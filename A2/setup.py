@@ -1,7 +1,6 @@
 import numpy as np
 from numpy.linalg import norm, inv
 
-#S = np.array([3, 3, 3])
 S = np.array([20, 25, 30])
 R = np.diag([6, 6, 6])
 X = np.array([[0, 0, 0], [1.75, 0, 0]])

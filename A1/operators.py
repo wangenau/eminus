@@ -1,5 +1,5 @@
 import numpy as np
-from numpy.linalg import det, pinv
+from numpy.linalg import det
 from numpy.fft import ifftn, fftn
 from setup import *
 

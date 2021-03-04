@@ -51,7 +51,6 @@ def cJdag(inp):
     return cI(inp) / np.prod(S)
 
 def diagouter(A, B):
-    #return np.diag(A @ B.conj().T)
     return np.sum(A * B.conj(), axis=1)
 
 def getE(W, Vdual):

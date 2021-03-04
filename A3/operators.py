@@ -12,13 +12,24 @@ def L(inp):
     return (-det(R) * G2 * inp).T
 
 def Linv(inp):
+    inp = inp.T
     out = np.zeros(inp.shape, dtype=complex)
     if inp.ndim == 1:
         out[1:] = inp[1:] / G2[1:] / -det(R)
     else:
         for i in range(len(inp)):
             out[i][1:] = inp[i][1:] / G2[1:] / -det(R)
-    return out
+    return out.T
+
+def K(inp):
+    inp = inp.T
+    out = np.empty(inp.shape, dtype=complex)
+    if inp.ndim == 1:
+        out = inp / (1 + G2)
+    else:
+        for i in range(len(inp)):
+            out[i] = inp[i] / (1 + G2)
+    return out.T
 
 def cI(inp):
     inp = inp.T
@@ -85,11 +96,99 @@ def getgrad(W, Vdual):
     return f * (HW - (O(W) @ invU) @ (W.conj().T @ HW)) @ invU
 
 def sd(W, Vdual, Nit):
+    Elist = []
     alpha = 3e-5
     for i in range(Nit):
         W = W - alpha * getgrad(W, Vdual)
-        print(f'Nit: {i}  \tE(W): {getE(W, Vdual)}')
-    return W
+        E = getE(W, Vdual)
+        Elist.append(E)
+        print(f'Nit: {i}  \tE(W): {E}')
+    return W, np.asarray(Elist)
+
+def lm(W, Vdual, Nit):
+    Elist = []
+    alphat = 3e-5
+    g = getgrad(W, Vdual)
+    d = -g
+    gt = getgrad(W + alphat * d, Vdual)
+    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + alpha * d
+    E = getE(W, Vdual)
+    Elist.append(E)
+    print(f'Nit: 0  \tE(W): {E}')
+    for i in range(1, Nit):
+        g = getgrad(W, Vdual)
+        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+        d = -g
+        gt = getgrad(W + alphat * d, Vdual)
+        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        W = W + alpha * d
+        E = getE(W, Vdual)
+        Elist.append(E)
+        print(f'Nit: {i}  \tE(W): {E}  \tlinmin test: {linmin}')
+    return W, np.asarray(Elist)
+
+def pclm(W, Vdual, Nit):
+    Elist = []
+    alphat = 3e-5
+    g = getgrad(W, Vdual)
+    d = -K(g)
+    gt = getgrad(W + alphat * d, Vdual)
+    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + alpha * d
+    E = getE(W, Vdual)
+    Elist.append(E)
+    print(f'Nit: 0  \tE(W): {E}')
+    for i in range(1, Nit):
+        g = getgrad(W, Vdual)
+        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+        d = -K(g)
+        gt = getgrad(W + alphat * d, Vdual)
+        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        W = W + alpha * d
+        E = getE(W, Vdual)
+        Elist.append(E)
+        print(f'Nit: {i}  \tE(W): {E}  \tlinmin test: {linmin}')
+    return W, np.asarray(Elist)
+
+def pccg(W, Vdual, Nit, cgform):
+    Elist = []
+    alphat = 3e-5
+    g = getgrad(W, Vdual)
+    d = -K(g)
+    gt = getgrad(W + alphat * d, Vdual)
+    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + alpha * d
+    dold = d
+    gold = g
+    E = getE(W, Vdual)
+    Elist.append(E)
+    print(f'Nit: 0  \tE(W): {E}')
+    for i in range(1, Nit):
+        g = getgrad(W, Vdual)
+        linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
+        cg = dotprod(g, K(gold)) / np.sqrt(dotprod(g, K(g)) * dotprod(gold, K(gold)))
+        if cgform == 1:
+            beta = dotprod(g, K(g)) / dotprod(gold, K(gold))
+        elif cgform == 2:
+            beta = dotprod(g - gold, K(g)) / dotprod(gold, K(gold))
+        elif cgform == 3:
+            beta = dotprod(g - gold, K(g)) / dotprod(g - gold, dold)
+        d = -K(g) + beta * dold
+        gt = getgrad(W + alphat * d, Vdual)
+        if abs(dotprod(g - gt, d)) < 1e-15:
+            break
+        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        W = W + alpha * d
+        dold = d
+        gold = g
+        E = getE(W, Vdual)
+        Elist.append(E)
+        print(f'Nit: {i}  \tE(W): {E}  \tlinmin test: {linmin}  \tcg test: {cg}')
+    return W, np.asarray(Elist)
+
+def dotprod(a, b):
+    return np.real(np.trace(a.conj().T @ b))
 
 def orth(W):
     return W @ inv(sqrtm(W.conj().T @ O(W)))
