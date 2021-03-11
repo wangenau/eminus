@@ -212,7 +212,7 @@ def pccg(W, Vdual, Nit, cgform):
             beta = dotprod(g - gold, K(g)) / dotprod(g - gold, dold)
         d = -K(g) + beta * dold
         gt = getgrad(W + alphat * d, Vdual)
-        if abs(dotprod(g - gt, d)) < 1e-15:
+        if abs(dotprod(g - gt, d)) < 1e-30:
             break
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
