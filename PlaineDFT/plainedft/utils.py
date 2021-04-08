@@ -25,56 +25,55 @@ def dotprod(a, b):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl
 def Ylm_real(l, m, R):
-    '''Calculate spherical harmonics.'''
+    '''Calculate spherical harmonics for real R-vectors.'''
+    # Account for single vectors
+    if R.ndim == 1:
+        R = np.array([R])
+
+    # No need to calculate anything for l=0
     if l == 0:
         return 0.5 * np.sqrt(1 / np.pi) * np.ones(len(R))
 
+    # Account for small norm, if norm(R) < eps: cost=0
     eps = 1e-9
     Rmod = norm(R, axis=1)
-
     cost = np.zeros(len(R))
     cost_idx = Rmod > eps
     cost[cost_idx] = R[cost_idx, 2] / Rmod[cost_idx]
 
+    # Vectorized version of sqrt(max(0, 1-cost^2))
     sint = np.sqrt(np.amax([np.zeros(len(R)), 1 - cost**2], axis=0))
 
+    # If Rx=0:  phi = pi/2*sign(Ry)
     phi = -np.pi / 2 * np.ones(len(R))
     phi_idx = R[:, 1] >= 0
     phi[phi_idx] = np.pi / 2 * np.ones(len(phi[phi_idx]))
 
+    # Beware the arc tan, it is defined with modulo pi
     phi_idx = R[:, 0] < -eps
     phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0]) + np.pi
-
     phi_idx = R[:, 0] > eps
     phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0])
 
     if l == 1:
-        # py
-        if m == -1:
+        if m == -1:  # py
             ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.sin(phi)
-        # pz
-        elif m == 0:
+        elif m == 0:  # pz
             ylm = 0.5 * np.sqrt(3 / np.pi) * cost
-        # px
-        elif m == 1:
+        elif m == 1:  # px
             ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.cos(phi)
         else:
             print(f'ERROR: No definition found for Ylm({l}, {m})')
     elif l == 2:
-        # dxy
-        if m == -2:
+        if m == -2:  # dxy
             ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.sin(2 * phi)
-        # dyz
-        elif m == -1:
+        elif m == -1:  # dyz
             ylm = np.sqrt(15 / 4 / np.pi) * cost * sint * np.sin(phi)
-        # dz2
-        elif m == 0:
+        elif m == 0:  # dz2
             ylm = 0.25 * np.sqrt(5 / np.pi) * (3 * cost**2 - 1)
-        # dxz
-        elif m == 1:
+        elif m == 1:  # dxz
             ylm = np.sqrt(15 / 4 / np.pi) * cost * sint * np.cos(phi)
-        # dx2-y2
-        elif m == 2:
+        elif m == 2:  # dx2-y2
             ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.cos(2 * phi)
         else:
             print(f'ERROR: No definition found for Ylm({l}, {m})')
