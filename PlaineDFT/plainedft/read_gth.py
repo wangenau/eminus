@@ -17,10 +17,9 @@ def read_GTH(f_file):
     rc = np.zeros(4)
     h = np.zeros([4, 3, 3])
     Nproj_l = np.zeros(4, dtype=int)
-    rcut_NL = np.zeros(4)
     try:
-        f = open(f_file,'r')
-    except:
+        f = open(f_file, 'r')
+    except FileNotFoundError:
         print('ERROR: Can\'t find file %s' % f_file)
 
     symbol = f.readline().split()[0]

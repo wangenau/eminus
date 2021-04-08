@@ -3,7 +3,7 @@
 Atoms object that holds every calculation relevant parameters and outputs.
 '''
 import numpy as np
-from numpy.linalg import norm, inv
+from numpy.linalg import inv
 from .operators import O, L, Linv, K, I, J, Idag, Jdag
 from .potentials import init_pot
 from .gth_loc import init_gth_loc
@@ -99,8 +99,9 @@ class Atoms:
 
         if any((self.S % 2) != 0) and self.verbose > 0:
             print('Odd dimension in S, this is could be bad!')
-        eS = self.S / 2 + 0.5
-        edges = np.nonzero(np.any(np.abs(M - np.ones((np.size(M, axis=0), 1)) @ [eS]) < 1, axis=1))
+        # FIXME: Remove old G-vector restriction
+        # eS = self.S / 2 + 0.5
+        # edges = np.nonzero(np.any(np.abs(M - np.ones((np.size(M, axis=0), 1)) @ [eS]) < 1, axis=1))
         # G2mx = np.min(G2[edges])
         # active = np.nonzero(G2 < G2mx / 4)
         active = np.nonzero(G2 <= 2 * self.ecut)
@@ -121,7 +122,7 @@ class Atoms:
         elif self.pot in ('HARMONIC', 'COULOMB', 'GE'):
             self.Vloc = init_pot(self)
         else:
-            print('ERROR: No potential found for %s' % a.pot)
+            print('ERROR: No potential found for %s' % self.pot)
 
     def O(self, a):
         '''Overlap operator.'''

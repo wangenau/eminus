@@ -3,8 +3,6 @@
 Calculate the non-local potential with GTH pseudopotentials. Phys. Rev. B 54, 1703
 '''
 import numpy as np
-from numpy.linalg import norm
-from .read_gth import read_GTH
 from .utils import Ylm_real
 
 
@@ -12,7 +10,6 @@ from .utils import Ylm_real
 def calc_Enl(a, W):
     '''Calculate the non-local energy.'''
     # Parameters of the non-local pseudopotential
-    NbetaNL = a.NbetaNL
     prj2beta = a.prj2beta
     betaNL = a.betaNL
 
@@ -33,7 +30,8 @@ def calc_Enl(a, W):
                         for jprj in range(psp['Nproj_l'][l]):
                             jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            enl1 += hij * np.real(betaNL_psi[ist, ibeta].conj() * betaNL_psi[ist, jbeta])
+                            enl1 += hij * np.real(betaNL_psi[ist, ibeta].conj() *
+                                    betaNL_psi[ist, jbeta])
         E_Ps_nloc += a.f[ist] * enl1
     return E_Ps_nloc
 
@@ -42,7 +40,6 @@ def calc_Enl(a, W):
 def calc_Vnl(a, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
     # Parameters of the non-local pseudopotential
-    NbetaNL = a.NbetaNL
     prj2beta = a.prj2beta
     betaNL = a.betaNL
 
@@ -103,7 +100,8 @@ def init_gth_nonloc(a):
                 for iprj in range(psp['Nproj_l'][l]):
                     GX = np.sum(a.X[ia] * g, axis=1)
                     Sf = np.cos(GX) - 1j * np.sin(GX)
-                    betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
+                    betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
+                                       eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL
 

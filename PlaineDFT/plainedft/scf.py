@@ -4,7 +4,7 @@ Main SCF file with every relevant function.
 '''
 import numpy as np
 from numpy.linalg import det, eig, inv, norm
-from numpy.random import randn, seed
+from numpy.random import randn
 from scipy.linalg import sqrtm
 from timeit import default_timer
 from .utils import Diagprod, dotprod
@@ -15,7 +15,6 @@ def SCF(a, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     '''Main SCF function.'''
     # Set up basis functions
     # Start with randomized, complex, orthogonal basis functions
-    # seed(1234)
     W = randn(len(a.active[0]), a.Ns) + 1j * randn(len(a.active[0]), a.Ns)
     W = orth(a, W)
 
@@ -72,7 +71,6 @@ def getE(a, W, out=False):
     W = orth(a, W)  # Orthogonalize at the start
     n = getn(a, W)
     phi = -4 * np.pi * a.Linv(a.O(a.J(n)))
-    U = W.conj().T @ a.O(W)
     exc = excVWN(n)
     Ekin = np.real(-0.5 * np.trace(np.diag(a.f) @ (W.conj().T @ a.L(W))))
     Eloc = np.real(a.Vloc.conj().T @ n)
@@ -88,6 +86,7 @@ def getE(a, W, out=False):
         print(f'Coulomb energy:              {Ecoul:+.9f} Eh')
         print(f'Exchange-correlation energy: {Exc:+.9f} Eh')
     return Ekin + Eloc + Enonloc + Ecoul + Exc
+
 
 # FIXME: Dimensions are scuffed
 def getEwald(a):
@@ -115,7 +114,8 @@ def getgrad(a, W):
     F = np.diag(a.f)
     U12 = sqrtm(inv(U))
     Ht = U12 @ (W.conj().T @ HW) @ U12
-    return (HW - (a.O(W) @ invU) @ (W.conj().T @ HW)) @ (U12 @ F @ U12) + a.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
+    return (HW - (a.O(W) @ invU) @ (W.conj().T @ HW)) @ (U12 @ F @ U12) + \
+           a.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
 # def getgrad(a, W):
@@ -166,7 +166,7 @@ def sd(a, W, Nit, etol):
         E = getE(a, W)
         Elist.append(E)
         if a.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E:+.7f} Eh')
+            print(f'Nit: {i+1}  \tE(W): {E:+.7f}')
         if i > 0:
             if abs(Elist[-2] - Elist[-1]) < etol:
                 print(f'Converged after {i+1} steps.')
@@ -189,7 +189,7 @@ def lm(a, W, Nit, etol):
     E = getE(a, W)
     Elist.append(E)
     if a.verbose >= 3:
-        print(f'Nit: 1  \tE(W): {E:+.7f} Eh')
+        print(f'Nit: 1  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
         g = getgrad(a, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -200,7 +200,7 @@ def lm(a, W, Nit, etol):
         E = getE(a, W)
         Elist.append(E)
         if a.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E:+.7f} Eh\tlinmin test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -222,7 +222,7 @@ def pclm(a, W, Nit, etol):
     E = getE(a, W)
     Elist.append(E)
     if a.verbose >= 3:
-        print(f'Nit: 1  \tE(W): {E:+.7f} Eh')
+        print(f'Nit: 1  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
         g = getgrad(a, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -233,7 +233,7 @@ def pclm(a, W, Nit, etol):
         E = getE(a, W)
         Elist.append(E)
         if a.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E:+.7f} Eh\tlinmin test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -257,7 +257,7 @@ def pccg(a, W, Nit, etol, cgform=1):
     E = getE(a, W)
     Elist.append(E)
     if a.verbose >= 3:
-        print(f'Nit: 0  \tE(W): {E:+.7f} Eh')
+        print(f'Nit: 0  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
         g = getgrad(a, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
@@ -281,7 +281,7 @@ def pccg(a, W, Nit, etol, cgform=1):
         E = getE(a, W)
         Elist.append(E)
         if a.verbose >= 3:
-            print(f'Nit: {i}  \tE(W): {E:+.7f} Eh\tlinmin test: {linmin:+.7f}  \tcg test: {cg:+.7f}')
+            print(f'Nit: {i}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -291,7 +291,7 @@ def pccg(a, W, Nit, etol, cgform=1):
 
 
 def excVWN(n):
-    '''VWN parameterization of the exchange correlation energy function.'''
+    '''VWN parameterization of the exchange correlation energy functional.'''
     X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
     A = 0.0310907
     x0 = -0.10498
@@ -299,16 +299,17 @@ def excVWN(n):
     c = 12.9352
     Q = np.sqrt(4 * c - b * b)
     X0 = x0 * x0 + b * x0 + c
-    rs = (4 * np.pi / 3 * n)**(-1/3)
+    rs = (4 * np.pi / 3 * n)**(-1 / 3)
     x = np.sqrt(rs)
     X = x * x + b * x + c
-    out = -X1 / rs + A * (np.log(x * x / X) + 2 * b / Q * np.arctan(Q / (2 * x + b)) \
-    - (b * x0) / X0 * (np.log((x - x0) * (x - x0) / X) + 2 * (2 * x0 + b) / Q * np.arctan(Q / (2 * x + b))))
+    out = -X1 / rs + A * (np.log(x * x / X) + 2 * b / Q * np.arctan(Q / (2 * x + b)) -
+          (b * x0) / X0 * (np.log((x - x0) * (x - x0) / X) + 2 * (2 * x0 + b) / Q *
+          np.arctan(Q / (2 * x + b))))
     return out
 
 
 def excpVWN(n):
-    '''Derivation with respect to n of the VWN parameterization of the exchange correlation energy function.'''
+    '''Derivation with respect to n of the VWN exchange correlation energy functional.'''
     X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
     A = 0.0310907
     x0 = -0.10498
@@ -316,12 +317,13 @@ def excpVWN(n):
     c = 12.9352
     Q = np.sqrt(4 * c - b * b)
     X0 = x0 * x0 + b * x0 + c
-    rs = (4 * np.pi / 3 * n)**(-1/3)
+    rs = (4 * np.pi / 3 * n)**(-1 / 3)
     x = np.sqrt(rs)
     X = x * x + b * x + c
     dx = 0.5 / x
-    out = dx * (2 * X1 / (rs * x) + A * (2 / x - (2 * x + b) / X - 4 * b / (Q * Q + (2 * x + b) * (2 * x + b)) \
-    - (b * x0) / X0 * (2 / (x - x0) - (2 * x + b) / X - 4 * (2 * x0 + b) / (Q * Q + (2 * x + b) * (2 * x + b)))))
+    out = dx * (2 * X1 / (rs * x) + A * (2 / x - (2 * x + b) / X - 4 * b / (Q * Q + (2 * x + b) *
+          (2 * x + b)) - (b * x0) / X0 * (2 / (x - x0) - (2 * x + b) / X - 4 * (2 * x0 + b) /
+          (Q * Q + (2 * x + b) * (2 * x + b)))))
     return (-rs / (3 * n)) * out
 
 
