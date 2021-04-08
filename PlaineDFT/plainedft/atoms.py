@@ -37,21 +37,22 @@ class Atoms:
         self.pot = pot.upper()
 
         # Parameters that will be built out of the inputs
-        self.R = None       # Unit cell
-        self.M = None       # Index matrix
-        self.N = None       # Index matrix
-        self.r = None       # Sample points in unit cell
-        self.G = None       # G-vectors
-        self.G2 = None      # Squared magnitudes of G-vectors
-        self.Sf = None      # Structure factor
-        self.active = None  # Mask for active G-vectors
-        self.Gc = None      # Cut G-vectors
-        self.G2c = None     # Cut squared magnitudes of G-vectors
+        self.CellVol = None  # Unit cell volume
+        self.R = None        # Unit cell
+        self.M = None        # Index matrix
+        self.N = None        # Index matrix
+        self.r = None        # Sample points in unit cell
+        self.G = None        # G-vectors
+        self.G2 = None       # Squared magnitudes of G-vectors
+        self.Sf = None       # Structure factor
+        self.active = None   # Mask for active G-vectors
+        self.Gc = None       # Cut G-vectors
+        self.G2c = None      # Cut squared magnitudes of G-vectors
         self.setup()
 
         # FIXME: Add comments to non-local part
         # Parameters used for pseudopotentials
-        self.GTH = {}       # Contains GTH parameters in a dictionary
+        self.GTH = {}         # Contains GTH parameters in a dictionary
         self.Vloc = None      # Local pseudopotential contribution (dual)
         self.NbetaNL = 0      #
         self.prj2beta = None  #
@@ -69,6 +70,7 @@ class Atoms:
         if self.a is not None:
             R = self.a * np.eye(3)
             self.R = R
+            self.CellVol = self.a**3  # We only have cubic unit cells for now
 
         ms = np.arange(0, np.prod(self.S))
         m1 = ms % self.S[0]

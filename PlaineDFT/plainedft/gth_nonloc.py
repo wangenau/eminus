@@ -72,7 +72,7 @@ def init_gth_nonloc(a):
     '''Initialize parameters to calculate non-local contributions.'''
     Natoms = len(a.atom)
     Npoints = len(a.active[0])
-    CellVol = a.a**3  # We only have cubic unit cells for now
+    CellVol = a.CellVol
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
     prj2beta[:] = -1  # Set to invalid index
