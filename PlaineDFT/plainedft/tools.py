@@ -7,17 +7,17 @@ from .constants import BOHR, HARTREE, KCALMOL
 
 
 def cutoff2gridspacing(E):
-    '''Convert planewave energy cutoff to a real-space gridspacing.'''
+    '''Convert planewave energy cutoff to a real-space gridspacing using a.u..'''
     # Taken from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
-    return np.pi / np.sqrt(2 * E / HARTREE) * BOHR
+    return np.pi / np.sqrt(2 * E)
 
 
 def gridspacing2cutoff(h):
-    '''Convert real-space gridspacing to planewave energy cutoff.'''
+    '''Convert real-space gridspacing to planewave energy cutoff using a.u..'''
     # Taken from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
     # In Hartree units, E = k^2 / 2, where k_max is approx. given by pi / h
     # See PRB, Vol 54, 14362 (1996)
-    return 0.5 * (np.pi * BOHR / h)**2 * HARTREE
+    return 0.5 * (np.pi / h)**2
 
 
 def hartree2ev(E):
