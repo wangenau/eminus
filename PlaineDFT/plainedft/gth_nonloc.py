@@ -8,9 +8,10 @@ from .read_gth import read_GTH
 from .utils import Ylm_real
 
 
+# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def calc_Enl(a, W):
     '''Calculate the non-local energy.'''
-    # Parameters for the non-local pseudopotential
+    # Parameters of the non-local pseudopotential
     NbetaNL = a.NbetaNL
     prj2beta = a.prj2beta
     betaNL = a.betaNL
@@ -37,9 +38,10 @@ def calc_Enl(a, W):
     return E_Ps_nloc
 
 
+# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnl(a, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
-    # Parameters for the non-local pseudopotential
+    # Parameters of the non-local pseudopotential
     NbetaNL = a.NbetaNL
     prj2beta = a.prj2beta
     betaNL = a.betaNL
@@ -65,6 +67,7 @@ def calc_Vnl(a, W):
     return Vpsi
 
 
+# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(a):
     '''Initialize parameters to calculate non-local contributions.'''
     Natoms = len(a.atom)
@@ -83,13 +86,16 @@ def init_gth_nonloc(a):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
-    # Can be calculated outside the loop in this case
-    g = a.Gc  # Simplified, would normally be G+k
-    Gm = norm(g, axis=1)
+    # Sort G-vectors by their magnitude
+    # PWDFT.jl uses sortperm, for compareabilty we need to sort with mergesort
+    idx = np.argsort(a.G2c, kind='mergesort')
 
-    betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
+    # Can be calculated outside the loop in this case
+    g = a.Gc[idx]  # Simplified, would normally be G+k
+    Gm = np.sqrt(a.G2c[idx])
 
     ibeta = 0
+    betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
     for ia in range(Natoms):
         psp = a.GTH[a.atom[ia]]
         for l in range(psp['lmax']):
@@ -102,34 +108,32 @@ def init_gth_nonloc(a):
     return NbetaNL, prj2beta, betaNL
 
 
+# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 def eval_proj_G(psp, l, iproj, Gm, CellVol):
+    '''Evaluate GTH projector function in G-space.'''
     rrl = psp['rc'][l]
     Gr2 = (Gm * rrl)**2
 
-    # s-channel
-    if l == 0:
+    if l == 0:  # s-channel
         if iproj == 1:
             Vprj = np.exp(-0.5 * Gr2)
         elif iproj == 2:
             Vprj = 2 / np.sqrt(15) * np.exp(-0.5 * Gr2) * (3 - Gr2)
         elif iproj == 3:
             Vprj = (4 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * (15 - 10 * Gr2 + Gr2**2)
-    # p-channel
-    elif l == 1:
+    elif l == 1:  # p-channel
         if iproj == 1:
             Vprj = (1 / np.sqrt(3)) * np.exp(-0.5 * Gr2) * Gm
         elif iproj == 2:
             Vprj = (2 / np.sqrt(105)) * np.exp(-0.5 * Gr2) * Gm * (5 - Gr2)
         elif iproj == 3:
             Vprj = (4 / 3) / np.sqrt(1155) * np.exp(-0.5 * Gr2) * Gm * (35 - 14 * Gr2 + Gr2**2)
-    # d-channel
-    elif l == 2:
+    elif l == 2:  # d-channel
         if iproj == 1:
             Vprj = (1 / np.sqrt(15)) * np.exp(-0.5 * Gr2) * Gm**2
         elif iproj == 2:
             Vprj = (2 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * Gm**2 * (7 - Gr2)
-    # f-channel
-    elif l == 3:
+    elif l == 3:  # f-channel
         # Only one projector
         Vprj = Gm**3 * np.exp(-0.5 * Gr2) / np.sqrt(105)
     else:

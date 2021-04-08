@@ -106,9 +106,8 @@ class Atoms:
 
         Gc = G[active]
         G2c = G2[active]
-        idx = np.argsort(G2c, kind='mergesort')
-        self.Gc = Gc[idx]
-        self.G2c = G2c[idx]
+        self.Gc = Gc
+        self.G2c = G2c
 
     def get_pot(self):
         '''Generate the potentials.'''
