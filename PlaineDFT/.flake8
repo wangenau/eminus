@@ -1,0 +1,5 @@
+[flake8]
+max-line-length = 100
+ignore = E127, E128, \  # Over- and under-indentation
+         E741, E743, \  # Ambiguous variable names and function definitions
+         W504           # Line break after binary operator
