@@ -61,8 +61,7 @@ def calc_Vnl(a, W):
                         for jprj in range(psp['Nproj_l'][l]):
                             jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            for igk in range(Npoints):
-                                Vpsi[igk, ist] += hij * betaNL[igk, ibeta] * betaNL_psi[ist, jbeta]
+                            Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
     return Vpsi
 
 
@@ -84,6 +83,10 @@ def init_gth_nonloc(a):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
+    # Can be calculated outside the loop in this case
+    g = a.Gc  # Simplified, would normally be G+k
+    Gm = norm(g, axis=1)
+
     betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
 
     ibeta = 0
@@ -92,11 +95,8 @@ def init_gth_nonloc(a):
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
-                    for igk in range(Npoints):
-                        g = a.Gc[igk]  # Simplified, would normally be G+k
-                        Gm = norm(g)
-                        GX = np.sum(a.X[ia] * g)
-                        Sf = np.cos(GX) - 1j * np.sin(GX)
-                        betaNL[igk, ibeta] = (-1j)**l * Ylm_real(l, m, g) * eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
+                    GX = np.sum(a.X[ia] * g, axis=1)
+                    Sf = np.cos(GX) - 1j * np.sin(GX)
+                    betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL

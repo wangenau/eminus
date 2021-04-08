@@ -5,6 +5,7 @@ Linear algebra calculation utilities.
 import numpy as np
 from numpy.linalg import norm
 
+
 # FIXME: This functions works, but is unused.
 # def diagouter(A, B):
 #     '''Calculate the expression Diag (A * Bdag).'''
@@ -22,42 +23,32 @@ def dotprod(a, b):
     return np.real(np.trace(a.conj().T @ b))
 
 
-# FIXME: Remove me?
-# def Ylm(l, m, r):
-#     '''Spherical harmonics for cartesian coordinates.'''
-#     e = 1e-9  # We dont want to divide by zero
-#     # Switch to spherical coordinates
-#     theta = np.arctan(np.sqrt(r[:,0]**2 + r[:,1]**2) / (r[:,2] + e))
-#     phi = np.arctan(r[:,1] / (r[:,0] + e))
-#     return sph_harm(m, l, theta, phi)
-
-
-# Taken from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl
 def Ylm_real(l, m, R):
     '''Calculate spherical harmonics.'''
-    eps = 1e-9
-    Rmod = norm(R)
-    if Rmod < eps:
-        cost = 0
-    else:
-        cost = R[2] / Rmod
-
-    if R[0] > eps:
-        phi = np.arctan(R[1] / R[0])
-    elif R[0] < -eps:
-        phi = np.arctan(R[1] / R[0]) + np.pi
-    else:
-        if R[1] >= 0:
-            phi = np.pi / 2
-        else:
-            phi = -np.pi / 2
-
-    sint = np.sqrt(max(0, 1 - cost**2))
-    ylm = 0
-
     if l == 0:
-        ylm = 0.5 * np.sqrt(1 / np.pi)
-    elif l == 1:
+        return 0.5 * np.sqrt(1 / np.pi) * np.ones(len(R))
+
+    eps = 1e-9
+    Rmod = norm(R, axis=1)
+
+    cost = np.zeros(len(R))
+    cost_idx = Rmod > eps
+    cost[cost_idx] = R[cost_idx, 2] / Rmod[cost_idx]
+
+    sint = np.sqrt(np.amax([np.zeros(len(R)), 1 - cost**2], axis=0))
+
+    phi = -np.pi / 2 * np.ones(len(R))
+    phi_idx = R[:, 1] >= 0
+    phi[phi_idx] = np.pi / 2 * np.ones(len(phi[phi_idx]))
+
+    phi_idx = R[:, 0] < -eps
+    phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0]) + np.pi
+
+    phi_idx = R[:, 0] > eps
+    phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0])
+
+    if l == 1:
         # py
         if m == -1:
             ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.sin(phi)
@@ -72,7 +63,7 @@ def Ylm_real(l, m, R):
     elif l == 2:
         # dxy
         if m == -2:
-            ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.sin(2*phi)
+            ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.sin(2 * phi)
         # dyz
         elif m == -1:
             ylm = np.sqrt(15 / 4 / np.pi) * cost * sint * np.sin(phi)
@@ -95,7 +86,7 @@ def Ylm_real(l, m, R):
         elif m == -1:
             ylm = 0.25 * np.sqrt(21 / 2 / np.pi) * sint * (5 * cost**2 - 1) * np.sin(phi)
         elif m == 0:
-            ylm = 0.25 * np.sqrt(7.0/np.pi) * (5 * cost**3 - 3 * cost)
+            ylm = 0.25 * np.sqrt(7 / np.pi) * (5 * cost**3 - 3 * cost)
         elif m == 1:
             ylm = 0.25 * np.sqrt(21 / 2 / np.pi) * sint * (5 * cost**2 - 1) * np.cos(phi)
         elif m == 2:
@@ -110,10 +101,9 @@ def Ylm_real(l, m, R):
 
 
 def eval_proj_G(psp, l, iproj, Gm, CellVol):
-    Vprj = 0
     rrl = psp['rc'][l]
-
     Gr2 = (Gm * rrl)**2
+
     # s-channel
     if l == 0:
         if iproj == 1:
