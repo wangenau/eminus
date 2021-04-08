@@ -29,13 +29,13 @@ from plainedft.tools import *
 # pot = 'gth'
 
 atom = 'Ne'
-lattice = 16# + 16/(30-1)
+lattice = 16
 X = np.array([[8, 8, 8]])
 Z = 8
 Ns = 4
 S = 20 * np.array([1, 1, 1])
 f = 2
-ecut = 25 #ev2hartree(650)
+ecut = 25
 verbose = 5
 pot = 'gth'
 

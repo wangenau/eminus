@@ -14,6 +14,8 @@ def main(name):
     if name == 'Ne':
         atom = 'Ne'
         lattice = 16
+        # Center atom in box, due to conversion from ang to bohr in PWDFT.jl by reading xyz files
+        # the atom gets slightly misaligned
         X = np.array([[8.000000003522448, 8.000000003522448, 8.000000003522448]])
         Z = 8
         Ns = 4
@@ -26,7 +28,10 @@ def main(name):
     if name == 'LiH':
         atom = ['Li', 'H']
         lattice = 16
-        X = np.array([[0,0,0], [8.000000003522448, 8.000000003522448, 8.000000003522448]])
+        # Center atom in box, due to conversion from ang to bohr in PWDFT.jl by reading xyz files
+        # the atom gets slightly misaligned
+        # Use 0-point to get no conversion error -> this is a stretched LiH molecule
+        X = np.array([[0, 0, 0], [8.000000003522448, 8.000000003522448, 8.000000003522448]])
         Z = [1, 1]
         Ns = 1
         S = 75 * np.array([1, 1, 1])
@@ -49,6 +54,7 @@ def main(name):
     betaNL_psi = np.dot(W.T.conj(), atoms.betaNL).conj()
 
     return atoms, E, V, W, betaNL_psi
+
 
 if __name__ == '__main__':
     from timeit import default_timer

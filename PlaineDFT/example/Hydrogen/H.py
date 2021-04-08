@@ -3,9 +3,9 @@ os.environ['OMP_NUM_THREADS'] = '2'
 import numpy as np
 from plainedft import Atoms
 from plainedft import SCF
+from plainedft.atoms_io import *
 from plainedft.plot import *
 from plainedft.tools import *
-from plainedft.atoms_io import *
 
 atom = 'H'
 lattice = 16
@@ -25,5 +25,5 @@ save_atoms(atoms, 'hydrogen.pkl')
 
 # atoms = load_atoms('hydrogen.pkl')
 # print(atoms.estate)
-# #plot_den(atoms)
+# plot_den(atoms)
 # plot_den_iso(atoms, 50, 20)

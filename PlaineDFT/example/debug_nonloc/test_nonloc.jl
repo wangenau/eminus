@@ -11,6 +11,7 @@ const DIR_PSP = joinpath(DIR_PWDFT, "pseudopotentials", "pade_gth")
 # Needed to build a wave function, bc I am too stupid to get the correct shape
 include("/home/wanja/PWDFT.jl/src/gen_wavefunc.jl")
 
+
 function main(name)
     Random.seed!(1234)
 
@@ -68,4 +69,5 @@ function main(name)
     return Ham, E.Ps_nloc, V, psiks[1], betaNL_psi
 end
 
-main("LiH")
+
+@time main("LiH")
