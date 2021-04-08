@@ -5,7 +5,7 @@ Calculate the non-local potential with GTH pseudopotentials. Phys. Rev. B 54, 17
 import numpy as np
 from numpy.linalg import norm
 from .read_gth import read_GTH
-from .utils import Ylm_real, eval_proj_G
+from .utils import Ylm_real
 
 
 def calc_Enl(a, W):
@@ -100,3 +100,40 @@ def init_gth_nonloc(a):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL
+
+
+def eval_proj_G(psp, l, iproj, Gm, CellVol):
+    rrl = psp['rc'][l]
+    Gr2 = (Gm * rrl)**2
+
+    # s-channel
+    if l == 0:
+        if iproj == 1:
+            Vprj = np.exp(-0.5 * Gr2)
+        elif iproj == 2:
+            Vprj = 2 / np.sqrt(15) * np.exp(-0.5 * Gr2) * (3 - Gr2)
+        elif iproj == 3:
+            Vprj = (4 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * (15 - 10 * Gr2 + Gr2**2)
+    # p-channel
+    elif l == 1:
+        if iproj == 1:
+            Vprj = (1 / np.sqrt(3)) * np.exp(-0.5 * Gr2) * Gm
+        elif iproj == 2:
+            Vprj = (2 / np.sqrt(105)) * np.exp(-0.5 * Gr2) * Gm * (5 - Gr2)
+        elif iproj == 3:
+            Vprj = (4 / 3) / np.sqrt(1155) * np.exp(-0.5 * Gr2) * Gm * (35 - 14 * Gr2 + Gr2**2)
+    # d-channel
+    elif l == 2:
+        if iproj == 1:
+            Vprj = (1 / np.sqrt(15)) * np.exp(-0.5 * Gr2) * Gm**2
+        elif iproj == 2:
+            Vprj = (2 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * Gm**2 * (7 - Gr2)
+    # f-channel
+    elif l == 3:
+        # Only one projector
+        Vprj = Gm**3 * np.exp(-0.5 * Gr2) / np.sqrt(105)
+    else:
+        print(f'ERROR: No projector found for l={l}')
+
+    pre = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / CellVol)
+    return pre * Vprj
