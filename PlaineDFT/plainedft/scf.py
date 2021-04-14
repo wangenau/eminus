@@ -16,17 +16,20 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     # Set up basis functions
     # Start with randomized, complex, orthogonal basis functions
     W = randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
-    W = orth(atoms, W)
 
     # Minimization procedure
     start = default_timer()
     if n_sd > 0:
+        W = orth(atoms, W)
         W, Elist = sd(atoms, W, n_sd, etol)
     if n_lm > 0:
+        W = orth(atoms, W)
         W, Elist = lm(atoms, W, n_lm, etol)
     if n_pclm > 0:
+        W = orth(atoms, W)
         W, Elist = pclm(atoms, W, n_pclm, etol)
     if n_cg > 0:
+        W = orth(atoms, W)
         W, Elist = pccg(atoms, W, n_cg, etol, cgform)
     end = default_timer()
 
@@ -53,8 +56,8 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
 
 def H(atoms, W):
     '''Left-hand side of our eigenvalue equation.'''
-    W = orth(atoms, W)  # Orthogonalize at the start
-    n = getn(atoms, W)
+    Y = orth(atoms, W)  # Orthogonalize at the start
+    n = getn(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     exc = excVWN(n)
     excp = excpVWN(n)
@@ -69,11 +72,11 @@ def H(atoms, W):
 
 def getE(atoms, W, out=False):
     '''Calculate the sum of energies over Ns states.'''
-    W = orth(atoms, W)  # Orthogonalize at the start
-    n = getn(atoms, W)
+    Y = orth(atoms, W)  # Orthogonalize at the start
+    n = getn(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     exc = excVWN(n)
-    Ekin = np.real(-0.5 * np.trace(np.diag(atoms.f) @ (W.conj().T @ atoms.L(W))))
+    Ekin = np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
     Eloc = np.real(atoms.Vloc.conj().T @ n)# * atoms.CellVol / np.prod(atoms.S)
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local energy if necessary
@@ -95,7 +98,7 @@ def getEwald(atoms):
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     sigma1 = 0.25
     gauss = 0
-    # FIXME: wrong
+    # FIXME: Maybe wrong
     for Z in atoms.Z:
         g = np.exp(-dr**2 / (2 * sigma1**2)) / np.sqrt(2 * np.pi * sigma1**2)**3
         gauss += Z * (np.sum(g) * det(atoms.R) / np.prod(atoms.S)) * g
@@ -145,10 +148,10 @@ def getgrad(atoms, W):
 
 def getPsi(atoms, W):
     '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
-    W = orth(atoms, W)
-    mu = W.conj().T @ H(atoms, W)
+    Y = orth(atoms, W)
+    mu = Y.conj().T @ H(atoms, Y)
     epsilon, D = eig(mu)
-    return W @ D, np.real(epsilon)
+    return Y @ D, np.real(epsilon)
 
 
 def getn(atoms, W):
