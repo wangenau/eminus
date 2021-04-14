@@ -9,16 +9,16 @@ from .potentials import init_pot
 from .gth_loc import init_gth_loc
 
 
-def plot_pot(a, rmax=2):
+def plot_pot(atoms, rmax=2):
     '''Plot the GTH pseudopotential along with the coulomb potential.'''
-    atom = a.atom
+    atom = atoms.atom
     lattice = rmax
     X = np.array([[0, 0, 0]])
-    Z = a.Z
-    Ns = a.Ns
+    Z = atoms.Z
+    Ns = atoms.Ns
     S = np.array([100, 1, 1])
-    f = a.f
-    ecut = a.ecut
+    f = atoms.f
+    ecut = atoms.ecut
     verbose = 0
     pot = 'gth'
     # Set up a dummy atoms object
@@ -44,13 +44,13 @@ def plot_pot(a, rmax=2):
     return
 
 
-def plot_den(a):
+def plot_den(atoms):
     '''Plot the electronic density in real-space.'''
     # Plot over x- and y-axis
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    mask = a.r[:, 2] == a.a / 2  # We only want to look at values in the middle of z
-    ax.plot_trisurf(a.r[:, 0][mask], a.r[:, 1][mask], a.n[mask])
+    mask = atoms.r[:, 2] == atoms.a / 2  # We only want to look at values in the middle of z
+    ax.plot_trisurf(atoms.r[:, 0][mask], atoms.r[:, 1][mask], atoms.n[mask])
     ax.set_xlabel('x-axis', fontsize=12)
     ax.set_ylabel('y-axis', fontsize=12)
     ax.set_zlabel('Density', fontsize=12)
@@ -60,8 +60,8 @@ def plot_den(a):
     # Plot over z- and x-axis
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    mask = a.r[:, 1] == a.a / 2
-    ax.plot_trisurf(a.r[:, 2][mask], a.r[:, 0][mask], a.n[mask])
+    mask = atoms.r[:, 1] == atoms.a / 2
+    ax.plot_trisurf(atoms.r[:, 2][mask], atoms.r[:, 0][mask], atoms.n[mask])
     ax.set_xlabel('z-axis', fontsize=12)
     ax.set_ylabel('x-axis', fontsize=12)
     ax.set_zlabel('Density', fontsize=12)
@@ -71,8 +71,8 @@ def plot_den(a):
     # Plot over y- and z-axis
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    mask = a.r[:, 0] == a.a / 2
-    ax.plot_trisurf(a.r[:, 1][mask], a.r[:, 2][mask], a.n[mask])
+    mask = atoms.r[:, 0] == atoms.a / 2
+    ax.plot_trisurf(atoms.r[:, 1][mask], atoms.r[:, 2][mask], atoms.n[mask])
     ax.set_xlabel('y-axis', fontsize=12)
     ax.set_ylabel('z-axis', fontsize=12)
     ax.set_zlabel('Density', fontsize=12)
@@ -81,13 +81,13 @@ def plot_den(a):
     return
 
 
-def plot_den_iso(a, iso_max, iso_min=0):
+def plot_den_iso(atoms, iso_max, iso_min=0):
     '''Plot the electronic density in real-space for isosurface values.'''
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    mask = (a.n < iso_max) & (a.n > iso_min)
-    ax.scatter(a.r[:, 0][mask], a.r[:, 1][mask], a.r[:, 2][mask])
-    ax.scatter(a.X[:, 0], a.X[:, 1], a.X[:, 2], c='r', s=100)
+    mask = (atoms.n < iso_max) & (atoms.n > iso_min)
+    ax.scatter(atoms.r[:, 0][mask], atoms.r[:, 1][mask], atoms.r[:, 2][mask])
+    ax.scatter(atoms.X[:, 0], atoms.X[:, 1], atoms.X[:, 2], c='r', s=100)
     ax.set_xlabel('x-axis', fontsize=12)
     ax.set_ylabel('y-axis', fontsize=12)
     ax.set_zlabel('z-axis', fontsize=12)

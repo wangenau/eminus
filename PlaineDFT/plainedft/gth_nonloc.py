@@ -7,22 +7,22 @@ from .utils import Ylm_real
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
-def calc_Enl(a, W):
+def calc_Enonloc(atoms, W):
     '''Calculate the non-local energy.'''
     # Parameters of the non-local pseudopotential
-    prj2beta = a.prj2beta
-    betaNL = a.betaNL
+    prj2beta = atoms.prj2beta
+    betaNL = atoms.betaNL
 
-    Natoms = len(a.atom)
-    Nstates = a.Ns
+    Natoms = len(atoms.atom)
+    Nstates = atoms.Ns
 
     betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
 
-    E_Ps_nloc = 0
+    Enloc = 0
     for ist in range(Nstates):
-        enl1 = 0
+        enl = 0
         for ia in range(Natoms):
-            psp = a.GTH[a.atom[ia]]
+            psp = atoms.GTH[atoms.atom[ia]]
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
@@ -30,29 +30,29 @@ def calc_Enl(a, W):
                         for jprj in range(psp['Nproj_l'][l]):
                             jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            enl1 += hij * np.real(betaNL_psi[ist, ibeta].conj() *
-                                    betaNL_psi[ist, jbeta])
-        E_Ps_nloc += a.f[ist] * enl1
-    return E_Ps_nloc
+                            enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
+                                   betaNL_psi[ist, jbeta])
+        Enloc += atoms.f[ist] * enl
+    return Enloc
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
-def calc_Vnl(a, W):
+def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
     # Parameters of the non-local pseudopotential
-    prj2beta = a.prj2beta
-    betaNL = a.betaNL
+    prj2beta = atoms.prj2beta
+    betaNL = atoms.betaNL
 
-    Natoms = len(a.atom)
+    Natoms = len(atoms.atom)
     Npoints = len(W)
-    Nstates = a.Ns
+    Nstates = atoms.Ns
 
     betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
 
     Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
     for ist in range(Nstates):
         for ia in range(Natoms):
-            psp = a.GTH[a.atom[ia]]
+            psp = atoms.GTH[atoms.atom[ia]]
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
@@ -65,18 +65,18 @@ def calc_Vnl(a, W):
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
-def init_gth_nonloc(a):
+def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions.'''
-    Natoms = len(a.atom)
-    Npoints = len(a.active[0])
-    CellVol = a.CellVol
+    Natoms = len(atoms.atom)
+    Npoints = len(atoms.active[0])
+    CellVol = atoms.CellVol
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
     prj2beta[:] = -1  # Set to invalid index
 
     NbetaNL = 0
     for ia in range(Natoms):
-        psp = a.GTH[a.atom[ia]]
+        psp = atoms.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
@@ -85,20 +85,20 @@ def init_gth_nonloc(a):
 
     # Sort G-vectors by their magnitude
     # PWDFT.jl uses sortperm, for compareabilty we need to sort with mergesort
-    idx = np.argsort(a.G2c, kind='mergesort')
+    idx = np.argsort(atoms.G2c, kind='mergesort')
 
     # Can be calculated outside the loop in this case
-    g = a.Gc[idx]  # Simplified, would normally be G+k
-    Gm = np.sqrt(a.G2c[idx])
+    g = atoms.Gc[idx]  # Simplified, would normally be G+k
+    Gm = np.sqrt(atoms.G2c[idx])
 
     ibeta = 0
     betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
     for ia in range(Natoms):
-        psp = a.GTH[a.atom[ia]]
+        psp = atoms.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
-                    GX = np.sum(a.X[ia] * g, axis=1)
+                    GX = np.sum(atoms.X[ia] * g, axis=1)
                     Sf = np.cos(GX) - 1j * np.sin(GX)
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
                                        eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf

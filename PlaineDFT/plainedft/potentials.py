@@ -6,27 +6,27 @@ import numpy as np
 from numpy.linalg import norm
 
 
-def Harm_pot(a):
+def Harm_pot(atoms):
     '''Harmonical potential, used for quantum dots.'''
-    dr = norm(a.r - np.sum(a.R, axis=1) / 2, axis=1)
+    dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     V = 2 * dr**2
-    Vdual = a.Jdag(a.O(a.J(V)))
+    Vdual = atoms.Jdag(atoms.O(atoms.J(V)))
     return Vdual
 
 
-def Coulomb(a):
+def Coulomb(atoms):
     '''Coulomb potential, used for Hydrogen.'''
-    Z = a.Z[0]  # Potential should only be used for same species
-    Vps = -4 * np.pi * Z / a.G2[1:]
+    Z = atoms.Z[0]  # Potential should only be used for same species
+    Vps = -4 * np.pi * Z / atoms.G2[1:]
     return np.concatenate(([0], Vps))
 
 
-def Ge(a):
+def Ge(atoms):
     '''Starkloff-Joannopoulos pseudopotential for Germanium, Fourier transformed by Arias.'''
-    Z = a.Z[0]  # Potential should only be used for same species
+    Z = atoms.Z[0]  # Potential should only be used for same species
     lamda = 18.5
     rc = 1.052
-    Gm = np.sqrt(a.G2[1:])
+    Gm = np.sqrt(atoms.G2[1:])
     Vps = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
           (1 - np.exp(-2 * np.pi * Gm / lamda))
     for n in range(5):
@@ -38,13 +38,13 @@ def Ge(a):
     return np.concatenate(([Vps0], Vps))
 
 
-def init_pot(a):
+def init_pot(atoms):
     '''Use the potentials from Arias lecture.'''
     implemented = {'HARMONIC': Harm_pot, 'COULOMB': Coulomb, 'GE': Ge}
-    pot = implemented[a.pot]
-    Vps = pot(a)
-    if a.pot == 'HARMONIC':
+    pot = implemented[atoms.pot]
+    Vps = pot(atoms)
+    if atoms.pot == 'HARMONIC':
         Vdual = Vps
     else:
-        Vdual = a.J(Vps * a.Sf)
+        Vdual = atoms.J(Vps * atoms.Sf)
     return Vdual
