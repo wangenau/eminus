@@ -3,8 +3,6 @@
 Various tools for calculations or unit conversions.
 '''
 import numpy as np
-from numpy.linalg import norm
-from math import isclose
 from .constants import BOHR, HARTREE, KCALMOL
 
 

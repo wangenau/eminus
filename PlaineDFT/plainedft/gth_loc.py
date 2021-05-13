@@ -30,7 +30,8 @@ def calc_Vloc(atoms):
                (C1 + C2 * (3 - rlocG2) + C3 * (15 - 10 * rlocG2 + rlocG2**2) +
                C4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
     # TODO: Apply to all elements with sqrt(G2) <1e-8
-    eps = 2 * np.pi * Zion * rloc**2 + (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
+    eps = 2 * np.pi * Zion * rloc**2 + \
+          (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
     return np.concatenate(([eps], Vps))
 
 

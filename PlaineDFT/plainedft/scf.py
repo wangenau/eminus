@@ -3,12 +3,12 @@
 Main SCF file with every relevant function.
 '''
 import numpy as np
-from numpy.linalg import eig, inv, det
-from numpy.random import randn, seed
+from numpy.linalg import eig, inv#, det
+from numpy.random import randn
 from scipy.linalg import sqrtm
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
-from .lda_VWN import excVWN, excpVWN, xc_vwn
+from .lda_VWN import excVWN, excpVWN#, xc_vwn
 from .utils import Diagprod, dotprod
 from .gth_nonloc import calc_Vnonloc
 
@@ -67,7 +67,8 @@ def H(atoms, W):
     exc = excVWN(n)
     excp = excpVWN(n)
     Vdual = atoms.Vloc
-    Veff = Vdual + atoms.Jdag(atoms.O(phi)) + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
+    Veff = Vdual + atoms.Jdag(atoms.O(phi)) + atoms.Jdag(atoms.O(atoms.J(exc))) + \
+           excp * atoms.Jdag(atoms.O(atoms.J(n)))
     #Veff = Vdual + atoms.Jdag(atoms.O(phi))
     #Vxc_psi = xc_vwn(n)[1]
     Vnonloc_psi = 0
@@ -246,7 +247,8 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
-        cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) * dotprod(gold, atoms.K(gold)))
+        cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) * \
+             dotprod(gold, atoms.K(gold)))
         if cgform == 1:
             beta = dotprod(g, atoms.K(g)) / dotprod(gold, atoms.K(gold))
         elif cgform == 2:

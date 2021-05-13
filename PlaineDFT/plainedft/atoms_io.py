@@ -28,7 +28,6 @@ def write_cube(atoms, field, filename):
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
-    atom = atoms.atom  # Atom types
     a = atoms.a        # Unit cell size
     r = atoms.r        # Real space sampling points
     S = atoms.S        # Sampling per direction

@@ -3,9 +3,9 @@
 Calculate energies for a basis set or one-particle densities.
 '''
 import numpy as np
-from numpy.linalg import det, norm, inv
+from numpy.linalg import inv
 from scipy.special import erfc
-from .lda_VWN import excVWN, xc_vwn
+from .lda_VWN import excVWN#, xc_vwn
 from .tools import ry2ha
 
 
