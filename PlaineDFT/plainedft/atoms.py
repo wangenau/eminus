@@ -3,7 +3,7 @@
 Atoms object that holds every calculation relevant parameters and outputs.
 '''
 import numpy as np
-from numpy.linalg import inv
+from numpy.linalg import inv, det
 from .operators import O, L, Linv, K, I, J, Idag, Jdag
 from .potentials import init_pot
 from .gth_loc import init_gth_loc
@@ -13,7 +13,7 @@ from .read_gth import read_GTH
 
 class Atoms:
     '''Define an atoms object that holds all necessary calculation parameters.'''
-    def __init__(self, atom, a, X, Z, Ns, S=None, f=2, ecut=20, verbose=3, pot='GTH'):
+    def __init__(self, atom, a, X, Z, Ns, S=None, f=2, ecut=20, verbose=3, pot='GTH', center=False, truncate=True):
         # Necessary inputs
         if isinstance(atom, str):
             atom = [atom]
@@ -21,13 +21,17 @@ class Atoms:
         self.a = a        # Lattice constant
         self.X = X        # Core positions
         if isinstance(Z, int):
-            Z = [Z] * len(atom)
-        self.Z = Z        # Charge
-        self.Ns = Ns      # Number of states
+            Z = [Z] * len(X)
+        self.Z = Z                # Charge
+        self.Ns = Ns              # Number of states
+        self.center = center      # Center molecule in box
+        self.truncate = truncate  # Bool to turn off G-vector truncation
 
         # Necessary inputs with presets
+        if S is isinstance(S, int):
+            S = S * np.array([1, 1, 1])
         if S is None:
-            S = 50 * np.ones(3)
+            S = 50 * np.array([1, 1, 1])
         if isinstance(f, int):
             f = f * np.ones(self.Ns)
         self.S = S              # Sampling
@@ -60,17 +64,24 @@ class Atoms:
         self.get_pot()
 
         # Parameters after SCF calculations
+        self.W = None       # Basis functions
         self.psi = None     # States
         self.estate = None  # Energy per state
         self.n = None       # Electronic density
         self.etot = None    # Total energy
 
     def setup(self):
+        # Center molecule by its center of mass in the unit cell
+        if self.center:
+            X = np.asarray(X)
+            com = center_of_mass(X)
+            self.X = X - (com - a / 2)
+
         # Build a cubic unit cell
         if self.a is not None:
             R = self.a * np.eye(3)
             self.R = R
-            self.CellVol = self.a**3  # We only have cubic unit cells for now
+            self.CellVol = np.abs(det(R))  # We only have cubic unit cells for now
 
         ms = np.arange(0, np.prod(self.S))
         m1 = ms % self.S[0]
@@ -97,18 +108,26 @@ class Atoms:
         Sf = np.sum(np.exp(-1j * G @ self.X.conj().T), axis=1)
         self.Sf = Sf
 
-        if any((self.S % 2) != 0) and self.verbose > 0:
-            print('Odd dimension in S, this is could be bad!')
         # FIXME: Remove old G-vector restriction
+        # if any((self.S % 2) != 0) and self.verbose > 0:
+        #     print('Odd dimension in S, this is could be bad!')
         # eS = self.S / 2 + 0.5
         # edges = np.nonzero(np.any(np.abs(M - np.ones((np.size(M, axis=0), 1)) @ [eS]) < 1, axis=1))
         # G2mx = np.min(G2[edges])
         # active = np.nonzero(G2 < G2mx / 4)
-        active = np.nonzero(G2 <= 2 * self.ecut)
+        if self.truncate:
+            active = np.nonzero(G2 <= 2 * self.ecut)
+        else:
+            active = np.nonzero(G2 >= 0)  # Trivial condition to produce the right shape
         self.active = active
 
         Gc = G[active]
         G2c = G2[active]
+
+        # idx = np.argsort(G2c, kind='mergesort')
+        # Gc = Gc[idx]
+        # G2c = G2c[idx]
+
         self.Gc = Gc
         self.G2c = G2c
 
@@ -155,3 +174,13 @@ class Atoms:
     def Jdag(self, a):
         '''Conjugated backwards transformation from reciprocal space to real-space.'''
         return Jdag(self, a)
+
+
+def center_of_mass(coords, weights=None):
+    '''Calculate the center of mass for a list of points and their weights.'''
+    if not isinstance(weights, (list, np.ndarray)):
+        weights = [1] * len(coords)
+    com = np.full(len(coords[0]), 0, dtype=float)
+    for i in range(len(coords)):
+        com += coords[i] * weights[i]
+    return com / sum(weights)
