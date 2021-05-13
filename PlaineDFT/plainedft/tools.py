@@ -22,32 +22,42 @@ def gridspacing2cutoff(h):
     return 0.5 * (np.pi / h)**2
 
 
-def hartree2ev(E):
+def ha2ev(E):
     '''Convert Hartree to electronvolt.'''
     return E * HARTREE
 
 
-def ev2hartree(E):
+def ev2ha(E):
     '''Convert electronvolt to Hartree.'''
     return E / HARTREE
 
 
-def hartree2kcalmol(E):
+def ha2ry(E):
+    '''Convert Hartree to Rydberg.'''
+    return 2 * E
+
+
+def ry2ha(E):
+    '''Convert Rydberg to Hartree.'''
+    return E / 2
+
+
+def ha2kcalmol(E):
     '''Convert Hartree to kcal/mol.'''
     return E * KCALMOL
 
 
-def kcalmol2hartree(E):
+def kcalmol2ha(E):
     '''Convert kcal/mol to Hartree.'''
     return E / KCALMOL
 
 
-def angstrom2bohr(r):
+def ang2bohr(r):
     '''Convert Angstrom to Bohr.'''
     return r / BOHR
 
 
-def bohr2angstrom(r):
+def bohr2ang(r):
     '''Convert Bohr to Angstrom.'''
     return r * BOHR
 
