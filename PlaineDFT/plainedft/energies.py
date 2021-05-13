@@ -6,28 +6,38 @@ import numpy as np
 from numpy.linalg import det, norm, inv
 from scipy.special import erfc
 from .lda_VWN import excVWN, xc_vwn
+from .tools import ry2ha
 
 
 def get_Ekin(atoms, Y):
+    '''Calculate the kinetic energy.'''
+    # Arias: Ekin = -0.5 Tr(F Cdag L(C))
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
 
 
 def get_Ecoul(atoms, n):
+    '''Calculate the coulomb energy.'''
+    # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(atoms, n):
+    '''Calculate the exchange-correlation energy.'''
+    # Arias: Exc = (Jn)dag O(J(exc))
     exc = excVWN(n)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
     #return np.dot(xc_vwn(n)[0], n) * atoms.CellVol / np.prod(atoms.S)
 
 
 def get_Eloc(atoms, n):
+    '''Calculate the local energy.'''
     return np.real(atoms.Vloc.conj().T @ n)# * atoms.CellVol / np.prod(atoms.S)
 
 
 def get_Esic(atoms, n):
+    '''Calculate the PErdew-Zunger self-interaction energy.'''
+    # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
         coul = get_Ecoul(atoms, n[i])
@@ -68,7 +78,15 @@ def get_Enonloc(atoms, W):
     return Enonloc
 
 
+# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
 def get_Eewald(atoms):
+    '''Calculate the Ewald energy.'''
+    # For a plane wave code we have multiple contributions for the Ewald energy
+    # Namely, a sum from contributions from real space, reciprocal space,
+    # the self energy, (the dipole term [neglected]), and an additional electroneutrality-term
+    # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
+    # Note: This code calculates the energy in Rydberg, so the equations are off
+    # ba a factor 2
     Natoms = len(atoms.X)
     tau = np.asarray(atoms.X)
     Zvals = np.asarray(atoms.Z)
@@ -103,7 +121,10 @@ def get_Eewald(atoms):
     mmm2 = int(np.rint(tmax / t2m + 1.5))
     mmm3 = int(np.rint(tmax / t3m + 1.5))
 
-    ewald = -2 * nu * x / np.sqrt(np.pi) - np.pi * totalcharge**2 / (omega * nu**2)
+    # Start by calculaton the self-energy
+    ewald = -2 * nu * x / np.sqrt(np.pi)
+    # Add the electroneutrality-term (Eq. 11)
+    ewald += -np.pi * totalcharge**2 / (omega * nu**2)
 
     dtau = np.zeros(3)
     G = np.zeros(3)
@@ -118,6 +139,7 @@ def get_Eewald(atoms):
                         if (ia != ja) or ((abs(i) + abs(j) + abs(k)) != 0):
                             T = i * t1 + j * t2 + k * t3
                             rmag = np.sqrt(np.sum((dtau - T)**2))
+                            # Add the real space contribution
                             ewald += ZiZj * erfc(rmag * nu) / rmag
 
     mmm1 = int(np.rint(gcut / g1m + 1.5))
@@ -135,7 +157,8 @@ def get_Eewald(atoms):
                             G = i * g1 + j * g2 + k * g3
                             Gtau = np.sum(G * dtau)
                             G2 = np.sum(G**2)
+                            # Add the reciprocal space contribution
                             x = 4 * np.pi / omega * np.exp(-0.25 * G2 / nu**2) / G2
                             ewald += x * ZiZj * np.cos(Gtau)
 
-    return 0.5 * ewald
+    return ry2ha(ewald)  # Convert to Hartree
