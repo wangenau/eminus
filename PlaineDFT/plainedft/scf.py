@@ -3,18 +3,22 @@
 Main SCF file with every relevant function.
 '''
 import numpy as np
-from numpy.linalg import det, eig, inv, norm
-from numpy.random import randn
+from numpy.linalg import eig, inv, det
+from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 from timeit import default_timer
+from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
+from .lda_VWN import excVWN, excpVWN, xc_vwn
 from .utils import Diagprod, dotprod
-from .gth_nonloc import calc_Enonloc, calc_Vnonloc
+from .gth_nonloc import calc_Vnonloc
 
 
 def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     '''Main SCF function.'''
     # Set up basis functions
     # Start with randomized, complex, orthogonal basis functions
+    # from numpy.random import seed
+    # seed(1234)  # Uncomment for a fixed starting point
     W = randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
 
     # Minimization procedure
@@ -32,24 +36,25 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
         W = orth(atoms, W)
         W, Elist = pccg(atoms, W, n_cg, etol, cgform)
     end = default_timer()
-
     # Handle energies and output
     Eel = Elist[-1]
-    EEwald = getEwald(atoms)
-    Etot = Eel + EEwald
+    Eewald = get_Eewald(atoms)
+    Etot = Eel + Eewald
     if atoms.verbose >= 5:
         print(f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}')
     if atoms.verbose >= 4:
         print(f'Time spent: {end - start:.5f}s')
     if atoms.verbose >= 3:
-        getE(atoms, W, True)
+        get_E(atoms, W, True)
         print(f'Electronic energy:           {Eel:+.9f} Eh')
-        print(f'Ewald energy:                {EEwald:+.9f} Eh')
+        print(f'Ewald energy:                {Eewald:+.9f} Eh')
     print(f'Total energy:                {Etot:+.9f} Eh')
 
     # Save calculation parameters
-    atoms.psi, atoms.estate = getPsi(atoms, W)  # Save wave functions and
-    atoms.n = getn(atoms, W)  # Save electronic density
+    W = orth(atoms, W)
+    atoms.W = W
+    atoms.psi, atoms.estate = get_psi(atoms, W)  # Save wave functions and
+    atoms.n = get_n_total(atoms, W)  # Save electronic density
     atoms.etot = Etot  # Save total energy
     return
 
@@ -57,32 +62,36 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
 def H(atoms, W):
     '''Left-hand side of our eigenvalue equation.'''
     Y = orth(atoms, W)  # Orthogonalize at the start
-    n = getn(atoms, Y)
+    n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     exc = excVWN(n)
     excp = excpVWN(n)
     Vdual = atoms.Vloc
     Veff = Vdual + atoms.Jdag(atoms.O(phi)) + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
+    #Veff = Vdual + atoms.Jdag(atoms.O(phi))
+    #Vxc_psi = xc_vwn(n)[1]
     Vnonloc_psi = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
         Vnonloc_psi = calc_Vnonloc(atoms, W)
-    Vkin_psi = -0.5 * atoms.L(W)
-    return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi
+    Vkin_psi = -0.5 * atoms.L(W)# / det(atoms.R)  #TODO: Divide by det? also presort of G2c is necessary
+    #Vkin_psi = -0.5 * atoms.L(W) / det(atoms.R)
+    return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi# + Vxc_psi
+
+# a=randn(prod(S),1)+i*randn(prod(S),1)
+# b=randn(prod(S),1)+i*randn(prod(S),1)
+# conj(a’*H(b))
+# b’*H(a)
 
 
-def getE(atoms, W, out=False):
+def get_E(atoms, W, out=False):
     '''Calculate the sum of energies over Ns states.'''
-    Y = orth(atoms, W)  # Orthogonalize at the start
-    n = getn(atoms, Y)
-    phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    exc = excVWN(n)
-    Ekin = np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
-    Eloc = np.real(atoms.Vloc.conj().T @ n)# * atoms.CellVol / np.prod(atoms.S)
-    Enonloc = 0
-    if atoms.NbetaNL > 0:  # Only calculate non-local energy if necessary
-        Enonloc = calc_Enonloc(atoms, W)
-    Ecoul = np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
-    Exc = np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    Y = orth(atoms, W)
+    n = get_n_total(atoms, Y)
+    Ekin = get_Ekin(atoms, Y)
+    Eloc = get_Eloc(atoms, n)
+    Enonloc = get_Enonloc(atoms, W)
+    Ecoul = get_Ecoul(atoms, n)
+    Exc = get_Exc(atoms, n)
     if atoms.verbose >= 5 or out:
         print(f'Kinetic energy:              {Ekin:+.9f} Eh')
         print(f'Local potential energy:      {Eloc:+.9f} Eh')
@@ -92,29 +101,7 @@ def getE(atoms, W, out=False):
     return Ekin + Eloc + Enonloc + Ecoul + Exc
 
 
-# FIXME: Dimensions are scuffed
-def getEwald(atoms):
-    '''Calculate the Ewald/Coulomb energy.'''
-    dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
-    sigma1 = 0.25
-    gauss = 0
-    # FIXME: Maybe wrong
-    for Z in atoms.Z:
-        g = np.exp(-dr**2 / (2 * sigma1**2)) / np.sqrt(2 * np.pi * sigma1**2)**3
-        gauss += Z * (np.sum(g) * det(atoms.R) / np.prod(atoms.S)) * g
-    n = atoms.I(atoms.J(gauss) * atoms.Sf)
-    n = np.real(n)
-    phi = atoms.I(atoms.Linv(-4 * np.pi * atoms.O(atoms.J(n))))
-    phi = np.real(phi)
-    Unum = 0.5 * np.real(atoms.J(phi).conj().T @ atoms.O(atoms.J(n)))
-
-    Uself = 0
-    for Z in atoms.Z:
-        Uself += Z**2 / (2 * np.sqrt(np.pi)) * (1 / sigma1)
-    return (Unum[0][0] - Uself)
-
-
-def getgrad(atoms, W):
+def get_grad(atoms, W):
     '''Calculate the energy gradient with respect to W.'''
     U = W.conj().T @ atoms.O(W)
     invU = inv(U)
@@ -126,27 +113,7 @@ def getgrad(atoms, W):
            atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
-# def getgrad(atoms, W):
-#     grad = np.zeros(W.size)
-#     H_psi = H(atoms, W)
-#     for ist in range(atoms.Ns):
-#         grad[:, ist] = H_psi[:, ist]
-#         for range(atoms.Ns):
-#             grad[:, ist] -= np.dot(psi[:, jst], H_psi[:, ist]) * psi[:, jst]
-#         grad[:,ist] *= atoms.f[ist]
-#
-#     if np.all(atoms.f == 2) or np.all(atoms.f == 1):
-#         return grad
-#
-#     F = np.diag(atoms.f)
-#     H = W.T * H_psi
-#     HFH = H*F - F*H
-#     Q = 0.5 * HFH
-#     grad[:,:] += psi * H
-#     return grad
-
-
-def getPsi(atoms, W):
+def get_psi(atoms, W):
     '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
     Y = orth(atoms, W)
     mu = Y.conj().T @ H(atoms, Y)
@@ -154,8 +121,8 @@ def getPsi(atoms, W):
     return Y @ D, np.real(epsilon)
 
 
-def getn(atoms, W):
-    '''Generate the electronic density.'''
+def get_n_total(atoms, W):
+    '''Generate the total electronic density.'''
     W = W.T
     n = np.zeros((np.prod(atoms.S), 1))
     for i in range(W.shape[0]):
@@ -164,14 +131,24 @@ def getn(atoms, W):
     return n.T[0]
 
 
+def get_n_single(atoms, W):
+    '''Generate single electronic densities.'''
+    W = W.T
+    n = np.zeros((np.prod(atoms.S), len(W)))
+    for i in range(W.shape[0]):
+        psi = atoms.I(W[i])
+        n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
+    return n.T
+
+
 def sd(atoms, W, Nit, etol):
     '''Steepest descent minimization algorithm.'''
     print('Start steepest descent minimization...')
     Elist = []
     alpha = 3e-5
     for i in range(Nit):
-        W = W - alpha * getgrad(atoms, W)
-        E = getE(atoms, W)
+        W = W - alpha * get_grad(atoms, W)
+        E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
             print(f'Nit: {i+1}  \tE(W): {E:+.7f}')
@@ -189,23 +166,23 @@ def lm(atoms, W, Nit, etol):
     print('Start Line minimization...')
     Elist = []
     alphat = 3e-5
-    g = getgrad(atoms, W)
+    g = get_grad(atoms, W)
     d = -g
-    gt = getgrad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
-    E = getE(atoms, W)
+    E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
         print(f'Nit: 1  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
-        g = getgrad(atoms, W)
+        g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
-        gt = getgrad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d)
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
-        E = getE(atoms, W)
+        E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
             print(f'Nit: {i+1}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f}')
@@ -222,23 +199,23 @@ def pclm(atoms, W, Nit, etol):
     print('Start preconditioned line minimization...')
     Elist = []
     alphat = 3e-5
-    g = getgrad(atoms, W)
+    g = get_grad(atoms, W)
     d = -atoms.K(g)
-    gt = getgrad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
-    E = getE(atoms, W)
+    E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
         print(f'Nit: 1  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
-        g = getgrad(atoms, W)
+        g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
-        gt = getgrad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d)
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
-        E = getE(atoms, W)
+        E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
             print(f'Nit: {i+1}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f}')
@@ -255,19 +232,19 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     print('Start preconditioned conjugate-gradient minimization...')
     Elist = []
     alphat = 3e-5
-    g = getgrad(atoms, W)
+    g = get_grad(atoms, W)
     d = -atoms.K(g)
-    gt = getgrad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
     dold = d
     gold = g
-    E = getE(atoms, W)
+    E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
         print(f'Nit: 0  \tE(W): {E:+.7f}')
     for i in range(1, Nit):
-        g = getgrad(atoms, W)
+        g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
         cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) * dotprod(gold, atoms.K(gold)))
         if cgform == 1:
@@ -277,7 +254,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         elif cgform == 3:
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
-        gt = getgrad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d)
         # FIXME: This feels wrong
         # If this becomes zero, the result will become nonsense
         if abs(dotprod(g - gt, d)) == 0:
@@ -286,7 +263,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         W = W + alpha * d
         dold = d
         gold = g
-        E = getE(atoms, W)
+        E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
             print(f'Nit: {i}  \tE(W): {E:+.7f}\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
@@ -298,52 +275,9 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     return W, np.asarray(Elist)
 
 
-def excVWN(n):
-    '''VWN parameterization of the exchange correlation energy functional.'''
-    X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
-    A = 0.0310907
-    x0 = -0.10498
-    b = 3.72744
-    c = 12.9352
-    Q = np.sqrt(4 * c - b * b)
-    X0 = x0 * x0 + b * x0 + c
-    rs = (4 * np.pi / 3 * n)**(-1 / 3)
-    x = np.sqrt(rs)
-    X = x * x + b * x + c
-    out = -X1 / rs + A * (np.log(x * x / X) + 2 * b / Q * np.arctan(Q / (2 * x + b)) -
-          (b * x0) / X0 * (np.log((x - x0) * (x - x0) / X) + 2 * (2 * x0 + b) / Q *
-          np.arctan(Q / (2 * x + b))))
-    return out
-
-
-def excpVWN(n):
-    '''Derivation with respect to n of the VWN exchange correlation energy functional.'''
-    X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
-    A = 0.0310907
-    x0 = -0.10498
-    b = 3.72744
-    c = 12.9352
-    Q = np.sqrt(4 * c - b * b)
-    X0 = x0 * x0 + b * x0 + c
-    rs = (4 * np.pi / 3 * n)**(-1 / 3)
-    x = np.sqrt(rs)
-    X = x * x + b * x + c
-    dx = 0.5 / x
-    out = dx * (2 * X1 / (rs * x) + A * (2 / x - (2 * x + b) / X - 4 * b / (Q * Q + (2 * x + b) *
-          (2 * x + b)) - (b * x0) / X0 * (2 / (x - x0) - (2 * x + b) / X - 4 * (2 * x0 + b) /
-          (Q * Q + (2 * x + b) * (2 * x + b)))))
-    return (-rs / (3 * n)) * out
-
-
 def orth(atoms, W):
     '''Orthogonalize coefficent matrix W.'''
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
-
-
-# FIXME: Only for testing
-# def orth2(atoms, W):
-#     '''Orthogonalize coefficent matrix W.'''
-#     return W @ inv(sqrtm(W.conj().T @ W))
 
 
 def Q(inp, U):
