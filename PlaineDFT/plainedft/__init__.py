@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from plainedft.atoms import Atoms
 from plainedft.scf import SCF
 
