@@ -23,17 +23,17 @@ def load_atoms(filename):
         return load(input)
 
 
-def cubegen(atoms, field, filename):
+def write_cube(atoms, field, filename):
     '''Generate cube files from a given (real-space) field.'''
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
-    atom = atoms.atom
-    a = atoms.a
-    r = atoms.r
-    S = atoms.S
-    X = atoms.X
-    Z = atoms.Z
+    atom = atoms.atom  # Atom types
+    a = atoms.a        # Unit cell size
+    r = atoms.r        # Real space sampling points
+    S = atoms.S        # Sampling per direction
+    X = atoms.X        # Atom positions
+    Z = atoms.Z        # Charges
 
     # Our field data has been created in a different order than needed for cube files
     # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
@@ -54,7 +54,7 @@ def cubegen(atoms, field, filename):
         f.write(f'Cube file generated with PlaineDFT {plainedft.__version__}\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
-        f.write(f'{len(atom)}  {min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
+        f.write(f'{len(X)}  {min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cubic box, so each vector only has one non-zero component
         f.write(f'{S[0]}  {a / S[0]:.5f}  0.0  0.0\n')
@@ -62,7 +62,7 @@ def cubegen(atoms, field, filename):
         f.write(f'{S[2]}  0.0  0.0  {a / S[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         # FIXME: Atomic charge can differ from atomic number when only treating valence electrons
-        for ia in range(len(atom)):
+        for ia in range(len(X)):
             f.write(f'{Z[ia]}  {Z[ia]:.5f}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have S[0]*S[1] chunks values with a length of S[2]
