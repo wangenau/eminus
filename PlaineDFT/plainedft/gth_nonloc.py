@@ -6,36 +6,6 @@ import numpy as np
 from .utils import Ylm_real
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
-def calc_Enonloc(atoms, W):
-    '''Calculate the non-local energy.'''
-    # Parameters of the non-local pseudopotential
-    prj2beta = atoms.prj2beta
-    betaNL = atoms.betaNL
-
-    Natoms = len(atoms.atom)
-    Nstates = atoms.Ns
-
-    betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
-
-    Enloc = 0
-    for ist in range(Nstates):
-        enl = 0
-        for ia in range(Natoms):
-            psp = atoms.GTH[atoms.atom[ia]]
-            for l in range(psp['lmax']):
-                for m in range(-l, l + 1):
-                    for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                        for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                            hij = psp['h'][l, iprj, jprj]
-                            enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
-                                   betaNL_psi[ist, jbeta])
-        Enloc += atoms.f[ist] * enl
-    return Enloc
-
-
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
@@ -43,7 +13,7 @@ def calc_Vnonloc(atoms, W):
     prj2beta = atoms.prj2beta
     betaNL = atoms.betaNL
 
-    Natoms = len(atoms.atom)
+    Natoms = len(atoms.X)
     Npoints = len(W)
     Nstates = atoms.Ns
 
@@ -67,7 +37,7 @@ def calc_Vnonloc(atoms, W):
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions.'''
-    Natoms = len(atoms.atom)
+    Natoms = len(atoms.X)
     Npoints = len(atoms.active[0])
     CellVol = atoms.CellVol
 
