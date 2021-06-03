@@ -8,12 +8,13 @@ import numpy as np
 
 def calc_Vloc(atoms):
     '''Local contribution for the GTH pseudopotential.'''
-    Natoms = len(atoms.X)
+    species = list(set(atoms.atom))
+    Nspecies = len(species)
 
     Vps = np.zeros(len(atoms.G2) - 1)
 
-    for ia in range(Natoms):
-        psp = atoms.GTH[atoms.atom[ia]]
+    for ia in range(Nspecies):
+        psp = atoms.GTH[species[ia]]
 
         rloc = psp['rlocal']
         Zion = psp['Zval']
