@@ -3,9 +3,10 @@
 Main SCF file with every relevant function.
 '''
 import numpy as np
-from numpy.linalg import eig, inv#, det
+from numpy.linalg import eig, inv#, det, norm
 from numpy.random import randn
 from scipy.linalg import sqrtm
+#from scipy.special import erf
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
 from .lda_VWN import excVWN, excpVWN#, xc_vwn
@@ -67,8 +68,36 @@ def H(atoms, W):
     exc = excVWN(n)
     excp = excpVWN(n)
     Vdual = atoms.Vloc
-    Veff = Vdual + atoms.Jdag(atoms.O(phi)) + atoms.Jdag(atoms.O(atoms.J(exc))) + \
+
+    # TODO: remove me
+    # if atoms.Vcoul is None:
+    #     alpha = np.sqrt(-np.log(1e-9)) / (np.sqrt(3) * atoms.a)
+    #     Vcoul = np.zeros(atoms.G2.shape, dtype=complex)
+    #     Vcoul += 4 * np.pi / atoms.G2 * (1 - np.exp(-atoms.G2 / (4 * alpha**2)))
+    #     Vcoul[0] = np.pi / alpha**2
+    #     for i in range(1, len(atoms.r)):
+    #         Vcoul[1:-1] += atoms.CellVol / len(atoms.r) * np.exp(-1j * np.dot(atoms.G[1:-1], atoms.r[i])) * erf(alpha * norm(atoms.r[i])) / norm(atoms.r[i])
+    #     atoms.Vcoul = Vcoul
+
+    # TODO: remove me
+    # alpha = np.sqrt(-np.log(1e-9)) / (np.sqrt(3) * atoms.a)
+    # Vcoul = np.zeros(atoms.G2.shape, dtype=complex)
+    # Vcoul += 4 * np.pi / atoms.G2 * (1 - np.exp(-atoms.G2 / (4 * alpha**2)))
+    # Vcoul[0] = np.pi / alpha**2
+    # Veff += Vcoul
+
+    Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + \
            excp * atoms.Jdag(atoms.O(atoms.J(n)))
+    if atoms.cutcoul is not None:
+        if atoms.cutcoul > 0:
+            Rc = atoms.cutcoul
+        else:
+            Rc = np.sqrt(3) * atoms.a
+        correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
+        Veff +=  atoms.Jdag(atoms.O(phi) - correction)
+    else:
+        Veff +=  atoms.Jdag(atoms.O(phi))
+
     #Veff = Vdual + atoms.Jdag(atoms.O(phi))
     #Vxc_psi = xc_vwn(n)[1]
     Vnonloc_psi = 0
@@ -289,3 +318,22 @@ def Q(inp, U):
     denom = np.sqrt(mu) @ np.ones((1, len(mu)))
     denom = denom + denom.conj().T
     return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
+
+
+# TODO: implement properly
+# def gen_gaussian_den(atoms):
+#     '''Generate inital guess density using normalized Gaussians.'''
+#     Natoms = len(atoms.X)
+#     Npoints = len(atoms.r)
+#
+#     sigma = 0.5
+#     nrmfct = (2 * np.pi * sigma**2)**(3 / 2)
+#     Rhoe = np.zeros(Npoints)
+#
+#     for ia in range(Natoms):
+#         for ip in range(Npoints):
+#             dr = atoms.r[:, ip] - atoms.X[:, ia]
+#             r = np.linalg.norm(dr)
+#             Rhoe[ip] += Rhoe[ip] + atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / nrmfct
+#     print("Gaussian Rhoe integral = ", np.sum(Rhoe)*grid.dVol)
+#     return Rhoe

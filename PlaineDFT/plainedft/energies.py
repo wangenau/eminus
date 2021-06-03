@@ -19,7 +19,15 @@ def get_Ecoul(atoms, n):
     '''Calculate the coulomb energy.'''
     # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
+    if atoms.cutcoul is not None:
+        if atoms.cutcoul > 0:
+            Rc = atoms.cutcoul
+        else:
+            Rc = np.sqrt(3) * atoms.a
+        correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
+        return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi) - correction))
+    else:
+        return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(atoms, n):

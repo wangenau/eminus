@@ -14,12 +14,12 @@ from .read_gth import read_GTH
 class Atoms:
     '''Define an atoms object that holds all necessary calculation parameters.'''
     def __init__(self, atom, a, X, Z, Ns, S=None, f=2, ecut=20, verbose=3, pot='GTH', center=False,
-                 truncate=True):
+                 truncate=True, cutcoul=None):
         # Necessary inputs
         if isinstance(atom, str):
             atom = [atom]
         self.atom = atom  # Atom type
-        self.a = a        # Lattice constant
+        self.a = a        # Box/Vacuum size
         self.X = X        # Core positions
         if isinstance(Z, int):
             Z = [Z] * len(X)
@@ -27,6 +27,9 @@ class Atoms:
         self.Ns = Ns              # Number of states
         self.center = center      # Center molecule in box
         self.truncate = truncate  # Bool to turn off G-vector truncation
+        self.cutcoul = cutcoul    # Cut-off radius for a spherical truncation
+                                  # Set to 0 to use the size of the box diagonal (sqrt(3) * a)
+
 
         # Necessary inputs with presets
         if S is isinstance(S, int):
@@ -128,14 +131,14 @@ class Atoms:
     def get_pot(self):
         '''Generate the potentials.'''
         if self.pot == 'GTH':
-            for ia in range(len(self.atom)):
+            for ia in range(len(self.X)):
                 self.GTH[self.atom[ia]] = read_GTH('%s-q%s.gth' % (self.atom[ia], self.Z[ia]))
             self.Vloc = init_gth_loc(self)
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
         elif self.pot in ('HARMONIC', 'COULOMB', 'GE'):
             self.Vloc = init_pot(self)
         else:
-            print('ERROR: No potential found for %s' % self.pot)
+            print('ERROR: No potential found for pot=%s' % self.pot)
 
     def O(self, a):
         '''Overlap operator.'''
