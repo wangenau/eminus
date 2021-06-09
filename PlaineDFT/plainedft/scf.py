@@ -100,9 +100,7 @@ def H(atoms, W):
 
     #Veff = Vdual + atoms.Jdag(atoms.O(phi))
     #Vxc_psi = xc_vwn(n)[1]
-    Vnonloc_psi = 0
-    if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        Vnonloc_psi = calc_Vnonloc(atoms, W)
+    Vnonloc_psi = calc_Vnonloc(atoms, W)
     Vkin_psi = -0.5 * atoms.L(W)# / det(atoms.R)  #TODO: Divide by det? also presort of G2c is necessary
     #Vkin_psi = -0.5 * atoms.L(W) / det(atoms.R)
     return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi# + Vxc_psi

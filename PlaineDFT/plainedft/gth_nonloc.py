@@ -9,29 +9,31 @@ from .utils import Ylm_real
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
-    # Parameters of the non-local pseudopotential
-    prj2beta = atoms.prj2beta
-    betaNL = atoms.betaNL
-
-    Natoms = len(atoms.X)
     Npoints = len(W)
     Nstates = atoms.Ns
-
-    betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
-
     Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
-    for ist in range(Nstates):
-        for ia in range(Natoms):
-            psp = atoms.GTH[atoms.atom[ia]]
-            for l in range(psp['lmax']):
-                for m in range(-l, l + 1):
-                    for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                        for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                            hij = psp['h'][l, iprj, jprj]
-                            Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
-    return Vpsi
+    if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
+        # Parameters of the non-local pseudopotential
+        prj2beta = atoms.prj2beta
+        betaNL = atoms.betaNL
+
+        Natoms = len(atoms.X)
+
+        betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
+
+        for ist in range(Nstates):
+            for ia in range(Natoms):
+                psp = atoms.GTH[atoms.atom[ia]]
+                for l in range(psp['lmax']):
+                    for m in range(-l, l + 1):
+                        for iprj in range(psp['Nproj_l'][l]):
+                            ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                            for jprj in range(psp['Nproj_l'][l]):
+                                jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                hij = psp['h'][l, iprj, jprj]
+                                Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
+        # We have to multiply with the cell volume, because of different orthogonalization
+    return Vpsi * atoms.CellVol
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
@@ -53,13 +55,14 @@ def init_gth_nonloc(atoms):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
+    # TODO: remove me
     # Sort G-vectors by their magnitude
     # PWDFT.jl uses sortperm, for compareabilty we need to sort with mergesort
-    idx = np.argsort(atoms.G2c, kind='mergesort')
-
-    # Can be calculated outside the loop in this case
-    g = atoms.Gc[idx]  # Simplified, would normally be G+k
-    Gm = np.sqrt(atoms.G2c[idx])
+    # idx = np.argsort(atoms.G2c, kind='mergesort')
+    # g = atoms.Gc[idx]
+    # Gm = np.sqrt(atoms.G2c[idx])
+    g = atoms.Gc  # Simplified, would normally be G+k
+    Gm = np.sqrt(atoms.G2c)
 
     ibeta = 0
     betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
