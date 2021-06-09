@@ -55,10 +55,10 @@ def get_Esic(atoms, n):
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
-def get_Enonloc(atoms, W):
+def get_Enonloc(atoms, Y):
     '''Calculate the non-local energy.'''
     Enonloc = 0
-    if atoms.NbetaNL > 0:
+    if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
         # Parameters of the non-local pseudopotential
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
@@ -66,9 +66,8 @@ def get_Enonloc(atoms, W):
         Natoms = len(atoms.X)
         Nstates = atoms.Ns
 
-        betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
+        betaNL_psi = np.dot(Y.T.conj(), betaNL).conj()
 
-        Enonloc = 0
         for ist in range(Nstates):
             enl = 0
             for ia in range(Natoms):
@@ -83,7 +82,8 @@ def get_Enonloc(atoms, W):
                                 enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
                                        betaNL_psi[ist, jbeta])
             Enonloc += atoms.f[ist] * enl
-    return Enonloc
+    # We have to multiply with the cell volume, because of different orthogonalization
+    return Enonloc * atoms.CellVol
 
 
 # Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
@@ -96,7 +96,7 @@ def get_Eewald(atoms):
     # Note: This code calculates the energy in Rydberg, so the equations are off
     # ba a factor 2
     Natoms = len(atoms.X)
-    tau = np.asarray(atoms.X)
+    tau = atoms.X
     Zvals = np.asarray(atoms.Z)
     omega = atoms.CellVol
 

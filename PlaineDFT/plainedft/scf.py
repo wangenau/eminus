@@ -94,9 +94,9 @@ def H(atoms, W):
         else:
             Rc = np.sqrt(3) * atoms.a
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
-        Veff +=  atoms.Jdag(atoms.O(phi) - correction)
+        Veff += atoms.Jdag(atoms.O(phi) - correction)
     else:
-        Veff +=  atoms.Jdag(atoms.O(phi))
+        Veff += atoms.Jdag(atoms.O(phi))
 
     #Veff = Vdual + atoms.Jdag(atoms.O(phi))
     #Vxc_psi = xc_vwn(n)[1]
@@ -119,7 +119,7 @@ def get_E(atoms, W, out=False):
     n = get_n_total(atoms, Y)
     Ekin = get_Ekin(atoms, Y)
     Eloc = get_Eloc(atoms, n)
-    Enonloc = get_Enonloc(atoms, W)
+    Enonloc = get_Enonloc(atoms, Y)
     Ecoul = get_Ecoul(atoms, n)
     Exc = get_Exc(atoms, n)
     if atoms.verbose >= 5 or out:
