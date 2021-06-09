@@ -76,6 +76,10 @@ def init_gth_nonloc(atoms):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
                                        eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
+    if atoms.verbose >= 5:
+        for ibeta in range(NbetaNL):
+            norm = betaNL[:, ibeta].conj() @ betaNL[:, ibeta]
+            print(f'Norm of betaNL(ibeta={ibeta}): {norm}')
     return NbetaNL, prj2beta, betaNL
 
 
