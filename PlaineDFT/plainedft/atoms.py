@@ -14,7 +14,7 @@ from .read_gth import read_GTH
 class Atoms:
     '''Define an atoms object that holds all necessary calculation parameters.'''
     def __init__(self, atom, a, X, Z, Ns, S=None, f=2, ecut=20, verbose=3, pot='GTH', center=False,
-                 truncate=True, cutcoul=None):
+                 truncate=True, spinpol=False, cutcoul=None):
         # Necessary inputs
         if isinstance(atom, str):
             atom = [atom]
@@ -27,6 +27,7 @@ class Atoms:
         self.Ns = Ns              # Number of states
         self.center = center      # Center molecule in box
         self.truncate = truncate  # Bool to turn off G-vector truncation
+        self.spinpol = spinpol    # Bool for spin polarized calculations
         self.cutcoul = cutcoul    # Cut-off radius for a spherical truncation
                                   # Set to 0 to use the size of the box diagonal (sqrt(3) * a)
 

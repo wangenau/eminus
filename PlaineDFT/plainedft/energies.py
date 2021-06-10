@@ -5,7 +5,7 @@ Calculate energies for a basis set or one-particle densities.
 import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
-from .lda_VWN import excVWN#, xc_vwn
+from .lda_VWN import excVWN, excVWN_spin
 from .tools import ry2ha
 
 
@@ -30,12 +30,15 @@ def get_Ecoul(atoms, n):
         return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(atoms, n):
+def get_Exc(atoms, n, spinpol):
     '''Calculate the exchange-correlation energy.'''
     # Arias: Exc = (Jn)dag O(J(exc))
-    exc = excVWN(n)
+    if spinpol:
+        # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
+        exc = excVWN_spin(n, np.ones((n.shape)))
+    else:
+        exc = excVWN(n)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
-    #return np.dot(xc_vwn(n)[0], n) * atoms.CellVol / np.prod(atoms.S)
 
 
 def get_Eloc(atoms, n):
@@ -44,12 +47,13 @@ def get_Eloc(atoms, n):
 
 
 def get_Esic(atoms, n):
-    '''Calculate the PErdew-Zunger self-interaction energy.'''
+    '''Calculate the Perdew-Zunger self-interaction energy.'''
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
         coul = get_Ecoul(atoms, n[i])
-        xc = get_Exc(atoms, n[i])
+        # The exchange part for a SIC correction has to be spin polarized
+        xc = get_Exc(atoms, n[i], spinpol=True)
         Esic += coul + xc
     return Esic
 
