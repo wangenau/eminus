@@ -38,4 +38,5 @@ def calc_Vloc(atoms):
 
 def init_gth_loc(atoms):
     '''Goedecker, Teter, Hutter pseudopotentials.'''
-    return np.real(atoms.J(calc_Vloc(atoms) * atoms.Sf))# * np.prod(atoms.S) / atoms.CellVol
+    Sf = np.sum(atoms.Sf, axis=0)
+    return np.real(atoms.J(calc_Vloc(atoms) * Sf))# * np.prod(atoms.S) / atoms.CellVol

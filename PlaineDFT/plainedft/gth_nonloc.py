@@ -67,16 +67,15 @@ def init_gth_nonloc(atoms):
     ibeta = 0
     betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
     for ia in range(Natoms):
+        Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
         psp = atoms.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
-                    GX = np.sum(atoms.X[ia] * g, axis=1)
-                    Sf = np.cos(GX) - 1j * np.sin(GX)
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
                                        eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
-    if atoms.verbose >= 5:
+    if atoms.verbose > 5:
         for ibeta in range(NbetaNL):
             norm = betaNL[:, ibeta].conj() @ betaNL[:, ibeta]
             print(f'Norm of betaNL(ibeta={ibeta}): {norm}')

@@ -46,5 +46,6 @@ def init_pot(atoms):
     if atoms.pot == 'HARMONIC':
         Vdual = Vps
     else:
-        Vdual = atoms.J(Vps * atoms.Sf)
+        Sf = np.sum(atoms.Sf, axis=0)
+        Vdual = atoms.J(Vps * Sf)
     return Vdual

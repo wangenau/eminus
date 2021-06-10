@@ -109,7 +109,7 @@ class Atoms:
         G2 = np.sum(G**2, axis=1)
         self.G2 = G2
 
-        Sf = np.sum(np.exp(-1j * G @ self.X.conj().T), axis=1)
+        Sf = np.exp(-1j * G @ self.X.conj().T).T
         self.Sf = Sf
 
         if self.truncate:
