@@ -181,7 +181,7 @@ def sd(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E + atoms.eewald:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}')
         if i > 0:
             if abs(Elist[-2] - Elist[-1]) < etol:
                 print(f'Converged after {i+1} steps.')
@@ -204,7 +204,7 @@ def lm(atoms, W, Nit, etol):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 1  \tE(W): {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -215,7 +215,7 @@ def lm(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -237,7 +237,7 @@ def pclm(atoms, W, Nit, etol):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 1  \tE(W): {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -248,7 +248,7 @@ def pclm(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tE(W): {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -272,7 +272,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 0  \tE(W): {E + atoms.eewald:+.7f}')
+        print(f'Nit: 0  \tEtot: {E + atoms.eewald:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
@@ -297,7 +297,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i}  \tE(W): {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
+            print(f'Nit: {i}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
