@@ -30,7 +30,6 @@ class Atoms:
         self.cutcoul = cutcoul    # Cut-off radius for a spherical truncation
                                   # Set to 0 to use the size of the box diagonal (sqrt(3) * a)
 
-
         # Necessary inputs with presets
         if S is isinstance(S, int):
             S = S * np.array([1, 1, 1])
@@ -72,6 +71,7 @@ class Atoms:
         self.psi = None     # States
         self.estate = None  # Energy per state
         self.n = None       # Electronic density
+        self.eewald = None  # Ewald energy
         self.etot = None    # Total energy
 
     def setup(self):
