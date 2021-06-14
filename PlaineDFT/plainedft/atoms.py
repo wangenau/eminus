@@ -122,10 +122,6 @@ class Atoms:
         Gc = G[active]
         G2c = G2[active]
 
-        # idx = np.argsort(G2c, kind='mergesort')
-        # Gc = Gc[idx]
-        # G2c = G2c[idx]
-
         self.Gc = Gc
         self.G2c = G2c
 

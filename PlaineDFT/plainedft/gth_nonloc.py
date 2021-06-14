@@ -55,12 +55,6 @@ def init_gth_nonloc(atoms):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
-    # TODO: remove me
-    # Sort G-vectors by their magnitude
-    # PWDFT.jl uses sortperm, for compareabilty we need to sort with mergesort
-    # idx = np.argsort(atoms.G2c, kind='mergesort')
-    # g = atoms.Gc[idx]
-    # Gm = np.sqrt(atoms.G2c[idx])
     g = atoms.Gc  # Simplified, would normally be G+k
     Gm = np.sqrt(atoms.G2c)
 

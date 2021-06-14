@@ -3,13 +3,12 @@
 Main SCF file with every relevant function.
 '''
 import numpy as np
-from numpy.linalg import eig, inv#, det, norm
+from numpy.linalg import eig, inv
 from numpy.random import randn
 from scipy.linalg import sqrtm
-#from scipy.special import erf
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
-from .lda_VWN import excVWN, excpVWN#, xc_vwn
+from .lda_VWN import excVWN, excpVWN
 from .utils import Diagprod, dotprod
 from .gth_nonloc import calc_Vnonloc
 
@@ -71,23 +70,6 @@ def H(atoms, W):
     excp = excpVWN(n)
     Vdual = atoms.Vloc
 
-    # TODO: remove me
-    # if atoms.Vcoul is None:
-    #     alpha = np.sqrt(-np.log(1e-9)) / (np.sqrt(3) * atoms.a)
-    #     Vcoul = np.zeros(atoms.G2.shape, dtype=complex)
-    #     Vcoul += 4 * np.pi / atoms.G2 * (1 - np.exp(-atoms.G2 / (4 * alpha**2)))
-    #     Vcoul[0] = np.pi / alpha**2
-    #     for i in range(1, len(atoms.r)):
-    #         Vcoul[1:-1] += atoms.CellVol / len(atoms.r) * np.exp(-1j * np.dot(atoms.G[1:-1], atoms.r[i])) * erf(alpha * norm(atoms.r[i])) / norm(atoms.r[i])
-    #     atoms.Vcoul = Vcoul
-
-    # TODO: remove me
-    # alpha = np.sqrt(-np.log(1e-9)) / (np.sqrt(3) * atoms.a)
-    # Vcoul = np.zeros(atoms.G2.shape, dtype=complex)
-    # Vcoul += 4 * np.pi / atoms.G2 * (1 - np.exp(-atoms.G2 / (4 * alpha**2)))
-    # Vcoul[0] = np.pi / alpha**2
-    # Veff += Vcoul
-
     Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + \
            excp * atoms.Jdag(atoms.O(atoms.J(n)))
     if atoms.cutcoul is not None:
@@ -100,12 +82,9 @@ def H(atoms, W):
     else:
         Veff += atoms.Jdag(atoms.O(phi))
 
-    #Veff = Vdual + atoms.Jdag(atoms.O(phi))
-    #Vxc_psi = xc_vwn(n)[1]
+    Vkin_psi = -0.5 * atoms.L(W)
     Vnonloc_psi = calc_Vnonloc(atoms, W)
-    Vkin_psi = -0.5 * atoms.L(W)# / det(atoms.R)  #TODO: Divide by det? also presort of G2c is necessary
-    #Vkin_psi = -0.5 * atoms.L(W) / det(atoms.R)
-    return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi# + Vxc_psi
+    return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi
 
 # a=randn(prod(S),1)+i*randn(prod(S),1)
 # b=randn(prod(S),1)+i*randn(prod(S),1)

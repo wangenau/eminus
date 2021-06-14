@@ -3,7 +3,6 @@
 Calculate the local potential with GTH pseudopotentials. Phys. Rev. B 54, 1703
 '''
 import numpy as np
-# from numpy.linalg import det
 
 
 def calc_Vloc(atoms):

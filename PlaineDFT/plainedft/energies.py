@@ -43,7 +43,7 @@ def get_Exc(atoms, n, spinpol=False):
 
 def get_Eloc(atoms, n):
     '''Calculate the local energy.'''
-    return np.real(atoms.Vloc.conj().T @ n)# * atoms.CellVol / np.prod(atoms.S)
+    return np.real(atoms.Vloc.conj().T @ n)
 
 
 def get_Esic(atoms, n):
