@@ -8,13 +8,16 @@ import numpy as np
 
 def calc_Vloc(atoms):
     '''Local contribution for the GTH pseudopotential.'''
-    species = list(set(atoms.atom))
+    G2 = atoms.G2
+    atom = atoms.atom
+    species = list(set(atom))
     Nspecies = len(species)
 
-    Vps = np.zeros(len(atoms.G2) - 1)
+    Vsp = np.zeros(len(G2))
+    Vloc = np.zeros(len(G2))
 
-    for ia in range(Nspecies):
-        psp = atoms.GTH[species[ia]]
+    for isp in range(Nspecies):
+        psp = atoms.GTH[species[isp]]
 
         rloc = psp['rlocal']
         Zion = psp['Zval']
@@ -24,19 +27,25 @@ def calc_Vloc(atoms):
         C4 = psp['C'][3]
 
         omega = 1  # det(atoms.R)  # FIXME: is this correct?
-        rlocG2 = atoms.G2[1:] * rloc**2
+        rlocG2 = G2[1:] * rloc**2
 
-        Vps += -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / atoms.G2[1:] + \
-               np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
-               (C1 + C2 * (3 - rlocG2) + C3 * (15 - 10 * rlocG2 + rlocG2**2) +
-               C4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
-    # TODO: Apply to all elements with sqrt(G2) <1e-8
-    eps = 2 * np.pi * Zion * rloc**2 + \
-          (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
-    return np.concatenate(([eps], Vps))
+        Vsp[1:] = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2[1:] + \
+                  np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
+                  (C1 + C2 * (3 - rlocG2) + C3 * (15 - 10 * rlocG2 + rlocG2**2) +
+                  C4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
+        # TODO: Apply to all elements with sqrt(G2) <1e-8
+        Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
+                 (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
+
+        # Sum up the structure factor for every species
+        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        for ia in range(len(atom)):
+            if atom[ia] == species[isp]:
+                Sf += atoms.Sf[ia]
+        Vloc += np.real(atoms.J(Vsp * Sf))
+    return Vloc
 
 
 def init_gth_loc(atoms):
     '''Goedecker, Teter, Hutter pseudopotentials.'''
-    Sf = np.sum(atoms.Sf, axis=0)
-    return np.real(atoms.J(calc_Vloc(atoms) * Sf))# * np.prod(atoms.S) / atoms.CellVol
+    return calc_Vloc(atoms)
