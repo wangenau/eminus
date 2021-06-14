@@ -255,7 +255,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
-        cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) * \
+        cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) *
              dotprod(gold, atoms.K(gold)))
         if cgform == 1:
             beta = dotprod(g, atoms.K(g)) / dotprod(gold, atoms.K(gold))
@@ -276,7 +276,8 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
+            print(f'Nit: {i}  \tEtot: {E + atoms.eewald:+.7f}'
+                  f'\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break

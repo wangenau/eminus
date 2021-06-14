@@ -31,19 +31,16 @@ def excVWN_spin(n, zeta):
     f = -9 / 8 * (3 / np.pi)**(1 / 3)
     alpha = 2 / 3
     third = 1 / 3
-    p43 = 4 / 3
 
     rho13 = ((1 + zeta) * n)**third
     exup = f * alpha * rho13
-    vxup = p43 * f * alpha * rho13
 
     rho13 = ((1 - zeta) * n)**third
     exdw = f * alpha * rho13
-    vxdw = p43 * f * alpha * rho13
     ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
 
     # Correlation contribution
-    pi34=(3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 / n**third
 
     A = (0.0310907, 0.01554535, -0.01688686394039)
@@ -56,8 +53,7 @@ def excVWN_spin(n, zeta):
 
     cfz = 2**(4 / 3) - 2
     cfz1 = 1 / cfz
-    cfz2 = 4/3 * cfz1
-    iddfz0 = 9 / 8 *cfz
+    iddfz0 = 9 / 8 * cfz
     sqrtrs = np.sqrt(rs)
     zeta3 = zeta**3
     zeta4 = zeta3 * zeta
@@ -74,7 +70,7 @@ def excVWN_spin(n, zeta):
     ac = ac * iddfz0
     De = ecF - ecP - ac  # e_c[F] - e_c[P] - alpha_c/(ddf/ddz(z=0))
     fzz4 = fz * zeta4
-    ec = ecP + ac * fz  + De * fzz4
+    ec = ecP + ac * fz + De * fzz4
 
     return ex + ec
 
@@ -91,7 +87,7 @@ def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
     atg = np.arctan(Qtxb)         # tan^-1(Q/(2x+b))
     fx = sqx + b[i] * x + c[i]    # X(x) = x^2 + b*x + c
 
-    fit = A[i] * (np.log(sqx / fx) + tbQ[i] * atg - \
+    fit = A[i] * (np.log(sqx / fx) + tbQ[i] * atg -
           bx0fx0[i] * (np.log(xx0 * xx0 / fx) + (tbQ[i] + 4 * x0[i] / Q[i]) * atg))
     return fit
 

@@ -28,8 +28,9 @@ class Atoms:
         self.center = center      # Center molecule in box
         self.truncate = truncate  # Bool to turn off G-vector truncation
         self.spinpol = spinpol    # Bool for spin polarized calculations
-        self.cutcoul = cutcoul    # Cut-off radius for a spherical truncation
-                                  # Set to 0 to use the size of the box diagonal (sqrt(3) * a)
+        # Cut-off radius for a spherical truncation
+        # Set to 0 to use the size of the box diagonal (sqrt(3) * a)
+        self.cutcoul = cutcoul
 
         # Necessary inputs with presets
         if S is isinstance(S, int):
