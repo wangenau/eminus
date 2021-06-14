@@ -30,10 +30,10 @@ def get_Ecoul(atoms, n):
         return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(atoms, n, spinpol):
+def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.'''
     # Arias: Exc = (Jn)dag O(J(exc))
-    if spinpol:
+    if atoms.spinpol or spinpol:
         # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
         exc = excVWN_spin(n, np.ones((n.shape)))
     else:

@@ -121,7 +121,7 @@ def get_E(atoms, W, out=False):
     Eloc = get_Eloc(atoms, n)
     Enonloc = get_Enonloc(atoms, Y)
     Ecoul = get_Ecoul(atoms, n)
-    Exc = get_Exc(atoms, n, atoms.spinpol)
+    Exc = get_Exc(atoms, n)
     if atoms.verbose >= 5 or out:
         print(f'Kinetic energy:              {Ekin:+.9f} Eh')
         print(f'Local potential energy:      {Eloc:+.9f} Eh')
