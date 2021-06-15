@@ -3,4 +3,4 @@ from .atoms import Atoms
 from .scf import SCF
 from .version import __version__
 
-__all__ = ['Atoms', 'SCF']
+__all__ = ['Atoms', 'SCF', __version__]
