@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from plainedft.atoms import Atoms
-from plainedft.scf import SCF
+from .atoms import Atoms
+from .scf import SCF
+from .version import __version__
 
 __all__ = ['Atoms', 'SCF']
-__version__ = '0.0.1'
