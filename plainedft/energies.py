@@ -5,7 +5,7 @@ Calculate energies for a basis set or one-particle densities.
 import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
-from .lda_VWN import excVWN, excVWN_spin
+from .lda_vwn import exc_vwn, exc_vwn_spin
 from .tools import ry2ha
 
 
@@ -35,9 +35,9 @@ def get_Exc(atoms, n, spinpol=False):
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
         # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
-        exc = excVWN_spin(n, np.ones((n.shape)))
+        exc = exc_vwn_spin(n, np.ones((n.shape)))
     else:
-        exc = excVWN(n)
+        exc = exc_vwn(n)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
@@ -58,7 +58,7 @@ def get_Esic(atoms, n):
     return Esic
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(atoms, Y):
     '''Calculate the non-local energy.'''
     Enonloc = 0
@@ -90,7 +90,7 @@ def get_Enonloc(atoms, Y):
     return Enonloc * atoms.CellVol
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
 def get_Eewald(atoms):
     '''Calculate the Ewald energy.'''
     # For a plane wave code we have multiple contributions for the Ewald energy

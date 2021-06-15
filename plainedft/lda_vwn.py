@@ -5,13 +5,14 @@ Parametization of the VWN local density approximation functional.
 import numpy as np
 
 
-def excVWN(n):
+def exc_vwn(n):
     '''VWN parameterization of the exchange correlation energy functional (spin unpolarized).'''
     X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
     A = 0.0310907
     x0 = -0.10498
     b = 3.72744
     c = 12.9352
+
     Q = np.sqrt(4 * c - b * b)
     X0 = x0 * x0 + b * x0 + c
     rs = (4 * np.pi / 3 * n)**(-1 / 3)
@@ -23,9 +24,29 @@ def excVWN(n):
     return out
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
+def excp_vwn(n):
+    '''Derivation with respect to n of the VWN exchange correlation energy functional.'''
+    X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
+    A = 0.0310907
+    x0 = -0.10498
+    b = 3.72744
+    c = 12.9352
+
+    Q = np.sqrt(4 * c - b * b)
+    X0 = x0 * x0 + b * x0 + c
+    rs = (4 * np.pi / 3 * n)**(-1 / 3)
+    x = np.sqrt(rs)
+    X = x * x + b * x + c
+    dx = 0.5 / x
+    out = dx * (2 * X1 / (rs * x) + A * (2 / x - (2 * x + b) / X - 4 * b / (Q * Q + (2 * x + b) *
+          (2 * x + b)) - (b * x0) / X0 * (2 / (x - x0) - (2 * x + b) / X - 4 * (2 * x0 + b) /
+          (Q * Q + (2 * x + b) * (2 * x + b)))))
+    return (-rs / (3 * n)) * out
+
+
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 # and https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
-def excVWN_spin(n, zeta):
+def exc_vwn_spin(n, zeta):
     '''VWN parameterization of the exchange correlation energy functiona (spin polarized).'''
     # Exchange contribution
     f = -9 / 8 * (3 / np.pi)**(1 / 3)
@@ -75,11 +96,10 @@ def excVWN_spin(n, zeta):
     return ex + ec
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
     ''''Implements eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
-
-    # Pade fit calculated in x and its derivative w.r.t. rho
+    # Pade fit calculated in x and its derivative with respect to rho
     # rs = inv((rho*)^(1/3)) = x^2
     sqx = x * x                   # x^2 = r_s
     xx0 = x - x0[i]               # x - x_0
@@ -90,22 +110,3 @@ def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
     fit = A[i] * (np.log(sqx / fx) + tbQ[i] * atg -
           bx0fx0[i] * (np.log(xx0 * xx0 / fx) + (tbQ[i] + 4 * x0[i] / Q[i]) * atg))
     return fit
-
-
-def excpVWN(n):
-    '''Derivation with respect to n of the VWN exchange correlation energy functional.'''
-    X1 = 0.75 * (3 / (2 * np.pi))**(2 / 3)
-    A = 0.0310907
-    x0 = -0.10498
-    b = 3.72744
-    c = 12.9352
-    Q = np.sqrt(4 * c - b * b)
-    X0 = x0 * x0 + b * x0 + c
-    rs = (4 * np.pi / 3 * n)**(-1 / 3)
-    x = np.sqrt(rs)
-    X = x * x + b * x + c
-    dx = 0.5 / x
-    out = dx * (2 * X1 / (rs * x) + A * (2 / x - (2 * x + b) / X - 4 * b / (Q * Q + (2 * x + b) *
-          (2 * x + b)) - (b * x0) / X0 * (2 / (x - x0) - (2 * x + b) / X - 4 * (2 * x0 + b) /
-          (Q * Q + (2 * x + b) * (2 * x + b)))))
-    return (-rs / (3 * n)) * out

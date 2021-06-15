@@ -8,7 +8,7 @@ from numpy.random import randn
 from scipy.linalg import sqrtm
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
-from .lda_VWN import excVWN, excpVWN
+from .lda_vwn import exc_vwn, excp_vwn
 from .utils import Diagprod, dotprod
 from .gth_nonloc import calc_Vnonloc
 
@@ -66,8 +66,8 @@ def H(atoms, W):
     Y = orth(atoms, W)  # Orthogonalize at the start
     n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    exc = excVWN(n)
-    excp = excpVWN(n)
+    exc = exc_vwn(n)
+    excp = excp_vwn(n)
     Vdual = atoms.Vloc
 
     Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + \
