@@ -6,16 +6,9 @@ import numpy as np
 from numpy.linalg import norm
 
 
-# FIXME: This functions works, but is unused.
-# def diagouter(A, B):
-#     '''Calculate the expression Diag (A * Bdag).'''
-#     return np.sum(A * B.conj(), axis=1)
-
-
 def Diagprod(a, B):
     '''Calculate the expression Diag(a) * B.'''
-    B = B.T
-    return (a * B).T
+    return (a * B.T).T
 
 
 def dotprod(a, b):
