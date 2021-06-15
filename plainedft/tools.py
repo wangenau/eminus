@@ -6,15 +6,15 @@ import numpy as np
 from .constants import BOHR, HARTREE, KCALMOL
 
 
+# Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
     '''Convert planewave energy cutoff to a real-space gridspacing using a.u..'''
-    # Taken from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
     return np.pi / np.sqrt(2 * E)
 
 
+# Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
     '''Convert real-space gridspacing to planewave energy cutoff using a.u..'''
-    # Taken from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
     # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
     # See PRB, Vol 54, 14362 (1996)
     return 0.5 * (np.pi / h)**2
@@ -30,16 +30,6 @@ def ev2ha(E):
     return E / HARTREE
 
 
-def ha2ry(E):
-    '''Convert Hartree to Rydberg.'''
-    return 2 * E
-
-
-def ry2ha(E):
-    '''Convert Rydberg to Hartree.'''
-    return E / 2
-
-
 def ha2kcalmol(E):
     '''Convert Hartree to kcal/mol.'''
     return E * KCALMOL
@@ -48,6 +38,26 @@ def ha2kcalmol(E):
 def kcalmol2ha(E):
     '''Convert kcal/mol to Hartree.'''
     return E / KCALMOL
+
+
+def ev2kcalmol(E):
+    '''Convert electronvolt to kcal/mol.'''
+    return ha2kcalmol(ev2ha(E))
+
+
+def kcalmol2ev(E):
+    '''Convert kcal/mol to electronvolt.'''
+    return ha2ev(kcalmol2ha(E))
+
+
+def ha2ry(E):
+    '''Convert Hartree to Rydberg.'''
+    return 2 * E
+
+
+def ry2ha(E):
+    '''Convert Rydberg to Hartree.'''
+    return E / 2
 
 
 def ang2bohr(r):
@@ -122,12 +132,15 @@ def check_orthonorm(atoms, func):
 
 def get_dipole(atoms, n):
     '''Calculate the electric dipole moment.'''
+    # The dipole may be extremly large. This can be because of periodic boundary conditions.
+    # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
+    # One fix can be to center the atom/molecule inside the box.
+
     # Diple moment: mu = \sum Z*X - \int n(r)*r dr
     mu = np.array([0, 0, 0], dtype=float)
     for i in range(len(atoms.X)):
         mu += atoms.Z[i] * atoms.X[i]
 
-    # TODO: Why does thos prefactor even work here?
     prefactor = atoms.a**3 / np.prod(atoms.S)
     for dim in range(3):
         mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
