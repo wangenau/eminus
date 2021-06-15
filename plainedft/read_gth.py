@@ -4,24 +4,36 @@ Get constants from GTH files.
 '''
 import numpy as np
 import plainedft
+from glob import glob
+from os.path import basename
 
 PSP_PATH = plainedft.__path__[0] + '/pade_gth/'
 
 
-# TODO: Rewrite???
-def read_GTH(f_file):
-    '''Read HGH/GTH files.'''
-    f_file = PSP_PATH + f_file
+def read_GTH(system, charge=None):
+    '''Read GTH files for a given system.'''
+    if charge is not None:
+        f_file = PSP_PATH + str(system) + '-q' + str(charge) + '.gth'
+    else:
+        files = glob(PSP_PATH + str(system) + '-*')
+        try:
+            f_file = files[0]
+        except IndexError:
+            print(f'ERROR: There is no pseudopotential for \'{system}\'')
+        if len(files) > 1:
+            print(f'INFO: Multiple pseudopotentials found for \'{system}\'. '
+                  f'Continue with \'{basename(f_file)}\'.')
+
+    try:
+        f = open(f_file, 'r')
+    except FileNotFoundError:
+        print(f'ERROR: There is no pseudopotential for \'{basename(f_file)}\'')
+
     psp = {}
     C = np.zeros(4)
     rc = np.zeros(4)
     h = np.zeros([4, 3, 3])
     Nproj_l = np.zeros(4, dtype=int)
-    try:
-        f = open(f_file, 'r')
-    except FileNotFoundError:
-        print('ERROR: Can\'t find file %s' % f_file)
-
     symbol = f.readline().split()[0]
     psp['symbol'] = symbol
     N_all = f.readline().split()
@@ -52,4 +64,4 @@ def read_GTH(f_file):
     psp['rc'] = rc
     psp['Nproj_l'] = Nproj_l
     psp['h'] = h
-    return psp
+    return psp, Zval
