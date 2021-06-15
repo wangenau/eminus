@@ -6,18 +6,17 @@ import numpy as np
 from .utils import Ylm_real
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
     Npoints = len(W)
     Nstates = atoms.Ns
+
     Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        # Parameters of the non-local pseudopotential
+        Natoms = len(atoms.X)
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
-
-        Natoms = len(atoms.X)
 
         betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
 
@@ -32,11 +31,11 @@ def calc_Vnonloc(atoms, W):
                                 jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
-        # We have to multiply with the cell volume, because of different orthogonalization
+    # We have to multiply with the cell volume, because of different orthogonalization
     return Vpsi * atoms.CellVol
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions.'''
     Natoms = len(atoms.X)
@@ -69,14 +68,10 @@ def init_gth_nonloc(atoms):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
                                        eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
                     ibeta += 1
-    if atoms.verbose > 5:
-        for ibeta in range(NbetaNL):
-            norm = betaNL[:, ibeta].conj() @ betaNL[:, ibeta]
-            print(f'Norm of betaNL(ibeta={ibeta}): {norm}')
     return NbetaNL, prj2beta, betaNL
 
 
-# Adopted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 def eval_proj_G(psp, l, iproj, Gm, CellVol):
     '''Evaluate GTH projector function in G-space.'''
     rrl = psp['rc'][l]
