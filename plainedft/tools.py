@@ -83,7 +83,7 @@ def check_ortho(atoms, func):
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    prefactor = atoms.a**3 / np.prod(atoms.S)
+    prefactor = atoms.CellVol / np.prod(atoms.S)
 
     ortho_bool = True
 
@@ -107,7 +107,7 @@ def check_norm(atoms, func):
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    prefactor = atoms.a**3 / np.prod(atoms.S)
+    prefactor = atoms.CellVol / np.prod(atoms.S)
 
     norm_bool = True
 
@@ -141,7 +141,7 @@ def get_dipole(atoms, n):
     for i in range(len(atoms.X)):
         mu += atoms.Z[i] * atoms.X[i]
 
-    prefactor = atoms.a**3 / np.prod(atoms.S)
+    prefactor = atoms.CellVol / np.prod(atoms.S)
     for dim in range(3):
         mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
     return mu
