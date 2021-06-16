@@ -3,7 +3,7 @@
 Various tools for calculations or unit conversions.
 '''
 import numpy as np
-from .constants import BOHR, HARTREE, KCALMOL
+from .constants import BOHR, DEBYE, HARTREE, KCALMOL
 
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
@@ -18,56 +18,6 @@ def gridspacing2cutoff(h):
     # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
     # See PRB, Vol 54, 14362 (1996)
     return 0.5 * (np.pi / h)**2
-
-
-def ha2ev(E):
-    '''Convert Hartree to electronvolt.'''
-    return E * HARTREE
-
-
-def ev2ha(E):
-    '''Convert electronvolt to Hartree.'''
-    return E / HARTREE
-
-
-def ha2kcalmol(E):
-    '''Convert Hartree to kcal/mol.'''
-    return E * KCALMOL
-
-
-def kcalmol2ha(E):
-    '''Convert kcal/mol to Hartree.'''
-    return E / KCALMOL
-
-
-def ev2kcalmol(E):
-    '''Convert electronvolt to kcal/mol.'''
-    return ha2kcalmol(ev2ha(E))
-
-
-def kcalmol2ev(E):
-    '''Convert kcal/mol to electronvolt.'''
-    return ha2ev(kcalmol2ha(E))
-
-
-def ha2ry(E):
-    '''Convert Hartree to Rydberg.'''
-    return 2 * E
-
-
-def ry2ha(E):
-    '''Convert Rydberg to Hartree.'''
-    return E / 2
-
-
-def ang2bohr(r):
-    '''Convert Angstrom to Bohr.'''
-    return r / BOHR
-
-
-def bohr2ang(r):
-    '''Convert Bohr to Angstrom.'''
-    return r * BOHR
 
 
 def check_ortho(atoms, func):
@@ -145,3 +95,63 @@ def get_dipole(atoms, n):
     for dim in range(3):
         mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
     return mu
+
+
+def ha2ev(E):
+    '''Convert Hartree to electronvolt.'''
+    return E * HARTREE
+
+
+def ev2ha(E):
+    '''Convert electronvolt to Hartree.'''
+    return E / HARTREE
+
+
+def ha2kcalmol(E):
+    '''Convert Hartree to kcal/mol.'''
+    return E * KCALMOL
+
+
+def kcalmol2ha(E):
+    '''Convert kcal/mol to Hartree.'''
+    return E / KCALMOL
+
+
+def ev2kcalmol(E):
+    '''Convert electronvolt to kcal/mol.'''
+    return ha2kcalmol(ev2ha(E))
+
+
+def kcalmol2ev(E):
+    '''Convert kcal/mol to electronvolt.'''
+    return ha2ev(kcalmol2ha(E))
+
+
+def ha2ry(E):
+    '''Convert Hartree to Rydberg.'''
+    return 2 * E
+
+
+def ry2ha(E):
+    '''Convert Rydberg to Hartree.'''
+    return E / 2
+
+
+def ang2bohr(r):
+    '''Convert Angstrom to Bohr.'''
+    return r / BOHR
+
+
+def bohr2ang(r):
+    '''Convert Bohr to Angstrom.'''
+    return r * BOHR
+
+
+def ebohr2d(p):
+    '''Convert e x Bohr to Debye.'''
+    return p * DEBYE
+
+
+def d2ebohr(p):
+    '''Convert Debye to e x Bohr.'''
+    return p / DEBYE
