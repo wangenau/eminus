@@ -6,7 +6,7 @@ import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
 from .lda_vwn import exc_vwn, exc_vwn_spin
-from .tools import ry2ha
+from .units import ry2ha
 
 
 def get_Ekin(atoms, Y):
@@ -51,6 +51,7 @@ def get_Esic(atoms, n):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
+        # Normalize single-particle densities
         norm = atoms.CellVol / np.prod(atoms.S) * np.sum(n[i])
         n[i] = n[i] / norm
         coul = get_Ecoul(atoms, n[i])
