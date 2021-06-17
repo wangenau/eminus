@@ -1,36 +1,36 @@
 #!/usr/bin/env python3
 '''
-Collection of constants that may be needed throughout the calculation.
+Collection of constants and conversions that may be needed throughout the calculation.
 '''
 
 # Ha in eV (https://en.wikipedia.org/wiki/Hartree)
-HARTREE = 27.211386245988
-# a0 in Angstrom (https://en.wikipedia.org/wiki/Bohr_radius)
-KCALMOL = 627.5094740631
+electronvolt = eV = 27.211386245988
 # Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)
-BOHR = 0.529177210903
+kcalmol = 627.5094740631
+# a0 in Å (https://en.wikipedia.org/wiki/Bohr_radius)
+angstrom = A = 0.529177210903
 # e x a0 in D (https://en.wikipedia.org/wiki/Hartree_atomic_units)
-DEBYE = 2.541746473
+Debye = D = 2.541746473
 
 
 def ha2ev(E):
     '''Convert Hartree to electronvolt.'''
-    return E * HARTREE
+    return E * electronvolt
 
 
 def ev2ha(E):
     '''Convert electronvolt to Hartree.'''
-    return E / HARTREE
+    return E / electronvolt
 
 
 def ha2kcalmol(E):
     '''Convert Hartree to kcal/mol.'''
-    return E * KCALMOL
+    return E * kcalmol
 
 
 def kcalmol2ha(E):
     '''Convert kcal/mol to Hartree.'''
-    return E / KCALMOL
+    return E / kcalmol
 
 
 def ev2kcalmol(E):
@@ -55,19 +55,19 @@ def ry2ha(E):
 
 def ang2bohr(r):
     '''Convert Angstrom to Bohr.'''
-    return r / BOHR
+    return r / angstrom
 
 
 def bohr2ang(r):
     '''Convert Bohr to Angstrom.'''
-    return r * BOHR
+    return r * angstrom
 
 
 def ebohr2d(p):
     '''Convert e x Bohr to Debye.'''
-    return p * DEBYE
+    return p * Debye
 
 
 def d2ebohr(p):
     '''Convert Debye to e x Bohr.'''
-    return p / DEBYE
+    return p / Debye
