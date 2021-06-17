@@ -51,10 +51,12 @@ def get_Esic(atoms, n):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
+        norm = atoms.CellVol / np.prod(atoms.S) * np.sum(n[i])
+        n[i] = n[i] / norm
         coul = get_Ecoul(atoms, n[i])
         # The exchange part for a SIC correction has to be spin polarized
         xc = get_Exc(atoms, n[i], spinpol=True)
-        Esic += coul + xc
+        Esic += (coul + xc) * norm
     return Esic
 
 
@@ -63,12 +65,10 @@ def get_Enonloc(atoms, Y):
     '''Calculate the non-local energy.'''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        # Parameters of the non-local pseudopotential
-        prj2beta = atoms.prj2beta
-        betaNL = atoms.betaNL
-
         Natoms = len(atoms.X)
         Nstates = atoms.Ns
+        prj2beta = atoms.prj2beta
+        betaNL = atoms.betaNL
 
         betaNL_psi = np.dot(Y.T.conj(), betaNL).conj()
 
