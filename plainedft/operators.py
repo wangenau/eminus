@@ -3,7 +3,6 @@
 Basis set depedent operators for DFT calculations in plane-wave basis.
 '''
 import numpy as np
-from numpy.linalg import det
 from scipy.fft import ifftn, fftn
 import os
 
@@ -12,16 +11,16 @@ THREADS = int(os.environ['OMP_NUM_THREADS'])
 
 def O(atoms, inp):
     '''Overlap operator.'''
-    return det(atoms.R) * inp
+    return atoms.CellVol * inp
 
 
 def L(atoms, inp):
     '''Laplacian operator.'''
     inp = inp.T
     if inp.shape[1] == len(atoms.G2c):
-        return (-det(atoms.R) * atoms.G2c * inp).T
+        return (-atoms.CellVol * atoms.G2c * inp).T
     else:
-        return (-det(atoms.R) * atoms.G2 * inp).T
+        return (-atoms.CellVol * atoms.G2 * inp).T
 
 
 def Linv(atoms, inp):
@@ -29,10 +28,10 @@ def Linv(atoms, inp):
     inp = inp.T
     out = np.zeros(inp.shape, dtype=complex)
     if inp.ndim == 1:
-        out[1:] = inp[1:] / atoms.G2[1:] / -det(atoms.R)
+        out[1:] = inp[1:] / atoms.G2[1:] / -atoms.CellVol
     else:
         for i in range(len(inp)):
-            out[i][1:] = inp[i][1:] / atoms.G2[1:] / -det(atoms.R)
+            out[i][1:] = inp[i][1:] / atoms.G2[1:] / -atoms.CellVol
     return out.T
 
 
