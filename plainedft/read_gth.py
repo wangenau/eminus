@@ -24,13 +24,12 @@ def read_gth(system, charge=None):
             print(f'INFO: Multiple pseudopotentials found for \'{system}\'. '
                   f'Continue with \'{basename(f_psp)}\'.')
 
+    psp = {}
+    C = np.zeros(4)
+    rc = np.zeros(4)
+    Nproj_l = np.zeros(4, dtype=int)
+    h = np.zeros([4, 3, 3])
     try:
-        psp = {}
-        C = np.zeros(4)
-        rc = np.zeros(4)
-        Nproj_l = np.zeros(4, dtype=int)
-        h = np.zeros([4, 3, 3])
-
         with open(f_psp, 'r') as fh:
             psp['symbol'] = fh.readline().split()[0]
             N_all = fh.readline().split()
