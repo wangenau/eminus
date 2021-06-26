@@ -58,7 +58,7 @@ def K(atoms, inp):
 
 
 def I(atoms, inp):
-    '''Forward transformation from real-space to reciprocal space.'''
+    '''Backwards transformation from reciprocal space to real-space.'''
     inp = inp.T
     if inp.ndim == 1:
         inp = np.array([inp])
@@ -78,7 +78,7 @@ def I(atoms, inp):
 
 
 def J(atoms, inp):
-    '''Backwards transformation from reciprocal space to real-space.'''
+    '''Forward transformation from real-space to reciprocal space.'''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
@@ -92,7 +92,7 @@ def J(atoms, inp):
 
 
 def Idag(atoms, inp):
-    '''Conjugated forward transformation from real-space to reciprocal space.'''
+    '''Conjugated backwards transformation from reciprocal space to real-space.'''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
@@ -108,7 +108,7 @@ def Idag(atoms, inp):
 
 
 def Jdag(atoms, inp):
-    '''Conjugated backwards transformation from reciprocal space to real-space.'''
+    '''Conjugated forward transformation from real-space to reciprocal space.'''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
