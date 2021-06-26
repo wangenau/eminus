@@ -19,7 +19,7 @@ setup(
     author_email='wangenau@protonmail.com',
     license='MIT',
     packages=find_packages(),
-    install_requires=['matplotlib', 'numpy', 'scipy'],
+    install_requires=['numpy', 'scipy'],
     python_requires='>=3.6',
     include_package_data=True,
     zip_safe=False
