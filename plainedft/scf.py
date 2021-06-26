@@ -3,8 +3,8 @@
 Main SCF file with every relevant function.
 '''
 import numpy as np
-from numpy.linalg import eig, inv
-from numpy.random import randn
+from numpy.linalg import eig, inv, norm
+from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
@@ -13,13 +13,16 @@ from .utils import Diagprod, dotprod
 from .gth_nonloc import calc_Vnonloc
 
 
-def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
+def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     '''Main SCF function.'''
     # Set up basis functions
-    # Start with randomized, complex, orthogonal basis functions
-    # from numpy.random import seed
-    # seed(1234)  # Uncomment for a fixed starting point
-    W = randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
+    guess = guess.lower()
+    if guess == 'gauss' or  guess == 'gaussian':
+        # Start with gaussians at atom positions
+        W = guess_gaussian(atoms)
+    else:
+        # Start with randomized, complex basis functions
+        W = guess_random(atoms, complex=True)
 
     # Calculate ewald energy
     atoms.eewald = get_Eewald(atoms)
@@ -39,6 +42,7 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
         W = orth(atoms, W)
         W, Elist = pccg(atoms, W, n_cg, etol, cgform)
     end = default_timer()
+
     # Handle energies and output
     Eel = Elist[-1]
     Etot = Eel + atoms.eewald
@@ -55,7 +59,7 @@ def SCF(atoms, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     # Save calculation parameters
     W = orth(atoms, W)
     atoms.W = W
-    atoms.psi, atoms.estate = get_psi(atoms, W)  # Save wave functions and
+    atoms.psi, atoms.estate = get_psi(atoms, W)  # Save wave functions and energies
     atoms.n = get_n_total(atoms, W)  # Save electronic density
     atoms.etot = Etot  # Save total energy
     return
@@ -86,10 +90,14 @@ def H(atoms, W):
     Vnonloc_psi = calc_Vnonloc(atoms, W)
     return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi
 
-# a=randn(prod(S),1)+i*randn(prod(S),1)
-# b=randn(prod(S),1)+i*randn(prod(S),1)
-# conj(a’*H(b))
-# b’*H(a)
+
+def Q(inp, U):
+    '''Operator needed to calculate gradients with non-constant occupations.'''
+    mu, V = eig(U)
+    mu = np.reshape(mu, (len(mu), 1))
+    denom = np.sqrt(mu) @ np.ones((1, len(mu)))
+    denom = denom + denom.conj().T
+    return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
 
 
 def get_E(atoms, W, out=False):
@@ -120,34 +128,6 @@ def get_grad(atoms, W):
     Ht = U12 @ (W.conj().T @ HW) @ U12
     return (HW - (atoms.O(W) @ invU) @ (W.conj().T @ HW)) @ (U12 @ F @ U12) + \
            atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
-
-
-def get_psi(atoms, W):
-    '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
-    Y = orth(atoms, W)
-    mu = Y.conj().T @ H(atoms, Y)
-    epsilon, D = eig(mu)
-    return Y @ D, np.real(epsilon)
-
-
-def get_n_total(atoms, W):
-    '''Generate the total electronic density.'''
-    W = W.T
-    n = np.zeros((np.prod(atoms.S), 1))
-    for i in range(W.shape[0]):
-        psi = atoms.I(W[i])
-        n += atoms.f[i] * np.real(psi.conj() * psi)
-    return n.T[0]
-
-
-def get_n_single(atoms, W):
-    '''Generate single electronic densities.'''
-    W = W.T
-    n = np.zeros((np.prod(atoms.S), len(W)))
-    for i in range(W.shape[0]):
-        psi = atoms.I(W[i])
-        n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
-    return n.T
 
 
 def sd(atoms, W, Nit, etol):
@@ -251,7 +231,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 0  \tEtot: {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
@@ -276,7 +256,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i}  \tEtot: {E + atoms.eewald:+.7f}'
+            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}'
                   f'\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
@@ -291,29 +271,55 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def Q(inp, U):
-    '''Operator needed to calculate gradients with non-constant occupations.'''
-    mu, V = eig(U)
-    mu = np.reshape(mu, (len(mu), 1))
-    denom = np.sqrt(mu) @ np.ones((1, len(mu)))
-    denom = denom + denom.conj().T
-    return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
+def get_psi(atoms, W):
+    '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
+    Y = orth(atoms, W)
+    mu = Y.conj().T @ H(atoms, Y)
+    epsilon, D = eig(mu)
+    return Y @ D, np.real(epsilon)
 
 
-# TODO: implement properly
-# def gen_gaussian_den(atoms):
-#     '''Generate inital guess density using normalized Gaussians.'''
-#     Natoms = len(atoms.X)
-#     Npoints = len(atoms.r)
-#
-#     sigma = 0.5
-#     nrmfct = (2 * np.pi * sigma**2)**(3 / 2)
-#     Rhoe = np.zeros(Npoints)
-#
-#     for ia in range(Natoms):
-#         for ip in range(Npoints):
-#             dr = atoms.r[:, ip] - atoms.X[:, ia]
-#             r = np.linalg.norm(dr)
-#             Rhoe[ip] += Rhoe[ip] + atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / nrmfct
-#     print("Gaussian Rhoe integral = ", np.sum(Rhoe)*grid.dVol)
-#     return Rhoe
+def get_n_total(atoms, W):
+    '''Generate the total electronic density.'''
+    W = W.T
+    n = np.zeros((np.prod(atoms.S), 1))
+    for i in range(W.shape[0]):
+        psi = atoms.I(W[i])
+        n += atoms.f[i] * np.real(psi.conj() * psi)
+    return n.T[0]
+
+
+def get_n_single(atoms, W):
+    '''Generate single electronic densities.'''
+    W = W.T
+    n = np.zeros((np.prod(atoms.S), len(W)))
+    for i in range(W.shape[0]):
+        psi = atoms.I(W[i])
+        n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
+    return n.T
+
+
+def guess_random(atoms, complex=True, reproduce=True):
+    '''Generate random coefficents.'''
+    if reproduce:
+        seed(42)
+    if complex:
+        return randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
+    else:
+        return randn(len(atoms.active[0]), atoms.Ns)
+
+
+def guess_gaussian(atoms):
+    '''Generate inital-guess coefficents using normalized Gaussians.'''
+    sigma = 0.5
+    normal = (2 * np.pi * sigma**2)**(3 / 2)
+
+    W = np.zeros((len(atoms.r), atoms.Ns))
+    for ist in range(atoms.Ns):
+        # If we have more states than atoms, start all over again
+        ia = ist % len(atoms.X)
+        r = norm(atoms.r - atoms.X[ia], axis=1)
+        W[:, ist] = atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
+    # Transform from real-space to reciprocal space
+    # There is no transformation on the active space for this, so do it "manually"
+    return atoms.J(W)[atoms.active]
