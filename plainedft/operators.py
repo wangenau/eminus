@@ -6,7 +6,10 @@ import numpy as np
 from scipy.fft import ifftn, fftn
 import os
 
-THREADS = int(os.environ['OMP_NUM_THREADS'])
+try:
+    THREADS = int(os.environ['OMP_NUM_THREADS'])
+except KeyError:
+    THREADS = 1
 
 
 def O(atoms, inp):
