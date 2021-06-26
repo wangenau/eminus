@@ -5,14 +5,22 @@ Import and export functionality for Atoms objects.
 from textwrap import fill
 from time import ctime
 from pickle import dump, load, HIGHEST_PROTOCOL
+from .data import symbol2number
 from .units import ang2bohr
 from .version import __version__
 import numpy as np
 
 
-def save_atoms(atoms, filename):
+def save_atoms(atoms, filename, clear=False):
     '''Save atoms objects into a pickle files.'''
-    # TODO: Add remove member functionality
+    # Remove results  from SCF calculations to save some space
+    if clear:
+        atoms.W = None
+        atoms.psi = None
+        atoms.estate = None
+        atoms.n = None
+        atoms.eewald = None
+        atoms.etot = None
     with open(filename, 'wb') as fp:
         dump(atoms, fp, HIGHEST_PROTOCOL)
     return
@@ -29,6 +37,7 @@ def write_cube(atoms, field, filename):
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
+    atom = atoms.atom  # Atom symbols
     a = atoms.a        # Unit cell size
     r = atoms.r        # Real space sampling points
     S = atoms.S        # Sampling per direction
@@ -63,7 +72,7 @@ def write_cube(atoms, field, filename):
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         # FIXME: Atomic charge can differ from atomic number when only treating valence electrons
         for ia in range(len(X)):
-            fp.write(f'{Z[ia]}  {Z[ia]:.5f}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
+            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have S[0]*S[1] chunks values with a length of S[2]
         for i in range(S[0] * S[1]):
@@ -82,8 +91,10 @@ def read_xyz(filename):
         lines = fh.readlines()
     # The first line contains the number of atoms
     Natoms = int(lines[0].strip())
-    # The second line can contain a comment
-    print(f'XYZ file comment: \'{lines[1].strip()}\'')
+    # The second line can contain a comment, print it if available
+    comment = lines[1].strip()
+    if comment:
+        print(f'XYZ file comment: \'{comment}\'')
     atom = []
     X = []
     # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
