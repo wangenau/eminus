@@ -72,7 +72,8 @@ def write_cube(atoms, field, filename):
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         # FIXME: Atomic charge can differ from atomic number when only treating valence electrons
         for ia in range(len(X)):
-            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
+            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}')
+            fp.write(f'  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have S[0]*S[1] chunks values with a length of S[2]
         for i in range(S[0] * S[1]):
