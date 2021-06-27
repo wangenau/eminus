@@ -13,25 +13,27 @@ from .units import ang2bohr
 from .version import __version__
 
 
-def save_atoms(atoms, filename, clear=False):
-    '''Save atoms objects into a pickle files.'''
-    # Remove results  from SCF calculations to save some space
-    if clear:
-        atoms.W = None
-        atoms.psi = None
-        atoms.estate = None
-        atoms.n = None
-        atoms.eewald = None
-        atoms.etot = None
-    with open(filename, 'wb') as fp:
-        dump(atoms, fp, HIGHEST_PROTOCOL)
-    return
-
-
-def load_atoms(filename):
-    '''Load atoms objects from pickle files.'''
-    with open(filename, 'rb') as fh:
-        return load(fh)
+def read_xyz(filename):
+    '''Load atoms objects from xyz files.'''
+    # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
+    with open(filename, 'r') as fh:
+        lines = fh.readlines()
+    # The first line contains the number of atoms
+    Natoms = int(lines[0].strip())
+    # The second line can contain a comment, print it if available
+    comment = lines[1].strip()
+    if comment:
+        print(f'XYZ file comment: \'{comment}\'')
+    atom = []
+    X = []
+    # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
+    for line in lines[2:2 + Natoms]:
+        split = line.strip().split()
+        atom.append(split[0])
+        X.append(np.float_(split[1:4]))
+    # xyz files are in angstrom, so convert to bohr
+    X = ang2bohr(np.asarray(X))
+    return atom, X
 
 
 def write_cube(atoms, field, filename):
@@ -86,24 +88,22 @@ def write_cube(atoms, field, filename):
     return
 
 
-def read_xyz(filename):
-    '''Load atoms objects from xyz files.'''
-    # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
-    with open(filename, 'r') as fh:
-        lines = fh.readlines()
-    # The first line contains the number of atoms
-    Natoms = int(lines[0].strip())
-    # The second line can contain a comment, print it if available
-    comment = lines[1].strip()
-    if comment:
-        print(f'XYZ file comment: \'{comment}\'')
-    atom = []
-    X = []
-    # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
-    for line in lines[2:2 + Natoms]:
-        split = line.strip().split()
-        atom.append(split[0])
-        X.append(np.float_(split[1:4]))
-    # xyz files are in angstrom, so convert to bohr
-    X = ang2bohr(np.asarray(X))
-    return atom, X
+def save_atoms(atoms, filename, clear=False):
+    '''Save atoms objects into a pickle files.'''
+    # Remove results  from SCF calculations to save some space
+    if clear:
+        atoms.W = None
+        atoms.psi = None
+        atoms.estate = None
+        atoms.n = None
+        atoms.eewald = None
+        atoms.etot = None
+    with open(filename, 'wb') as fp:
+        dump(atoms, fp, HIGHEST_PROTOCOL)
+    return
+
+
+def load_atoms(filename):
+    '''Load atoms objects from pickle files.'''
+    with open(filename, 'rb') as fh:
+        return load(fh)

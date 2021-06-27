@@ -19,6 +19,33 @@ def gridspacing2cutoff(h):
     return 0.5 * (np.pi / h)**2
 
 
+def center_of_mass(coords, weights=None):
+    '''Calculate the center of mass for a list of points and their weights.'''
+    if not isinstance(weights, (list, np.ndarray)):
+        weights = [1] * len(coords)
+    com = np.full(len(coords[0]), 0, dtype=float)
+    for i in range(len(coords)):
+        com += coords[i] * weights[i]
+    return com / sum(weights)
+
+
+def get_dipole(atoms, n):
+    '''Calculate the electric dipole moment.'''
+    # The dipole may be extremly large. This can be because of periodic boundary conditions.
+    # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
+    # One fix can be to center the atom/molecule inside the box.
+
+    # Diple moment: mu = \sum Z*X - \int n(r)*r dr
+    mu = np.array([0, 0, 0], dtype=float)
+    for i in range(len(atoms.X)):
+        mu += atoms.Z[i] * atoms.X[i]
+
+    prefactor = atoms.CellVol / np.prod(atoms.S)
+    for dim in range(3):
+        mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
+    return mu
+
+
 def check_ortho(atoms, func):
     '''Check the orthogonality condition for a set of functions.'''
     # Orthogonality condition: \int func1^* func2 dr = 0
@@ -77,20 +104,3 @@ def check_orthonorm(atoms, func):
     norm_bool = check_norm(atoms, func)
     print(f'Orthonormal: {ortho_bool * norm_bool}')
     return ortho_bool * norm_bool
-
-
-def get_dipole(atoms, n):
-    '''Calculate the electric dipole moment.'''
-    # The dipole may be extremly large. This can be because of periodic boundary conditions.
-    # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
-    # One fix can be to center the atom/molecule inside the box.
-
-    # Diple moment: mu = \sum Z*X - \int n(r)*r dr
-    mu = np.array([0, 0, 0], dtype=float)
-    for i in range(len(atoms.X)):
-        mu += atoms.Z[i] * atoms.X[i]
-
-    prefactor = atoms.CellVol / np.prod(atoms.S)
-    for dim in range(3):
-        mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
-    return mu

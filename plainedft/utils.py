@@ -90,13 +90,3 @@ def Ylm_real(l, m, R):
     else:
         print(f'ERROR: No definition found for Ylm({l}, {m})')
     return ylm
-
-
-def center_of_mass(coords, weights=None):
-    '''Calculate the center of mass for a list of points and their weights.'''
-    if not isinstance(weights, (list, np.ndarray)):
-        weights = [1] * len(coords)
-    com = np.full(len(coords[0]), 0, dtype=float)
-    for i in range(len(coords)):
-        com += coords[i] * weights[i]
-    return com / sum(weights)

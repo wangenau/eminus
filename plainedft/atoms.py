@@ -11,8 +11,7 @@ from scipy.fft import next_fast_len
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .operators import I, Idag, J, Jdag, K, L, Linv, O
 from .potentials import init_pot
-from .tools import cutoff2gridspacing
-from .utils import center_of_mass
+from .tools import center_of_mass, cutoff2gridspacing
 
 
 class Atoms:
