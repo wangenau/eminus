@@ -29,11 +29,15 @@ def center_of_mass(coords, weights=None):
     return com / sum(weights)
 
 
-def get_dipole(atoms, n):
+def get_dipole(atoms):
     '''Calculate the electric dipole moment.'''
     # The dipole may be extremly large. This can be because of periodic boundary conditions.
     # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
+    n = atoms.n
+    if n is None:
+        print('ERROR: There is no density to calculate a dipole.')
+        return
 
     # Diple moment: mu = \sum Z*X - \int n(r)*r dr
     mu = np.array([0, 0, 0], dtype=float)
