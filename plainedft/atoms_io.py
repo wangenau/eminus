@@ -72,7 +72,6 @@ def write_cube(atoms, field, filename):
         fp.write(f'{S[1]}  0.0  {a / S[1]:.5f}  0.0\n')
         fp.write(f'{S[2]}  0.0  0.0  {a / S[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
-        # FIXME: Atomic charge can differ from atomic number when only treating valence electrons
         for ia in range(len(X)):
             fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}')
             fp.write(f'  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
