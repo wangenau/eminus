@@ -7,7 +7,7 @@ from os.path import basename
 
 import numpy as np
 
-from plainedft import __path__
+from . import __path__
 from .utils import Ylm_real
 
 
