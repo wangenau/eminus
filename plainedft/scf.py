@@ -8,7 +8,7 @@ from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
-from .lda_vwn import exc_vwn, excp_vwn
+from .exc import exc_vwn, excp_vwn
 from .utils import Diagprod, dotprod
 from .gth_nonloc import calc_Vnonloc
 
