@@ -15,9 +15,12 @@ from .gth_nonloc import calc_Vnonloc
 
 def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
     '''Main SCF function.'''
+    # Update atoms object at the beginning to ensure correct inputs
+    atoms.update()
+
     # Set up basis functions
     guess = guess.lower()
-    if guess == 'gauss' or  guess == 'gaussian':
+    if guess == 'gauss' or guess == 'gaussian':
         # Start with gaussians at atom positions
         W = guess_gaussian(atoms)
     else:
@@ -77,10 +80,7 @@ def H(atoms, W):
     Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + \
            excp * atoms.Jdag(atoms.O(atoms.J(n)))
     if atoms.cutcoul is not None:
-        if atoms.cutcoul > 0:
-            Rc = atoms.cutcoul
-        else:
-            Rc = np.sqrt(3) * atoms.a
+        Rc = atoms.cutcoul
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
         Veff += atoms.Jdag(atoms.O(phi) - correction)
     else:

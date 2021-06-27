@@ -19,7 +19,7 @@ def read_gth(system, charge=None):
         try:
             f_psp = files[0]
         except IndexError:
-            print(f'ERROR: There is no pseudopotential for \'{system}\'')
+            print(f'ERROR: There is no GTH pseudopotential for \'{system}\'')
         if len(files) > 1:
             print(f'INFO: Multiple pseudopotentials found for \'{system}\'. '
                   f'Continue with \'{basename(f_psp)}\'.')
@@ -59,5 +59,5 @@ def read_gth(system, charge=None):
                         h[k, j, i] = h[k, i, j]
             psp['h'] = h
     except FileNotFoundError:
-        print(f'ERROR: There is no pseudopotential for \'{basename(f_psp)}\'')
+        print(f'ERROR: There is no GTH pseudopotential for \'{basename(f_psp)}\'')
     return psp

@@ -47,6 +47,9 @@ def Ge(atoms):
 
 def init_pot(atoms):
     '''Use potentials from the Arias lectures.'''
-    implemented = {'HARMONIC': Harmonic, 'COULOMB': Coulomb, 'GE': Ge}
-    pot = implemented[atoms.pot]
+    implemented = {'harmonic': Harmonic, 'coulomb': Coulomb, 'ge': Ge}
+    try:
+        pot = implemented[atoms.pot]
+    except KeyError:
+        print(f'ERROR: No potential found for \'{atoms.pot}\'')
     return pot(atoms)

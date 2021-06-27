@@ -20,10 +20,7 @@ def get_Ecoul(atoms, n):
     # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     if atoms.cutcoul is not None:
-        if atoms.cutcoul > 0:
-            Rc = atoms.cutcoul
-        else:
-            Rc = np.sqrt(3) * atoms.a
+        Rc = atoms.cutcoul
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
         return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi) - correction))
     else:
@@ -102,7 +99,7 @@ def get_Eewald(atoms):
     # ba a factor 2
     Natoms = len(atoms.X)
     tau = atoms.X
-    Zvals = np.asarray(atoms.Z)
+    Zvals = atoms.Z
     omega = atoms.CellVol
 
     LatVecs = atoms.R
