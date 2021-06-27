@@ -5,6 +5,7 @@ Calculate energies for a basis set or one-particle densities.
 import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
+
 from .exc import exc_vwn, exc_vwn_spin
 from .units import ry2ha
 

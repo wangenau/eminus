@@ -2,12 +2,13 @@
 '''
 Basis set depedent operators for DFT calculations in plane-wave basis.
 '''
+from os import environ
+
 import numpy as np
 from scipy.fft import ifftn, fftn
-import os
 
 try:
-    THREADS = int(os.environ['OMP_NUM_THREADS'])
+    THREADS = int(environ['OMP_NUM_THREADS'])
 except KeyError:
     THREADS = 1
 

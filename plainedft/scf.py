@@ -2,15 +2,17 @@
 '''
 Main SCF file with every relevant function.
 '''
+from timeit import default_timer
+
 import numpy as np
 from numpy.linalg import eig, inv, norm
 from numpy.random import randn, seed
 from scipy.linalg import sqrtm
-from timeit import default_timer
-from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
+
+from .energies import get_Ecoul, get_Eewald, get_Ekin, get_Eloc, get_Enonloc, get_Exc
 from .exc import exc_vwn, excp_vwn
-from .utils import Diagprod, dotprod
 from .gth import calc_Vnonloc
+from .utils import Diagprod, dotprod
 
 
 def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):

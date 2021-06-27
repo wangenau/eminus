@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+'''
+Data collections.
+'''
 symbol2number = {
     'H': 1,
     'He': 2,

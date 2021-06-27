@@ -2,7 +2,6 @@
 '''
 Collection of constants and conversions that may be needed throughout the calculation.
 '''
-
 # Ha in eV (https://en.wikipedia.org/wiki/Hartree)
 electronvolt = eV = 27.211386245988
 # Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)

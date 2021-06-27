@@ -2,13 +2,15 @@
 '''
 Defines atoms object that holds every relevant calculation parameters and outputs.
 '''
-import numpy as np
-from numpy.linalg import inv, det
-from scipy.fft import next_fast_len
 from re import sub
-from .operators import O, L, Linv, K, I, J, Idag, Jdag
-from .potentials import init_pot
+
+import numpy as np
+from numpy.linalg import det, inv
+from scipy.fft import next_fast_len
+
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
+from .operators import I, Idag, J, Jdag, K, L, Linv, O
+from .potentials import init_pot
 from .tools import cutoff2gridspacing
 from .utils import center_of_mass
 

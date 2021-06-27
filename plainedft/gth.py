@@ -2,10 +2,12 @@
 '''
 Utilities to calculate GTH pseudopotentials. Phys. Rev. B 54, 1703
 '''
-import numpy as np
-from plainedft import __path__
 from glob import glob
 from os.path import basename
+
+import numpy as np
+
+from plainedft import __path__
 from .utils import Ylm_real
 
 

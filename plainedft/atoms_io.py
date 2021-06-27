@@ -4,11 +4,13 @@ Import and export functionality for Atoms objects.
 '''
 from textwrap import fill
 from time import ctime
-from pickle import dump, load, HIGHEST_PROTOCOL
+from pickle import dump, HIGHEST_PROTOCOL, load
+
+import numpy as np
+
 from .data import symbol2number
 from .units import ang2bohr
 from .version import __version__
-import numpy as np
 
 
 def save_atoms(atoms, filename, clear=False):
