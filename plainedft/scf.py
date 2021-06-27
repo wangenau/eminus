@@ -10,7 +10,7 @@ from timeit import default_timer
 from .energies import get_Ekin, get_Eloc, get_Enonloc, get_Ecoul, get_Exc, get_Eewald
 from .exc import exc_vwn, excp_vwn
 from .utils import Diagprod, dotprod
-from .gth_nonloc import calc_Vnonloc
+from .gth import calc_Vnonloc
 
 
 def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):

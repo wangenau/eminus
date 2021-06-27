@@ -8,9 +8,7 @@ from scipy.fft import next_fast_len
 from re import sub
 from .operators import O, L, Linv, K, I, J, Idag, Jdag
 from .potentials import init_pot
-from .gth_loc import init_gth_loc
-from .gth_nonloc import init_gth_nonloc
-from .read_gth import read_gth
+from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .tools import cutoff2gridspacing
 from .utils import center_of_mass
 
