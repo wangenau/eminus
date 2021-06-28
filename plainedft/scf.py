@@ -42,6 +42,7 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
     else:
         # Start with randomized, complex basis functions with a random seed
         W = guess_random(atoms, complex=True, reproduce=False)
+    W = orth(atoms, W)
 
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
@@ -49,16 +50,12 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
     # Minimization procedure
     start = default_timer()
     if n_sd > 0:
-        W = orth(atoms, W)
         W, Elist = sd(atoms, W, n_sd, etol)
     if n_lm > 0:
-        W = orth(atoms, W)
         W, Elist = lm(atoms, W, n_lm, etol)
     if n_pclm > 0:
-        W = orth(atoms, W)
         W, Elist = pclm(atoms, W, n_pclm, etol)
     if n_cg > 0:
-        W = orth(atoms, W)
         W, Elist = pccg(atoms, W, n_cg, etol, cgform)
     end = default_timer()
 
