@@ -384,7 +384,7 @@ def write_cube(atoms, field, filename):
             data_str = '%+1.5e  ' * S[2] % tuple(field[i * S[2]:(i + 1) * S[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
-            fp.write(fill(data_str, width=90) + '\n\n')
+            fp.write(f'{fill(data_str, width=90)}\n\n')
     return
 
 

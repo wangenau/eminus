@@ -150,12 +150,12 @@ def eval_proj_G(psp, l, iproj, Gm, CellVol):
 
 def read_gth(system, charge=None):
     '''Read GTH files for a given system.'''
-    PSP_PATH = __path__[0] + '/pade_gth/'
+    PSP_PATH = f'{__path__[0]}/pade_gth/'
 
     if charge is not None:
-        f_psp = PSP_PATH + str(system) + '-q' + str(charge) + '.gth'
+        f_psp = f'{PSP_PATH}{system}-q{charge}.gth'
     else:
-        files = glob(PSP_PATH + str(system) + '-*')
+        files = glob(f'{PSP_PATH}{system}-q*')
         try:
             f_psp = files[0]
         except IndexError:
