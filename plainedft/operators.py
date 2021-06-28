@@ -10,7 +10,7 @@ from scipy.fft import ifftn, fftn
 try:
     THREADS = int(environ['OMP_NUM_THREADS'])
 except KeyError:
-    THREADS = 1
+    THREADS = None
 
 
 def O(atoms, inp):
