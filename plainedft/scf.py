@@ -63,6 +63,8 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
     end = default_timer()
 
     # Handle output
+    if abs(Elist[-2] - Elist[-1]) > etol:
+        print('Not converged!')
     if atoms.verbose >= 5:
         print(f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}')
     if atoms.verbose >= 4:
@@ -150,9 +152,7 @@ def sd(atoms, W, Nit, etol):
             if abs(Elist[-2] - Elist[-1]) < etol:
                 print(f'Converged after {i+1} steps.')
                 break
-    if abs(Elist[-2] - Elist[-1]) > etol:
-        print('Not converged!')
-    return W, np.asarray(Elist)
+    return W, Elist
 
 
 def lm(atoms, W, Nit, etol):
@@ -183,9 +183,7 @@ def lm(atoms, W, Nit, etol):
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
-    if abs(Elist[-2] - Elist[-1]) > etol:
-        print('Not converged!')
-    return W, np.asarray(Elist)
+    return W, Elist
 
 
 def pclm(atoms, W, Nit, etol):
@@ -216,9 +214,7 @@ def pclm(atoms, W, Nit, etol):
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
-    if abs(Elist[-2] - Elist[-1]) > etol:
-        print('Not converged!')
-    return W, np.asarray(Elist)
+    return W, Elist
 
 
 def pccg(atoms, W, Nit, etol, cgform=1):
@@ -266,9 +262,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
-    if abs(Elist[-2] - Elist[-1]) > etol:
-        print('Not converged!')
-    return W, np.asarray(Elist)
+    return W, Elist
 
 
 def orth(atoms, W):
