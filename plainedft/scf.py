@@ -117,8 +117,6 @@ def get_E(atoms, W):
     atoms.energies.Enonloc = get_Enonloc(atoms, Y)
     atoms.energies.Ecoul = get_Ecoul(atoms, n)
     atoms.energies.Exc = get_Exc(atoms, n)
-    if atoms.verbose >= 5:
-        print(atoms.energies)
     return atoms.energies.Etot
 
 
@@ -134,21 +132,47 @@ def get_grad(atoms, W):
            atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
+def check_energies(atoms, Elist, etol, linmin=None, cg=None):
+    '''Check the energies for every SCF cycle and handle the output.'''
+    Nit = len(Elist)
+
+    # Output handling
+    if linmin is not None:
+        linmin = f'\tlinmin-test: {linmin:+.7f}'
+    else:
+        linmin = ''
+    if cg is not None:
+        cg = f'\tcg-test: {cg:+.7f}'
+    else:
+        cg = ''
+
+    if atoms.verbose >= 5:
+        print(f'Step: {Nit} {linmin} {cg}\n{atoms.energies}\n')
+    elif atoms.verbose >= 4:
+        print(f'Step: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
+    elif atoms.verbose >= 3:
+        print(f'Step: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
+
+    # Check for convergence
+    if Nit > 1:
+        if abs(Elist[-2] - Elist[-1]) < etol:
+            print(f'Converged after {Nit} steps.')
+            return True
+    return False
+
+
 def sd(atoms, W, Nit, etol):
     '''Steepest descent minimization algorithm.'''
     print('Start steepest descent minimization...')
     Elist = []
     alpha = 3e-5
+
     for i in range(Nit):
         W = W - alpha * get_grad(atoms, W)
         E = get_E(atoms, W)
         Elist.append(E)
-        if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}')
-        if i > 0:
-            if abs(Elist[-2] - Elist[-1]) < etol:
-                print(f'Converged after {i+1} steps.')
-                break
+        if check_energies(atoms, Elist, etol):
+            break
     return W, Elist
 
 
@@ -157,6 +181,8 @@ def lm(atoms, W, Nit, etol):
     print('Start Line minimization...')
     Elist = []
     alphat = 3e-5
+
+    # Do the first step without the linmin test
     g = get_grad(atoms, W)
     d = -g
     gt = get_grad(atoms, W + alphat * d)
@@ -164,8 +190,8 @@ def lm(atoms, W, Nit, etol):
     W = W + alpha * d
     E = get_E(atoms, W)
     Elist.append(E)
-    if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
+    check_energies(atoms, Elist, etol)
+
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -175,10 +201,7 @@ def lm(atoms, W, Nit, etol):
         W = W + alpha * d
         E = get_E(atoms, W)
         Elist.append(E)
-        if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}\tlinmin-test: {linmin:+.7f}')
-        if abs(Elist[-2] - Elist[-1]) < etol:
-            print(f'Converged after {i+1} steps.')
+        if check_energies(atoms, Elist, etol, linmin):
             break
     return W, Elist
 
@@ -188,6 +211,8 @@ def pclm(atoms, W, Nit, etol):
     print('Start preconditioned line minimization...')
     Elist = []
     alphat = 3e-5
+
+    # Do the first step without the linmin test
     g = get_grad(atoms, W)
     d = -atoms.K(g)
     gt = get_grad(atoms, W + alphat * d)
@@ -195,8 +220,8 @@ def pclm(atoms, W, Nit, etol):
     W = W + alpha * d
     E = get_E(atoms, W)
     Elist.append(E)
-    if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
+    check_energies(atoms, Elist, etol)
+
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -206,10 +231,7 @@ def pclm(atoms, W, Nit, etol):
         W = W + alpha * d
         E = get_E(atoms, W)
         Elist.append(E)
-        if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}\tlinmin-test: {linmin:+.7f}')
-        if abs(Elist[-2] - Elist[-1]) < etol:
-            print(f'Converged after {i+1} steps.')
+        if check_energies(atoms, Elist, etol, linmin):
             break
     return W, Elist
 
@@ -219,6 +241,8 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     print('Start preconditioned conjugate-gradient minimization...')
     Elist = []
     alphat = 3e-5
+
+    # Do the first step without the linmin and cg test
     g = get_grad(atoms, W)
     d = -atoms.K(g)
     gt = get_grad(atoms, W + alphat * d)
@@ -228,8 +252,8 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     gold = g
     E = get_E(atoms, W)
     Elist.append(E)
-    if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
+    check_energies(atoms, Elist, etol)
+
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
@@ -243,21 +267,13 @@ def pccg(atoms, W, Nit, etol, cgform=1):
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
         gt = get_grad(atoms, W + alphat * d)
-        # FIXME: This feels wrong
-        # If this becomes zero, the result will become nonsense
-        if abs(dotprod(g - gt, d)) == 0:
-            break
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
         dold = d
         gold = g
         E = get_E(atoms, W)
         Elist.append(E)
-        if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}'
-                  f'\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
-        if abs(Elist[-2] - Elist[-1]) < etol:
-            print(f'Converged after {i+1} steps.')
+        if check_energies(atoms, Elist, etol, linmin, cg):
             break
     return W, Elist
 
