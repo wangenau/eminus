@@ -15,13 +15,12 @@ def init_gth_loc(atoms):
     '''Initialize parameters to calculate local contributions of GTH pseudopotentials.'''
     G2 = atoms.G2
     atom = atoms.atom
-    species = list(set(atom))
-    Nspecies = len(species)
+    species = set(atom)
 
     Vsp = np.zeros(len(G2))  # Potential for every species
     Vloc = np.zeros(len(G2))  # Total local potential
-    for isp in range(Nspecies):
-        psp = atoms.GTH[species[isp]]
+    for isp in species:
+        psp = atoms.GTH[isp]
         rloc = psp['rlocal']
         Zion = psp['Zval']
         C1 = psp['C'][0]
@@ -42,7 +41,7 @@ def init_gth_loc(atoms):
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
         for ia in range(len(atom)):
-            if atom[ia] == species[isp]:
+            if atom[ia] == isp:
                 Sf += atoms.Sf[ia]
         Vloc += np.real(atoms.J(Vsp * Sf))
     return Vloc
@@ -150,12 +149,12 @@ def eval_proj_G(psp, l, iproj, Gm, CellVol):
 
 def read_gth(system, charge=None):
     '''Read GTH files for a given system.'''
-    PSP_PATH = f'{__path__[0]}/pade_gth/'
+    psp_path = f'{__path__[0]}/pade_gth/'
 
     if charge is not None:
-        f_psp = f'{PSP_PATH}{system}-q{charge}.gth'
+        f_psp = f'{psp_path}{system}-q{charge}.gth'
     else:
-        files = glob(f'{PSP_PATH}{system}-q*')
+        files = glob(f'{psp_path}{system}-q*')
         try:
             f_psp = files[0]
         except IndexError:
