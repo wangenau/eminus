@@ -77,7 +77,8 @@ class Atoms:
             Default: 'gth'
 
         center : bool
-            Center the system inside the box by its geometric center of mass.
+            Center the system inside the box by its geometric center of mass and rotate it such
+            that its geometric moment of inertia aligns with the coordinate axes.
             Default: False
 
         spinpol : bool
@@ -185,7 +186,7 @@ class Atoms:
             self.cutcoul = np.sqrt(3) * self.a
 
         # Center molecule by its geometric center of mass in the unit cell
-        # Also rotate it, such that the geometric inertia tensor will be diagonal
+        # Also rotate it such that the geometric inertia tensor will be diagonal
         if self.center:
             # Shift to center of the box
             X = self.X
