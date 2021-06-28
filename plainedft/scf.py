@@ -158,6 +158,8 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {Nit} steps.')
             return True
+        if Elist[-1] > Elist[-2]:
+            print('WARNING: Energy is not decreasing.')
     return False
 
 
