@@ -26,11 +26,11 @@ def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, et
         # Start with gaussians at atom positions
         W = guess_gaussian(atoms)
     else:
-        # Start with randomized, complex basis functions
-        W = guess_random(atoms, complex=True)
+        # Start with randomized, complex basis functions with a set random seed
+        W = guess_random(atoms, complex=True, reproduce=True)
 
     # Calculate ewald energy
-    atoms.eewald = get_Eewald(atoms)
+    atoms.energies.Eewald = get_Eewald(atoms)
 
     # Minimization procedure
     start = default_timer()
@@ -48,26 +48,17 @@ def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, et
         W, Elist = pccg(atoms, W, n_cg, etol, cgform)
     end = default_timer()
 
-    # Handle energies and output
-    Eel = Elist[-1]
-    Etot = Eel + atoms.eewald
+    # Handle output
     if atoms.verbose >= 5:
         print(f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}')
     if atoms.verbose >= 4:
         print(f'Time spent: {end - start:.5f}s')
-    if atoms.verbose >= 3:
-        get_E(atoms, W, True)
-        print(f'Electronic energy:           {Eel:+.9f} Eh')
-        print(f'Ewald energy:                {atoms.eewald:+.9f} Eh')
-    print(f'Total energy:                {Etot:+.9f} Eh')
+    print('Energy contributions:')
+    print(atoms.energies)
 
-    # Save calculation parameters
-    W = orth(atoms, W)
-    atoms.W = W
-    atoms.psi, atoms.estate = get_psi(atoms, W)  # Save wave functions and energies
-    atoms.n = get_n_total(atoms, W)  # Save electronic density
-    atoms.etot = Etot  # Save total energy
-    return
+    # Save basis functions
+    atoms.W = orth(atoms, W)
+    return atoms.energies.Etot
 
 
 def H(atoms, W):
@@ -79,8 +70,7 @@ def H(atoms, W):
     excp = excp_vwn(n)
     Vdual = atoms.Vloc
 
-    Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + \
-           excp * atoms.Jdag(atoms.O(atoms.J(n)))
+    Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
     if atoms.cutcoul is not None:
         Rc = atoms.cutcoul
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
@@ -102,22 +92,18 @@ def Q(inp, U):
     return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
 
 
-def get_E(atoms, W, out=False):
+def get_E(atoms, W):
     '''Calculate the sum of energies over Ns states.'''
     Y = orth(atoms, W)
     n = get_n_total(atoms, Y)
-    Ekin = get_Ekin(atoms, Y)
-    Eloc = get_Eloc(atoms, n)
-    Enonloc = get_Enonloc(atoms, Y)
-    Ecoul = get_Ecoul(atoms, n)
-    Exc = get_Exc(atoms, n)
-    if atoms.verbose >= 5 or out:
-        print(f'Kinetic energy:              {Ekin:+.9f} Eh')
-        print(f'Local potential energy:      {Eloc:+.9f} Eh')
-        print(f'Non-local potential energy:  {Enonloc:+.9f} Eh')
-        print(f'Coulomb energy:              {Ecoul:+.9f} Eh')
-        print(f'Exchange-correlation energy: {Exc:+.9f} Eh')
-    return Ekin + Eloc + Enonloc + Ecoul + Exc
+    atoms.energies.Ekin = get_Ekin(atoms, Y)
+    atoms.energies.Eloc = get_Eloc(atoms, n)
+    atoms.energies.Enonloc = get_Enonloc(atoms, Y)
+    atoms.energies.Ecoul = get_Ecoul(atoms, n)
+    atoms.energies.Exc = get_Exc(atoms, n)
+    if atoms.verbose >= 5:
+        print(atoms.energies)
+    return atoms.energies.Etot
 
 
 def get_grad(atoms, W):
@@ -142,7 +128,7 @@ def sd(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}')
         if i > 0:
             if abs(Elist[-2] - Elist[-1]) < etol:
                 print(f'Converged after {i+1} steps.')
@@ -165,7 +151,7 @@ def lm(atoms, W, Nit, etol):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -176,7 +162,7 @@ def lm(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -198,7 +184,7 @@ def pclm(atoms, W, Nit, etol):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -209,7 +195,7 @@ def pclm(atoms, W, Nit, etol):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}\tlinmin-test: {linmin:+.7f}')
+            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}\tlinmin-test: {linmin:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')
             break
@@ -233,7 +219,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     E = get_E(atoms, W)
     Elist.append(E)
     if atoms.verbose >= 3:
-        print(f'Nit: 1  \tEtot: {E + atoms.eewald:+.7f}')
+        print(f'Nit: 1  \tEtot: {atoms.energies.Etot:+.7f}')
     for i in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
@@ -258,7 +244,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         E = get_E(atoms, W)
         Elist.append(E)
         if atoms.verbose >= 3:
-            print(f'Nit: {i+1}  \tEtot: {E + atoms.eewald:+.7f}'
+            print(f'Nit: {i+1}  \tEtot: {atoms.energies.Etot:+.7f}'
                   f'\tlinmin-test: {linmin:+.7f} \tcg-test: {cg:+.7f}')
         if abs(Elist[-2] - Elist[-1]) < etol:
             print(f'Converged after {i+1} steps.')

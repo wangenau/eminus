@@ -10,6 +10,37 @@ from .exc import exc_vwn, exc_vwn_spin
 from .units import ry2ha
 
 
+class Energy:
+    '''Energy class to save the SCF results in one place.'''
+    def __init__(self):
+        '''Energy contributions are uninitialized by default.'''
+        self.Ekin = None
+        self.Eloc = None
+        self.Enonloc = None
+        self.Ecoul = None
+        self.Exc = None
+        self.Eewald = None
+
+    @property
+    def Etot(self):
+        '''The total energy is the sum of the energy contributions.'''
+        try:
+            return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald
+        except TypeError:
+            return None
+
+    def __repr__(self):
+        '''Display energy contributions when printing the Energy object.'''
+        kin = f'Kinetic:   {self.Ekin:+.9f} Eh\n'
+        loc = f'Local:     {self.Eloc:+.9f} Eh\n'
+        nonloc = f'Non-local: {self.Enonloc:+.9f} Eh\n'
+        coul = f'Coulomb:   {self.Ecoul:+.9f} Eh\n'
+        xc = f'EXC:       {self.Exc:+.9f} Eh\n'
+        ewald = f'Ewald:     {self.Eewald:+.9f} Eh\n'
+        tot = f'Total:     {self.Etot:+.9f} Eh'
+        return f'{kin}{loc}{nonloc}{coul}{xc}{ewald}{tot}'
+
+
 def get_Ekin(atoms, Y):
     '''Calculate the kinetic energy.'''
     # Arias: Ekin = -0.5 Tr(F Cdag L(C))

@@ -13,6 +13,7 @@ from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
 from .data import symbol2number
+from .energies import Energy
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .operators import I, Idag, J, Jdag, K, L, Linv, O
 from .potentials import init_pot
@@ -126,12 +127,8 @@ class Atoms:
         self.betaNL = None    # Atomic-centered projector functions
 
         # Parameters after SCF calculations
-        self.W = None       # Basis functions
-        self.psi = None     # States
-        self.estate = None  # Energy per state
-        self.n = None       # Electronic density
-        self.eewald = None  # Ewald energy
-        self.etot = None    # Total energy
+        self.W = None             # Basis functions
+        self.energies = Energy()  # Energy object that holds energy contributions
 
     def update(self):
         '''Check inputs and update if no inputs are given.'''
@@ -407,16 +404,8 @@ def write_cube(atoms, field, filename):
     return
 
 
-def save_atoms(atoms, filename, clear=False):
+def save_atoms(atoms, filename):
     '''Save atoms objects into a pickle files.'''
-    # Remove results  from SCF calculations to save some space
-    if clear:
-        atoms.W = None
-        atoms.psi = None
-        atoms.estate = None
-        atoms.n = None
-        atoms.eewald = None
-        atoms.etot = None
     with open(filename, 'wb') as fp:
         dump(atoms, fp, HIGHEST_PROTOCOL)
     return
