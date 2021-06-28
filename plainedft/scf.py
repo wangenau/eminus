@@ -26,8 +26,8 @@ def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, et
         # Start with gaussians at atom positions
         W = guess_gaussian(atoms)
     else:
-        # Start with randomized, complex basis functions with a set random seed
-        W = guess_random(atoms, complex=True, reproduce=True)
+        # Start with randomized, complex basis functions with a random seed
+        W = guess_random(atoms, complex=True, reproduce=False)
 
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
@@ -53,8 +53,11 @@ def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, et
         print(f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}')
     if atoms.verbose >= 4:
         print(f'Time spent: {end - start:.5f}s')
-    print('Energy contributions:')
-    print(atoms.energies)
+    if atoms.verbose >= 3:
+        print('Energy contributions:')
+        print(atoms.energies)
+    else:
+        print(f'Total energy: {atoms.energies.Etot:.9f} Eh')
 
     # Save basis functions
     atoms.W = orth(atoms, W)
@@ -68,15 +71,14 @@ def H(atoms, W):
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     exc = exc_vwn(n)
     excp = excp_vwn(n)
-    Vdual = atoms.Vloc
 
-    Veff = Vdual + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
-    if atoms.cutcoul is not None:
+    Veff = atoms.Vloc + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
+    if atoms.cutcoul is None:
+        Veff += atoms.Jdag(atoms.O(phi))
+    else:
         Rc = atoms.cutcoul
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
         Veff += atoms.Jdag(atoms.O(phi) - correction)
-    else:
-        Veff += atoms.Jdag(atoms.O(phi))
 
     Vkin_psi = -0.5 * atoms.L(W)
     Vnonloc_psi = calc_Vnonloc(atoms, W)
@@ -259,35 +261,34 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_psi(atoms, W):
+def get_psi(atoms, Y):
     '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
-    Y = orth(atoms, W)
     mu = Y.conj().T @ H(atoms, Y)
     epsilon, D = eig(mu)
     return Y @ D, np.real(epsilon)
 
 
-def get_n_total(atoms, W):
+def get_n_total(atoms, Y):
     '''Generate the total electronic density.'''
-    W = W.T
+    Y = Y.T
     n = np.zeros((np.prod(atoms.S), 1))
-    for i in range(W.shape[0]):
-        psi = atoms.I(W[i])
+    for i in range(Y.shape[0]):
+        psi = atoms.I(Y[i])
         n += atoms.f[i] * np.real(psi.conj() * psi)
     return n.T[0]
 
 
-def get_n_single(atoms, W):
+def get_n_single(atoms, Y):
     '''Generate single electronic densities.'''
-    W = W.T
-    n = np.zeros((np.prod(atoms.S), len(W)))
-    for i in range(W.shape[0]):
-        psi = atoms.I(W[i])
+    Y = Y.T
+    n = np.zeros((np.prod(atoms.S), len(Y)))
+    for i in range(Y.shape[0]):
+        psi = atoms.I(Y[i])
         n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
     return n.T
 
 
-def guess_random(atoms, complex=True, reproduce=True):
+def guess_random(atoms, complex=True, reproduce=False):
     '''Generate random coefficents.'''
     if reproduce:
         seed(42)
