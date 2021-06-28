@@ -88,7 +88,7 @@ def check_ortho(atoms, func):
             res = prefactor * np.sum(func[i].conj() * func[j])
             tmp_bool = np.abs(res) < eps
             ortho_bool *= tmp_bool
-            if atoms.verbose > 2:
+            if atoms.verbose >= 3:
                 print(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
     print(f'Orthogonal: {ortho_bool}')
     return ortho_bool
@@ -111,7 +111,7 @@ def check_norm(atoms, func):
         res = prefactor * np.sum(func[i])
         tmp_bool = np.abs(atoms.f[i] - res) < eps
         norm_bool *= tmp_bool
-        if atoms.verbose > 2:
+        if atoms.verbose >= 3:
             print(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
     print(f'Normalized: {norm_bool}')
     return norm_bool
