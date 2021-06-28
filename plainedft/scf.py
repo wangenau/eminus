@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Main SCF file with every relevant function.
+SCF function with every relevant function.
 '''
 from timeit import default_timer
 
@@ -15,8 +15,22 @@ from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
 
-def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, etol=1e-7):
-    '''Main SCF function.'''
+def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1):
+    '''Main SCF function to do direct minimizations.
+
+    Args:
+        atoms :
+
+    Kwargs:
+        guess :
+
+        etol :
+
+        cgform :
+
+    Returns:
+        Total energy as a float.
+    '''
     # Update atoms object at the beginning to ensure correct inputs
     atoms.update()
 
@@ -65,13 +79,14 @@ def SCF(atoms, guess='random', n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1, et
 
 
 def H(atoms, W):
-    '''Left-hand side of our eigenvalue equation.'''
+    '''Left-hand side of the eigenvalue equation.'''
     Y = orth(atoms, W)  # Orthogonalize at the start
     n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     exc = exc_vwn(n)
     excp = excp_vwn(n)
 
+    # Calculate the effective potential, with or without Coulomb truncation
     Veff = atoms.Vloc + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
     if atoms.cutcoul is None:
         Veff += atoms.Jdag(atoms.O(phi))
@@ -95,7 +110,7 @@ def Q(inp, U):
 
 
 def get_E(atoms, W):
-    '''Calculate the sum of energies over Ns states.'''
+    '''Calculate all the energy contributions.'''
     Y = orth(atoms, W)
     n = get_n_total(atoms, Y)
     atoms.energies.Ekin = get_Ekin(atoms, Y)
@@ -269,7 +284,7 @@ def get_psi(atoms, Y):
 
 
 def get_n_total(atoms, Y):
-    '''Generate the total electronic density.'''
+    '''Calculate the total electronic density.'''
     Y = Y.T
     n = np.zeros((np.prod(atoms.S), 1))
     for i in range(Y.shape[0]):
@@ -279,7 +294,7 @@ def get_n_total(atoms, Y):
 
 
 def get_n_single(atoms, Y):
-    '''Generate single electronic densities.'''
+    '''Calculate the single electronic densities.'''
     Y = Y.T
     n = np.zeros((np.prod(atoms.S), len(Y)))
     for i in range(Y.shape[0]):
@@ -289,7 +304,7 @@ def get_n_single(atoms, Y):
 
 
 def guess_random(atoms, complex=True, reproduce=False):
-    '''Generate random coefficents.'''
+    '''Generate random coefficents as starting values.'''
     if reproduce:
         seed(42)
     if complex:
@@ -299,7 +314,7 @@ def guess_random(atoms, complex=True, reproduce=False):
 
 
 def guess_gaussian(atoms):
-    '''Generate inital-guess coefficents using normalized Gaussians.'''
+    '''Generate inital-guess coefficents using normalized Gaussians as starting values.'''
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
 
