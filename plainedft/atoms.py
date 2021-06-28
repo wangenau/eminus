@@ -280,6 +280,17 @@ class Atoms:
             if mod != 0:
                 self.f[-1] = mod
 
+    def __repr__(self):
+        '''Display informations when printing the Atoms object.'''
+        atom = self.atom
+        X = self.X
+        Z = self.Z
+
+        out = 'Atom\tCharge\tPosition'
+        for i in range(len(X)):
+            out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i][0]:10.5f}  {X[i][1]:10.5f}  {X[i][2]:10.5f}'
+        return out
+
     def O(self, inp):
         '''Overlap operator.'''
         return O(self, inp)
