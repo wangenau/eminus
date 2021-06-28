@@ -9,14 +9,14 @@ from textwrap import fill
 from time import ctime
 
 import numpy as np
-from numpy.linalg import det, inv
+from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
 from .data import symbol2number
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .operators import I, Idag, J, Jdag, K, L, Linv, O
 from .potentials import init_pot
-from .tools import center_of_mass, cutoff2gridspacing
+from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 from .units import ang2bohr
 from .version import __version__
 
@@ -185,10 +185,17 @@ class Atoms:
             self.cutcoul = np.sqrt(3) * self.a
 
         # Center molecule by its geometric center of mass in the unit cell
+        # Also rotate it, such that the geometric inertia tensor will be diagonal
         if self.center:
-            X = np.asarray(self.X)
+            # Shift to center of the box
+            X = self.X
             com = center_of_mass(X)
-            self.X = X - (com - self.a / 2)
+            X = X - (com - self.a / 2)
+
+            # Rotate the system
+            I = inertia_tensor(X)
+            _, eigvecs = eig(I)
+            self.X = np.dot(inv(eigvecs), X.T).T
 
         # Build a cubic unit cell and calculate its volume
         R = self.a * np.eye(3)
