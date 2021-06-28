@@ -34,6 +34,20 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
     # Update atoms object at the beginning to ensure correct inputs
     atoms.update()
 
+    # Print some useful informations
+    if atoms.verbose >= 3:
+        print(f'--- System data ---\n{atoms}\n')
+    if atoms.verbose >= 4:
+        print(f'--- Cell data ---\nSide lengths: {atoms.a} Bohr\n'
+              f'Cut-off energy: {atoms.ecut} Hartree\n'
+              f'Sampling per axis: ({atoms.S[0]}, {atoms.S[1]}, {atoms.S[2]})\n')
+        print(f'--- Calculation data ---\nSpin polarization: {atoms.spinpol}\n'
+              f'Number of states: {atoms.Ns}\n'
+              f'Occupation per state: {atoms.f}\n'
+              f'Potential: {atoms.pot}\n'
+              f'Non-local contribution: {atoms.NbetaNL > 0}\n'
+              f'Coulomb-truncation: {atoms.cutcoul is not None}\n')
+
     # Set up basis functions
     guess = guess.lower()
     if guess == 'gauss' or guess == 'gaussian':
@@ -159,7 +173,7 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
             print(f'Converged after {Nit} steps.')
             return True
         if Elist[-1] > Elist[-2]:
-            print('WARNING: Energy is not decreasing.')
+            print('WARNING: Total energy is not decreasing.')
     return False
 
 
