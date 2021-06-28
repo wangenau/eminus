@@ -97,7 +97,10 @@ def get_Eewald(atoms):
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality-term
     # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
     # Note: This code calculates the energy in Rydberg, so the equations are off
-    # ba a factor 2
+    # by a factor 2
+    if atoms.cutcoul is not None:
+        return 0
+
     Natoms = len(atoms.X)
     tau = atoms.X
     Zvals = atoms.Z
