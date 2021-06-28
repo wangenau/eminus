@@ -19,14 +19,29 @@ def gridspacing2cutoff(h):
     return 0.5 * (np.pi / h)**2
 
 
-def center_of_mass(coords, weights=None):
-    '''Calculate the center of mass for a list of points and their weights.'''
-    if not isinstance(weights, (list, np.ndarray)):
-        weights = [1] * len(coords)
-    com = np.full(len(coords[0]), 0, dtype=float)
-    for i in range(len(coords)):
-        com += coords[i] * weights[i]
-    return com / sum(weights)
+def center_of_mass(coords, masses=None):
+    '''Calculate the center of mass for a set of coordinates and masses.'''
+    if masses is None:
+        masses = np.ones(len(coords))
+
+    return np.sum(masses * coords.T, axis=1) / np.sum(masses)
+
+
+def inertia_tensor(coords, masses=None):
+    '''Calculate the inertia tensor for a set of coordinates and masses.'''
+    if masses is None:
+        masses = np.ones(len(coords))
+
+    # For the definition see https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
+    I = np.zeros((3, 3))
+    I[0][0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
+    I[1][1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
+    I[2][2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))
+
+    I[0][1] = I[1][0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
+    I[0][2] = I[2][0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
+    I[1][2] = I[2][1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
+    return I
 
 
 def get_dipole(atoms):
