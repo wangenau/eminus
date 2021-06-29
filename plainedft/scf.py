@@ -20,19 +20,51 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
 
     Args:
         atoms :
+            Atoms object.
 
     Kwargs:
-        guess :
+        guess : str
+            Initial guess method for the basis functions (case insensitive).
+            Example: 'Gauss', 'gaussian', 'random', 'rand'
+            Default: 'random'
 
-        etol :
+        etol : float
+            Convergence tolerance of the total energy.
+            Default: 1e-7
 
-        min :
+        min : dict
+            Dictionary to set the maximum amount of steps per minimization method and their order.
+            Example: {'sd': 10, 'pccg': 100}
+            Default: {'pccg': 100}
 
-        cgform :
+        cgform : int
+            Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
+            1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
+            Default: 1
 
     Returns:
         Total energy as a float.
     '''
+    # Map minimization names and functions, also use this dict to save times and iterations
+    minimizer = {
+        'sd': {
+            'func': sd,
+            'name': 'steepest descent minimization'
+        },
+        'lm': {
+            'func': lm,
+            'name': 'line minimization'
+        },
+        'pclm': {
+            'func': pclm,
+            'name': 'preconditioned line minimization'
+        },
+        'pccg': {
+            'func': pccg,
+            'name': 'preconditioned conjugate-gradient minimization'
+        }
+    }
+
     # Update atoms object at the beginning to ensure correct inputs
     atoms.update()
 
@@ -56,33 +88,13 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     if guess == 'gauss' or guess == 'gaussian':
         # Start with gaussians at atom positions
         W = guess_gaussian(atoms)
-    else:
+    elif guess == 'rand' or guess == 'random':
         # Start with randomized, complex basis functions with a random seed
         W = guess_random(atoms, complex=True, reproduce=False)
     W = orth(atoms, W)
 
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
-
-    # Map minimization names and functions, also use thsidict to save times and iterations
-    minimizer = {
-        'sd': {
-            'func': sd,
-            'name': 'steepest descent minimization'
-        },
-        'lm': {
-            'func': lm,
-            'name': 'line minimization'
-        },
-        'pclm': {
-            'func': pclm,
-            'name': 'preconditioned line minimization'
-        },
-        'pccg': {
-            'func': pccg,
-            'name': 'preconditioned conjugate-gradient minimization'
-        }
-    }
 
     # Start minimization procedures
     print('--- SCF data ---')
@@ -197,11 +209,11 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
         cg = ''
 
     if atoms.verbose >= 5:
-        print(f'Step: {Nit} {linmin} {cg}\n{atoms.energies}\n')
+        print(f'Iteration: {Nit} {linmin} {cg}\n{atoms.energies}\n')
     elif atoms.verbose >= 4:
-        print(f'Step: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
+        print(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
     elif atoms.verbose >= 3:
-        print(f'Step: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
+        print(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
 
     # Check for convergence
     if Nit > 1:
@@ -306,11 +318,11 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
         cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) *
              dotprod(gold, atoms.K(gold)))
-        if cgform == 1:
+        if cgform == 1:  # Fletcher-Reeves
             beta = dotprod(g, atoms.K(g)) / dotprod(gold, atoms.K(gold))
-        elif cgform == 2:
+        elif cgform == 2:  # Polak-Ribiere
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(gold, atoms.K(gold))
-        elif cgform == 3:
+        elif cgform == 3:  # Hestenes-Stiefel
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
         gt = get_grad(atoms, W + alphat * d)
