@@ -15,7 +15,7 @@ from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
 
-def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, cgform=1):
+def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     '''Main SCF function to do direct minimizations.
 
     Args:
@@ -25,6 +25,8 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
         guess :
 
         etol :
+
+        min :
 
         cgform :
 
@@ -36,17 +38,18 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
 
     # Print some useful informations
     if atoms.verbose >= 3:
-        print(f'--- System data ---\n{atoms}\n')
+        print(f'--- System informations ---\n{atoms}\n')
     if atoms.verbose >= 4:
-        print(f'--- Cell data ---\nSide lengths: {atoms.a} Bohr\n'
+        print(f'--- Cell informations ---\nSide lengths: {atoms.a} Bohr\n'
               f'Cut-off energy: {atoms.ecut} Hartree\n'
               f'Sampling per axis: ({atoms.S[0]}, {atoms.S[1]}, {atoms.S[2]})\n')
-        print(f'--- Calculation data ---\nSpin polarization: {atoms.spinpol}\n'
+        print(f'--- Calculation informations ---\nSpin polarization: {atoms.spinpol}\n'
               f'Number of states: {atoms.Ns}\n'
               f'Occupation per state: {atoms.f}\n'
               f'Potential: {atoms.pot}\n'
               f'Non-local contribution: {atoms.NbetaNL > 0}\n'
-              f'Coulomb-truncation: {atoms.cutcoul is not None}\n')
+              f'Coulomb-truncation: {atoms.cutcoul is not None}\n'
+              f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
 
     # Set up basis functions
     guess = guess.lower()
@@ -61,32 +64,65 @@ def SCF(atoms, guess='random', etol=1e-7, n_sd=10, n_lm=0, n_pclm=0, n_cg=100, c
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
 
-    # Minimization procedure
-    start = default_timer()
-    if n_sd > 0:
-        W, Elist = sd(atoms, W, n_sd, etol)
-    if n_lm > 0:
-        W, Elist = lm(atoms, W, n_lm, etol)
-    if n_pclm > 0:
-        W, Elist = pclm(atoms, W, n_pclm, etol)
-    if n_cg > 0:
-        W, Elist = pccg(atoms, W, n_cg, etol, cgform)
-    end = default_timer()
+    # Map minimization names and functions, also use thsidict to save times and iterations
+    minimizer = {
+        'sd': {
+            'func': sd,
+            'name': 'steepest descent minimization'
+        },
+        'lm': {
+            'func': lm,
+            'name': 'line minimization'
+        },
+        'pclm': {
+            'func': pclm,
+            'name': 'preconditioned line minimization'
+        },
+        'pccg': {
+            'func': pccg,
+            'name': 'preconditioned conjugate-gradient minimization'
+        }
+    }
 
-    # Handle output
-    if abs(Elist[-2] - Elist[-1]) > etol:
-        print('Not converged!')
-    if atoms.verbose >= 5:
-        print(f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}')
-    if atoms.verbose >= 4:
-        print(f'Time spent: {end - start:.5f}s')
+    # Start minimization procedures
+    print('--- SCF data ---')
+    Etots = []
+    for imin in min:
+        start = default_timer()
+        print(f'Start {minimizer[imin]["name"]}...')
+        W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
+        end = default_timer()
+        minimizer[imin]['time'] = end - start
+        minimizer[imin]['iteration'] = len(Elist)
+        Etots += Elist
+    if abs(Etots[-2] - Etots[-1]) < etol:
+        print(f'SCF converged after {len(Etots)} iterations.\n')
+    else:
+        print('SCF not converged!\n')
+
+    # Print SCF data
     if atoms.verbose >= 3:
-        print('Energy contributions:')
-        print(atoms.energies)
+        print('--- SCF results ---')
+        t_total = 0
+        for imin in min:
+            N = minimizer[imin]['iteration']
+            t = minimizer[imin]['time']
+            t_total += t
+            if atoms.verbose >= 4:
+                print(f'Minimizer: {imin}\n'
+                      f'\tIterations:\t{N}\n'
+                      f'\tTime:\t\t{t:.5f} s\n'
+                      f'\tTime/Iteration:\t{t / N:.5f} s')
+        print(f'Total SCF time: {t_total:.5f} s\n')
+
+    # Print energy data
+    print('--- Energy data ---')
+    if atoms.verbose >= 3:
+        print(f'{atoms.energies}')
     else:
         print(f'Total energy: {atoms.energies.Etot:.9f} Eh')
 
-    # Save basis functions
+    # Save basis functions to reuse them later
     atoms.W = orth(atoms, W)
     return atoms.energies.Etot
 
@@ -170,16 +206,14 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     # Check for convergence
     if Nit > 1:
         if abs(Elist[-2] - Elist[-1]) < etol:
-            print(f'Converged after {Nit} steps.')
             return True
         if Elist[-1] > Elist[-2]:
             print('WARNING: Total energy is not decreasing.')
     return False
 
 
-def sd(atoms, W, Nit, etol):
+def sd(atoms, W, Nit, etol, **kwargs):
     '''Steepest descent minimization algorithm.'''
-    print('Start steepest descent minimization...')
     Elist = []
     alpha = 3e-5
 
@@ -192,9 +226,8 @@ def sd(atoms, W, Nit, etol):
     return W, Elist
 
 
-def lm(atoms, W, Nit, etol):
+def lm(atoms, W, Nit, etol, **kwargs):
     '''Line minimization algorithm.'''
-    print('Start Line minimization...')
     Elist = []
     alphat = 3e-5
 
@@ -222,9 +255,8 @@ def lm(atoms, W, Nit, etol):
     return W, Elist
 
 
-def pclm(atoms, W, Nit, etol):
+def pclm(atoms, W, Nit, etol, **kwargs):
     '''Preconditioned line minimization algorithm.'''
-    print('Start preconditioned line minimization...')
     Elist = []
     alphat = 3e-5
 
@@ -254,7 +286,6 @@ def pclm(atoms, W, Nit, etol):
 
 def pccg(atoms, W, Nit, etol, cgform=1):
     '''Preconditioned conjugate-gradient algorithm.'''
-    print('Start preconditioned conjugate-gradient minimization...')
     Elist = []
     alphat = 3e-5
 
