@@ -185,15 +185,15 @@ class Atoms:
         # Center molecule by its geometric center of mass in the unit cell
         # Also rotate it such that the geometric inertia tensor will be diagonal
         if self.center:
-            # Shift to center of the box
-            X = self.X
-            com = center_of_mass(X)
-            X = X - (com - self.a / 2)
-
             # Rotate the system
+            X = self.X
             I = inertia_tensor(X)
             _, eigvecs = eig(I)
-            self.X = np.dot(inv(eigvecs), X.T).T
+            X = np.dot(inv(eigvecs), X.T).T
+
+            # Shift to center of the box
+            com = center_of_mass(X)
+            self.X = X - (com - self.a / 2)
 
         # Build a cubic unit cell and calculate its volume
         R = self.a * np.eye(3)
