@@ -6,7 +6,7 @@ import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
 
-from .exc import exc_vwn, exc_vwn_spin
+from .exc import lda_vwn_c, lda_vwn_x, lda_vwn_spin
 from .units import ry2ha
 
 
@@ -64,9 +64,9 @@ def get_Exc(atoms, n, spinpol=False):
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
         # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
-        exc = exc_vwn_spin(n, np.ones((n.shape)))
+        exc = lda_vwn_spin(n, np.ones((n.shape)))
     else:
-        exc = exc_vwn(n)
+        exc = lda_vwn_x(n)[0] + lda_vwn_c(n)[0]
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 

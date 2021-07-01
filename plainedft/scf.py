@@ -10,7 +10,7 @@ from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 
 from .energies import get_Ecoul, get_Eewald, get_Ekin, get_Eloc, get_Enonloc, get_Exc
-from .exc import exc_vwn, excp_vwn
+from .exc import lda_vwn_c, lda_vwn_x
 from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
@@ -144,8 +144,8 @@ def H(atoms, W):
     Y = orth(atoms, W)  # Orthogonalize at the start
     n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    exc = exc_vwn(n)
-    excp = excp_vwn(n)
+    exc = lda_vwn_x(n)[0] + lda_vwn_c(n)[0]
+    excp = lda_vwn_x(n)[1] + lda_vwn_c(n)[1]
 
     # Calculate the effective potential, with or without Coulomb truncation
     Veff = atoms.Vloc + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
