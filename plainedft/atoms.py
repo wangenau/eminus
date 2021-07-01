@@ -128,6 +128,7 @@ class Atoms:
 
         # Parameters after SCF calculations
         self.W = None             # Basis functions
+        self.n = None             # Electronic density
         self.energies = Energy()  # Energy object that holds energy contributions
 
     def update(self):

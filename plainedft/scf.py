@@ -134,8 +134,9 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     else:
         print(f'Total energy: {atoms.energies.Etot:.9f} Eh')
 
-    # Save basis functions to reuse them later
+    # Save basis functions and density to reuse them later
     atoms.W = orth(atoms, W)
+    atoms.n = get_n_total(atoms, atoms.W)
     return atoms.energies.Etot
 
 
