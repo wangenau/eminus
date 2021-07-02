@@ -51,5 +51,5 @@ def init_pot(atoms):
     try:
         pot = implemented[atoms.pot]
     except KeyError:
-        print(f'ERROR: No potential found for \'{atoms.pot}\'')
+        print(f'ERROR: No potential found for "{atoms.pot}"')
     return pot(atoms)

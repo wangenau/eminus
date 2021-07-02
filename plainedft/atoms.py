@@ -341,7 +341,7 @@ def read_xyz(filename):
     # The second line can contain a comment, print it if available
     comment = lines[1].strip()
     if comment:
-        print(f'XYZ file comment: \'{comment}\'')
+        print(f'XYZ file comment: "{comment}"')
     atom = []
     X = []
     # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
