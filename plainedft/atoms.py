@@ -91,6 +91,7 @@ class Atoms:
             theoretical minimum of sqrt(3)*a.
             Default: None
     '''
+
     def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
                  pot='gth', center=False, spinpol=False, cutcoul=None):
         '''Initialize and update the atoms object.'''

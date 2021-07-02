@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-PlaineDFT by wangenau
+PlaineDFT by wangenau.
 
 Minimal usage example to do a DFT calculation for Hydrogen:
 $ from plainedft import *

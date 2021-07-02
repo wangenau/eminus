@@ -12,6 +12,7 @@ from .units import ry2ha
 
 class Energy:
     '''Energy class to save the SCF results in one place.'''
+
     def __init__(self):
         '''Energy contributions are uninitialized by default.'''
         self.Ekin = None
@@ -23,7 +24,7 @@ class Energy:
 
     @property
     def Etot(self):
-        '''The total energy is the sum of the energy contributions.'''
+        '''Total energy is the sum of the energy contributions.'''
         try:
             return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald
         except TypeError:

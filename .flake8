@@ -1,5 +1,6 @@
 [flake8]
 max-line-length = 100
+max-doc-length  = 100
 ignore = E126, E127, E128, \  # Over- and under-indentation
          E741, E743, \        # Ambiguous variable names and function definitions
          W504                 # Line break after binary operator

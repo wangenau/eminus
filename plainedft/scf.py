@@ -16,7 +16,7 @@ from .utils import Diagprod, dotprod
 
 
 def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
-    '''Main SCF function to do direct minimizations.
+    '''SCF function to handle direct minimizations.
 
     Args:
         atoms :

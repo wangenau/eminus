@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Utilities to calculate GTH pseudopotentials. Phys. Rev. B 54, 1703
+Utilities to calculate GTH pseudopotentials. Phys. Rev. B 54, 1703.
 '''
 from glob import glob
 from os.path import basename

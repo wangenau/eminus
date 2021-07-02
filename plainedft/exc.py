@@ -104,7 +104,7 @@ def lda_vwn_spin(n, zeta):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
-    ''''Implements eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
+    '''Implement eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
     # Pade fit calculated in x and its derivative with respect to rho
     # rs = inv((rho*)^(1/3)) = x^2
     sqx = x * x                   # x^2 = r_s
