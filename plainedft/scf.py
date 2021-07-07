@@ -10,12 +10,12 @@ from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 
 from .energies import get_Ecoul, get_Eewald, get_Ekin, get_Eloc, get_Enonloc, get_Exc
-from .exc import lda_slater_x, lda_vwn_c
+from .exc import get_exc
 from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
 
-def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
+def SCF(atoms, exc='lda,vwn', guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     '''SCF function to handle direct minimizations.
 
     Args:
@@ -23,9 +23,14 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
             Atoms object.
 
     Kwargs:
+        exc : str
+            Exchange-correlation functional description (case insensitive).
+            Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','
+            Default: 'lda,vwn'
+
         guess : str
             Initial guess method for the basis functions (case insensitive).
-            Example: 'Gauss', 'gaussian', 'random', 'rand'
+            Example: 'Gauss'; 'gaussian'; 'random'; 'rand'
             Default: 'random'
 
         etol : float
@@ -34,7 +39,7 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
 
         min : dict
             Dictionary to set the maximum amount of steps per minimization method and their order.
-            Example: {'sd': 10, 'pccg': 100}
+            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50}
             Default: {'pccg': 100}
 
         cgform : int
@@ -68,8 +73,11 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     # Update atoms object at the beginning to ensure correct inputs
     atoms.update()
 
+    exc = exc.lower()
+    guess = guess.lower()
+
     # Print some useful informations
-    if atoms.verbose >= 3:
+    if atoms.verbose >= 4:
         print(f'--- System informations ---\n{atoms}\n')
     if atoms.verbose >= 4:
         print(f'--- Cell informations ---\nSide lengths: {atoms.a} Bohr\n'
@@ -81,10 +89,11 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
               f'Potential: {atoms.pot}\n'
               f'Non-local contribution: {atoms.NbetaNL > 0}\n'
               f'Coulomb-truncation: {atoms.cutcoul is not None}\n'
+              f'XC functional: {exc}\n'
+              f'Starting guess: {guess}\n'
               f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
 
     # Set up basis functions
-    guess = guess.lower()
     if guess == 'gauss' or guess == 'gaussian':
         # Start with gaussians at atom positions
         W = guess_gaussian(atoms)
@@ -102,7 +111,7 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     for imin in min:
         start = default_timer()
         print(f'Start {minimizer[imin]["name"]}...')
-        W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
+        W, Elist = minimizer[imin]['func'](atoms, W, min[imin], exc, etol, cgform=cgform)
         end = default_timer()
         minimizer[imin]['time'] = end - start
         minimizer[imin]['iteration'] = len(Elist)
@@ -140,22 +149,24 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     return atoms.energies.Etot
 
 
-def H(atoms, W):
+def H(atoms, W, exc):
     '''Left-hand side of the eigenvalue equation.'''
     Y = orth(atoms, W)  # Orthogonalize at the start
     n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    exc = lda_slater_x(n)[0] + lda_vwn_c(n)[0]
-    excp = lda_slater_x(n)[1] + lda_vwn_c(n)[1]
+
+    # Calculate the exchange-correlation potential
+    # We get the full potential in the functinal definition, unlike in the Arias notation
+    vxc = get_exc(exc, n, atoms.spinpol)[1]
+    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
 
     # Calculate the effective potential, with or without Coulomb truncation
-    Veff = atoms.Vloc + atoms.Jdag(atoms.O(atoms.J(exc))) + excp * atoms.Jdag(atoms.O(atoms.J(n)))
     if atoms.cutcoul is None:
-        Veff += atoms.Jdag(atoms.O(phi))
+        Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     else:
         Rc = atoms.cutcoul
         correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
-        Veff += atoms.Jdag(atoms.O(phi) - correction)
+        Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi) - correction)
 
     Vkin_psi = -0.5 * atoms.L(W)
     Vnonloc_psi = calc_Vnonloc(atoms, W)
@@ -183,11 +194,11 @@ def get_E(atoms, W):
     return atoms.energies.Etot
 
 
-def get_grad(atoms, W):
+def get_grad(atoms, W, exc):
     '''Calculate the energy gradient with respect to W.'''
     U = W.conj().T @ atoms.O(W)
     invU = inv(U)
-    HW = H(atoms, W)
+    HW = H(atoms, W, exc)
     F = np.diag(atoms.f)
     U12 = sqrtm(inv(U))
     Ht = U12 @ (W.conj().T @ HW) @ U12
@@ -225,13 +236,13 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     return False
 
 
-def sd(atoms, W, Nit, etol, **kwargs):
+def sd(atoms, W, Nit, exc, etol, **kwargs):
     '''Steepest descent minimization algorithm.'''
     Elist = []
     alpha = 3e-5
 
     for i in range(Nit):
-        W = W - alpha * get_grad(atoms, W)
+        W = W - alpha * get_grad(atoms, W, exc)
         E = get_E(atoms, W)
         Elist.append(E)
         if check_energies(atoms, Elist, etol):
@@ -239,15 +250,15 @@ def sd(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def lm(atoms, W, Nit, etol, **kwargs):
+def lm(atoms, W, Nit, exc, etol, **kwargs):
     '''Line minimization algorithm.'''
     Elist = []
     alphat = 3e-5
 
     # Do the first step without the linmin test
-    g = get_grad(atoms, W)
+    g = get_grad(atoms, W, exc)
     d = -g
-    gt = get_grad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d, exc)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
     E = get_E(atoms, W)
@@ -255,10 +266,10 @@ def lm(atoms, W, Nit, etol, **kwargs):
     check_energies(atoms, Elist, etol)
 
     for i in range(1, Nit):
-        g = get_grad(atoms, W)
+        g = get_grad(atoms, W, exc)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d, exc)
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
         E = get_E(atoms, W)
@@ -268,15 +279,15 @@ def lm(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def pclm(atoms, W, Nit, etol, **kwargs):
+def pclm(atoms, W, Nit, exc, etol, **kwargs):
     '''Preconditioned line minimization algorithm.'''
     Elist = []
     alphat = 3e-5
 
     # Do the first step without the linmin test
-    g = get_grad(atoms, W)
+    g = get_grad(atoms, W, exc)
     d = -atoms.K(g)
-    gt = get_grad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d, exc)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
     E = get_E(atoms, W)
@@ -284,10 +295,10 @@ def pclm(atoms, W, Nit, etol, **kwargs):
     check_energies(atoms, Elist, etol)
 
     for i in range(1, Nit):
-        g = get_grad(atoms, W)
+        g = get_grad(atoms, W, exc)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d, exc)
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
         E = get_E(atoms, W)
@@ -297,15 +308,15 @@ def pclm(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def pccg(atoms, W, Nit, etol, cgform=1):
+def pccg(atoms, W, Nit, exc, etol, cgform=1):
     '''Preconditioned conjugate-gradient algorithm.'''
     Elist = []
     alphat = 3e-5
 
     # Do the first step without the linmin and cg test
-    g = get_grad(atoms, W)
+    g = get_grad(atoms, W, exc)
     d = -atoms.K(g)
-    gt = get_grad(atoms, W + alphat * d)
+    gt = get_grad(atoms, W + alphat * d, exc)
     alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
     W = W + alpha * d
     dold = d
@@ -315,7 +326,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     check_energies(atoms, Elist, etol)
 
     for i in range(1, Nit):
-        g = get_grad(atoms, W)
+        g = get_grad(atoms, W, exc)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
         cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) *
              dotprod(gold, atoms.K(gold)))
@@ -326,7 +337,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         elif cgform == 3:  # Hestenes-Stiefel
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + alphat * d, exc)
         alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
         W = W + alpha * d
         dold = d
@@ -343,9 +354,9 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_psi(atoms, Y):
+def get_psi(atoms, Y, exc='lda,vwn'):
     '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
-    mu = Y.conj().T @ H(atoms, Y)
+    mu = Y.conj().T @ H(atoms, Y, exc)
     epsilon, D = eig(mu)
     return Y @ D, np.real(epsilon)
 

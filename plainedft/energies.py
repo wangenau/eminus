@@ -6,7 +6,7 @@ import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
 
-from .exc import lda_slater_x, lda_slater_x_spin, lda_vwn_c, lda_vwn_c_spin
+from .exc import get_exc
 from .units import ry2ha
 
 
@@ -64,10 +64,9 @@ def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.'''
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
-        # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
-        exc = lda_slater_x_spin(n, np.ones((n.shape)))[0] + lda_vwn_c_spin(n, np.ones((n.shape)))[0]
+        exc = get_exc('lda,vwn', n, spinpol=True)[0]
     else:
-        exc = lda_slater_x(n)[0] + lda_vwn_c(n)[0]
+        exc = get_exc('lda,vwn', n, spinpol=False)[0]
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 

@@ -5,6 +5,35 @@ Parametizations of density functionals.
 import numpy as np
 
 
+def get_exc(exc, n, spinpol):
+    '''Get the exchange-correlation functional by an exc string.'''
+    exch, corr = exc.split(',')
+    if spinpol:
+        exc_map = {
+            'lda': lda_slater_x_spin,
+            'pw': lda_pw_c_spin,
+            'vwn': lda_vwn_c_spin
+        }
+        # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
+        ex, vx = exc_map.get(exch, dummy_exc)(n, np.ones((n.shape)))
+        ec, vc = exc_map.get(corr, dummy_exc)(n, np.ones((n.shape)))
+    else:
+        exc_map = {
+            'lda': lda_slater_x,
+            'pw': lda_pw_c,
+            'vwn': lda_vwn_c
+        }
+        ex, vx = exc_map.get(exch, dummy_exc)(n)
+        ec, vc = exc_map.get(corr, dummy_exc)(n)
+    return ex + ec, vx + vc
+
+
+def dummy_exc(n, **kwargs):
+    '''Dummy exchange-correlation functional with no effect.'''
+    zero = np.zeros((n.shape))
+    return zero, zero
+
+
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
 def lda_slater_x(n, alpha=2 / 3):
     '''Slater exchange functional (spin paired).'''
@@ -16,8 +45,130 @@ def lda_slater_x(n, alpha=2 / 3):
 
     ex = f * alpha / rs
     vx = p43 * f * alpha / rs
-    # In PWDFT they return Vx that is ex+n*dex/dn, but we need dex/dn, so return (vx-ex)/n instead
-    return ex, (vx - ex) / n
+    return ex, vx
+
+
+# Adapted from
+# https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
+def lda_slater_x_spin(n, zeta, alpha=2 / 3):
+    '''Slater exchange functional (spin polarized).'''
+    third = 1 / 3
+    p43 = 4 / 3
+    f = -9 / 8 * (3 / np.pi)**(1 / 3)
+
+    rho13 = ((1 + zeta) * n)**third
+    exup = f * alpha * rho13
+    vxup = p43 * f * alpha * rho13
+
+    rho13 = ((1 - zeta) * n)**third
+    exdw = f * alpha * rho13
+    vxdw = p43 * f * alpha * rho13
+    ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
+    return ex, [vxup, vxdw]
+
+
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
+def lda_pw_c(n):
+    '''PW parameterization of the correlation functional (spin paired).'''
+    third = 1 / 3
+    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    rs = pi34 / n**third
+
+    a = 0.031091
+    a1 = 0.21370
+    b1 = 7.5957
+    b2 = 3.5876
+    b3 = 1.6382
+    b4 = 0.49294
+
+    rs12 = np.sqrt(rs)
+    rs32 = rs * rs12
+    rs2 = rs**2
+
+    om = 2 * a * (b1 * rs12 + b2 * rs + b3 * rs32 + b4 * rs2)
+    dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
+    olog = np.log(1 + 1 / om)
+    ec = -2 * a * (1 + a1 * rs) * olog
+    vc = -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
+    return ec, vc
+
+
+# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
+def lda_pw_c_spin(n, zeta):
+    '''PW parameterization of the correlation functional (spin polarized).'''
+    third = 1 / 3
+    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    rs = pi34 / n**third
+
+    # Unpolarised parameters
+    a = 0.031091
+    a1 = 0.21370
+    b1 = 7.5957
+    b2 = 3.5876
+    b3 = 1.6382
+    b4 = 0.49294
+
+    # Polarised parameters
+    ap = 0.015545
+    a1p = 0.20548
+    b1p = 14.1189
+    b2p = 6.1977
+    b3p = 3.3662
+    b4p = 0.62517
+
+    # Antiferromagnetic parameters
+    aa = 0.016887
+    a1a = 0.11125
+    b1a = 10.357
+    b2a = 3.6231
+    b3a = 0.88026
+    b4a = 0.49671
+
+    fz0 = 1.709921
+
+    zeta2 = zeta * zeta
+    zeta3 = zeta2 * zeta
+    zeta4 = zeta3 * zeta
+    rs12 = np.sqrt(rs)
+    rs32 = rs * rs12
+    rs2 = rs**2
+
+    # Unpolarised
+    om = 2 * a * (b1 * rs12 + b2 * rs + b3 * rs32 + b4 * rs2)
+    dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
+    olog = np.log(1 + 1 / om)
+    epwc = -2 * a * (1 + a1 * rs) * olog
+    vpwc = -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
+
+    # Polarized
+    omp = 2 * ap * (b1p * rs12 + b2p * rs + b3p * rs32 + b4p * rs2)
+    domp = 2 * ap * (0.5 * b1p * rs12 + b2p * rs + 1.5 * b3p * rs32 + 2 * b4p * rs2)
+    ologp = np.log(1 + 1 / omp)
+    epwcp = -2 * ap * (1 + a1p * rs) * ologp
+    vpwcp = -2 * ap * (1 + 2 / 3 * a1p * rs) * ologp - \
+             2 / 3 * ap * (1 + a1p * rs) * domp / (omp * (omp + 1))
+
+    # Antiferromagnetic
+    oma = 2 * aa * (b1a * rs12 + b2a * rs + b3a * rs32 + b4a * rs2)
+    doma = 2 * aa * (0.5 * b1a * rs12 + b2a * rs + 1.5 * b3a * rs32 + 2 * b4a * rs2)
+    ologa = np.log(1 + 1 / oma)
+    alpha = 2 * aa * (1 + a1a * rs) * ologa
+    vpwca = 2 * aa * (1 + 2 / 3 * a1a * rs) * ologa + \
+            2 / 3 * aa * (1 + a1a * rs) * doma / (oma * (oma + 1))
+
+    fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
+    dfz = ((1 + zeta)**(1 / 3) - (1 - zeta)**(1 / 3)) * 4 / (3 * (2**(4 / 3) - 2))
+
+    ec = epwc + alpha * fz * (1 - zeta4) / fz0 + (epwcp - epwc) * fz * zeta4
+
+    vcup = vpwc + vpwca * fz * (1 - zeta4) / fz0 + (vpwcp - vpwc) * fz * zeta4 + \
+           (alpha / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+           (epwcp - epwc) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
+
+    vcdw = vpwc + vpwca * fz * (1 - zeta4) / fz0 + (vpwcp - vpwc) * fz * zeta4 - \
+           (alpha / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+           (epwcp - epwc) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
+    return ec, [vcup, vcdw]
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
@@ -45,28 +196,7 @@ def lda_vwn_c(n):
     tt = tx * tx + q * q
     vc = ec - rs12 * A / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
          f2 * (2 / (rs12 - x0) - tx / fx - 4.0 * (2 * x0 + b) / tt))
-    # In PWDFT they return Vc that is ec+n*dec/dn, but we need dec/dn, so return (vc-ec)/n instead
-    return ec, (vc - ec) / n
-
-
-# Adapted from
-# https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
-def lda_slater_x_spin(n, zeta, alpha=2 / 3):
-    '''Slater exchange functional (spin polarized).'''
-    third = 1 / 3
-    p43 = 4 / 3
-    f = -9 / 8 * (3 / np.pi)**(1 / 3)
-
-    rho13 = ((1 + zeta) * n)**third
-    exup = f * alpha * rho13
-    vxup = p43 * f * alpha * rho13
-
-    rho13 = ((1 - zeta) * n)**third
-    exdw = f * alpha * rho13
-    vxdw = p43 * f * alpha * rho13
-    ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
-    # FIXME: exp is probably wrong
-    return ex, [(vxup - exup) / n, (vxdw - exdw) / n]
+    return ec, vc
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
@@ -113,13 +243,12 @@ def lda_vwn_c_spin(n, zeta):
 
     vcup = dec1 + (1 - zeta) * dec2
     vcdw = dec1 - (1 + zeta) * dec2
-    # FIXME: ecp is probably wrong
-    return ec, [(vcup - ec) / n, (vcdw - ec) / n]
+    return ec, [vcup, vcdw]
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
-    '''Implement eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
+    '''Implements eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
     # Pade fit calculated in x and its derivative with respect to rho
     # rs = inv((rho*)^(1/3)) = x^2
     sqx = x * x                   # x^2 = r_s

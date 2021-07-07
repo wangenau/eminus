@@ -74,7 +74,7 @@ class Atoms:
 
         pot : str
             Type of pseudopotential (case insensitive).
-            Example: 'GTH', 'harmonic', 'Coulomb', 'Ge'
+            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge'
             Default: 'gth'
 
         center : bool
