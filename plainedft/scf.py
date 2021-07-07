@@ -25,7 +25,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
     Kwargs:
         guess : str
             Initial guess method for the basis functions (case insensitive).
-            Example: 'Gauss'; 'gaussian'; 'random'; 'rand'
+            Example: 'Gauss'; 'gaussian'; 'random'; 'rand'; 'Experimental'; 'exp'
             Default: 'gaussian'
 
         etol : float
@@ -92,6 +92,9 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
     elif guess == 'rand' or guess == 'random':
         # Start with randomized, complex basis functions with a random seed
         W = guess_random(atoms, complex=True, reproduce=False)
+    elif guess == 'exp' or guess == 'experimental':
+        # Start with s-type orbitals. This may work good for small systems.
+        W = guess_experimental(atoms)
 
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
@@ -403,3 +406,23 @@ def guess_gaussian(atoms):
     # Calculate the eigenfunctions
     W, _ = get_psi(atoms, W, n)
     return W * atoms.CellVol / np.prod(atoms.S)
+
+
+def guess_experimental(atoms):
+    '''Generate a s-type basis set.'''
+    eps = 1e-9
+    sigma = 0.5
+    normal = (2 * np.pi * sigma**2)**(3 / 2)
+
+    W = np.zeros((len(atoms.r), atoms.Ns))
+    for ist in range(atoms.Ns):
+        # If we have more states than atoms, start all over again
+        ia = ist % len(atoms.X)
+        r = norm(atoms.r - atoms.X[ia], axis=1)
+        W[:, ist] = atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal + eps
+        # Vary each W minimally by eps with changing signs, such that Wdag*O(W) is not singulary
+        eps *= -1
+    # Transform from real-space to reciprocal space
+    # There is no transformation on the active space for this, so do it "manually"
+    W = atoms.J(W)[atoms.active]
+    return orth(atoms, W)
