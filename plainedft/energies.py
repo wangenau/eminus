@@ -64,9 +64,9 @@ def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.'''
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
-        exc = get_exc('lda,vwn', n, spinpol=True)[0]
+        exc = get_exc(atoms.exc, n, spinpol=True)[0]
     else:
-        exc = get_exc('lda,vwn', n, spinpol=False)[0]
+        exc = get_exc(atoms.exc, n, spinpol=False)[0]
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 

@@ -82,6 +82,11 @@ class Atoms:
             that its geometric moment of inertia aligns with the coordinate axes.
             Default: False
 
+        exc : str
+            Exchange-correlation functional description (case insensitive), separated by a comma.
+            Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','
+            Default: 'lda,vwn'
+
         spinpol : bool
             Spin-polarized calculation.
             Default: False
@@ -93,7 +98,7 @@ class Atoms:
     '''
 
     def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
-                 pot='gth', center=False, spinpol=False, cutcoul=None):
+                 pot='gth', center=False, exc='lda,vwn', spinpol=False, cutcoul=None):
         '''Initialize and update the atoms object.'''
         self.atom = atom          # Atom symbols
         self.X = X                # Atom positions
@@ -106,6 +111,7 @@ class Atoms:
         self.pot = pot            # Used pseudopotential
         self.verbose = verbose    # Output control
         self.center = center      # Center molecule in cell
+        self.exc = exc            # Exchange-correlation functional
         self.spinpol = spinpol    # Bool for spin polarized calculations
         self.cutcoul = cutcoul    # Cut-off radius for a spherical coulomb truncation
 
@@ -196,6 +202,9 @@ class Atoms:
             # Shift to center of the box
             com = center_of_mass(X)
             self.X = X - (com - self.a / 2)
+
+        # Lower the exchange-correlation string
+        self.exc = self.exc.lower()
 
         # Build a cubic unit cell and calculate its volume
         R = self.a * np.eye(3)
