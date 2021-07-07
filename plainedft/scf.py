@@ -15,7 +15,7 @@ from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
 
-def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
+def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
     '''SCF function to handle direct minimizations.
 
     Args:
@@ -26,7 +26,7 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
         guess : str
             Initial guess method for the basis functions (case insensitive).
             Example: 'Gauss'; 'gaussian'; 'random'; 'rand'
-            Default: 'random'
+            Default: 'gaussian'
 
         etol : float
             Convergence tolerance of the total energy.
@@ -92,7 +92,6 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     elif guess == 'rand' or guess == 'random':
         # Start with randomized, complex basis functions with a random seed
         W = guess_random(atoms, complex=True, reproduce=False)
-    W = orth(atoms, W)
 
     # Calculate ewald energy
     atoms.energies.Eewald = get_Eewald(atoms)
@@ -141,10 +140,11 @@ def SCF(atoms, guess='random', etol=1e-7, min={'pccg': 100}, cgform=1):
     return atoms.energies.Etot
 
 
-def H(atoms, W):
+def H(atoms, W, n=None):
     '''Left-hand side of the eigenvalue equation.'''
     Y = orth(atoms, W)  # Orthogonalize at the start
-    n = get_n_total(atoms, Y)
+    if n is None:
+        n = get_n_total(atoms, Y)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
     # Calculate the exchange-correlation potential
@@ -346,9 +346,9 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_psi(atoms, Y):
+def get_psi(atoms, Y, n=None):
     '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
-    mu = Y.conj().T @ H(atoms, Y)
+    mu = Y.conj().T @ H(atoms, Y, n)
     epsilon, D = eig(mu)
     return Y @ D, np.real(epsilon)
 
@@ -378,22 +378,28 @@ def guess_random(atoms, complex=True, reproduce=False):
     if reproduce:
         seed(42)
     if complex:
-        return randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
+        W = randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
     else:
-        return randn(len(atoms.active[0]), atoms.Ns)
+        W = randn(len(atoms.active[0]), atoms.Ns)
+    return orth(atoms, W)
 
 
 def guess_gaussian(atoms):
     '''Generate inital-guess coefficents using normalized Gaussians as starting values.'''
+    # Start with a randomized basis set
+    W = guess_random(atoms, complex=True, reproduce=True)
+    W = orth(atoms, W)
+
+    eps = 1e-9
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
 
-    W = np.zeros((len(atoms.r), atoms.Ns))
-    for ist in range(atoms.Ns):
-        # If we have more states than atoms, start all over again
-        ia = ist % len(atoms.X)
+    # Calculate a density from normalized Gauss functions
+    n = np.zeros(len(atoms.r)) + eps  # We divide by n in exc functionals, so 0 would be bad
+    for ia in range(len(atoms.X)):
         r = norm(atoms.r - atoms.X[ia], axis=1)
-        W[:, ist] = atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
-    # Transform from real-space to reciprocal space
-    # There is no transformation on the active space for this, so do it "manually"
-    return atoms.J(W)[atoms.active]
+        n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
+
+    # Calculate the eigenfunctions
+    W, _ = get_psi(atoms, W, n)
+    return W * atoms.CellVol / np.prod(atoms.S)
