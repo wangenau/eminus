@@ -186,10 +186,8 @@ def read_gth(system, charge=None):
                 rc[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
                 for jiter in range(Nproj_l[iiter]):
                     tmp = fh.readline().split()
-                    iread = 0
-                    for kiter in range(jiter, Nproj_l[iiter]):
+                    for iread, kiter in enumerate(range(jiter, Nproj_l[iiter])):
                         h[iiter, jiter, kiter] = float(tmp[iread])
-                        iread += 1
             psp['rc'] = rc
             psp['Nproj_l'] = Nproj_l
             for k in range(3):
