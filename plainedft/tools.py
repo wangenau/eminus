@@ -72,8 +72,8 @@ def check_ortho(atoms, func):
     eps = 1e-9
     # It makes no sense to calculate anything for only one function
     if len(func) == 1:
-        print('Need at least two functions to check their orthogonality.')
-        return False
+        print('WARNING: Need at least two functions to check their orthogonality.')
+        return True
 
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor is (b-a)/n, with n as the sampling
