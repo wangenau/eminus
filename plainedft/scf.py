@@ -236,7 +236,7 @@ def sd(atoms, W, Nit, etol, **kwargs):
     Elist = []
     alpha = 3e-5
 
-    for i in range(Nit):
+    for _ in range(Nit):
         W = W - alpha * get_grad(atoms, W)
         E = get_E(atoms, W)
         Elist.append(E)
@@ -260,7 +260,7 @@ def lm(atoms, W, Nit, etol, **kwargs):
     Elist.append(E)
     check_energies(atoms, Elist, etol)
 
-    for i in range(1, Nit):
+    for _ in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
@@ -289,7 +289,7 @@ def pclm(atoms, W, Nit, etol, **kwargs):
     Elist.append(E)
     check_energies(atoms, Elist, etol)
 
-    for i in range(1, Nit):
+    for _ in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
@@ -320,7 +320,7 @@ def pccg(atoms, W, Nit, etol, cgform=1):
     Elist.append(E)
     check_energies(atoms, Elist, etol)
 
-    for i in range(1, Nit):
+    for _ in range(1, Nit):
         g = get_grad(atoms, W)
         linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
         cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) *
