@@ -52,7 +52,7 @@ def get_dipole(atoms):
     n = atoms.n
     if n is None:
         print('ERROR: There is no density to calculate a dipole.')
-        return
+        return 0
 
     # Diple moment: mu = \sum Z*X - \int n(r)*r dr
     mu = np.array([0, 0, 0], dtype=float)
@@ -73,7 +73,7 @@ def check_ortho(atoms, func):
     # It makes no sense to calculate anything for only one function
     if len(func) == 1:
         print('Need at least two functions to check their orthogonality.')
-        return
+        return False
 
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor is (b-a)/n, with n as the sampling
