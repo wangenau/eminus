@@ -100,41 +100,46 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
     atoms.energies.Eewald = get_Eewald(atoms)
 
     # Start minimization procedures
-    print('--- SCF data ---')
+    if atoms.verbose >= 3:
+        print('--- SCF data ---')
     Etots = []
     for imin in min:
         start = default_timer()
-        print(f'Start {minimizer[imin]["name"]}...')
+        if atoms.verbose >= 2:
+            print(f'Start {minimizer[imin]["name"]}...')
         W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
         end = default_timer()
         minimizer[imin]['time'] = end - start
         minimizer[imin]['iteration'] = len(Elist)
         Etots += Elist
-    if abs(Etots[-2] - Etots[-1]) < etol:
-        print(f'SCF converged after {len(Etots)} iterations.\n')
-    else:
-        print('SCF not converged!\n')
+    if atoms.verbose >= 1:
+        if abs(Etots[-2] - Etots[-1]) < etol:
+            print(f'SCF converged after {len(Etots)} iterations.')
+        else:
+            print('SCF not converged!')
 
     # Print SCF data
-    if atoms.verbose >= 3:
-        print(f'--- SCF results ---\nStarting guess: {guess}\n')
+    if atoms.verbose >= 2:
+        if atoms.verbose >= 3:
+            print(f'\n--- SCF results ---\nStarting guess: {guess}')
         t_total = 0
         for imin in min:
             N = minimizer[imin]['iteration']
             t = minimizer[imin]['time']
             t_total += t
             if atoms.verbose >= 4:
-                print(f'Minimizer: {imin}\n'
-                      f'Iterations:\t{N}\n'
-                      f'Time:\t\t{t:.5f}s\n'
-                      f'Time/Iteration:\t{t / N:.5f}s\n')
-        print(f'Total SCF time: {t_total:.5f}s\n')
+                print(f'\nMinimizer: {imin}'
+                      f'\nIterations:\t{N}'
+                      f'\nTime:\t\t{t:.5f}s'
+                      f'\nTime/Iteration:\t{t / N:.5f}s')
+        print(f'Total SCF time: {t_total:.5f}s')
 
     # Print energy data
-    print('--- Energy data ---')
     if atoms.verbose >= 3:
+        print('\n--- Energy data ---')
+    if atoms.verbose >= 4:
         print(f'{atoms.energies}')
-    else:
+    elif atoms.verbose >= 1:
         print(f'Total energy: {atoms.energies.Etot:.9f} Eh')
 
     # Save basis functions and density to reuse them later
@@ -226,7 +231,7 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     if Nit > 1:
         if abs(Elist[-2] - Elist[-1]) < etol:
             return True
-        if Elist[-1] > Elist[-2]:
+        if Elist[-1] > Elist[-2] and atoms.verbose >= 3:
             print('WARNING: Total energy is not decreasing.')
     return False
 
