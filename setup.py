@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 from setuptools import find_packages, setup
 
-version = {}
-with open('plainedft/version.py') as fp:
-    exec(fp.read(), version)
+with open('plainedft/version.py', 'r') as fh:
+    version = {}
+    exec(fh.read(), version)
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
