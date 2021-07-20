@@ -18,7 +18,7 @@ from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .operators import I, Idag, J, Jdag, K, L, Linv, O
 from .potentials import init_pot
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
-from .units import ang2bohr
+from .units import ang2bohr, bohr2ang
 from .version import __version__
 
 
@@ -361,6 +361,35 @@ def read_xyz(filename):
     # xyz files are in angstrom, so convert to bohr
     X = ang2bohr(np.asarray(X))
     return atom, X
+
+
+def write_xyz(atoms, filename, extra=None):
+    '''Generate xyz files from atoms objects.'''
+    # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
+    atom = atoms.atom
+    X = atoms.X
+
+    # Convert the coordinates from atomic units to angstrom
+    X = bohr2ang(X)
+    extra = bohr2ang(extra)
+
+    with open(filename, 'w') as fp:
+        # The first line contains the number of atoms.
+        # If we add extra coordinates, add them to the count.
+        if extra is None:
+            fp.write(f'{len(X)}\n')
+        else:
+            fp.write(f'{len(X) + len(extra)}\n')
+        # The second line can contains a comment.
+        # Print informations about the file and program, and the file creation time.
+        fp.write(f'XYZ file generated with PlaineDFT {__version__} at {ctime()}\n')
+        for ia in range(len(X)):
+            fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
+        # Add extra coordinates, if desired. The will default to X (no atom type).
+        if extra is not None:
+            for ix in range(len(extra)):
+                fp.write(f'X  {extra[ix][0]:.5f}  {extra[ix][1]:.5f}  {extra[ix][2]:.5f}\n')
+    return
 
 
 def write_cube(atoms, field, filename):
