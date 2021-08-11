@@ -91,7 +91,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
         W = guess_gaussian(atoms)
     elif guess in ('rand', 'random'):
         # Start with randomized, complex basis functions with a random seed
-        W = guess_random(atoms, complex=True, reproduce=False)
+        W = guess_random(atoms, complex=True, reproduce=True)
     elif guess in ('exp', 'experimental'):
         # Start with s-type orbitals. This may work good for small systems.
         W = guess_experimental(atoms)
