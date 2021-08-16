@@ -15,7 +15,7 @@ from scipy.fft import next_fast_len
 from .data import symbol2number
 from .energies import Energy
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
-from .operators import I, Idag, J, Jdag, K, L, Linv, O
+from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .potentials import init_pot
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 from .units import ang2bohr, bohr2ang
@@ -338,6 +338,10 @@ class Atoms:
     def Jdag(self, inp):
         '''Conjugated forward transformation from real-space to reciprocal space.'''
         return Jdag(self, inp)
+
+    def T(self, inp, dr):
+        '''Translation in reciprocal space by a real space vector dr.'''
+        return T(self, inp, dr)
 
 
 def read_xyz(filename):

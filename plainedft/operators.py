@@ -120,3 +120,12 @@ def Jdag(atoms, inp):
             tmp = np.reshape(inp[i], atoms.S, order='F')
             out[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
     return out.T
+
+
+def T(atoms, inp, dr):
+    '''Translation in reciprocal space by a real space vector dr.'''
+    dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
+    factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))
+    for i in range(atoms.Ns):
+        inp[:, i] *= factor
+    return inp
