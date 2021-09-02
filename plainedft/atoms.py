@@ -239,7 +239,7 @@ class Atoms:
         self.G2 = G2
 
         # Calculate the structure factor per atom
-        Sf = np.exp(-1j * G @ self.X.conj().T).T
+        Sf = np.exp(1j * G @ self.X.conj().T).T
         self.Sf = Sf
 
         # Restrict the G and G2
@@ -396,7 +396,7 @@ def write_xyz(atoms, filename, extra=None):
     return
 
 
-def write_cube(atoms, field, filename):
+def write_cube(atoms, field, filename, extra=None):
     '''Generate cube files from a given (real-space) field.'''
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
@@ -427,7 +427,11 @@ def write_cube(atoms, field, filename):
         fp.write(f'Cube file generated with PlaineDFT {__version__}\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
-        fp.write(f'{len(X)}  {min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
+        if extra is None:
+            fp.write(f'{len(X)}  ')
+        else:
+            fp.write(f'{len(X) + len(extra)}  ')
+        fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cubic box, so each vector only has one non-zero component
         fp.write(f'{S[0]}  {a / S[0]:.5f}  0.0  0.0\n')
@@ -435,8 +439,12 @@ def write_cube(atoms, field, filename):
         fp.write(f'{S[2]}  0.0  0.0  {a / S[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(len(X)):
-            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}')
-            fp.write(f'  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
+            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  ')
+            fp.write(f'{X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
+        if extra is not None:
+            for ix in range(len(extra)):
+                fp.write('0  0.00000  ')
+                fp.write(f'{extra[ix][0]:.5f}  {extra[ix][1]:.5f}  {extra[ix][2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have S[0]*S[1] chunks values with a length of S[2]
         for i in range(S[0] * S[1]):
