@@ -124,8 +124,9 @@ def Jdag(atoms, inp):
 
 def T(atoms, inp, dr):
     '''Translation in reciprocal space by a real space vector dr.'''
+    out = np.zeros((inp.shape), dtype=complex)
     dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
     factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))
     for i in range(atoms.Ns):
-        inp[:, i] *= factor
-    return inp
+        out[:, i] = factor * inp[:, i]
+    return out
