@@ -155,6 +155,7 @@ def read_gth(system, charge=None):
         f_psp = f'{psp_path}{system}-q{charge}.gth'
     else:
         files = glob(f'{psp_path}{system}-q*')
+        files.sort()
         try:
             f_psp = files[0]
         except IndexError:

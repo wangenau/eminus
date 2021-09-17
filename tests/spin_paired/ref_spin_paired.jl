@@ -9,7 +9,7 @@ function ref_spin_paired()
     psps = [
         [joinpath(path, "H-q1.gth")],
         [joinpath(path, "H-q1.gth")],
-        [joinpath(path, "Li-q3.gth"), joinpath(path, "H-q1.gth")],
+        [joinpath(path, "Li-q1.gth"), joinpath(path, "H-q1.gth")],
         [joinpath(path, "C-q4.gth"), joinpath(path, "H-q1.gth")],
         [joinpath(path, "Ne-q8.gth")]
     ]
