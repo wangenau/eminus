@@ -1,0 +1,29 @@
+image: python:3-slim
+
+stages:
+    - test
+    - deploy
+
+before_script:
+    - apt update -y
+    - apt install -y libgomp1
+    - pip install -e .
+
+pytest:
+  stage: test
+  script:
+  - pip install pytest
+  - pytest tests/
+
+pages:
+  stage: deploy
+  script:
+    - pip install -U sphinx sphinx-rtd-theme
+    - sphinx-build -b html ./docs ./public
+  artifacts:
+    paths:
+    - public
+  only:
+    changes:
+      - docs/*
+      - docs/**/*
