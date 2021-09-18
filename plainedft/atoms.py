@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 '''
-Atoms object that holds every relevant calculation parameters and outputs and import and export
-functionality for the Atoms objects.
+Atoms object with import and export functionalities.
 '''
 from pickle import dump, HIGHEST_PROTOCOL, load
 from re import sub

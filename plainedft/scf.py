@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-SCF function with every relevant function.
+SCF calculation functionalities with relevant sub-function.
 '''
 from timeit import default_timer
 

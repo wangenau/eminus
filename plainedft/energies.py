@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Calculate energies for a basis set or one-particle densities.
+Calculate different energy contributions.
 '''
 import numpy as np
 from numpy.linalg import inv

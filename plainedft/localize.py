@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Utilities to localize a set of Kohn-Sham orbitals (in reciprocal space).
+Utilities to localize and analyze orbitals.
 '''
 import numpy as np
 

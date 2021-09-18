@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Potentials given by the assignments by Tomas Arias.
+Collection of miscellaneous potentials.
 '''
 import numpy as np
 from numpy.linalg import norm

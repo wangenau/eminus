@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Collection of constants and conversions that may be needed throughout the calculation.
+Collection of constants and unit conversion tools.
 '''
 # Ha in eV (https://en.wikipedia.org/wiki/Hartree)
 electronvolt = eV = 27.211386245988

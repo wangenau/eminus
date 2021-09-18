@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Various tools for calculations or unit conversions.
+Various tools to check physical properties.
 '''
 import numpy as np
 

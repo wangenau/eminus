@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Basis set depedent operators for DFT calculations in plane-wave basis.
+Basis set depedent operators for a plane-wave basis.
 '''
 from os import environ
 
