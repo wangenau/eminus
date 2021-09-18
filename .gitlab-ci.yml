@@ -6,6 +6,7 @@ stages:
 
 before_script:
     - apt update -y
+    # libgomp1 is not included in small Docker images, but needed for numpy
     - apt install -y libgomp1
     - pip install -e .
 
@@ -14,6 +15,8 @@ pytest:
   script:
   - pip install pytest
   - pytest tests/
+  artifacts:
+    expire_in: 1 week
   only:
     changes:
       - plainedft/*
@@ -22,11 +25,12 @@ pytest:
 pages:
   stage: deploy
   script:
-    - pip install -U sphinx sphinx-rtd-theme
+    - pip install sphinx sphinx-rtd-theme
     - sphinx-build -b html ./docs ./public
   artifacts:
     paths:
     - public
+    expire_in: 1 week
   only:
     changes:
       - docs/*
