@@ -33,7 +33,7 @@ class Atoms:
         X : list or array of floats
             Atom positions.
             Examples: [0, 0, 0]; array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
-                      array([[[0, 0, 0], [1, 1, 1]]])
+            array([[[0, 0, 0], [1, 1, 1]]])
 
     Kwargs:
         a : float
