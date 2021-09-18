@@ -24,7 +24,7 @@ def Coulomb(atoms):
 
 
 def Ge(atoms):
-    '''Starkloff-Joannopoulos pseudopotential for Germanium, Fourier transformed by Arias.'''
+    '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier transformed by Arias.'''
     Z = atoms.Z[0]  # Potential should only be used for same species/Germanium
     lamda = 18.5
     rc = 1.052

@@ -7,13 +7,13 @@ import numpy as np
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
-    '''Convert planewave energy cutoff to a real-space gridspacing using a.u..'''
+    '''Convert planewave energy cutoff to a real-space gridspacing using a.u.'''
     return np.pi / np.sqrt(2 * E)
 
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
-    '''Convert real-space gridspacing to planewave energy cutoff using a.u..'''
+    '''Convert real-space gridspacing to planewave energy cutoff using a.u.'''
     # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
     # See PRB, Vol 54, 14362 (1996)
     return 0.5 * (np.pi / h)**2

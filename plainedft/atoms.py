@@ -323,19 +323,19 @@ class Atoms:
         return K(self, inp)
 
     def I(self, inp):
-        '''Backwards transformation from reciprocal space to real-space.'''
+        '''Transformation from k-space to real-space.'''
         return I(self, inp)
 
     def J(self, inp):
-        '''Forward transformation from real-space to reciprocal space.'''
+        '''Transformation from real-space to k-space.'''
         return J(self, inp)
 
     def Idag(self, inp):
-        '''Conjugated backwards transformation from reciprocal space to real-space.'''
+        '''Conjugated transformation from k-space to real-space.'''
         return Idag(self, inp)
 
     def Jdag(self, inp):
-        '''Conjugated forward transformation from real-space to reciprocal space.'''
+        '''Conjugated transformation from real-space to k-space.'''
         return Jdag(self, inp)
 
     def T(self, inp, dr):

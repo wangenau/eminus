@@ -8,7 +8,7 @@ from .scf import orth
 
 
 def eval_psi(atoms, psi, r):
-    '''Get the value for given psi a the coordinate point r.'''
+    '''Get the value for given orbital at the coordinate point r.'''
     # Shift the evaluation point to (0,0,0), because we always have a lattice point there
     psi_T = atoms.T(psi, -r)
     psi_Trs = atoms.I(psi_T)
