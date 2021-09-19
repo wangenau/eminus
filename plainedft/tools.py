@@ -7,20 +7,48 @@ import numpy as np
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
-    '''Convert planewave energy cutoff to a real-space gridspacing using a.u.'''
+    '''Convert planewave energy cut-off to a real-space gridspacing using a.u.
+
+    Args:
+        E : float
+            Energy in Hartree.
+
+    Returns:
+        Gridspacing in Bohr as a float.
+    '''
     return np.pi / np.sqrt(2 * E)
 
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
-    '''Convert real-space gridspacing to planewave energy cutoff using a.u.'''
+    '''Convert real-space gridspacing to planewave energy cuto-ff using a.u.
+
+    Args:
+        h : float
+            Gridspacing in Bohr.
+
+    Returns:
+        Cut-off in Hartree as a float.
+    '''
     # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
     # See PRB, Vol 54, 14362 (1996)
     return 0.5 * (np.pi / h)**2
 
 
 def center_of_mass(coords, masses=None):
-    '''Calculate the center of mass for a set of coordinates and masses.'''
+    '''Calculate the center of mass for a set of coordinates and masses.
+
+    Args:
+        coords : array
+            Array of real-space coordinates.
+
+    Kwargs:
+        masses : array
+            Mass or weight for each coordinate.
+
+    Returns:
+        Center of mass as a float.
+    '''
     if masses is None:
         masses = np.ones(len(coords))
 
@@ -28,7 +56,19 @@ def center_of_mass(coords, masses=None):
 
 
 def inertia_tensor(coords, masses=None):
-    '''Calculate the inertia tensor for a set of coordinates and masses.'''
+    '''Calculate the inertia tensor for a set of coordinates and masses.
+
+    Args:
+        coords : array
+            Array of real-space coordinates.
+
+    Kwargs:
+        masses : array
+            Mass or weight for each coordinate.
+
+    Returns:
+        Inertia tensor as an array.
+    '''
     if masses is None:
         masses = np.ones(len(coords))
 
@@ -45,7 +85,15 @@ def inertia_tensor(coords, masses=None):
 
 
 def get_dipole(atoms):
-    '''Calculate the electric dipole moment.'''
+    '''Calculate the electric dipole moment.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Electric dipole moment in e times Bohr as an array.
+    '''
     # The dipole may be extremly large. This can be because of periodic boundary conditions.
     # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
@@ -66,7 +114,18 @@ def get_dipole(atoms):
 
 
 def check_ortho(atoms, func):
-    '''Check the orthogonality condition for a set of functions.'''
+    '''Check the orthogonality condition for a set of functions.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        func : array
+            Discretized set of functions.
+
+    Returns:
+        Orthogonality status of the set of functions as a bool.
+    '''
     # Orthogonality condition: \int func1^* func2 dr = 0
     # Tolerance for the condition
     eps = 1e-9
@@ -95,7 +154,18 @@ def check_ortho(atoms, func):
 
 
 def check_norm(atoms, func):
-    '''Check the normalization condition for a set of functions.'''
+    '''Check the normalization condition for a set of functions.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        func : array
+            Discretized set of functions.
+
+    Returns:
+        Normalization status of the set of functions as a bool.
+    '''
     # Orthogonality condition: \int func dr = 1
     # Tolerance for the condition
     eps = 1e-9
@@ -118,7 +188,18 @@ def check_norm(atoms, func):
 
 
 def check_orthonorm(atoms, func):
-    '''Check the orthonormality conditions for a set of functions.'''
+    '''Check the orthonormality conditions for a set of functions.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        func : array
+            Discretized set of functions.
+
+    Returns:
+        Orthonormality status of the set of functions as a bool.
+    '''
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
     print(f'Orthonormal: {ortho_bool * norm_bool}')

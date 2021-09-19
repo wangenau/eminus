@@ -7,18 +7,54 @@ from numpy.linalg import norm
 
 
 def Diagprod(a, B):
-    '''Calculate the expression Diag(a) * B.'''
+    '''Calculate the expression Diag(a) * B.
+
+    Args:
+        a : array
+            Single vector.
+
+        B : array
+            Matrix.
+
+    Returns:
+        Result as an array.
+    '''
     return (a * B.T).T
 
 
 def dotprod(a, b):
-    '''Calculate the expression a * b.'''
+    '''Calculate the expression a * b.
+
+    Args:
+        a : array
+            Array of vectors.
+
+        b : array
+            Array of vectors.
+
+    Returns:
+        Result as a float.
+    '''
     return np.real(np.trace(a.conj().T @ b))
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl
 def Ylm_real(l, m, R):
-    '''Calculate spherical harmonics for real R-vectors.'''
+    '''Calculate spherical harmonics.
+
+    Args:
+        l : int
+            Angular momentum number.
+
+        m : int
+            Magnetic quantum number.
+
+        R : array
+            Real-space position vector or array of real-space position vectors.
+
+    Returns:
+        Spherical harmonics as an array.
+    '''
     # Account for single vectors
     if R.ndim == 1:
         R = np.array([R])

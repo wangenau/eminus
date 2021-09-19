@@ -6,7 +6,21 @@ import numpy as np
 
 
 def get_exc(exc, n, spinpol):
-    '''Get the exchange-correlation functional by an exc string.'''
+    '''Handle and get exchange-correlation functionals.
+
+    Args:
+        exc : str
+            Exchange and correlation identifier, separated by a comma.
+
+        n : array
+            Real-space electronic density.
+
+        spinpol : bool
+            Choose if a spin-polarized exchange-correlation functional will be used.
+
+    Returns:
+        Exchange-correlation energy density and potential as a tuple(array, array).
+    '''
     exch, corr = exc.split(',')
     if spinpol:
         exc_map = {
@@ -29,14 +43,34 @@ def get_exc(exc, n, spinpol):
 
 
 def dummy_exc(n, **kwargs):
-    '''Dummy exchange-correlation functional with no effect.'''
+    '''Dummy exchange-correlation functional with no effect.
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Dummy exchange-correlation energy density and potential as a tuple(array, array).
+    '''
     zero = np.zeros((n.shape))
     return zero, zero
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
 def lda_slater_x(n, alpha=2 / 3):
-    '''Slater exchange functional (spin paired).'''
+    '''Slater exchange functional (spin paired).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+    Kwargs:
+        alpha : float
+            Scaling factor.
+
+    Returns:
+        Exchange energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     p43 = 4 / 3
     pi34 = (3 / (4 * np.pi))**(1 / 3)
@@ -51,7 +85,22 @@ def lda_slater_x(n, alpha=2 / 3):
 # Adapted from
 # https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
 def lda_slater_x_spin(n, zeta, alpha=2 / 3):
-    '''Slater exchange functional (spin polarized).'''
+    '''Slater exchange functional (spin polarized).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+        zeta : array
+            Relative spin polarization.
+
+    Kwargs:
+        alpha : float
+            Scaling factor.
+
+    Returns:
+        Exchange energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     p43 = 4 / 3
     f = -9 / 8 * (3 / np.pi)**(1 / 3)
@@ -69,7 +118,15 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
 def lda_pw_c(n):
-    '''PW parameterization of the correlation functional (spin paired).'''
+    '''PW parameterization of the correlation functional (spin paired).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Correlation energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 / n**third
@@ -95,7 +152,18 @@ def lda_pw_c(n):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
 def lda_pw_c_spin(n, zeta):
-    '''PW parameterization of the correlation functional (spin polarized).'''
+    '''PW parameterization of the correlation functional (spin polarized).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+        zeta : array
+            Relative spin polarization.
+
+    Returns:
+        Correlation energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 / n**third
@@ -173,7 +241,15 @@ def lda_pw_c_spin(n, zeta):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
 def lda_vwn_c(n):
-    '''VWN parameterization of the correlation functional (spin paired).'''
+    '''VWN parameterization of the correlation functional (spin paired).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Correlation energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 / n**third
@@ -201,18 +277,21 @@ def lda_vwn_c(n):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def lda_vwn_c_spin(n, zeta):
-    '''VWN parameterization of the correlation functional (spin polarized).'''
+    '''VWN parameterization of the correlation functional (spin polarized).
+
+    Args:
+        n : array
+            Real-space electronic density.
+
+        zeta : array
+            Relative spin polarization.
+
+    Returns:
+        Correlation energy density and potential as a tuple(array, array).
+    '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 / n**third
-
-    A = (0.0310907, 0.01554535, -0.01688686394039)
-    b = (3.72744, 7.06042, 1.13107)
-    c = (12.9352, 18.0578, 13.0045)
-    x0 = (-0.10498, -0.32500, -0.0047584)
-    Q = (6.15199081975908, 4.73092690956011, 7.12310891781812)
-    tbQ = (1.21178334272806, 2.98479352354082, 0.31757762321188)
-    bx0fx0 = (-0.03116760867894, -0.14460061018521, -0.00041403379428)
 
     cfz = 2**(4 / 3) - 2
     cfz1 = 1 / cfz
@@ -228,9 +307,9 @@ def lda_vwn_c_spin(n, zeta):
     fz = cfz1 * (trup13 * trup + trdw13 * trdw - 2)  # f(zeta)
     dfz = cfz2 * (trup13 - trdw13)  # df/dzeta
 
-    ecP, vcP = padefit(sqrtrs, 0, x0, Q, b, c, A, tbQ, bx0fx0)  # ecF = e_c Paramagnetic
-    ecF, vcF = padefit(sqrtrs, 1, x0, Q, b, c, A, tbQ, bx0fx0)  # ecP = e_c Ferromagnetic
-    ac, dac = padefit(sqrtrs, 2, x0, Q, b, c, A, tbQ, bx0fx0)  # ac = "spin stiffness"
+    ecP, vcP = padefit(sqrtrs, 0)  # Paramagnetic fit
+    ecF, vcF = padefit(sqrtrs, 1)  # Ferromagnetic fit
+    ac, dac = padefit(sqrtrs, 2)  # ac = "spin stiffness"
 
     ac = ac * iddfz0
     dac = dac * iddfz0
@@ -247,8 +326,27 @@ def lda_vwn_c_spin(n, zeta):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
-def padefit(x, i, x0, Q, b, c, A, tbQ, bx0fx0):
-    '''Implements eq. 4.4 in S.H. Vosko, L. Wilk, and M. Nusair, Can. J. Phys. 58, 1200 (1980).'''
+def padefit(x, i):
+    '''Calculate correlation energies by Pade approximation interpolation.
+
+    Args:
+        x : array
+              Square root of the density.
+
+        i : int
+            Index weather to use a paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
+
+    Returns:
+        Pade fit and its derivative as a tuple(array, array).
+    '''
+    A = (0.0310907, 0.01554535, -0.01688686394039)
+    b = (3.72744, 7.06042, 1.13107)
+    c = (12.9352, 18.0578, 13.0045)
+    x0 = (-0.10498, -0.32500, -0.0047584)
+    Q = (6.15199081975908, 4.73092690956011, 7.12310891781812)
+    tbQ = (1.21178334272806, 2.98479352354082, 0.31757762321188)
+    bx0fx0 = (-0.03116760867894, -0.14460061018521, -0.00041403379428)
+
     # Pade fit calculated in x and its derivative with respect to rho
     # rs = inv((rho*)^(1/3)) = x^2
     sqx = x * x                   # x^2 = r_s

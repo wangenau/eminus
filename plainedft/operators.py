@@ -14,12 +14,34 @@ except KeyError:
 
 
 def O(atoms, inp):
-    '''Overlap operator.'''
+    '''Overlap operator.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     return atoms.CellVol * inp
 
 
 def L(atoms, inp):
-    '''Laplacian operator.'''
+    '''Laplacian operator.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     if inp.shape[1] == len(atoms.G2c):
         return (-atoms.CellVol * atoms.G2c * inp).T
@@ -28,7 +50,18 @@ def L(atoms, inp):
 
 
 def Linv(atoms, inp):
-    '''Inverse Laplacian operator.'''
+    '''Inverse Laplacian operator.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     out = np.zeros(inp.shape, dtype=complex)
     if inp.ndim == 1:
@@ -40,7 +73,18 @@ def Linv(atoms, inp):
 
 
 def K(atoms, inp):
-    '''Precondition by applying 1/(1+G2) to the input.'''
+    '''Preconditioning operator. Applies 1/(1+G2) to the input.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     out = np.empty(inp.shape, dtype=complex)
     if inp.shape[1] == len(atoms.G2c):
@@ -59,7 +103,18 @@ def K(atoms, inp):
 
 
 def I(atoms, inp):
-    '''Backwards transformation from reciprocal space to real-space.'''
+    '''Backwards transformation from reciprocal space to real-space.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     if inp.ndim == 1:
         inp = np.array([inp])
@@ -79,7 +134,18 @@ def I(atoms, inp):
 
 
 def J(atoms, inp):
-    '''Forward transformation from real-space to reciprocal space.'''
+    '''Forward transformation from real-space to reciprocal space.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
@@ -93,7 +159,18 @@ def J(atoms, inp):
 
 
 def Idag(atoms, inp):
-    '''Conjugated backwards transformation from reciprocal space to real-space.'''
+    '''Conjugated backwards transformation from reciprocal space to real-space.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
@@ -109,7 +186,18 @@ def Idag(atoms, inp):
 
 
 def Jdag(atoms, inp):
-    '''Conjugated forward transformation from real-space to reciprocal space.'''
+    '''Conjugated forward transformation from real-space to reciprocal space.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+    Returns:
+        Result as an array.
+    '''
     inp = inp.T
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
@@ -123,7 +211,21 @@ def Jdag(atoms, inp):
 
 
 def T(atoms, inp, dr):
-    '''Translation in reciprocal space by a real space vector dr.'''
+    '''Translation operator. Shifts input by the vector dr.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        inp : array
+            Coefficents input array.
+
+        dr : array
+            Real-space position vector.
+
+    Returns:
+        Result as an array.
+    '''
     out = np.zeros((inp.shape), dtype=complex)
     dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
     factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))

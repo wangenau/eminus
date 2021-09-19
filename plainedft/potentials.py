@@ -7,14 +7,30 @@ from numpy.linalg import norm
 
 
 def Harmonic(atoms):
-    '''Harmonical potential, e.g., for quantum dot calculations.'''
+    '''Harmonical potential. Can be used for quantum dot calculations.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Harmonical potential as an array.
+    '''
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     V = 2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(V)))
 
 
 def Coulomb(atoms):
-    '''Coulomb potential, e.g., for Hydrogen calculations.'''
+    '''Coulomb potential. Can be used for Hydrogen calculations.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Coulomb potential as an array.
+    '''
     Z = atoms.Z[0]  # Potential should only be used for same species
     Vps = -4 * np.pi * Z / atoms.G2[1:]
     Vps = np.concatenate(([0], Vps))
@@ -24,7 +40,15 @@ def Coulomb(atoms):
 
 
 def Ge(atoms):
-    '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier transformed by Arias.'''
+    '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier transformed by Tomas Arias.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Germanium pseudopotential as an array.
+    '''
     Z = atoms.Z[0]  # Potential should only be used for same species/Germanium
     lamda = 18.5
     rc = 1.052
@@ -46,7 +70,15 @@ def Ge(atoms):
 
 
 def init_pot(atoms):
-    '''Use potentials from the Arias lectures.'''
+    '''Handle and initialize potentials.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Potential as an array.
+    '''
     implemented = {'harmonic': Harmonic, 'coulomb': Coulomb, 'ge': Ge}
     try:
         pot = implemented[atoms.pot]

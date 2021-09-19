@@ -98,7 +98,7 @@ class Atoms:
 
     def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
                  pot='gth', center=False, exc='lda,vwn', spinpol=False, cutcoul=None):
-        '''Initialize and update the atoms object.'''
+        '''Initialize the atoms object.'''
         self.atom = atom          # Atom symbols
         self.X = X                # Atom positions
         self.a = a                # Cell/Vacuum size
@@ -138,7 +138,7 @@ class Atoms:
         self.energies = Energy()  # Energy object that holds energy contributions
 
     def update(self):
-        '''Check inputs and update if no inputs are given.'''
+        '''Check inputs and update them if none are given.'''
         # If a string is given for atom symbols convert them to a list of strings
         if isinstance(self.atom, str):
             # Insert a whitespace before every capital letter, these can appear once or none at all
@@ -296,7 +296,7 @@ class Atoms:
                 self.f[-1] = mod
 
     def __repr__(self):
-        '''Display informations when printing the Atoms object.'''
+        '''Display informations when printing the atoms object.'''
         atom = self.atom
         X = self.X
         Z = self.Z
@@ -307,44 +307,52 @@ class Atoms:
         return out
 
     def O(self, inp):
-        '''Overlap operator.'''
+        '''Overlap operator :func:`~plainedft.operators.O`.'''
         return O(self, inp)
 
     def L(self, inp):
-        '''Laplacian operator.'''
+        '''Laplacian operator :func:`~plainedft.operators.L`.'''
         return L(self, inp)
 
     def Linv(self, inp):
-        '''Inverse Laplacian operator.'''
+        '''Inverse Laplacian operator :func:`~plainedft.operators.Linv`.'''
         return Linv(self, inp)
 
     def K(self, inp):
-        '''Precondition by applying 1/(1+G2) to the input.'''
+        '''Preconditioning operator :func:`~plainedft.operators.K`.'''
         return K(self, inp)
 
     def I(self, inp):
-        '''Transformation from k-space to real-space.'''
+        '''Transformation from k- to real-space :func:`~plainedft.operators.I`.'''
         return I(self, inp)
 
     def J(self, inp):
-        '''Transformation from real-space to k-space.'''
+        '''Transformation from real- to k-space :func:`~plainedft.operators.J`.'''
         return J(self, inp)
 
     def Idag(self, inp):
-        '''Conjugated transformation from k-space to real-space.'''
+        '''Conj transformation from k- to real-space :func:`~plainedft.operators.Idag`.'''
         return Idag(self, inp)
 
     def Jdag(self, inp):
-        '''Conjugated transformation from real-space to k-space.'''
+        '''Conj transformation from real- to k-space :func:`~plainedft.operators.Jdag`.'''
         return Jdag(self, inp)
 
     def T(self, inp, dr):
-        '''Translation in reciprocal space by a real space vector dr.'''
+        '''Translation operator :func:`~plainedft.operators.T`.'''
         return T(self, inp, dr)
 
 
 def read_xyz(filename):
-    '''Load atoms objects from xyz files.'''
+    '''Load atoms objects from xyz files.
+
+    Args:
+        filename : str
+            xyz input file path/name.
+
+    Returns:
+        Species atom, and charges X as a tuple(list, array).
+    '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     with open(filename, 'r') as fh:
         lines = fh.readlines()
@@ -367,7 +375,19 @@ def read_xyz(filename):
 
 
 def write_xyz(atoms, filename, extra=None):
-    '''Generate xyz files from atoms objects.'''
+    '''Generate xyz files from atoms objects.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        filename : str
+            xyz output file path/name.
+
+    Kwargs:
+        extra : array
+            Extra coordinates to write.
+    '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     atom = atoms.atom
     X = atoms.X
@@ -396,7 +416,22 @@ def write_xyz(atoms, filename, extra=None):
 
 
 def write_cube(atoms, field, filename, extra=None):
-    '''Generate cube files from a given (real-space) field.'''
+    '''Generate cube files from given field data.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        field : array
+            Real-space field data.
+
+        filename : str
+            xyz output file path/name.
+
+    Kwargs:
+        extra : array
+            Extra coordinates to write.
+    '''
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
@@ -456,13 +491,29 @@ def write_cube(atoms, field, filename, extra=None):
 
 
 def save_atoms(atoms, filename):
-    '''Save atoms objects into a pickle files.'''
+    '''Save atoms objects to a pickle file.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        filename : str
+            xyz input file path/name.
+    '''
     with open(filename, 'wb') as fp:
         dump(atoms, fp, HIGHEST_PROTOCOL)
     return
 
 
 def load_atoms(filename):
-    '''Load atoms objects from pickle files.'''
+    '''Load atoms objects from a pickle file.
+
+    Args:
+        filename : str
+            xyz input file path/name.
+
+    Returns:
+        Atoms object.
+    '''
     with open(filename, 'rb') as fh:
         return load(fh)

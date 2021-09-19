@@ -11,7 +11,7 @@ from .units import ry2ha
 
 
 class Energy:
-    '''Energy class to save the SCF results in one place.'''
+    '''Energy class to save SCF results in one place.'''
 
     def __init__(self):
         '''Energy contributions are uninitialized by default.'''
@@ -24,7 +24,7 @@ class Energy:
 
     @property
     def Etot(self):
-        '''Total energy is the sum of the energy contributions.'''
+        '''Total energy is the sum of all energy contributions.'''
         try:
             return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald
         except TypeError:
@@ -43,13 +43,35 @@ class Energy:
 
 
 def get_Ekin(atoms, Y):
-    '''Calculate the kinetic energy.'''
+    '''Calculate the kinetic energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogornal wave functions.
+
+    Returns:
+        Kinetic energy in Hartree as a float.
+    '''
     # Arias: Ekin = -0.5 Tr(F Cdag L(C))
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
 
 
 def get_Ecoul(atoms, n):
-    '''Calculate the coulomb energy.'''
+    '''Calculate the coulomb energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Coulomb energy in Hartree as a float.
+    '''
     # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     if atoms.cutcoul is None:
@@ -61,7 +83,22 @@ def get_Ecoul(atoms, n):
 
 
 def get_Exc(atoms, n, spinpol=False):
-    '''Calculate the exchange-correlation energy.'''
+    '''Calculate the exchange-correlation energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        n : array
+            Real-space electronic density.
+
+    Kwargs:
+        spinpol : bool
+            Choose if a spin-polarized exchange-correlation functional will be used.
+
+    Returns:
+        Exchange-correlation energy in Hartree as a float.
+    '''
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
         exc = get_exc(atoms.exc, n, spinpol=True)[0]
@@ -71,7 +108,18 @@ def get_Exc(atoms, n, spinpol=False):
 
 
 def get_Eloc(atoms, n):
-    '''Calculate the local energy.'''
+    '''Calculate the local energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Local energy in Hartree as a float.
+    '''
     return np.real(atoms.Vloc.conj().T @ n)
 
 
@@ -92,7 +140,18 @@ def get_Esic(atoms, n):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(atoms, Y):
-    '''Calculate the non-local energy.'''
+    '''Calculate the non-local energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogornal wave functions.
+
+    Returns:
+        Non-local energy in Hartree as a float.
+    '''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
         Natoms = len(atoms.X)
@@ -122,7 +181,15 @@ def get_Enonloc(atoms, Y):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
 def get_Eewald(atoms):
-    '''Calculate the Ewald energy.'''
+    '''Calculate the Ewald energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Ewald energy in Hartree as a float.
+    '''
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality-term

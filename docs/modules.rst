@@ -13,7 +13,7 @@ Modules
    plainedft.energies
    plainedft.exc
    plainedft.gth
-   plainedft.localize
+   plainedft.localizer
    plainedft.operators
    plainedft.potentials
    plainedft.scf

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Utilities to use GTH pseudopotentials. Phys. Rev. B 54, 1703.
+Utilities to use Goedecker, Teter, and Hutter pseudopotentials.
 '''
 from glob import glob
 from os.path import basename
@@ -12,7 +12,15 @@ from .utils import Ylm_real
 
 
 def init_gth_loc(atoms):
-    '''Initialize parameters to calculate local contributions of GTH pseudopotentials.'''
+    '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Local GTH potential contribution as an array.
+    '''
     G2 = atoms.G2
     atom = atoms.atom
     species = set(atom)
@@ -49,7 +57,15 @@ def init_gth_loc(atoms):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(atoms):
-    '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.'''
+    '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        NbetaNL, prj2beta, and betaNL as a tuple(int, array, array).
+    '''
     Natoms = len(atoms.X)
     Npoints = len(atoms.active[0])
     CellVol = atoms.CellVol
@@ -85,7 +101,18 @@ def init_gth_nonloc(atoms):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(atoms, W):
-    '''Calculate the non-local pseudopotential, applied on the basis functions W.'''
+    '''Calculate the non-local pseudopotential, applied on the basis functions W.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions.
+
+    Returns:
+        Non-local GTH potential contribution as an array.
+    '''
     Npoints = len(W)
     Nstates = atoms.Ns
 
@@ -113,29 +140,49 @@ def calc_Vnonloc(atoms, W):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
-def eval_proj_G(psp, l, iproj, Gm, CellVol):
-    '''Evaluate GTH projector functions in G-space.'''
+def eval_proj_G(psp, l, iprj, Gm, CellVol):
+    '''Evaluate GTH projector functions in G-space.
+
+    Args:
+        psp : dict
+            GTH parameters.
+
+        l : int
+            Angular momentum number.
+
+        iprj : int
+            Nproj_l index.
+
+        Gm : array
+            Magnitude of G-vectors.
+
+        CellVol : float
+            Unit cell volume.
+
+    Returns:
+        GTH projector as an array.
+    '''
     rrl = psp['rc'][l]
     Gr2 = (Gm * rrl)**2
 
     if l == 0:  # s-channel
-        if iproj == 1:
+        if iprj == 1:
             Vprj = np.exp(-0.5 * Gr2)
-        elif iproj == 2:
+        elif iprj == 2:
             Vprj = 2 / np.sqrt(15) * np.exp(-0.5 * Gr2) * (3 - Gr2)
-        elif iproj == 3:
+        elif iprj == 3:
             Vprj = (4 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * (15 - 10 * Gr2 + Gr2**2)
     elif l == 1:  # p-channel
-        if iproj == 1:
+        if iprj == 1:
             Vprj = (1 / np.sqrt(3)) * np.exp(-0.5 * Gr2) * Gm
-        elif iproj == 2:
+        elif iprj == 2:
             Vprj = (2 / np.sqrt(105)) * np.exp(-0.5 * Gr2) * Gm * (5 - Gr2)
-        elif iproj == 3:
+        elif iprj == 3:
             Vprj = (4 / 3) / np.sqrt(1155) * np.exp(-0.5 * Gr2) * Gm * (35 - 14 * Gr2 + Gr2**2)
     elif l == 2:  # d-channel
-        if iproj == 1:
+        if iprj == 1:
             Vprj = (1 / np.sqrt(15)) * np.exp(-0.5 * Gr2) * Gm**2
-        elif iproj == 2:
+        elif iprj == 2:
             Vprj = (2 / 3) / np.sqrt(105) * np.exp(-0.5 * Gr2) * Gm**2 * (7 - Gr2)
     elif l == 3:  # f-channel
         # Only one projector
@@ -148,7 +195,19 @@ def eval_proj_G(psp, l, iproj, Gm, CellVol):
 
 
 def read_gth(system, charge=None):
-    '''Read GTH files for a given system.'''
+    '''Read GTH files for a given system.
+
+    Args:
+        system : str
+            Atom name.
+
+    Kwargs:
+        charge : int
+            Valence charge.
+
+    Returns:
+        GTH parameters as a dictionary.
+    '''
     psp_path = f'{__path__[0]}/pade_gth/'
 
     if charge is not None:
