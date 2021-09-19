@@ -3,6 +3,7 @@
 Utilities to localize and analyze orbitals.
 '''
 import numpy as np
+from numpy.linalg import norm
 
 from .scf import orth
 
@@ -102,3 +103,74 @@ def get_FLOs(atoms, psi, fods):
     '''
     FOs = get_FOs(atoms, psi, fods)
     return orth(atoms, FOs)
+
+
+def wannier_cost(atoms, psirs):
+    '''Calculate the Wannier cost function, namely the spread. Equivalent to Foster-Boys.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        psirs : array
+            Set of orbitals in real-space.
+
+    Returns:
+        Spread per orbital as an array.
+    '''
+    centers = wannier_center(atoms, psirs)
+    moments = second_moment(atoms, psirs)
+    costs = moments - norm(centers**2, axis=1)
+    if atoms.verbose >= 3:
+        print(f'Centers:\n{centers}\nMoments:\n{moments}')
+    print(f'Costs:\n{costs}')
+    return np.sum(costs)
+
+
+def wannier_center(atoms, psirs):
+    '''Calculate Wannier centers that are the expecation values of r.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        psirs : array
+            Set of orbitals in real-space.
+
+    Returns:
+        Wannier centers per orbital as an array.
+    '''
+    prefactor = atoms.CellVol / np.prod(atoms.S)
+    r = atoms.r
+
+    centers = []
+    for i in range(atoms.Ns):
+        center = np.zeros(3)
+        for dim in range(3):
+            center[dim] = prefactor * np.real(np.sum(psirs[i].conj() * r[:, dim] * psirs[i],
+                          axis=0))
+        centers.append(center)
+    return np.asarray(centers)
+
+
+def second_moment(atoms, psirs):
+    '''Calculate the second moments that are the expecation values of r^2.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        psirs : array
+            Set of orbitals in real-space.
+
+    Returns:
+        Second moments per orbital as an array.
+    '''
+    prefactor = atoms.CellVol / np.prod(atoms.S)
+    r2 = norm(atoms.r, axis=1)**2
+
+    moments = []
+    for i in range(atoms.Ns):
+        moment = prefactor * np.real(np.sum(psirs[i].conj() * r2 * psirs[i], axis=0))
+        moments.append(moment)
+    return np.asarray(moments)
