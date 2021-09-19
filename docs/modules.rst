@@ -6,6 +6,7 @@ Modules
 .. autosummary::
    :toctree: _autosummary
    :template: custom-module.rst
+   :nosignatures:
 
    plainedft
    plainedft.atoms
