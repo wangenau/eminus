@@ -3,6 +3,7 @@
 Atomic data collections.
 '''
 symbol2number = {
+    'X': 0,
     'H': 1,
     'He': 2,
     'Li': 3,
