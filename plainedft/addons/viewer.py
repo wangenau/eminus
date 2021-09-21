@@ -73,7 +73,7 @@ def save_view(view, filename):
         filename : str
             Output file path/name.
     '''
-    if not filename.endswith('.png')
+    if not filename.endswith('.png'):
         filename = f'{filename}.png'
     view.download_image(filename, trim=True)
     return
