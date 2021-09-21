@@ -22,3 +22,4 @@ Modules
    plainedft.units
    plainedft.utils
    plainedft.version
+   plainedft.addons.viewer
