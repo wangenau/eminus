@@ -6,13 +6,13 @@ try:
     from nglview import NGLWidget, TextStructure
 except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
-          'To use this module, install the package with addons, e.g., "pip install .[addons]"')
+          'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
 
 from plainedft.atoms import create_pdb, read_cube, read_xyz
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
-def view(filename, isovalue=0.01):
+def view(filename, isovalue=0.01, **kwargs):
     '''Display molecules and orbitals.
 
     Args:
@@ -28,7 +28,7 @@ def view(filename, isovalue=0.01):
     '''
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
-    view = NGLWidget()
+    view = NGLWidget(**kwargs)
     view._set_size('400px', '400px')
 
     if filename.endswith('.xyz'):
@@ -63,7 +63,7 @@ def view(filename, isovalue=0.01):
     return view
 
 
-def save_view(view, filename):
+def save_view(view, filename, **kwargs):
     '''Save the current view as a png.
 
     Args:
@@ -75,5 +75,5 @@ def save_view(view, filename):
     '''
     if not filename.endswith('.png'):
         filename = f'{filename}.png'
-    view.download_image(filename, trim=True)
+    view.download_image(filename, trim=True, **kwargs)
     return
