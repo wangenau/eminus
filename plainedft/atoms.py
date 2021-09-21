@@ -11,7 +11,7 @@ import numpy as np
 from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
-from .data import symbol2number
+from .data import number2symbol, symbol2number
 from .energies import Energy
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
@@ -343,25 +343,32 @@ class Atoms:
         return T(self, inp, dr)
 
 
-def read_xyz(filename):
-    '''Load atoms objects from xyz files.
+def read_xyz(filename, info=False):
+    '''Load atom species and positions from xyz files.
 
     Args:
         filename : str
             xyz input file path/name.
 
+    Kwargs:
+        info : bool
+            Display file comments.
+
     Returns:
-        Species atom, and charges X as a tuple(list, array).
+        Atom species and positions as a tuple(list, array).
     '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     with open(filename, 'r') as fh:
         lines = fh.readlines()
+
     # The first line contains the number of atoms
     Natoms = int(lines[0].strip())
+
     # The second line can contain a comment, print it if available
     comment = lines[1].strip()
-    if comment:
+    if info:
         print(f'XYZ file comment: "{comment}"')
+
     atom = []
     X = []
     # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
@@ -369,6 +376,7 @@ def read_xyz(filename):
         split = line.strip().split()
         atom.append(split[0])
         X.append(np.float_(split[1:4]))
+
     # xyz files are in angstrom, so convert to bohr
     X = ang2bohr(np.asarray(X))
     return atom, X
@@ -394,7 +402,8 @@ def write_xyz(atoms, filename, extra=None):
 
     # Convert the coordinates from atomic units to angstrom
     X = bohr2ang(X)
-    extra = bohr2ang(extra)
+    if extra is not None:
+        extra = bohr2ang(extra)
 
     with open(filename, 'w') as fp:
         # The first line contains the number of atoms.
@@ -413,6 +422,54 @@ def write_xyz(atoms, filename, extra=None):
             for ix in range(len(extra)):
                 fp.write(f'X  {extra[ix][0]:.5f}  {extra[ix][1]:.5f}  {extra[ix][2]:.5f}\n')
     return
+
+
+def read_cube(filename, info=False):
+    '''Load atom and cell data from cube files.
+
+    Args:
+        filename : str
+            cube input file path/name.
+    Kwargs:
+        info : bool
+            Display file comments.
+
+    Returns:
+        Species, positions, charges, cell size, and sampling as a
+        tuple(list, array, float, array, int).
+    '''
+    # It seems, that there is no standard for cube files. The following definition is taken from:
+    # https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
+    # Atomic units, same sampling per axis, and a cubic unit cell that starts at (0,0,0) is assumed.
+    with open(filename, 'r') as fh:
+        lines = fh.readlines()
+
+    # The first and second line can contain comments, print them if available
+    comment = f'{lines[0].strip()}\n{lines[1].strip()}'
+    if info:
+        print(f'XYZ file comment: "{comment}"')
+
+    # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/S
+    # Only use line 4, because same samplings and a cubic unit cell are assumed
+    split = lines[3].strip().split()
+    S = int(split[0])
+    a = S * np.float_(split[1])
+
+    atom = []
+    X = []
+    Z = []
+    # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
+    for line in lines[6:]:
+        split = line.strip().split()
+        # If the first value is not a (positive) integer, we have reached the field data
+        if not split[0].isdigit():
+            break
+        atom.append(number2symbol[int(split[0])])
+        Z.append(split[1])
+        X.append(np.float_(split[2:5]))
+
+    X = np.asarray(X)
+    return atom, X, Z, a, S
 
 
 def write_cube(atoms, field, filename, extra=None):
@@ -517,3 +574,70 @@ def load_atoms(filename):
     '''
     with open(filename, 'rb') as fh:
         return load(fh)
+
+
+def create_pdb(atom, X, a=None):
+    '''Convert xyz files to pdb format.
+
+    Args:
+        atom : list
+            Atom symbols.
+
+        X : array
+            Atom positions.
+
+    Kwargs:
+        a : float
+            Cell size.
+
+    Returns:
+        pdb file format as a string.
+    '''
+    # pdb file definitions:
+    # For CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
+    # For ATOM: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
+    # Convert Bohr to Angstrom
+    X = bohr2ang(X)
+    if a is not None:
+        a = bohr2ang(a)
+
+    # pdb files have specific numbers of characters for every data with changing justification
+    # Write everything explicitly down to not loose track of line lengths
+    pdb = ''
+    # Create data for a cubic cell
+    if a is not None:
+        pdb += 'CRYST1'               # 1-6 "CRYST1"
+        pdb += f'{a:9.3f}'.rjust(9)   # 7-15 a
+        pdb += f'{a:9.3f}'.rjust(9)   # 16-24 b
+        pdb += f'{a:9.3f}'.rjust(9)   # 25-33 c
+        pdb += f'{90:7.2f}'.rjust(7)  # 34-40 alpha
+        pdb += f'{90:7.2f}'.rjust(7)  # 41-47 beta
+        pdb += f'{90:7.2f}'.rjust(7)  # 48-54 gamma
+        pdb += ' '
+        pdb += 'P 1'.ljust(11)        # 56-66 Space group
+        # pdb += '1'.rjust(4)         # 67-70 Z value
+
+    # Create molecule data
+    pdb += '\nMODEL 1'
+    for ia in range(len(X)):
+        pdb += '\nATOM  '                   # 1-6 "ATOM"
+        pdb += f'{ia + 1}'.rjust(5)         # 7-11 Atom serial number
+        pdb += ' '
+        pdb += f'{atom[ia]}'.rjust(4)       # 13-16 Atom name
+        pdb += ' '                          # 17 Alternate location indicator
+        pdb += 'MOL'                        # 18-20 Residue name
+        pdb += ' '
+        pdb += ' '                          # 22 Chain identifier
+        pdb += '1'.rjust(4)                 # 23-26 Residue sequence number
+        pdb += ' '                          # 27 Code for insertions of residues
+        pdb += '   '
+        pdb += f'{X[ia][0]:8.3f}'.rjust(8)  # 31-38 X orthogonal coordinate
+        pdb += f'{X[ia][1]:8.3f}'.rjust(8)  # 39-46 Y orthogonal coordinate
+        pdb += f'{X[ia][2]:8.3f}'.rjust(8)  # 47-54 Z orthogonal coordinate
+        pdb += f'{1:6.2f}'.rjust(6)         # 55-60 Occupancy
+        pdb += f'{0:6.2f}'.rjust(6)         # 61-66 Temperature factor
+        pdb += '          '
+        pdb += f'{atom[ia]}'.rjust(2)       # 77-78 Element symbol
+        # pdb += '  '                       # 79-80 Charge
+    pdb = f'{pdb}\nENDMDL'
+    return pdb

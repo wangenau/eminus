@@ -90,3 +90,5 @@ symbol2number = {
     'At': 85,
     'Rn': 86
 }
+
+number2symbol = {value: key for key, value in symbol2number.items()}
