@@ -2,7 +2,6 @@
 '''
 Viewer functions for Jupyter notebooks.
 '''
-import numpy as np
 try:
     from nglview import NGLWidget, TextStructure
 except ImportError:
@@ -10,6 +9,7 @@ except ImportError:
           'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
 
 from plainedft.atoms import create_pdb, read_cube, read_xyz
+from plainedft.addons.fods import split_atom_and_fod
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
@@ -95,27 +95,3 @@ def save_view(view, filename, **kwargs):
         filename = f'{filename}.png'
     view.download_image(filename, trim=True, **kwargs)
     return
-
-
-def split_atom_and_fod(atom, X):
-    '''Split atom and FOD coordinates.
-
-    Args:
-        atom : list
-            Atom symbols.
-
-        X : array
-            Atom positions.
-
-    Returns:
-        Shortened atom types and coordinates, with FOD coordinates as a tuple(list, array, array).
-    '''
-    X_fod = []
-    # Iterate in reverted order, because we may delete elements
-    for ia in range(len(X) - 1, -1, -1):
-        if atom[ia] == 'X':
-            X_fod.append(X[ia])
-            X = np.delete(X, ia, axis=0)
-            del atom[ia]
-    X_fod = np.asarray(X_fod)
-    return atom, X, X_fod
