@@ -327,9 +327,9 @@ class Atoms:
         '''Transformation from k- to real-space :func:`~plainedft.operators.I`.'''
         return I(self, inp)
 
-    def J(self, inp):
+    def J(self, inp, full=True):
         '''Transformation from real- to k-space :func:`~plainedft.operators.J`.'''
-        return J(self, inp)
+        return J(self, inp, full)
 
     def Idag(self, inp):
         '''Conj transformation from k- to real-space :func:`~plainedft.operators.Idag`.'''

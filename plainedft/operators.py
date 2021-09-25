@@ -133,7 +133,7 @@ def I(atoms, inp):
     return (out * np.prod(atoms.S)).T
 
 
-def J(atoms, inp):
+def J(atoms, inp, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
     Args:
@@ -143,6 +143,10 @@ def J(atoms, inp):
         inp : array
             Coefficents input array.
 
+    Kwargs:
+        full : bool
+            Transform in the full or in the active/truncated space.
+
     Returns:
         Result as an array.
     '''
@@ -150,11 +154,19 @@ def J(atoms, inp):
     if inp.ndim == 1:
         tmp = np.reshape(inp, atoms.S, order='F')
         out = fftn(tmp, workers=THREADS).flatten(order='F')
+        if not full:
+            out = out[atoms.active]
     else:
-        out = np.empty(inp.shape, dtype=complex)
-        for i in range(inp.shape[0]):
-            tmp = np.reshape(inp[i], atoms.S, order='F')
-            out[i] = fftn(tmp, workers=THREADS).flatten(order='F')
+        if full:
+            out = np.empty(inp.shape, dtype=complex)
+            for i in range(inp.shape[0]):
+                tmp = np.reshape(inp[i], atoms.S, order='F')
+                out[i] = fftn(tmp, workers=THREADS).flatten(order='F')
+        else:
+            out = np.empty((inp.shape[0], len(atoms.active[0])), dtype=complex)
+            for i in range(inp.shape[0]):
+                tmp = np.reshape(inp[i], atoms.S, order='F')
+                out[i] = fftn(tmp, workers=THREADS).flatten(order='F')[atoms.active]
     return (out / np.prod(atoms.S)).T
 
 
