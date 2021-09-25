@@ -58,9 +58,10 @@ def view(filename, isovalue=0.01, **kwargs):
         # Spin up
         view.add_component(filename)
         view[1].clear()
-        view[1].add_surface(negateIsolevel=False,
+        # Negate isovalue here as a workaround for some display bugs
+        view[1].add_surface(negateIsolevel=True,
                             isolevelType='value',
-                            isolevel=isovalue,
+                            isolevel=-isovalue,
                             color='lightgreen',
                             opacity=0.75,
                             side='front')
