@@ -294,6 +294,7 @@ class Atoms:
             self.f = self.f * np.ones(self.Ns)
             if mod != 0:
                 self.f[-1] = mod
+        return
 
     def __repr__(self):
         '''Display informations when printing the atoms object.'''
