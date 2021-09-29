@@ -3,9 +3,7 @@
 Utilities to localize and analyze orbitals.
 '''
 import numpy as np
-from numpy.linalg import norm
-
-from .scf import orth
+from numpy.linalg import eig, norm
 
 
 def eval_psi(atoms, psi, r):
@@ -85,8 +83,31 @@ def get_FOs(atoms, psi, fods):
     return FOs
 
 
+def get_S(atoms, psirs):
+    '''Calculate overlap matrix between orbitals.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        psirs : array
+            Set of orbitals in real-space.
+
+    Returns:
+        Overlap matrix S as an array.
+    '''
+    # Overlap elements: S_ij = \int psi_i^* psi_j dr
+    S = np.zeros((atoms.Ns, atoms.Ns), dtype=complex)
+
+    prefactor = atoms.CellVol / np.prod(atoms.S)
+    for i in range(atoms.Ns):
+        for j in range(atoms.Ns):
+            S[i][j] = prefactor * np.sum(psirs[:, i].conj() * psirs[:, j])
+    return S
+
+
 def get_FLOs(atoms, psi, fods):
-    '''Calculate Fermi-Löwdin orbitals by orthogornalizing Fermi orbitals.
+    '''Calculate Fermi-Löwdin orbitals by orthonormalizing Fermi orbitals.
 
     Args:
         atoms :
@@ -102,7 +123,13 @@ def get_FLOs(atoms, psi, fods):
         Fermi-Löwdin orbitals as an array.
     '''
     FOs = get_FOs(atoms, psi, fods)
-    return orth(atoms, FOs)
+    # Calculate the overlap matrix for FOs
+    S = get_S(atoms, FOs)
+    # Calculate eigenvalues and eigenvectors
+    Q, T = eig(S)
+    # Löwdins symmetric orthonormalization method
+    Q12 = np.diag(1 / np.sqrt(Q))
+    return FOs @ (T @ Q12 @ T.T)
 
 
 def wannier_cost(atoms, psirs):
