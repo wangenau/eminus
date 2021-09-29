@@ -166,7 +166,7 @@ def check_norm(atoms, func):
     Returns:
         Normalization status of the set of functions as a bool.
     '''
-    # Orthogonality condition: \int func dr = 1
+    # Normality condition: \int func^* func dr = 1
     # Tolerance for the condition
     eps = 1e-9
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
@@ -176,10 +176,10 @@ def check_norm(atoms, func):
 
     norm_bool = True
 
-    # Check the condition for every combination
+    # Check the condition for every function
     for i in range(len(func)):
-        res = prefactor * np.sum(func[i])
-        tmp_bool = np.abs(atoms.f[i] - res) < eps
+        res = prefactor * np.sum(func[i].conj() * func[i])
+        tmp_bool = np.abs(1 - res) < eps
         norm_bool *= tmp_bool
         if atoms.verbose >= 3:
             print(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
