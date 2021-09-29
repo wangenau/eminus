@@ -431,31 +431,3 @@ def guess_experimental(atoms):
     # There is no transformation on the active space for this, so do it "manually"
     W = atoms.J(W)[atoms.active]
     return orth(atoms, W)
-
-
-def normalize(atoms, psirs, occ=None):
-    '''Normalize orbitals.
-
-    Args:
-        atoms :
-            Atoms object.
-
-        psirs : array
-            Set of orbitals in real-space.
-
-    Kwargs:
-        occ : float
-            Value to normalize the orbitals. Use atoms.f if None.
-
-    Returns:
-        Normalized orbitals as an array.
-    '''
-    if occ is None:
-        f = atoms.f
-    else:
-        f = occ * np.ones(len(atoms.Ns))
-    out = np.zeros((psirs.shape), dtype=complex)
-    for i in range(psirs.shape[1]):
-        norm = atoms.CellVol / np.prod(atoms.S) * np.sum(psirs[:, i])
-        out[:, i] = f[i] * psirs[:, i] / norm
-    return out
