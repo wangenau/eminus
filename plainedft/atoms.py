@@ -211,7 +211,7 @@ class Atoms:
         self.CellVol = np.abs(det(R))
 
         # Build index matrix M
-        ms = np.arange(0, np.prod(self.S))
+        ms = np.arange(np.prod(self.S))
         m1 = ms % self.S[0]
         m2 = np.floor(ms / self.S[0]) % self.S[1]
         m3 = np.floor(ms / (self.S[0] * self.S[1])) % self.S[2]
