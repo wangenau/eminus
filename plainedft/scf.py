@@ -416,7 +416,7 @@ def guess_gaussian(atoms):
         n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
 
     # Calculate the eigenfunctions
-    W, _ = get_psi(atoms, W, n)
+    W = get_psi(atoms, W, n)
     return W * atoms.CellVol / np.prod(atoms.S)
 
 
