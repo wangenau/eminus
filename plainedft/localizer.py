@@ -147,7 +147,7 @@ def wannier_cost(atoms, psirs):
     '''
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
-    costs = moments - norm(centers**2, axis=1)
+    costs = moments - norm(centers, axis=1)**2
     if atoms.verbose >= 3:
         print(f'Centers:\n{centers}\nMoments:\n{moments}')
     print(f'Costs:\n{costs}')
