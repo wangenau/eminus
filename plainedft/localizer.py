@@ -174,7 +174,7 @@ def wannier_center(atoms, psirs):
     for i in range(atoms.Ns):
         center = np.zeros(3)
         for dim in range(3):
-            center[dim] = prefactor * np.real(np.sum(psirs[i].conj() * r[:, dim] * psirs[i],
+            center[dim] = prefactor * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
                           axis=0))
         centers.append(center)
     return np.asarray(centers)
@@ -198,6 +198,6 @@ def second_moment(atoms, psirs):
 
     moments = []
     for i in range(atoms.Ns):
-        moment = prefactor * np.real(np.sum(psirs[i].conj() * r2 * psirs[i], axis=0))
+        moment = prefactor * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
         moments.append(moment)
     return np.asarray(moments)

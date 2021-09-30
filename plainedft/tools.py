@@ -142,9 +142,9 @@ def check_ortho(atoms, func):
     ortho_bool = True
 
     # Check the condition for every combination
-    for i in range(len(func)):
-        for j in range(i + 1, len(func)):
-            res = prefactor * np.sum(func[i].conj() * func[j])
+    for i in range(func.shape[1]):
+        for j in range(i + 1, func.shape[1]):
+            res = prefactor * np.sum(func[:, i].conj() * func[:, j])
             tmp_bool = np.abs(res) < eps
             ortho_bool *= tmp_bool
             if atoms.verbose >= 3:
@@ -177,8 +177,8 @@ def check_norm(atoms, func):
     norm_bool = True
 
     # Check the condition for every function
-    for i in range(len(func)):
-        res = prefactor * np.sum(func[i].conj() * func[i])
+    for i in range(func.shape[1]):
+        res = prefactor * np.sum(func[:, i].conj() * func[:, i])
         tmp_bool = np.abs(1 - res) < eps
         norm_bool *= tmp_bool
         if atoms.verbose >= 3:
