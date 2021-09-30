@@ -355,10 +355,17 @@ def orth(atoms, W):
 
 
 def get_psi(atoms, Y, n=None):
-    '''Calculate eigensolutions and eigenvalues from the coefficent matrix W.'''
+    '''Calculate eigenstates from H.'''
     mu = Y.conj().T @ H(atoms, Y, n)
-    epsilon, D = eig(mu)
-    return Y @ D, np.real(epsilon)
+    _, D = eig(mu)
+    return Y @ D
+
+
+def get_epsilon(atoms, Y, n=None):
+    '''Calculate eigenvalues from H.'''
+    mu = Y.conj().T @ H(atoms, Y, n)
+    epsilon, _ = eig(mu)
+    return np.real(epsilon)
 
 
 def get_n_total(atoms, Y):
