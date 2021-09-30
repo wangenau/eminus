@@ -128,13 +128,13 @@ def get_Esic(atoms, n):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
-        # Normalize single-particle densities
-        norm = atoms.CellVol / np.prod(atoms.S) * np.sum(n[i])
-        n[i] = n[i] / norm
-        coul = get_Ecoul(atoms, n[i])
+        # Normalize single-particle densities to 1
+        n_tmp = n[i] / atoms.f[i]
+        coul = get_Ecoul(atoms, n_tmp)
         # The exchange part for a SIC correction has to be spin polarized
-        xc = get_Exc(atoms, n[i], spinpol=True)
-        Esic += (coul + xc) * norm
+        xc = get_Exc(atoms, n_tmp, spinpol=True)
+        # SIC energy is scaled by the occupation
+        Esic += (coul + xc) * atoms.f[i]
     return Esic
 
 
