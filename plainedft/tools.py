@@ -107,9 +107,9 @@ def get_dipole(atoms):
     for i in range(len(atoms.X)):
         mu += atoms.Z[i] * atoms.X[i]
 
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
     for dim in range(3):
-        mu[dim] -= prefactor * np.sum(n * atoms.r[:, dim])
+        mu[dim] -= dV * np.sum(n * atoms.r[:, dim])
     return mu
 
 
@@ -135,16 +135,16 @@ def check_ortho(atoms, func):
         return True
 
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
-    # The integration prefactor is (b-a)/n, with n as the sampling
+    # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
 
     ortho_bool = True
 
     # Check the condition for every combination
     for i in range(func.shape[1]):
         for j in range(i + 1, func.shape[1]):
-            res = prefactor * np.sum(func[:, i].conj() * func[:, j])
+            res = dV * np.sum(func[:, i].conj() * func[:, j])
             tmp_bool = np.abs(res) < eps
             ortho_bool *= tmp_bool
             if atoms.verbose >= 3:
@@ -170,15 +170,15 @@ def check_norm(atoms, func):
     # Tolerance for the condition
     eps = 1e-9
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
-    # The integration prefactor is (b-a)/n, with n as the sampling
+    # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
 
     norm_bool = True
 
     # Check the condition for every function
     for i in range(func.shape[1]):
-        res = prefactor * np.sum(func[:, i].conj() * func[:, i])
+        res = dV * np.sum(func[:, i].conj() * func[:, i])
         tmp_bool = np.abs(1 - res) < eps
         norm_bool *= tmp_bool
         if atoms.verbose >= 3:

@@ -99,10 +99,10 @@ def get_S(atoms, psirs):
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.zeros((atoms.Ns, atoms.Ns), dtype=complex)
 
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
     for i in range(atoms.Ns):
         for j in range(atoms.Ns):
-            S[i][j] = prefactor * np.sum(psirs[:, i].conj() * psirs[:, j])
+            S[i][j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
 
@@ -150,7 +150,8 @@ def wannier_cost(atoms, psirs):
     costs = moments - norm(centers, axis=1)**2
     if atoms.verbose >= 3:
         print(f'Centers:\n{centers}\nMoments:\n{moments}')
-    print(f'Costs:\n{costs}')
+    if atoms.verbose >= 2:
+        print(f'Costs:\n{costs}')
     return np.sum(costs)
 
 
@@ -167,17 +168,15 @@ def wannier_center(atoms, psirs):
     Returns:
         Wannier centers per orbital as an array.
     '''
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
     r = atoms.r
 
-    centers = []
+    centers = np.zeros((psirs.shape[1], 3))
     for i in range(psirs.shape[1]):
-        center = np.zeros(3)
         for dim in range(3):
-            center[dim] = prefactor * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
-                          axis=0))
-        centers.append(center)
-    return np.asarray(centers)
+            centers[i][dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
+                              axis=0))
+    return centers
 
 
 def second_moment(atoms, psirs):
@@ -193,11 +192,10 @@ def second_moment(atoms, psirs):
     Returns:
         Second moments per orbital as an array.
     '''
-    prefactor = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.CellVol / np.prod(atoms.S)
     r2 = norm(atoms.r, axis=1)**2
 
-    moments = []
+    moments = np.zeros(psirs.shape[1])
     for i in range(psirs.shape[1]):
-        moment = prefactor * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
-        moments.append(moment)
-    return np.asarray(moments)
+        moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
+    return moments
