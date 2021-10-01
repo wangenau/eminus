@@ -44,7 +44,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     # Convert to Angstrom for pyscf
     X = bohr2ang(atoms.X)
     # Build the pyscf input format
-    atom_pyscf = [[atoms.atom[ia], X[ia]] for ia in range(len(X))]
+    atom_pyscf = [i for i in zip(atoms.atom, X)]
 
     # Do the pyscf DFT calculation
     mol = M(atom=atom_pyscf, basis=basis)
