@@ -41,12 +41,12 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     Returns:
         FOD positions as an array.
     '''
-    # Convert to Angstrom for pyscf
+    # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)
-    # Build the pyscf input format
+    # Build the PySCF input format
     atom_pyscf = [i for i in zip(atoms.atom, X)]
 
-    # Do the pyscf DFT calculation
+    # Do the PySCF DFT calculation
     mol = M(atom=atom_pyscf, basis=basis)
     mf = RKS(mol=mol)
     mf.verbose = 0
