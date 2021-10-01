@@ -13,12 +13,12 @@ from .fods import split_atom_and_fod
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
-def view(filename, isovalue=0.01, **kwargs):
+def view_mol(filename, isovalue=0.01, **kwargs):
     '''Display molecules and orbitals.
 
     Args:
         filename : str
-            Input file path/name.
+            Input file path/name. This can be either a cube or xyz file.
 
     Kwargs:
         isovalue : float
@@ -40,7 +40,7 @@ def view(filename, isovalue=0.01, **kwargs):
         view[0].clear()
         view[0].add_ball_and_stick()
         # FODs
-        if len(X_fod) > 0:
+        if X_fod:
             view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
             view[1].clear()
             view[1].add_ball_and_stick('_X', color='red', radius=0.1)
@@ -75,24 +75,8 @@ def view(filename, isovalue=0.01, **kwargs):
                             opacity=0.75,
                             side='front')
         # FODs
-        if len(X_fod) > 0:
+        if X_fod:
             view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
             view[3].clear()
             view[3].add_ball_and_stick('_X', color='red', radius=0.1)
     return view
-
-
-def save_view(view, filename, **kwargs):
-    '''Save the current view as a png.
-
-    Args:
-        view :
-            NGLWidget object.
-
-        filename : str
-            Output file path/name.
-    '''
-    if not filename.endswith('.png'):
-        filename = f'{filename}.png'
-    view.download_image(filename, trim=True, **kwargs)
-    return
