@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     install_requires=['numpy', 'scipy'],
     extras_require={
-        'addons': ['nglview', 'pyscf']  # , 'pyflosic_dev']
+        'addons': ['nglview', 'vispy']  # , 'pyflosic_dev']
     },
     python_requires='>=3.6',
     include_package_data=True,

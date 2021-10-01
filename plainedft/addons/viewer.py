@@ -2,8 +2,11 @@
 '''
 Viewer functions for Jupyter notebooks.
 '''
+import numpy as np
+from numpy.linalg import norm
 try:
     from nglview import NGLWidget, TextStructure
+    from vispy import scene
 except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
           'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
@@ -80,3 +83,38 @@ def view_mol(filename, isovalue=0.01, **kwargs):
             view[3].clear()
             view[3].add_ball_and_stick('_X', color='red', radius=0.1)
     return view
+
+
+def view_grid(coords, extra=None):
+    '''Display 3D-coordinates, e.g., grid points.
+
+    Args:
+        coords : array
+            Grid points.
+
+    Kwargs:
+        extra : array
+            Extra coordinates to display.
+
+    Returns:
+        Viewable object as a SceneCanvas.
+    '''
+    # Set up view
+    canvas = scene.SceneCanvas(keys='interactive', show=True, size=(400, 400))
+    view = canvas.central_widget.add_view()
+    view.size = (400, 400)
+    view.camera = 'arcball'
+    view.camera.center = (np.mean(coords[:, 0]), np.mean(coords[:, 1]), np.mean(coords[:, 2]))
+    view.camera.distance = np.max(norm(coords, axis=1)) * 2
+
+    # Add data
+    grid = scene.visuals.Markers()
+    grid.set_data(coords, face_color='lightgreen', edge_width=0, size=2)
+    view.add(grid)
+    if extra is not None:
+        grid_extra = scene.visuals.Markers()
+        grid_extra.set_data(extra, face_color='red', edge_width=0, size=8)
+        view.add(grid_extra)
+
+    canvas.app.run()
+    return canvas
