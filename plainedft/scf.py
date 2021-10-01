@@ -65,9 +65,6 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
         }
     }
 
-    # Update atoms object at the beginning to ensure correct inputs
-    atoms.update()
-
     # Print some useful informations
     if atoms.verbose >= 3:
         print(f'--- System informations ---\n{atoms}\n')

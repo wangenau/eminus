@@ -134,6 +134,7 @@ class Atoms:
         self.W = None             # Basis functions
         self.n = None             # Electronic density
         self.energies = Energy()  # Energy object that holds energy contributions
+        self.update()
 
     def update(self):
         '''Check inputs and update them if none are given.'''
