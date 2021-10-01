@@ -417,8 +417,8 @@ def write_xyz(atoms, filename, extra=None):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Add extra coordinates, if desired. The will default to X (no atom type).
         if extra is not None:
-            for ix in range(len(extra)):
-                fp.write(f'X  {extra[ix][0]:.5f}  {extra[ix][1]:.5f}  {extra[ix][2]:.5f}\n')
+            for ie in extra:
+                fp.write(f'X  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
     return
 
 
@@ -531,9 +531,9 @@ def write_cube(atoms, field, filename, extra=None):
             fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  ')
             fp.write(f'{X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         if extra is not None:
-            for ix in range(len(extra)):
+            for ie in extra:
                 fp.write('0  0.00000  ')
-                fp.write(f'{extra[ix][0]:.5f}  {extra[ix][1]:.5f}  {extra[ix][2]:.5f}\n')
+                fp.write(f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have S[0]*S[1] chunks values with a length of S[2]
         for i in range(S[0] * S[1]):
