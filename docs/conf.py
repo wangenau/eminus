@@ -26,3 +26,5 @@ pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
 html_show_sphinx = False
+
+autodoc_preserve_defaults = True
