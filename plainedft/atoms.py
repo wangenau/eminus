@@ -117,8 +117,6 @@ class Atoms:
         # Parameters that will be built out of the inputs
         self.R = None         # Unit cell
         self.CellVol = None   # Unit cell volume
-        self.M = None         # Index matrix
-        self.N = None         # Index matrix
         self.r = None         # Sample points in unit cell
         self.G = None         # G-vectors
         self.G2 = None        # Squared magnitudes of G-vectors
@@ -216,14 +214,12 @@ class Atoms:
         m2 = np.floor(ms / self.S[0]) % self.S[1]
         m3 = np.floor(ms / (self.S[0] * self.S[1])) % self.S[2]
         M = np.array([m1, m2, m3]).T
-        self.M = M
 
         # Build index matrix N
         n1 = m1 - (m1 > self.S[0] / 2) * self.S[0]
         n2 = m2 - (m2 > self.S[1] / 2) * self.S[1]
         n3 = m3 - (m3 > self.S[2] / 2) * self.S[2]
         N = np.array([n1, n2, n3]).T
-        self.N = N
 
         # Build sampling points
         r = M @ inv(np.diag(self.S)) @ R.T
