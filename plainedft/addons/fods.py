@@ -7,7 +7,7 @@ from os import remove
 import numpy as np
 from numpy.linalg import norm
 try:
-    from pyscf.gto import M
+    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC
     from pyscf.scf import RKS
     from pyflosic_dev.atoms.atoms import Atoms
     from pyflosic_dev.guess.pycom import pycom
@@ -44,9 +44,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     # Convert to Angstrom for pyscf
     X = bohr2ang(atoms.X)
     # Build the pyscf input format
-    atom_pyscf = []
-    for ia in range(len(X)):
-        atom_pyscf.append([atoms.atom[ia], X[ia]])
+    atom_pyscf = [[atoms.atom[ia], X[ia]] for ia in range(len(X))]
 
     # Do the pyscf DFT calculation
     mol = M(atom=atom_pyscf, basis=basis)
