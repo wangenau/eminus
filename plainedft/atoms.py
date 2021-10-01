@@ -398,6 +398,9 @@ def write_xyz(atoms, filename, extra=None):
     atom = atoms.atom
     X = atoms.X
 
+    if not filename.endswith('.xyz'):
+        filename = f'{filename}.xyz'
+
     # Convert the coordinates from atomic units to angstrom
     X = bohr2ang(X)
     if extra is not None:
@@ -496,6 +499,9 @@ def write_cube(atoms, field, filename, extra=None):
     S = atoms.S
     X = atoms.X
     Z = atoms.Z
+
+    if not filename.endswith('.cube'):
+        filename = f'{filename}.cube'
 
     # Our field data has been created in a different order than needed for cube files
     # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
