@@ -29,8 +29,8 @@ def get_exc(exc, n, spinpol):
             'vwn': lda_vwn_c_spin
         }
         # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
-        ex, vx = exc_map.get(exch, dummy_exc)(n, np.ones((n.shape)))
-        ec, vc = exc_map.get(corr, dummy_exc)(n, np.ones((n.shape)))
+        ex, vx = exc_map.get(exch, dummy_exc)(n, np.ones_like(n))
+        ec, vc = exc_map.get(corr, dummy_exc)(n, np.ones_like(n))
     else:
         exc_map = {
             'lda': lda_slater_x,
@@ -52,7 +52,7 @@ def dummy_exc(n, **kwargs):
     Returns:
         Dummy exchange-correlation energy density and potential as a tuple(array, array).
     '''
-    zero = np.zeros((n.shape))
+    zero = np.zeros_like(n)
     return zero, zero
 
 

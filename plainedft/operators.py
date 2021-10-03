@@ -63,7 +63,7 @@ def Linv(atoms, inp):
         Result as an array.
     '''
     inp = inp.T
-    out = np.zeros(inp.shape, dtype=complex)
+    out = np.zeros_like(inp, dtype=complex)
     if inp.ndim == 1:
         out[1:] = inp[1:] / atoms.G2[1:] / -atoms.CellVol
     else:
@@ -238,7 +238,7 @@ def T(atoms, inp, dr):
     Returns:
         Result as an array.
     '''
-    out = np.zeros((inp.shape), dtype=complex)
+    out = np.zeros_like(inp, dtype=complex)
     dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
     factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))
     for i in range(atoms.Ns):
