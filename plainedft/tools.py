@@ -73,7 +73,7 @@ def inertia_tensor(coords, masses=None):
         masses = np.ones(len(coords))
 
     # For the definition see https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
-    I = np.zeros((3, 3))
+    I = np.empty((3, 3))
     I[0][0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
     I[1][1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
     I[2][2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))

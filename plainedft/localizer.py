@@ -46,7 +46,7 @@ def get_R(atoms, psi, fods):
         Transformation matrix R as an array.
     '''
     # We only calculate occupied orbitals, so a zero matrix is enough
-    R = np.zeros((atoms.Ns, atoms.Ns), dtype=complex)
+    R = np.empty((len(fods), len(fods)), dtype=complex)
     for i in range(len(fods)):
         # Get the value at one FOD position for all psi
         psi_fod = eval_psi(atoms, psi, fods[i])
@@ -97,7 +97,7 @@ def get_S(atoms, psirs):
         Overlap matrix S as an array.
     '''
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
-    S = np.zeros((atoms.Ns, atoms.Ns), dtype=complex)
+    S = np.empty((atoms.Ns, atoms.Ns), dtype=complex)
 
     dV = atoms.CellVol / np.prod(atoms.S)
     for i in range(atoms.Ns):
@@ -171,7 +171,7 @@ def wannier_center(atoms, psirs):
     dV = atoms.CellVol / np.prod(atoms.S)
     r = atoms.r
 
-    centers = np.zeros((psirs.shape[1], 3))
+    centers = np.empty((psirs.shape[1], 3))
     for i in range(psirs.shape[1]):
         for dim in range(3):
             centers[i][dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
@@ -195,7 +195,7 @@ def second_moment(atoms, psirs):
     dV = atoms.CellVol / np.prod(atoms.S)
     r2 = norm(atoms.r, axis=1)**2
 
-    moments = np.zeros(psirs.shape[1])
+    moments = np.empty(psirs.shape[1])
     for i in range(psirs.shape[1]):
         moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments

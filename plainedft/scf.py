@@ -382,7 +382,7 @@ def get_n_total(atoms, Y):
 def get_n_single(atoms, Y):
     '''Calculate the single electronic densities.'''
     Y = Y.T
-    n = np.zeros((np.prod(atoms.S), len(Y)))
+    n = np.empty((np.prod(atoms.S), len(Y)))
     for i in range(Y.shape[0]):
         psi = atoms.I(Y[i])
         n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
@@ -427,7 +427,7 @@ def guess_experimental(atoms):
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
 
-    W = np.zeros((len(atoms.r), atoms.Ns))
+    W = np.empty((len(atoms.r), atoms.Ns))
     for ist in range(atoms.Ns):
         # If we have more states than atoms, start all over again
         ia = ist % len(atoms.X)

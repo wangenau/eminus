@@ -25,7 +25,7 @@ def init_gth_loc(atoms):
     atom = atoms.atom
     species = set(atom)
 
-    Vsp = np.zeros(len(G2))  # Potential for every species
+    Vsp = np.empty(len(G2))  # Potential for every species
     Vloc = np.zeros(len(G2))  # Total local potential
     for isp in species:
         psp = atoms.GTH[isp]

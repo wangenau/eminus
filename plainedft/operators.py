@@ -63,7 +63,8 @@ def Linv(atoms, inp):
         Result as an array.
     '''
     inp = inp.T
-    out = np.zeros_like(inp, dtype=complex)
+    out = np.empty_like(inp, dtype=complex)
+    out[0] = 0
     if inp.ndim == 1:
         out[1:] = inp[1:] / atoms.G2[1:] / -atoms.CellVol
     else:
@@ -86,7 +87,7 @@ def K(atoms, inp):
         Result as an array.
     '''
     inp = inp.T
-    out = np.empty(inp.shape, dtype=complex)
+    out = np.empty_like(inp, dtype=complex)
     if inp.shape[1] == len(atoms.G2c):
         if inp.ndim == 1:
             out = inp / (1 + atoms.G2c)
@@ -119,7 +120,7 @@ def I(atoms, inp):
     if inp.ndim == 1:
         inp = np.array([inp])
     if np.size(inp, 1) == np.prod(atoms.S):
-        out = np.empty(inp.shape, dtype=complex)
+        out = np.empty_like(inp, dtype=complex)
         for i in range(inp.shape[0]):
             tmp = np.reshape(inp[i], atoms.S, order='F')
             out[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
@@ -158,7 +159,7 @@ def J(atoms, inp, full=True):
             out = out[atoms.active]
     else:
         if full:
-            out = np.empty(inp.shape, dtype=complex)
+            out = np.empty_like(inp, dtype=complex)
             for i in range(inp.shape[0]):
                 tmp = np.reshape(inp[i], atoms.S, order='F')
                 out[i] = fftn(tmp, workers=THREADS).flatten(order='F')
@@ -215,7 +216,7 @@ def Jdag(atoms, inp):
         tmp = np.reshape(inp, atoms.S, order='F')
         out = ifftn(tmp, workers=THREADS).flatten(order='F')
     else:
-        out = np.empty(inp.shape, dtype=complex)
+        out = np.empty_like(inp, dtype=complex)
         for i in range(len(inp)):
             tmp = np.reshape(inp[i], atoms.S, order='F')
             out[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
@@ -238,7 +239,7 @@ def T(atoms, inp, dr):
     Returns:
         Result as an array.
     '''
-    out = np.zeros_like(inp, dtype=complex)
+    out = np.empty_like(inp, dtype=complex)
     dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
     factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))
     for i in range(atoms.Ns):

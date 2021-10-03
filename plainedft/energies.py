@@ -238,9 +238,9 @@ def get_Eewald(atoms):
     # Add the electroneutrality-term (Eq. 11)
     ewald += -np.pi * totalcharge**2 / (omega * nu**2)
 
-    dtau = np.zeros(3)
-    G = np.zeros(3)
-    T = np.zeros(3)
+    dtau = np.empty(3)
+    G = np.empty(3)
+    T = np.empty(3)
     for ia in range(Natoms):
         for ja in range(Natoms):
             dtau = tau[ia] - tau[ja]
