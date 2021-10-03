@@ -271,7 +271,7 @@ def lda_vwn_c(n):
     tx = 2 * rs12 + b
     tt = tx * tx + q * q
     vc = ec - rs12 * A / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
-         f2 * (2 / (rs12 - x0) - tx / fx - 4.0 * (2 * x0 + b) / tt))
+         f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
     return ec, vc
 
 
