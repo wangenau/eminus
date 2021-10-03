@@ -15,7 +15,7 @@ from .gth import calc_Vnonloc
 from .utils import Diagprod, dotprod
 
 
-def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
+def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     '''SCF function to handle direct minimizations.
 
     Args:
@@ -35,7 +35,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
         min : dict
             Dictionary to set the maximum amount of steps per minimization method and their order.
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50}
-            Default: {'pccg': 100}
+            Default: None (will default to {'pccg': 100})
 
         cgform : int
             Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
@@ -64,6 +64,10 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min={'pccg': 100}, cgform=1):
             'name': 'preconditioned conjugate-gradient minimization'
         }
     }
+
+    # Set min here, better not use mutable data types in signatures
+    if min is None:
+        min = {'pccg': 100}
 
     # Print some useful informations
     if atoms.verbose >= 3:
