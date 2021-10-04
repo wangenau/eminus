@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 '''
-Module version number.
+Package version number.
 '''
 __version__ = '0.0.1'

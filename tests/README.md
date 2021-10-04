@@ -15,3 +15,4 @@ Running all tests can be simply performed with
 ```bash
 pytest
 ```
+

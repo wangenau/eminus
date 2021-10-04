@@ -1,9 +1,9 @@
 # addons
 
-Addon functions that need additional dependencies to work.
+Addon directory that contains functions that need additional dependencies to work.
 
-To also install all dependecies to use these addons, please use
+| File      | Description |
+| :-------: | :---------: |
+|   fods.py | FOD generation |
+| viewer.py | Notebook display functions |
 
-```bash
-pip install .[addons]
-```

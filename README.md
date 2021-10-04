@@ -30,3 +30,4 @@ pip install .[addons]
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://gitlab.com/wangenau/plainedft/-/blob/master/LICENSE) file for details.
+

@@ -2,9 +2,7 @@
 '''
 PlaineDFT - A simple plane wave DFT code.
 
-Minimal usage example to do a DFT calculation for Hydrogen:
-
-.. code-block:: bash
+Minimal usage example to do a DFT calculation for Hydrogen::
 
     from plainedft import *
     atoms = Atoms('H', [0, 0, 0])
