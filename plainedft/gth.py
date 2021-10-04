@@ -66,7 +66,7 @@ def init_gth_nonloc(atoms):
     Returns:
         NbetaNL, prj2beta, and betaNL as a tuple(int, array, array).
     '''
-    Natoms = len(atoms.X)
+    Natoms = atoms.Natoms
     Npoints = len(atoms.active[0])
     CellVol = atoms.CellVol
 
@@ -118,7 +118,7 @@ def calc_Vnonloc(atoms, W):
 
     Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        Natoms = len(atoms.X)
+        Natoms = atoms.Natoms
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
 

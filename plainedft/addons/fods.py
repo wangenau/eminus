@@ -125,7 +125,7 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
     '''
     method = method.lower()
     if method in ('auto', 'automatic'):
-        for ia in range(len(atoms.X)):
+        for ia in range(atoms.Natoms):
             n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state
             # Since only core states are removed in pseudopotentials this value is divisible by 2
@@ -136,7 +136,7 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
             # Remove core FODs with the smallest distance to the core
             fods = np.delete(fods, idx[:n_core], axis=0)
     else:
-        for ia in range(len(atoms.X)):
+        for ia in range(atoms.Natoms):
             dist = norm(fods - atoms.X[ia], axis=1)
             if method in ('rad', 'radius'):
                 # Remove FODs within a sphere of given radius around atoms

@@ -154,7 +154,7 @@ def get_Enonloc(atoms, Y):
     '''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        Natoms = len(atoms.X)
+        Natoms = atoms.Natoms
         Nstates = atoms.Ns
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
@@ -206,7 +206,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     if atoms.cutcoul is not None:
         return 0
 
-    Natoms = len(atoms.X)
+    Natoms = atoms.Natoms
     tau = atoms.X
     Zvals = atoms.Z
     omega = atoms.CellVol

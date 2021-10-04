@@ -115,6 +115,7 @@ class Atoms:
         self.cutcoul = cutcoul    # Cut-off radius for a spherical coulomb truncation
 
         # Parameters that will be built out of the inputs
+        self.Natoms = None    # Number of atoms
         self.R = None         # Unit cell
         self.CellVol = None   # Unit cell volume
         self.r = None         # Sample points in unit cell
@@ -134,6 +135,7 @@ class Atoms:
         self.W = None             # Basis functions
         self.n = None             # Electronic density
         self.energies = Energy()  # Energy object that holds energy contributions
+
         self.update()
 
     def update(self):
@@ -153,6 +155,8 @@ class Atoms:
                     atom += [ia]
             self.atom = atom
 
+        self.Natoms = len(self.atom)
+
         # We need atom positions as a two-dimensional array
         self.X = np.asarray(self.X)
         if self.X.ndim == 1:
@@ -160,7 +164,7 @@ class Atoms:
 
         # If only one charge is given, assume it is the charge for every atom
         if isinstance(self.Z, int):
-            self.Z = [self.Z] * len(self.X)
+            self.Z = [self.Z] * self.Natoms
         if isinstance(self.Z, list):
             self.Z = np.asarray(self.Z)
 
@@ -250,12 +254,12 @@ class Atoms:
         # Update the potentials
         if self.pot == 'gth':
             if self.Z is not None:
-                for ia in range(len(self.X)):
+                for ia in range(self.Natoms):
                     self.GTH[self.atom[ia]] = read_gth(self.atom[ia], self.Z[ia])
             else:
                 # If no charges are given, use the ones provided by the pseudopotential
                 Z = []
-                for ia in range(len(self.X)):
+                for ia in range(self.Natoms):
                     self.GTH[self.atom[ia]] = read_gth(self.atom[ia])
                     Z.append(self.GTH[self.atom[ia]]['Zval'])
                 self.Z = np.asarray(Z)
@@ -296,11 +300,12 @@ class Atoms:
     def __repr__(self):
         '''Display informations when printing the atoms object.'''
         atom = self.atom
+        Natoms = self.Natoms
         X = self.X
         Z = self.Z
 
         out = 'Atom\tCharge\tPosition'
-        for i in range(len(X)):
+        for i in range(Natoms):
             out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i][0]:10.5f}  {X[i][1]:10.5f}  {X[i][2]:10.5f}'
         return out
 
@@ -396,6 +401,7 @@ def write_xyz(atoms, filename, extra=None):
     '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     atom = atoms.atom
+    Natoms = atoms.Natoms
     X = atoms.X
 
     if not filename.endswith('.xyz'):
@@ -410,13 +416,13 @@ def write_xyz(atoms, filename, extra=None):
         # The first line contains the number of atoms.
         # If we add extra coordinates, add them to the count.
         if extra is None:
-            fp.write(f'{len(X)}\n')
+            fp.write(f'{Natoms}\n')
         else:
-            fp.write(f'{len(X) + len(extra)}\n')
+            fp.write(f'{Natoms + len(extra)}\n')
         # The second line can contains a comment.
         # Print informations about the file and program, and the file creation time.
         fp.write(f'XYZ file generated with PlaineDFT {__version__} at {ctime()}\n')
-        for ia in range(len(X)):
+        for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Add extra coordinates, if desired. The will default to X (no atom type).
         if extra is not None:
@@ -494,6 +500,7 @@ def write_cube(atoms, field, filename, extra=None):
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
     atom = atoms.atom
+    Natoms = atoms.Natoms
     a = atoms.a
     r = atoms.r
     S = atoms.S
@@ -523,9 +530,9 @@ def write_cube(atoms, field, filename, extra=None):
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
         if extra is None:
-            fp.write(f'{len(X)}  ')
+            fp.write(f'{Natoms}  ')
         else:
-            fp.write(f'{len(X) + len(extra)}  ')
+            fp.write(f'{Natoms + len(extra)}  ')
         fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cubic box, so each vector only has one non-zero component
@@ -533,7 +540,7 @@ def write_cube(atoms, field, filename, extra=None):
         fp.write(f'{S[1]}  0.0  {a / S[1]:.5f}  0.0\n')
         fp.write(f'{S[2]}  0.0  0.0  {a / S[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
-        for ia in range(len(X)):
+        for ia in range(Natoms):
             fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  ')
             fp.write(f'{X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         if extra is not None:
@@ -623,7 +630,7 @@ def create_pdb(atom, X, a=None):
 
     # Create molecule data
     pdb += '\nMODEL 1'
-    for ia in range(len(X)):
+    for ia in range(len(atom)):
         pdb += '\nATOM  '                   # 1-6 "ATOM"
         pdb += f'{ia + 1}'.rjust(5)         # 7-11 Atom serial number
         pdb += ' '

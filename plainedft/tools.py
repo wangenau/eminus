@@ -104,7 +104,7 @@ def get_dipole(atoms):
 
     # Diple moment: mu = \sum Z*X - \int n(r)*r dr
     mu = np.array([0, 0, 0], dtype=float)
-    for i in range(len(atoms.X)):
+    for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.X[i]
 
     dV = atoms.CellVol / np.prod(atoms.S)

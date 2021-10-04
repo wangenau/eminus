@@ -412,7 +412,7 @@ def guess_gaussian(atoms):
 
     # Calculate a density from normalized Gauss functions
     n = np.zeros(len(atoms.r)) + eps  # We divide by n in exc functionals, so 0 would be bad
-    for ia in range(len(atoms.X)):
+    for ia in range(atoms.Natoms):
         r = norm(atoms.r - atoms.X[ia], axis=1)
         n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
 
@@ -430,7 +430,7 @@ def guess_experimental(atoms):
     W = np.empty((len(atoms.r), atoms.Ns))
     for ist in range(atoms.Ns):
         # If we have more states than atoms, start all over again
-        ia = ist % len(atoms.X)
+        ia = ist % atoms.Natoms
         r = norm(atoms.r - atoms.X[ia], axis=1)
         W[:, ist] = atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal + eps
         # Vary each W minimally by eps with changing signs, such that Wdag*O(W) is not singulary
