@@ -10,6 +10,7 @@ Modules
 
    plainedft
    plainedft.atoms
+   plainedft.atoms_io
    plainedft.data
    plainedft.energies
    plainedft.exc

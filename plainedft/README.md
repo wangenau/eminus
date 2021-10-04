@@ -4,7 +4,8 @@ Main source code directory.
 
 | File            | Description |
 | :-------------: | :---------: |
-|        atoms.py | Atoms object and input/output functions |
+|        atoms.py | Atoms object definitions |
+|     atoms_io.py | Input/output functions |
 |         data.py | Atom specific data |
 |     energies.py | Energy object and calculation |
 |          exc.py | Exchange-correlation functionals |
