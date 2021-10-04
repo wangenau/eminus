@@ -371,9 +371,9 @@ def read_xyz(filename, info=False):
     X = []
     # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
     for line in lines[2:2 + Natoms]:
-        split = line.strip().split()
-        atom.append(split[0])
-        X.append(np.float_(split[1:4]))
+        line_split = line.strip().split()
+        atom.append(line_split[0])
+        X.append(np.float_(line_split[1:4]))
 
     # xyz files are in angstrom, so convert to bohr
     X = ang2bohr(np.asarray(X))
@@ -452,22 +452,22 @@ def read_cube(filename, info=False):
 
     # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/S
     # Only use line 4, because same samplings and a cubic unit cell are assumed
-    split = lines[3].strip().split()
-    S = int(split[0])
-    a = S * np.float_(split[1])
+    line_split = lines[3].strip().split()
+    S = int(line_split[0])
+    a = S * np.float_(line_split[1])
 
     atom = []
     X = []
     Z = []
     # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
     for line in lines[6:]:
-        split = line.strip().split()
+        line_split = line.strip().split()
         # If the first value is not a (positive) integer, we have reached the field data
-        if not split[0].isdigit():
+        if not line_split[0].isdigit():
             break
-        atom.append(number2symbol[int(split[0])])
-        Z.append(split[1])
-        X.append(np.float_(split[2:5]))
+        atom.append(number2symbol[int(line_split[0])])
+        Z.append(line_split[1])
+        X.append(np.float_(line_split[2:5]))
 
     X = np.asarray(X)
     return atom, X, Z, a, S
