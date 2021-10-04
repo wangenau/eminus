@@ -22,7 +22,13 @@ def test_spin_paired():
         e = SCF(atoms)
         Etot.append(e)
 
-    assert_allclose(Etot, Etot_ref)
+    try:
+        assert_allclose(Etot, Etot_ref)
+    except AssertionError as err:
+        print('Test failed.')
+        raise SystemExit(err)
+    else:
+        print('Test passed.')
     return
 
 
