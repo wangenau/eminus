@@ -94,17 +94,7 @@ symbol2number = {
 
 number2symbol = {value: key for key, value in symbol2number.items()}
 
-
-# Covalent radii in Bohr
-# Generated with:
-# from plainedft.data import symbol2number
-# from plainedft.units import ang2bohr
-# from ase.data import covalent_radii
-#
-# print('covalent_radii = {')
-# for i in range(len(symbol2number)):
-#     print(f'    \'{list(symbol2number.keys())[i]}\': {ang2bohr(covalent_radii[i])},')
-# print('}')
+# Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/__init__.py
 covalent_radii = {
     'X': 0.3779452249251541,
     'H': 0.5858150986339887,
