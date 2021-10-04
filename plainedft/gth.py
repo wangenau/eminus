@@ -194,7 +194,7 @@ def eval_proj_G(psp, l, iprj, Gm, CellVol):
     return pre * Vprj
 
 
-def read_gth(system, charge=None):
+def read_gth(system, charge=None, psp_path=f'{__path__[0]}/pade_gth/'):
     '''Read GTH files for a given system.
 
     Args:
@@ -205,11 +205,12 @@ def read_gth(system, charge=None):
         charge : int
             Valence charge.
 
+        psp_path : str
+            Path to GTH pseudopotential files.
+
     Returns:
         GTH parameters as a dictionary.
     '''
-    psp_path = f'{__path__[0]}/pade_gth/'
-
     if charge is not None:
         f_psp = f'{psp_path}{system}-q{charge}.gth'
     else:
