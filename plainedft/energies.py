@@ -180,12 +180,19 @@ def get_Enonloc(atoms, Y):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
-def get_Eewald(atoms):
+def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     '''Calculate the Ewald energy.
 
     Args:
         atoms :
             Atoms object.
+
+    Kwargs:
+        gcut : float
+            G-vector cut-off.
+
+        ebsl : float
+            Error tolerance
 
     Returns:
         Ewald energy in Hartree as a float.
@@ -223,8 +230,6 @@ def get_Eewald(atoms):
     x = np.sum(Zvals**2)
     totalcharge = np.sum(Zvals)
 
-    gcut = 2
-    ebsl = 1e-8
     gexp = -np.log(ebsl)
     nu = 0.5 * np.sqrt(gcut**2 / gexp)
 
