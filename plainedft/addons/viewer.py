@@ -43,7 +43,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
         view[0].clear()
         view[0].add_ball_and_stick()
         # FODs
-        if X_fod:
+        if len(X_fod) > 0:
             view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
             view[1].clear()
             view[1].add_ball_and_stick('_X', color='red', radius=0.1)
@@ -78,7 +78,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
                             opacity=0.75,
                             side='front')
         # FODs
-        if X_fod:
+        if len(X_fod) > 0:
             view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
             view[3].clear()
             view[3].add_ball_and_stick('_X', color='red', radius=0.1)
