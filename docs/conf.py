@@ -28,3 +28,15 @@ html_theme = 'sphinx_rtd_theme'
 html_show_sphinx = False
 
 autodoc_preserve_defaults = True
+
+
+def skip(app, what, name, obj, would_skip, options):
+    '''Exclude all dunder methods.'''
+    if '__' in name:
+        return True
+    return would_skip
+
+
+def setup(app):
+    '''Use autodoc-skip-member.'''
+    app.connect('autodoc-skip-member', skip)

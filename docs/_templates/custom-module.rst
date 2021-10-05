@@ -9,6 +9,7 @@
    .. autosummary::
       :toctree:
       :nosignatures:
+      :template: custom-class.rst
    {% for item in classes %}
       {{ item }}
    {%- endfor %}
