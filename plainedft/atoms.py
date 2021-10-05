@@ -92,7 +92,6 @@ class Atoms:
 
     def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
                  pot='gth', center=False, exc='lda,vwn', spinpol=False, cutcoul=None):
-        '''Initialize the atoms object.'''
         self.atom = atom          # Atom symbols
         self.X = X                # Atom positions
         self.a = a                # Cell/Vacuum size
@@ -292,7 +291,6 @@ class Atoms:
         return
 
     def __repr__(self):
-        '''Display informations when printing the atoms object.'''
         atom = self.atom
         Natoms = self.Natoms
         X = self.X

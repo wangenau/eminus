@@ -14,7 +14,6 @@ class Energy:
     '''Energy class to save SCF results in one place.'''
 
     def __init__(self):
-        '''Energy contributions are uninitialized by default.'''
         self.Ekin = None
         self.Eloc = None
         self.Enonloc = None
@@ -31,7 +30,6 @@ class Energy:
             return None
 
     def __repr__(self):
-        '''Display energy contributions when printing the Energy object.'''
         kin = f'Kinetic:   {self.Ekin:+.9f} Eh\n'
         loc = f'Local:     {self.Eloc:+.9f} Eh\n'
         nonloc = f'Non-local: {self.Enonloc:+.9f} Eh\n'
