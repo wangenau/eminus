@@ -17,5 +17,5 @@ Main source code directory.
 |        units.py | Constants and unit conversion functions |
 |        tools.py | Tools to calculate physical properties |
 |        utils.py | Linear algebra calculation utilities |
-|      version.py | Package version file |
+|      version.py | Package versions file |
 

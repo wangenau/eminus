@@ -11,7 +11,7 @@ Minimal usage example to do a DFT calculation for Hydrogen::
 from .atoms import Atoms
 from .atoms_io import load_atoms, read_cube, read_xyz, save_atoms, write_cube, write_xyz
 from .scf import SCF
-from .version import __version__
+from .version import info, __version__
 
-__all__ = ['Atoms', 'load_atoms', 'read_cube', 'read_xyz', 'save_atoms', 'SCF', 'write_cube',
-           'write_xyz', '__version__']
+__all__ = ['Atoms', 'info', 'load_atoms', 'read_cube', 'read_xyz', 'save_atoms', 'SCF',
+           'write_cube', 'write_xyz', '__version__']
