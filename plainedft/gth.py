@@ -219,7 +219,7 @@ def read_gth(system, charge=None, psp_path=f'{__path__[0]}/pade_gth/'):
         try:
             f_psp = files[0]
         except IndexError:
-            print(f'ERROR: There is no GTH pseudopotential for "{system}"')
+            print(f'ERROR: There is no GTH pseudopotential in {psp_path} for "{system}"')
         if len(files) > 1:
             print(f'INFO: Multiple pseudopotentials found for "{system}". '
                   f'Continue with "{basename(f_psp)}".')
