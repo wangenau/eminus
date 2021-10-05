@@ -12,7 +12,7 @@ def info():
     print('--- Version infos ---')
     print(f'python       : {version.split()[0]}')
     print(f'plainedft    : {__version__}')
-    for pkg in ('numpy', 'scipy', 'vispy', 'nglview', 'pyflosic_dev'):
+    for pkg in ('numpy', 'scipy', 'vispy', 'nglview', 'jupyter_rfb', 'pyflosic_dev'):
         try:
             exec(f'import {pkg}')
             print(f'{pkg.ljust(13)}: {eval(pkg).__version__}')
