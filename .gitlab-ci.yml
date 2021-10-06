@@ -14,7 +14,7 @@ pytest:
   stage: test
   script:
   - pip install pytest
-  - pytest tests/
+  - pytest --tb=short tests/
   artifacts:
     expire_in: 1 week
   only:
