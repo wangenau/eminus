@@ -47,7 +47,8 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     atom_pyscf = [i for i in zip(atoms.atom, X)]
 
     # Do the PySCF DFT calculation
-    mol = M(atom=atom_pyscf, basis=basis)
+    spin = np.sum(atoms.Z) % 2
+    mol = M(atom=atom_pyscf, basis=basis, spin=spin)
     mf = RKS(mol=mol)
     mf.verbose = 0
     mf.kernel()
@@ -58,7 +59,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     X_pyflosic = np.vstack((X, extra))
 
     # Do the pycom FOD generation
-    atoms = Atoms(atom_pyflosic, X_pyflosic, elec_symbols=['X', None])
+    atoms = Atoms(atom_pyflosic, X_pyflosic, elec_symbols=['X', None], spin=spin)
     p = parameters(mode='restricted')
     p.init_atoms(atoms)
     p.basis = basis
