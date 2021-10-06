@@ -21,24 +21,23 @@ def get_exc(exc, n, spinpol):
     Returns:
         Exchange-correlation energy density and potential as a tuple(array, array).
     '''
+    exc_map = {
+        'lda': 'lda_slater_x',
+        'pw': 'lda_pw_c',
+        'vwn': 'lda_vwn_c'
+    }
+
     exch, corr = exc.split(',')
+    f_exch = exc_map.get(exch, dummy_exc)
+    f_corr = exc_map.get(corr, dummy_exc)
     if spinpol:
-        exc_map = {
-            'lda': lda_slater_x_spin,
-            'pw': lda_pw_c_spin,
-            'vwn': lda_vwn_c_spin
-        }
-        # FIXME: WARNING: For unpolarized calculations we insert ones as zeta, fix this for later
-        ex, vx = exc_map.get(exch, dummy_exc)(n, np.ones_like(n))
-        ec, vc = exc_map.get(corr, dummy_exc)(n, np.ones_like(n))
-    else:
-        exc_map = {
-            'lda': lda_slater_x,
-            'pw': lda_pw_c,
-            'vwn': lda_vwn_c
-        }
-        ex, vx = exc_map.get(exch, dummy_exc)(n)
-        ec, vc = exc_map.get(corr, dummy_exc)(n)
+        f_exch = f'{f_exch}_spin'
+        f_corr = f'{f_corr}_spin'
+
+    # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
+    #        spin-unpolarised calculations
+    ex, vx = eval(f_exch)(n, zeta=np.ones_like(n))
+    ec, vc = eval(f_corr)(n, zeta=np.ones_like(n))
     return ex + ec, vx + vc
 
 
@@ -56,8 +55,11 @@ def dummy_exc(n, **kwargs):
     return zero, zero
 
 
+dummy_exc_spin = dummy_exc
+
+
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
-def lda_slater_x(n, alpha=2 / 3):
+def lda_slater_x(n, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin paired).
 
     Args:
@@ -117,7 +119,7 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
-def lda_pw_c(n):
+def lda_pw_c(n, **kwargs):
     '''PW parameterization of the correlation functional (spin paired).
 
     Args:
@@ -151,7 +153,7 @@ def lda_pw_c(n):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
-def lda_pw_c_spin(n, zeta):
+def lda_pw_c_spin(n, zeta, **kwargs):
     '''PW parameterization of the correlation functional (spin polarized).
 
     Args:
@@ -223,7 +225,7 @@ def lda_pw_c_spin(n, zeta):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
-def lda_vwn_c(n):
+def lda_vwn_c(n, **kwargs):
     '''VWN parameterization of the correlation functional (spin paired).
 
     Args:
@@ -259,7 +261,7 @@ def lda_vwn_c(n):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
-def lda_vwn_c_spin(n, zeta):
+def lda_vwn_c_spin(n, zeta, **kwargs):
     '''VWN parameterization of the correlation functional (spin polarized).
 
     Args:
