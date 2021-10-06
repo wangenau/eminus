@@ -11,33 +11,32 @@ from .units import ry2ha
 
 
 class Energy:
-    '''Energy class to save SCF results in one place.'''
+    '''Energy class to save energy contributions in one place.'''
+    __slots__ = ['Ekin', 'Eloc', 'Enonloc', 'Ecoul', 'Exc', 'Eewald', 'Esic']
 
     def __init__(self):
-        self.Ekin = None
-        self.Eloc = None
-        self.Enonloc = None
-        self.Ecoul = None
-        self.Exc = None
-        self.Eewald = None
+        self.Ekin = 0
+        self.Eloc = 0
+        self.Enonloc = 0
+        self.Ecoul = 0
+        self.Exc = 0
+        self.Eewald = 0
+        self.Esic = 0
 
     @property
     def Etot(self):
         '''Total energy is the sum of all energy contributions.'''
-        try:
-            return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald
-        except TypeError:
-            return None
+        return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald + \
+               self.Esic
 
     def __repr__(self):
-        kin = f'Kinetic:   {self.Ekin:+.9f} Eh\n'
-        loc = f'Local:     {self.Eloc:+.9f} Eh\n'
-        nonloc = f'Non-local: {self.Enonloc:+.9f} Eh\n'
-        coul = f'Coulomb:   {self.Ecoul:+.9f} Eh\n'
-        xc = f'EXC:       {self.Exc:+.9f} Eh\n'
-        ewald = f'Ewald:     {self.Eewald:+.9f} Eh\n'
-        tot = f'Total:     {self.Etot:+.9f} Eh'
-        return f'{kin}{loc}{nonloc}{coul}{xc}{ewald}{tot}'
+        out = ''
+        for ie in self.__slots__:
+            energy = eval('self.' + ie)
+            if energy != 0:
+                out = f'{out}{ie.ljust(8)}: {energy:+.9f} Eh\n'
+        out = f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
+        return out
 
 
 def get_Ekin(atoms, Y):
