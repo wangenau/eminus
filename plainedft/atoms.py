@@ -156,9 +156,9 @@ class Atoms:
             self.X = np.array([self.X])
 
         # If only one charge is given, assume it is the charge for every atom
-        if isinstance(self.Z, int):
+        if isinstance(self.Z, (int, np.integer)):
             self.Z = [self.Z] * self.Natoms
-        if isinstance(self.Z, list):
+        if isinstance(self.Z, (list, tuple)):
             self.Z = np.asarray(self.Z)
 
         # Make sampling dependent of ecut if no sampling is given
@@ -173,9 +173,9 @@ class Atoms:
             # See https://github.com/scipy/scipy/blob/master/scipy/fft/_helper.py
             self.S = next_fast_len(S)
         # Choose the same sampling for every direction if an integer is given
-        if isinstance(self.S, int):
+        if isinstance(self.S, (int, np.integer)):
             self.S = self.S * np.ones(3, dtype=int)
-        if isinstance(self.S, list):
+        if isinstance(self.S, (list, tuple)):
             self.S = np.asarray(self.S)
 
         # Lower the potential string
@@ -263,13 +263,13 @@ class Atoms:
             self.Vloc = init_pot(self)
 
         # Check occupations and number of states together
-        if isinstance(self.f, list):
+        if isinstance(self.f, (list, tuple)):
             self.f = np.asarray(self.f)
         # If no states are provided, use the length of the occupations
         if isinstance(self.f, np.ndarray) and self.Ns is None:
             self.Ns = len(self.f)
         # If one occupation and the number of states is given, use it for every state
-        if isinstance(self.f, (int, float)) and self.Ns is not None:
+        if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
             self.f = self.f * np.ones(self.Ns)
         # If no occupation and the number of states is given, assume 2
         if self.f is None and self.Ns is not None:
@@ -283,7 +283,7 @@ class Atoms:
             Ztot = np.sum(self.Z)
             self.Ns = int(np.ceil(Ztot / self.f))
         # If the sum of valence charges is not divisible by occupation, change the last occupation
-        if isinstance(self.f, (int, float)):
+        if isinstance(self.f, (int, np.integer, float, np.floating)):
             mod = np.sum(self.Z) % self.f
             self.f = self.f * np.ones(self.Ns)
             if mod != 0:
