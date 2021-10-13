@@ -4,6 +4,8 @@ Various tools to check physical properties.
 '''
 import numpy as np
 
+from .scf import get_epsilon
+
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
@@ -111,6 +113,21 @@ def get_dipole(atoms):
     for dim in range(3):
         mu[dim] -= dV * np.sum(n * atoms.r[:, dim])
     return mu
+
+
+def get_IP(atoms):
+    '''Calculate the ionization potential by calculating the negative HOMO energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Ionization potential in Hartree as a float.
+    '''
+    epsilon = get_epsilon(atoms, atoms.W)
+    IP = -epsilon[-1]
+    return IP
 
 
 def check_ortho(atoms, func):
