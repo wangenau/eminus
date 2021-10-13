@@ -271,7 +271,12 @@ def lm(atoms, W, Nit, etol, **kwargs):
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
         gt = get_grad(atoms, W + alphat * d)
-        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        # The denominator can get zero, add this check to prevent this
+        denom = dotprod(g - gt, d)
+        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
+            alpha = alphat * dotprod(g, d) / denom
+        else:
+            alpha = alphat * dotprod(g, d) / 1e-16
         W = W + alpha * d
         E = get_E(atoms, W)
         Elist.append(E)
@@ -300,7 +305,12 @@ def pclm(atoms, W, Nit, etol, **kwargs):
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
         gt = get_grad(atoms, W + alphat * d)
-        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        # The denominator can get zero, add this check to prevent this
+        denom = dotprod(g - gt, d)
+        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
+            alpha = alphat * dotprod(g, d) / denom
+        else:
+            alpha = alphat * dotprod(g, d) / 1e-16
         W = W + alpha * d
         E = get_E(atoms, W)
         Elist.append(E)
@@ -339,7 +349,12 @@ def pccg(atoms, W, Nit, etol, cgform=1):
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
         gt = get_grad(atoms, W + alphat * d)
-        alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
+        # The denominator can get zero, add this check to prevent this
+        denom = dotprod(g - gt, d)
+        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
+            alpha = alphat * dotprod(g, d) / denom
+        else:
+            alpha = alphat * dotprod(g, d) / 1e-16
         W = W + alpha * d
         dold = d
         gold = g
