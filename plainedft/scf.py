@@ -366,7 +366,8 @@ def get_epsilon(atoms, Y, n=None):
     '''Calculate eigenvalues from H.'''
     mu = Y.conj().T @ H(atoms, Y, n)
     epsilon, _ = eig(mu)
-    return np.real(epsilon)
+    epsilon = np.real(epsilon)
+    return np.sort(epsilon)
 
 
 def get_n_total(atoms, Y):
