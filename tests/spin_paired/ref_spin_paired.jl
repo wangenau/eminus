@@ -3,11 +3,11 @@ using PWDFT
 
 function ref_spin_paired()
     path = "../../plainedft/pade_gth/"
-    systems = ["H", "H2", "LiH", "CH4", "Ne"]
+    systems = ["He", "H2", "LiH", "CH4", "Ne"]
     a = 16.0
     ecut = 10.0
     psps = [
-        [joinpath(path, "H-q1.gth")],
+        [joinpath(path, "He-q2.gth")],
         [joinpath(path, "H-q1.gth")],
         [joinpath(path, "Li-q1.gth"), joinpath(path, "H-q1.gth")],
         [joinpath(path, "C-q4.gth"), joinpath(path, "H-q1.gth")],

@@ -2,9 +2,9 @@ from numpy.testing import assert_allclose
 
 from plainedft import Atoms, SCF, read_xyz, __path__
 
-# Total energies calculated with PWDFT.jl for H, H2, LiH, CH4, and Ne with same parameters as below
+# Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
 # These values can be generated with the file ref_spin_paired.jl
-Etot_ref = [-0.4353327, -1.10228799, -0.76526088, -7.71058153, -29.88936935]
+Etot_ref = [-2.54356557, -1.10228799, -0.76526088, -7.71058154, -29.88936934]
 
 
 def calc_spin_paired(system, E_ref):
@@ -29,8 +29,8 @@ def calc_spin_paired(system, E_ref):
     return
 
 
-def test_H():
-    calc_spin_paired('H', Etot_ref[0])
+def test_He():
+    calc_spin_paired('He', Etot_ref[0])
 
 
 def test_H2():
@@ -50,7 +50,7 @@ def test_Ne():
 
 
 if __name__ == '__main__':
-    test_H()
+    test_He()
     test_H2()
     test_LiH()
     test_CH4()
