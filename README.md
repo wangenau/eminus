@@ -1,5 +1,5 @@
 # PlaineDFT
-[![license](https://img.shields.io/badge/license-MIT-green)](https://gitlab.com/wangenau/plainedft/-/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-APACHE2-green)](https://gitlab.com/wangenau/plainedft/-/blob/master/LICENSE)
 [![language](https://img.shields.io/badge/language-Python3-blue)](https://www.python.org/)
 
 PlaineDFT is a plane wave density functional theory (DFT) code.
@@ -29,5 +29,5 @@ pip install .[addons]
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](https://gitlab.com/wangenau/plainedft/-/blob/master/LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/wangenau/plainedft/-/blob/master/LICENSE) file for details.
 

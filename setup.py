@@ -17,7 +17,7 @@ setup(
     url='https://gitlab.com/wangenau/plainedft',
     author='Wanja Schulze',
     author_email='wangenau@protonmail.com',
-    license='MIT',
+    license='APACHE2.0',
     packages=find_packages(),
     install_requires=['numpy', 'scipy'],
     extras_require={
