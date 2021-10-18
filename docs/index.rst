@@ -1,6 +1,6 @@
 .. _index:
 
-Welcome to the PlaineDFT documentation!
+Welcome to the eminus documentation!
 ***************************************
 
 .. toctree::

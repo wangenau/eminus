@@ -19,8 +19,8 @@ pytest:
     expire_in: 1 week
   only:
     changes:
-      - plainedft/*
-      - plainedft/**/*
+      - eminus/*
+      - eminus/**/*
 
 pages:
   stage: deploy

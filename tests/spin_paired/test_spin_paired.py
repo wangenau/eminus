@@ -1,6 +1,6 @@
 from numpy.testing import assert_allclose
 
-from plainedft import Atoms, SCF, read_xyz, __path__
+from eminus import Atoms, SCF, read_xyz, __path__
 
 # Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
 # These values can be generated with the file ref_spin_paired.jl

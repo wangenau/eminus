@@ -2,7 +2,7 @@ using PWDFT
 
 
 function ref_spin_paired()
-    path = "../../plainedft/pade_gth/"
+    path = "../../eminus/pade_gth/"
     systems = ["He", "H2", "LiH", "CH4", "Ne"]
     a = 16.0
     ecut = 10.0

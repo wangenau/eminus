@@ -302,37 +302,37 @@ class Atoms:
         return out
 
     def O(self, inp):
-        '''Overlap operator :func:`~plainedft.operators.O`.'''
+        '''Overlap operator :func:`~eminus.operators.O`.'''
         return O(self, inp)
 
     def L(self, inp):
-        '''Laplacian operator :func:`~plainedft.operators.L`.'''
+        '''Laplacian operator :func:`~eminus.operators.L`.'''
         return L(self, inp)
 
     def Linv(self, inp):
-        '''Inverse Laplacian operator :func:`~plainedft.operators.Linv`.'''
+        '''Inverse Laplacian operator :func:`~eminus.operators.Linv`.'''
         return Linv(self, inp)
 
     def K(self, inp):
-        '''Preconditioning operator :func:`~plainedft.operators.K`.'''
+        '''Preconditioning operator :func:`~eminus.operators.K`.'''
         return K(self, inp)
 
     def I(self, inp):
-        '''Transformation from k- to real-space :func:`~plainedft.operators.I`.'''
+        '''Transformation from k- to real-space :func:`~eminus.operators.I`.'''
         return I(self, inp)
 
     def J(self, inp, full=True):
-        '''Transformation from real- to k-space :func:`~plainedft.operators.J`.'''
+        '''Transformation from real- to k-space :func:`~eminus.operators.J`.'''
         return J(self, inp, full)
 
     def Idag(self, inp):
-        '''Conj transformation from k- to real-space :func:`~plainedft.operators.Idag`.'''
+        '''Conj transformation from k- to real-space :func:`~eminus.operators.Idag`.'''
         return Idag(self, inp)
 
     def Jdag(self, inp):
-        '''Conj transformation from real- to k-space :func:`~plainedft.operators.Jdag`.'''
+        '''Conj transformation from real- to k-space :func:`~eminus.operators.Jdag`.'''
         return Jdag(self, inp)
 
     def T(self, inp, dr):
-        '''Translation operator :func:`~plainedft.operators.T`.'''
+        '''Translation operator :func:`~eminus.operators.T`.'''
         return T(self, inp, dr)

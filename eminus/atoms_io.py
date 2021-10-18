@@ -88,7 +88,7 @@ def write_xyz(atoms, filename, extra=None):
             fp.write(f'{Natoms + len(extra)}\n')
         # The second line can contains a comment.
         # Print informations about the file and program, and the file creation time.
-        fp.write(f'XYZ file generated with PlaineDFT {__version__} at {ctime()}\n')
+        fp.write(f'XYZ file generated with eminus {__version__} at {ctime()}\n')
         for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Add extra coordinates, if desired. The will default to X (no atom type).
@@ -193,7 +193,7 @@ def write_cube(atoms, field, filename, extra=None):
         # The first two lines have to be a comment.
         # Print file creation time and informations about the file and program.
         fp.write(f'{ctime()}\n')
-        fp.write(f'Cube file generated with PlaineDFT {__version__}\n')
+        fp.write(f'Cube file generated with eminus {__version__}\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
         if extra is None:

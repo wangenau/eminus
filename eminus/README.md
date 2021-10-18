@@ -1,4 +1,4 @@
-# plainedft
+# eminus
 
 Main source code directory.
 

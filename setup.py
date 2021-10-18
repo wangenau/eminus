@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from setuptools import find_packages, setup
 
-with open('plainedft/version.py', 'r') as fh:
+with open('eminus/version.py', 'r') as fh:
     version = {}
     exec(fh.read(), version)
 
@@ -9,13 +9,13 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 setup(
-    name='plainedft',
+    name='eminus',
     version=version['__version__'],
-    description='Simple plane wave density funtional theory code.',
+    description='A plane wave density funtional theory code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://gitlab.com/wangenau/plainedft',
-    author='Wanja Schulze',
+    url='https://gitlab.com/wangenau/eminus',
+    author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
     license='APACHE2.0',
     packages=find_packages(),

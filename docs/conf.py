@@ -6,14 +6,14 @@ documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import sphinx_rtd_theme
 
-import plainedft
+import eminus
 
 
-project = 'PlaineDFT'
-author = 'Wanja Schulze'
-copyright = '2021, Wanja Schulze'
-version = plainedft.__version__
-release = plainedft.__version__
+project = 'eminus'
+author = 'Wanja Timm Schulze'
+copyright = '2021, Wanja Timm Schulze'
+version = eminus.__version__
+release = eminus.__version__
 
 extensions = [
     'sphinx.ext.autodoc',

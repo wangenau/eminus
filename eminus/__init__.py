@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 '''
-PlaineDFT - A simple plane wave DFT code.
+eminus - A plane wave density funtional theory code.
 
 Minimal usage example to do a DFT calculation for Hydrogen::
 
-    from plainedft import *
+    from eminus import *
     atoms = Atoms('H', [0, 0, 0])
     SCF(atoms)
 '''

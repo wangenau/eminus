@@ -11,7 +11,7 @@ def info():
     '''Print version numbers and availability of used packages.'''
     print('--- Version infos ---')
     print(f'python       : {version.split()[0]}')
-    print(f'plainedft    : {__version__}')
+    print(f'eminus       : {__version__}')
     for pkg in ('numpy', 'scipy', 'vispy', 'nglview', 'jupyter_rfb', 'pyflosic_dev'):
         try:
             exec(f'import {pkg}')

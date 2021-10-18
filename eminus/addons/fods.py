@@ -16,9 +16,9 @@ except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
           'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
 
-from plainedft.atoms_io import read_xyz
-from plainedft.data import covalent_radii, symbol2number
-from plainedft.units import bohr2ang
+from eminus.atoms_io import read_xyz
+from eminus.data import covalent_radii, symbol2number
+from eminus.units import bohr2ang
 
 
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
