@@ -4,7 +4,7 @@ from eminus import Atoms, SCF, read_xyz, __path__
 
 # Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
 # These values can be generated with the file ref_spin_paired.jl
-Etot_ref = [-2.54356557, -1.10228799, -0.76526088, -7.71058154, -29.88936934]
+Etot_ref = [-2.54356557, -1.10228799, -0.76598438, -7.70803736, -29.88936935]
 
 
 def calc_spin_paired(system, E_ref):
