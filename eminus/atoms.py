@@ -29,8 +29,8 @@ class Atoms:
             array([[[0, 0, 0], [1, 1, 1]]])
 
     Kwargs:
-        a : float
-            Cell size or vacuum size. A cubic box with the same side lengths will be created.
+        a : float list or array of floats
+            Cell size or vacuum size. A cuboidic box with the same side lengths will be created.
             Default: 20 Bohr (ca. 10.5 Angstrom).
 
         ecut : float or None
@@ -161,17 +161,24 @@ class Atoms:
         if isinstance(self.Z, (list, tuple)):
             self.Z = np.asarray(self.Z)
 
+        if isinstance(self.a, (int, np.integer, float, np.floating)):
+            self.a = self.a * np.ones(3)
+        if isinstance(self.a, (list, tuple)):
+            self.a = np.asarray(self.a)
+
         # Make sampling dependent of ecut if no sampling is given
         if self.S is None:
             try:
-                S = int(self.a / cutoff2gridspacing(self.ecut))
+                S = np.int_(self.a / cutoff2gridspacing(self.ecut))
             except TypeError:
                 print('ERROR: No ecut provided, please enter a valid S.')
             # Multiply by two and add one to match PWDFT
             S = 2 * S + 1
             # Calculate a fast length to optimize the FFT calculations
             # See https://github.com/scipy/scipy/blob/master/scipy/fft/_helper.py
-            self.S = next_fast_len(S)
+            for i in range(len(S)):
+                S[i] = next_fast_len(S[i])
+            self.S = S
         # Choose the same sampling for every direction if an integer is given
         if isinstance(self.S, (int, np.integer)):
             self.S = self.S * np.ones(3, dtype=int)
@@ -183,7 +190,7 @@ class Atoms:
 
         # If the cut-off radius is zero, set it to the theoretical minimal value
         if self.cutcoul == 0:
-            self.cutcoul = np.sqrt(3) * self.a
+            self.cutcoul = np.sqrt(3) * self.a[0]
 
         # Center molecule by its geometric center of mass in the unit cell
         # Also rotate it such that the geometric inertia tensor will be diagonal
@@ -201,7 +208,7 @@ class Atoms:
         # Lower the exchange-correlation string
         self.exc = self.exc.lower()
 
-        # Build a cubic unit cell and calculate its volume
+        # Build a cuboidic unit cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
         self.CellVol = np.abs(det(R))
