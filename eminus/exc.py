@@ -75,7 +75,7 @@ def lda_slater_x(n, alpha=2 / 3, **kwargs):
     '''
     third = 1 / 3
     p43 = 4 / 3
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**third
     f = -9 / 8 * (3 / (2 * np.pi))**(2 / 3)
     rs = pi34 / n**third
 
@@ -105,7 +105,7 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
     '''
     third = 1 / 3
     p43 = 4 / 3
-    f = -9 / 8 * (3 / np.pi)**(1 / 3)
+    f = -9 / 8 * (3 / np.pi)**third
 
     rho13 = ((1 + zeta) * n)**third
     exup = f * alpha * rho13
@@ -130,7 +130,7 @@ def lda_pw_c(n, **kwargs):
         Correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**third
     rs = pi34 / n**third
 
     a = 0.031091
@@ -167,7 +167,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
         Correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**third
     rs = pi34 / n**third
 
     fz0 = 1.709921
@@ -210,7 +210,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     ac, dac = pw_fit(2)  # Spin stiffness
 
     fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
-    dfz = ((1 + zeta)**(1 / 3) - (1 - zeta)**(1 / 3)) * 4 / (3 * (2**(4 / 3) - 2))
+    dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
 
     ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
 
@@ -236,7 +236,7 @@ def lda_vwn_c(n, **kwargs):
         Correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**third
     rs = pi34 / n**third
 
     A = 0.0310907
@@ -275,7 +275,7 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
         Correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    pi34 = (3 / (4 * np.pi))**third
     rs = pi34 / n**third
 
     cfz = 2**(4 / 3) - 2
@@ -287,8 +287,8 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
     zeta4 = zeta3 * zeta
     trup = 1 + zeta
     trdw = 1 - zeta
-    trup13 = trup**(1 / 3)
-    trdw13 = trdw**(1 / 3)
+    trup13 = trup**third
+    trdw13 = trdw**third
     fz = cfz1 * (trup13 * trup + trdw13 * trdw - 2)  # f(zeta)
     dfz = cfz2 * (trup13 - trdw13)  # df/dzeta
 
