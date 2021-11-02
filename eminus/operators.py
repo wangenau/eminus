@@ -63,7 +63,7 @@ def Linv(atoms, inp):
         Result as an array.
     '''
     inp = inp.T
-    out = np.empty_like(inp, dtype=complex)
+    out = np.zeros_like(inp, dtype=complex)
     out[0] = 0
     if inp.ndim == 1:
         out[1:] = inp[1:] / atoms.G2[1:] / -atoms.CellVol
