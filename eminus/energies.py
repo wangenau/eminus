@@ -7,7 +7,6 @@ from numpy.linalg import inv
 from scipy.special import erfc
 
 from .exc import get_exc
-from .units import ry2ha
 
 
 class Energy:
@@ -196,10 +195,8 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     '''
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real space, reciprocal space,
-    # the self energy, (the dipole term [neglected]), and an additional electroneutrality-term
+    # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
-    # Note: This code calculates the energy in Rydberg, so the equations are off
-    # by a factor 2
     if atoms.cutcoul is not None:
         return 0
 
@@ -236,9 +233,9 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     mmm3 = int(np.rint(tmax / t3m + 1.5))
 
     # Start by calculaton the self-energy
-    ewald = -2 * nu * x / np.sqrt(np.pi)
+    Eewald = -nu * x / np.sqrt(np.pi)
     # Add the electroneutrality-term (Eq. 11)
-    ewald += -np.pi * totalcharge**2 / (omega * nu**2)
+    Eewald += -np.pi * totalcharge**2 / (2 * omega * nu**2)
 
     dtau = np.empty(3)
     G = np.empty(3)
@@ -254,7 +251,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
                             T = i * t1 + j * t2 + k * t3
                             rmag = np.sqrt(np.sum((dtau - T)**2))
                             # Add the real space contribution
-                            ewald += ZiZj * erfc(rmag * nu) / rmag
+                            Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
     mmm1 = int(np.rint(gcut / g1m + 1.5))
     mmm2 = int(np.rint(gcut / g2m + 1.5))
@@ -272,7 +269,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
                             Gtau = np.sum(G * dtau)
                             G2 = np.sum(G**2)
                             # Add the reciprocal space contribution
-                            x = 4 * np.pi / omega * np.exp(-0.25 * G2 / nu**2) / G2
-                            ewald += x * ZiZj * np.cos(Gtau)
+                            x = 2 * np.pi / omega * np.exp(-0.25 * G2 / nu**2) / G2
+                            Eewald += x * ZiZj * np.cos(Gtau)
 
-    return ry2ha(ewald)  # Convert to Hartree
+    return Eewald
