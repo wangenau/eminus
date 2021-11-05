@@ -240,8 +240,7 @@ def T(atoms, inp, dr):
         Result as an array.
     '''
     out = np.empty_like(inp, dtype=complex)
-    dr = dr / (2 * np.pi)  # Multiply by 2pi, because we have a real space vector, no reciprocal one
-    factor = np.exp(-2 * 1j * np.pi * np.dot(atoms.Gc, dr))
+    factor = np.exp(-1j * np.dot(atoms.Gc, dr))
     for i in range(atoms.Ns):
         out[:, i] = factor * inp[:, i]
     return out
