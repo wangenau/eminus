@@ -434,7 +434,7 @@ def guess_gaussian(atoms):
 
     # Calculate the eigenfunctions
     W = get_psi(atoms, W, n)
-    return W * atoms.CellVol / np.prod(atoms.S)
+    return W
 
 
 def guess_experimental(atoms):
