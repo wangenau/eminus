@@ -35,3 +35,4 @@ pages:
     changes:
       - docs/*
       - docs/**/*
+      - eminus/version.py
