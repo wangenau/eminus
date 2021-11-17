@@ -26,3 +26,4 @@ Modules
    eminus.addons
    eminus.addons.fods
    eminus.addons.viewer
+   eminus.addons.workflows

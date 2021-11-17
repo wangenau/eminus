@@ -8,5 +8,7 @@ To also install all dependecies to use them, use::
 '''
 from .fods import get_fods, remove_core_fods, split_atom_and_fod
 from .viewer import view_grid, view_mol
+from .workflows import FO, FLO, KSO
 
-__all__ = ['get_fods', 'remove_core_fods', 'split_atom_and_fod', 'view_grid', 'view_mol']
+__all__ = ['FO', 'FLO', 'get_fods', 'KSO', 'remove_core_fods', 'split_atom_and_fod', 'view_grid',
+           'view_mol']
