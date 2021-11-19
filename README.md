@@ -1,4 +1,4 @@
-![eminus logo](https://gitlab.com/wangenau/eminus/-/blob/master/docs/logo/eminus_logo.png)
+![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/master/docs/logo/eminus_logo.png)
 
 # eminus
 [![license](https://img.shields.io/badge/license-APACHE2-green)](https://gitlab.com/wangenau/eminus/-/blob/master/LICENSE)
