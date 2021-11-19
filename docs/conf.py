@@ -25,6 +25,12 @@ templates_path = ['_templates']
 pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
+html_theme_options = {
+    'logo_only': True,
+    'style_nav_header_background': '#f7f7f7'
+}
+html_logo = 'logo/eminus_logo.png'
+html_favicon = 'logo/eminus_favicon.png'
 html_show_sphinx = False
 
 autodoc_preserve_defaults = True
