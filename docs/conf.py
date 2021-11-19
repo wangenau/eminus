@@ -26,8 +26,9 @@ pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
+    'display_version': False,
     'logo_only': True,
-    'style_nav_header_background': '#f7f7f7'
+    'style_nav_header_background': '#e3e3e3'
 }
 html_logo = 'logo/eminus_logo.png'
 html_favicon = 'logo/eminus_favicon.png'
