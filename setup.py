@@ -24,6 +24,6 @@ setup(
         'addons': ['jupyter_rfb', 'nglview', 'vispy']  # , 'pyflosic_dev']
     },
     python_requires='>=3.6',
-    include_package_data=True,
+    package_data={'eminus.pade_gth': ['*.gth']},
     zip_safe=False
 )
