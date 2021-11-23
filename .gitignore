@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 
 # Packaging files
+dist/
 *.egg-info/
 
 # Unit test
