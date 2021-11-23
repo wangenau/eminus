@@ -4,7 +4,7 @@ Package version number and version info function.
 '''
 from sys import version
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 def info():
