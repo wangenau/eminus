@@ -3,6 +3,7 @@
 # eminus
 [![license](https://img.shields.io/badge/license-APACHE2-green)](https://gitlab.com/wangenau/eminus/-/blob/master/LICENSE)
 [![language](https://img.shields.io/badge/language-Python3-blue)](https://www.python.org/)
+[![DOI](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
 
 eminus is a plane wave density functional theory (DFT) code.
 
