@@ -20,15 +20,13 @@ To learn more about the implementation, take a look inside the [documentation](h
 The package and all necessary dependencies can be installed using pip
 
 ```bash
-git clone https://gitlab.com/wangenau/eminus
-cd eminus
-pip install .
+pip install eminus
 ```
 
 To also install all optional dependecies to use built-in addons, use
 
 ```bash
-pip install .[addons]
+pip install eminus[addons]
 ```
 
 ## License

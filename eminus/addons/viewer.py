@@ -9,7 +9,8 @@ try:
     from vispy import scene
 except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
-          'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
+          'To use this module, install the package with addons, e.g., with '
+          '"pip install eminus[addons]"')
 
 from eminus.atoms_io import create_pdb, read_cube, read_xyz
 from .fods import split_atom_and_fod

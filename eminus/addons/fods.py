@@ -14,7 +14,8 @@ try:
     from pyflosic_dev.parameters.flosic_parameters import parameters
 except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
-          'To use this module, install the package with addons, e.g., with "pip install .[addons]"')
+          'To use this module, install the package with addons, e.g., with '
+          '"pip install eminus[addons]"')
 
 from eminus.atoms_io import read_xyz
 from eminus.data import covalent_radii, symbol2number
