@@ -1,11 +1,11 @@
 # docs
 
-[Sphinx](https://www.sphinx-doc.org/) documentation pages using the [rtd-theme](https://sphinx-rtd-theme.readthedocs.io/).
+[Sphinx](https://www.sphinx-doc.org/) documentation pages using the [Furo](https://pradyunsg.me/furo/).
 
 Both packages can be installed with
 
 ```bash
-pip install sphinx sphinx-rtd-theme
+pip install sphinx furo
 ```
 
 The document can be built to the public folder using

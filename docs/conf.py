@@ -18,11 +18,24 @@ extensions = [
     'sphinx.ext.viewcode'
 ]
 templates_path = ['_templates']
-pygments_style = 'sphinx'
+pygments_style = 'friendly'
+pygments_dark_style = 'native'
 
 html_theme = 'furo'
-html_logo = 'logo/eminus_logo.png'
 html_favicon = 'logo/eminus_favicon.png'
+html_theme_options = {
+    'light_logo': 'logo/eminus_logo.png',
+    'light_css_variables': {
+        'color-brand-primary': '#006700',
+        'color-brand-content': '#1a962b',
+    },
+    'dark_logo': 'logo/eminus_logo_dark.png',
+    'dark_css_variables': {
+        'color-brand-primary': '#70a973',
+        'color-brand-content': '#a0dba2',
+    },
+}
+html_static_path = ['']
 html_show_sphinx = False
 
 autodoc_preserve_defaults = True
