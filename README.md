@@ -1,4 +1,4 @@
-![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/master/docs/logo/eminus_logo.png)
+![eminus logo](https://gitlab.com/nextdft/eminus/-/raw/master/docs/logo/eminus_logo.png)
 
 # eminus
 [![license](https://img.shields.io/badge/license-APACHE2-green)](https://gitlab.com/wangenau/eminus/-/blob/master/LICENSE)
@@ -13,7 +13,7 @@ The goal is to create a simple code that is easy to read and easy to extend whil
 
 ## Documentation
 
-To learn more about the implementation, take a look inside the [documentation](https://wangenau.gitlab.io/eminus/).
+To learn more about the implementation, take a look inside the [documentation](https://nextdft.gitlab.io/eminus/).
 
 ## Installation
 
@@ -31,5 +31,5 @@ pip install eminus[addons]
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/wangenau/eminus/-/blob/master/LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/nextdft/eminus/-/blob/master/LICENSE) file for details.
 

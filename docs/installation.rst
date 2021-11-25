@@ -19,7 +19,7 @@ Alternatively, you can create an installation by downloading the source code
 
 .. code-block:: bash
 
-   git clone https://gitlab.com/wangenau/eminus.git
+   git clone https://gitlab.com/nextdft/eminus.git
    cd eminus
    pip install .
 

@@ -14,7 +14,7 @@ setup(
     description='A plane wave density funtional theory code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://gitlab.com/wangenau/eminus',
+    url='https://gitlab.com/nextdft/eminus',
     author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
     license='APACHE2.0',
