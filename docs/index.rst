@@ -8,5 +8,7 @@ Welcome to the eminus documentation!
    :maxdepth: 1
    :numbered:
 
+   introduction.rst
    installation.rst
    modules.rst
+   further.rst

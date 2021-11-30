@@ -29,8 +29,14 @@ To also install all optional dependencies to use built-in addons, use either
 
    pip install eminus[addons]
 
-or for a installation after downloading the source code use
+or for an installation after downloading the source code use
 
 .. code-block:: bash
 
    pip install .[addons]
+
+Testing
+=======
+
+| To verify that the installation works as intended, tests can be found `here <https://gitlab.com/nextdft/eminus/-/tree/master/tests>`_.
+| They can be executed using your Python3 interpreter or pytest.
