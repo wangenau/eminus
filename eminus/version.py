@@ -2,6 +2,7 @@
 '''
 Package version number and version info function.
 '''
+from os import environ
 from sys import version
 
 __version__ = '1.0.1'
@@ -23,4 +24,14 @@ def info():
                 print(f'{pkg.ljust(13)}: Dependency not installed')
             elif pkg in addons:
                 print(f'{pkg.ljust(13)}: Addon not installed')
+
+    print('\n--- Performance infos ---')
+    try:
+        THREADS = int(environ['OMP_NUM_THREADS'])
+    except KeyError:
+        print('INFO: No OMP_NUM_THREADS environment variable was found.\n'
+              'To improve performance, add "export OMP_NUM_THREADS=threads" to your ".bashrc".\n'
+              'Make sure to replace "threads", typically with the number of cores your CPU has.')
+    else:
+        print(f'eminus will run on {THREADS} threads.')
     return
