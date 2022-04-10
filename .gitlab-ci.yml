@@ -12,6 +12,20 @@ before_script:
     - pip config set global.disable-pip-version-check true
     - pip install -e .
 
+flake8:
+  stage: test
+  script:
+  - pip install flake8
+  - flake8 eminus/ examples/ tests/
+  artifacts:
+    expire_in: 1 week
+  only:
+    changes:
+      - eminus/*
+      - eminus/**/*
+      - examples/*
+      - tests/*
+
 pytest:
   stage: test
   script:
