@@ -7,7 +7,7 @@ stages:
 before_script:
     - apt-get update -y
     # libgomp1 is not included in small Docker images, but needed for numpy
-    - apt-get install -y libgomp1
+    - apt-get install -y libgomp1 --no-install-recommends
     - pip install -e .
 
 pytest:
