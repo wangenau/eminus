@@ -17,8 +17,6 @@ pypi:
   stage: build
   script:
   - python3 setup.py sdist
-  artifacts:
-    expire_in: 1 week
   only:
     changes:
       - eminus/version.py
@@ -28,8 +26,6 @@ flake8:
   script:
   - pip install flake8
   - flake8 eminus/ examples/ tests/
-  artifacts:
-    expire_in: 1 week
   only:
     changes:
       - eminus/*
@@ -42,8 +38,6 @@ pytest:
   script:
   - pip install pytest
   - pytest --tb=short tests/
-  artifacts:
-    expire_in: 1 week
   only:
     changes:
       - eminus/*
@@ -57,7 +51,6 @@ pages:
   artifacts:
     paths:
     - public
-    expire_in: 1 week
   only:
     changes:
       - docs/*
