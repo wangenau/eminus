@@ -11,4 +11,5 @@ Welcome to the eminus documentation!
    introduction.rst
    installation.rst
    modules.rst
+   changelog.rst
    further.rst
