@@ -28,8 +28,8 @@ def get_exc(exc, n, spinpol):
     }
 
     exch, corr = exc.split(',')
-    f_exch = exc_map.get(exch, dummy_exc)
-    f_corr = exc_map.get(corr, dummy_exc)
+    f_exch = exc_map.get(exch, mock_exc)
+    f_corr = exc_map.get(corr, mock_exc)
     if spinpol:
         f_exch = f'{f_exch}_spin'
         f_corr = f'{f_corr}_spin'
@@ -41,21 +41,21 @@ def get_exc(exc, n, spinpol):
     return ex + ec, vx + vc
 
 
-def dummy_exc(n, **kwargs):
-    '''Dummy exchange-correlation functional with no effect.
+def mock_exc(n, **kwargs):
+    '''mock exchange-correlation functional with no effect.
 
     Args:
         n : array
             Real-space electronic density.
 
     Returns:
-        Dummy exchange-correlation energy density and potential as a tuple(array, array).
+        mock exchange-correlation energy density and potential as a tuple(array, array).
     '''
     zero = np.zeros_like(n)
     return zero, zero
 
 
-dummy_exc_spin = dummy_exc
+mock_exc_spin = mock_exc
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
