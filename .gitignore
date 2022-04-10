@@ -12,6 +12,3 @@ dist/
 # Sphinx documentation
 docs/_autosummary/
 public/
-
-# PySCF temporary files
-tmp*
