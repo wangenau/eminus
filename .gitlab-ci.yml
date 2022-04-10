@@ -8,6 +8,8 @@ before_script:
     - apt-get update -y
     # libgomp1 is not included in small Docker images, but needed for numpy
     - apt-get install -y libgomp1 --no-install-recommends
+    # Disable warnings about newer pip versions available
+    - pip config set global.disable-pip-version-check true
     - pip install -e .
 
 pytest:
