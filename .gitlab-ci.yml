@@ -45,6 +45,7 @@ pytest:
     changes:
       - eminus/*
       - eminus/**/*
+      - tests/*
 
 # Build documentation
 pages:
