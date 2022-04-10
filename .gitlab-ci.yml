@@ -53,6 +53,10 @@ pages:
   script:
     - pip install sphinx furo
     - sphinx-build -b html ./docs ./public
+    - >-
+      find public/
+      \( -name '*.css' -o -name '*.html' -o -name '*.js' -o -name '*.svg' \)
+      -exec gzip -vrk9 {} \;
   artifacts:
     paths:
     - public
