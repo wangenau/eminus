@@ -83,7 +83,7 @@ def examples_generate(app):
                 fp.write(f' :download:`{file.split("/")[-1]} <../{file}>`')
 
 
-def examples_cleanup(app, exception):
+def examples_remove(app, exception):
     '''Remove examples.rst after build.'''
     os.remove('docs/examples.rst')
 
@@ -92,4 +92,4 @@ def setup(app):
     '''Customize build process.'''
     app.connect('builder-inited', examples_generate)
     app.connect('autodoc-skip-member', dunder_skip)
-    app.connect('build-finished', examples_cleanup)
+    app.connect('build-finished', examples_remove)
