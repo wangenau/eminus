@@ -3,6 +3,10 @@
 Welcome to the eminus documentation!
 ************************************
 
+.. meta::
+   :description: Documentation website for the eminus code.
+   :author: Wanja Timm Schulze
+
 .. toctree::
    :caption: Contents
    :maxdepth: 1

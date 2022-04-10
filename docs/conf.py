@@ -21,6 +21,8 @@ templates_path = ['_templates']
 pygments_style = 'friendly'
 pygments_dark_style = 'native'
 
+language = 'en'
+
 html_theme = 'furo'
 html_favicon = 'logo/eminus_favicon.png'
 html_theme_options = {
