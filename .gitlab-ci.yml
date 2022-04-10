@@ -1,16 +1,27 @@
 image: python:3.10-slim
 
 stages:
-    - test
-    - deploy
+  - build
+  - test
+  - deploy
 
 before_script:
-    - apt-get update -y
-    # libgomp1 is not included in small Docker images, but needed for numpy
-    - apt-get install -y libgomp1 --no-install-recommends
-    # Disable warnings about newer pip versions available
-    - pip config set global.disable-pip-version-check true
-    - pip install -e .
+  - apt-get update -y
+  # libgomp1 is not included in small Docker images, but needed for numpy
+  - apt-get install -y libgomp1 --no-install-recommends
+  # Disable warnings about newer pip versions available
+  - pip config set global.disable-pip-version-check true
+  - pip install -e .
+
+pypi:
+  stage: build
+  script:
+  - python3 setup.py sdist
+  artifacts:
+    expire_in: 1 week
+  only:
+    changes:
+      - eminus/version.py
 
 flake8:
   stage: test
