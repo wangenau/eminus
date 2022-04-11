@@ -5,3 +5,6 @@ Examples
 
 ..
    Automatically generated examples page
+
+.. toctree::
+   :caption: Examples
