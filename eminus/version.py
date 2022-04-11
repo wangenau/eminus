@@ -35,3 +35,7 @@ def info():
     else:
         print(f'eminus will run on {THREADS} threads.')
     return
+
+
+if __name__ == '__main__':
+    info()

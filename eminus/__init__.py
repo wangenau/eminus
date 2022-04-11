@@ -2,7 +2,7 @@
 '''
 eminus - A plane wave density funtional theory code.
 
-Minimal usage example to do a DFT calculation for Helium::
+Minimal usage example to do a DFT calculation for helium::
 
     from eminus import *
     atoms = Atoms('He', [0, 0, 0])

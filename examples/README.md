@@ -11,4 +11,4 @@ This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
 * Each example has its own subfolder
 * Each subfolder contains one Python file with the same name as the subfolder
-* Each subfolder contains a README.md that is interpretable as a rst file
+* Each subfolder contains a README.md that is interpretable as an rst file

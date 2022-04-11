@@ -1,4 +1,4 @@
 Minimal example
 ===============
 
-Minimal example for a DFT calculation with helium.
+A minimal example for a DFT calculation using helium.

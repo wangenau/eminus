@@ -9,7 +9,6 @@ import shutil
 
 import eminus
 
-
 project = 'eminus'
 author = 'Wanja Timm Schulze'
 copyright = '2021, Wanja Timm Schulze'

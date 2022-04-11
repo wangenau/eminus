@@ -1,4 +1,4 @@
 import eminus
 
-# Display version informations of installed packages
+# Display version information of installed packages
 eminus.info()
