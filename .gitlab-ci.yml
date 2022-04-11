@@ -1,7 +1,6 @@
 image: python:3.10-slim
 
 stages:
-  - build
   - test
   - deploy
 
@@ -12,15 +11,6 @@ before_script:
   # Disable warnings about newer pip versions available
   - pip config set global.disable-pip-version-check true
   - pip install -e .
-
-# Test package building on version changes
-pypi:
-  stage: build
-  script:
-  - python3 setup.py sdist
-  only:
-    changes:
-      - eminus/version.py
 
 # Lint check python files
 flake8:
