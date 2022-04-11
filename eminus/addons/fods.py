@@ -7,11 +7,11 @@ from os import remove
 import numpy as np
 from numpy.linalg import norm
 try:
-    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC
+    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
     from pyscf.scf import RKS
-    from pyflosic_dev.atoms.atoms import Atoms
-    from pyflosic_dev.guess.pycom import pycom
-    from pyflosic_dev.parameters.flosic_parameters import parameters
+    from pyflosic2.atoms.atoms import Atoms
+    from pyflosic2.guess.pycom import pycom
+    from pyflosic2.parameters.flosic_parameters import parameters
 except ImportError:
     print('ERROR: Necessary addon dependecies not found. '
           'To use this module, install the package with addons, e.g., with '

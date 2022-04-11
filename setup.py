@@ -21,7 +21,7 @@ setup(
     packages=find_packages(),
     install_requires=['numpy', 'scipy'],
     extras_require={
-        'addons': ['jupyter_rfb', 'nglview', 'notebook', 'vispy']  # , 'pyflosic_dev']
+        'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'vispy']
     },
     python_requires='>=3.6',
     package_data={'eminus.pade_gth': ['*.gth']},
