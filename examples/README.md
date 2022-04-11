@@ -10,9 +10,5 @@ Examples that act as a tutorial for the most important functionalities of the co
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
 * Each example has its own subfolder
-  - The subfolder name starts with XX_
-* Each subfolder contains one Python file
-  - The Python file has the same name as the folder
-* Each subfolder contains a README.md
-  - The first line contains the subcaption
-  - Following content will be the examples description
+* Each subfolder contains one Python file with the same name as the subfolder
+* Each subfolder contains a README.md that is interpretable as a rst file

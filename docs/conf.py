@@ -65,14 +65,8 @@ def examples_generate(app):
     # Append to examples.rst
     with open('docs/examples.rst', 'a') as fp:
         for example in examples:
-            with open(f'examples/{example}/README.md', 'r') as readme:
-                lines = readme.readlines()
-                # Generate heading from first readme line
-                heading = lines[0].strip().replace('# ', '')
-                fp.write(f'\n\n{heading}\n{"=" * len(heading)}\n')
-                # Generate info text from readme
-                for line in lines[1:]:
-                    fp.write(line)
+            # Include readme
+            fp.write(f'\n\n.. include:: ../examples/{example}/README.md\n')
             # Include script
             fp.write(f'\n.. literalinclude:: ../examples/{example}/{example}.py\n')
             # Add download buttons
