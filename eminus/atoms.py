@@ -83,15 +83,10 @@ class Atoms:
         spinpol : bool
             Spin-polarized calculation.
             Default: False
-
-        cutcoul : float
-            Radius of the spherical truncation of the Coulomb potential. None will set the
-            theoretical minimum of sqrt(3)*a.
-            Default: None
     '''
 
     def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
-                 pot='gth', center=False, exc='lda,vwn', spinpol=False, cutcoul=None):
+                 pot='gth', center=False, exc='lda,vwn', spinpol=False):
         self.atom = atom          # Atom symbols
         self.X = X                # Atom positions
         self.a = a                # Cell/Vacuum size
@@ -105,7 +100,6 @@ class Atoms:
         self.center = center      # Center molecule in cell
         self.exc = exc            # Exchange-correlation functional
         self.spinpol = spinpol    # Bool for spin polarized calculations
-        self.cutcoul = cutcoul    # Cut-off radius for a spherical coulomb truncation
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
@@ -187,10 +181,6 @@ class Atoms:
 
         # Lower the potential string
         self.pot = self.pot.lower()
-
-        # If the cut-off radius is zero, set it to the theoretical minimal value
-        if self.cutcoul == 0:
-            self.cutcoul = np.sqrt(3) * self.a[0]
 
         # Center molecule by its geometric center of mass in the unit cell
         # Also rotate it such that the geometric inertia tensor will be diagonal

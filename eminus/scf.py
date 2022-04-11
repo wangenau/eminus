@@ -81,7 +81,6 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
               f'Occupation per state: {atoms.f}\n'
               f'Potential: {atoms.pot}\n'
               f'Non-local contribution: {atoms.NbetaNL > 0}\n'
-              f'Coulomb-truncation: {atoms.cutcoul is not None}\n'
               f'XC functionals: {atoms.exc}\n'
               f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
 
@@ -161,14 +160,7 @@ def H(atoms, W, n=None):
     vxc = get_exc(atoms.exc, n, atoms.spinpol)[1]
     Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
 
-    # Calculate the effective potential, with or without Coulomb truncation
-    if atoms.cutcoul is None:
-        Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
-    else:
-        Rc = atoms.cutcoul
-        correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
-        Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi) - correction)
-
+    Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     Vkin_psi = -0.5 * atoms.L(W)
     Vnonloc_psi = calc_Vnonloc(atoms, W)
     return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi

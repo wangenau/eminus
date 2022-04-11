@@ -70,12 +70,7 @@ def get_Ecoul(atoms, n):
     '''
     # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-    if atoms.cutcoul is None:
-        return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
-    else:
-        Rc = atoms.cutcoul
-        correction = np.cos(np.sqrt(atoms.G2) * Rc) * atoms.O(phi)
-        return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi) - correction))
+    return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(atoms, n, spinpol=False):
@@ -197,9 +192,6 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     # Namely, a sum from contributions from real space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
-    if atoms.cutcoul is not None:
-        return 0
-
     Natoms = atoms.Natoms
     tau = atoms.X
     Zvals = atoms.Z
