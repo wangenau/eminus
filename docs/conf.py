@@ -68,12 +68,12 @@ def examples_generate(app):
             with open(f'docs/examples/{example}.rst', 'w') as fp:
                 fp.write(f'.. _{example}:\n')
                 # Include readme
-                fp.write(f'\n.. include:: ../../examples/{example}/README.md\n')
+                fp.write(f'\n.. include:: ../../examples/{example}/README.rst\n')
                 # Include script
                 fp.write(f'\n.. literalinclude:: ../../examples/{example}/{example}.py\n')
                 # Add download buttons
                 fp.write('\nDownload')
-                files = glob.glob(f'examples/{example}/[!README.md]*')
+                files = glob.glob(f'examples/{example}/[!README.rst]*')
                 files.sort()
                 for file in files:
                     fp.write(f' :download:`{file.split("/")[-1]} <../../{file}>`')
