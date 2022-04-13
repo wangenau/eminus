@@ -8,7 +8,7 @@ from eminus.scf import get_psi
 from .fods import get_fods, remove_core_fods
 
 
-def KSO(atoms, write_cubes=True, **kwargs):
+def KSO(atoms, write_cubes=False, **kwargs):
     '''Generate Kohn-Sham orbitals and optionally save them as cube files.
 
     Args:
@@ -32,7 +32,7 @@ def KSO(atoms, write_cubes=True, **kwargs):
     return KSOs
 
 
-def FO(atoms, write_cubes=True, fods=None):
+def FO(atoms, write_cubes=False, fods=None):
     '''Generate Fermi orbitals and optionally save them as cube files.
 
     Args:
@@ -63,7 +63,7 @@ def FO(atoms, write_cubes=True, fods=None):
     return FOs
 
 
-def FLO(atoms, write_cubes=True, fods=None):
+def FLO(atoms, write_cubes=False, fods=None):
     '''Generate Fermi-Löwdin orbitals and optionally save them as cube files.
 
     Args:
