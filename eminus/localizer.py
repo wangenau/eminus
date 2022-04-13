@@ -133,7 +133,7 @@ def get_FLOs(atoms, psi, fods):
 
 
 def wannier_cost(atoms, psirs):
-    '''Calculate the Wannier cost function, namely the spread. Equivalent to Foster-Boys.
+    '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
     Args:
         atoms :
@@ -152,7 +152,7 @@ def wannier_cost(atoms, psirs):
         print(f'Centers:\n{centers}\nMoments:\n{moments}')
     if atoms.verbose >= 2:
         print(f'Costs:\n{costs}')
-    return np.sum(costs)
+    return costs
 
 
 def wannier_center(atoms, psirs):
