@@ -125,7 +125,7 @@ def read_cube(filename, info=False):
 
     # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/S
     # A cuboidic unit cell is assumed, so only use the diagonal entries
-    S = np.empty(3)
+    S = np.empty(3, dtype=int)
     a = np.empty(3)
     for i, line in enumerate(lines[3:6]):
         line_split = line.strip().split()
