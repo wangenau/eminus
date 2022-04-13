@@ -129,7 +129,7 @@ def read_cube(filename, info=False):
     a = np.empty(3)
     for i, line in enumerate(lines[3:6]):
         line_split = line.strip().split()
-        S[i] = int(line_split[0])
+        S[i] = line_split[0]
         a[i] = S[i] * np.float_(line_split[i + 1])
 
     atom = []
