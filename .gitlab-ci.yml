@@ -17,7 +17,7 @@ flake8:
   stage: test
   script:
   - pip install flake8
-  - flake8 eminus/ examples/ tests/
+  - flake8
   only:
     changes:
       - eminus/*
