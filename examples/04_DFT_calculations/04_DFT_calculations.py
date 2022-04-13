@@ -31,5 +31,5 @@ etot = SCF(atoms=atoms, guess=guess, etol=etol, min=min, cgform=cgform)
 
 # The total energy is a return value of the SCF function, but it is saved in the Atoms object as
 # well with all energy contributions
-print(f'\nEnergy from SCF function:\n{etot} Hartree')
+print(f'\nEnergy from SCF function = {etot} Hartree')
 print(f'\nEnergy in Atoms object:\n{atoms.energies}')

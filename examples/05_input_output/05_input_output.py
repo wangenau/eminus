@@ -21,5 +21,5 @@ write_cube(atoms, atoms.n, 'CH4')
 # Please note that xyz files will use Angstrom as length units
 # cube files have no standard, but atomic units will be assumed
 # Units can always be converted using the unit conversion functionality
-print(f'\nMethane coordinates in Bohr:\n{X}\n')
+print(f'\nMethane coordinates in Bohr:\n{X}')
 print(f'\nMethane coordinates in Angstrom:\n{bohr2ang(X)}')
