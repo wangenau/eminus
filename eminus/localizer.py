@@ -99,7 +99,7 @@ def get_S(atoms, psirs):
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.Ns, atoms.Ns), dtype=complex)
 
-    dV = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.S)
     for i in range(atoms.Ns):
         for j in range(atoms.Ns):
             S[i][j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
@@ -168,7 +168,7 @@ def wannier_center(atoms, psirs):
     Returns:
         Wannier centers per orbital as an array.
     '''
-    dV = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.S)
     r = atoms.r
 
     centers = np.empty((psirs.shape[1], 3))
@@ -192,7 +192,7 @@ def second_moment(atoms, psirs):
     Returns:
         Second moments per orbital as an array.
     '''
-    dV = atoms.CellVol / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.S)
     r2 = norm(atoms.r, axis=1)**2
 
     moments = np.empty(psirs.shape[1])

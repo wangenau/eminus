@@ -104,7 +104,7 @@ class Atoms:
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
         self.R = None         # Unit cell
-        self.CellVol = None   # Unit cell volume
+        self.Omega = None     # Unit cell volume
         self.r = None         # Sample points in unit cell
         self.G = None         # G-vectors
         self.G2 = None        # Squared magnitudes of G-vectors
@@ -201,20 +201,20 @@ class Atoms:
         # Build a cuboidal unit cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
-        self.CellVol = np.abs(det(R))
+        self.Omega = np.abs(det(R))
 
         # Build index matrix M
         ms = np.arange(np.prod(self.S))
         m1 = ms % self.S[0]
         m2 = np.floor(ms / self.S[0]) % self.S[1]
         m3 = np.floor(ms / (self.S[0] * self.S[1])) % self.S[2]
-        M = np.array([m1, m2, m3]).T
+        M = np.column_stack((m1, m2, m3))
 
         # Build index matrix N
         n1 = m1 - (m1 > self.S[0] / 2) * self.S[0]
         n2 = m2 - (m2 > self.S[1] / 2) * self.S[1]
         n3 = m3 - (m3 > self.S[2] / 2) * self.S[2]
-        N = np.array([n1, n2, n3]).T
+        N = np.column_stack((n1, n2, n3))
 
         # Build sampling points
         r = M @ inv(np.diag(self.S)) @ R.T

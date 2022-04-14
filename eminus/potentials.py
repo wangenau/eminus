@@ -32,11 +32,11 @@ def Coulomb(atoms):
         Coulomb potential as an array.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
-    Vps = -4 * np.pi * Z / atoms.G2[1:]
-    Vps = np.concatenate(([0], Vps))
+    Vcoul = -4 * np.pi * Z / atoms.G2[1:]
+    Vcoul = np.concatenate(([0], Vcoul))
 
     Sf = np.sum(atoms.Sf, axis=0)
-    return atoms.J(Vps * Sf)
+    return atoms.J(Vcoul * Sf)
 
 
 def Ge(atoms):

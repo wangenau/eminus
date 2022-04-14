@@ -13,136 +13,136 @@ except KeyError:
     THREADS = None
 
 
-def O(atoms, inp):
+def O(atoms, W):
     '''Overlap operator.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    return atoms.CellVol * inp
+    return atoms.Omega * W
 
 
-def L(atoms, inp):
+def L(atoms, W):
     '''Laplacian operator.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    if inp.shape[1] == len(atoms.G2c):
-        return (-atoms.CellVol * atoms.G2c * inp).T
+    W = W.T
+    if W.shape[1] == len(atoms.G2c):
+        return (-atoms.Omega * atoms.G2c * W).T
     else:
-        return (-atoms.CellVol * atoms.G2 * inp).T
+        return (-atoms.Omega * atoms.G2 * W).T
 
 
-def Linv(atoms, inp):
+def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    out = np.zeros_like(inp, dtype=complex)
+    W = W.T
+    out = np.zeros_like(W, dtype=complex)
     out[0] = 0
-    if inp.ndim == 1:
-        out[1:] = inp[1:] / atoms.G2[1:] / -atoms.CellVol
+    if W.ndim == 1:
+        out[1:] = W[1:] / atoms.G2[1:] / -atoms.Omega
     else:
-        for i in range(len(inp)):
-            out[i][1:] = inp[i][1:] / atoms.G2[1:] / -atoms.CellVol
+        for i in range(len(W)):
+            out[i][1:] = W[i][1:] / atoms.G2[1:] / -atoms.Omega
     return out.T
 
 
-def K(atoms, inp):
+def K(atoms, W):
     '''Preconditioning operator. Applies 1/(1+G2) to the input.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    out = np.empty_like(inp, dtype=complex)
-    if inp.shape[1] == len(atoms.G2c):
-        if inp.ndim == 1:
-            out = inp / (1 + atoms.G2c)
+    W = W.T
+    out = np.empty_like(W, dtype=complex)
+    if W.shape[1] == len(atoms.G2c):
+        if W.ndim == 1:
+            out = W / (1 + atoms.G2c)
         else:
-            for i in range(len(inp)):
-                out[i] = inp[i] / (1 + atoms.G2c)
+            for i in range(len(W)):
+                out[i] = W[i] / (1 + atoms.G2c)
     else:
-        if inp.ndim == 1:
-            out = inp / (1 + atoms.G2)
+        if W.ndim == 1:
+            out = W / (1 + atoms.G2)
         else:
-            for i in range(len(inp)):
-                out[i] = inp[i] / (1 + atoms.G2)
+            for i in range(len(W)):
+                out[i] = W[i] / (1 + atoms.G2)
     return out.T
 
 
-def I(atoms, inp):
+def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    if inp.ndim == 1:
-        inp = np.array([inp])
-    if np.size(inp, 1) == np.prod(atoms.S):
-        out = np.empty_like(inp, dtype=complex)
-        for i in range(inp.shape[0]):
-            tmp = np.reshape(inp[i], atoms.S, order='F')
-            out[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
+    W = W.T
+    if W.ndim == 1:
+        W = np.array([W])
+    if np.size(W, 1) == np.prod(atoms.S):
+        Finv = np.empty_like(W, dtype=complex)
+        for i in range(W.shape[0]):
+            tmp = np.reshape(W[i], atoms.S, order='F')
+            Finv[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
     else:
-        out = np.empty((inp.shape[0], np.prod(atoms.S)), dtype=complex)
-        for i in range(inp.shape[0]):
+        Finv = np.empty((W.shape[0], np.prod(atoms.S)), dtype=complex)
+        for i in range(W.shape[0]):
             full = np.zeros(np.prod(atoms.S), dtype=complex)
-            full[atoms.active] = inp[i]
+            full[atoms.active] = W[i]
             full = np.reshape(full, atoms.S, order='F')
-            out[i] = ifftn(full, workers=THREADS).flatten(order='F')
-    return (out * np.prod(atoms.S)).T
+            Finv[i] = ifftn(full, workers=THREADS).flatten(order='F')
+    return (Finv * np.prod(atoms.S)).T
 
 
-def J(atoms, inp, full=True):
+def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Kwargs:
         full : bool
@@ -151,87 +151,87 @@ def J(atoms, inp, full=True):
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    if inp.ndim == 1:
-        tmp = np.reshape(inp, atoms.S, order='F')
-        out = fftn(tmp, workers=THREADS).flatten(order='F')
+    W = W.T
+    if W.ndim == 1:
+        tmp = np.reshape(W, atoms.S, order='F')
+        F = fftn(tmp, workers=THREADS).flatten(order='F')
         if not full:
-            out = out[atoms.active]
+            F = F[atoms.active]
     else:
         if full:
-            out = np.empty_like(inp, dtype=complex)
-            for i in range(inp.shape[0]):
-                tmp = np.reshape(inp[i], atoms.S, order='F')
-                out[i] = fftn(tmp, workers=THREADS).flatten(order='F')
+            F = np.empty_like(W, dtype=complex)
+            for i in range(W.shape[0]):
+                tmp = np.reshape(W[i], atoms.S, order='F')
+                F[i] = fftn(tmp, workers=THREADS).flatten(order='F')
         else:
-            out = np.empty((inp.shape[0], len(atoms.active[0])), dtype=complex)
-            for i in range(inp.shape[0]):
-                tmp = np.reshape(inp[i], atoms.S, order='F')
-                out[i] = fftn(tmp, workers=THREADS).flatten(order='F')[atoms.active]
-    return (out / np.prod(atoms.S)).T
+            F = np.empty((W.shape[0], len(atoms.active[0])), dtype=complex)
+            for i in range(W.shape[0]):
+                tmp = np.reshape(W[i], atoms.S, order='F')
+                F[i] = fftn(tmp, workers=THREADS).flatten(order='F')[atoms.active]
+    return (F / np.prod(atoms.S)).T
 
 
-def Idag(atoms, inp):
+def Idag(atoms, W):
     '''Conjugated backwards transformation from reciprocal space to real-space.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    if inp.ndim == 1:
-        tmp = np.reshape(inp, atoms.S, order='F')
+    W = W.T
+    if W.ndim == 1:
+        tmp = np.reshape(W, atoms.S, order='F')
         full = fftn(tmp, workers=THREADS).flatten(order='F')
-        out = full[atoms.active]
+        F = full[atoms.active]
     else:
-        out = np.empty((np.size(inp, 0), len(atoms.active[0])), dtype=complex)
-        for i in range(len(inp)):
-            tmp = np.reshape(inp[i], atoms.S, order='F')
+        F = np.empty((np.size(W, 0), len(atoms.active[0])), dtype=complex)
+        for i in range(len(W)):
+            tmp = np.reshape(W[i], atoms.S, order='F')
             full = fftn(tmp, workers=THREADS).flatten(order='F')
-            out[i] = full[atoms.active]
-    return out.T
+            F[i] = full[atoms.active]
+    return F.T
 
 
-def Jdag(atoms, inp):
+def Jdag(atoms, W):
     '''Conjugated forward transformation from real-space to reciprocal space.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Result as an array.
     '''
-    inp = inp.T
-    if inp.ndim == 1:
-        tmp = np.reshape(inp, atoms.S, order='F')
-        out = ifftn(tmp, workers=THREADS).flatten(order='F')
+    W = W.T
+    if W.ndim == 1:
+        tmp = np.reshape(W, atoms.S, order='F')
+        Finv = ifftn(tmp, workers=THREADS).flatten(order='F')
     else:
-        out = np.empty_like(inp, dtype=complex)
-        for i in range(len(inp)):
-            tmp = np.reshape(inp[i], atoms.S, order='F')
-            out[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
-    return out.T
+        Finv = np.empty_like(W, dtype=complex)
+        for i in range(len(W)):
+            tmp = np.reshape(W[i], atoms.S, order='F')
+            Finv[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
+    return Finv.T
 
 
-def T(atoms, inp, dr):
+def T(atoms, W, dr):
     '''Translation operator. Shifts input by the vector dr.
 
     Args:
         atoms :
             Atoms object.
 
-        inp : array
-            Coefficients input array.
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
         dr : array
             Real-space position vector.
@@ -239,8 +239,8 @@ def T(atoms, inp, dr):
     Returns:
         Result as an array.
     '''
-    out = np.empty_like(inp, dtype=complex)
+    out = np.empty_like(W, dtype=complex)
     factor = np.exp(-1j * np.dot(atoms.Gc, dr))
     for i in range(atoms.Ns):
-        out[:, i] = factor * inp[:, i]
+        out[:, i] = factor * W[:, i]
     return out

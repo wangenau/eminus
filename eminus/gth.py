@@ -68,7 +68,7 @@ def init_gth_nonloc(atoms):
     '''
     Natoms = atoms.Natoms
     Npoints = len(atoms.active[0])
-    CellVol = atoms.CellVol
+    Omega = atoms.Omega
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
     prj2beta[:] = -1  # Set to invalid index
@@ -94,7 +94,7 @@ def init_gth_nonloc(atoms):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
-                                       eval_proj_G(psp, l, iprj + 1, Gm, CellVol) * Sf
+                                       eval_proj_G(psp, l, iprj + 1, Gm, Omega) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL
 
@@ -136,11 +136,11 @@ def calc_Vnonloc(atoms, W):
                                 hij = psp['h'][l, iprj, jprj]
                                 Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
     # We have to multiply with the cell volume, because of different orthogonalization
-    return Vpsi * atoms.CellVol
+    return Vpsi * atoms.Omega
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
-def eval_proj_G(psp, l, iprj, Gm, CellVol):
+def eval_proj_G(psp, l, iprj, Gm, Omega):
     '''Evaluate GTH projector functions in G-space.
 
     Args:
@@ -156,7 +156,7 @@ def eval_proj_G(psp, l, iprj, Gm, CellVol):
         Gm : array
             Magnitude of G-vectors.
 
-        CellVol : float
+        Omega : float
             Unit cell volume.
 
     Returns:
@@ -190,7 +190,7 @@ def eval_proj_G(psp, l, iprj, Gm, CellVol):
     else:
         print(f'ERROR: No projector found for l={l}')
 
-    pre = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / CellVol)
+    pre = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / Omega)
     return pre * Vprj
 
 

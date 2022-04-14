@@ -179,11 +179,11 @@ def get_Enonloc(atoms, Y):
                                        betaNL_psi[ist, jbeta])
             Enonloc += atoms.f[ist] * enl
     # We have to multiply with the cell volume, because of different orthogonalization
-    return Enonloc * atoms.CellVol
+    return Enonloc * atoms.Omega
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
-def get_Eewald(atoms, gcut=2, ebsl=1e-8):
+def get_Eewald(atoms, gcut=2, gamma=1e-8):
     '''Calculate the Ewald energy.
 
     Args:
@@ -194,7 +194,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
         gcut : float
             G-vector cut-off.
 
-        ebsl : float
+        gamma : float
             Error tolerance
 
     Returns:
@@ -207,7 +207,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     Natoms = atoms.Natoms
     tau = atoms.X
     Zvals = atoms.Z
-    omega = atoms.CellVol
+    Omega = atoms.Omega
 
     LatVecs = atoms.R
     t1 = LatVecs[0]
@@ -228,7 +228,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     x = np.sum(Zvals**2)
     totalcharge = np.sum(Zvals)
 
-    gexp = -np.log(ebsl)
+    gexp = -np.log(gamma)
     nu = 0.5 * np.sqrt(gcut**2 / gexp)
 
     tmax = np.sqrt(0.5 * gexp) / nu
@@ -239,7 +239,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
     # Start by calculaton the self-energy
     Eewald = -nu * x / np.sqrt(np.pi)
     # Add the electroneutrality-term (Eq. 11)
-    Eewald += -np.pi * totalcharge**2 / (2 * omega * nu**2)
+    Eewald += -np.pi * totalcharge**2 / (2 * Omega * nu**2)
 
     dtau = np.empty(3)
     G = np.empty(3)
@@ -273,7 +273,7 @@ def get_Eewald(atoms, gcut=2, ebsl=1e-8):
                             Gtau = np.sum(G * dtau)
                             G2 = np.sum(G**2)
                             # Add the reciprocal space contribution
-                            x = 2 * np.pi / omega * np.exp(-0.25 * G2 / nu**2) / G2
+                            x = 2 * np.pi / Omega * np.exp(-0.25 * G2 / nu**2) / G2
                             Eewald += x * ZiZj * np.cos(Gtau)
 
     return Eewald

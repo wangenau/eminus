@@ -7,7 +7,7 @@ from numpy.linalg import norm
 
 
 def Diagprod(a, B):
-    '''Calculate the expression Diag(a) * B.
+    '''Efficiently calculate the expression Diag(a) * B.
 
     Args:
         a : array

@@ -239,7 +239,7 @@ def lda_vwn_c(n, **kwargs):
     pi34 = (3 / (4 * np.pi))**third
     rs = pi34 / n**third
 
-    A = 0.0310907
+    a = 0.0310907
     b = 3.72744
     c = 12.9352
     x0 = -0.10498
@@ -251,11 +251,11 @@ def lda_vwn_c(n, **kwargs):
     rs12 = np.sqrt(rs)
     fx = rs + b * rs12 + c
     qx = np.arctan(q / (2 * rs12 + b))
-    ec = A * (np.log(rs / fx) + f1 * qx - f2 * (np.log((rs12 - x0)**2 / fx) + f3 * qx))
+    ec = a * (np.log(rs / fx) + f1 * qx - f2 * (np.log((rs12 - x0)**2 / fx) + f3 * qx))
 
     tx = 2 * rs12 + b
     tt = tx * tx + q * q
-    vc = ec - rs12 * A / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
+    vc = ec - rs12 * a / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
          f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
     return ec, vc
 
@@ -302,7 +302,7 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
         Returns:
             Pade fit and the derivative as a tuple(array, array).
         '''
-        A = (0.0310907, 0.01554535, -0.01688686394039)
+        a = (0.0310907, 0.01554535, -0.01688686394039)
         b = (3.72744, 7.06042, 1.13107)
         c = (12.9352, 18.0578, 13.0045)
         x0 = (-0.10498, -0.325, -0.0047584)
@@ -315,14 +315,14 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
         atg = np.arctan(Qtxb)
         fx = rs + b[i] * sqrtrs + c[i]
 
-        fit = A[i] * (np.log(rs / fx) + tbQ[i] * atg -
+        fit = a[i] * (np.log(rs / fx) + tbQ[i] * atg -
               bx0fx0[i] * (np.log(xx0 * xx0 / fx) + (tbQ[i] + 4 * x0[i] / Q[i]) * atg))
 
         txb = 2 * sqrtrs + b[i]
         txbfx = txb / fx
         itxbQ = 1 / (txb * txb + Q[i] * Q[i])
 
-        dfit = fit - A[i] / 3 + A[i] * sqrtrs / 6 * (txbfx + 4 * b[i] * itxbQ +
+        dfit = fit - a[i] / 3 + a[i] * sqrtrs / 6 * (txbfx + 4 * b[i] * itxbQ +
                bx0fx0[i] * (2 / xx0 - txbfx - 4 * (b[i] + 2 * x0[i]) * itxbQ))
         return fit, dfit
 

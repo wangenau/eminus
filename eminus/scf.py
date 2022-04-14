@@ -295,7 +295,7 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     return False
 
 
-def sd(atoms, W, Nit, etol, **kwargs):
+def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
     '''Steepest descent minimization algorithm.
 
     Args:
@@ -311,14 +311,17 @@ def sd(atoms, W, Nit, etol, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
+    Kwargs:
+        beta : float
+            SCF step size.
+
     Returns:
         Wave functions and total energies per SCF cycle as a tuple(array, list).
     '''
     Elist = []
-    alpha = 3e-5
 
     for _ in range(Nit):
-        W = W - alpha * get_grad(atoms, W)
+        W = W - beta * get_grad(atoms, W)
         E = get_E(atoms, W)
         Elist.append(E)
         if check_energies(atoms, Elist, etol):
@@ -326,7 +329,7 @@ def sd(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def lm(atoms, W, Nit, etol, **kwargs):
+def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
     '''Line minimization algorithm.
 
     Args:
@@ -342,18 +345,21 @@ def lm(atoms, W, Nit, etol, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
+    Kwargs:
+        betat : float
+            SCF step size.
+
     Returns:
         Wave functions and energies per SCF cycle as a tuple(array, list).
     '''
     Elist = []
-    alphat = 3e-5
 
     # Do the first step without the linmin test
     g = get_grad(atoms, W)
     d = -g
-    gt = get_grad(atoms, W + alphat * d)
-    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + alpha * d
+    gt = get_grad(atoms, W + betat * d)
+    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + beta * d
     E = get_E(atoms, W)
     Elist.append(E)
     check_energies(atoms, Elist, etol)
@@ -362,14 +368,14 @@ def lm(atoms, W, Nit, etol, **kwargs):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + betat * d)
         # The denominator can get zero, add this check to prevent this
         denom = dotprod(g - gt, d)
         if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            alpha = alphat * dotprod(g, d) / denom
+            beta = betat * dotprod(g, d) / denom
         else:
-            alpha = alphat * dotprod(g, d) / 1e-16
-        W = W + alpha * d
+            beta = betat * dotprod(g, d) / 1e-16
+        W = W + beta * d
         E = get_E(atoms, W)
         Elist.append(E)
         if check_energies(atoms, Elist, etol, linmin):
@@ -377,7 +383,7 @@ def lm(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def pclm(atoms, W, Nit, etol, **kwargs):
+def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
     '''Preconditioned line minimization algorithm.
 
     Args:
@@ -393,18 +399,21 @@ def pclm(atoms, W, Nit, etol, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
+    Kwargs:
+        betat : float
+            SCF step size.
+
     Returns:
         Wave functions and energies per SCF cycle as a tuple(array, list).
     '''
     Elist = []
-    alphat = 3e-5
 
     # Do the first step without the linmin test
     g = get_grad(atoms, W)
     d = -atoms.K(g)
-    gt = get_grad(atoms, W + alphat * d)
-    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + alpha * d
+    gt = get_grad(atoms, W + betat * d)
+    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + beta * d
     E = get_E(atoms, W)
     Elist.append(E)
     check_energies(atoms, Elist, etol)
@@ -413,14 +422,14 @@ def pclm(atoms, W, Nit, etol, **kwargs):
         g = get_grad(atoms, W)
         linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + betat * d)
         # The denominator can get zero, add this check to prevent this
         denom = dotprod(g - gt, d)
         if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            alpha = alphat * dotprod(g, d) / denom
+            beta = betat * dotprod(g, d) / denom
         else:
-            alpha = alphat * dotprod(g, d) / 1e-16
-        W = W + alpha * d
+            beta = betat * dotprod(g, d) / 1e-16
+        W = W + beta * d
         E = get_E(atoms, W)
         Elist.append(E)
         if check_energies(atoms, Elist, etol, linmin):
@@ -428,7 +437,7 @@ def pclm(atoms, W, Nit, etol, **kwargs):
     return W, Elist
 
 
-def pccg(atoms, W, Nit, etol, cgform=1):
+def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
     '''Preconditioned conjugate-gradient algorithm.
 
     Args:
@@ -445,6 +454,10 @@ def pccg(atoms, W, Nit, etol, cgform=1):
             Convergence tolerance of the total energy.
 
     Kwargs:
+        betat : float
+            SCF step size.
+
+
         cgform : int
             Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
 
@@ -452,14 +465,13 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         Wave functions and energies per SCF cycle as a tuple(array, list).
     '''
     Elist = []
-    alphat = 3e-5
 
     # Do the first step without the linmin and cg test
     g = get_grad(atoms, W)
     d = -atoms.K(g)
-    gt = get_grad(atoms, W + alphat * d)
-    alpha = alphat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + alpha * d
+    gt = get_grad(atoms, W + betat * d)
+    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    W = W + beta * d
     dold = d
     gold = g
     E = get_E(atoms, W)
@@ -478,14 +490,14 @@ def pccg(atoms, W, Nit, etol, cgform=1):
         elif cgform == 3:  # Hestenes-Stiefel
             beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
         d = -atoms.K(g) + beta * dold
-        gt = get_grad(atoms, W + alphat * d)
+        gt = get_grad(atoms, W + betat * d)
         # The denominator can get zero, add this check to prevent this
         denom = dotprod(g - gt, d)
         if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            alpha = alphat * dotprod(g, d) / denom
+            beta = betat * dotprod(g, d) / denom
         else:
-            alpha = alphat * dotprod(g, d) / 1e-16
-        W = W + alpha * d
+            beta = betat * dotprod(g, d) / 1e-16
+        W = W + beta * d
         dold = d
         gold = g
         E = get_E(atoms, W)
