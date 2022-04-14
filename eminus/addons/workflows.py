@@ -22,7 +22,7 @@ def KSO(atoms, write_cubes=False, **kwargs):
     Returns:
         Kohn-Sham orbitals as an array.
     '''
-    KSOs = get_psi(atoms, atoms.W)
+    KSOs = atoms.I(get_psi(atoms, atoms.W))
     name = ''
     for ia in set(atoms.atom):
         name += f'{ia}{atoms.atom.count(ia)}'
