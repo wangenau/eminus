@@ -388,7 +388,7 @@ def get_n_total(atoms, Y):
 
 
 def get_n_single(atoms, Y):
-    '''Calculate the single electronic densities.'''
+    '''Calculate the single-electron densities.'''
     Y = Y.T
     n = np.empty((np.prod(atoms.S), len(Y)))
     for i in range(Y.shape[0]):

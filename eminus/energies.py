@@ -115,7 +115,18 @@ def get_Eloc(atoms, n):
 
 
 def get_Esic(atoms, n):
-    '''Calculate the Perdew-Zunger self-interaction energy.'''
+    '''Calculate the Perdew-Zunger self-interaction energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        n : array
+            Real-space single-electron density.
+
+    Returns:
+        PZ self-interaction energy as a float.
+    '''
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     Esic = 0
     for i in range(len(n)):
@@ -126,6 +137,7 @@ def get_Esic(atoms, n):
         xc = get_Exc(atoms, n_tmp, spinpol=True)
         # SIC energy is scaled by the occupation
         Esic += (coul + xc) * atoms.f[i]
+    atoms.energies.Esic = Esic
     return Esic
 
 
