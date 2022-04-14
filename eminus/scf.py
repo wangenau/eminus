@@ -75,7 +75,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     if atoms.verbose >= 4:
         print(f'--- Cell informations ---\nSide lengths: {atoms.a} Bohr\n'
               f'Cut-off energy: {atoms.ecut} Hartree\n'
-              f'Sampling per axis: ({atoms.S[0]}, {atoms.S[1]}, {atoms.S[2]})\n')
+              f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n')
         print(f'--- Calculation informations ---\nSpin polarization: {atoms.spinpol}\n'
               f'Number of states: {atoms.Ns}\n'
               f'Occupation per state: {atoms.f}\n'
@@ -582,7 +582,7 @@ def get_n_total(atoms, Y):
         Electronic density as an array.
     '''
     Y = Y.T
-    n = np.zeros((np.prod(atoms.S), 1))
+    n = np.zeros((np.prod(atoms.s), 1))
     for i in range(Y.shape[0]):
         psi = atoms.I(Y[i])
         n += atoms.f[i] * np.real(psi.conj() * psi)
@@ -603,7 +603,7 @@ def get_n_single(atoms, Y):
         Single-electron densities as an array.
     '''
     Y = Y.T
-    n = np.empty((np.prod(atoms.S), len(Y)))
+    n = np.empty((np.prod(atoms.s), len(Y)))
     for i in range(Y.shape[0]):
         psi = atoms.I(Y[i])
         n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T

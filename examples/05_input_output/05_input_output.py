@@ -9,10 +9,10 @@ atoms = Atoms(*read_xyz('CH4.xyz'))
 
 # Cube files are supported as well
 # Here, lattice information are given as well
-atom, X, Z, a, S = read_cube('CH4.cube')
+atom, X, Z, a, s = read_cube('CH4.cube')
 
 # Create an Atoms object with it and start a DFT calculation
-atoms = Atoms(atom=atom, X=X, a=a, S=S, verbose=2)
+atoms = Atoms(atom=atom, X=X, a=a, s=s, verbose=2)
 SCF(atoms)
 
 # Write the total density to a cube file, e.g., to visualize it

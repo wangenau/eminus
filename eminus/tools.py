@@ -109,7 +109,7 @@ def get_dipole(atoms):
     for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.X[i]
 
-    dV = atoms.Omega / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.s)
     for dim in range(3):
         mu[dim] -= dV * np.sum(n * atoms.r[:, dim])
     return mu
@@ -154,7 +154,7 @@ def check_ortho(atoms, func):
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    dV = atoms.Omega / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.s)
 
     ortho_bool = True
 
@@ -189,7 +189,7 @@ def check_norm(atoms, func):
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
-    dV = atoms.Omega / np.prod(atoms.S)
+    dV = atoms.Omega / np.prod(atoms.s)
 
     norm_bool = True
 

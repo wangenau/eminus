@@ -34,7 +34,7 @@ class Atoms:
             Default: 20 Bohr (ca. 10.5 Angstrom).
 
         ecut : float or None
-            Cut-off energy. None will disable the G-Vector truncation (needs a separate S).
+            Cut-off energy. None will disable the G-Vector truncation (needs a separate s).
             Default: 20 Hartree (ca. 544 eV).
 
         Z : int or list or array of ints or None
@@ -44,7 +44,7 @@ class Atoms:
             Example: 1; [4, 1, 1, 1, 1]
             Default: None
 
-        S : int or list or array of ints
+        s : int or list or array of ints
             Real-space sampling of the cell/vacuum. None will make the sampling dependent of a and
             ecut.
             Example: 30; [30, 40, 50]; array([30, 40, 50])
@@ -85,14 +85,14 @@ class Atoms:
             Default: False
     '''
 
-    def __init__(self, atom, X, a=20, ecut=20, Z=None, S=None, f=None, Ns=None, verbose=3,
+    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, verbose=3,
                  pot='gth', center=False, exc='lda,vwn', spinpol=False):
         self.atom = atom          # Atom symbols
         self.X = X                # Atom positions
         self.a = a                # Cell/Vacuum size
         self.ecut = ecut          # Cut-off energy
         self.Z = Z                # Valence charges
-        self.S = S                # Cell sampling
+        self.s = s                # Cell sampling
         self.f = f                # Occupation numbers
         self.Ns = Ns              # Number of states
         self.pot = pot            # Used pseudopotential
@@ -161,23 +161,23 @@ class Atoms:
             self.a = np.asarray(self.a)
 
         # Make sampling dependent of ecut if no sampling is given
-        if self.S is None:
+        if self.s is None:
             try:
-                S = np.int_(self.a / cutoff2gridspacing(self.ecut))
+                s = np.int_(self.a / cutoff2gridspacing(self.ecut))
             except TypeError:
-                print('ERROR: No ecut provided, please enter a valid S.')
+                print('ERROR: No ecut provided, please enter a valid s.')
             # Multiply by two and add one to match PWDFT
-            S = 2 * S + 1
+            s = 2 * s + 1
             # Calculate a fast length to optimize the FFT calculations
             # See https://github.com/scipy/scipy/blob/master/scipy/fft/_helper.py
-            for i in range(len(S)):
-                S[i] = next_fast_len(S[i])
-            self.S = S
+            for i in range(len(s)):
+                s[i] = next_fast_len(s[i])
+            self.s = s
         # Choose the same sampling for every direction if an integer is given
-        if isinstance(self.S, (int, np.integer)):
-            self.S = self.S * np.ones(3, dtype=int)
-        if isinstance(self.S, (list, tuple)):
-            self.S = np.asarray(self.S)
+        if isinstance(self.s, (int, np.integer)):
+            self.s = self.s * np.ones(3, dtype=int)
+        if isinstance(self.s, (list, tuple)):
+            self.s = np.asarray(self.s)
 
         # Lower the potential string
         self.pot = self.pot.lower()
@@ -204,20 +204,20 @@ class Atoms:
         self.Omega = np.abs(det(R))
 
         # Build index matrix M
-        ms = np.arange(np.prod(self.S))
-        m1 = ms % self.S[0]
-        m2 = np.floor(ms / self.S[0]) % self.S[1]
-        m3 = np.floor(ms / (self.S[0] * self.S[1])) % self.S[2]
+        ms = np.arange(np.prod(self.s))
+        m1 = ms % self.s[0]
+        m2 = np.floor(ms / self.s[0]) % self.s[1]
+        m3 = np.floor(ms / (self.s[0] * self.s[1])) % self.s[2]
         M = np.column_stack((m1, m2, m3))
 
         # Build index matrix N
-        n1 = m1 - (m1 > self.S[0] / 2) * self.S[0]
-        n2 = m2 - (m2 > self.S[1] / 2) * self.S[1]
-        n3 = m3 - (m3 > self.S[2] / 2) * self.S[2]
+        n1 = m1 - (m1 > self.s[0] / 2) * self.s[0]
+        n2 = m2 - (m2 > self.s[1] / 2) * self.s[1]
+        n3 = m3 - (m3 > self.s[2] / 2) * self.s[2]
         N = np.column_stack((n1, n2, n3))
 
         # Build sampling points
-        r = M @ inv(np.diag(self.S)) @ R.T
+        r = M @ inv(np.diag(self.s)) @ R.T
         self.r = r
 
         # Build G-vectors

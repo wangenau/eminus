@@ -22,7 +22,7 @@ ecut = 20
 Z = [5, 5]
 
 # Real-space sampling of the cell using an equidistant grid
-S = 40
+s = 40
 
 # Occupation numbers per state
 # None will assume occupations of 2. The last state will be adjusted if the sum of f is not equal to
@@ -47,7 +47,7 @@ center = True
 exc = 'lda,pw'
 
 # Create an object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, S=S, f=f, Ns=Ns, verbose=verbose,
+atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, f=f, Ns=Ns, verbose=verbose,
               pot=pot, center=center, exc=exc)
 print(f'New Atoms object:\n{atoms}\n')
 

@@ -123,14 +123,14 @@ def read_cube(filename, info=False):
     if info:
         print(f'XYZ file comment: "{comment}"')
 
-    # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/S
+    # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/s
     # A cuboidal unit cell is assumed, so only use the diagonal entries
-    S = np.empty(3, dtype=int)
+    s = np.empty(3, dtype=int)
     a = np.empty(3)
     for i, line in enumerate(lines[3:6]):
         line_split = line.strip().split()
-        S[i] = line_split[0]
-        a[i] = S[i] * np.float_(line_split[i + 1])
+        s[i] = line_split[0]
+        a[i] = s[i] * np.float_(line_split[i + 1])
 
     atom = []
     X = []
@@ -146,7 +146,7 @@ def read_cube(filename, info=False):
         X.append(np.float_(line_split[2:5]))
 
     X = np.asarray(X)
-    return atom, X, Z, a, S
+    return atom, X, Z, a, s
 
 
 def write_cube(atoms, field, filename, extra=None):
@@ -173,7 +173,7 @@ def write_cube(atoms, field, filename, extra=None):
     Natoms = atoms.Natoms
     a = atoms.a
     r = atoms.r
-    S = atoms.S
+    s = atoms.s
     X = atoms.X
     Z = atoms.Z
 
@@ -183,10 +183,10 @@ def write_cube(atoms, field, filename, extra=None):
     # Our field data has been created in a different order than needed for cube files
     # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
     idx = []
-    for Nx in range(S[0]):
-        for Ny in range(S[1]):
-            for Nz in range(S[2]):
-                idx.append(Nx + Ny * S[0] + Nz * S[0] * S[1])
+    for Nx in range(s[0]):
+        for Ny in range(s[1]):
+            for Nz in range(s[2]):
+                idx.append(Nx + Ny * s[0] + Nz * s[0] * s[1])
     idx = np.asarray(idx)
 
     # Make sure we have real valued data in the correct order
@@ -206,9 +206,9 @@ def write_cube(atoms, field, filename, extra=None):
         fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cuboidal box, so each vector only has one non-zero component
-        fp.write(f'{S[0]}  {a[0] / S[0]:.5f}  0.0  0.0\n')
-        fp.write(f'{S[1]}  0.0  {a[1] / S[1]:.5f}  0.0\n')
-        fp.write(f'{S[2]}  0.0  0.0  {a[2] / S[2]:.5f}\n')
+        fp.write(f'{s[0]}  {a[0] / s[0]:.5f}  0.0  0.0\n')
+        fp.write(f'{s[1]}  0.0  {a[1] / s[1]:.5f}  0.0\n')
+        fp.write(f'{s[2]}  0.0  0.0  {a[2] / s[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(Natoms):
             fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  ')
@@ -218,10 +218,10 @@ def write_cube(atoms, field, filename, extra=None):
                 fp.write('0  0.00000  ')
                 fp.write(f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
         # Field data (float) with scientific formatting
-        # We have S[0]*S[1] chunks values with a length of S[2]
-        for i in range(S[0] * S[1]):
+        # We have s[0]*s[1] chunks values with a length of s[2]
+        for i in range(s[0] * s[1]):
             # Print every round of values, so we can add empty lines between them
-            data_str = '%+1.5e  ' * S[2] % tuple(field[i * S[2]:(i + 1) * S[2]])
+            data_str = '%+1.5e  ' * s[2] % tuple(field[i * s[2]:(i + 1) * s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
             fp.write(f'{fill(data_str, width=90)}\n\n')
@@ -287,16 +287,16 @@ def create_pdb(atom, X, a=None):
     pdb = ''
     # Create data for a cuboidal cell
     if a is not None:
-        pdb += 'CRYST1'               # 1-6 "CRYST1"
-        pdb += f'{a[0]:9.3f}'.rjust(9)   # 7-15 a
-        pdb += f'{a[1]:9.3f}'.rjust(9)   # 16-24 b
-        pdb += f'{a[2]:9.3f}'.rjust(9)   # 25-33 c
-        pdb += f'{90:7.2f}'.rjust(7)  # 34-40 alpha
-        pdb += f'{90:7.2f}'.rjust(7)  # 41-47 beta
-        pdb += f'{90:7.2f}'.rjust(7)  # 48-54 gamma
+        pdb += 'CRYST1'                 # 1-6 "CRYST1"
+        pdb += f'{a[0]:9.3f}'.rjust(9)  # 7-15 a
+        pdb += f'{a[1]:9.3f}'.rjust(9)  # 16-24 b
+        pdb += f'{a[2]:9.3f}'.rjust(9)  # 25-33 c
+        pdb += f'{90:7.2f}'.rjust(7)    # 34-40 alpha
+        pdb += f'{90:7.2f}'.rjust(7)    # 41-47 beta
+        pdb += f'{90:7.2f}'.rjust(7)    # 48-54 gamma
         pdb += ' '
-        pdb += 'P 1'.ljust(11)        # 56-66 Space group
-        # pdb += '1'.rjust(4)         # 67-70 Z value
+        pdb += 'P 1'.ljust(11)          # 56-66 Space group
+        # pdb += '1'.rjust(4)             # 67-70 Z value
 
     # Create molecule data
     pdb += '\nMODEL 1'
