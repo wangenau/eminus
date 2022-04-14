@@ -146,7 +146,22 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
 
 
 def H(atoms, W, n=None):
-    '''Left-hand side of the eigenvalue equation.'''
+    '''Left-hand side of the eigenvalue equation.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Kwargs:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Hamiltonian applied on W as an array.
+    '''
     Y = orth(atoms, W)  # Orthogonalize at the start
     if n is None:
         n = get_n_total(atoms, Y)
@@ -164,7 +179,18 @@ def H(atoms, W, n=None):
 
 
 def Q(inp, U):
-    '''Operator needed to calculate gradients with non-constant occupations.'''
+    '''Operator needed to calculate gradients with non-constant occupations.
+
+    Args:
+        inp : array
+            Input array to operate on.
+
+        U : array
+            Overlap of wave functions.
+
+    Returns:
+        Operator result as an array.
+    '''
     mu, V = eig(U)
     mu = np.reshape(mu, (len(mu), 1))
     denom = np.sqrt(mu) @ np.ones((1, len(mu)))
@@ -173,7 +199,18 @@ def Q(inp, U):
 
 
 def get_E(atoms, W):
-    '''Calculate all the energy contributions.'''
+    '''Calculate all the energy contributions.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        Total energy as a float.
+    '''
     Y = orth(atoms, W)
     n = get_n_total(atoms, Y)
     atoms.energies.Ekin = get_Ekin(atoms, Y)
@@ -185,7 +222,18 @@ def get_E(atoms, W):
 
 
 def get_grad(atoms, W):
-    '''Calculate the energy gradient with respect to W.'''
+    '''Calculate the energy gradient with respect to W.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        Gradient as an array.
+    '''
     U = W.conj().T @ atoms.O(W)
     invU = inv(U)
     HW = H(atoms, W)
@@ -197,7 +245,28 @@ def get_grad(atoms, W):
 
 
 def check_energies(atoms, Elist, etol, linmin=None, cg=None):
-    '''Check the energies for every SCF cycle and handle the output.'''
+    '''Check the energies for every SCF cycle and handle the output.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Elist : list
+            Total energies per SCF step.
+
+        etol : float
+            Convergence tolerance of the total energy.
+
+    Kwargs:
+        linmin : float
+            Cosine between previous search direction and current gradient.
+
+        cg : float
+            Conjugate-gradient orthogonality.
+
+    Returns:
+        Convergence condition as a bool.
+    '''
     Nit = len(Elist)
 
     # Output handling
@@ -227,7 +296,24 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
 
 
 def sd(atoms, W, Nit, etol, **kwargs):
-    '''Steepest descent minimization algorithm.'''
+    '''Steepest descent minimization algorithm.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+        Nit : int
+            Maximum number of SCF steps.
+
+        etol : float
+            Convergence tolerance of the total energy.
+
+    Returns:
+        Wave functions and total energies per SCF cycle as a tuple(array, list).
+    '''
     Elist = []
     alpha = 3e-5
 
@@ -241,7 +327,24 @@ def sd(atoms, W, Nit, etol, **kwargs):
 
 
 def lm(atoms, W, Nit, etol, **kwargs):
-    '''Line minimization algorithm.'''
+    '''Line minimization algorithm.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+        Nit : int
+            Maximum number of SCF steps.
+
+        etol : float
+            Convergence tolerance of the total energy.
+
+    Returns:
+        Wave functions and energies per SCF cycle as a tuple(array, list).
+    '''
     Elist = []
     alphat = 3e-5
 
@@ -275,7 +378,24 @@ def lm(atoms, W, Nit, etol, **kwargs):
 
 
 def pclm(atoms, W, Nit, etol, **kwargs):
-    '''Preconditioned line minimization algorithm.'''
+    '''Preconditioned line minimization algorithm.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+        Nit : int
+            Maximum number of SCF steps.
+
+        etol : float
+            Convergence tolerance of the total energy.
+
+    Returns:
+        Wave functions and energies per SCF cycle as a tuple(array, list).
+    '''
     Elist = []
     alphat = 3e-5
 
@@ -309,7 +429,28 @@ def pclm(atoms, W, Nit, etol, **kwargs):
 
 
 def pccg(atoms, W, Nit, etol, cgform=1):
-    '''Preconditioned conjugate-gradient algorithm.'''
+    '''Preconditioned conjugate-gradient algorithm.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+        Nit : int
+            Maximum number of SCF steps.
+
+        etol : float
+            Convergence tolerance of the total energy.
+
+    Kwargs:
+        cgform : int
+            Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
+
+    Returns:
+        Wave functions and energies per SCF cycle as a tuple(array, list).
+    '''
     Elist = []
     alphat = 3e-5
 
@@ -355,19 +496,60 @@ def pccg(atoms, W, Nit, etol, cgform=1):
 
 
 def orth(atoms, W):
-    '''Orthogonalize coefficent matrix W.'''
+    '''Orthogonalize coefficent matrix W.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        W : array
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        Orthogonalized wave functions as an array.
+    '''
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
 def get_psi(atoms, Y, n=None):
-    '''Calculate eigenstates from H.'''
+    '''Calculate eigenstates from H.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Kwargs:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Eigenstates in reciprocal space as an array.
+    '''
     mu = Y.conj().T @ H(atoms, Y, n)
     _, D = eig(mu)
     return Y @ D
 
 
 def get_epsilon(atoms, Y, n=None):
-    '''Calculate eigenvalues from H.'''
+    '''Calculate eigenvalues from H.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Kwargs:
+        n : array
+            Real-space electronic density.
+
+    Returns:
+        Eigenvalues as an array.
+    '''
     mu = Y.conj().T @ H(atoms, Y, n)
     epsilon, _ = eig(mu)
     epsilon = np.real(epsilon)
@@ -375,7 +557,18 @@ def get_epsilon(atoms, Y, n=None):
 
 
 def get_n_total(atoms, Y):
-    '''Calculate the total electronic density.'''
+    '''Calculate the total electronic density.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Returns:
+        Electronic density as an array.
+    '''
     Y = Y.T
     n = np.zeros((np.prod(atoms.S), 1))
     for i in range(Y.shape[0]):
@@ -385,7 +578,18 @@ def get_n_total(atoms, Y):
 
 
 def get_n_single(atoms, Y):
-    '''Calculate the single-electron densities.'''
+    '''Calculate the single-electron densities.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Returns:
+        Single-electron densities as an array.
+    '''
     Y = Y.T
     n = np.empty((np.prod(atoms.S), len(Y)))
     for i in range(Y.shape[0]):
@@ -395,7 +599,22 @@ def get_n_single(atoms, Y):
 
 
 def guess_random(atoms, complex=True, reproduce=False):
-    '''Generate random coefficents as starting values.'''
+    '''Generate random initial-guess coefficients as starting values.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Kwargs:
+        complex : bool
+            Use complex numbers for the random guess.
+
+        reproduce : Bool
+            Use a set seed for reproducible random numbers.
+
+    Returns:
+        Starting guess orthogonal wave functions in reciprocal space as an array.
+    '''
     if reproduce:
         seed(42)
     if complex:
@@ -406,7 +625,15 @@ def guess_random(atoms, complex=True, reproduce=False):
 
 
 def guess_gaussian(atoms):
-    '''Generate inital-guess coefficents using normalized Gaussians as starting values.'''
+    '''Generate initial-guess coefficients using normalized Gaussians as starting values.
+
+    Args:
+        atoms :
+            Atoms object.
+
+    Returns:
+        Starting guess orthogonal wave functions in reciprocal space as an array.
+    '''
     # Start with a randomized basis set
     W = guess_random(atoms, complex=True, reproduce=True)
     W = orth(atoms, W)
