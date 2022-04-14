@@ -183,13 +183,13 @@ def Q(inp, U):
 
     Args:
         inp : array
-            Input array to operate on.
+            Coefficients input array.
 
         U : array
             Overlap of wave functions.
 
     Returns:
-        Operator result as an array.
+        Q operator result as an array.
     '''
     mu, V = eig(U)
     mu = np.reshape(mu, (len(mu), 1))

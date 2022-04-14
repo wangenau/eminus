@@ -108,7 +108,7 @@ def calc_Vnonloc(atoms, W):
             Atoms object.
 
         W : array
-            Expansion coefficients of unconstrained wave functions.
+            Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         Non-local GTH potential contribution as an array.

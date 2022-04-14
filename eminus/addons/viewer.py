@@ -8,7 +8,7 @@ try:
     from nglview import NGLWidget, TextStructure
     from vispy import scene
 except ImportError:
-    print('ERROR: Necessary addon dependecies not found. '
+    print('ERROR: Necessary addon dependencies not found. '
           'To use this module, install the package with addons, e.g., with '
           '"pip install eminus[addons]"')
 
@@ -29,7 +29,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
             Isovalue for sizing orbitals.
 
     Returns:
-        Viewable object as a NGLWidget.
+        Viewable object as an NGLWidget.
     '''
     if isinstance(isovalue, str):
         isovalue = float(isovalue)

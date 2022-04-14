@@ -21,7 +21,7 @@ def O(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -37,7 +37,7 @@ def L(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -57,7 +57,7 @@ def Linv(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -81,7 +81,7 @@ def K(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -111,7 +111,7 @@ def I(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -142,7 +142,7 @@ def J(atoms, inp, full=True):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Kwargs:
         full : bool
@@ -179,7 +179,7 @@ def Idag(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -206,7 +206,7 @@ def Jdag(atoms, inp):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
     Returns:
         Result as an array.
@@ -231,7 +231,7 @@ def T(atoms, inp, dr):
             Atoms object.
 
         inp : array
-            Coefficents input array.
+            Coefficients input array.
 
         dr : array
             Real-space position vector.

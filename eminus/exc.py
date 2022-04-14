@@ -187,7 +187,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
                 Index weather to use unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
 
         Returns:
-            PW fit and its derivative as a tuple(array, array).
+            PW fit and the derivative as a tuple(array, array).
         '''
         a = (0.031091, 0.015545, 0.016887)
         a1 = (0.2137, 0.20548, 0.11125)
@@ -300,7 +300,7 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
                 Index weather to use paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
 
         Returns:
-            Pade fit and its derivative as a tuple(array, array).
+            Pade fit and the derivative as a tuple(array, array).
         '''
         A = (0.0310907, 0.01554535, -0.01688686394039)
         b = (3.72744, 7.06042, 1.13107)

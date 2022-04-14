@@ -114,7 +114,7 @@ def read_cube(filename, info=False):
     '''
     # It seems, that there is no standard for cube files. The following definition is taken from:
     # https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
-    # Atomic units and a cuboidic unit cell that starts at (0,0,0) is assumed.
+    # Atomic units and a cuboidal unit cell that starts at (0,0,0) are assumed.
     with open(filename, 'r') as fh:
         lines = fh.readlines()
 
@@ -124,7 +124,7 @@ def read_cube(filename, info=False):
         print(f'XYZ file comment: "{comment}"')
 
     # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/S
-    # A cuboidic unit cell is assumed, so only use the diagonal entries
+    # A cuboidal unit cell is assumed, so only use the diagonal entries
     S = np.empty(3, dtype=int)
     a = np.empty(3)
     for i, line in enumerate(lines[3:6]):
@@ -194,7 +194,7 @@ def write_cube(atoms, field, filename, extra=None):
 
     with open(filename, 'w') as fp:
         # The first two lines have to be a comment.
-        # Print file creation time and informations about the file and program.
+        # Print file creation time and information about the file and program.
         fp.write(f'{ctime()}\n')
         fp.write(f'Cube file generated with eminus {__version__}\n')
         # Number of atoms (int), and origin of the coordinate system (float)
@@ -205,7 +205,7 @@ def write_cube(atoms, field, filename, extra=None):
             fp.write(f'{Natoms + len(extra)}  ')
         fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
-        # We only have a cuboidic box, so each vector only has one non-zero component
+        # We only have a cuboidal box, so each vector only has one non-zero component
         fp.write(f'{S[0]}  {a[0] / S[0]:.5f}  0.0  0.0\n')
         fp.write(f'{S[1]}  0.0  {a[1] / S[1]:.5f}  0.0\n')
         fp.write(f'{S[2]}  0.0  0.0  {a[2] / S[2]:.5f}\n')
@@ -285,7 +285,7 @@ def create_pdb(atom, X, a=None):
     # pdb files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not loose track of line lengths
     pdb = ''
-    # Create data for a cuboidic cell
+    # Create data for a cuboidal cell
     if a is not None:
         pdb += 'CRYST1'               # 1-6 "CRYST1"
         pdb += f'{a[0]:9.3f}'.rjust(9)   # 7-15 a

@@ -46,7 +46,7 @@ def get_Ekin(atoms, Y):
             Atoms object.
 
         Y : array
-            Expansion coefficients of orthogornal wave functions.
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         Kinetic energy in Hartree as a float.
@@ -150,7 +150,7 @@ def get_Enonloc(atoms, Y):
             Atoms object.
 
         Y : array
-            Expansion coefficients of orthogornal wave functions.
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         Non-local energy in Hartree as a float.

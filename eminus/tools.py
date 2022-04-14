@@ -9,7 +9,7 @@ from .scf import get_epsilon
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
-    '''Convert planewave energy cut-off to a real-space gridspacing using a.u.
+    '''Convert plane wave energy cut-off to a real-space grid spacing using a.u.
 
     Args:
         E : float
@@ -23,7 +23,7 @@ def cutoff2gridspacing(E):
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
-    '''Convert real-space gridspacing to planewave energy cuto-ff using a.u.
+    '''Convert real-space grid spacing to plane wave energy cuto-ff using a.u.
 
     Args:
         h : float
@@ -96,7 +96,7 @@ def get_dipole(atoms):
     Returns:
         Electric dipole moment in e times Bohr as an array.
     '''
-    # The dipole may be extremly large. This can be because of periodic boundary conditions.
+    # The dipole may be extremely large. This can be because of periodic boundary conditions.
     # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
     n = atoms.n

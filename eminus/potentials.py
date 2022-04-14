@@ -40,7 +40,7 @@ def Coulomb(atoms):
 
 
 def Ge(atoms):
-    '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier transformed by Tomas Arias.
+    '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier-transformed by Tomas Arias.
 
     Args:
         atoms :

@@ -13,7 +13,7 @@ try:
     from pyflosic2.guess.pycom import pycom
     from pyflosic2.parameters.flosic_parameters import parameters
 except ImportError:
-    print('ERROR: Necessary addon dependecies not found. '
+    print('ERROR: Necessary addon dependencies not found. '
           'To use this module, install the package with addons, e.g., with '
           '"pip install eminus[addons]"')
 

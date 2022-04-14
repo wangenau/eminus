@@ -4,7 +4,7 @@ Changelog
 v1.0.1
 ------
 - Add branding
-- Fix gth files not included in pypi build
+- Fix GTH files not included in PyPI build
 
 v1.0.0
 ------

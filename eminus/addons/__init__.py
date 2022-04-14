@@ -2,7 +2,7 @@
 '''
 Addon functions that need additional dependencies to work.
 
-To also install all dependecies to use them, use::
+To also install all dependencies to use them, use::
 
     pip install eminus[addons]
 '''

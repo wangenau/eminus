@@ -30,7 +30,7 @@ class Atoms:
 
     Kwargs:
         a : float list or array of floats
-            Cell size or vacuum size. A cuboidic box with the same side lengths will be created.
+            Cell size or vacuum size. A cuboidal box with the same side lengths will be created.
             Default: 20 Bohr (ca. 10.5 Angstrom).
 
         ecut : float or None
@@ -198,7 +198,7 @@ class Atoms:
         # Lower the exchange-correlation string
         self.exc = self.exc.lower()
 
-        # Build a cuboidic unit cell and calculate its volume
+        # Build a cuboidal unit cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
         self.CellVol = np.abs(det(R))
