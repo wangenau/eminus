@@ -1,9 +1,9 @@
-from eminus import Atoms, SCF, read_xyz, write_xyz, write_cube
-from eminus.addons import get_fods, remove_core_fods, FLO
+from eminus import Atoms, SCF, read_xyz, write_cube, write_xyz
+from eminus.addons import get_fods, remove_core_fods
 from eminus.localizer import get_FLOs
 from eminus.scf import get_psi
 
-# Start by with a calculation for methane
+# Start by with a DFT calculation for methane
 atoms = Atoms(*read_xyz('CH4.xyz'), center=True)
 SCF(atoms)
 
@@ -11,7 +11,7 @@ SCF(atoms)
 fods_all = get_fods(atoms)
 print(f'\nAll FODs:\n{fods_all}')
 
-# Remove core FODs, since the calculation uses the GTH pseudopotential
+# Remove core FODs, since the calculation uses a GTH pseudopotential
 fods = remove_core_fods(atoms, fods_all)
 print(f'\nCore FODs:\n{fods}')
 
@@ -22,7 +22,7 @@ print(f'\nCore FODs:\n{fods}')
 #                  [ 9.24857483, 10.79169744,  9.24052496],
 #                  [ 9.25441172,  9.25005662, 10.82402898]])
 
-# Write the FODs to a xyz file to view them
+# Write the FODs to an xyz file to view them
 write_xyz(atoms, 'CH4_fods.xyz', fods)
 
 # Generate the Kohn-Sham orbitals
@@ -38,4 +38,5 @@ for i in range(atoms.Ns):
     write_cube(atoms, FLOs[:, i], f'CH4_FLO_{i + 1}.cube')
 
 # All of the functionality above can be achieved with the following workflow function
+# from eminus.addons import FLO
 # FLOs = FLO(atoms, write_cubes=True)

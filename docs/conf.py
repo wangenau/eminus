@@ -70,7 +70,7 @@ def examples_generate(app):
                 # Include readme
                 fp.write(f'\n.. include:: ../../examples/{example}/README.rst\n')
                 # Include script if one exists
-                if os.path.exists(f'../../examples/{example}/{example}.py'):
+                if os.path.exists(f'examples/{example}/{example}.py'):
                     fp.write(f'\n.. literalinclude:: ../../examples/{example}/{example}.py\n')
                 # Add download buttons
                 fp.write('\nDownload')

@@ -53,13 +53,15 @@ print(f'New Atoms object:\n{atoms}\n')
 
 # You can always manipulate the object freely by displaying or editing properties
 # To display the calculated cell volume
-print(f'Cell volume = {atoms.CellVol} Bohr^3')
+print(f'Cell volume = {atoms.CellVol} a0^3')
 
 # If you edit properties of an existing object dependent properties can be updated
 # Edit the cell size, update the object, and display the new cell volume
 atoms.a = 3
 atoms.update()
-print(f'New cell volume = {atoms.CellVol} Bohr^3')
+print(f'New cell volume = {atoms.CellVol} a0^3')
 
 # More informations are always available in the respective docstring
-print(f'\nAtoms docstring:\n{Atoms.__doc__}')
+# print(f'\nAtoms docstring:\n{Atoms.__doc__}')
+# or:
+# help(Atoms)

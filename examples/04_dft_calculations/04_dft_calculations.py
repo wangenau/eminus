@@ -1,7 +1,7 @@
 from eminus import Atoms, SCF
 
 # Start by creating an Atoms object for helium
-# Use a very small ecut for fast calculations
+# Use a very small ecut for a fast calculation
 atoms = Atoms('He', [0, 0, 0], ecut=5)
 
 # Optional parameters with examples are listed as follows
@@ -31,5 +31,5 @@ etot = SCF(atoms=atoms, guess=guess, etol=etol, min=min, cgform=cgform)
 
 # The total energy is a return value of the SCF function, but it is saved in the Atoms object as
 # well with all energy contributions
-print(f'\nEnergy from SCF function = {etot} Hartree')
+print(f'\nEnergy from SCF function = {etot} Eh')
 print(f'\nEnergy in Atoms object:\n{atoms.energies}')
