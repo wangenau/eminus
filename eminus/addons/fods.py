@@ -23,7 +23,7 @@ from eminus.units import bohr2ang
 
 
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
-    '''Generate FOD positions using the pycom method.
+    '''Generate FOD positions using the PyCOM method.
 
     Args:
         atoms :

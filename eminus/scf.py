@@ -508,7 +508,7 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
 
 
 def orth(atoms, W):
-    '''Orthogonalize coefficent matrix W.
+    '''Orthogonalize coefficient matrix W.
 
     Args:
         atoms :

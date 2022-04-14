@@ -75,7 +75,7 @@ def get_FOs(atoms, psi, fods):
     FOs = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
     R = get_R(atoms, psi, fods)
-    # Transform psi to real space
+    # Transform psi to real-space
     psi_rs = atoms.I(psi)
     for i in range(len(R)):
         for j in range(atoms.Ns):

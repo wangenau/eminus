@@ -56,7 +56,7 @@ def get_Ekin(atoms, Y):
 
 
 def get_Ecoul(atoms, n):
-    '''Calculate the coulomb energy.
+    '''Calculate the Coulomb energy.
 
     Args:
         atoms :
@@ -201,7 +201,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         Ewald energy in Hartree as a float.
     '''
     # For a plane wave code we have multiple contributions for the Ewald energy
-    # Namely, a sum from contributions from real space, reciprocal space,
+    # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
     Natoms = atoms.Natoms
@@ -254,7 +254,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
                         if (ia != ja) or ((abs(i) + abs(j) + abs(k)) != 0):
                             T = i * t1 + j * t2 + k * t3
                             rmag = np.sqrt(np.sum((dtau - T)**2))
-                            # Add the real space contribution
+                            # Add the real-space contribution
                             Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
     mmm1 = int(np.rint(gcut / g1m + 1.5))

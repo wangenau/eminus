@@ -45,7 +45,7 @@ class Atoms:
             Default: None
 
         s : int or list or array of ints
-            Real-space sampling of the cell/vacuum. None will make the sampling dependent of a and
+            Real-space sampling of the cell/vacuum. None will make the sampling dependent on a and
             ecut.
             Example: 30; [30, 40, 50]; array([30, 40, 50])
             Default: None

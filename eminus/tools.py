@@ -23,7 +23,7 @@ def cutoff2gridspacing(E):
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
-    '''Convert real-space grid spacing to plane wave energy cuto-ff using a.u.
+    '''Convert real-space grid spacing to plane wave energy cut-off using a.u.
 
     Args:
         h : float
