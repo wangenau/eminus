@@ -13,4 +13,3 @@ The following color palettes have been used
 | `#006700` | `#70a973` |
 | `#1a962b` | `#a0dba2` |
 | `#59c859` | `#d2ffd3` |
-
