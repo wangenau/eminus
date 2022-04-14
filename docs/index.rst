@@ -17,4 +17,5 @@ Welcome to the eminus documentation!
    examples.rst
    modules.rst
    changelog.rst
+   license.rst
    further.rst

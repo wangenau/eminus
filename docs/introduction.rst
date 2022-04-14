@@ -12,16 +12,16 @@ Introduction
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
 
-| eminus is a plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
-| The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
-| It is built upon the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ pragmas proposed by Tomas Arias et al. that aim to let programming languages and theory coincide.
-| This can be shown by, e.g., solving the Poisson equation. In the operator notation of DFT++ the equation reads
+eminus is a plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
+The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
+It is built upon the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ pragmas proposed by Tomas Arias et al. that aim to let programming languages and theory coincide.
+This can be shown by, e.g., solving the Poisson equation. In the operator notation of DFT++ the equation reads
 
 .. math::
 
    \boldsymbol \phi = 4\pi\hat L^{-1}\hat O\hat J \boldsymbol n.
 
-The corresponding Python code (implying that the operators already have been implemented) reads
+The corresponding Python code (implying that the operators have been implemented properly) reads
 
 .. code-block:: python
 
@@ -37,7 +37,7 @@ Feature overview
 How to cite
 ===========
 
-The project has been published with `Zenodo <https://zenodo.org/record/5720636>`_ and has an assigned DOI. The following BibTeX key can be used.
+The project has been published with `Zenodo <https://zenodo.org/record/5720636>`_ and has an assigned DOI. The following BibTeX key can be used
 
 .. code-block:: TeX
 
