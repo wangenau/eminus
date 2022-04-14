@@ -34,7 +34,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
             Basis set for the DFT calculation.
 
         loc : str
-            Localization method.
+            Localization method  (case insensitive).
 
         clean : bool
             Remove pycom log files.
@@ -42,6 +42,8 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     Returns:
         FOD positions as an array.
     '''
+    loc = loc.upper()
+
     # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)
     # Build the PySCF input format
