@@ -57,7 +57,7 @@ def examples_generate(app):
     '''Automatically generate examples page from examples folder.'''
     # Copy template file and create examples folder
     shutil.copy2('docs/_templates/custom-examples.rst', 'docs/examples.rst')
-    os.mkdir('docs/examples')
+    os.makedirs('docs/examples', exist_ok=True)
     # Get list of examples from subfolders
     examples = os.listdir('examples')
     examples = [name for name in examples if os.path.isdir(os.path.join('examples', name))]
