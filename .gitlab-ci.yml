@@ -30,7 +30,7 @@ pytest:
   stage: test
   script:
   - pip install pytest
-  - pytest --tb=short tests/
+  - pytest --tb=short tests/ --ignore=tests/examples
   only:
     changes:
       - eminus/*
