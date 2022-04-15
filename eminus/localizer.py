@@ -156,7 +156,7 @@ def wannier_cost(atoms, psirs):
 
 
 def wannier_center(atoms, psirs):
-    '''Calculate Wannier centers that are the expectation values of r.
+    '''Calculate Wannier centers, i.e., the expectation values of r.
 
     Args:
         atoms :
@@ -180,7 +180,7 @@ def wannier_center(atoms, psirs):
 
 
 def second_moment(atoms, psirs):
-    '''Calculate the second moments that are the expectation values of r^2.
+    '''Calculate the second moments, i.e., the expectation values of r^2.
 
     Args:
         atoms :

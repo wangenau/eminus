@@ -199,7 +199,7 @@ def Q(inp, U):
 
 
 def get_E(atoms, W):
-    '''Calculate all the energy contributions.
+    '''Calculate all energy contributions and update Atoms energies.
 
     Args:
         atoms :
@@ -625,7 +625,7 @@ def guess_random(atoms, complex=True, reproduce=False):
             Use a set seed for reproducible random numbers.
 
     Returns:
-        Starting guess orthogonal wave functions in reciprocal space as an array.
+        Initial-guess orthogonal wave functions in reciprocal space as an array.
     '''
     if reproduce:
         seed(42)
@@ -644,7 +644,7 @@ def guess_gaussian(atoms):
             Atoms object.
 
     Returns:
-        Starting guess orthogonal wave functions in reciprocal space as an array.
+        Initial-guess orthogonal wave functions in reciprocal space as an array.
     '''
     # Start with a randomized basis set
     W = guess_random(atoms, complex=True, reproduce=True)

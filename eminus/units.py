@@ -8,7 +8,7 @@ electronvolt = eV = 27.211386245988
 kcalmol = 627.5094740631
 # a0 in Å (https://en.wikipedia.org/wiki/Bohr_radius)
 angstrom = A = 0.529177210903
-# e x a0 in D (https://en.wikipedia.org/wiki/Hartree_atomic_units)
+# e * a0 in D (https://en.wikipedia.org/wiki/Hartree_atomic_units)
 Debye = D = 2.541746473
 
 
@@ -143,7 +143,7 @@ def bohr2ang(r):
 
 
 def ebohr2d(p):
-    '''Convert e x Bohr to Debye.
+    '''Convert e * Bohr to Debye.
 
     Args:
         p : float
@@ -156,7 +156,7 @@ def ebohr2d(p):
 
 
 def d2ebohr(p):
-    '''Convert Debye to e x Bohr.
+    '''Convert Debye to e * Bohr.
 
     Args:
         p : float

@@ -224,7 +224,7 @@ def Jdag(atoms, W):
 
 
 def T(atoms, W, dr):
-    '''Translation operator. Shifts input by the vector dr.
+    '''Translation operator. Shifts input orbitals by the vector dr.
 
     Args:
         atoms :

@@ -22,7 +22,7 @@ def Harmonic(atoms):
 
 
 def Coulomb(atoms):
-    '''Coulomb potential. Can be used for Hydrogen calculations.
+    '''All-electron Coulomb potential.
 
     Args:
         atoms :

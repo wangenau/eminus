@@ -9,25 +9,25 @@ from .scf import get_epsilon
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
-    '''Convert plane wave energy cut-off to a real-space grid spacing using a.u.
+    '''Convert plane wave energy cut-off to a real-space grid spacing.
 
     Args:
         E : float
             Energy in Hartree.
 
     Returns:
-        Gridspacing in Bohr as a float.
+        Grid spacing in Bohr as a float.
     '''
     return np.pi / np.sqrt(2 * E)
 
 
 # Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
-    '''Convert real-space grid spacing to plane wave energy cut-off using a.u.
+    '''Convert real-space grid spacing to plane wave energy cut-off.
 
     Args:
         h : float
-            Gridspacing in Bohr.
+            Grid spacing in Bohr.
 
     Returns:
         Cut-off in Hartree as a float.

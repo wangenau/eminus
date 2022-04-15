@@ -89,7 +89,7 @@ def examples_remove(app, exception):
 
 
 def setup(app):
-    '''Customize build process.'''
+    '''Customized build process.'''
     app.connect('builder-inited', examples_generate)
     app.connect('autodoc-skip-member', dunder_skip)
     app.connect('build-finished', examples_remove)

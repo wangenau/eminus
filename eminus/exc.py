@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Parameterizations of density functionals.
+Parameterizations of exchange-correlation functionals.
 '''
 import numpy as np
 
@@ -120,14 +120,14 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
 def lda_pw_c(n, **kwargs):
-    '''PW parameterization of the correlation functional (spin-paired).
+    '''Perdew-Wang parameterization of the correlation functional (spin-paired).
 
     Args:
         n : array
             Real-space electronic density.
 
     Returns:
-        Correlation energy density and potential as a tuple(array, array).
+        PW correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -154,7 +154,7 @@ def lda_pw_c(n, **kwargs):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
 def lda_pw_c_spin(n, zeta, **kwargs):
-    '''PW parameterization of the correlation functional (spin-polarized).
+    '''Perdew-Wang parameterization of the correlation functional (spin-polarized).
 
     Args:
         n : array
@@ -164,7 +164,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
             Relative spin polarization.
 
     Returns:
-        Correlation energy density and potential as a tuple(array, array).
+        PW correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -226,14 +226,14 @@ def lda_pw_c_spin(n, zeta, **kwargs):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
 def lda_vwn_c(n, **kwargs):
-    '''VWN parameterization of the correlation functional (spin-paired).
+    '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-paired).
 
     Args:
         n : array
             Real-space electronic density.
 
     Returns:
-        Correlation energy density and potential as a tuple(array, array).
+        VWN correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -262,7 +262,7 @@ def lda_vwn_c(n, **kwargs):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def lda_vwn_c_spin(n, zeta, **kwargs):
-    '''VWN parameterization of the correlation functional (spin-polarized).
+    '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-polarized).
 
     Args:
         n : array
@@ -272,7 +272,7 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
             Relative spin polarization.
 
     Returns:
-        Correlation energy density and potential as a tuple(array, array).
+        VWN correlation energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third

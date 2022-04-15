@@ -20,7 +20,7 @@ def KSO(atoms, write_cubes=False, **kwargs):
             Write orbitals to cube files.
 
     Returns:
-        Kohn-Sham orbitals as an array.
+        Real-space Kohn-Sham orbitals as an array.
     '''
     KSOs = atoms.I(get_psi(atoms, atoms.W))
     name = ''
@@ -47,7 +47,7 @@ def FO(atoms, write_cubes=False, fods=None):
             Fermi-orbital descriptors.
 
     Returns:
-        Fermi orbitals as an array.
+        Real-space Fermi orbitals as an array.
     '''
     KSOs = get_psi(atoms, atoms.W)
     if fods is None:
@@ -78,7 +78,7 @@ def FLO(atoms, write_cubes=False, fods=None):
             Fermi-orbital descriptors.
 
     Returns:
-        Fermi-Löwdin orbitals as an array.
+        Real-space Fermi-Löwdin orbitals as an array.
     '''
     KSOs = get_psi(atoms, atoms.W)
     if fods is None:

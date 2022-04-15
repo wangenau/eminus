@@ -23,7 +23,7 @@ def Diagprod(a, B):
 
 
 def dotprod(a, b):
-    '''Calculate the expression a * b.
+    '''Efficiently calculate the expression a * b.
 
     Args:
         a : array

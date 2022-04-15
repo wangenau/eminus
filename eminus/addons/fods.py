@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''
-Fermi-orbital descriptor generation for localization of orbitals.
+Fermi-orbital descriptor generation.
 '''
 from os import remove
 
@@ -91,7 +91,7 @@ def split_atom_and_fod(atom, X):
             Atom positions.
 
     Returns:
-        Shortened atom types and coordinates, with FOD coordinates as a tuple(list, array, array).
+        Atom types, the respective coordinates, and FOD positions as a tuple(list, array, array).
     '''
     X_fod = []
     # Iterate in reverted order, because we may delete elements
@@ -118,14 +118,14 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
         method : str
             Method to remove FODs (case insensitive). 'Automatic' will remove the nearest FODs of
             atoms depending on the number of core states. 'Radius' removes FODs within a fixed
-            radius around atoms, 'covalent' does the same, but scaled by the atoms covalent radius.
+            radius around atoms, 'covalent' does the same, but scaled by the atom's covalent radius.
 
         radius : float
             Radius size for 'radius' method, covalent radius scaling factor for 'covalent'. No
             effect for the 'automatic' method.
 
     Returns:
-        Valence FOD positions as an array.
+        Valence FODs as an array.
     '''
     method = method.lower()
     if method in ('auto', 'automatic'):

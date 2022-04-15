@@ -11,7 +11,7 @@ addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyflosic2')
 
 
 def info():
-    '''Print version numbers and availability of used packages.'''
+    '''Print version numbers and availability of packages.'''
     print('--- Version infos ---')
     print(f'python      : {version.split()[0]}')
     print(f'eminus      : {__version__}')

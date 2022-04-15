@@ -99,7 +99,7 @@ def get_Exc(atoms, n, spinpol=False):
 
 
 def get_Eloc(atoms, n):
-    '''Calculate the local energy.
+    '''Calculate the local energy contribution.
 
     Args:
         atoms :
@@ -109,7 +109,7 @@ def get_Eloc(atoms, n):
             Real-space electronic density.
 
     Returns:
-        Local energy in Hartree as a float.
+        Local energy contribution in Hartree as a float.
     '''
     return np.real(atoms.Vloc.conj().T @ n)
 
@@ -143,7 +143,7 @@ def get_Esic(atoms, n):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(atoms, Y):
-    '''Calculate the non-local energy.
+    '''Calculate the non-local energy contribution.
 
     Args:
         atoms :
@@ -153,7 +153,7 @@ def get_Enonloc(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        Non-local energy in Hartree as a float.
+        Non-local energy contribution in Hartree as a float.
     '''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
