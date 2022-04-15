@@ -581,12 +581,9 @@ def get_n_total(atoms, Y):
     Returns:
         Electronic density as an array.
     '''
-    Y = Y.T
-    n = np.zeros((np.prod(atoms.s), 1))
-    for i in range(Y.shape[0]):
-        psi = atoms.I(Y[i])
-        n += atoms.f[i] * np.real(psi.conj() * psi)
-    return n.T[0]
+    psi = atoms.I(Y)
+    n = atoms.f * np.real(psi.conj() * psi)
+    return np.sum(n, axis=1)
 
 
 def get_n_single(atoms, Y):
@@ -602,11 +599,8 @@ def get_n_single(atoms, Y):
     Returns:
         Single-electron densities as an array.
     '''
-    Y = Y.T
-    n = np.empty((np.prod(atoms.s), len(Y)))
-    for i in range(Y.shape[0]):
-        psi = atoms.I(Y[i])
-        n[:, i] = atoms.f[i] * np.real(psi.conj() * psi).T
+    psi = atoms.I(Y)
+    n = atoms.f * np.real(psi.conj() * psi)
     return n.T
 
 
