@@ -12,3 +12,6 @@ dist/
 # Sphinx documentation
 docs/_autosummary/
 public/
+
+# Jupyter Notebook
+.ipynb_checkpoints

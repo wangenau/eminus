@@ -60,7 +60,7 @@ def test_07():
 
 
 def test_08():
-    pass
+    clean_example(['CH4_density.cube', 'CH4_fods.xyz'])
 
 
 def test_09():
