@@ -169,7 +169,7 @@ def H(atoms, W, n=None):
 
     # Calculate the exchange-correlation potential
     # We get the full potential in the functinal definition, unlike in the Arias notation
-    vxc = get_exc(atoms.exc, n, atoms.spinpol)[1]
+    vxc = get_exc(atoms.exc, n, 'potential', atoms.spinpol)
     Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
 
     Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))

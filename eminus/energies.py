@@ -92,9 +92,9 @@ def get_Exc(atoms, n, spinpol=False):
     '''
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
-        exc = get_exc(atoms.exc, n, spinpol=True)[0]
+        exc = get_exc(atoms.exc, n, 'density', spinpol=True)
     else:
-        exc = get_exc(atoms.exc, n, spinpol=False)[0]
+        exc = get_exc(atoms.exc, n, 'density', spinpol=False)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 

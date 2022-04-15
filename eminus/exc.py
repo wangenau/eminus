@@ -5,7 +5,7 @@ Parameterizations of exchange-correlation functionals.
 import numpy as np
 
 
-def get_exc(exc, n, spinpol):
+def get_exc(exc, n, ret, spinpol):
     '''Handle and get exchange-correlation functionals.
 
     Args:
@@ -15,11 +15,14 @@ def get_exc(exc, n, spinpol):
         n : array
             Real-space electronic density.
 
+        ret : str
+            Choose whether to return the energy density or the potential.
+
         spinpol : bool
             Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
-        Exchange-correlation energy density and potential as a tuple(array, array).
+        Exchange-correlation energy density or potential as an array.
     '''
     exc_map = {
         'lda': 'lda_slater_x',
@@ -36,35 +39,41 @@ def get_exc(exc, n, spinpol):
 
     # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
     #        spin-unpolarised calculations
-    ex, vx = eval(f_exch)(n, zeta=np.ones_like(n))
-    ec, vc = eval(f_corr)(n, zeta=np.ones_like(n))
-    return ex + ec, vx + vc
+    x = eval(f_exch)(n, ret, zeta=np.ones_like(n))
+    c = eval(f_corr)(n, ret, zeta=np.ones_like(n))
+    return x + c
 
 
-def mock_exc(n, **kwargs):
+def mock_exc(n, ret, **kwargs):
     '''Mock exchange-correlation functional with no effect.
 
     Args:
         n : array
             Real-space electronic density.
 
+        ret : str
+            Choose whether to return the energy density or the potential.
+
     Returns:
         Mock exchange-correlation energy density and potential as a tuple(array, array).
     '''
     zero = np.zeros_like(n)
-    return zero, zero
+    return zero
 
 
 mock_exc_spin = mock_exc
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
-def lda_slater_x(n, alpha=2 / 3, **kwargs):
+def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-paired).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
     Kwargs:
         alpha : float
@@ -74,24 +83,27 @@ def lda_slater_x(n, alpha=2 / 3, **kwargs):
         Exchange energy density and potential as a tuple(array, array).
     '''
     third = 1 / 3
-    p43 = 4 / 3
     pi34 = (3 / (4 * np.pi))**third
     f = -9 / 8 * (3 / (2 * np.pi))**(2 / 3)
     rs = pi34 / n**third
 
-    ex = f * alpha / rs
-    vx = p43 * f * alpha / rs
-    return ex, vx
+    if ret == 'density':
+        return f * alpha / rs
+
+    return 4 / 3 * f * alpha / rs
 
 
 # Adapted from
 # https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
-def lda_slater_x_spin(n, zeta, alpha=2 / 3):
+def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
     '''Slater exchange functional (spin-polarized).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
         zeta : array
             Relative spin polarization.
@@ -107,24 +119,29 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
     p43 = 4 / 3
     f = -9 / 8 * (3 / np.pi)**third
 
-    rho13 = ((1 + zeta) * n)**third
-    exup = f * alpha * rho13
-    vxup = p43 * f * alpha * rho13
+    rho13p = ((1 + zeta) * n)**third
+    rho13m = ((1 - zeta) * n)**third
 
-    rho13 = ((1 - zeta) * n)**third
-    exdw = f * alpha * rho13
-    vxdw = p43 * f * alpha * rho13
-    ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
-    return ex, [vxup, vxdw]
+    if ret == 'density':
+        exup = f * alpha * rho13p
+        exdw = f * alpha * rho13m
+        return 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
+
+    vxup = p43 * f * alpha * rho13p
+    vxdw = p43 * f * alpha * rho13m
+    return [vxup, vxdw]
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
-def lda_pw_c(n, **kwargs):
+def lda_pw_c(n, ret, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-paired).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
     Returns:
         PW correlation energy density and potential as a tuple(array, array).
@@ -145,20 +162,24 @@ def lda_pw_c(n, **kwargs):
     rs2 = rs**2
 
     om = 2 * a * (b1 * rs12 + b2 * rs + b3 * rs32 + b4 * rs2)
-    dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
     olog = np.log(1 + 1 / om)
-    ec = -2 * a * (1 + a1 * rs) * olog
-    vc = -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
-    return ec, vc
+    if ret == 'density':
+        return -2 * a * (1 + a1 * rs) * olog
+
+    dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
+    return -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
-def lda_pw_c_spin(n, zeta, **kwargs):
+def lda_pw_c_spin(n, ret, zeta, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-polarized).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
         zeta : array
             Relative spin polarization.
@@ -210,27 +231,29 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     ac, dac = pw_fit(2)  # Spin stiffness
 
     fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
+    if ret == 'density':
+        return ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
+
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
-
-    ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
-
     vcup = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 + \
            (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
            (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
-
     vcdw = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
            (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
            (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
-    return ec, [vcup, vcdw]
+    return [vcup, vcdw]
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
-def lda_vwn_c(n, **kwargs):
+def lda_vwn_c(n, ret, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-paired).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
     Returns:
         VWN correlation energy density and potential as a tuple(array, array).
@@ -251,22 +274,27 @@ def lda_vwn_c(n, **kwargs):
     rs12 = np.sqrt(rs)
     fx = rs + b * rs12 + c
     qx = np.arctan(q / (2 * rs12 + b))
+
     ec = a * (np.log(rs / fx) + f1 * qx - f2 * (np.log((rs12 - x0)**2 / fx) + f3 * qx))
+    if ret == 'density':
+        return ec
 
     tx = 2 * rs12 + b
     tt = tx * tx + q * q
-    vc = ec - rs12 * a / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
-         f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
-    return ec, vc
+    return ec - rs12 * a / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
+     f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
-def lda_vwn_c_spin(n, zeta, **kwargs):
+def lda_vwn_c_spin(n, ret, zeta, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-polarized).
 
     Args:
         n : array
             Real-space electronic density.
+
+        ret : str
+            Choose whether to return the energy density or the potential.
 
         zeta : array
             Relative spin polarization.
@@ -331,14 +359,15 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
     ac, dac = pade_fit(2)  # Spin stiffness
 
     ac = ac * iddfz0
-    dac = dac * iddfz0
     De = ecF - ecP - ac  # e_c[F] - e_c[P] - alpha_c/(ddf/ddz(z=0))
     fzz4 = fz * zeta4
-    ec = ecP + ac * fz + De * fzz4
+    if ret == 'density':
+        return ecP + ac * fz + De * fzz4
 
+    dac = dac * iddfz0
     dec1 = vcP + dac * fz + (vcF - vcP - dac) * fzz4  # e_c-(r_s/3)*(de_c/dr_s)
     dec2 = ac * dfz + De * (4 * zeta3 * fz + zeta4 * dfz)  # de_c/dzeta
 
     vcup = dec1 + (1 - zeta) * dec2
     vcdw = dec1 - (1 + zeta) * dec2
-    return ec, [vcup, vcdw]
+    return [vcup, vcdw]
