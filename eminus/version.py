@@ -29,11 +29,12 @@ def info():
     try:
         THREADS = int(environ['OMP_NUM_THREADS'])
     except KeyError:
+        THREADS = 1
         print('INFO: No OMP_NUM_THREADS environment variable was found.\n'
-              'To improve performance, add "export OMP_NUM_THREADS=threads" to your ".bashrc".\n'
-              'Make sure to replace "threads", typically with the number of cores your CPU has.')
-    else:
-        print(f'eminus will run on {THREADS} threads.')
+              'To improve performance, add "export OMP_NUM_THREADS=THREADS" to your ".bashrc".\n'
+              'Make sure to replace "THREADS", typically with the number of cores your CPU has.')
+    finally:
+        print(f'FFT operations will run on {THREADS} thread{"s" if THREADS!=1 else ""}.')
     return
 
 
