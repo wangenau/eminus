@@ -581,27 +581,9 @@ def get_n_total(atoms, Y):
     Returns:
         Electronic density as an array.
     '''
-    psi = atoms.I(Y)
-    n = atoms.f * np.real(psi.conj() * psi)
+    Yrs = atoms.I(Y)
+    n = atoms.f * np.real(Yrs.conj() * Yrs)
     return np.sum(n, axis=1)
-
-
-def get_n_single(atoms, Y):
-    '''Calculate the single-electron densities.
-
-    Args:
-        atoms :
-            Atoms object.
-
-        Y : array
-            Expansion coefficients of orthogonal wave functions in reciprocal space.
-
-    Returns:
-        Single-electron densities as an array.
-    '''
-    psi = atoms.I(Y)
-    n = atoms.f * np.real(psi.conj() * psi)
-    return n.T
 
 
 def guess_random(atoms, complex=True, reproduce=False):

@@ -114,33 +114,6 @@ def get_Eloc(atoms, n):
     return np.real(atoms.Vloc.conj().T @ n)
 
 
-def get_Esic(atoms, n):
-    '''Calculate the Perdew-Zunger self-interaction energy.
-
-    Args:
-        atoms :
-            Atoms object.
-
-        n : array
-            Real-space single-electron density.
-
-    Returns:
-        PZ self-interaction energy as a float.
-    '''
-    # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
-    Esic = 0
-    for i in range(len(n)):
-        # Normalize single-particle densities to 1
-        n_tmp = n[i] / atoms.f[i]
-        coul = get_Ecoul(atoms, n_tmp)
-        # The exchange part for a SIC correction has to be spin polarized
-        xc = get_Exc(atoms, n_tmp, spinpol=True)
-        # SIC energy is scaled by the occupation
-        Esic += (coul + xc) * atoms.f[i]
-    atoms.energies.Esic = Esic
-    return Esic
-
-
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(atoms, Y):
     '''Calculate the non-local energy contribution.
@@ -277,3 +250,49 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
                             Eewald += x * ZiZj * np.cos(Gtau)
 
     return Eewald
+
+
+def get_n_single(atoms, Y):
+    '''Calculate the single-electron densities.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Returns:
+        Single-electron densities as an array.
+    '''
+    Yrs = atoms.I(Y)
+    n = atoms.f * np.real(Yrs.conj() * Yrs)
+    return n
+
+
+def get_Esic(atoms, Y):
+    '''Calculate the Perdew-Zunger self-interaction energy.
+
+    Args:
+        atoms :
+            Atoms object.
+
+        Y : array
+            Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Returns:
+        PZ self-interaction energy as a float.
+    '''
+    # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
+    n_single = get_n_single(atoms, Y)
+    Esic = 0
+    for i in range(atoms.Ns):
+        # Normalize single-particle densities to 1
+        ni = n_single[:, i] / atoms.f[i]
+        coul = get_Ecoul(atoms, ni)
+        # The exchange part for a SIC correction has to be spin polarized
+        xc = get_Exc(atoms, ni, spinpol=True)
+        # SIC energy is scaled by the occupation
+        Esic += (coul + xc) * atoms.f[i]
+    atoms.energies.Esic = Esic
+    return Esic
