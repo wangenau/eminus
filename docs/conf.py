@@ -84,11 +84,13 @@ def examples_generate(app):
                     fp.write(f' :download:`{file.split("/")[-1]} <../../{file}>`')
             # Add example subfile to index
             f_index.write(f'\n   {example}.rst')
+    return
 
 
 def examples_remove(app, exception):
     '''Remove generated examples after build.'''
     shutil.rmtree('docs/_examples')
+    return
 
 
 def setup(app):
@@ -96,3 +98,4 @@ def setup(app):
     app.connect('builder-inited', examples_generate)
     app.connect('autodoc-skip-member', dunder_skip)
     app.connect('build-finished', examples_remove)
+    return
