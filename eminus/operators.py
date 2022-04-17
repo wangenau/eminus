@@ -52,12 +52,13 @@ def Linv(atoms, W):
         array: The operator applied on W.
     '''
     W = W.T
-    out = np.zeros_like(W, dtype=complex)
-    out[0] = 0
+    out = np.empty_like(W, dtype=complex)
     if W.ndim == 1:
+        out[0] = 0
         out[1:] = W[1:] / atoms.G2[1:] / -atoms.Omega
     else:
         for i in range(len(W)):
+            out[:, 0] = 0
             out[i][1:] = W[i][1:] / atoms.G2[1:] / -atoms.Omega
     return out.T
 
