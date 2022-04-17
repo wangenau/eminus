@@ -9,5 +9,6 @@ ignore = E126, E127, E128, \  # Over- and under-indentation
          D107, \              # Missing docstring in __init__
          D300                 # Use double quotes for docstrings
 
-per-file-ignores = examples/*:D100  # Missing docstring in public module
-per-file-ignores = tests/*:D103     # Missing docstring in public function
+# Ignore missing docstring in public modules or functions
+per-file-ignores = examples/*:D100
+                   tests/*:D103
