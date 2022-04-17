@@ -1,4 +1,4 @@
-from eminus import Atoms, SCF, load_atoms, read_cube, read_xyz, save_atoms, write_cube
+from eminus import Atoms, load_atoms, read_cube, read_xyz, save_atoms, SCF, write_cube
 from eminus.units import bohr2ang
 
 # Some file standards are supported to be read from

@@ -18,7 +18,7 @@ before_script:
 flake8:
   stage: test
   script:
-  - pip install flake8 flake8-docstrings
+  - pip install flake8 flake8-docstrings flake8-import-order
   - flake8
   only:
     changes:

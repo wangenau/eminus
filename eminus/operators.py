@@ -3,7 +3,7 @@
 from os import environ
 
 import numpy as np
-from scipy.fft import ifftn, fftn
+from scipy.fft import fftn, ifftn
 
 try:
     THREADS = int(environ['OMP_NUM_THREADS'])

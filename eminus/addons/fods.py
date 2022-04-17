@@ -15,9 +15,9 @@ except ImportError:
           'To use this module, install the package with addons, e.g., with '
           '"pip install eminus[addons]"')
 
-from eminus.atoms_io import read_xyz
-from eminus.data import covalent_radii, symbol2number
-from eminus.units import bohr2ang
+from ..atoms_io import read_xyz
+from ..data import covalent_radii, symbol2number
+from ..units import bohr2ang
 
 
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''Test functionality of examples.'''
-import runpy
 from os import chdir, remove
 from os.path import exists
+from runpy import run_path
 
 from eminus import __path__
 
@@ -12,7 +12,7 @@ def execute_example(name):
     chdir(f'{__path__[0]}/../examples/{name}')
 
     try:
-        runpy.run_path(f'{name}.py')
+        run_path(f'{name}.py')
     except Exception as err:
         print(f'Test for {name} failed.')
         raise SystemExit(err) from None

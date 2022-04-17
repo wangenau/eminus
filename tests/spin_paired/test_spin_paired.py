@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 '''Test total energies for a small set of systems.'''
+from eminus import __path__, Atoms, read_xyz, SCF
 from numpy.testing import assert_allclose
-
-from eminus import Atoms, SCF, read_xyz, __path__
 
 # Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
 # These values can be generated with the file ref_spin_paired.jl
