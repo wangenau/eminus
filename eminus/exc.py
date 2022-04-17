@@ -10,11 +10,8 @@ def get_exc(exc, n, ret, spinpol):
 
     Args:
         exc (str): Exchange and correlation identifier, separated by a comma.
-
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
-
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
@@ -45,7 +42,6 @@ def mock_exc(n, ret, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
@@ -64,7 +60,6 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
 
     Keyword Args:
@@ -91,9 +86,7 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
-
         zeta (array): Relative spin polarization.
 
     Keyword Args:
@@ -125,7 +118,6 @@ def lda_pw_c(n, ret, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
@@ -161,9 +153,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
-
         zeta (array): Relative spin polarization.
 
     Returns:
@@ -231,7 +221,6 @@ def lda_vwn_c(n, ret, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
@@ -270,9 +259,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
 
     Args:
         n (array): Real-space electronic density.
-
         ret (str): Choose whether to return the energy density or the potential.
-
         zeta (array): Relative spin polarization.
 
     Returns:

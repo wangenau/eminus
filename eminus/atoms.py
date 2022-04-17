@@ -22,7 +22,6 @@ class Atoms:
         atom (str or list of str): Atom symbols.
 
             Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']
-
         X (list or array of floats): Atom positions.
 
             Examples: [0, 0, 0]; array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
@@ -33,12 +32,10 @@ class Atoms:
 
             A cuboidal box with the same side lengths will be created.
             Default: 20 Bohr (ca. 10.5 Angstrom).
-
         ecut (float or None): Cut-off energy.
 
             None will disable the G-Vector truncation (needs a separate s).
             Default: 20 Hartree (ca. 544 eV).
-
         Z (int or list or array of ints or None): Valence charge per atom.
 
             The charges should not differ for same species.
@@ -46,46 +43,38 @@ class Atoms:
             will be assumed for single integers.
             Example: 1; [4, 1, 1, 1, 1]
             Default: None
-
         s (int or list or array of ints): Real-space sampling of the cell/vacuum.
 
             None will make the sampling dependent on a and ecut.
             Example: 30; [30, 40, 50]; array([30, 40, 50])
             Default: None
-
         f (float or list or array of floats): Occupation numbers per state.
 
             The last state will be adjusted if the sum of f is not equal to the sum of Z.
             None will assume occupations of 2.
             Example: 2; [2, 2/3, 2/3, 2/3]; array([2, 2/3, 2/3, 2/3])
             Default: None
-
         Ns (int): Number of states.
 
             None will get the number of states from f or assume occupations of 2 and divide the sum of Z by it.
             Default: None
-
         verbose (int): Level of output.
 
             Larger numbers mean more output.
             Default: 3
-
         pot (str): Type of pseudopotential (case insensitive).
 
             Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge'
             Default: 'gth'
-
         center (bool): Center the system inside the cell.
 
             Align the geometric center of mass with the center of the call and rotate the system,
             such that its geometric moment of inertia aligns with the coordinate axes.
             Default: False
-
         exc (str): Comma-separated exchange-correlation functional description (case insensitive).
 
             Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','
             Default: 'lda,vwn'
-
         spinpol (bool): Spin-polarized calculation.
 
             Default: False

@@ -43,7 +43,6 @@ def get_Ekin(atoms, Y):
 
     Args:
         atoms: Atoms object.
-
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -58,7 +57,6 @@ def get_Ecoul(atoms, n):
 
     Args:
         atoms: Atoms object.
-
         n (array): Real-space electronic density.
 
     Returns:
@@ -74,7 +72,6 @@ def get_Exc(atoms, n, spinpol=False):
 
     Args:
         atoms: Atoms object.
-
         n (array): Real-space electronic density.
 
     Keyword Args:
@@ -96,7 +93,6 @@ def get_Eloc(atoms, n):
 
     Args:
         atoms: Atoms object.
-
         n (array): Real-space electronic density.
 
     Returns:
@@ -111,7 +107,6 @@ def get_Enonloc(atoms, Y):
 
     Args:
         atoms: Atoms object.
-
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -153,7 +148,6 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     Keyword Args:
         gcut (float): G-vector cut-off.
-
         gamma (float): Error tolerance
 
     Returns:
@@ -243,7 +237,6 @@ def get_n_single(atoms, Y):
 
     Args:
         atoms: Atoms object.
-
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -259,7 +252,6 @@ def get_Esic(atoms, Y):
 
     Args:
         atoms: Atoms object.
-
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:

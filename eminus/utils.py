@@ -11,7 +11,6 @@ def Diagprod(a, B):
 
     Args:
         a (array): Single vector.
-
         B (array): Matrix.
 
     Returns:
@@ -25,7 +24,6 @@ def dotprod(a, b):
 
     Args:
         a (array): Array of vectors.
-
         b (array): Array of vectors.
 
     Returns:
@@ -40,9 +38,7 @@ def Ylm_real(l, m, R):
 
     Args:
         l (int): Angular momentum number.
-
         m (int): Magnetic quantum number.
-
         R (array): Real-space position vector or array of real-space position vectors.
 
     Returns:

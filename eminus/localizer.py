@@ -11,9 +11,7 @@ def eval_psi(atoms, psi, r):
 
     Args:
         atoms: Atoms object.
-
         psi (array): Set of orbitals in reciprocal space.
-
         r (array): Real-space positions.
 
     Returns:
@@ -31,9 +29,7 @@ def get_R(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-
         psi (array): Set of orbitals in reciprocal space.
-
         fods (array): Fermi-orbital descriptors.
 
     Returns:
@@ -55,9 +51,7 @@ def get_FOs(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-
         psi (array): Set of orbitals in reciprocal space.
-
         fods (array): Fermi-orbital descriptors.
 
     Returns:
@@ -79,7 +73,6 @@ def get_S(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-
         psirs (array): Set of orbitals in real-space.
 
     Returns:
@@ -100,9 +93,7 @@ def get_FLOs(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-
         psi (array): Set of orbitals in reciprocal space.
-
         fods (array): Fermi-orbital descriptors.
 
     Returns:
@@ -123,7 +114,6 @@ def wannier_cost(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-
         psirs (array): Set of orbitals in real-space.
 
     Returns:
@@ -144,7 +134,6 @@ def wannier_center(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-
         psirs (array): Set of orbitals in real-space.
 
     Returns:
@@ -166,7 +155,6 @@ def second_moment(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-
         psirs (array): Set of orbitals in real-space.
 
     Returns:

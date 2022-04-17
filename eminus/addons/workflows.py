@@ -38,7 +38,6 @@ def FO(atoms, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
-
         fods (array): Fermi-orbital descriptors.
 
     Returns:
@@ -66,7 +65,6 @@ def FLO(atoms, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
-
         fods (array): Fermi-orbital descriptors.
 
     Returns:

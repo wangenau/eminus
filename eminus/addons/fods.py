@@ -30,9 +30,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
 
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
-
         loc (str): Localization method  (case insensitive).
-
         clean (bool): Remove pycom log files.
 
     Returns:
@@ -81,7 +79,6 @@ def split_atom_and_fod(atom, X):
 
     Args:
         atom (list): Atom symbols.
-
         X (array): Atom positions.
 
     Returns:
@@ -103,7 +100,6 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
 
     Args:
         atoms: Atoms object.
-
         fods (array): FOD positions.
 
     Keyword Args:
@@ -112,7 +108,6 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
             'Automatic' will remove the nearest FODs of atoms depending on the number of core
             states. 'Radius' removes FODs within a fixed radius around atoms, 'covalent' does the
             same, but scaled by the atom's covalent radius.
-
         radius (float): Radii scaling.
 
             Radius size for 'radius' method, covalent radius scaling factor for 'covalent'. No

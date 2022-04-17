@@ -127,7 +127,6 @@ def check_ortho(atoms, func):
 
     Args:
         atoms: Atoms object.
-
         func (array): Discretized set of functions.
 
     Returns:
@@ -165,7 +164,6 @@ def check_norm(atoms, func):
 
     Args:
         atoms: Atoms object.
-
         func (array): Discretized set of functions.
 
     Returns:
@@ -197,7 +195,6 @@ def check_orthonorm(atoms, func):
 
     Args:
         atoms: Atoms object.
-
         func (array): Discretized set of functions.
 
     Returns:

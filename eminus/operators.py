@@ -18,7 +18,6 @@ def O(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -32,7 +31,6 @@ def L(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -50,7 +48,6 @@ def Linv(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -72,7 +69,6 @@ def K(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -100,7 +96,6 @@ def I(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -129,7 +124,6 @@ def J(atoms, W, full=True):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -163,7 +157,6 @@ def Idag(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -188,7 +181,6 @@ def Jdag(atoms, W):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -211,9 +203,7 @@ def T(atoms, W, dr):
 
     Args:
         atoms: Atoms object.
-
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
         dr (array): Real-space shift.
 
     Returns:

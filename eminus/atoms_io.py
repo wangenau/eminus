@@ -55,7 +55,6 @@ def write_xyz(atoms, filename, extra=None):
 
     Args:
         atoms: Atoms object.
-
         filename (str): xyz output file path/name.
 
     Keyword Args:
@@ -147,9 +146,7 @@ def write_cube(atoms, field, filename, extra=None):
 
     Args:
         atoms: Atoms object.
-
         field (array): Real-space field data.
-
         filename (str): xyz output file path/name.
 
     Keyword Args:
@@ -222,7 +219,6 @@ def save_atoms(atoms, filename):
 
     Args:
         atoms: Atoms object.
-
         filename (str): xyz input file path/name.
     '''
     with open(filename, 'wb') as fp:
@@ -248,7 +244,6 @@ def create_pdb(atom, X, a=None):
 
     Args:
         atom (list): Atom symbols.
-
         X (array): Atom positions.
 
     Keyword Args:
