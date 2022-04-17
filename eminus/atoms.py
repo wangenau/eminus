@@ -99,11 +99,9 @@ class Atoms:
         self.R = None         # Unit cell
         self.Omega = None     # Unit cell volume
         self.r = None         # Sample points in unit cell
-        self.G = None         # G-vectors
         self.G2 = None        # Squared magnitudes of G-vectors
         self.Sf = None        # Structure factor
         self.active = None    # Mask for active G-vectors
-        self.Gc = None        # Truncated G-vectors
         self.G2c = None       # Truncated squared magnitudes of G-vectors
         self.GTH = {}         # Dictionary of GTH parameters per atom species
         self.Vloc = None      # Local pseudopotential contribution

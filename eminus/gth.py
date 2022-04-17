@@ -78,7 +78,7 @@ def init_gth_nonloc(atoms):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
-    g = atoms.Gc  # Simplified, would normally be G+k
+    g = atoms.G[atoms.active]  # Simplified, would normally be G+k
     Gm = np.sqrt(atoms.G2c)
 
     ibeta = 0
