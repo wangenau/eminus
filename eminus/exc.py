@@ -9,16 +9,16 @@ def get_exc(exc, n, ret, spinpol):
     '''Handle and get exchange-correlation functionals.
 
     Args:
-        exc : str
+        exc (str):
             Exchange and correlation identifier, separated by a comma.
 
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
-        spinpol : bool
+        spinpol (bool):
             Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
@@ -48,10 +48,10 @@ def mock_exc(n, ret, **kwargs):
     '''Mock exchange-correlation functional with no effect.
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
     Returns:
@@ -69,14 +69,14 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-paired).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
     Keyword Args:
-        alpha : float
+        alpha (float):
             Scaling factor.
 
     Returns:
@@ -99,17 +99,17 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
     '''Slater exchange functional (spin-polarized).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
-        zeta : array
+        zeta (array):
             Relative spin polarization.
 
     Keyword Args:
-        alpha : float
+        alpha (float):
             Scaling factor.
 
     Returns:
@@ -137,10 +137,10 @@ def lda_pw_c(n, ret, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-paired).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
     Returns:
@@ -175,13 +175,13 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-polarized).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
-        zeta : array
+        zeta (array):
             Relative spin polarization.
 
     Returns:
@@ -204,7 +204,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
         '''Calculate correlation energies by Perdew-Wang approximation interpolation.
 
         Args:
-            i : int
+            i (int):
                 Index weather to use unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
 
         Returns:
@@ -249,10 +249,10 @@ def lda_vwn_c(n, ret, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-paired).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
     Returns:
@@ -290,13 +290,13 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-polarized).
 
     Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
-        ret : str
+        ret (str):
             Choose whether to return the energy density or the potential.
 
-        zeta : array
+        zeta (array):
             Relative spin polarization.
 
     Returns:
@@ -324,7 +324,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
         '''Calculate correlation energies by Pade approximation interpolation.
 
         Args:
-            i : int
+            i (int):
                 Index weather to use paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
 
         Returns:

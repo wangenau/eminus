@@ -10,8 +10,7 @@ def Harmonic(atoms):
     '''Harmonical potential. Can be used for quantum dot calculations.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Harmonical potential as an array.
@@ -25,8 +24,7 @@ def Coulomb(atoms):
     '''All-electron Coulomb potential.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Coulomb potential as an array.
@@ -43,8 +41,7 @@ def Ge(atoms):
     '''Starkloff-Joannopoulos pseudopotential for Germanium. Fourier-transformed by Tomas Arias.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Germanium pseudopotential as an array.
@@ -73,8 +70,7 @@ def init_pot(atoms):
     '''Handle and initialize potentials.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Potential as an array.

@@ -17,11 +17,11 @@ def read_xyz(filename, info=False):
     '''Load atom species and positions from xyz files.
 
     Args:
-        filename : str
+        filename (str):
             xyz input file path/name.
 
     Keyword Args:
-        info : bool
+        info (bool):
             Display file comments.
 
     Returns:
@@ -56,14 +56,13 @@ def write_xyz(atoms, filename, extra=None):
     '''Generate xyz files from atoms objects.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        filename : str
+        filename (str):
             xyz output file path/name.
 
     Keyword Args:
-        extra : array
+        extra (array):
             Extra coordinates to write.
     '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
@@ -102,10 +101,10 @@ def read_cube(filename, info=False):
     '''Load atom and cell data from cube files.
 
     Args:
-        filename : str
+        filename (str):
             cube input file path/name.
     Keyword Args:
-        info : bool
+        info (bool):
             Display file comments.
 
     Returns:
@@ -153,17 +152,16 @@ def write_cube(atoms, field, filename, extra=None):
     '''Generate cube files from given field data.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        field : array
+        field (array):
             Real-space field data.
 
-        filename : str
+        filename (str):
             xyz output file path/name.
 
     Keyword Args:
-        extra : array
+        extra (array):
             Extra coordinates to write.
     '''
     # It seems, that there is no standard for cube files. The following definition will work with
@@ -232,10 +230,9 @@ def save_atoms(atoms, filename):
     '''Save atoms objects to a pickle file.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        filename : str
+        filename (str):
             xyz input file path/name.
     '''
     with open(filename, 'wb') as fp:
@@ -247,7 +244,7 @@ def load_atoms(filename):
     '''Load atoms objects from a pickle file.
 
     Args:
-        filename : str
+        filename (str):
             xyz input file path/name.
 
     Returns:
@@ -261,14 +258,14 @@ def create_pdb(atom, X, a=None):
     '''Convert xyz files to pdb format.
 
     Args:
-        atom : list
+        atom (list):
             Atom symbols.
 
-        X : array
+        X (array):
             Atom positions.
 
     Keyword Args:
-        a : float
+        a (float):
             Cell size.
 
     Returns:

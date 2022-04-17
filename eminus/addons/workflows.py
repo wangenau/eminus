@@ -12,11 +12,10 @@ def KSO(atoms, write_cubes=False, **kwargs):
     '''Generate Kohn-Sham orbitals and optionally save them as cube files.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        write_cubes : bool
+        write_cubes (bool):
             Write orbitals to cube files.
 
     Returns:
@@ -36,14 +35,13 @@ def FO(atoms, write_cubes=False, fods=None):
     '''Generate Fermi orbitals and optionally save them as cube files.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        write_cubes : bool
+        write_cubes (bool):
             Write orbitals to cube files.
 
-        fods : array
+        fods (array):
             Fermi-orbital descriptors.
 
     Returns:
@@ -67,14 +65,13 @@ def FLO(atoms, write_cubes=False, fods=None):
     '''Generate Fermi-Löwdin orbitals and optionally save them as cube files.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        write_cubes : bool
+        write_cubes (bool):
             Write orbitals to cube files.
 
-        fods : array
+        fods (array):
             Fermi-orbital descriptors.
 
     Returns:

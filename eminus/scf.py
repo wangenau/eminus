@@ -19,25 +19,24 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     '''SCF function to handle direct minimizations.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        guess : str
+        guess (str):
             Initial guess method for the basis functions (case insensitive).
             Example: 'Gauss'; 'gaussian'; 'random'; 'rand';
             Default: 'gaussian'
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
             Default: 1e-7
 
-        min : dict
+        min (dict):
             Dictionary to set the maximum amount of steps per minimization method and their order.
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50}
             Default: None (will default to {'pccg': 100})
 
-        cgform : int
+        cgform (int):
             Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
             Default: 1
@@ -149,14 +148,13 @@ def H(atoms, W, n=None):
     '''Left-hand side of the eigenvalue equation.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
     Returns:
@@ -182,10 +180,10 @@ def Q(inp, U):
     '''Operator needed to calculate gradients with non-constant occupations.
 
     Args:
-        inp : array
+        inp(array):
             Coefficients input array.
 
-        U : array
+        U(array):
             Overlap of wave functions.
 
     Returns:
@@ -202,10 +200,9 @@ def get_E(atoms, W):
     '''Calculate all energy contributions and update Atoms energies.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -225,10 +222,9 @@ def get_grad(atoms, W):
     '''Calculate the energy gradient with respect to W.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -248,20 +244,19 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     '''Check the energies for every SCF cycle and handle the output.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Elist : list
+        Elist (list):
             Total energies per SCF step.
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
 
     Keyword Args:
-        linmin : float
+        linmin(float):
             Cosine between previous search direction and current gradient.
 
-        cg : float
+        cg(float):
             Conjugate-gradient orthogonality.
 
     Returns:
@@ -299,20 +294,19 @@ def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
     '''Steepest descent minimization algorithm.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        Nit : int
+        Nit (int):
             Maximum number of SCF steps.
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
 
     Keyword Args:
-        beta : float
+        beta(float):
             SCF step size.
 
     Returns:
@@ -333,20 +327,19 @@ def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
     '''Line minimization algorithm.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        Nit : int
+        Nit (int):
             Maximum number of SCF steps.
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
 
     Keyword Args:
-        betat : float
+        betat(float):
             SCF step size.
 
     Returns:
@@ -387,20 +380,19 @@ def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
     '''Preconditioned line minimization algorithm.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        Nit : int
+        Nit (int):
             Maximum number of SCF steps.
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
 
     Keyword Args:
-        betat : float
+        betat(float):
             SCF step size.
 
     Returns:
@@ -441,24 +433,23 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
     '''Preconditioned conjugate-gradient algorithm.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        Nit : int
+        Nit (int):
             Maximum number of SCF steps.
 
-        etol : float
+        etol(float):
             Convergence tolerance of the total energy.
 
     Keyword Args:
-        betat : float
+        betat(float):
             SCF step size.
 
 
-        cgform : int
+        cgform (int):
             Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
 
     Returns:
@@ -511,10 +502,9 @@ def orth(atoms, W):
     '''Orthogonalize coefficient matrix W.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -527,14 +517,13 @@ def get_psi(atoms, Y, n=None):
     '''Calculate eigenstates from H.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
     Returns:
@@ -549,14 +538,13 @@ def get_epsilon(atoms, Y, n=None):
     '''Calculate eigenvalues from H.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n : array
+        n (array):
             Real-space electronic density.
 
     Returns:
@@ -572,10 +560,9 @@ def get_n_total(atoms, Y):
     '''Calculate the total electronic density.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -590,14 +577,13 @@ def guess_random(atoms, complex=True, reproduce=False):
     '''Generate random initial-guess coefficients as starting values.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        complex : bool
+        complex (bool):
             Use complex numbers for the random guess.
 
-        reproduce : Bool
+        reproduce (bool):
             Use a set seed for reproducible random numbers.
 
     Returns:
@@ -616,8 +602,7 @@ def guess_gaussian(atoms):
     '''Generate initial-guess coefficients using normalized Gaussians as starting values.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Initial-guess orthogonal wave functions in reciprocal space as an array.

@@ -10,13 +10,12 @@ def eval_psi(atoms, psi, r):
     '''Evaluate orbitals at given coordinate points.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psi : array
+        psi (array):
             Set of orbitals in reciprocal space.
 
-        r : array
+        r (array):
             Real-space positions.
 
     Returns:
@@ -33,13 +32,12 @@ def get_R(atoms, psi, fods):
     '''Calculate transformation matrix to build Fermi orbitals from Kohn-Sham orbitals.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psi : array
+        psi (array):
             Set of orbitals in reciprocal space.
 
-        fods : array
+        fods (array):
             Fermi-orbital descriptors.
 
     Returns:
@@ -60,13 +58,12 @@ def get_FOs(atoms, psi, fods):
     '''Calculate Fermi orbitals from Kohn-Sham orbitals and a set of respective FODs.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psi : array
+        psi (array):
             Set of orbitals in reciprocal space.
 
-        fods : array
+        fods (array):
             Fermi-orbital descriptors.
 
     Returns:
@@ -87,10 +84,9 @@ def get_S(atoms, psirs):
     '''Calculate overlap matrix between orbitals.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psirs : array
+        psirs (array):
             Set of orbitals in real-space.
 
     Returns:
@@ -110,13 +106,12 @@ def get_FLOs(atoms, psi, fods):
     '''Calculate Fermi-Löwdin orbitals by orthonormalizing Fermi orbitals.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psi : array
+        psi (array):
             Set of orbitals in reciprocal space.
 
-        fods : array
+        fods (array):
             Fermi-orbital descriptors.
 
     Returns:
@@ -136,10 +131,9 @@ def wannier_cost(atoms, psirs):
     '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psirs : array
+        psirs (array):
             Set of orbitals in real-space.
 
     Returns:
@@ -159,10 +153,9 @@ def wannier_center(atoms, psirs):
     '''Calculate Wannier centers, i.e., the expectation values of r.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psirs : array
+        psirs (array):
             Set of orbitals in real-space.
 
     Returns:
@@ -183,10 +176,9 @@ def second_moment(atoms, psirs):
     '''Calculate the second moments, i.e., the expectation values of r^2.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        psirs : array
+        psirs (array):
             Set of orbitals in real-space.
 
     Returns:

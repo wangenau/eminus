@@ -15,8 +15,7 @@ def init_gth_loc(atoms):
     '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Local GTH potential contribution as an array.
@@ -60,8 +59,7 @@ def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         NbetaNL, prj2beta, and betaNL as a tuple(int, array, array).
@@ -104,10 +102,9 @@ def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -144,19 +141,19 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     '''Evaluate GTH projector functions in G-space.
 
     Args:
-        psp : dict
+        psp (dict):
             GTH parameters.
 
-        l : int
+        l (int):
             Angular momentum number.
 
-        iprj : int
+        iprj (int):
             Nproj_l index.
 
-        Gm : array
+        Gm (array):
             Magnitude of G-vectors.
 
-        Omega : float
+        Omega (float):
             Unit cell volume.
 
     Returns:
@@ -198,14 +195,14 @@ def read_gth(system, charge=None, psp_path=None):
     '''Read GTH files for a given system.
 
     Args:
-        system : str
+        system (str):
             Atom name.
 
     Keyword Args:
-        charge : int
+        charge (int):
             Valence charge.
 
-        psp_path : str
+        psp_path (str):
             Path to GTH pseudopotential files. None will default to /installation_path/pade_gth/.
 
     Returns:

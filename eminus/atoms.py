@@ -19,72 +19,71 @@ class Atoms:
     '''Atoms object that holds all necessary calculation parameters.
 
     Args:
-        atom : str or list of str
+        atom (str or list of str):
             Atom symbols.
             Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']
 
-        X : list or array of floats
+        X (list or array of floats):
             Atom positions.
             Examples: [0, 0, 0]; array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
             array([[[0, 0, 0], [1, 1, 1]]])
 
     Keyword Args:
-        a : float list or array of floats
+        a (float list or array of floats):
             Cell size or vacuum size. A cuboidal box with the same side lengths will be created.
             Default: 20 Bohr (ca. 10.5 Angstrom).
 
-        ecut : float or None
+        ecut (float or None):
             Cut-off energy. None will disable the G-Vector truncation (needs a separate s).
             Default: 20 Hartree (ca. 544 eV).
 
-        Z : int or list or array of ints or None
+        Z (int or list or array of ints or None):
             Valence charge per atom. The charges should not differ for same species.
             None will use valence charges from GTH pseudopotentials. The same charge for every atom
             will be assumed for single integers.
             Example: 1; [4, 1, 1, 1, 1]
             Default: None
 
-        s : int or list or array of ints
+        s (int or list or array of ints):
             Real-space sampling of the cell/vacuum. None will make the sampling dependent on a and
             ecut.
             Example: 30; [30, 40, 50]; array([30, 40, 50])
             Default: None
 
-        f : float or list or array of floats
+        f (float or list or array of floats):
             Occupation numbers per state. None will assume occupations of 2. The last state will
             be adjusted if the sum of f is not equal to the sum of Z.
             Example: 2; [2, 2/3, 2/3, 2/3]; array([2, 2/3, 2/3, 2/3])
             Default: None
 
-        Ns : int
+        Ns (int):
             Number of states. None will get the number of states from f or assume occupations of 2
             and divide the sum of Z by it.
             Default: None
 
-        verbose : int
+        verbose (int):
             Level of output. Larger numbers mean more output.
             Default: 3
 
-        pot : str
+        pot (str):
             Type of pseudopotential (case insensitive).
             Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge'
             Default: 'gth'
 
-        center : bool
+        center (bool):
             Center the system inside the box by its geometric center of mass and rotate it such
             that its geometric moment of inertia aligns with the coordinate axes.
             Default: False
 
-        exc : str
+        exc (str):
             Exchange-correlation functional description (case insensitive), separated by a comma.
             Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','
             Default: 'lda,vwn'
 
-        spinpol : bool
+        spinpol (bool):
             Spin-polarized calculation.
             Default: False
     '''
-
     def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, verbose=3,
                  pot='gth', center=False, exc='lda,vwn', spinpol=False):
         self.atom = atom          # Atom symbols

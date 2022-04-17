@@ -21,11 +21,11 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     '''Display molecules and orbitals.
 
     Args:
-        filename : str
+        filename (str):
             Input file path/name. This can be either a cube or xyz file.
 
     Keyword Args:
-        isovalue : float
+        isovalue (float):
             Isovalue for sizing orbitals.
 
     Returns:
@@ -90,11 +90,11 @@ def view_grid(coords, extra=None):
     '''Display 3D-coordinates, e.g., grid points.
 
     Args:
-        coords : array
+        coords (array):
             Grid points.
 
     Keyword Args:
-        extra : array
+        extra (array):
             Extra coordinates to display.
 
     Returns:

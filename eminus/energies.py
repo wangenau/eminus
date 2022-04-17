@@ -42,10 +42,9 @@ def get_Ekin(atoms, Y):
     '''Calculate the kinetic energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -59,10 +58,9 @@ def get_Ecoul(atoms, n):
     '''Calculate the Coulomb energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        n : array
+        n (array):
             Real-space electronic density.
 
     Returns:
@@ -77,14 +75,13 @@ def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        n : array
+        n (array):
             Real-space electronic density.
 
     Keyword Args:
-        spinpol : bool
+        spinpol (bool):
             Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
@@ -102,10 +99,9 @@ def get_Eloc(atoms, n):
     '''Calculate the local energy contribution.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        n : array
+        n (array):
             Real-space electronic density.
 
     Returns:
@@ -119,10 +115,9 @@ def get_Enonloc(atoms, Y):
     '''Calculate the non-local energy contribution.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -160,14 +155,13 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     '''Calculate the Ewald energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        gcut : float
+        gcut (float):
             G-vector cut-off.
 
-        gamma : float
+        gamma (float):
             Error tolerance
 
     Returns:
@@ -256,10 +250,9 @@ def get_n_single(atoms, Y):
     '''Calculate the single-electron densities.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -274,10 +267,9 @@ def get_Esic(atoms, Y):
     '''Calculate the Perdew-Zunger self-interaction energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        Y : array
+        Y (array):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:

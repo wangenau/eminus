@@ -17,10 +17,9 @@ def O(atoms, W):
     '''Overlap operator.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -33,10 +32,9 @@ def L(atoms, W):
     '''Laplacian operator.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -53,10 +51,9 @@ def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -77,10 +74,9 @@ def K(atoms, W):
     '''Preconditioning operator. Applies 1/(1+G2) to the input.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -107,10 +103,9 @@ def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -138,14 +133,13 @@ def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        full : bool
+        full (bool):
             Transform in the full or in the active/truncated space.
 
     Returns:
@@ -175,10 +169,9 @@ def Idag(atoms, W):
     '''Conjugated backwards transformation from reciprocal space to real-space.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -202,10 +195,9 @@ def Jdag(atoms, W):
     '''Conjugated forward transformation from real-space to reciprocal space.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -227,13 +219,12 @@ def T(atoms, W, dr):
     '''Translation operator. Shifts input orbitals by the vector dr.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        W : array
+        W (array):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        dr : array
+        dr (array):
             Real-space position vector.
 
     Returns:

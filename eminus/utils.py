@@ -10,10 +10,10 @@ def Diagprod(a, B):
     '''Efficiently calculate the expression Diag(a) * B.
 
     Args:
-        a : array
+        a (array):
             Single vector.
 
-        B : array
+        B (array):
             Matrix.
 
     Returns:
@@ -26,10 +26,10 @@ def dotprod(a, b):
     '''Efficiently calculate the expression a * b.
 
     Args:
-        a : array
+        a (array):
             Array of vectors.
 
-        b : array
+        b (array):
             Array of vectors.
 
     Returns:
@@ -43,13 +43,13 @@ def Ylm_real(l, m, R):
     '''Calculate spherical harmonics.
 
     Args:
-        l : int
+        l (int):
             Angular momentum number.
 
-        m : int
+        m (int):
             Magnetic quantum number.
 
-        R : array
+        R (array):
             Real-space position vector or array of real-space position vectors.
 
     Returns:

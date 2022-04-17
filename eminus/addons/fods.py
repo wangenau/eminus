@@ -26,17 +26,16 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     '''Generate FOD positions using the PyCOM method.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Keyword Args:
-        basis : str
+        basis (str):
             Basis set for the DFT calculation.
 
-        loc : str
+        loc (str):
             Localization method  (case insensitive).
 
-        clean : bool
+        clean (bool):
             Remove pycom log files.
 
     Returns:
@@ -84,10 +83,10 @@ def split_atom_and_fod(atom, X):
     '''Split atom and FOD coordinates.
 
     Args:
-        atom : list
+        atom (list):
             Atom symbols.
 
-        X : array
+        X (array):
             Atom positions.
 
     Returns:
@@ -108,19 +107,18 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
     '''Remove core FODs from a set of FOD coordinates.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        fods : array
+        fods (array):
             FOD positions.
 
     Keyword Args:
-        method : str
+        method (str):
             Method to remove FODs (case insensitive). 'Automatic' will remove the nearest FODs of
             atoms depending on the number of core states. 'Radius' removes FODs within a fixed
             radius around atoms, 'covalent' does the same, but scaled by the atom's covalent radius.
 
-        radius : float
+        radius (float):
             Radius size for 'radius' method, covalent radius scaling factor for 'covalent'. No
             effect for the 'automatic' method.
 

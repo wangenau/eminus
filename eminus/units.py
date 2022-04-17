@@ -16,7 +16,7 @@ def ha2ev(E):
     '''Convert Hartree to electronvolt.
 
     Args:
-        E : float
+        E (float):
             Energy in Hartree.
 
     Returns:
@@ -29,7 +29,7 @@ def ev2ha(E):
     '''Convert electronvolt to Hartree.
 
     Args:
-        E : float
+        E (float):
             Energy in electronvolt.
 
     Returns:
@@ -42,7 +42,7 @@ def ha2kcalmol(E):
     '''Convert Hartree to kcal/mol.
 
     Args:
-        E : float
+        E (float):
             Energy in Hartree.
 
     Returns:
@@ -55,7 +55,7 @@ def kcalmol2ha(E):
     '''Convert kcal/mol to Hartree.
 
     Args:
-        E : float
+        E (float):
             Energy in kcal/mol.
 
     Returns:
@@ -68,7 +68,7 @@ def ev2kcalmol(E):
     '''Convert electronvolt to kcal/mol.
 
     Args:
-        E : float
+        E (float):
             Energy in electronvolt.
 
     Returns:
@@ -81,7 +81,7 @@ def kcalmol2ev(E):
     '''Convert kcal/mol to electronvolt.
 
     Args:
-        E : float
+        E (float):
             Energy in kcal/mol.
 
     Returns:
@@ -94,7 +94,7 @@ def ha2ry(E):
     '''Convert Hartree to Rydberg.
 
     Args:
-        E : float
+        E (float):
             Energy in Hartree.
 
     Returns:
@@ -107,7 +107,7 @@ def ry2ha(E):
     '''Convert Rydberg to Hartree.
 
     Args:
-        E : float
+        E (float):
             Energy in Rydberg.
 
     Returns:
@@ -120,7 +120,7 @@ def ang2bohr(r):
     '''Convert Angstrom to Bohr.
 
     Args:
-        r : float
+        r (float):
             Length in Angstrom.
 
     Returns:
@@ -133,7 +133,7 @@ def bohr2ang(r):
     '''Convert Bohr to Angstrom.
 
     Args:
-        r : float
+        r (float):
             Length in Bohr.
 
     Returns:
@@ -146,7 +146,7 @@ def ebohr2d(p):
     '''Convert e * Bohr to Debye.
 
     Args:
-        p : float
+        p (float):
             Electric dipole moment in e times Bohr.
 
     Returns:
@@ -159,7 +159,7 @@ def d2ebohr(p):
     '''Convert Debye to e * Bohr.
 
     Args:
-        p : float
+        p (float):
             Electric dipole moment in Debye.
 
     Returns:

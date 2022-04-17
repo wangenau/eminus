@@ -12,7 +12,7 @@ def cutoff2gridspacing(E):
     '''Convert plane wave energy cut-off to a real-space grid spacing.
 
     Args:
-        E : float
+        E (float):
             Energy in Hartree.
 
     Returns:
@@ -26,7 +26,7 @@ def gridspacing2cutoff(h):
     '''Convert real-space grid spacing to plane wave energy cut-off.
 
     Args:
-        h : float
+        h (float):
             Grid spacing in Bohr.
 
     Returns:
@@ -41,11 +41,11 @@ def center_of_mass(coords, masses=None):
     '''Calculate the center of mass for a set of coordinates and masses.
 
     Args:
-        coords : array
+        coords (array):
             Array of real-space coordinates.
 
     Keyword Args:
-        masses : array
+        masses (array):
             Mass or weight for each coordinate.
 
     Returns:
@@ -61,11 +61,11 @@ def inertia_tensor(coords, masses=None):
     '''Calculate the inertia tensor for a set of coordinates and masses.
 
     Args:
-        coords : array
+        coords (array):
             Array of real-space coordinates.
 
     Keyword Args:
-        masses : array
+        masses (array):
             Mass or weight for each coordinate.
 
     Returns:
@@ -90,8 +90,7 @@ def get_dipole(atoms):
     '''Calculate the electric dipole moment.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Electric dipole moment in e times Bohr as an array.
@@ -119,8 +118,7 @@ def get_IP(atoms):
     '''Calculate the ionization potential by calculating the negative HOMO energy.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
     Returns:
         Ionization potential in Hartree as a float.
@@ -134,10 +132,9 @@ def check_ortho(atoms, func):
     '''Check the orthogonality condition for a set of functions.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        func : array
+        func (array):
             Discretized set of functions.
 
     Returns:
@@ -174,10 +171,9 @@ def check_norm(atoms, func):
     '''Check the normalization condition for a set of functions.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        func : array
+        func (array):
             Discretized set of functions.
 
     Returns:
@@ -208,10 +204,9 @@ def check_orthonorm(atoms, func):
     '''Check the orthonormality conditions for a set of functions.
 
     Args:
-        atoms :
-            Atoms object.
+        atoms: Atoms object.
 
-        func : array
+        func (array):
             Discretized set of functions.
 
     Returns:
