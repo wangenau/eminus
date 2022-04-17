@@ -17,12 +17,10 @@ def read_xyz(filename, info=False):
     '''Load atom species and positions from xyz files.
 
     Args:
-        filename (str):
-            xyz input file path/name.
+        filename (str): xyz input file path/name.
 
     Keyword Args:
-        info (bool):
-            Display file comments.
+        info (bool): Display file comments.
 
     Returns:
         tuple(list, array): Atom species and positions.
@@ -58,12 +56,10 @@ def write_xyz(atoms, filename, extra=None):
     Args:
         atoms: Atoms object.
 
-        filename (str):
-            xyz output file path/name.
+        filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (array):
-            Extra coordinates to write.
+        extra (array): Extra coordinates to write.
     '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     atom = atoms.atom
@@ -101,11 +97,10 @@ def read_cube(filename, info=False):
     '''Load atom and cell data from cube files.
 
     Args:
-        filename (str):
-            cube input file path/name.
+        filename (str): cube input file path/name.
+
     Keyword Args:
-        info (bool):
-            Display file comments.
+        info (bool): Display file comments.
 
     Returns:
         tuple(list, array, float, array, int): Species, positions, charges, cell size, and sampling.
@@ -153,15 +148,12 @@ def write_cube(atoms, field, filename, extra=None):
     Args:
         atoms: Atoms object.
 
-        field (array):
-            Real-space field data.
+        field (array): Real-space field data.
 
-        filename (str):
-            xyz output file path/name.
+        filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (array):
-            Extra coordinates to write.
+        extra (array): Extra coordinates to write.
     '''
     # It seems, that there is no standard for cube files. The following definition will work with
     # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
@@ -231,8 +223,7 @@ def save_atoms(atoms, filename):
     Args:
         atoms: Atoms object.
 
-        filename (str):
-            xyz input file path/name.
+        filename (str): xyz input file path/name.
     '''
     with open(filename, 'wb') as fp:
         dump(atoms, fp, HIGHEST_PROTOCOL)
@@ -243,8 +234,7 @@ def load_atoms(filename):
     '''Load atoms objects from a pickle file.
 
     Args:
-        filename (str):
-            xyz input file path/name.
+        filename (str): xyz input file path/name.
 
     Returns:
         Atoms object.
@@ -257,18 +247,15 @@ def create_pdb(atom, X, a=None):
     '''Convert xyz files to pdb format.
 
     Args:
-        atom (list):
-            Atom symbols.
+        atom (list): Atom symbols.
 
-        X (array):
-            Atom positions.
+        X (array): Atom positions.
 
     Keyword Args:
-        a (float):
-            Cell size.
+        a (float): Cell size.
 
     Returns:
-        str - pdb file format.
+        str: pdb file format.
     '''
     # pdb file definitions:
     # For CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1

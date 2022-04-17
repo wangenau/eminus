@@ -19,8 +19,7 @@ def O(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -34,8 +33,7 @@ def L(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -53,8 +51,7 @@ def Linv(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -76,8 +73,7 @@ def K(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -105,8 +101,7 @@ def I(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -135,12 +130,10 @@ def J(atoms, W, full=True):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        full (bool):
-            Transform in the full or in the active/truncated space.
+        full (bool): Wether to transform in the full or in the active space.
 
     Returns:
         array: The operator applied on W.
@@ -171,8 +164,7 @@ def Idag(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -197,8 +189,7 @@ def Jdag(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: The operator applied on W.
@@ -221,11 +212,9 @@ def T(atoms, W, dr):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-        dr (array):
-            Real-space position vector.
+        dr (array): Real-space shift.
 
     Returns:
         array: The operator applied on W.

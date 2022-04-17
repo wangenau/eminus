@@ -104,8 +104,7 @@ def calc_Vnonloc(atoms, W):
     Args:
         atoms: Atoms object.
 
-        W (array):
-            Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         array: Non-local GTH potential contribution.
@@ -141,20 +140,15 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     '''Evaluate GTH projector functions in G-space.
 
     Args:
-        psp (dict):
-            GTH parameters.
+        psp (dict): GTH parameters.
 
-        l (int):
-            Angular momentum number.
+        l (int): Angular momentum number.
 
-        iprj (int):
-            Nproj_l index.
+        iprj (int): Nproj_l index.
 
-        Gm (array):
-            Magnitude of G-vectors.
+        Gm (array): Magnitude of G-vectors.
 
-        Omega (float):
-            Unit cell volume.
+        Omega (float): Unit cell volume.
 
     Returns:
         array: GTH projector.
@@ -195,15 +189,12 @@ def read_gth(system, charge=None, psp_path=None):
     '''Read GTH files for a given system.
 
     Args:
-        system (str):
-            Atom name.
+        system (str): Atom name.
 
     Keyword Args:
-        charge (int):
-            Valence charge.
+        charge (int): Valence charge.
 
-        psp_path (str):
-            Path to GTH pseudopotential files. None will default to /installation_path/pade_gth/.
+        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/pade_gth/.
 
     Returns:
         dict: GTH parameters.

@@ -44,8 +44,7 @@ def get_Ekin(atoms, Y):
     Args:
         atoms: Atoms object.
 
-        Y (array):
-            Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         float: Kinetic energy in Hartree.
@@ -60,8 +59,7 @@ def get_Ecoul(atoms, n):
     Args:
         atoms: Atoms object.
 
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
     Returns:
         float: Coulomb energy in Hartree.
@@ -77,12 +75,10 @@ def get_Exc(atoms, n, spinpol=False):
     Args:
         atoms: Atoms object.
 
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
     Keyword Args:
-        spinpol (bool):
-            Choose if a spin-polarized exchange-correlation functional will be used.
+        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
         float: Exchange-correlation energy in Hartree.
@@ -101,8 +97,7 @@ def get_Eloc(atoms, n):
     Args:
         atoms: Atoms object.
 
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
     Returns:
         float: Local energy contribution in Hartree.
@@ -117,8 +112,7 @@ def get_Enonloc(atoms, Y):
     Args:
         atoms: Atoms object.
 
-        Y (array):
-            Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         float: Non-local energy contribution in Hartree.
@@ -158,11 +152,9 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         atoms: Atoms object.
 
     Keyword Args:
-        gcut (float):
-            G-vector cut-off.
+        gcut (float): G-vector cut-off.
 
-        gamma (float):
-            Error tolerance
+        gamma (float): Error tolerance
 
     Returns:
         float: Ewald energy in Hartree.
@@ -252,8 +244,7 @@ def get_n_single(atoms, Y):
     Args:
         atoms: Atoms object.
 
-        Y (array):
-            Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         array: Single-electron densities.
@@ -269,8 +260,7 @@ def get_Esic(atoms, Y):
     Args:
         atoms: Atoms object.
 
-        Y (array):
-            Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         float: PZ self-interaction energy.

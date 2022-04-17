@@ -29,14 +29,11 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
         atoms: Atoms object.
 
     Keyword Args:
-        basis (str):
-            Basis set for the DFT calculation.
+        basis (str): Basis set for the DFT calculation.
 
-        loc (str):
-            Localization method  (case insensitive).
+        loc (str): Localization method  (case insensitive).
 
-        clean (bool):
-            Remove pycom log files.
+        clean (bool): Remove pycom log files.
 
     Returns:
         array: FOD positions.
@@ -83,11 +80,9 @@ def split_atom_and_fod(atom, X):
     '''Split atom and FOD coordinates.
 
     Args:
-        atom (list):
-            Atom symbols.
+        atom (list): Atom symbols.
 
-        X (array):
-            Atom positions.
+        X (array): Atom positions.
 
     Returns:
         tuple(list, array, array): Atom types, the respective coordinates, and FOD positions..
@@ -109,16 +104,17 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
     Args:
         atoms: Atoms object.
 
-        fods (array):
-            FOD positions.
+        fods (array): FOD positions.
 
     Keyword Args:
-        method (str):
-            Method to remove FODs (case insensitive). 'Automatic' will remove the nearest FODs of
-            atoms depending on the number of core states. 'Radius' removes FODs within a fixed
-            radius around atoms, 'covalent' does the same, but scaled by the atom's covalent radius.
+        method (str): Method to remove FODs (case insensitive).
 
-        radius (float):
+            'Automatic' will remove the nearest FODs of atoms depending on the number of core
+            states. 'Radius' removes FODs within a fixed radius around atoms, 'covalent' does the
+            same, but scaled by the atom's covalent radius.
+
+        radius (float): Radii scaling.
+
             Radius size for 'radius' method, covalent radius scaling factor for 'covalent'. No
             effect for the 'automatic' method.
 

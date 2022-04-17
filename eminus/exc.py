@@ -9,17 +9,13 @@ def get_exc(exc, n, ret, spinpol):
     '''Handle and get exchange-correlation functionals.
 
     Args:
-        exc (str):
-            Exchange and correlation identifier, separated by a comma.
+        exc (str): Exchange and correlation identifier, separated by a comma.
 
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
-        spinpol (bool):
-            Choose if a spin-polarized exchange-correlation functional will be used.
+        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
         array: Exchange-correlation energy density or potential.
@@ -48,11 +44,9 @@ def mock_exc(n, ret, **kwargs):
     '''Mock exchange-correlation functional with no effect.
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
         array: Mock exchange-correlation energy density and potential.
@@ -69,15 +63,12 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-paired).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
     Keyword Args:
-        alpha (float):
-            Scaling factor.
+        alpha (float): Scaling factor.
 
     Returns:
         array: Exchange energy density and potential.
@@ -99,18 +90,14 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
     '''Slater exchange functional (spin-polarized).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
-        zeta (array):
-            Relative spin polarization.
+        zeta (array): Relative spin polarization.
 
     Keyword Args:
-        alpha (float):
-            Scaling factor.
+        alpha (float): Scaling factor.
 
     Returns:
         array: Exchange energy density and potential.
@@ -137,11 +124,9 @@ def lda_pw_c(n, ret, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-paired).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
         array: PW correlation energy density and potential.
@@ -175,14 +160,11 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-polarized).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
-        zeta (array):
-            Relative spin polarization.
+        zeta (array): Relative spin polarization.
 
     Returns:
         array: PW correlation energy density and potential.
@@ -204,8 +186,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
         '''Calculate correlation energies by Perdew-Wang approximation interpolation.
 
         Args:
-            i (int):
-                Index weather to use unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
+            i (int): Index to choose unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
 
         Returns:
             tuple(array, array): PW fit and the derivative.
@@ -249,11 +230,9 @@ def lda_vwn_c(n, ret, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-paired).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
         array: VWN correlation energy density and potential.
@@ -290,14 +269,11 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-polarized).
 
     Args:
-        n (array):
-            Real-space electronic density.
+        n (array): Real-space electronic density.
 
-        ret (str):
-            Choose whether to return the energy density or the potential.
+        ret (str): Choose whether to return the energy density or the potential.
 
-        zeta (array):
-            Relative spin polarization.
+        zeta (array): Relative spin polarization.
 
     Returns:
         array: VWN correlation energy density and potential.
@@ -324,8 +300,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
         '''Calculate correlation energies by Pade approximation interpolation.
 
         Args:
-            i (int):
-                Index weather to use paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
+            i (int): Index to choose paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
 
         Returns:
             tuple(array, array): Pade fit and the derivative.

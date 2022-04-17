@@ -16,8 +16,7 @@ def ha2ev(E):
     '''Convert Hartree to electronvolt.
 
     Args:
-        E (float):
-            Energy in Hartree.
+        E (float): Energy in Hartree.
 
     Returns:
         float: Energy in electronvolt.
@@ -29,8 +28,7 @@ def ev2ha(E):
     '''Convert electronvolt to Hartree.
 
     Args:
-        E (float):
-            Energy in electronvolt.
+        E (float): Energy in electronvolt.
 
     Returns:
         float: Energy in Hartree.
@@ -42,8 +40,7 @@ def ha2kcalmol(E):
     '''Convert Hartree to kcal/mol.
 
     Args:
-        E (float):
-            Energy in Hartree.
+        E (float): Energy in Hartree.
 
     Returns:
         float: Energy in kcal/mol.
@@ -55,8 +52,7 @@ def kcalmol2ha(E):
     '''Convert kcal/mol to Hartree.
 
     Args:
-        E (float):
-            Energy in kcal/mol.
+        E (float): Energy in kcal/mol.
 
     Returns:
         float: Energy in Hartree.
@@ -68,8 +64,7 @@ def ev2kcalmol(E):
     '''Convert electronvolt to kcal/mol.
 
     Args:
-        E (float):
-            Energy in electronvolt.
+        E (float): Energy in electronvolt.
 
     Returns:
         float: Energy in kcal/mol.
@@ -81,8 +76,7 @@ def kcalmol2ev(E):
     '''Convert kcal/mol to electronvolt.
 
     Args:
-        E (float):
-            Energy in kcal/mol.
+        E (float): Energy in kcal/mol.
 
     Returns:
         float: Energy in electronvolt.
@@ -94,8 +88,7 @@ def ha2ry(E):
     '''Convert Hartree to Rydberg.
 
     Args:
-        E (float):
-            Energy in Hartree.
+        E (float): Energy in Hartree.
 
     Returns:
         float: Energy in Rydberg.
@@ -107,8 +100,7 @@ def ry2ha(E):
     '''Convert Rydberg to Hartree.
 
     Args:
-        E (float):
-            Energy in Rydberg.
+        E (float): Energy in Rydberg.
 
     Returns:
         float: Energy in Hartree.
@@ -120,8 +112,7 @@ def ang2bohr(r):
     '''Convert Angstrom to Bohr.
 
     Args:
-        r (float):
-            Length in Angstrom.
+        r (float): Length in Angstrom.
 
     Returns:
         float: Length in Bohr.
@@ -133,8 +124,7 @@ def bohr2ang(r):
     '''Convert Bohr to Angstrom.
 
     Args:
-        r (float):
-            Length in Bohr.
+        r (float): Length in Bohr.
 
     Returns:
         float: Length in Angstrom.
@@ -146,8 +136,7 @@ def ebohr2d(p):
     '''Convert e * Bohr to Debye.
 
     Args:
-        p (float):
-            Electric dipole moment in e times Bohr.
+        p (float): Electric dipole moment in e times Bohr.
 
     Returns:
         float: Electric dipole moment in Debye.
@@ -159,8 +148,7 @@ def d2ebohr(p):
     '''Convert Debye to e * Bohr.
 
     Args:
-        p (float):
-            Electric dipole moment in Debye.
+        p (float): Electric dipole moment in Debye.
 
     Returns:
         float: Electric dipole moment in e times Bohr.

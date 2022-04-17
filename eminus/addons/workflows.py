@@ -15,8 +15,7 @@ def KSO(atoms, write_cubes=False, **kwargs):
         atoms: Atoms object.
 
     Keyword Args:
-        write_cubes (bool):
-            Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to cube files.
 
     Returns:
         array: Real-space Kohn-Sham orbitals.
@@ -38,11 +37,9 @@ def FO(atoms, write_cubes=False, fods=None):
         atoms: Atoms object.
 
     Keyword Args:
-        write_cubes (bool):
-            Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to cube files.
 
-        fods (array):
-            Fermi-orbital descriptors.
+        fods (array): Fermi-orbital descriptors.
 
     Returns:
         array: Real-space Fermi orbitals.
@@ -68,11 +65,9 @@ def FLO(atoms, write_cubes=False, fods=None):
         atoms: Atoms object.
 
     Keyword Args:
-        write_cubes (bool):
-            Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to cube files.
 
-        fods (array):
-            Fermi-orbital descriptors.
+        fods (array): Fermi-orbital descriptors.
 
     Returns:
         array: Real-space Fermi-Löwdin orbitals.

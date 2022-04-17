@@ -21,12 +21,10 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     '''Display molecules and orbitals.
 
     Args:
-        filename (str):
-            Input file path/name. This can be either a cube or xyz file.
+        filename (str): Input file path/name. This can be either a cube or xyz file.
 
     Keyword Args:
-        isovalue (float):
-            Isovalue for sizing orbitals.
+        isovalue (float): Isovalue for sizing orbitals.
 
     Returns:
         NGLWidget: Viewable object.
@@ -90,12 +88,10 @@ def view_grid(coords, extra=None):
     '''Display 3D-coordinates, e.g., grid points.
 
     Args:
-        coords (array):
-            Grid points.
+        coords (array): Grid points.
 
     Keyword Args:
-        extra (array):
-            Extra coordinates to display.
+        extra (array): Extra coordinates to display.
 
     Returns:
         SceneCanvas: Viewable object.

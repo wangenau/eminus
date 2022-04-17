@@ -12,8 +12,7 @@ def cutoff2gridspacing(E):
     '''Convert plane wave energy cut-off to a real-space grid spacing.
 
     Args:
-        E (float):
-            Energy in Hartree.
+        E (float): Energy in Hartree.
 
     Returns:
         float: Grid spacing in Bohr.
@@ -26,8 +25,7 @@ def gridspacing2cutoff(h):
     '''Convert real-space grid spacing to plane wave energy cut-off.
 
     Args:
-        h (float):
-            Grid spacing in Bohr.
+        h (float): Grid spacing in Bohr.
 
     Returns:
         float: Cut-off in Hartree.
@@ -41,12 +39,10 @@ def center_of_mass(coords, masses=None):
     '''Calculate the center of mass for a set of coordinates and masses.
 
     Args:
-        coords (array):
-            Array of real-space coordinates.
+        coords (array): Array of real-space coordinates.
 
     Keyword Args:
-        masses (array):
-            Mass or weight for each coordinate.
+        masses (array): Mass or weight for each coordinate.
 
     Returns:
         array: Center of mass.
@@ -61,12 +57,10 @@ def inertia_tensor(coords, masses=None):
     '''Calculate the inertia tensor for a set of coordinates and masses.
 
     Args:
-        coords (array):
-            Array of real-space coordinates.
+        coords (array): Array of real-space coordinates.
 
     Keyword Args:
-        masses (array):
-            Mass or weight for each coordinate.
+        masses (array): Mass or weight for each coordinate.
 
     Returns:
         array: Inertia tensor.
@@ -134,8 +128,7 @@ def check_ortho(atoms, func):
     Args:
         atoms: Atoms object.
 
-        func (array):
-            Discretized set of functions.
+        func (array): Discretized set of functions.
 
     Returns:
         bool: Orthogonality status of the set of functions.
@@ -173,8 +166,7 @@ def check_norm(atoms, func):
     Args:
         atoms: Atoms object.
 
-        func (array):
-            Discretized set of functions.
+        func (array): Discretized set of functions.
 
     Returns:
         bool: Normalization status of the set of functions.
@@ -206,8 +198,7 @@ def check_orthonorm(atoms, func):
     Args:
         atoms: Atoms object.
 
-        func (array):
-            Discretized set of functions.
+        func (array): Discretized set of functions.
 
     Returns:
         bool: Orthonormality status of the set of functions.

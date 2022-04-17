@@ -12,11 +12,9 @@ def eval_psi(atoms, psi, r):
     Args:
         atoms: Atoms object.
 
-        psi (array):
-            Set of orbitals in reciprocal space.
+        psi (array): Set of orbitals in reciprocal space.
 
-        r (array):
-            Real-space positions.
+        r (array): Real-space positions.
 
     Returns:
         array: Values of psi at points r.
@@ -34,11 +32,9 @@ def get_R(atoms, psi, fods):
     Args:
         atoms: Atoms object.
 
-        psi (array):
-            Set of orbitals in reciprocal space.
+        psi (array): Set of orbitals in reciprocal space.
 
-        fods (array):
-            Fermi-orbital descriptors.
+        fods (array): Fermi-orbital descriptors.
 
     Returns:
         array: Transformation matrix R.
@@ -60,11 +56,9 @@ def get_FOs(atoms, psi, fods):
     Args:
         atoms: Atoms object.
 
-        psi (array):
-            Set of orbitals in reciprocal space.
+        psi (array): Set of orbitals in reciprocal space.
 
-        fods (array):
-            Fermi-orbital descriptors.
+        fods (array): Fermi-orbital descriptors.
 
     Returns:
         array: Fermi orbitals.
@@ -86,8 +80,7 @@ def get_S(atoms, psirs):
     Args:
         atoms: Atoms object.
 
-        psirs (array):
-            Set of orbitals in real-space.
+        psirs (array): Set of orbitals in real-space.
 
     Returns:
         array: Overlap matrix S.
@@ -108,11 +101,9 @@ def get_FLOs(atoms, psi, fods):
     Args:
         atoms: Atoms object.
 
-        psi (array):
-            Set of orbitals in reciprocal space.
+        psi (array): Set of orbitals in reciprocal space.
 
-        fods (array):
-            Fermi-orbital descriptors.
+        fods (array): Fermi-orbital descriptors.
 
     Returns:
         array: Fermi-Löwdin orbitals.
@@ -133,8 +124,7 @@ def wannier_cost(atoms, psirs):
     Args:
         atoms: Atoms object.
 
-        psirs (array):
-            Set of orbitals in real-space.
+        psirs (array): Set of orbitals in real-space.
 
     Returns:
         array: Spread per orbital.
@@ -155,8 +145,7 @@ def wannier_center(atoms, psirs):
     Args:
         atoms: Atoms object.
 
-        psirs (array):
-            Set of orbitals in real-space.
+        psirs (array): Set of orbitals in real-space.
 
     Returns:
         array: Wannier centers per orbital.
@@ -178,8 +167,7 @@ def second_moment(atoms, psirs):
     Args:
         atoms: Atoms object.
 
-        psirs (array):
-            Set of orbitals in real-space.
+        psirs (array): Set of orbitals in real-space.
 
     Returns:
         array: Second moments per orbital.
