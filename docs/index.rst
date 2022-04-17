@@ -14,7 +14,7 @@ Welcome to the eminus documentation!
 
    introduction.rst
    installation.rst
-   examples.rst
+   _examples/examples.rst
    modules.rst
    changelog.rst
    license.rst

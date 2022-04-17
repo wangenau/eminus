@@ -56,16 +56,17 @@ def dunder_skip(app, what, name, obj, would_skip, options):
 def examples_generate(app):
     '''Automatically generate examples page from examples folder.'''
     # Copy template file and create examples folder
-    shutil.copy2('docs/_templates/custom-examples.rst', 'docs/examples.rst')
-    os.makedirs('docs/examples', exist_ok=True)
+    os.makedirs('docs/_examples', exist_ok=True)
+    shutil.copy2('docs/_templates/custom-examples.rst', 'docs/_examples/examples.rst')
     # Get list of examples from subfolders
     examples = os.listdir('examples')
     examples = [name for name in examples if os.path.isdir(os.path.join('examples', name))]
     examples.sort()
-    with open('docs/examples.rst', 'a') as f_index:
+
+    with open('docs/_examples/examples.rst', 'a') as f_index:
         for example in examples:
             # Create example subfile
-            with open(f'docs/examples/{example}.rst', 'w') as fp:
+            with open(f'docs/_examples/{example}.rst', 'w') as fp:
                 fp.write(f'.. _{example}:\n')
                 # Include readme
                 fp.write(f'\n.. include:: ../../examples/{example}/README.rst\n')
@@ -79,13 +80,12 @@ def examples_generate(app):
                 for file in files:
                     fp.write(f' :download:`{file.split("/")[-1]} <../../{file}>`')
             # Add example subfile to index
-            f_index.write(f'\n   examples/{example}.rst')
+            f_index.write(f'\n   {example}.rst')
 
 
 def examples_remove(app, exception):
     '''Remove generated examples after build.'''
-    os.remove('docs/examples.rst')
-    shutil.rmtree('docs/examples')
+    shutil.rmtree('docs/_examples')
 
 
 def setup(app):

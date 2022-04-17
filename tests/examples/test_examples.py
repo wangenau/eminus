@@ -45,7 +45,7 @@ def test_04():
 
 def test_05():
     execute_example('05_input_output')
-    clean_example(['CH4_density.cube', 'CH4.pkl'])
+    clean_example(['CH4.pkl', 'CH4_density.cube'])
 
 
 def test_06():
