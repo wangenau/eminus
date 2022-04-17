@@ -16,7 +16,7 @@ def cutoff2gridspacing(E):
             Energy in Hartree.
 
     Returns:
-        Grid spacing in Bohr as a float.
+        float: Grid spacing in Bohr.
     '''
     return np.pi / np.sqrt(2 * E)
 
@@ -30,7 +30,7 @@ def gridspacing2cutoff(h):
             Grid spacing in Bohr.
 
     Returns:
-        Cut-off in Hartree as a float.
+        float: Cut-off in Hartree.
     '''
     # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
     # See PRB, Vol 54, 14362 (1996)
@@ -49,7 +49,7 @@ def center_of_mass(coords, masses=None):
             Mass or weight for each coordinate.
 
     Returns:
-        Center of mass as a float.
+        array: Center of mass.
     '''
     if masses is None:
         masses = np.ones(len(coords))
@@ -69,7 +69,7 @@ def inertia_tensor(coords, masses=None):
             Mass or weight for each coordinate.
 
     Returns:
-        Inertia tensor as an array.
+        array: Inertia tensor.
     '''
     if masses is None:
         masses = np.ones(len(coords))
@@ -93,7 +93,7 @@ def get_dipole(atoms):
         atoms: Atoms object.
 
     Returns:
-        Electric dipole moment in e times Bohr as an array.
+        array: Electric dipole moment in e times Bohr.
     '''
     # The dipole may be extremely large. This can be because of periodic boundary conditions.
     # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
@@ -121,7 +121,7 @@ def get_IP(atoms):
         atoms: Atoms object.
 
     Returns:
-        Ionization potential in Hartree as a float.
+        float: Ionization potential in Hartree.
     '''
     epsilon = get_epsilon(atoms, atoms.W)
     IP = -epsilon[-1]
@@ -138,7 +138,7 @@ def check_ortho(atoms, func):
             Discretized set of functions.
 
     Returns:
-        Orthogonality status of the set of functions as a bool.
+        bool: Orthogonality status of the set of functions.
     '''
     # Orthogonality condition: \int func1^* func2 dr = 0
     # Tolerance for the condition
@@ -177,7 +177,7 @@ def check_norm(atoms, func):
             Discretized set of functions.
 
     Returns:
-        Normalization status of the set of functions as a bool.
+        bool: Normalization status of the set of functions.
     '''
     # Normality condition: \int func^* func dr = 1
     # Tolerance for the condition
@@ -210,7 +210,7 @@ def check_orthonorm(atoms, func):
             Discretized set of functions.
 
     Returns:
-        Orthonormality status of the set of functions as a bool.
+        bool: Orthonormality status of the set of functions.
     '''
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)

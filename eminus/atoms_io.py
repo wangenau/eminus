@@ -25,7 +25,7 @@ def read_xyz(filename, info=False):
             Display file comments.
 
     Returns:
-        Atom species and positions as a tuple(list, array).
+        tuple(list, array): Atom species and positions.
     '''
     # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     with open(filename, 'r') as fh:
@@ -108,8 +108,7 @@ def read_cube(filename, info=False):
             Display file comments.
 
     Returns:
-        Species, positions, charges, cell size, and sampling as a
-        tuple(list, array, float, array, int).
+        tuple(list, array, float, array, int): Species, positions, charges, cell size, and sampling.
     '''
     # It seems, that there is no standard for cube files. The following definition is taken from:
     # https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
@@ -269,7 +268,7 @@ def create_pdb(atom, X, a=None):
             Cell size.
 
     Returns:
-        pdb file format as a string.
+        str - pdb file format.
     '''
     # pdb file definitions:
     # For CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1

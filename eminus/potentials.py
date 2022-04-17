@@ -13,7 +13,7 @@ def Harmonic(atoms):
         atoms: Atoms object.
 
     Returns:
-        Harmonical potential as an array.
+        array: Harmonical potential.
     '''
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     V = 2 * dr**2
@@ -27,7 +27,7 @@ def Coulomb(atoms):
         atoms: Atoms object.
 
     Returns:
-        Coulomb potential as an array.
+        array: Coulomb potential.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
     Vcoul = -4 * np.pi * Z / atoms.G2[1:]
@@ -44,7 +44,7 @@ def Ge(atoms):
         atoms: Atoms object.
 
     Returns:
-        Germanium pseudopotential as an array.
+        array: Germanium pseudopotential.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species/Germanium
     lamda = 18.5
@@ -73,7 +73,7 @@ def init_pot(atoms):
         atoms: Atoms object.
 
     Returns:
-        Potential as an array.
+        array: Potential.
     '''
     implemented = {'harmonic': Harmonic, 'coulomb': Coulomb, 'ge': Ge}
     try:

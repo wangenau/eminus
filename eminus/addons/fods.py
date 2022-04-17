@@ -39,7 +39,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
             Remove pycom log files.
 
     Returns:
-        FOD positions as an array.
+        array: FOD positions.
     '''
     loc = loc.upper()
 
@@ -90,7 +90,7 @@ def split_atom_and_fod(atom, X):
             Atom positions.
 
     Returns:
-        Atom types, the respective coordinates, and FOD positions as a tuple(list, array, array).
+        tuple(list, array, array): Atom types, the respective coordinates, and FOD positions..
     '''
     X_fod = []
     # Iterate in reverted order, because we may delete elements
@@ -123,7 +123,7 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
             effect for the 'automatic' method.
 
     Returns:
-        Valence FODs as an array.
+        array: Valence FODs.
     '''
     method = method.lower()
     if method in ('auto', 'automatic'):

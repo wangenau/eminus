@@ -23,7 +23,7 @@ def O(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     return atoms.Omega * W
 
@@ -38,7 +38,7 @@ def L(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     if W.shape[1] == len(atoms.G2c):
@@ -57,7 +57,7 @@ def Linv(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     out = np.zeros_like(W, dtype=complex)
@@ -80,7 +80,7 @@ def K(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     out = np.empty_like(W, dtype=complex)
@@ -109,7 +109,7 @@ def I(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     if W.ndim == 1:
@@ -143,7 +143,7 @@ def J(atoms, W, full=True):
             Transform in the full or in the active/truncated space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     if W.ndim == 1:
@@ -175,7 +175,7 @@ def Idag(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     if W.ndim == 1:
@@ -201,7 +201,7 @@ def Jdag(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     W = W.T
     if W.ndim == 1:
@@ -228,7 +228,7 @@ def T(atoms, W, dr):
             Real-space position vector.
 
     Returns:
-        Result as an array.
+        array: The operator applied on W.
     '''
     out = np.empty_like(W, dtype=complex)
     factor = np.exp(-1j * np.dot(atoms.Gc, dr))

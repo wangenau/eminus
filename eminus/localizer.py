@@ -19,7 +19,7 @@ def eval_psi(atoms, psi, r):
             Real-space positions.
 
     Returns:
-        Values of psi at points r as an array.
+        array: Values of psi at points r.
     '''
     # Shift the evaluation point to (0,0,0), because we always have a lattice point there
     psi_T = atoms.T(psi, -r)
@@ -41,7 +41,7 @@ def get_R(atoms, psi, fods):
             Fermi-orbital descriptors.
 
     Returns:
-        Transformation matrix R as an array.
+        array: Transformation matrix R.
     '''
     # We only calculate occupied orbitals, so a zero matrix is enough
     R = np.empty((len(fods), len(fods)), dtype=complex)
@@ -67,7 +67,7 @@ def get_FOs(atoms, psi, fods):
             Fermi-orbital descriptors.
 
     Returns:
-        Fermi orbitals as an array.
+        array: Fermi orbitals.
     '''
     FOs = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
@@ -90,7 +90,7 @@ def get_S(atoms, psirs):
             Set of orbitals in real-space.
 
     Returns:
-        Overlap matrix S as an array.
+        array: Overlap matrix S.
     '''
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.Ns, atoms.Ns), dtype=complex)
@@ -115,7 +115,7 @@ def get_FLOs(atoms, psi, fods):
             Fermi-orbital descriptors.
 
     Returns:
-        Fermi-Löwdin orbitals as an array.
+        array: Fermi-Löwdin orbitals.
     '''
     FOs = get_FOs(atoms, psi, fods)
     # Calculate the overlap matrix for FOs
@@ -137,7 +137,7 @@ def wannier_cost(atoms, psirs):
             Set of orbitals in real-space.
 
     Returns:
-        Spread per orbital as an array.
+        array: Spread per orbital.
     '''
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
@@ -159,7 +159,7 @@ def wannier_center(atoms, psirs):
             Set of orbitals in real-space.
 
     Returns:
-        Wannier centers per orbital as an array.
+        array: Wannier centers per orbital.
     '''
     dV = atoms.Omega / np.prod(atoms.s)
     r = atoms.r
@@ -182,7 +182,7 @@ def second_moment(atoms, psirs):
             Set of orbitals in real-space.
 
     Returns:
-        Second moments per orbital as an array.
+        array: Second moments per orbital.
     '''
     dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2

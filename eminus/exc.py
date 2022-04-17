@@ -22,7 +22,7 @@ def get_exc(exc, n, ret, spinpol):
             Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
-        Exchange-correlation energy density or potential as an array.
+        array: Exchange-correlation energy density or potential.
     '''
     exc_map = {
         'lda': 'lda_slater_x',
@@ -55,7 +55,7 @@ def mock_exc(n, ret, **kwargs):
             Choose whether to return the energy density or the potential.
 
     Returns:
-        Mock exchange-correlation energy density and potential as a tuple(array, array).
+        array: Mock exchange-correlation energy density and potential.
     '''
     zero = np.zeros_like(n)
     return zero
@@ -80,7 +80,7 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
             Scaling factor.
 
     Returns:
-        Exchange energy density and potential as a tuple(array, array).
+        array: Exchange energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -113,7 +113,7 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
             Scaling factor.
 
     Returns:
-        Exchange energy density and potential as a tuple(array, array).
+        array: Exchange energy density and potential.
     '''
     third = 1 / 3
     p43 = 4 / 3
@@ -144,7 +144,7 @@ def lda_pw_c(n, ret, **kwargs):
             Choose whether to return the energy density or the potential.
 
     Returns:
-        PW correlation energy density and potential as a tuple(array, array).
+        array: PW correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -185,7 +185,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
             Relative spin polarization.
 
     Returns:
-        PW correlation energy density and potential as a tuple(array, array).
+        array: PW correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -208,7 +208,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
                 Index weather to use unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
 
         Returns:
-            PW fit and the derivative as a tuple(array, array).
+            tuple(array, array): PW fit and the derivative.
         '''
         a = (0.031091, 0.015545, 0.016887)
         a1 = (0.2137, 0.20548, 0.11125)
@@ -256,7 +256,7 @@ def lda_vwn_c(n, ret, **kwargs):
             Choose whether to return the energy density or the potential.
 
     Returns:
-        VWN correlation energy density and potential as a tuple(array, array).
+        array: VWN correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -300,7 +300,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
             Relative spin polarization.
 
     Returns:
-        VWN correlation energy density and potential as a tuple(array, array).
+        array: VWN correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -328,7 +328,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
                 Index weather to use paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
 
         Returns:
-            Pade fit and the derivative as a tuple(array, array).
+            tuple(array, array): Pade fit and the derivative.
         '''
         a = (0.0310907, 0.01554535, -0.01688686394039)
         b = (3.72744, 7.06042, 1.13107)

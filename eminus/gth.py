@@ -18,7 +18,7 @@ def init_gth_loc(atoms):
         atoms: Atoms object.
 
     Returns:
-        Local GTH potential contribution as an array.
+        array: Local GTH potential contribution.
     '''
     G2 = atoms.G2
     atom = atoms.atom
@@ -62,7 +62,7 @@ def init_gth_nonloc(atoms):
         atoms: Atoms object.
 
     Returns:
-        NbetaNL, prj2beta, and betaNL as a tuple(int, array, array).
+        tuple(int, array, array): NbetaNL, prj2beta, and betaNL.
     '''
     Natoms = atoms.Natoms
     Npoints = len(atoms.active[0])
@@ -108,7 +108,7 @@ def calc_Vnonloc(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Non-local GTH potential contribution as an array.
+        array: Non-local GTH potential contribution.
     '''
     Npoints = len(W)
     Nstates = atoms.Ns
@@ -157,7 +157,7 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
             Unit cell volume.
 
     Returns:
-        GTH projector as an array.
+        array: GTH projector.
     '''
     rrl = psp['rc'][l]
     Gr2 = (Gm * rrl)**2
@@ -206,7 +206,7 @@ def read_gth(system, charge=None, psp_path=None):
             Path to GTH pseudopotential files. None will default to /installation_path/pade_gth/.
 
     Returns:
-        GTH parameters as a dictionary.
+        dict: GTH parameters.
     '''
     if psp_path is None:
         psp_path = f'{__path__[0]}/pade_gth/'

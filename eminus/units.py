@@ -20,7 +20,7 @@ def ha2ev(E):
             Energy in Hartree.
 
     Returns:
-        Energy in electronvolt as a float.
+        float: Energy in electronvolt.
     '''
     return E * electronvolt
 
@@ -33,7 +33,7 @@ def ev2ha(E):
             Energy in electronvolt.
 
     Returns:
-        Energy in Hartree as a float.
+        float: Energy in Hartree.
     '''
     return E / electronvolt
 
@@ -46,7 +46,7 @@ def ha2kcalmol(E):
             Energy in Hartree.
 
     Returns:
-        Energy in kcal/mol as a float.
+        float: Energy in kcal/mol.
     '''
     return E * kcalmol
 
@@ -59,7 +59,7 @@ def kcalmol2ha(E):
             Energy in kcal/mol.
 
     Returns:
-        Energy in Hartree as a float.
+        float: Energy in Hartree.
     '''
     return E / kcalmol
 
@@ -72,7 +72,7 @@ def ev2kcalmol(E):
             Energy in electronvolt.
 
     Returns:
-        Energy in kcal/mol as a float.
+        float: Energy in kcal/mol.
     '''
     return ha2kcalmol(ev2ha(E))
 
@@ -85,7 +85,7 @@ def kcalmol2ev(E):
             Energy in kcal/mol.
 
     Returns:
-        Energy in electronvolt as a float.
+        float: Energy in electronvolt.
     '''
     return ha2ev(kcalmol2ha(E))
 
@@ -98,7 +98,7 @@ def ha2ry(E):
             Energy in Hartree.
 
     Returns:
-        Energy in Rydberg as a float.
+        float: Energy in Rydberg.
     '''
     return 2 * E
 
@@ -111,7 +111,7 @@ def ry2ha(E):
             Energy in Rydberg.
 
     Returns:
-        Energy in Hartree as a float.
+        float: Energy in Hartree.
     '''
     return E / 2
 
@@ -124,7 +124,7 @@ def ang2bohr(r):
             Length in Angstrom.
 
     Returns:
-        Length in Bohr as a float.
+        float: Length in Bohr.
     '''
     return r / angstrom
 
@@ -137,7 +137,7 @@ def bohr2ang(r):
             Length in Bohr.
 
     Returns:
-        Length in Angstrom as a float.
+        float: Length in Angstrom.
     '''
     return r * angstrom
 
@@ -150,7 +150,7 @@ def ebohr2d(p):
             Electric dipole moment in e times Bohr.
 
     Returns:
-        Electric dipole moment in Debye as a float.
+        float: Electric dipole moment in Debye.
     '''
     return p * Debye
 
@@ -163,6 +163,6 @@ def d2ebohr(p):
             Electric dipole moment in Debye.
 
     Returns:
-        Electric dipole moment in e times Bohr as a float.
+        float: Electric dipole moment in e times Bohr.
     '''
     return p / Debye

@@ -17,7 +17,7 @@ def Diagprod(a, B):
             Matrix.
 
     Returns:
-        Result as an array.
+        array: The expressions result.
     '''
     return (a * B.T).T
 
@@ -33,7 +33,7 @@ def dotprod(a, b):
             Array of vectors.
 
     Returns:
-        Result as a float.
+        float - Expression result.
     '''
     return np.real(np.trace(a.conj().T @ b))
 
@@ -53,7 +53,7 @@ def Ylm_real(l, m, R):
             Real-space position vector or array of real-space position vectors.
 
     Returns:
-        Spherical harmonics as an array.
+        array: Spherical harmonics.
     '''
     # Account for single vectors
     if R.ndim == 1:

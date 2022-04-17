@@ -45,6 +45,7 @@ html_static_path = ['']
 html_show_sphinx = False
 
 autodoc_preserve_defaults = True
+napoleon_use_rtype = False
 
 
 def dunder_skip(app, what, name, obj, would_skip, options):

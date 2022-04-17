@@ -42,7 +42,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
             Default: 1
 
     Returns:
-        Total energy as a float.
+        float: Total energy.
     '''
     # Map minimization names and functions, also use this dict to save times and iterations
     minimizer = {
@@ -158,7 +158,7 @@ def H(atoms, W, n=None):
             Real-space electronic density.
 
     Returns:
-        Hamiltonian applied on W as an array.
+        array: Hamiltonian applied on W.
     '''
     Y = orth(atoms, W)  # Orthogonalize at the start
     if n is None:
@@ -187,7 +187,7 @@ def Q(inp, U):
             Overlap of wave functions.
 
     Returns:
-        Q operator result as an array.
+        array: Q operator result.
     '''
     mu, V = eig(U)
     mu = np.reshape(mu, (len(mu), 1))
@@ -206,7 +206,7 @@ def get_E(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Total energy as a float.
+        float: Total energy.
     '''
     Y = orth(atoms, W)
     n = get_n_total(atoms, Y)
@@ -228,7 +228,7 @@ def get_grad(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Gradient as an array.
+        array: Gradient.
     '''
     U = W.conj().T @ atoms.O(W)
     invU = inv(U)
@@ -260,7 +260,7 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
             Conjugate-gradient orthogonality.
 
     Returns:
-        Convergence condition as a bool.
+        bool: Convergence condition.
     '''
     Nit = len(Elist)
 
@@ -310,7 +310,7 @@ def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
             SCF step size.
 
     Returns:
-        Wave functions and total energies per SCF cycle as a tuple(array, list).
+        tuple(array, list): Wave functions and total energies per SCF cycle.
     '''
     Elist = []
 
@@ -343,7 +343,7 @@ def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
             SCF step size.
 
     Returns:
-        Wave functions and energies per SCF cycle as a tuple(array, list).
+        tuple(array, list): Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -396,7 +396,7 @@ def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
             SCF step size.
 
     Returns:
-        Wave functions and energies per SCF cycle as a tuple(array, list).
+        tuple(array, list): Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -453,7 +453,7 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
             Conjugated-gradient from for the preconditioned conjugate-gradient minimization (pccg).
 
     Returns:
-        Wave functions and energies per SCF cycle as a tuple(array, list).
+        tuple(array, list): Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -508,7 +508,7 @@ def orth(atoms, W):
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        Orthogonalized wave functions as an array.
+        array: Orthogonalized wave functions.
     '''
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
@@ -527,7 +527,7 @@ def get_psi(atoms, Y, n=None):
             Real-space electronic density.
 
     Returns:
-        Eigenstates in reciprocal space as an array.
+        array: Eigenstates in reciprocal space.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
     _, D = eig(mu)
@@ -548,7 +548,7 @@ def get_epsilon(atoms, Y, n=None):
             Real-space electronic density.
 
     Returns:
-        Eigenvalues as an array.
+        array: Eigenvalues.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
     epsilon, _ = eig(mu)
@@ -566,7 +566,7 @@ def get_n_total(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        Electronic density as an array.
+        array: Electronic density.
     '''
     Yrs = atoms.I(Y)
     n = atoms.f * np.real(Yrs.conj() * Yrs)
@@ -587,7 +587,7 @@ def guess_random(atoms, complex=True, reproduce=False):
             Use a set seed for reproducible random numbers.
 
     Returns:
-        Initial-guess orthogonal wave functions in reciprocal space as an array.
+        array: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     if reproduce:
         seed(42)
@@ -605,7 +605,7 @@ def guess_gaussian(atoms):
         atoms: Atoms object.
 
     Returns:
-        Initial-guess orthogonal wave functions in reciprocal space as an array.
+        array: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     # Start with a randomized basis set
     W = guess_random(atoms, complex=True, reproduce=True)

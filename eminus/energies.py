@@ -48,7 +48,7 @@ def get_Ekin(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        Kinetic energy in Hartree as a float.
+        float: Kinetic energy in Hartree.
     '''
     # Arias: Ekin = -0.5 Tr(F Cdag L(C))
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
@@ -64,7 +64,7 @@ def get_Ecoul(atoms, n):
             Real-space electronic density.
 
     Returns:
-        Coulomb energy in Hartree as a float.
+        float: Coulomb energy in Hartree.
     '''
     # Arias: Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
@@ -85,7 +85,7 @@ def get_Exc(atoms, n, spinpol=False):
             Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
-        Exchange-correlation energy in Hartree as a float.
+        float: Exchange-correlation energy in Hartree.
     '''
     # Arias: Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
@@ -105,7 +105,7 @@ def get_Eloc(atoms, n):
             Real-space electronic density.
 
     Returns:
-        Local energy contribution in Hartree as a float.
+        float: Local energy contribution in Hartree.
     '''
     return np.real(atoms.Vloc.conj().T @ n)
 
@@ -121,7 +121,7 @@ def get_Enonloc(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        Non-local energy contribution in Hartree as a float.
+        float: Non-local energy contribution in Hartree.
     '''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
@@ -165,7 +165,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             Error tolerance
 
     Returns:
-        Ewald energy in Hartree as a float.
+        float: Ewald energy in Hartree.
     '''
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
@@ -256,7 +256,7 @@ def get_n_single(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        Single-electron densities as an array.
+        array: Single-electron densities.
     '''
     Yrs = atoms.I(Y)
     n = atoms.f * np.real(Yrs.conj() * Yrs)
@@ -273,7 +273,7 @@ def get_Esic(atoms, Y):
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        PZ self-interaction energy as a float.
+        float: PZ self-interaction energy.
     '''
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     n_single = get_n_single(atoms, Y)

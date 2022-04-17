@@ -29,7 +29,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
             Isovalue for sizing orbitals.
 
     Returns:
-        Viewable object as an NGLWidget.
+        NGLWidget: Viewable object.
     '''
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
@@ -98,7 +98,7 @@ def view_grid(coords, extra=None):
             Extra coordinates to display.
 
     Returns:
-        Viewable object as a SceneCanvas.
+        SceneCanvas: Viewable object.
     '''
     # Set up view
     canvas = scene.SceneCanvas(keys='interactive', show=True, size=(400, 400))
