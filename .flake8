@@ -7,7 +7,9 @@ ignore = E126, E127, E128, \  # Over- and under-indentation
          E741, E743, \        # Ambiguous variable names and function definitions
          W504, \              # Line break after binary operator
          D107, \              # Missing docstring in __init__
-         D300                 # Use double quotes for docstrings
+         D300, \              # Use double quotes for docstrings
+         D417                 # A bug results in false positives
+                              # TODO: Remove if pydocstyle gets updated
 
 # Ignore missing docstring in public modules or functions
 per-file-ignores = examples/*:D100
