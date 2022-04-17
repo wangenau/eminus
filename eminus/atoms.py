@@ -28,7 +28,7 @@ class Atoms:
             Examples: [0, 0, 0]; array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
             array([[[0, 0, 0], [1, 1, 1]]])
 
-    Kwargs:
+    Keyword Args:
         a : float list or array of floats
             Cell size or vacuum size. A cuboidal box with the same side lengths will be created.
             Default: 20 Bohr (ca. 10.5 Angstrom).

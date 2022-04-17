@@ -83,7 +83,7 @@ def get_Exc(atoms, n, spinpol=False):
         n : array
             Real-space electronic density.
 
-    Kwargs:
+    Keyword Args:
         spinpol : bool
             Choose if a spin-polarized exchange-correlation functional will be used.
 
@@ -163,7 +163,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         gcut : float
             G-vector cut-off.
 

@@ -201,7 +201,7 @@ def read_gth(system, charge=None, psp_path=None):
         system : str
             Atom name.
 
-    Kwargs:
+    Keyword Args:
         charge : int
             Valence charge.
 

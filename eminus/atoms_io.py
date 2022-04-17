@@ -20,7 +20,7 @@ def read_xyz(filename, info=False):
         filename : str
             xyz input file path/name.
 
-    Kwargs:
+    Keyword Args:
         info : bool
             Display file comments.
 
@@ -62,7 +62,7 @@ def write_xyz(atoms, filename, extra=None):
         filename : str
             xyz output file path/name.
 
-    Kwargs:
+    Keyword Args:
         extra : array
             Extra coordinates to write.
     '''
@@ -104,7 +104,7 @@ def read_cube(filename, info=False):
     Args:
         filename : str
             cube input file path/name.
-    Kwargs:
+    Keyword Args:
         info : bool
             Display file comments.
 
@@ -162,7 +162,7 @@ def write_cube(atoms, field, filename, extra=None):
         filename : str
             xyz output file path/name.
 
-    Kwargs:
+    Keyword Args:
         extra : array
             Extra coordinates to write.
     '''
@@ -267,7 +267,7 @@ def create_pdb(atom, X, a=None):
         X : array
             Atom positions.
 
-    Kwargs:
+    Keyword Args:
         a : float
             Cell size.
 

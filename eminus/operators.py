@@ -144,7 +144,7 @@ def J(atoms, W, full=True):
         W : array
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-    Kwargs:
+    Keyword Args:
         full : bool
             Transform in the full or in the active/truncated space.
 

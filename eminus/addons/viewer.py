@@ -24,7 +24,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
         filename : str
             Input file path/name. This can be either a cube or xyz file.
 
-    Kwargs:
+    Keyword Args:
         isovalue : float
             Isovalue for sizing orbitals.
 
@@ -93,7 +93,7 @@ def view_grid(coords, extra=None):
         coords : array
             Grid points.
 
-    Kwargs:
+    Keyword Args:
         extra : array
             Extra coordinates to display.
 

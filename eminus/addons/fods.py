@@ -29,7 +29,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         basis : str
             Basis set for the DFT calculation.
 
@@ -114,7 +114,7 @@ def remove_core_fods(atoms, fods, method='auto', radius=0.1):
         fods : array
             FOD positions.
 
-    Kwargs:
+    Keyword Args:
         method : str
             Method to remove FODs (case insensitive). 'Automatic' will remove the nearest FODs of
             atoms depending on the number of core states. 'Radius' removes FODs within a fixed

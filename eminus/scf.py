@@ -22,7 +22,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         guess : str
             Initial guess method for the basis functions (case insensitive).
             Example: 'Gauss'; 'gaussian'; 'random'; 'rand';
@@ -155,7 +155,7 @@ def H(atoms, W, n=None):
         W : array
             Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-    Kwargs:
+    Keyword Args:
         n : array
             Real-space electronic density.
 
@@ -257,7 +257,7 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
         etol : float
             Convergence tolerance of the total energy.
 
-    Kwargs:
+    Keyword Args:
         linmin : float
             Cosine between previous search direction and current gradient.
 
@@ -311,7 +311,7 @@ def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
-    Kwargs:
+    Keyword Args:
         beta : float
             SCF step size.
 
@@ -345,7 +345,7 @@ def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
-    Kwargs:
+    Keyword Args:
         betat : float
             SCF step size.
 
@@ -399,7 +399,7 @@ def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
         etol : float
             Convergence tolerance of the total energy.
 
-    Kwargs:
+    Keyword Args:
         betat : float
             SCF step size.
 
@@ -453,7 +453,7 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
         etol : float
             Convergence tolerance of the total energy.
 
-    Kwargs:
+    Keyword Args:
         betat : float
             SCF step size.
 
@@ -533,7 +533,7 @@ def get_psi(atoms, Y, n=None):
         Y : array
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
-    Kwargs:
+    Keyword Args:
         n : array
             Real-space electronic density.
 
@@ -555,7 +555,7 @@ def get_epsilon(atoms, Y, n=None):
         Y : array
             Expansion coefficients of orthogonal wave functions in reciprocal space.
 
-    Kwargs:
+    Keyword Args:
         n : array
             Real-space electronic density.
 
@@ -593,7 +593,7 @@ def guess_random(atoms, complex=True, reproduce=False):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         complex : bool
             Use complex numbers for the random guess.
 

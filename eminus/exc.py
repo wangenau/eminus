@@ -75,7 +75,7 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
         ret : str
             Choose whether to return the energy density or the potential.
 
-    Kwargs:
+    Keyword Args:
         alpha : float
             Scaling factor.
 
@@ -108,7 +108,7 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
         zeta : array
             Relative spin polarization.
 
-    Kwargs:
+    Keyword Args:
         alpha : float
             Scaling factor.
 

@@ -44,7 +44,7 @@ def center_of_mass(coords, masses=None):
         coords : array
             Array of real-space coordinates.
 
-    Kwargs:
+    Keyword Args:
         masses : array
             Mass or weight for each coordinate.
 
@@ -64,7 +64,7 @@ def inertia_tensor(coords, masses=None):
         coords : array
             Array of real-space coordinates.
 
-    Kwargs:
+    Keyword Args:
         masses : array
             Mass or weight for each coordinate.
 

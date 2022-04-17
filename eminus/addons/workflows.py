@@ -15,7 +15,7 @@ def KSO(atoms, write_cubes=False, **kwargs):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         write_cubes : bool
             Write orbitals to cube files.
 
@@ -39,7 +39,7 @@ def FO(atoms, write_cubes=False, fods=None):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         write_cubes : bool
             Write orbitals to cube files.
 
@@ -70,7 +70,7 @@ def FLO(atoms, write_cubes=False, fods=None):
         atoms :
             Atoms object.
 
-    Kwargs:
+    Keyword Args:
         write_cubes : bool
             Write orbitals to cube files.
 
