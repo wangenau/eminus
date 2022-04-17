@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-SCF calculation functionalities with relevant sub-function.
-'''
+'''SCF calculation functionalities with relevant sub-function.'''
 from timeit import default_timer
 
 import numpy as np

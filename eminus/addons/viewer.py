@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Viewer functions for Jupyter notebooks.
-'''
+'''Viewer functions for Jupyter notebooks.'''
 import numpy as np
 from numpy.linalg import norm
 try:

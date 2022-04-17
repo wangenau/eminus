@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Workflow functions that combine functions to get one property.
-'''
+'''Workflow functions that combine functions to get one property.'''
 from eminus.atoms_io import write_cube
 from eminus.localizer import get_FLOs, get_FOs
 from eminus.scf import get_psi

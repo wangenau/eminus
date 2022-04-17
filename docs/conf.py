@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-'''
-Configuration file for the Sphinx documentation builder. For a full list of options see the
-documentation: https://www.sphinx-doc.org/en/master/usage/configuration.html
+'''Sphinx documentation builder configuration file.
+
+For a full list of options see the documentation:
+https://www.sphinx-doc.org/en/master/usage/configuration.html
 '''
 import glob
 import os

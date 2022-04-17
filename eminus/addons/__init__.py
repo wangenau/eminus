@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-'''
-Addon functions that need additional dependencies to work.
+'''Addon functions that need additional dependencies to work.
 
 To also install additional dependencies, use::
 

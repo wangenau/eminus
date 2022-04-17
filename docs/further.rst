@@ -43,7 +43,7 @@ Linting
 
 .. code-block:: bash
 
-   pip install flake8
+   pip install flake8 flake8-docstrings
    flake8
 
 Documentation

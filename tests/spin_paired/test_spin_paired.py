@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+'''Test total energies for a small set of systems.'''
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF, read_xyz, __path__

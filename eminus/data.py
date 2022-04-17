@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Atomic data collections.
-'''
+'''Atomic data collections.'''
 symbol2number = {
     'X': 0,
     'H': 1,

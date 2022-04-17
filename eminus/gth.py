@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Utilities to use Goedecker, Teter, and Hutter pseudopotentials.
-'''
+'''Utilities to use Goedecker, Teter, and Hutter pseudopotentials.'''
 from glob import glob
 from os.path import basename
 

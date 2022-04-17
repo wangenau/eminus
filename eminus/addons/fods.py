@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Fermi-orbital descriptor generation.
-'''
+'''Fermi-orbital descriptor generation.'''
 from os import remove
 
 import numpy as np

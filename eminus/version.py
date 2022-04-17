@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Package version number and version info function.
-'''
+'''Package version number and version info function.'''
 from os import environ
 from sys import version
 

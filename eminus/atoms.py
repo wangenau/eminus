@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Atoms object definitions.
-'''
+'''Atoms object definitions.'''
 from re import sub
 
 import numpy as np
@@ -56,7 +54,8 @@ class Atoms:
             Default: None
         Ns (int): Number of states.
 
-            None will get the number of states from f or assume occupations of 2 and divide the sum of Z by it.
+            None will get the number of states from f or assume occupations of 2 and divide the sum
+            of Z by it.
             Default: None
         verbose (int): Level of output.
 
@@ -282,6 +281,7 @@ class Atoms:
         return
 
     def __repr__(self):
+        '''Print the atom parameters stored in the Atoms object.'''
         atom = self.atom
         Natoms = self.Natoms
         X = self.X

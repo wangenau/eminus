@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Parameterizations of exchange-correlation functionals.
-'''
+'''Parameterizations of exchange-correlation functionals.'''
 import numpy as np
 
 

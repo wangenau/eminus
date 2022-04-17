@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+'''Test functionality of examples.'''
 import runpy
 from os import chdir, remove
 from os.path import exists

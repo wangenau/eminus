@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Various tools to check physical properties.
-'''
+'''Various tools to check physical properties.'''
 import numpy as np
 
 from .scf import get_epsilon

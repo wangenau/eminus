@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Basis set dependent operators for a plane-wave basis.
-'''
+'''Basis set dependent operators for a plane-wave basis.'''
 from os import environ
 
 import numpy as np

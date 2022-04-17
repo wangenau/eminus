@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Import and export functionalities.
-'''
+'''Import and export functionalities.'''
 from pickle import dump, HIGHEST_PROTOCOL, load
 from textwrap import fill
 from time import ctime

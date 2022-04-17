@@ -1,6 +1,6 @@
 # examples
 
-Test the functionality of all examples.
+Test functionality of examples.
 
 This may take some time. This test is excluded when testing with CI.
 

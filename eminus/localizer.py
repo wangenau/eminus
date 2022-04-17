@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Utilities to localize and analyze orbitals.
-'''
+'''Utilities to localize and analyze orbitals.'''
 import numpy as np
 from numpy.linalg import eig, norm
 

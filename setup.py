@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+'''Setup file to make eminus installable.'''
 from setuptools import find_packages, setup
 
 with open('eminus/version.py', 'r') as fh:

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-'''
-Calculate different energy contributions.
-'''
+'''Calculate different energy contributions.'''
 import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
@@ -29,6 +27,7 @@ class Energy:
                self.Esic
 
     def __repr__(self):
+        '''Printe the energies stored in the Energy object.'''
         out = ''
         for ie in self.__slots__:
             energy = eval('self.' + ie)
