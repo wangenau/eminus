@@ -34,7 +34,7 @@ setup(
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Scientific/Engineering :: Physics',
         'Topic :: Software Development'
-        ],
+    ],
     license='APACHE2.0',
     install_requires=['numpy', 'scipy'],
     keywords='NextDFT',
