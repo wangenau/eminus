@@ -15,16 +15,38 @@ setup(
     description='A plane wave density funtional theory code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://gitlab.com/nextdft/eminus',
     author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
-    license='APACHE2.0',
+    url='https://nextdft.gitlab.io/eminus',
     packages=find_packages(),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'License :: OSI Approved :: Apache Software License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
+        'Topic :: Education',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Scientific/Engineering :: Chemistry',
+        'Topic :: Scientific/Engineering :: Physics',
+        'Topic :: Software Development'
+        ],
+    license='APACHE2.0',
     install_requires=['numpy', 'scipy'],
+    keywords='NextDFT',
+    package_data={'eminus.pade_gth': ['*.gth']},
+    zip_safe=False,
     extras_require={
         'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'vispy']
     },
     python_requires='>=3.6',
-    package_data={'eminus.pade_gth': ['*.gth']},
-    zip_safe=False
+    project_urls={
+        'Documentation': 'https://nextdft.gitlab.io/eminus',
+        'Source': 'https://gitlab.com/nextdft/eminus',
+        'Tracker': 'https://gitlab.com/nextdft/eminus/-/issues'
+    }
 )
