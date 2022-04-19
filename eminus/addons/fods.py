@@ -11,9 +11,8 @@ try:
     from pyflosic2.guess.pycom import pycom
     from pyflosic2.parameters.flosic_parameters import parameters
 except ImportError:
-    print('ERROR: Necessary addon dependencies not found. '
-          'To use this module, install the package with addons, e.g., with '
-          '"pip install eminus[addons]"')
+    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
+          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from ..atoms_io import read_xyz
 from ..data import symbol2number
@@ -23,7 +22,7 @@ from ..units import bohr2ang
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     '''Generate FOD positions using the PyCOM method.
 
-    Reference: J. Comput. Chem. 40, 2843–2857.
+    Reference: J. Comput. Chem. 40, 2843-2857.
 
     Args:
         atoms: Atoms object.

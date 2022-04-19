@@ -16,11 +16,11 @@ def info():
     for pkg in dependencies + addons:
         try:
             exec(f'import {pkg}')
-            # PyLibXC does not use the standard version identifier
-            if pkg == 'pylibxc':
-                print(f'{pkg.ljust(12)}: {eval(pkg).version.__version__}')
-            else:
+            try:
                 print(f'{pkg.ljust(12)}: {eval(pkg).__version__}')
+            except AttributeError:
+                # PyLibXC does not use the standard version identifier
+                print(f'{pkg.ljust(12)}: {eval(pkg).version.__version__}')
         except ModuleNotFoundError:
             if pkg in dependencies:
                 print(f'{pkg.ljust(12)}: Dependency not installed')

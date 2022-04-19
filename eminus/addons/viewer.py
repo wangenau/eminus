@@ -6,9 +6,8 @@ try:
     from nglview import NGLWidget, TextStructure
     from vispy import scene
 except ImportError:
-    print('ERROR: Necessary addon dependencies not found. '
-          'To use this module, install the package with addons, e.g., with '
-          '"pip install eminus[addons]"')
+    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
+          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from .fods import split_atom_and_fod
 from ..atoms_io import create_pdb, read_cube, read_xyz

@@ -6,9 +6,8 @@ For a list of available functionals, see: https://www.tddft.org/programs/libxc/f
 try:
     from pylibxc import LibXCFunctional
 except ImportError:
-    print('ERROR: Necessary addon dependencies not found. '
-          'To use this module, install the package with addons, e.g., with '
-          '"pip install eminus[addons]"')
+    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
+          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 
 def libxc_functional(exc, n, ret, spinpol):
@@ -32,6 +31,7 @@ def libxc_functional(exc, n, ret, spinpol):
 
     inp = {}
     inp['rho'] = n
+    # LibXC functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(exc), spin)
     except KeyError:
