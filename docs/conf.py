@@ -76,6 +76,10 @@ def examples_generate(app):
                 # Include script if one exists
                 if os.path.exists(f'examples/{example}/{example}.py'):
                     fp.write(f'\n.. literalinclude:: ../../examples/{example}/{example}.py\n')
+                if os.path.exists(f'examples/{example}/{example}.ipynb'):
+                    fp.write('\nSee a preview of the notebook '
+                             '`here <https://gitlab.com/nextdft/eminus/-/blob/master/'
+                            f'examples/{example}/{example}.ipynb>`_.\n')
                 # Add download buttons
                 fp.write('\nDownload')
                 files = glob.glob(f'examples/{example}/[!README.rst]*')

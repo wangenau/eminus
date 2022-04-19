@@ -18,4 +18,4 @@ This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
 * Each example has its own subfolder
 * Each subfolder contains a README.rst
-* Each subfolder can contain one Python file with the same name as the subfolder
+* Each subfolder can contain one Python file OR one Jupyter notebook with the same name as the subfolder
