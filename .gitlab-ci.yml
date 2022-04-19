@@ -6,11 +6,13 @@ stages:
 
 before_script:
   - apt-get update -y
-  # libgomp1 is not included in small docker images but needed for numpy
+  # libgomp1 is not included in slim docker images, but needed for numpy
   - apt-get install -y libgomp1 --no-install-recommends
   # TODO: Disable root warnings if pip gets updated
   # Disable warnings about running pip as root user
   # - pip config set global.root-user-action=ignore
+  # Disable warnings about newer pip versions available
+  # - pip config set global.disable-pip-version-check true
   - pip install --upgrade pip
   - pip install -e .
 

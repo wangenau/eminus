@@ -27,6 +27,7 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
         'Topic :: Education',
@@ -37,7 +38,7 @@ setup(
     ],
     license='APACHE2.0',
     install_requires=['numpy', 'scipy'],
-    keywords='NextDFT',
+    keywords=['NextDFT'],
     package_data={'eminus.pade_gth': ['*.gth']},
     zip_safe=False,
     extras_require={
