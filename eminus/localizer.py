@@ -25,6 +25,8 @@ def eval_psi(atoms, psi, r):
 def get_R(atoms, psi, fods):
     '''Calculate transformation matrix to build Fermi orbitals from Kohn-Sham orbitals.
 
+    Reference: J. Chem. Phys. 153, 084104.
+
     Args:
         atoms: Atoms object.
         psi (array): Set of orbitals in reciprocal space.
@@ -47,13 +49,15 @@ def get_R(atoms, psi, fods):
 def get_FOs(atoms, psi, fods):
     '''Calculate Fermi orbitals from Kohn-Sham orbitals and a set of respective FODs.
 
+    Reference: J. Chem. Phys. 153, 084104.
+
     Args:
         atoms: Atoms object.
         psi (array): Set of orbitals in reciprocal space.
         fods (array): Fermi-orbital descriptors.
 
     Returns:
-        array: Fermi orbitals.
+        array: Real-space Fermi orbitals.
     '''
     FOs = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
@@ -68,6 +72,8 @@ def get_FOs(atoms, psi, fods):
 
 def get_S(atoms, psirs):
     '''Calculate overlap matrix between orbitals.
+
+    Reference: J. Chem. Phys. 153, 084104.
 
     Args:
         atoms: Atoms object.
@@ -89,13 +95,15 @@ def get_S(atoms, psirs):
 def get_FLOs(atoms, psi, fods):
     '''Calculate Fermi-Löwdin orbitals by orthonormalizing Fermi orbitals.
 
+    Reference: J. Chem. Phys. 153, 084104.
+
     Args:
         atoms: Atoms object.
         psi (array): Set of orbitals in reciprocal space.
         fods (array): Fermi-orbital descriptors.
 
     Returns:
-        array: Fermi-Löwdin orbitals.
+        array: Real-space Fermi-Löwdin orbitals.
     '''
     FOs = get_FOs(atoms, psi, fods)
     # Calculate the overlap matrix for FOs
@@ -109,6 +117,8 @@ def get_FLOs(atoms, psi, fods):
 
 def wannier_cost(atoms, psirs):
     '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
+
+    Reference: J. Chem. Phys. 137, 224114.
 
     Args:
         atoms: Atoms object.
