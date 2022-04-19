@@ -48,7 +48,7 @@ exc = 'lda,pw'
 
 # The libxc interface can be used by adding 'libxc:' before a functional
 # Names and numbers can be used, and mixed with the internal functionals as well
-# exc = 'libxc:LDA_X,libxc:LDA_C_VWN'
+# exc = 'libxc:LDA_X,libxc:LDA_C_PW'
 # exc = 'libxc:1,pw'
 
 # Create an object for dinitrogen and display it
