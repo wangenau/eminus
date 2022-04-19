@@ -72,7 +72,7 @@ class Atoms:
             Default: False
         exc (str): Comma-separated exchange-correlation functional description (case insensitive).
 
-            Adding 'libx:' before a functional will try to use the LibXC interface.
+            Adding 'libxc:' before a functional will try to use the LibXC interface.
 
             Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','; 'libxc:LDA_X,libxc:7'
             Default: 'lda,vwn'
