@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-'''Collection of constants and unit conversion tools.'''
+'''Collection of constants and unit conversion functions.
+
+For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
+'''
 # Ha in eV (https://en.wikipedia.org/wiki/Hartree)
 electronvolt = eV = 27.211386245988
 # Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)

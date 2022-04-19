@@ -27,3 +27,4 @@ Modules
    eminus.addons.fods
    eminus.addons.orbitals
    eminus.addons.viewer
+   eminus.pade_gth

@@ -25,7 +25,7 @@ def dotprod(a, b):
         b (array): Array of vectors.
 
     Returns:
-        float: Expression result.
+        float: The expressions result
     '''
     return np.real(np.trace(a.conj().T @ b))
 
