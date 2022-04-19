@@ -5,8 +5,7 @@ To also install additional dependencies, use::
 
     pip install eminus[addons]
 '''
-from .fods import get_fods, remove_core_fods, split_atom_and_fod
-from .libxc import libxc_functional
+from .fods import get_fods, remove_core_fods
 from .orbitals import FLO, FO, KSO
 from .viewer import view_grid, view_mol
 
