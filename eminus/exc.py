@@ -22,16 +22,33 @@ def get_exc(exc, n, ret, spinpol):
     }
 
     exch, corr = exc.split(',')
-    f_exch = exc_map.get(exch, mock_exc)
-    f_corr = exc_map.get(corr, mock_exc)
-    if spinpol:
-        f_exch = f'{f_exch}_spin'
-        f_corr = f'{f_corr}_spin'
+    # Only import libxc interface if necessary
+    if 'libxc' in exc:
+        from .addons import libxc_functional
 
-    # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
-    #        spin-unpolarised calculations
-    x = eval(f_exch)(n, ret, zeta=np.ones_like(n))
-    c = eval(f_corr)(n, ret, zeta=np.ones_like(n))
+    # Handle exchange part
+    if 'libxc' in exch:
+        _, exch = exch.split(':')
+        x = libxc_functional(exch, n, ret, spinpol)
+    else:
+        f_exch = exc_map.get(exch, 'mock_exc')
+        if spinpol:
+            f_exch = f'{f_exch}_spin'
+        # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
+        #        spin-unpolarised calculations
+        x = eval(f_exch)(n, ret, zeta=np.ones_like(n))
+
+    # Handle correlation part
+    if 'libxc' in corr:
+        _, corr = corr.split(':')
+        c = libxc_functional(corr, n, ret, spinpol)
+    else:
+        f_corr = exc_map.get(corr, 'mock_exc')
+        if spinpol:
+            f_corr = f'{f_corr}_spin'
+        # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
+        #        spin-unpolarised calculations
+        c = eval(f_corr)(n, ret, zeta=np.ones_like(n))
     return x + c
 
 

@@ -25,6 +25,7 @@ Modules
    eminus.version
    eminus.addons
    eminus.addons.fods
+   eminus.addons.libxc
    eminus.addons.orbitals
    eminus.addons.viewer
    eminus.pade_gth

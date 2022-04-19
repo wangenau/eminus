@@ -46,6 +46,11 @@ center = True
 # Exchange-correlation functional description (case insensitive), separated by a comma.
 exc = 'lda,pw'
 
+# The libxc interface can be used by adding 'libxc:' before a functional
+# Names and numbers can be used, and mixed with the internal functionals as well
+# exc = 'libxc:LDA_X,libxc:LDA_C_VWN'
+# exc = 'libxc:1,pw'
+
 # Create an object for dinitrogen and display it
 atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, f=f, Ns=Ns, verbose=verbose,
               pot=pot, center=center, exc=exc)

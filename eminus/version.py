@@ -5,7 +5,7 @@ from sys import version
 
 __version__ = '1.0.1'
 dependencies = ('numpy', 'scipy')
-addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyflosic2')
+addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
 
 
 def info():
@@ -16,7 +16,11 @@ def info():
     for pkg in dependencies + addons:
         try:
             exec(f'import {pkg}')
-            print(f'{pkg.ljust(12)}: {eval(pkg).__version__}')
+            # PyLibXC does not use the standard version identifier
+            if pkg == 'pylibxc':
+                print(f'{pkg.ljust(12)}: {eval(pkg).version.__version__}')
+            else:
+                print(f'{pkg.ljust(12)}: {eval(pkg).__version__}')
         except ModuleNotFoundError:
             if pkg in dependencies:
                 print(f'{pkg.ljust(12)}: Dependency not installed')
