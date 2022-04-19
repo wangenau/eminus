@@ -16,20 +16,22 @@ except ImportError:
           '"pip install eminus[addons]"')
 
 from ..atoms_io import read_xyz
-from ..data import covalent_radii, symbol2number
+from ..data import symbol2number
 from ..units import bohr2ang
 
 
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     '''Generate FOD positions using the PyCOM method.
 
+    Reference: J. Comput. Chem. 40, 2843–2857.
+
     Args:
         atoms: Atoms object.
 
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
-        loc (str): Localization method  (case insensitive).
-        clean (bool): Remove pycom log files.
+        loc (str): Localization method (case insensitive).
+        clean (bool): Remove log files.
 
     Returns:
         array: FOD positions.
@@ -48,7 +50,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     mf.verbose = 0
     mf.kernel()
 
-    # Add some FODs to the positions, otherwise the method wont work
+    # Add some FODs to the positions, otherwise the method will not work
     extra = np.zeros((atoms.Ns, 3))
     atom_pyflosic = atoms.atom + ['X'] * len(extra)
     X_pyflosic = np.vstack((X, extra))
@@ -80,7 +82,7 @@ def split_atom_and_fod(atom, X):
         X (array): Atom positions.
 
     Returns:
-        tuple(list, array, array): Atom types, the respective coordinates, and FOD positions..
+        tuple(list, array, array): Atom types, the respective coordinates, and FOD positions.
     '''
     X_fod = []
     # Iterate in reverted order, because we may delete elements
@@ -93,46 +95,24 @@ def split_atom_and_fod(atom, X):
     return atom, X, X_fod
 
 
-def remove_core_fods(atoms, fods, method='auto', radius=0.1):
+def remove_core_fods(atoms, fods):
     '''Remove core FODs from a set of FOD coordinates.
 
     Args:
         atoms: Atoms object.
         fods (array): FOD positions.
 
-    Keyword Args:
-        method (str): Method to remove FODs (case insensitive).
-
-            'Automatic' will remove the nearest FODs of atoms depending on the number of core
-            states. 'Radius' removes FODs within a fixed radius around atoms, 'covalent' does the
-            same, but scaled by the atom's covalent radius.
-        radius (float): Radii scaling.
-
-            Radius size for 'radius' method, covalent radius scaling factor for 'covalent'. No
-            effect for the 'automatic' method.
-
     Returns:
-        array: Valence FODs.
+        array: Valence FOD positions.
     '''
-    method = method.lower()
-    if method in ('auto', 'automatic'):
-        for ia in range(atoms.Natoms):
-            n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
-            # In the spin-paired case two electrons are one state
-            # Since only core states are removed in pseudopotentials this value is divisible by 2
-            # +1 to account for uneven amount of core fods (e.g., for hydrogen)
-            n_core = (n_core + 1) // 2
-            dist = norm(fods - atoms.X[ia], axis=1)
-            idx = np.argsort(dist)
-            # Remove core FODs with the smallest distance to the core
-            fods = np.delete(fods, idx[:n_core], axis=0)
-    else:
-        for ia in range(atoms.Natoms):
-            dist = norm(fods - atoms.X[ia], axis=1)
-            if method in ('rad', 'radius'):
-                # Remove FODs within a sphere of given radius around atoms
-                fods = fods[dist > radius]
-            elif method in ('cov', 'covalent'):
-                # Remove FODs within a sphere scaled by the covalent radius around atoms
-                fods = fods[dist > radius * covalent_radii[atoms.atom[ia]]]
+    for ia in range(atoms.Natoms):
+        n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
+        # In the spin-paired case two electrons are one state
+        # Since only core states are removed in pseudopotentials this value is divisible by 2
+        # +1 to account for uneven amount of core fods (e.g., for hydrogen)
+        n_core = (n_core + 1) // 2
+        dist = norm(fods - atoms.X[ia], axis=1)
+        idx = np.argsort(dist)
+        # Remove core FODs with the smallest distance to the core
+        fods = np.delete(fods, idx[:n_core], axis=0)
     return fods
