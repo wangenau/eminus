@@ -91,7 +91,6 @@ class Atoms:
         self.verbose = verbose  # Output control
         self.center = center    # Center molecule in cell
         self.exc = exc          # Exchange-correlation functional
-        self.spinpol = False    # Bool for spin polarized calculations
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms

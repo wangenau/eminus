@@ -25,9 +25,8 @@ def libxc_functional(exc, n, ret, spinpol):
         array: Exchange or correlation energy density or potential.
     '''
     if spinpol:
-        spin = 'polarized'
-    else:
-        spin = 'unpolarized'
+        print('WARNING: The LibXC routine will still use an unpolarized functional.')
+    spin = 'unpolarized'
 
     inp = {}
     inp['rho'] = n

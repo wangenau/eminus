@@ -86,10 +86,7 @@ def get_Exc(atoms, n, spinpol=False):
         float: Exchange-correlation energy in Hartree.
     '''
     # Exc = (Jn)dag O(J(exc))
-    if atoms.spinpol or spinpol:
-        exc = get_exc(atoms.exc, n, 'density', spinpol=True)
-    else:
-        exc = get_exc(atoms.exc, n, 'density', spinpol=False)
+    exc = get_exc(atoms.exc, n, 'density', spinpol)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 

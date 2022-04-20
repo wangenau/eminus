@@ -3,13 +3,15 @@
 import numpy as np
 
 
-def get_exc(exc, n, ret, spinpol):
+def get_exc(exc, n, ret, spinpol=False):
     '''Handle and get exchange-correlation functionals.
 
     Args:
         exc (str): Exchange and correlation identifier, separated by a comma.
         n (array): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
+
+    Keyword Args:
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:

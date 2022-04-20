@@ -70,13 +70,13 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         print(f'--- Cell informations ---\nSide lengths: {atoms.a} Bohr\n'
               f'Cut-off energy: {atoms.ecut} Hartree\n'
               f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n')
-        print(f'--- Calculation informations ---\nSpin polarization: {atoms.spinpol}\n'
-              f'Number of states: {atoms.Ns}\n'
-              f'Occupation per state: {atoms.f}\n'
-              f'Potential: {atoms.pot}\n'
-              f'Non-local contribution: {atoms.NbetaNL > 0}\n'
-              f'XC functionals: {atoms.exc}\n'
-              f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
+        print('--- Calculation informations ---\n'
+             f'Number of states: {atoms.Ns}\n'
+             f'Occupation per state: {atoms.f}\n'
+             f'Potential: {atoms.pot}\n'
+             f'Non-local contribution: {atoms.NbetaNL > 0}\n'
+             f'XC functionals: {atoms.exc}\n'
+             f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
 
     # Set up basis functions
     guess = guess.lower()
@@ -159,7 +159,7 @@ def H(atoms, W, n=None):
 
     # Calculate the exchange-correlation potential
     # We get the full potential in the functinal definition, unlike in the Arias notation
-    vxc = get_exc(atoms.exc, n, 'potential', atoms.spinpol)
+    vxc = get_exc(atoms.exc, n, 'potential')
     Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
 
     Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
