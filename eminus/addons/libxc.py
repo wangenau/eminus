@@ -34,7 +34,7 @@ def libxc_functional(exc, n, ret, spinpol):
     # LibXC functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(exc), spin)
-    except KeyError:
+    except ValueError:
         func = LibXCFunctional(exc, spin)
     out = func.compute(inp)
     if ret == 'density':
