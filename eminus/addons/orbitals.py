@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
 from .fods import get_fods, remove_core_fods
-from ..atoms_io import write_cube
+from ..filehandler import write_cube
 from ..localizer import get_FLOs, get_FOs
 from ..scf import get_psi
 

@@ -10,7 +10,7 @@ except ImportError:
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from .fods import split_atom_and_fod
-from ..atoms_io import create_pdb, read_cube, read_xyz
+from ..filehandler import create_pdb, read_cube, read_xyz
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374

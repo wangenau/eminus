@@ -14,8 +14,8 @@ except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
-from ..atoms_io import read_xyz
 from ..data import symbol2number
+from ..filehandler import read_xyz
 from ..units import bohr2ang
 
 

@@ -10,10 +10,10 @@ Modules
 
    eminus
    eminus.atoms
-   eminus.atoms_io
    eminus.data
    eminus.energies
    eminus.exc
+   eminus.filehandler
    eminus.gth
    eminus.localizer
    eminus.operators
