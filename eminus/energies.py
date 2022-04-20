@@ -40,7 +40,7 @@ class Energy:
 def get_Ekin(atoms, Y):
     '''Calculate the kinetic energy.
 
-    Reference: Comput. Phys. Commun. 128, 1-45.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -56,7 +56,7 @@ def get_Ekin(atoms, Y):
 def get_Ecoul(atoms, n):
     '''Calculate the Coulomb energy.
 
-    Reference: Comput. Phys. Commun. 128, 1-45.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -73,7 +73,7 @@ def get_Ecoul(atoms, n):
 def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.
 
-    Reference: Comput. Phys. Commun. 128, 1-45.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -110,7 +110,7 @@ def get_Eloc(atoms, n):
 def get_Enonloc(atoms, Y):
     '''Calculate the non-local GTH energy contribution.
 
-    Reference: Phys. Rev. B 54, 1703-1710.
+    Reference: Phys. Rev. B 54, 1703.
 
     Args:
         atoms: Atoms object.
@@ -150,7 +150,7 @@ def get_Enonloc(atoms, Y):
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
     '''Calculate the Ewald energy.
 
-    Reference: J. Chem. Theory Comput. 10, 381-390.
+    Reference: J. Chem. Theory Comput. 10, 381.
 
     Args:
         atoms: Atoms object.
@@ -258,7 +258,7 @@ def get_n_single(atoms, Y):
 def get_Esic(atoms, Y):
     '''Calculate the Perdew-Zunger self-interaction energy.
 
-    Reference: Phys. Rev. B 23, 5048-5079.
+    Reference: Phys. Rev. B 23, 5048.
 
     Args:
         atoms: Atoms object.

@@ -74,7 +74,7 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 1 in LibXC.
-    Reference: Phys. Rev. 81, 385-390.
+    Reference: Phys. Rev. 81, 385.
 
     Args:
         n (array): Real-space electronic density.
@@ -103,7 +103,7 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
     '''Slater exchange functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 1 in LibXC.
-    Reference: Phys. Rev. 81, 385-390.
+    Reference: Phys. Rev. 81, 385.
 
     Args:
         n (array): Real-space electronic density.
@@ -138,7 +138,7 @@ def lda_pw_c(n, ret, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
-    Reference: Phys. Rev. B 45, 13244-13249.
+    Reference: Phys. Rev. B 45, 13244.
 
     Args:
         n (array): Real-space electronic density.
@@ -176,7 +176,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
     '''Perdew-Wang parameterization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
-    Reference: Phys. Rev. B 45, 13244-13249.
+    Reference: Phys. Rev. B 45, 13244.
 
     Args:
         n (array): Real-space electronic density.
@@ -247,7 +247,7 @@ def lda_vwn_c(n, ret, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 7 in LibXC.
-    Reference: Phys. Rev. B 22, 3812-3815.
+    Reference: Phys. Rev. B 22, 3812.
 
     Args:
         n (array): Real-space electronic density.
@@ -288,7 +288,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
     '''Vosko, Wilk, and Nusair parameterization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 7 in LibXC.
-    Reference: Phys. Rev. B 22, 3812-3815.
+    Reference: Phys. Rev. B 22, 3812.
 
     Args:
         n (array): Real-space electronic density.

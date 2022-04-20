@@ -22,7 +22,7 @@ from ..units import bohr2ang
 def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     '''Generate FOD positions using the PyCOM method.
 
-    Reference: J. Comput. Chem. 40, 2843-2857.
+    Reference: J. Comput. Chem. 40, 2843.
 
     Args:
         atoms: Atoms object.

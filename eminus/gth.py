@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Utilities to use Goedecker, Teter, and Hutter (GTH) pseudopotentials.
 
-Reference: Phys. Rev. B 54, 1703-1710.
+Reference: Phys. Rev. B 54, 1703.
 '''
 from glob import glob
 from os.path import basename
@@ -15,7 +15,7 @@ from .utils import Ylm_real
 def init_gth_loc(atoms):
     '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
-    Reference: Phys. Rev. B 54, 1703-1710.
+    Reference: Phys. Rev. B 54, 1703.
 
     Args:
         atoms: Atoms object.
@@ -62,7 +62,7 @@ def init_gth_loc(atoms):
 def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
-    Reference: Phys. Rev. B 54, 1703-1710.
+    Reference: Phys. Rev. B 54, 1703.
 
     Args:
         atoms: Atoms object.
@@ -108,7 +108,7 @@ def init_gth_nonloc(atoms):
 def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.
 
-    Reference: Phys. Rev. B 54, 1703-1710.
+    Reference: Phys. Rev. B 54, 1703.
 
     Args:
         atoms: Atoms object.
@@ -147,7 +147,7 @@ def calc_Vnonloc(atoms, W):
 def eval_proj_G(psp, l, iprj, Gm, Omega):
     '''Evaluate GTH projector functions in G-space.
 
-    Reference: Phys. Rev. B 54, 1703-1710.
+    Reference: Phys. Rev. B 54, 1703.
 
     Args:
         psp (dict): GTH parameters.
