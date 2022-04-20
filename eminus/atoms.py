@@ -76,25 +76,22 @@ class Atoms:
 
             Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','; 'libxc:LDA_X,libxc:7'
             Default: 'lda,vwn'
-        spinpol (bool): Spin-polarized calculation.
-
-            Default: False
     '''
     def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, verbose=3,
-                 pot='gth', center=False, exc='lda,vwn', spinpol=False):
-        self.atom = atom          # Atom symbols
-        self.X = X                # Atom positions
-        self.a = a                # Cell/Vacuum size
-        self.ecut = ecut          # Cut-off energy
-        self.Z = Z                # Valence charges
-        self.s = s                # Cell sampling
-        self.f = f                # Occupation numbers
-        self.Ns = Ns              # Number of states
-        self.pot = pot            # Used pseudopotential
-        self.verbose = verbose    # Output control
-        self.center = center      # Center molecule in cell
-        self.exc = exc            # Exchange-correlation functional
-        self.spinpol = spinpol    # Bool for spin polarized calculations
+                 pot='gth', center=False, exc='lda,vwn'):
+        self.atom = atom        # Atom symbols
+        self.X = X              # Atom positions
+        self.a = a              # Cell/Vacuum size
+        self.ecut = ecut        # Cut-off energy
+        self.Z = Z              # Valence charges
+        self.s = s              # Cell sampling
+        self.f = f              # Occupation numbers
+        self.Ns = Ns            # Number of states
+        self.pot = pot          # Used pseudopotential
+        self.verbose = verbose  # Output control
+        self.center = center    # Center molecule in cell
+        self.exc = exc          # Exchange-correlation functional
+        self.spinpol = False    # Bool for spin polarized calculations
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
