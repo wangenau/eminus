@@ -125,8 +125,9 @@ def wannier_cost(atoms, psirs):
         psirs (array): Set of orbitals in real-space.
 
     Returns:
-        array: Spread per orbital.
+        array: Variance per orbital.
     '''
+    # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
     costs = moments - norm(centers, axis=1)**2

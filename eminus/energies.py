@@ -40,6 +40,8 @@ class Energy:
 def get_Ekin(atoms, Y):
     '''Calculate the kinetic energy.
 
+    Reference: Comput. Phys. Commun. 128, 1-45.
+
     Args:
         atoms: Atoms object.
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
@@ -47,12 +49,14 @@ def get_Ekin(atoms, Y):
     Returns:
         float: Kinetic energy in Hartree.
     '''
-    # Arias: Ekin = -0.5 Tr(F Cdag L(C))
+    # Ekin = -0.5 Tr(F Cdag L(C))
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
 
 
 def get_Ecoul(atoms, n):
     '''Calculate the Coulomb energy.
+
+    Reference: Comput. Phys. Commun. 128, 1-45.
 
     Args:
         atoms: Atoms object.
@@ -61,13 +65,15 @@ def get_Ecoul(atoms, n):
     Returns:
         float: Coulomb energy in Hartree.
     '''
-    # Arias: Ecoul = -(Jn)dag O(phi)
+    # Ecoul = -(Jn)dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(atoms, n, spinpol=False):
     '''Calculate the exchange-correlation energy.
+
+    Reference: Comput. Phys. Commun. 128, 1-45.
 
     Args:
         atoms: Atoms object.
@@ -79,7 +85,7 @@ def get_Exc(atoms, n, spinpol=False):
     Returns:
         float: Exchange-correlation energy in Hartree.
     '''
-    # Arias: Exc = (Jn)dag O(J(exc))
+    # Exc = (Jn)dag O(J(exc))
     if atoms.spinpol or spinpol:
         exc = get_exc(atoms.exc, n, 'density', spinpol=True)
     else:
@@ -102,14 +108,16 @@ def get_Eloc(atoms, n):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(atoms, Y):
-    '''Calculate the non-local energy contribution.
+    '''Calculate the non-local GTH energy contribution.
+
+    Reference: Phys. Rev. B 54, 1703-1710.
 
     Args:
         atoms: Atoms object.
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        float: Non-local energy contribution in Hartree.
+        float: Non-local GTH energy contribution in Hartree.
     '''
     Enonloc = 0
     if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
@@ -134,13 +142,15 @@ def get_Enonloc(atoms, Y):
                                 enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
                                        betaNL_psi[ist, jbeta])
             Enonloc += atoms.f[ist] * enl
-    # We have to multiply with the cell volume, because of different orthogonalization
+    # We have to multiply with the cell volume, because of different orthogonalization methods
     return Enonloc * atoms.Omega
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
     '''Calculate the Ewald energy.
+
+    Reference: J. Chem. Theory Comput. 10, 381-390.
 
     Args:
         atoms: Atoms object.
@@ -155,7 +165,6 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
-    # See Eq. (4) https://juser.fz-juelich.de/record/16155/files/IAS_Series_06.pdf
     Natoms = atoms.Natoms
     tau = atoms.X
     Zvals = atoms.Z
@@ -190,7 +199,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     # Start by calculaton the self-energy
     Eewald = -nu * x / np.sqrt(np.pi)
-    # Add the electroneutrality-term (Eq. 11)
+    # Add the electroneutrality-term
     Eewald += -np.pi * totalcharge**2 / (2 * Omega * nu**2)
 
     dtau = np.empty(3)
@@ -243,11 +252,13 @@ def get_n_single(atoms, Y):
     '''
     Yrs = atoms.I(Y)
     n = atoms.f * np.real(Yrs.conj() * Yrs)
-    return n
+    return n.T
 
 
 def get_Esic(atoms, Y):
     '''Calculate the Perdew-Zunger self-interaction energy.
+
+    Reference: Phys. Rev. B 23, 5048-5079.
 
     Args:
         atoms: Atoms object.
@@ -261,11 +272,11 @@ def get_Esic(atoms, Y):
     Esic = 0
     for i in range(atoms.Ns):
         # Normalize single-particle densities to 1
-        ni = n_single[:, i] / atoms.f[i]
+        ni = n_single[i] / atoms.f[i]
         coul = get_Ecoul(atoms, ni)
         # The exchange part for a SIC correction has to be spin polarized
         xc = get_Exc(atoms, ni, spinpol=True)
-        # SIC energy is scaled by the occupation
+        # SIC energy is scaled by the occupation number
         Esic += (coul + xc) * atoms.f[i]
     atoms.energies.Esic = Esic
     return Esic
