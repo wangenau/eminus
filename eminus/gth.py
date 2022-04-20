@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-'''Utilities to use Goedecker, Teter, and Hutter pseudopotentials.'''
+'''Utilities to use Goedecker, Teter, and Hutter (GTH) pseudopotentials.
+
+Reference: Phys. Rev. B 54, 1703-1710.
+'''
 from glob import glob
 from os.path import basename
 
@@ -11,6 +14,8 @@ from .utils import Ylm_real
 
 def init_gth_loc(atoms):
     '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
+
+    Reference: Phys. Rev. B 54, 1703-1710.
 
     Args:
         atoms: Atoms object.
@@ -40,6 +45,7 @@ def init_gth_loc(atoms):
                   np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
                   (C1 + C2 * (3 - rlocG2) + C3 * (15 - 10 * rlocG2 + rlocG2**2) +
                   C4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
+        # Special case for G=(0,0,0), same as in QE
         Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
                  (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
 
@@ -56,6 +62,8 @@ def init_gth_loc(atoms):
 def init_gth_nonloc(atoms):
     '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
+    Reference: Phys. Rev. B 54, 1703-1710.
+
     Args:
         atoms: Atoms object.
 
@@ -67,7 +75,7 @@ def init_gth_nonloc(atoms):
     Omega = atoms.Omega
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
-    prj2beta[:] = -1  # Set to invalid index
+    prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
     for ia in range(Natoms):
@@ -84,6 +92,7 @@ def init_gth_nonloc(atoms):
     ibeta = 0
     betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
     for ia in range(Natoms):
+        # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
         psp = atoms.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
@@ -98,6 +107,8 @@ def init_gth_nonloc(atoms):
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(atoms, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.
+
+    Reference: Phys. Rev. B 54, 1703-1710.
 
     Args:
         atoms: Atoms object.
@@ -128,13 +139,15 @@ def calc_Vnonloc(atoms, W):
                                 jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
-    # We have to multiply with the cell volume, because of different orthogonalization
+    # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 def eval_proj_G(psp, l, iprj, Gm, Omega):
     '''Evaluate GTH projector functions in G-space.
+
+    Reference: Phys. Rev. B 54, 1703-1710.
 
     Args:
         psp (dict): GTH parameters.
@@ -214,31 +227,33 @@ def read_gth(system, charge=None, psp_path=None):
     h = np.zeros([4, 3, 3])
     try:
         with open(f_psp, 'r') as fh:
-            psp['symbol'] = fh.readline().split()[0]
+            psp['symbol'] = fh.readline().split()[0]  # Atom symbol
             N_all = fh.readline().split()
             N_s, N_p, N_d, N_f = int(N_all[0]), int(N_all[1]), int(N_all[2]), int(N_all[3])
-            psp['Zval'] = N_s + N_p + N_d + N_f
+            psp['Zval'] = N_s + N_p + N_d + N_f  # Valence charge
             rlocal, n_c_local = fh.readline().split()
+            # Range of the Gaussian valence charge distribution leading to the erf potential
             psp['rlocal'] = float(rlocal)
-            psp['n_c_local'] = int(n_c_local)
+            psp['n_c_local'] = int(n_c_local)  #
             for i, val in enumerate(fh.readline().split()):
                 C[i] = float(val)
             psp['C'] = C
             lmax = int(fh.readline().split()[0])
-            psp['lmax'] = lmax
+            psp['lmax'] = lmax  #
             for iiter in range(lmax):
                 rc[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
                 for jiter in range(Nproj_l[iiter]):
                     tmp = fh.readline().split()
                     for iread, kiter in enumerate(range(jiter, Nproj_l[iiter])):
                         h[iiter, jiter, kiter] = float(tmp[iread])
+            # Radius of the non-local part
             psp['rc'] = rc
-            psp['Nproj_l'] = Nproj_l
+            psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
             for k in range(3):
                 for i in range(2):
                     for j in range(i + 1, 2):
                         h[k, j, i] = h[k, i, j]
-            psp['h'] = h
+            psp['h'] = h  # Coefficients of the non-local projector functions
     except FileNotFoundError:
         print(f'ERROR: There is no GTH pseudopotential for "{basename(f_psp)}"')
     return psp
