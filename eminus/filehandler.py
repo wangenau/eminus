@@ -151,7 +151,7 @@ def read_cube(filename, info=False):
 def write_cube(atoms, field, filename, extra=None):
     '''Generate cube files from given field data.
 
-    There is no standard for cube files. The following format has been used.
+    There is no standard for cube files. The following format has been used to work with VESTA.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:

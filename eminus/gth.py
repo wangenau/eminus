@@ -31,23 +31,23 @@ def init_gth_loc(atoms):
     Vloc = np.zeros(len(G2))  # Total local potential
     for isp in species:
         psp = atoms.GTH[isp]
-        rloc = psp['rlocal']
-        Zion = psp['Zval']
-        C1 = psp['C'][0]
-        C2 = psp['C'][1]
-        C3 = psp['C'][2]
-        C4 = psp['C'][3]
+        rloc = psp['rloc']
+        Zion = psp['Zion']
+        c1 = psp['cloc'][0]
+        c2 = psp['cloc'][1]
+        c3 = psp['cloc'][2]
+        c4 = psp['cloc'][3]
 
         omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
         rlocG2 = G2[1:] * rloc**2
 
         Vsp[1:] = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2[1:] + \
                   np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
-                  (C1 + C2 * (3 - rlocG2) + C3 * (15 - 10 * rlocG2 + rlocG2**2) +
-                  C4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
+                  (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
+                  c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
         # Special case for G=(0,0,0), same as in QE
         Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
-                 (2 * np.pi)**1.5 * rloc**3 * (C1 + 3 * C2 + 15 * C3 + 105 * C4)
+                 (2 * np.pi)**1.5 * rloc**3 * (c1 + 3 * c2 + 15 * c3 + 105 * c4)
 
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
@@ -159,7 +159,7 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     Returns:
         array: GTH projector.
     '''
-    rrl = psp['rc'][l]
+    rrl = psp['rp'][l]
     Gr2 = (Gm * rrl)**2
 
     if l == 0:  # s-channel
@@ -221,39 +221,41 @@ def read_gth(system, charge=None, psp_path=None):
                   f'Continue with "{basename(f_psp)}".')
 
     psp = {}
-    C = np.zeros(4)
-    rc = np.zeros(4)
+    cloc = np.zeros(4)
+    rp = np.zeros(4)
     Nproj_l = np.zeros(4, dtype=int)
     h = np.zeros([4, 3, 3])
     try:
         with open(f_psp, 'r') as fh:
-            psp['symbol'] = fh.readline().split()[0]  # Atom symbol
+            # Skip the first line, since we don't need the atom symbol here. If needed, use
+            # psp['atom'] = fh.readline().split()[0]  # Atom symbol
+            fh.readline()
             N_all = fh.readline().split()
             N_s, N_p, N_d, N_f = int(N_all[0]), int(N_all[1]), int(N_all[2]), int(N_all[3])
-            psp['Zval'] = N_s + N_p + N_d + N_f  # Valence charge
-            rlocal, n_c_local = fh.readline().split()
-            # Range of the Gaussian valence charge distribution leading to the erf potential
-            psp['rlocal'] = float(rlocal)
-            psp['n_c_local'] = int(n_c_local)  #
+            psp['Zion'] = N_s + N_p + N_d + N_f  # Ionic charge
+            # Skip the number of local coefficients, since we don't need it. If needed, use
+            # rloc, n_c_local = fh.readline().split()
+            # psp['n_c_local'] = int(n_c_local)  # Number of local coefficients
+            rloc = fh.readline().split()[0]
+            psp['rloc'] = float(rloc)  # Range of local Gaussian charge distribution
             for i, val in enumerate(fh.readline().split()):
-                C[i] = float(val)
-            psp['C'] = C
+                cloc[i] = float(val)
+            psp['cloc'] = cloc  # Coefficients for the local part
             lmax = int(fh.readline().split()[0])
-            psp['lmax'] = lmax  #
+            psp['lmax'] = lmax  # Maximal angular momentum in the non-local part
             for iiter in range(lmax):
-                rc[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
+                rp[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
                 for jiter in range(Nproj_l[iiter]):
                     tmp = fh.readline().split()
                     for iread, kiter in enumerate(range(jiter, Nproj_l[iiter])):
                         h[iiter, jiter, kiter] = float(tmp[iread])
-            # Radius of the non-local part
-            psp['rc'] = rc
+            psp['rp'] = rp  # Projector radius for each angular momentum
             psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
             for k in range(3):
                 for i in range(2):
                     for j in range(i + 1, 2):
                         h[k, j, i] = h[k, i, j]
-            psp['h'] = h  # Coefficients of the non-local projector functions
+            psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
         print(f'ERROR: There is no GTH pseudopotential for "{basename(f_psp)}"')
     return psp

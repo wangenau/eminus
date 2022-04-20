@@ -241,7 +241,7 @@ class Atoms:
                 Z = []
                 for ia in range(self.Natoms):
                     self.GTH[self.atom[ia]] = read_gth(self.atom[ia])
-                    Z.append(self.GTH[self.atom[ia]]['Zval'])
+                    Z.append(self.GTH[self.atom[ia]]['Zion'])
                 self.Z = np.asarray(Z)
             # Setup potentials
             self.Vloc = init_gth_loc(self)
