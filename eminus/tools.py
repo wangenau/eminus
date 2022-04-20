@@ -5,9 +5,10 @@ import numpy as np
 from .scf import get_epsilon
 
 
-# Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def cutoff2gridspacing(E):
     '''Convert plane wave energy cut-off to a real-space grid spacing.
+
+    Reference: Phys. Rev. B 54, 14362.
 
     Args:
         E (float): Energy in Hartree.
@@ -18,9 +19,10 @@ def cutoff2gridspacing(E):
     return np.pi / np.sqrt(2 * E)
 
 
-# Adapted from GPAW: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/utilities/tools.py
 def gridspacing2cutoff(h):
     '''Convert real-space grid spacing to plane wave energy cut-off.
+
+    Reference: Phys. Rev. B 54, 14362.
 
     Args:
         h (float): Grid spacing in Bohr.
@@ -28,8 +30,6 @@ def gridspacing2cutoff(h):
     Returns:
         float: Cut-off in Hartree.
     '''
-    # In Hartree units, E=k^2/2, where k_max is approx. given by pi/h
-    # See PRB, Vol 54, 14362 (1996)
     return 0.5 * (np.pi / h)**2
 
 
@@ -66,7 +66,8 @@ def inertia_tensor(coords, masses=None):
     if masses is None:
         masses = np.ones(len(coords))
 
-    # For the definition see https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
+    # The inertia tensor for a set of point masses can be calculated with simple sumation
+    # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
     I = np.empty((3, 3))
     I[0][0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
     I[1][1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
@@ -81,14 +82,16 @@ def inertia_tensor(coords, masses=None):
 def get_dipole(atoms):
     '''Calculate the electric dipole moment.
 
+    Reference: J. Chem. Phys. 155, 224109.
+
     Args:
         atoms: Atoms object.
 
     Returns:
         array: Electric dipole moment in e times Bohr.
     '''
-    # The dipole may be extremely large. This can be because of periodic boundary conditions.
-    # E.g., the density gets "smeared" to the edges if the atom sits at one edge.
+    # The dipole may be extremely large. This can be because of periodic boundary conditions,
+    # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
     n = atoms.n
     if n is None:
@@ -109,6 +112,8 @@ def get_dipole(atoms):
 def get_IP(atoms):
     '''Calculate the ionization potential by calculating the negative HOMO energy.
 
+    Reference: Physica 1, 104.
+
     Args:
         atoms: Atoms object.
 
@@ -120,19 +125,19 @@ def get_IP(atoms):
     return IP
 
 
-def check_ortho(atoms, func):
+def check_ortho(atoms, func, eps=1e-9):
     '''Check the orthogonality condition for a set of functions.
 
     Args:
         atoms: Atoms object.
         func (array): Discretized set of functions.
 
+    Keyword Args:
+        eps (float): Tolerance for the condition.
+
     Returns:
-        bool: Orthogonality status of the set of functions.
+        bool: Orthogonality status for the set of functions.
     '''
-    # Orthogonality condition: \int func1^* func2 dr = 0
-    # Tolerance for the condition
-    eps = 1e-9
     # It makes no sense to calculate anything for only one function
     if len(func) == 1:
         print('WARNING: Need at least two functions to check their orthogonality.')
@@ -144,8 +149,8 @@ def check_ortho(atoms, func):
     dV = atoms.Omega / np.prod(atoms.s)
 
     ortho_bool = True
-
     # Check the condition for every combination
+    # Orthogonality condition: \int func1^* func2 dr = 0
     for i in range(func.shape[1]):
         for j in range(i + 1, func.shape[1]):
             res = dV * np.sum(func[:, i].conj() * func[:, j])
@@ -157,27 +162,27 @@ def check_ortho(atoms, func):
     return ortho_bool
 
 
-def check_norm(atoms, func):
+def check_norm(atoms, func, eps=1e-9):
     '''Check the normalization condition for a set of functions.
 
     Args:
         atoms: Atoms object.
         func (array): Discretized set of functions.
 
+    Keyword Args:
+        eps (float): Tolerance for the condition.
+
     Returns:
-        bool: Normalization status of the set of functions.
+        bool: Normalization status for the set of functions.
     '''
-    # Normality condition: \int func^* func dr = 1
-    # Tolerance for the condition
-    eps = 1e-9
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
     dV = atoms.Omega / np.prod(atoms.s)
 
     norm_bool = True
-
     # Check the condition for every function
+    # Normality condition: \int func^* func dr = 1
     for i in range(func.shape[1]):
         res = dV * np.sum(func[:, i].conj() * func[:, i])
         tmp_bool = np.abs(1 - res) < eps
@@ -196,7 +201,7 @@ def check_orthonorm(atoms, func):
         func (array): Discretized set of functions.
 
     Returns:
-        bool: Orthonormality status of the set of functions.
+        bool: Orthonormality status for the set of functions.
     '''
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
