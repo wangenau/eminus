@@ -14,6 +14,8 @@ from .version import __version__
 def read_xyz(filename, info=False):
     '''Load atom species and positions from xyz files.
 
+    File format definition: https://openbabel.org/wiki/XYZ_%28format%29
+
     Args:
         filename (str): xyz input file path/name.
 
@@ -23,33 +25,37 @@ def read_xyz(filename, info=False):
     Returns:
         tuple(list, array): Atom species and positions.
     '''
-    # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
+    if not filename.endswith('.xyz'):
+        filename = f'{filename}.xyz'
+
     with open(filename, 'r') as fh:
         lines = fh.readlines()
 
-    # The first line contains the number of atoms
-    Natoms = int(lines[0].strip())
+        # The first line contains the number of atoms
+        Natoms = int(lines[0].strip())
 
-    # The second line can contain a comment, print it if available
-    comment = lines[1].strip()
-    if info:
-        print(f'XYZ file comment: "{comment}"')
+        # The second line can contain a comment, print it if available
+        comment = lines[1].strip()
+        if info:
+            print(f'XYZ file comment: "{comment}"')
 
-    atom = []
-    X = []
-    # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
-    for line in lines[2:2 + Natoms]:
-        line_split = line.strip().split()
-        atom.append(line_split[0])
-        X.append(np.float_(line_split[1:4]))
+        atom = []
+        X = []
+        # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
+        for line in lines[2:2 + Natoms]:
+            line_split = line.strip().split()
+            atom.append(line_split[0])
+            X.append(np.float_(line_split[1:4]))
 
-    # xyz files are in angstrom, so convert to bohr
+    # xyz files are in Angstrom, so convert to Bohr
     X = ang2bohr(np.asarray(X))
     return atom, X
 
 
 def write_xyz(atoms, filename, extra=None):
     '''Generate xyz files from atoms objects.
+
+    File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
         atoms: Atoms object.
@@ -58,7 +64,6 @@ def write_xyz(atoms, filename, extra=None):
     Keyword Args:
         extra (array): Extra coordinates to write.
     '''
-    # XYZ file definitions: https://en.wikipedia.org/wiki/XYZ_file_format
     atom = atoms.atom
     Natoms = atoms.Natoms
     X = atoms.X
@@ -66,7 +71,7 @@ def write_xyz(atoms, filename, extra=None):
     if not filename.endswith('.xyz'):
         filename = f'{filename}.xyz'
 
-    # Convert the coordinates from atomic units to angstrom
+    # Convert the coordinates from atomic units to Angstrom
     X = bohr2ang(X)
     if extra is not None:
         extra = bohr2ang(extra)
@@ -83,7 +88,7 @@ def write_xyz(atoms, filename, extra=None):
         fp.write(f'XYZ file generated with eminus {__version__} at {ctime()}\n')
         for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
-        # Add extra coordinates, if desired. The will default to X (no atom type).
+        # Add extra coordinates if desired. The atom symbol will default to X (no atom type).
         if extra is not None:
             for ie in extra:
                 fp.write(f'X  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
@@ -92,6 +97,9 @@ def write_xyz(atoms, filename, extra=None):
 
 def read_cube(filename, info=False):
     '''Load atom and cell data from cube files.
+
+    There is no standard for cube files. The following format has been used.
+    File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
         filename (str): cube input file path/name.
@@ -102,38 +110,39 @@ def read_cube(filename, info=False):
     Returns:
         tuple(list, array, float, array, int): Species, positions, charges, cell size, and sampling.
     '''
-    # It seems, that there is no standard for cube files. The following definition is taken from:
-    # https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
+    if not filename.endswith('.cube'):
+        filename = f'{filename}.cube'
+
     # Atomic units and a cuboidal unit cell that starts at (0,0,0) are assumed.
     with open(filename, 'r') as fh:
         lines = fh.readlines()
 
-    # The first and second line can contain comments, print them if available
-    comment = f'{lines[0].strip()}\n{lines[1].strip()}'
-    if info:
-        print(f'XYZ file comment: "{comment}"')
+        # The first and second line can contain comments, print them if available
+        comment = f'{lines[0].strip()}\n{lines[1].strip()}'
+        if info:
+            print(f'XYZ file comment: "{comment}"')
 
-    # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/s
-    # A cuboidal unit cell is assumed, so only use the diagonal entries
-    s = np.empty(3, dtype=int)
-    a = np.empty(3)
-    for i, line in enumerate(lines[3:6]):
-        line_split = line.strip().split()
-        s[i] = line_split[0]
-        a[i] = s[i] * np.float_(line_split[i + 1])
+        # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/s
+        # A cuboidal unit cell is assumed, so only use the diagonal entries
+        s = np.empty(3, dtype=int)
+        a = np.empty(3)
+        for i, line in enumerate(lines[3:6]):
+            line_split = line.strip().split()
+            s[i] = line_split[0]
+            a[i] = s[i] * np.float_(line_split[i + 1])
 
-    atom = []
-    X = []
-    Z = []
-    # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
-    for line in lines[6:]:
-        line_split = line.strip().split()
-        # If the first value is not a (positive) integer, we have reached the field data
-        if not line_split[0].isdigit():
-            break
-        atom.append(number2symbol[int(line_split[0])])
-        Z.append(line_split[1])
-        X.append(np.float_(line_split[2:5]))
+        atom = []
+        X = []
+        Z = []
+        # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
+        for line in lines[6:]:
+            line_split = line.strip().split()
+            # If the first value is not a (positive) integer, we have reached the field data
+            if not line_split[0].isdigit():
+                break
+            atom.append(number2symbol[int(line_split[0])])
+            Z.append(line_split[1])
+            X.append(np.float_(line_split[2:5]))
 
     X = np.asarray(X)
     return atom, X, Z, a, s
@@ -141,6 +150,9 @@ def read_cube(filename, info=False):
 
 def write_cube(atoms, field, filename, extra=None):
     '''Generate cube files from given field data.
+
+    There is no standard for cube files. The following format has been used.
+    File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
         atoms: Atoms object.
@@ -150,8 +162,6 @@ def write_cube(atoms, field, filename, extra=None):
     Keyword Args:
         extra (array): Extra coordinates to write.
     '''
-    # It seems, that there is no standard for cube files. The following definition will work with
-    # VESTA and is taken from: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
     # Atomic units are assumed, so there is no need for conversion.
     atom = atoms.atom
     Natoms = atoms.Natoms
@@ -213,12 +223,15 @@ def write_cube(atoms, field, filename, extra=None):
 
 
 def save_atoms(atoms, filename):
-    '''Save atoms objects to a pickle file.
+    '''Save atoms objects in a pickle file.
 
     Args:
         atoms: Atoms object.
         filename (str): xyz input file path/name.
     '''
+    if not filename.endswith(('.pickle', '.pkl')):
+        filename = f'{filename}.pickle'
+
     with open(filename, 'wb') as fp:
         dump(atoms, fp, HIGHEST_PROTOCOL)
     return
@@ -233,12 +246,20 @@ def load_atoms(filename):
     Returns:
         Atoms object.
     '''
+    if not filename.endswith(('.pickle', '.pkl')):
+        filename = f'{filename}.pickle'
+
     with open(filename, 'rb') as fh:
         return load(fh)
 
 
 def create_pdb(atom, X, a=None):
-    '''Convert xyz files to pdb format.
+    '''Convert atom symbols and positions to the pdb format.
+
+    File format definitions:
+        CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
+
+        ATOM: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
 
     Args:
         atom (list): Atom symbols.
@@ -250,9 +271,6 @@ def create_pdb(atom, X, a=None):
     Returns:
         str: pdb file format.
     '''
-    # pdb file definitions:
-    # For CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
-    # For ATOM: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
     # Convert Bohr to Angstrom
     X = bohr2ang(X)
     if a is not None:
@@ -272,7 +290,7 @@ def create_pdb(atom, X, a=None):
         pdb += f'{90:7.2f}'.rjust(7)    # 48-54 gamma
         pdb += ' '
         pdb += 'P 1'.ljust(11)          # 56-66 Space group
-        # pdb += '1'.rjust(4)             # 67-70 Z value
+        # pdb += '1'.rjust(4)           # 67-70 Z value
 
     # Create molecule data
     pdb += '\nMODEL 1'

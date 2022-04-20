@@ -5,7 +5,8 @@ from eminus.units import bohr2ang
 atom, X = read_xyz('CH4.xyz')
 
 # To immediately create an Atoms object you can do the following
-atoms = Atoms(*read_xyz('CH4.xyz'))
+# You can also omit the file ending, they will be appended automatically
+atoms = Atoms(*read_xyz('CH4'))
 
 # Cube files are supported as well
 # Here, lattice information are given as well
