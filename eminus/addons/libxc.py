@@ -15,6 +15,8 @@ def libxc_functional(exc, n, ret, spinpol):
 
     Only LDA functionals should be used.
 
+    Reference: SoftwareX 7, 1.
+
     Args:
         exc (str or int): Exchange or correlation identifier.
         n (array): Real-space electronic density.

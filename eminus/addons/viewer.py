@@ -17,6 +17,8 @@ from ..filehandler import create_pdb, read_cube, read_xyz
 def view_mol(filename, isovalue=0.01, **kwargs):
     '''Display molecules and orbitals.
 
+    Reference: Bioinformatics 34, 1241.
+
     Args:
         filename (str): Input file path/name. This can be either a cube or xyz file.
 
