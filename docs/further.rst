@@ -23,6 +23,12 @@ To apply changes to the code without reinstalling the code, install eminus with
    cd eminus
    pip install -e .
 
+To install all packages needed for development as listed below, use the following option
+
+.. code-block:: bash
+
+   pip install -e .[dev]
+
 Testing
 -------
 

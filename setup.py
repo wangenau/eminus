@@ -46,7 +46,8 @@ setup(
     package_data={'eminus.pade_gth': ['*.gth']},
     zip_safe=False,
     extras_require={
-        'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'pylibxc2', 'vispy']
+        'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'pylibxc2', 'vispy'],
+        'dev': ['flake8', 'flake8-docstrings', 'flake8-import-order', 'furo', 'pytest', 'sphinx']
     },
     python_requires='>=3.6',
     project_urls={
