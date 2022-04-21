@@ -126,7 +126,7 @@ def calc_Vnonloc(atoms, W):
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
 
-        betaNL_psi = np.dot(W.T.conj(), betaNL).conj()
+        betaNL_psi = (W.conj().T @ betaNL).conj()
 
         for ist in range(Nstates):
             for ia in range(Natoms):

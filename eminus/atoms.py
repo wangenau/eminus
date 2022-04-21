@@ -197,7 +197,7 @@ class Atoms:
             X = self.X
             I = inertia_tensor(self.X)
             _, eigvecs = eig(I)
-            self.X = np.dot(inv(eigvecs), self.X.T).T
+            self.X = (inv(eigvecs) @ self.X.T).T
         # Shift system such that its geometric center of mass is in the center of the unit cell
         if self.center or self.center == 'shift':
             X = self.X

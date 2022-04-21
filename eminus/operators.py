@@ -209,7 +209,7 @@ def T(atoms, W, dr):
         array: The operator applied on W.
     '''
     out = np.empty_like(W, dtype=complex)
-    factor = np.exp(-1j * np.dot(atoms.G[atoms.active], dr))
+    factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
     for i in range(atoms.Ns):
         out[:, i] = factor * W[:, i]
     return out

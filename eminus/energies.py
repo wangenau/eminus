@@ -123,7 +123,7 @@ def get_Enonloc(atoms, Y):
         prj2beta = atoms.prj2beta
         betaNL = atoms.betaNL
 
-        betaNL_psi = np.dot(Y.T.conj(), betaNL).conj()
+        betaNL_psi = (Y.conj().T @ betaNL).conj()
 
         for ist in range(Nstates):
             enl = 0
@@ -171,17 +171,17 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     t1 = LatVecs[0]
     t2 = LatVecs[1]
     t3 = LatVecs[2]
-    t1m = np.sqrt(np.dot(t1, t1))
-    t2m = np.sqrt(np.dot(t2, t2))
-    t3m = np.sqrt(np.dot(t3, t3))
+    t1m = np.sqrt(t1 @ t1)
+    t2m = np.sqrt(t2 @ t2)
+    t3m = np.sqrt(t3 @ t3)
 
     RecVecs = 2 * np.pi * inv(LatVecs.conj().T)
     g1 = RecVecs[0]
     g2 = RecVecs[1]
     g3 = RecVecs[2]
-    g1m = np.sqrt(np.dot(g1, g1))
-    g2m = np.sqrt(np.dot(g2, g2))
-    g3m = np.sqrt(np.dot(g3, g3))
+    g1m = np.sqrt(g1 @ g1)
+    g2m = np.sqrt(g2 @ g2)
+    g3m = np.sqrt(g3 @ g3)
 
     x = np.sum(Zvals**2)
     totalcharge = np.sum(Zvals)
