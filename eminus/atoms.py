@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Atoms object definitions.'''
+'''Atoms object definition.'''
 from re import sub
 
 import numpy as np
@@ -14,71 +14,78 @@ from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
 class Atoms:
-    '''Atoms object that holds all necessary calculation parameters.
+    '''Atoms object that holds all system and cell parameters.
 
     Args:
-        atom (str or list of str): Atom symbols.
+        atom (str or list or tuple): Atom symbols.
 
-            Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']
-        X (list or array of floats): Atom positions.
+            Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']; ('C', 'H', 'H', 'H', 'H')
+        X (list or tuple or array): Atom positions.
 
-            Examples: [0, 0, 0]; array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
-            array([[[0, 0, 0], [1, 1, 1]]])
+            Examples: (0, 0, 0); array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
 
     Keyword Args:
-        a (float list or array of floats): Cell size or vacuum size.
+        a (float or list or tuple or array): Cell size or vacuum size.
 
             A cuboidal box with the same side lengths will be created.
+
+            Examples: 10; [10, 10, 10]; (7, 8, 9),
             Default: 20 Bohr (ca. 10.5 Angstrom).
         ecut (float or None): Cut-off energy.
 
             None will disable the G-Vector truncation (needs a separate s).
             Default: 20 Hartree (ca. 544 eV).
-        Z (int or list or array of ints or None): Valence charge per atom.
+        Z (int or list or tuple or array or None): Valence charge per atom.
 
-            The charges should not differ for same species.
-            None will use valence charges from GTH pseudopotentials. The same charge for every atom
-            will be assumed for single integers.
-            Example: 1; [4, 1, 1, 1, 1]
+            The charges should not differ for same species. None will use valence charges from GTH
+            files. The same charge for every atom will be assumed for single integers.
+
+            Example: 1; [4, 1, 1, 1, 1],
             Default: None
-        s (int or list or array of ints): Real-space sampling of the cell/vacuum.
+        s (int or list or tuple or array or None): Real-space sampling of the cell.
 
             None will make the sampling dependent on a and ecut.
-            Example: 30; [30, 40, 50]; array([30, 40, 50])
+
+            Example: 30; [30, 40, 50]; array([30, 40, 50]),
             Default: None
-        f (float or list or array of floats): Occupation numbers per state.
+        f (float or list or tuple or array or None): Occupation numbers per state.
 
             The last state will be adjusted if the sum of f is not equal to the sum of Z.
             None will assume occupations of 2.
-            Example: 2; [2, 2/3, 2/3, 2/3]; array([2, 2/3, 2/3, 2/3])
+
+            Example: 2; [2, 2, 2, 2]; array([2, 2/3, 2/3, 2/3]),
             Default: None
-        Ns (int): Number of states.
+        Ns (int or None): Number of states.
 
             None will get the number of states from f or assume occupations of 2 and divide the sum
             of Z by it.
+
             Default: None
-        verbose (int): Level of output.
-
-            Larger numbers mean more output.
-            Default: 3
-        pot (str): Type of pseudopotential (case insensitive).
-
-            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge'
-            Default: 'gth'
-        center (bool): Center the system inside the cell.
+        center (bool or str): Center the system inside the cell (case insensitive).
 
             Align the geometric center of mass with the center of the call and rotate the system,
             such that its geometric moment of inertia aligns with the coordinate axes.
+
+            Example: True; 'shift'; 'rotate',
             Default: False
+        pot (str): Type of pseudopotential (case insensitive).
+
+            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge',
+            Default: 'gth'
         exc (str): Comma-separated exchange-correlation functional description (case insensitive).
 
             Adding 'libxc:' before a functional will try to use the LibXC interface.
 
-            Example: 'lda,vwn'; 'lda,pw'; 'lda,'; ',vwn';0 ',pw'; ','; 'libxc:LDA_X,libxc:7'
+            Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
             Default: 'lda,vwn'
+        verbose (int): Level of output.
+
+            Larger numbers mean more output.
+
+            Default: 3
     '''
-    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, verbose=3,
-                 pot='gth', center=False, exc='lda,vwn'):
+    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, center=False,
+                 pot='gth', exc='lda,vwn', verbose=3):
         self.atom = atom        # Atom symbols
         self.X = X              # Atom positions
         self.a = a              # Cell/Vacuum size
@@ -87,35 +94,49 @@ class Atoms:
         self.s = s              # Cell sampling
         self.f = f              # Occupation numbers
         self.Ns = Ns            # Number of states
-        self.pot = pot          # Used pseudopotential
-        self.verbose = verbose  # Output control
         self.center = center    # Center molecule in cell
-        self.exc = exc          # Exchange-correlation functional
+        self.pot = pot.lower()  # Used pseudopotential
+        self.exc = exc.lower()  # Exchange-correlation functional
+        self.verbose = verbose  # Output control
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
         self.R = None         # Unit cell
         self.Omega = None     # Unit cell volume
         self.r = None         # Sample points in unit cell
+        self.G = None         # G-vectors
         self.G2 = None        # Squared magnitudes of G-vectors
-        self.Sf = None        # Structure factor
         self.active = None    # Mask for active G-vectors
         self.G2c = None       # Truncated squared magnitudes of G-vectors
+        self.Sf = None        # Structure factor
         self.GTH = {}         # Dictionary of GTH parameters per atom species
         self.Vloc = None      # Local pseudopotential contribution
         self.NbetaNL = 0      # Number of projector functions for the non-local gth potential
         self.prj2beta = None  # Index matrix to map to the correct projector function
         self.betaNL = None    # Atomic-centered projector functions
+        self.update()
 
-        # Parameters after SCF calculations
+        # Parameters after the SCF calculation
         self.W = None             # Basis functions
         self.n = None             # Electronic density
         self.energies = Energy()  # Energy object that holds energy contributions
 
-        self.update()
-
     def update(self):
-        '''Check inputs and update them if none are given.'''
+        '''Validate inputs, update them and build all necessary parameters.'''
+        self._set_atom()
+        self._set_charge()
+        self._set_cell_size()
+        self._set_positions()
+        self._set_sampling()
+        self._set_states()
+        M, N = self._get_index_matrices()
+        self._set_cell(M)
+        self._set_G(N)
+        self._set_potential()
+        return
+
+    def _set_atom(self):
+        '''Validate the atom input and calculate the number of atoms.'''
         # If a string is given for atom symbols convert them to a list of strings
         if isinstance(self.atom, str):
             # Insert a whitespace before every capital letter, these can appear once or none at all
@@ -131,23 +152,66 @@ class Atoms:
                     atom += [ia]
             self.atom = atom
 
+        # Get the number of atoms
         self.Natoms = len(self.atom)
+        return
 
-        # We need atom positions as a two-dimensional array
-        self.X = np.asarray(self.X)
-        if self.X.ndim == 1:
-            self.X = np.array([self.X])
-
+    def _set_charge(self):
+        '''Validate the Z input and calculate charges if necessary.'''
         # If only one charge is given, assume it is the charge for every atom
         if isinstance(self.Z, (int, np.integer)):
             self.Z = [self.Z] * self.Natoms
         if isinstance(self.Z, (list, tuple)):
             self.Z = np.asarray(self.Z)
 
+        # If no charge is given, use the ionic charge from the GTH files
+        if self.Z is None:
+            Z = []
+            for ia in range(self.Natoms):
+                GTH_dict = read_gth(self.atom[ia])
+                Z.append(GTH_dict['Zion'])
+            self.Z = np.asarray(Z)
+        return
+
+    def _set_cell_size(self):
+        '''Validate the a input.'''
+        # Do this early on, since it is needed in many functions
         if isinstance(self.a, (int, np.integer, float, np.floating)):
             self.a = self.a * np.ones(3)
         if isinstance(self.a, (list, tuple)):
             self.a = np.asarray(self.a)
+        return
+
+    def _set_positions(self):
+        '''Validate the X and center input and center the system if desired.'''
+        # We need atom positions as an two-dimensional array
+        self.X = np.asarray(self.X)
+        if self.X.ndim == 1:
+            self.X = np.array([self.X])
+        if isinstance(self.center, str):
+            self.center = self.center.lower()
+
+        # Center system such that the geometric inertia tensor will be diagonal
+        # Rotate before shifting!
+        if self.center or self.center == 'rotate':
+            X = self.X
+            I = inertia_tensor(self.X)
+            _, eigvecs = eig(I)
+            self.X = np.dot(inv(eigvecs), self.X.T).T
+        # Shift system such that its geometric center of mass is in the center of the unit cell
+        if self.center or self.center == 'shift':
+            X = self.X
+            com = center_of_mass(X)
+            self.X = X - (com - self.a / 2)
+        return
+
+    def _set_sampling(self):
+        '''Validate the s input and calculate it if necessary.'''
+        # Choose the same sampling for every direction if an integer is given
+        if isinstance(self.s, (int, np.integer)):
+            self.s = self.s * np.ones(3, dtype=int)
+        if isinstance(self.s, (list, tuple)):
+            self.s = np.asarray(self.s)
 
         # Make sampling dependent of ecut if no sampling is given
         if self.s is None:
@@ -162,36 +226,39 @@ class Atoms:
             for i in range(len(s)):
                 s[i] = next_fast_len(s[i])
             self.s = s
-        # Choose the same sampling for every direction if an integer is given
-        if isinstance(self.s, (int, np.integer)):
-            self.s = self.s * np.ones(3, dtype=int)
-        if isinstance(self.s, (list, tuple)):
-            self.s = np.asarray(self.s)
+        return
 
-        # Lower the potential string
-        self.pot = self.pot.lower()
+    def _set_states(self):
+        '''Validate the f and Ns input and calculate the states if necessary.'''
+        if isinstance(self.f, (list, tuple)):
+            self.f = np.asarray(self.f)
+        # If no states are provided use the length of the occupations
+        if isinstance(self.f, np.ndarray) and self.Ns is None:
+            self.Ns = len(self.f)
+        # If one occupation and the number of states is given, use it for every state
+        if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
+            self.f = self.f * np.ones(self.Ns)
+        # If no occupations and the number of states is given, assume 2
+        if self.f is None and self.Ns is not None:
+            self.f = 2 * np.ones(self.Ns)
+        # If the number of states is None and the occupations is a number or None, we are in trouble
+        if self.Ns is None:
+            # If no occupations is given, assume 2
+            if self.f is None:
+                self.f = 2
+            # Assume the number of states by dividing the total valence charge by the occupations
+            Ztot = np.sum(self.Z)
+            self.Ns = int(np.ceil(Ztot / self.f))
+        # If the sum of valence charges is not divisible by occupations, change the last occupation
+        if isinstance(self.f, (int, np.integer, float, np.floating)):
+            mod = np.sum(self.Z) % self.f
+            self.f = self.f * np.ones(self.Ns)
+            if mod != 0:
+                self.f[-1] = mod
+        return
 
-        # Center molecule by its geometric center of mass in the unit cell
-        # Also rotate it such that the geometric inertia tensor will be diagonal
-        if self.center:
-            # Rotate the system
-            X = self.X
-            I = inertia_tensor(X)
-            _, eigvecs = eig(I)
-            X = np.dot(inv(eigvecs), X.T).T
-
-            # Shift to center of the box
-            com = center_of_mass(X)
-            self.X = X - (com - self.a / 2)
-
-        # Lower the exchange-correlation string
-        self.exc = self.exc.lower()
-
-        # Build a cuboidal unit cell and calculate its volume
-        R = self.a * np.eye(3)
-        self.R = R
-        self.Omega = np.abs(det(R))
-
+    def _get_index_matrices(self):
+        '''Build index matrices M and N to build the real and reciprocal space samplings.'''
         # Build index matrix M
         ms = np.arange(np.prod(self.s))
         m1 = ms % self.s[0]
@@ -204,76 +271,48 @@ class Atoms:
         n2 = m2 - (m2 > self.s[1] / 2) * self.s[1]
         n3 = m3 - (m3 > self.s[2] / 2) * self.s[2]
         N = np.column_stack((n1, n2, n3))
+        return M, N
 
-        # Build sampling points
-        r = M @ inv(np.diag(self.s)) @ R.T
-        self.r = r
+    def _set_cell(self, M):
+        '''Build the unit cell and create the respective sampling.'''
+        # Build a cuboidal unit cell and calculate its volume
+        R = self.a * np.eye(3)
+        self.R = R
+        self.Omega = np.abs(det(R))
+        # Build real-space sampling points
+        self.r = M @ inv(np.diag(self.s)) @ R.T
+        return
 
+    def _set_G(self, N):
+        '''Build G-vectors, build squared magnitudes G2, and generate the active space.'''
         # Build G-vectors
-        G = 2 * np.pi * N @ inv(R)
+        G = 2 * np.pi * N @ inv(self.R)
         self.G = G
-
         # Calculate squared-magnitudes of G-vectors
         G2 = np.sum(G**2, axis=1)
         self.G2 = G2
-
-        # Calculate the structure factor per atom
-        Sf = np.exp(1j * G @ self.X.conj().T).T
-        self.Sf = Sf
-
-        # Restrict the G and G2
+        # Calculate the G2 restriction
         if self.ecut is not None:
             active = np.nonzero(G2 <= 2 * self.ecut)
         else:
             active = np.nonzero(G2 >= 0)  # Trivial condition to produce the right shape
         self.active = active
-        self.Gc = G[active]
         self.G2c = G2[active]
 
-        # Update the potentials
+        # Calculate the structure factor per atom
+        self.Sf = np.exp(1j * G @ self.X.conj().T).T
+        return
+
+    def _set_potential(self):
+        '''Build the potential.'''
         if self.pot == 'gth':
-            if self.Z is not None:
-                for ia in range(self.Natoms):
-                    self.GTH[self.atom[ia]] = read_gth(self.atom[ia], self.Z[ia])
-            else:
-                # If no charges are given, use the ones provided by the pseudopotential
-                Z = []
-                for ia in range(self.Natoms):
-                    self.GTH[self.atom[ia]] = read_gth(self.atom[ia])
-                    Z.append(self.GTH[self.atom[ia]]['Zion'])
-                self.Z = np.asarray(Z)
-            # Setup potentials
+            for ia in range(self.Natoms):
+                self.GTH[self.atom[ia]] = read_gth(self.atom[ia], self.Z[ia])
+            # Setup for the local and non-local part
             self.Vloc = init_gth_loc(self)
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
         else:
             self.Vloc = init_pot(self)
-
-        # Check occupations and number of states together
-        if isinstance(self.f, (list, tuple)):
-            self.f = np.asarray(self.f)
-        # If no states are provided, use the length of the occupations
-        if isinstance(self.f, np.ndarray) and self.Ns is None:
-            self.Ns = len(self.f)
-        # If one occupation and the number of states is given, use it for every state
-        if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
-            self.f = self.f * np.ones(self.Ns)
-        # If no occupation and the number of states is given, assume 2
-        if self.f is None and self.Ns is not None:
-            self.f = 2 * np.ones(self.Ns)
-        # If number of states is None and occupations is a Number or None, we are in trouble
-        if self.Ns is None:
-            # If no occupations is given, assume 2
-            if self.f is None:
-                self.f = 2
-            # Assume the number of states by dividing the total valence charge by the occupation
-            Ztot = np.sum(self.Z)
-            self.Ns = int(np.ceil(Ztot / self.f))
-        # If the sum of valence charges is not divisible by occupation, change the last occupation
-        if isinstance(self.f, (int, np.integer, float, np.floating)):
-            mod = np.sum(self.Z) % self.f
-            self.f = self.f * np.ones(self.Ns)
-            if mod != 0:
-                self.f[-1] = mod
         return
 
     def __repr__(self):
