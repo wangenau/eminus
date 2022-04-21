@@ -103,14 +103,14 @@ def I(atoms, W):
     W = W.T
     if W.ndim == 1:
         W = np.array([W])
-    if np.size(W, 1) == np.prod(atoms.s):
+    if W.shape[1] == np.prod(atoms.s):
         Finv = np.empty_like(W, dtype=complex)
-        for i in range(W.shape[0]):
+        for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s, order='F')
             Finv[i] = ifftn(tmp, workers=THREADS).flatten(order='F')
     else:
-        Finv = np.empty((W.shape[0], np.prod(atoms.s)), dtype=complex)
-        for i in range(W.shape[0]):
+        Finv = np.empty((len(W), np.prod(atoms.s)), dtype=complex)
+        for i in range(len(W)):
             full = np.zeros(np.prod(atoms.s), dtype=complex)
             full[atoms.active] = W[i]
             full = np.reshape(full, atoms.s, order='F')
@@ -140,12 +140,12 @@ def J(atoms, W, full=True):
     else:
         if full:
             F = np.empty_like(W, dtype=complex)
-            for i in range(W.shape[0]):
+            for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s, order='F')
                 F[i] = fftn(tmp, workers=THREADS).flatten(order='F')
         else:
-            F = np.empty((W.shape[0], len(atoms.active[0])), dtype=complex)
-            for i in range(W.shape[0]):
+            F = np.empty((len(W), len(atoms.active[0])), dtype=complex)
+            for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s, order='F')
                 F[i] = fftn(tmp, workers=THREADS).flatten(order='F')[atoms.active]
     return (F / np.prod(atoms.s)).T
@@ -167,7 +167,7 @@ def Idag(atoms, W):
         full = fftn(tmp, workers=THREADS).flatten(order='F')
         F = full[atoms.active]
     else:
-        F = np.empty((np.size(W, 0), len(atoms.active[0])), dtype=complex)
+        F = np.empty((len(W), len(atoms.active[0])), dtype=complex)
         for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s, order='F')
             full = fftn(tmp, workers=THREADS).flatten(order='F')
