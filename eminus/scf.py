@@ -22,18 +22,19 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     Keyword Args:
         guess (str): Initial guess method for the basis functions (case insensitive).
 
-            Example: 'Gauss'; 'gaussian'; 'random'; 'rand';
+            Example: 'Gauss'; 'gaussian'; 'random'; 'rand',
             Default: 'gaussian'
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
-        min (dict): Dictionary to set the order and maximum number of steps per minimization method.
+        min (dict or None): Dictionary to set the order and number of steps per minimization method.
 
-            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50}
+            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
             Default: None (will default to {'pccg': 100})
         cgform (int):  Conjugated-gradient form for the pccg minimization.
 
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
+
             Default: 1
 
     Returns:
