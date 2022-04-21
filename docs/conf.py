@@ -51,7 +51,7 @@ napoleon_use_rtype = False
 
 def dunder_skip(app, what, name, obj, would_skip, options):
     '''Exclude all dunder methods.'''
-    if '__' in name:
+    if name.startswith('_'):
         return True
     return would_skip
 
