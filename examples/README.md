@@ -13,6 +13,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 07_fod_addon                | FOD and FLO generation |
 | 08_visualizer_addon         | Visualization features |
 | 09_sic_calculations         | Calculate SIC energies |
+| 10_domain_generation        | Generate domains and use them |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept

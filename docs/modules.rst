@@ -11,6 +11,7 @@ Modules
    eminus
    eminus.atoms
    eminus.data
+   eminus.domains
    eminus.energies
    eminus.exc
    eminus.filehandler

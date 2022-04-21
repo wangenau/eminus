@@ -6,6 +6,7 @@ Main source code directory.
 | :------------: | :---------: |
 | atoms.py       | Atoms object definitions |
 | data.py        | Atom specific data |
+| domains.py     | Domain generation |
 | energies.py    | Energy object and calculation |
 | exc.py         | Exchange-correlation functionals |
 | filehandler.py | Input/output functions |

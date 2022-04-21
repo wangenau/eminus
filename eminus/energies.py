@@ -252,7 +252,7 @@ def get_n_single(atoms, Y):
     return n.T
 
 
-def get_Esic(atoms, Y):
+def get_Esic(atoms, Y, n_single=None):
     '''Calculate the Perdew-Zunger self-interaction energy.
 
     Reference: Phys. Rev. B 23, 5048.
@@ -261,11 +261,15 @@ def get_Esic(atoms, Y):
         atoms: Atoms object.
         Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
+    Keyword Args:
+        n_single(array): Single-electron densities.
+
     Returns:
         float: PZ self-interaction energy.
     '''
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
-    n_single = get_n_single(atoms, Y)
+    if n_single is None:
+        n_single = get_n_single(atoms, Y)
     Esic = 0
     for i in range(atoms.Ns):
         # Normalize single-particle densities to 1

@@ -24,6 +24,9 @@ def get_exc(exc, n, ret, spinpol=False):
     }
     exch, corr = exc.split(',')
 
+    # Only use non-zero values of the density
+    n_nz = n[np.nonzero(n)]
+
     # Only import libxc interface if necessary
     if 'libxc' in exc:
         from .addons.libxc import libxc_functional
@@ -31,27 +34,31 @@ def get_exc(exc, n, ret, spinpol=False):
     # Handle exchange part
     if 'libxc' in exch:
         exch = exch.split(':')[1]
-        x = libxc_functional(exch, n, ret, spinpol)
+        x = libxc_functional(exch, n_nz, ret, spinpol)
     else:
         f_exch = exc_map.get(exch, 'mock_exc')
         if spinpol:
             f_exch = f'{f_exch}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
         #        spin-unpolarised calculations
-        x = eval(f_exch)(n, ret, zeta=np.ones_like(n))
+        x = eval(f_exch)(n_nz, ret, zeta=np.ones_like(n_nz))
 
     # Handle correlation part
     if 'libxc' in corr:
         corr = corr.split(':')[1]
-        c = libxc_functional(corr, n, ret, spinpol)
+        c = libxc_functional(corr, n_nz, ret, spinpol)
     else:
         f_corr = exc_map.get(corr, 'mock_exc')
         if spinpol:
             f_corr = f'{f_corr}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
         #        spin-unpolarised calculations
-        c = eval(f_corr)(n, ret, zeta=np.ones_like(n))
-    return x + c
+        c = eval(f_corr)(n_nz, ret, zeta=np.ones_like(n_nz))
+
+    # Use zero as the result for zero values
+    xc = np.zeros_like(n)
+    xc[np.nonzero(n)] = x + c
+    return xc
 
 
 def mock_exc(n, ret, **kwargs):

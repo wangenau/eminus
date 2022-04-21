@@ -69,6 +69,10 @@ def test_09():
     execute_example('09_sic_calculations')
 
 
+def test_10():
+    execute_example('10_domain_generation')
+
+
 if __name__ == '__main__':
     test_01()
     test_02()
@@ -79,3 +83,4 @@ if __name__ == '__main__':
     test_07()
     test_08()
     test_09()
+    test_10()
