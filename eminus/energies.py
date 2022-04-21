@@ -163,76 +163,71 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     Natoms = atoms.Natoms
-    tau = atoms.X
-    Zvals = atoms.Z
+    X = atoms.X
+    Z = atoms.Z
     Omega = atoms.Omega
+    R = atoms.R
 
-    LatVecs = atoms.R
-    t1 = LatVecs[0]
-    t2 = LatVecs[1]
-    t3 = LatVecs[2]
+    t1, t2, t3 = R
     t1m = np.sqrt(t1 @ t1)
     t2m = np.sqrt(t2 @ t2)
     t3m = np.sqrt(t3 @ t3)
 
-    RecVecs = 2 * np.pi * inv(LatVecs.conj().T)
-    g1 = RecVecs[0]
-    g2 = RecVecs[1]
-    g3 = RecVecs[2]
+    g1, g2, g3 = 2 * np.pi * inv(R.conj().T)
     g1m = np.sqrt(g1 @ g1)
     g2m = np.sqrt(g2 @ g2)
     g3m = np.sqrt(g3 @ g3)
 
-    x = np.sum(Zvals**2)
-    totalcharge = np.sum(Zvals)
-
     gexp = -np.log(gamma)
     nu = 0.5 * np.sqrt(gcut**2 / gexp)
 
-    tmax = np.sqrt(0.5 * gexp) / nu
-    mmm1 = int(np.rint(tmax / t1m + 1.5))
-    mmm2 = int(np.rint(tmax / t2m + 1.5))
-    mmm3 = int(np.rint(tmax / t3m + 1.5))
+    x = np.sum(Z**2)
+    totalcharge = np.sum(Z)
 
     # Start by calculaton the self-energy
     Eewald = -nu * x / np.sqrt(np.pi)
     # Add the electroneutrality-term
     Eewald += -np.pi * totalcharge**2 / (2 * Omega * nu**2)
 
-    dtau = np.empty(3)
-    G = np.empty(3)
+    tmax = np.sqrt(0.5 * gexp) / nu
+    mmm1 = np.rint(tmax / t1m + 1.5)
+    mmm2 = np.rint(tmax / t2m + 1.5)
+    mmm3 = np.rint(tmax / t3m + 1.5)
+
+    dX = np.empty(3)
     T = np.empty(3)
     for ia in range(Natoms):
         for ja in range(Natoms):
-            dtau = tau[ia] - tau[ja]
-            ZiZj = Zvals[ia] * Zvals[ja]
-            for i in range(-mmm1, mmm1 + 1):
-                for j in range(-mmm2, mmm2 + 1):
-                    for k in range(-mmm3, mmm3 + 1):
+            dX = X[ia] - X[ja]
+            ZiZj = Z[ia] * Z[ja]
+            for i in np.arange(-mmm1, mmm1 + 1):
+                for j in np.arange(-mmm2, mmm2 + 1):
+                    for k in np.arange(-mmm3, mmm3 + 1):
                         if (ia != ja) or ((abs(i) + abs(j) + abs(k)) != 0):
                             T = i * t1 + j * t2 + k * t3
-                            rmag = np.sqrt(np.sum((dtau - T)**2))
+                            rmag = np.sqrt(np.sum((dX - T)**2))
                             # Add the real-space contribution
                             Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
-    mmm1 = int(np.rint(gcut / g1m + 1.5))
-    mmm2 = int(np.rint(gcut / g2m + 1.5))
-    mmm3 = int(np.rint(gcut / g3m + 1.5))
+    mmm1 = np.rint(gcut / g1m + 1.5)
+    mmm2 = np.rint(gcut / g2m + 1.5)
+    mmm3 = np.rint(gcut / g3m + 1.5)
 
+    G = np.empty(3)
     for ia in range(Natoms):
         for ja in range(Natoms):
-            dtau = tau[ia] - tau[ja]
-            ZiZj = Zvals[ia] * Zvals[ja]
-            for i in range(-mmm1, mmm1 + 1):
-                for j in range(-mmm2, mmm2 + 1):
-                    for k in range(-mmm3, mmm3 + 1):
+            dX = X[ia] - X[ja]
+            ZiZj = Z[ia] * Z[ja]
+            for i in np.arange(-mmm1, mmm1 + 1):
+                for j in np.arange(-mmm2, mmm2 + 1):
+                    for k in np.arange(-mmm3, mmm3 + 1):
                         if (abs(i) + abs(j) + abs(k)) != 0:
                             G = i * g1 + j * g2 + k * g3
-                            Gtau = np.sum(G * dtau)
+                            GX = np.sum(G * dX)
                             G2 = np.sum(G**2)
                             # Add the reciprocal space contribution
                             x = 2 * np.pi / Omega * np.exp(-0.25 * G2 / nu**2) / G2
-                            Eewald += x * ZiZj * np.cos(Gtau)
+                            Eewald += x * ZiZj * np.cos(GX)
 
     return Eewald
 
