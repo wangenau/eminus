@@ -144,7 +144,7 @@ def J(atoms, W, full=True):
                 tmp = np.reshape(W[i], atoms.s, order='F')
                 F[i] = fftn(tmp, workers=THREADS).flatten(order='F')
         else:
-            F = np.empty((len(W), len(atoms.active[0])), dtype=complex)
+            F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
             for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s, order='F')
                 F[i] = fftn(tmp, workers=THREADS).flatten(order='F')[atoms.active]
@@ -167,7 +167,7 @@ def Idag(atoms, W):
         full = fftn(tmp, workers=THREADS).flatten(order='F')
         F = full[atoms.active]
     else:
-        F = np.empty((len(W), len(atoms.active[0])), dtype=complex)
+        F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
         for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s, order='F')
             full = fftn(tmp, workers=THREADS).flatten(order='F')

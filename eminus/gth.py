@@ -71,7 +71,7 @@ def init_gth_nonloc(atoms):
         tuple(int, array, array): NbetaNL, prj2beta, and betaNL.
     '''
     Natoms = atoms.Natoms
-    Npoints = len(atoms.active[0])
+    Npoints = len(atoms.G2c)
     Omega = atoms.Omega
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)

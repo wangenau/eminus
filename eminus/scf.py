@@ -527,9 +527,9 @@ def guess_random(atoms, complex=True, reproduce=False):
     if reproduce:
         seed(42)
     if complex:
-        W = randn(len(atoms.active[0]), atoms.Ns) + 1j * randn(len(atoms.active[0]), atoms.Ns)
+        W = randn(len(atoms.G2c), atoms.Ns) + 1j * randn(len(atoms.G2c), atoms.Ns)
     else:
-        W = randn(len(atoms.active[0]), atoms.Ns)
+        W = randn(len(atoms.G2c), atoms.Ns)
     return orth(atoms, W)
 
 
