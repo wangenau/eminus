@@ -258,7 +258,11 @@ class Atoms:
         return
 
     def _get_index_matrices(self):
-        '''Build index matrices M and N to build the real and reciprocal space samplings.'''
+        '''Build index matrices M and N to build the real and reciprocal space samplings.
+
+        Returns:
+            tuple(array, array): Index matrices.
+        '''
         # Build index matrix M
         ms = np.arange(np.prod(self.s))
         m1 = ms % self.s[0]
@@ -274,7 +278,11 @@ class Atoms:
         return M, N
 
     def _set_cell(self, M):
-        '''Build the unit cell and create the respective sampling.'''
+        '''Build the unit cell and create the respective sampling.
+
+        Args:
+            M (array): Index matrix.
+        '''
         # Build a cuboidal unit cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
@@ -284,7 +292,11 @@ class Atoms:
         return
 
     def _set_G(self, N):
-        '''Build G-vectors, build squared magnitudes G2, and generate the active space.'''
+        '''Build G-vectors, build squared magnitudes G2, and generate the active space.
+
+        Args:
+            N (array): Index matrix.
+        '''
         # Build G-vectors
         G = 2 * np.pi * N @ inv(self.R)
         self.G = G
