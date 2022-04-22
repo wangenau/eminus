@@ -180,7 +180,7 @@ def Q(inp, U):
         array: Q operator result.
     '''
     mu, V = eig(U)
-    mu = np.reshape(mu, (len(mu), 1))
+    mu = mu[:, None]
     denom = np.sqrt(mu) @ np.ones((1, len(mu)))
     denom = denom + denom.conj().T
     return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T

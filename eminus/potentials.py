@@ -28,9 +28,11 @@ def Coulomb(atoms):
         array: Coulomb potential in reciprocal space.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
-    Vcoul = np.empty_like(atoms.G2)
+    # Ignore the division by zero for the first elements
+    # One could do some proper indexing with [1:], but this version is way faster
+    with np.errstate(divide='ignore', invalid='ignore'):
+        Vcoul = -4 * np.pi * Z / atoms.G2
     Vcoul[0] = 0
-    Vcoul[1:] = -4 * np.pi * Z / atoms.G2[1:]
 
     Sf = np.sum(atoms.Sf, axis=0)
     return atoms.J(Vcoul * Sf)

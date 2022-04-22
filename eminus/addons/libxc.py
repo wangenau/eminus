@@ -39,6 +39,6 @@ def libxc_functional(exc, n, ret, spinpol):
         func = LibXCFunctional(exc, spin)
     out = func.compute(inp)
     if ret == 'density':
-        return out['zk'].flatten()
+        return out['zk'].ravel()
     else:
-        return out['vrho'].flatten()
+        return out['vrho'].ravel()

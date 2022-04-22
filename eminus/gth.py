@@ -26,9 +26,9 @@ def init_gth_loc(atoms):
     G2 = atoms.G2
     atom = atoms.atom
     species = set(atom)
+    omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
 
-    Vsp = np.empty(len(G2))  # Potential for every species
-    Vloc = np.zeros(len(G2))  # Total local potential
+    Vloc = np.zeros(len(G2))
     for isp in species:
         psp = atoms.GTH[isp]
         rloc = psp['rloc']
@@ -38,10 +38,11 @@ def init_gth_loc(atoms):
         c3 = psp['cloc'][2]
         c4 = psp['cloc'][3]
 
-        omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
-        rlocG2 = G2[1:] * rloc**2
-
-        Vsp[1:] = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2[1:] + \
+        rlocG2 = G2 * rloc**2
+        # Ignore the division by zero for the first elements
+        # One could do some proper indexing with [1:], but this version is way faster
+        with np.errstate(divide='ignore', invalid='ignore'):
+            Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2 + \
                   np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
                   (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
                   c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
