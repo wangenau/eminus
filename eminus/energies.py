@@ -244,7 +244,7 @@ def get_n_single(atoms, Y):
     '''
     Yrs = atoms.I(Y)
     n = atoms.f * np.real(Yrs.conj() * Yrs)
-    return n.T
+    return n
 
 
 def get_Esic(atoms, Y, n_single=None):
@@ -268,7 +268,7 @@ def get_Esic(atoms, Y, n_single=None):
     Esic = 0
     for i in range(atoms.Ns):
         # Normalize single-particle densities to 1
-        ni = n_single[i] / atoms.f[i]
+        ni = n_single[:, i] / atoms.f[i]
         coul = get_Ecoul(atoms, ni)
         # The exchange part for a SIC correction has to be spin polarized
         xc = get_Exc(atoms, ni, spinpol=True)
