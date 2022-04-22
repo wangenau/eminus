@@ -77,21 +77,13 @@ def K(atoms, W):
     Returns:
         array: The operator applied on W.
     '''
-    W = W.T
-    out = np.empty_like(W, dtype=complex)
-    if W.shape[1] == len(atoms.G2c):
-        if W.ndim == 1:
-            out = W / (1 + atoms.G2c)
-        else:
-            for i in range(len(W)):
-                out[i] = W[i] / (1 + atoms.G2c)
+    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    if len(W) == len(atoms.G2c):
+        G2 = atoms.G2c.reshape(-1, 1)
     else:
-        if W.ndim == 1:
-            out = W / (1 + atoms.G2)
-        else:
-            for i in range(len(W)):
-                out[i] = W[i] / (1 + atoms.G2)
-    return out.T
+        G2 = atoms.G2.reshape(-1, 1)
+
+    return W / (1 + G2)
 
 
 def I(atoms, W):
