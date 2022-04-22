@@ -98,26 +98,26 @@ def I(atoms, W):
     if W.ndim == 1:
         if len(W) == np.prod(atoms.s):
             tmp = np.reshape(W, atoms.s)
-            Finv = ifftn(tmp, workers=THREADS).flatten()
+            Finv = ifftn(tmp, workers=THREADS).ravel()
         else:
             full = np.zeros(np.prod(atoms.s), dtype=complex)
             full[atoms.active] = W
             full = np.reshape(full, atoms.s)
-            Finv = ifftn(full, workers=THREADS).flatten()
+            Finv = ifftn(full, workers=THREADS).ravel()
     else:
         W = W.T
         if W.shape[1] == np.prod(atoms.s):
             Finv = np.empty_like(W, dtype=complex)
             for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s)
-                Finv[i] = ifftn(tmp, workers=THREADS).flatten()
+                Finv[i] = ifftn(tmp, workers=THREADS).ravel()
         else:
             Finv = np.empty((len(W), np.prod(atoms.s)), dtype=complex)
             for i in range(len(W)):
                 full = np.zeros(np.prod(atoms.s), dtype=complex)
                 full[atoms.active] = W[i]
                 full = np.reshape(full, atoms.s)
-                Finv[i] = ifftn(full, workers=THREADS).flatten()
+                Finv[i] = ifftn(full, workers=THREADS).ravel()
         Finv = Finv.T
     return Finv * np.prod(atoms.s)
 
@@ -137,7 +137,7 @@ def J(atoms, W, full=True):
     '''
     if W.ndim == 1:
         tmp = np.reshape(W, atoms.s)
-        F = fftn(tmp, workers=THREADS).flatten()
+        F = fftn(tmp, workers=THREADS).ravel()
         if not full:
             F = F[atoms.active]
     else:
@@ -146,12 +146,12 @@ def J(atoms, W, full=True):
             F = np.empty_like(W, dtype=complex)
             for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s)
-                F[i] = fftn(tmp, workers=THREADS).flatten()
+                F[i] = fftn(tmp, workers=THREADS).ravel()
         else:
             F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
             for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s)
-                F[i] = fftn(tmp, workers=THREADS).flatten()[atoms.active]
+                F[i] = fftn(tmp, workers=THREADS).ravel()[atoms.active]
         F = F.T
     return F / np.prod(atoms.s)
 
@@ -168,14 +168,14 @@ def Idag(atoms, W):
     '''
     if W.ndim == 1:
         tmp = np.reshape(W, atoms.s)
-        full = fftn(tmp, workers=THREADS).flatten()
+        full = fftn(tmp, workers=THREADS).ravel()
         F = full[atoms.active]
     else:
         W = W.T
         F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
         for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s)
-            full = fftn(tmp, workers=THREADS).flatten()
+            full = fftn(tmp, workers=THREADS).ravel()
             F[i] = full[atoms.active]
         F = F.T
     return F
@@ -193,13 +193,13 @@ def Jdag(atoms, W):
     '''
     if W.ndim == 1:
         tmp = np.reshape(W, atoms.s)
-        Finv = ifftn(tmp, workers=THREADS).flatten()
+        Finv = ifftn(tmp, workers=THREADS).ravel()
     else:
         W = W.T
         Finv = np.empty_like(W, dtype=complex)
         for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s)
-            Finv[i] = ifftn(tmp, workers=THREADS).flatten()
+            Finv[i] = ifftn(tmp, workers=THREADS).ravel()
         Finv = Finv.T
     return Finv
 
