@@ -105,18 +105,19 @@ def I(atoms, W):
             full[atoms.active] = W
             full = np.reshape(full, atoms.s)
             Finv = ifftn(full, workers=THREADS).flatten()
-    elif W.shape[1] == np.prod(atoms.s):
-        Finv = np.empty_like(W, dtype=complex)
-        for i in range(len(W)):
-            tmp = np.reshape(W[i], atoms.s)
-            Finv[i] = ifftn(tmp, workers=THREADS).flatten()
     else:
-        Finv = np.empty((len(W), np.prod(atoms.s)), dtype=complex)
-        for i in range(len(W)):
-            full = np.zeros(np.prod(atoms.s), dtype=complex)
-            full[atoms.active] = W[i]
-            full = np.reshape(full, atoms.s)
-            Finv[i] = ifftn(full, workers=THREADS).flatten()
+        if W.shape[1] == np.prod(atoms.s):
+            Finv = np.empty_like(W, dtype=complex)
+            for i in range(len(W)):
+                tmp = np.reshape(W[i], atoms.s)
+                Finv[i] = ifftn(tmp, workers=THREADS).flatten()
+        else:
+            Finv = np.empty((len(W), np.prod(atoms.s)), dtype=complex)
+            for i in range(len(W)):
+                full = np.zeros(np.prod(atoms.s), dtype=complex)
+                full[atoms.active] = W[i]
+                full = np.reshape(full, atoms.s)
+                Finv[i] = ifftn(full, workers=THREADS).flatten()
     return (Finv * np.prod(atoms.s)).T
 
 
