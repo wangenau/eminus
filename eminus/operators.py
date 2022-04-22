@@ -36,9 +36,9 @@ def L(atoms, W):
     '''
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
-        G2 = atoms.G2c.reshape(-1, 1)
+        G2 = atoms.G2c[:, None]
     else:
-        G2 = atoms.G2.reshape(-1, 1)
+        G2 = atoms.G2[:, None]
     return -atoms.Omega * G2 * W
 
 
@@ -61,7 +61,7 @@ def Linv(atoms, W):
             out[0] = 0
         else:
             # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
-            G2 = atoms.G2.reshape(-1, 1)
+            G2 = atoms.G2[:, None]
             out = W / G2 / -atoms.Omega
             out[0, :] = 0
     return out
@@ -79,9 +79,9 @@ def K(atoms, W):
     '''
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
-        G2 = atoms.G2c.reshape(-1, 1)
+        G2 = atoms.G2c[:, None]
     else:
-        G2 = atoms.G2.reshape(-1, 1)
+        G2 = atoms.G2[:, None]
     return W / (1 + G2)
 
 
@@ -214,5 +214,5 @@ def T(atoms, W, dr):
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
     if W.ndim == 2:
         # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
-        factor = factor.reshape(-1, 1)
+        factor = factor[:, None]
     return factor * W
