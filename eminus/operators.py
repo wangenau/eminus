@@ -1,5 +1,27 @@
 #!/usr/bin/env python3
-'''Basis set dependent operators for a plane-wave basis.'''
+'''Basis set dependent operators for a plane-wave basis.
+
+These operators act on discretized wave functions, i.e., the arrays W.
+
+These W are column vectors. This has been chosen to let theory and code coincide, e.g.,
+W^dagger W becomes W.conj().T @ W.
+
+The downside is that the i-th state will be accessed with W[:, i] instead of W[i].
+Choosing the i-th state makes the array 1d.
+
+These operators can act on six different options, namely
+
+1. the real-space
+2. the real-space (1d)
+3. the full reciprocal space
+4. the full reciprocal space (1d)
+5. the active reciprocal space
+6. the active reciprocal space (1d)
+
+The active space is the truncated reciprocal space by restricting it with a sphere given by ecut.
+
+Reference: Comput. Phys. Commun. 128, 1.
+'''
 from os import environ
 
 import numpy as np
@@ -14,6 +36,8 @@ except KeyError:
 def O(atoms, W):
     '''Overlap operator.
 
+    This operator acts on the options 3, 4, 5, and 6.
+
     Args:
         atoms: Atoms object.
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
@@ -26,6 +50,8 @@ def O(atoms, W):
 
 def L(atoms, W):
     '''Laplacian operator.
+
+    This operator acts on the options 3 and 5.
 
     Args:
         atoms: Atoms object.
@@ -45,6 +71,8 @@ def L(atoms, W):
 def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
+    This operator acts on the options 3 and 4.
+
     Args:
         atoms: Atoms object.
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
@@ -54,9 +82,9 @@ def Linv(atoms, W):
     '''
     out = np.empty_like(W, dtype=complex)
     # Ignore the division by zero for the first elements
-    # One could do some proper indexing with [1:], but this version is way faster
     with np.errstate(divide='ignore', invalid='ignore'):
         if W.ndim == 1:
+            # One could do some proper indexing with [1:] but indexing is slow
             out = W / atoms.G2 / -atoms.Omega
             out[0] = 0
         else:
@@ -68,7 +96,9 @@ def Linv(atoms, W):
 
 
 def K(atoms, W):
-    '''Preconditioning operator. Applies 1/(1+G2) to the input.
+    '''Preconditioning operator.
+
+    This operator acts on the options 3 and 5.
 
     Args:
         atoms: Atoms object.
@@ -88,6 +118,8 @@ def K(atoms, W):
 def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
+    This operator acts on the options 3, 4, 5, and 6.
+
     Args:
         atoms: Atoms object.
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
@@ -95,35 +127,33 @@ def I(atoms, W):
     Returns:
         array: The operator applied on W.
     '''
-    if W.ndim == 1:
-        if len(W) == np.prod(atoms.s):
-            tmp = W.reshape(atoms.s)
-            Finv = ifftn(tmp, workers=THREADS).ravel()
-        else:
-            full = np.zeros(np.prod(atoms.s), dtype=complex)
-            full[atoms.active] = W
-            full = full.reshape(atoms.s)
-            Finv = ifftn(full, workers=THREADS).ravel()
+    n = np.prod(atoms.s)
+    # If W is in the full space do nothing with W
+    if len(W) == len(atoms.G2):
+        Wfft = W
     else:
-        W = W.T
-        if W.shape[1] == np.prod(atoms.s):
-            Finv = np.empty_like(W, dtype=complex)
-            for i in range(len(W)):
-                tmp = W[i].reshape(atoms.s)
-                Finv[i] = ifftn(tmp, workers=THREADS).ravel()
+        # Fill with zeros if W is in the active space
+        if W.ndim == 1:
+            Wfft = np.zeros(n, dtype=complex)
         else:
-            Finv = np.empty((len(W), np.prod(atoms.s)), dtype=complex)
-            for i in range(len(W)):
-                full = np.zeros(np.prod(atoms.s), dtype=complex)
-                full[atoms.active] = W[i]
-                full = full.reshape(atoms.s)
-                Finv[i] = ifftn(full, workers=THREADS).ravel()
-        Finv = Finv.T
-    return Finv * np.prod(atoms.s)
+            Wfft = np.zeros((n, atoms.Ns), dtype=complex)
+        Wfft[atoms.active] = W
+    if W.ndim == 1:
+        Wfft = Wfft.reshape(atoms.s)
+        Finv = ifftn(Wfft, workers=THREADS).ravel()
+    else:
+        # Here we reshape the input like in the 1d case but add an extra dimension in the end,
+        # holding the number of states
+        Wfft = Wfft.reshape(np.append(atoms.s, atoms.Ns))
+        # Tell the function that the FFT only has to act on the first 3 axes
+        Finv = ifftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Ns))
+    return Finv * n
 
 
 def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
+
+    This operator acts on the options 1 and 2.
 
     Args:
         atoms: Atoms object.
@@ -135,55 +165,44 @@ def J(atoms, W, full=True):
     Returns:
         array: The operator applied on W.
     '''
+    n = np.prod(atoms.s)
     if W.ndim == 1:
-        tmp = W.reshape(atoms.s)
-        F = fftn(tmp, workers=THREADS).ravel()
-        if not full:
-            F = F[atoms.active]
+        Wfft = W.reshape(atoms.s)
+        F = fftn(Wfft, workers=THREADS).ravel()
     else:
-        W = W.T
-        if full:
-            F = np.empty_like(W, dtype=complex)
-            for i in range(len(W)):
-                tmp = W[i].reshape(atoms.s)
-                F[i] = fftn(tmp, workers=THREADS).ravel()
-        else:
-            F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
-            for i in range(len(W)):
-                tmp = W[i].reshape(atoms.s)
-                full = fftn(tmp, workers=THREADS).ravel()
-                F[i] = full[atoms.active]
-        F = F.T
-    return F / np.prod(atoms.s)
+        Wfft = W.reshape(np.append(atoms.s, atoms.Ns))
+        F = fftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Ns))
+    # There is no way to know if J has to transform to the full or the active space
+    # but normally it transforms to the full space
+    if not full:
+        F = F[atoms.active]
+    return F / n
 
 
-def Idag(atoms, W):
-    '''Conjugated backwards transformation from reciprocal space to real-space.
+def Idag(atoms, W, full=False):
+    '''Conjugated backwards transformation from real-space to reciprocal space.
+
+    This operator acts on the options 1 and 2.
 
     Args:
         atoms: Atoms object.
         W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
+    Keyword Args:
+        full (bool): Wether to transform in the full or in the active space.
+
     Returns:
         array: The operator applied on W.
     '''
-    if W.ndim == 1:
-        tmp = W.reshape(atoms.s)
-        full = fftn(tmp, workers=THREADS).ravel()
-        F = full[atoms.active]
-    else:
-        W = W.T
-        F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
-        for i in range(len(W)):
-            tmp = W[i].reshape(atoms.s)
-            full = fftn(tmp, workers=THREADS).ravel()
-            F[i] = full[atoms.active]
-        F = F.T
-    return F
+    n = np.prod(atoms.s)
+    F = J(atoms, W, full)
+    return F * n
 
 
 def Jdag(atoms, W):
-    '''Conjugated forward transformation from real-space to reciprocal space.
+    '''Conjugated forward transformation from reciprocal space to real-space.
+
+    This operator acts on the options 3, 4, 5, and 6.
 
     Args:
         atoms: Atoms object.
@@ -192,21 +211,15 @@ def Jdag(atoms, W):
     Returns:
         array: The operator applied on W.
     '''
-    if W.ndim == 1:
-        tmp = W.reshape(atoms.s)
-        Finv = ifftn(tmp, workers=THREADS).ravel()
-    else:
-        W = W.T
-        Finv = np.empty_like(W, dtype=complex)
-        for i in range(len(W)):
-            tmp = W[i].reshape(atoms.s)
-            Finv[i] = ifftn(tmp, workers=THREADS).ravel()
-        Finv = Finv.T
-    return Finv
+    n = np.prod(atoms.s)
+    Finv = I(atoms, W)
+    return Finv / n
 
 
 def T(atoms, W, dr):
-    '''Translation operator. Shifts input orbitals by the vector dr.
+    '''Translation operator.
+
+    This operator acts on the options 5 and 6.
 
     Args:
         atoms: Atoms object.
@@ -218,7 +231,7 @@ def T(atoms, W, dr):
     '''
     # Do the shift by multiplying a phase factor, given by the shift theorem
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
+    # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if W.ndim == 2:
-        # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
         factor = factor[:, None]
     return factor * W

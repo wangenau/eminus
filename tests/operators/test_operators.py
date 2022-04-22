@@ -60,9 +60,23 @@ def test_JI():
         assert_allclose(out, test)
 
 
+def test_IdagJdag():
+    for i in ['active', 'active_single']:
+        out = atoms.Idag(atoms.Jdag(W_tests[i]))
+        test = W_tests[i]
+        assert_allclose(out, test)
+
+
+def test_JdagIdag():
+    for i in ['full', 'full_single']:
+        out = atoms.Jdag(atoms.Idag(W_tests[i], True))
+        test = W_tests[i]
+        assert_allclose(out, test)
+
+
 def test_TT():
     dr = randn(3)
-    for i in ['active']:
+    for i in ['active', 'active_single']:
         out = atoms.T(atoms.T(W_tests[i], dr), -dr)
         test = W_tests[i]
         assert_allclose(out, test)
@@ -73,4 +87,6 @@ if __name__ == '__main__':
     run_operator(test_LinvL)
     run_operator(test_IJ)
     run_operator(test_JI)
+    run_operator(test_IdagJdag)
+    run_operator(test_JdagIdag)
     run_operator(test_TT)

@@ -356,19 +356,19 @@ class Atoms:
         return K(self, inp)
 
     def I(self, inp):
-        '''Transformation from k- to real-space :func:`~eminus.operators.I`.'''
+        '''Transformation from reciprocal to real-space :func:`~eminus.operators.I`.'''
         return I(self, inp)
 
     def J(self, inp, full=True):
-        '''Transformation from real- to k-space :func:`~eminus.operators.J`.'''
+        '''Transformation from real to reciprocal space :func:`~eminus.operators.J`.'''
         return J(self, inp, full)
 
-    def Idag(self, inp):
-        '''Conj transformation from k- to real-space :func:`~eminus.operators.Idag`.'''
-        return Idag(self, inp)
+    def Idag(self, inp, full=False):
+        '''Conj. transformation from real to reciprocal space :func:`~eminus.operators.Idag`.'''
+        return Idag(self, inp, full)
 
     def Jdag(self, inp):
-        '''Conj transformation from real- to k-space :func:`~eminus.operators.Jdag`.'''
+        '''Conj. transformation from reciprocal to real-space :func:`~eminus.operators.Jdag`.'''
         return Jdag(self, inp)
 
     def T(self, inp, dr):
