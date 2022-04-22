@@ -46,7 +46,7 @@ def test_LLinv():
 def test_IJ():
     for i in ['full', 'full_single']:
         out = atoms.I(atoms.J(W_tests[i]))
-        test = W_tests[i].reshape(out.shape)
+        test = W_tests[i]
         assert_allclose(out, test)
 
 
@@ -56,7 +56,7 @@ def test_JI():
             out = atoms.J(atoms.I(W_tests[i]), False)
         else:
             out = atoms.J(atoms.I(W_tests[i]))
-        test = W_tests[i].reshape(out.shape)
+        test = W_tests[i]
         assert_allclose(out, test)
 
 

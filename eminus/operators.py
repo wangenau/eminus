@@ -102,8 +102,15 @@ def I(atoms, W):
     '''
     W = W.T
     if W.ndim == 1:
-        W = np.array([W])
-    if W.shape[1] == np.prod(atoms.s):
+        if len(W) == np.prod(atoms.s):
+            tmp = np.reshape(W, atoms.s, order='F')
+            Finv = ifftn(tmp, workers=THREADS).flatten(order='F')
+        else:
+            full = np.zeros(np.prod(atoms.s), dtype=complex)
+            full[atoms.active] = W
+            full = np.reshape(full, atoms.s, order='F')
+            Finv = ifftn(full, workers=THREADS).flatten(order='F')
+    elif W.shape[1] == np.prod(atoms.s):
         Finv = np.empty_like(W, dtype=complex)
         for i in range(len(W)):
             tmp = np.reshape(W[i], atoms.s, order='F')
