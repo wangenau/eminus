@@ -151,7 +151,8 @@ def J(atoms, W, full=True):
             F = np.empty((len(W), len(atoms.G2c)), dtype=complex)
             for i in range(len(W)):
                 tmp = np.reshape(W[i], atoms.s)
-                F[i] = fftn(tmp, workers=THREADS).ravel()[atoms.active]
+                full = fftn(tmp, workers=THREADS).ravel()
+                F[i] = full[atoms.active]
         F = F.T
     return F / np.prod(atoms.s)
 
