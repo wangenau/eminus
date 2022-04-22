@@ -34,11 +34,13 @@ def L(atoms, W):
     Returns:
         array: The operator applied on W.
     '''
-    W = W.T
-    if W.shape[1] == len(atoms.G2c):
-        return (-atoms.Omega * atoms.G2c * W).T
+    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    if len(W) == len(atoms.G2c):
+        G2 = atoms.G2c.reshape(-1, 1)
     else:
-        return (-atoms.Omega * atoms.G2 * W).T
+        G2 = atoms.G2.reshape(-1, 1)
+
+    return -atoms.Omega * G2 * W
 
 
 def Linv(atoms, W):
@@ -51,16 +53,18 @@ def Linv(atoms, W):
     Returns:
         array: The operator applied on W.
     '''
-    W = W.T
     out = np.empty_like(W, dtype=complex)
-    if W.ndim == 1:
-        out[0] = 0
-        out[1:] = W[1:] / atoms.G2[1:] / -atoms.Omega
-    else:
-        for i in range(len(W)):
-            out[:, 0] = 0
-            out[i][1:] = W[i][1:] / atoms.G2[1:] / -atoms.Omega
-    return out.T
+    # Ignore the division by zero for the first elements
+    # One could do some proper indexing with [1:], but this version is way faster
+    with np.errstate(divide='ignore', invalid='ignore'):
+        if W.ndim == 1:
+            out = W / atoms.G2 / -atoms.Omega
+            out[0] = 0
+        else:
+            G2 = atoms.G2.reshape(-1, 1)
+            out = W / G2 / -atoms.Omega
+            out[0, :] = 0
+    return out
 
 
 def K(atoms, W):
