@@ -39,7 +39,6 @@ def L(atoms, W):
         G2 = atoms.G2c.reshape(-1, 1)
     else:
         G2 = atoms.G2.reshape(-1, 1)
-
     return -atoms.Omega * G2 * W
 
 
@@ -61,6 +60,7 @@ def Linv(atoms, W):
             out = W / atoms.G2 / -atoms.Omega
             out[0] = 0
         else:
+            # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
             G2 = atoms.G2.reshape(-1, 1)
             out = W / G2 / -atoms.Omega
             out[0, :] = 0
@@ -82,7 +82,6 @@ def K(atoms, W):
         G2 = atoms.G2c.reshape(-1, 1)
     else:
         G2 = atoms.G2.reshape(-1, 1)
-
     return W / (1 + G2)
 
 
@@ -211,8 +210,9 @@ def T(atoms, W, dr):
     Returns:
         array: The operator applied on W.
     '''
-    out = np.empty_like(W, dtype=complex)
+    # Do the shift by multiplying a phase factor, given by the shift theorem
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
-    for i in range(atoms.Ns):
-        out[:, i] = factor * W[:, i]
-    return out
+    if W.ndim == 2:
+        # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
+        factor = factor.reshape(-1, 1)
+    return factor * W
