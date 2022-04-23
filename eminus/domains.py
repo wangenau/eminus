@@ -33,10 +33,10 @@ def domain_cuboid(atoms, length, centers=None):
         mask = mask1 & mask2 & mask3
     else:
         mask = np.zeros(len(atoms.r), dtype=bool)
-        for i in range(len(centers)):
-            mask1 = (np.abs(centers[i][0] - atoms.r[:, 0]) < length[0])
-            mask2 = (np.abs(centers[i][1] - atoms.r[:, 1]) < length[1])
-            mask3 = (np.abs(centers[i][2] - atoms.r[:, 2]) < length[2])
+        for center in centers:
+            mask1 = (np.abs(center[0] - atoms.r[:, 0]) < length[0])
+            mask2 = (np.abs(center[1] - atoms.r[:, 1]) < length[1])
+            mask3 = (np.abs(center[2] - atoms.r[:, 2]) < length[2])
             mask = mask | (mask1 & mask2 & mask3)
     return mask
 
@@ -76,8 +76,8 @@ def domain_sphere(atoms, radius, centers=None):
         mask = norm(centers - atoms.r, axis=1) < radius
     else:
         mask = np.zeros(len(atoms.r), dtype=bool)
-        for i in range(len(centers)):
-            mask_tmp = norm(centers[i] - atoms.r, axis=1) < radius
+        for center in centers:
+            mask_tmp = norm(center - atoms.r, axis=1) < radius
             mask = mask | mask_tmp
     return mask
 
