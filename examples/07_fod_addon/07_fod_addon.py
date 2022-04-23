@@ -38,5 +38,5 @@ for i in range(atoms.Ns):
     write_cube(atoms, FLO[:, i], f'CH4_FLO_{i + 1}.cube')
 
 # All of the functionality above can be achieved with the following workflow function
-# from eminus.addons import FLO
+# from eminus.orbitals import FLO
 # FLO = FLO(atoms, write_cubes=True)

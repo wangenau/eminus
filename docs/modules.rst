@@ -18,6 +18,7 @@ Modules
    eminus.gth
    eminus.localizer
    eminus.operators
+   eminus.orbitals
    eminus.potentials
    eminus.scf
    eminus.tools
@@ -27,6 +28,5 @@ Modules
    eminus.addons
    eminus.addons.fods
    eminus.addons.libxc
-   eminus.addons.orbitals
    eminus.addons.viewer
    eminus.pade_gth

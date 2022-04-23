@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
-from .fods import get_fods, remove_core_fods
-from ..filehandler import write_cube
-from ..localizer import get_FLO, get_FO
-from ..scf import get_psi
+from .filehandler import write_cube
+from .localizer import get_FLO, get_FO
+from .scf import get_psi
 
 
 def KSO(atoms, write_cubes=False, **kwargs):
@@ -44,6 +43,8 @@ def FO(atoms, write_cubes=False, fods=None):
     Returns:
         array: Real-space Fermi orbitals.
     '''
+    # Late import addons
+    from .addons.fods import get_fods, remove_core_fods
     # Calculate eigenfunctions
     KSO = get_psi(atoms, atoms.W)
     if fods is None:
@@ -75,6 +76,8 @@ def FLO(atoms, write_cubes=False, fods=None):
     Returns:
         array: Real-space Fermi-Löwdin orbitals.
     '''
+    # Late import addons
+    from .addons.fods import get_fods, remove_core_fods
     # Calculate eigenfunctions
     KSO = get_psi(atoms, atoms.W)
     if fods is None:

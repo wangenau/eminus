@@ -6,5 +6,4 @@ Addon directory that contains functions that need additional dependencies to wor
 | :---------: | :---------: |
 | fods.py     | FOD generation |
 | libxc.py    | Use LibXC functionals |
-| orbitals.py | Orbital generation workflows |
 | viewer.py   | Notebook display functions |

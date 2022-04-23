@@ -1,9 +1,10 @@
 from timeit import default_timer
 
 from eminus import Atoms, read_xyz, SCF
-from eminus.addons import KSO, view_grid
+from eminus.addons import view_grid
 from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, truncate
 from eminus.energies import get_Esic, get_n_single
+from eminus.orbitals import KSO
 
 # Start by creating an Atoms object for lithium hydride
 # Use a small s to make the resulting grid not too dense to display it

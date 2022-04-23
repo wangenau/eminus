@@ -1,6 +1,6 @@
 from eminus import Atoms, SCF
-from eminus.addons import FLO, KSO
 from eminus.energies import get_Esic
+from eminus.orbitals import FLO, KSO
 
 # Start by with a DFT calculation for neon
 atoms = Atoms('Ne', [0, 0, 0])
