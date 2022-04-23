@@ -153,7 +153,7 @@ def check_ortho(atoms, func, eps=1e-9):
     for i in range(func.shape[1]):
         for j in range(i + 1, func.shape[1]):
             res = dV * np.sum(func[:, i].conj() * func[:, j])
-            tmp_bool = np.abs(res) < eps
+            tmp_bool = abs(res) < eps
             ortho_bool *= tmp_bool
             if atoms.verbose >= 3:
                 print(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
@@ -184,7 +184,7 @@ def check_norm(atoms, func, eps=1e-9):
     # Normality condition: \int func^* func dr = 1
     for i in range(func.shape[1]):
         res = dV * np.sum(func[:, i].conj() * func[:, i])
-        tmp_bool = np.abs(1 - res) < eps
+        tmp_bool = abs(1 - res) < eps
         norm_bool *= tmp_bool
         if atoms.verbose >= 3:
             print(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
