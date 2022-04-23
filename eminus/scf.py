@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-'''SCF calculation functionalities with relevant sub-function.'''
+'''SCF calculation functionalities with relevant sub-function.
+
+Reference: Comput. Phys. Commun. 128, 1.
+'''
 from timeit import default_timer
 
 import numpy as np

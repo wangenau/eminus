@@ -13,8 +13,9 @@ def harmonic(atoms):
     Returns:
         array: Harmonical potential in reciprocal space.
     '''
+    freq = 2
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
-    Vharm = 2 * dr**2
+    Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
 
