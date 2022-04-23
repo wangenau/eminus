@@ -14,7 +14,9 @@ def Diagprod(a, B):
     Returns:
         array: The expressions result.
     '''
-    return (a * B.T).T
+    # Reshape a to a column vector
+    a_col = a[:, None]
+    return a_col * B
 
 
 def dotprod(a, b):

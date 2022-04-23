@@ -29,7 +29,7 @@ def Coulomb(atoms):
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
     # Ignore the division by zero for the first elements
-    # One could do some proper indexing with [1:], but this version is way faster
+    # One could do some proper indexing with [1:] but indexing is slow
     with np.errstate(divide='ignore', invalid='ignore'):
         Vcoul = -4 * np.pi * Z / atoms.G2
     Vcoul[0] = 0
@@ -53,19 +53,20 @@ def Ge(atoms):
     Z = 4  # Potential should only be used for germanium
     lamda = 18.5
     rc = 1.052
-    Gm = np.sqrt(atoms.G2[1:])
+    Gm = np.sqrt(atoms.G2)
     Vps = np.empty_like(atoms.G2)
+
+    with np.errstate(divide='ignore', invalid='ignore'):
+        Vps = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
+                  (1 - np.exp(-2 * np.pi * Gm / lamda))
+        for n in range(5):
+            Vps = Vps + (-1)**n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm)**2)
+        Vps = Vps * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2
 
     # Special case for G=(0,0,0)
     n = np.arange(1, 5)
     Vps[0] = 4 * np.pi * Z * (1 + np.exp(-lamda * rc)) * (rc**2 / 2 + 1 / lamda**2 * (np.pi**2 / 6 +
              np.sum((-1)**n * np.exp(-lamda * rc * n) / n**2)))
-
-    Vps[1:] = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
-              (1 - np.exp(-2 * np.pi * Gm / lamda))
-    for n in range(5):
-        Vps[1:] = Vps[1:] + (-1)**n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm)**2)
-    Vps[1:] = Vps[1:] * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2
 
     Sf = np.sum(atoms.Sf, axis=0)
     return atoms.J(Vps * Sf)

@@ -40,7 +40,7 @@ def init_gth_loc(atoms):
 
         rlocG2 = G2 * rloc**2
         # Ignore the division by zero for the first elements
-        # One could do some proper indexing with [1:], but this version is way faster
+        # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide='ignore', invalid='ignore'):
             Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2 + \
                   np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
