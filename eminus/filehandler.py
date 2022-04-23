@@ -225,6 +225,8 @@ def write_cube(atoms, field, filename, extra=None):
 def save_atoms(atoms, filename):
     '''Save atoms objects in a pickle file.
 
+    This function is for personal use only. Never load a file you haven't saved yourself!
+
     Args:
         atoms: Atoms object.
         filename (str): xyz input file path/name.
@@ -239,6 +241,8 @@ def save_atoms(atoms, filename):
 
 def load_atoms(filename):
     '''Load atoms objects from a pickle file.
+
+    This function is for personal use only. Never load a file you haven't saved yourself!
 
     Args:
         filename (str): xyz input file path/name.
