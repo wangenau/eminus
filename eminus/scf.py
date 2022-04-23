@@ -88,7 +88,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         # Start with randomized, complex basis functions with a random seed
         W = guess_random(atoms, complex=True, reproduce=True)
 
-    # Calculate ewald energy
+    # Calculate Ewald energy that only depends on the system geometry
     atoms.energies.Eewald = get_Eewald(atoms)
 
     # Start minimization procedures
@@ -156,16 +156,21 @@ def H(atoms, W, n=None):
     Y = orth(atoms, W)  # Orthogonalize at the start
     if n is None:
         n = get_n_total(atoms, Y)
+    # Solve the Poisson equation
+    # phi = -4 pi Linv(O(J(n)))
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
-    # Calculate the exchange-correlation potential
-    # We get the full potential in the functinal definition, unlike in the Arias notation
+    # We get the full potential in the functional definition (different to the DFT++ notation)
+    # Normally Vxc = Jdag(O(J(exc))) + diag(exc')Jdag(O(J(n)))
     vxc = get_exc(atoms.exc, n, 'potential')
     Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
 
-    Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
+    # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W)
+    # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
+    Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     Vnonloc_psi = calc_Vnonloc(atoms, W)
+    # H = Vkin + Idag(diag(Veff))I + Vnonloc
     return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W))) + Vnonloc_psi
 
 
@@ -216,13 +221,17 @@ def get_grad(atoms, W):
     Returns:
         array: Gradient.
     '''
+    F = np.diag(atoms.f)
+    HW = H(atoms, W)
+    WHW = W.conj().T @ HW
+    # U = Wdag O(W)
     U = W.conj().T @ atoms.O(W)
     invU = inv(U)
-    HW = H(atoms, W)
-    F = np.diag(atoms.f)
-    U12 = sqrtm(inv(U))
-    Ht = U12 @ (W.conj().T @ HW) @ U12
-    return (HW - (atoms.O(W) @ invU) @ (W.conj().T @ HW)) @ (U12 @ F @ U12) + \
+    U12 = sqrtm(invU)
+    # Htilde = U^-0.5 Wdag H(W) U^-0.5
+    Ht = U12 @ WHW @ U12
+    # grad E = H(W) - O(W)U^-1 (Wdag H(W))(U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
+    return (HW - (atoms.O(W) @ invU) @ WHW) @ (U12 @ F @ U12) + \
            atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
@@ -456,6 +465,7 @@ def orth(atoms, W):
     Returns:
         array: Orthogonalized wave functions.
     '''
+    # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
@@ -505,6 +515,7 @@ def get_n_total(atoms, Y):
     Returns:
         array: Electronic density.
     '''
+    # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
     n = atoms.f * np.real(Yrs.conj() * Yrs)
     return np.sum(n, axis=1)
@@ -544,7 +555,6 @@ def guess_gaussian(atoms):
     # Start with a randomized basis set
     W = guess_random(atoms, complex=True, reproduce=True)
     W = orth(atoms, W)
-
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
     # Calculate a density from normalized Gauss functions

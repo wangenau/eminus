@@ -49,7 +49,7 @@ def get_Ekin(atoms, Y):
     Returns:
         float: Kinetic energy in Hartree.
     '''
-    # Ekin = -0.5 Tr(F Cdag L(C))
+    # Ekin = -0.5 Tr(F Wdag L(W))
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
 
 
@@ -65,7 +65,7 @@ def get_Ecoul(atoms, n):
     Returns:
         float: Coulomb energy in Hartree.
     '''
-    # Ecoul = -(Jn)dag O(phi)
+    # Ecoul = -(J(n))dag O(phi)
     phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
@@ -85,7 +85,7 @@ def get_Exc(atoms, n, spinpol=False):
     Returns:
         float: Exchange-correlation energy in Hartree.
     '''
-    # Exc = (Jn)dag O(J(exc))
+    # Exc = (J(n))dag O(J(exc))
     exc = get_exc(atoms.exc, n, 'density', spinpol)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
