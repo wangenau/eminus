@@ -121,8 +121,7 @@ def get_IP(atoms):
         float: Ionization potential in Hartree.
     '''
     epsilon = get_epsilon(atoms, atoms.W)
-    IP = -epsilon[-1]
-    return IP
+    return -epsilon[-1]
 
 
 def check_ortho(atoms, func, eps=1e-9):

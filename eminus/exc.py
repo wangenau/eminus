@@ -40,7 +40,7 @@ def get_exc(exc, n, ret, spinpol=False):
         if spinpol:
             f_exch = f'{f_exch}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
-        #        spin-unpolarised calculations
+        #        spin-unpolarized calculations
         x = eval(f_exch)(n_nz, ret, zeta=np.ones_like(n_nz))
 
     # Handle correlation part
@@ -52,7 +52,7 @@ def get_exc(exc, n, ret, spinpol=False):
         if spinpol:
             f_corr = f'{f_corr}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
-        #        spin-unpolarised calculations
+        #        spin-unpolarized calculations
         c = eval(f_corr)(n_nz, ret, zeta=np.ones_like(n_nz))
 
     # Use zero as the result for zero values
@@ -71,8 +71,7 @@ def mock_exc(n, ret, **kwargs):
     Returns:
         array: Mock exchange-correlation energy density and potential.
     '''
-    zero = np.zeros_like(n)
-    return zero
+    return np.zeros_like(n)
 
 
 mock_exc_spin = mock_exc
@@ -212,7 +211,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
         '''Calculate correlation energies by Perdew-Wang approximation interpolation.
 
         Args:
-            i (int): Index to choose unpolarised (0), polarised (1), or antiferromagnetic (2) fit.
+            i (int): Index to choose unpolarized (0), polarized (1), or antiferromagnetic (2) fit.
 
         Returns:
             tuple(array, array): PW fit and the derivative.
@@ -233,7 +232,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
                2 / 3 * a[i] * (1 + a1[i] * rs) * dom / (om * (om + 1))
         return fit, dfit
 
-    ecU, vcU = pw_fit(0)  # Unpolarised
+    ecU, vcU = pw_fit(0)  # Unpolarized
     ecP, vcP = pw_fit(1)  # Polarized
     ac, dac = pw_fit(2)  # Spin stiffness
 

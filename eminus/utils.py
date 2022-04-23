@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 
 
-def Diagprod(a, B):
+def diagprod(a, B):
     '''Efficiently calculate the expression Diag(a) * B.
 
     Args:

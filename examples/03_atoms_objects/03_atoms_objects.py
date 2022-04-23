@@ -66,7 +66,7 @@ atoms.a = 3
 atoms.update()
 print(f'New cell volume = {atoms.Omega} a0^3')
 
-# More informations are always available in the respective docstring
+# More information are always available in the respective docstring
 # print(f'\nAtoms docstring:\n{Atoms.__doc__}')
 # or:
 # help(Atoms)

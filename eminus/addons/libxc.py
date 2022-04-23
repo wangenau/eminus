@@ -30,8 +30,7 @@ def libxc_functional(exc, n, ret, spinpol):
         print('WARNING: The LibXC routine will still use an unpolarized functional.')
     spin = 'unpolarized'
 
-    inp = {}
-    inp['rho'] = n
+    inp = {'rho': n}
     # LibXC functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(exc), spin)

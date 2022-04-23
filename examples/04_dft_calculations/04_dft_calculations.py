@@ -7,11 +7,11 @@ atoms = Atoms('He', [0, 0, 0], ecut=5)
 # Optional parameters with examples are listed as follows
 # Dictionary to set the maximum amount of steps per minimization method and their order
 # Set it to a very small value for a short output
-min = {'pccg': 5}
+min_dict = {'pccg': 5}
 
 # The SCF function only needs an Atoms object, but only calculate 5 steps for less output
 print('First calculation:')
-SCF(atoms, min=min)
+SCF(atoms, min=min_dict)
 
 # Initial guess method for the basis functions (case insensitive)
 guess = 'random'
@@ -27,7 +27,7 @@ atoms.verbose = 5
 
 # Start a new calculation with new parameters
 print('\nSecond calculation with more output:')
-etot = SCF(atoms=atoms, guess=guess, etol=etol, min=min, cgform=cgform)
+etot = SCF(atoms=atoms, guess=guess, etol=etol, min=min_dict, cgform=cgform)
 
 # The total energy is a return value of the SCF function, but it is saved in the Atoms object as
 # well with all energy contributions

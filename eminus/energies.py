@@ -228,7 +228,6 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
                             # Add the reciprocal space contribution
                             x = 2 * np.pi / Omega * np.exp(-0.25 * G2 / nu**2) / G2
                             Eewald += x * ZiZj * np.cos(GX)
-
     return Eewald
 
 
@@ -243,8 +242,7 @@ def get_n_single(atoms, Y):
         array: Single-electron densities.
     '''
     Yrs = atoms.I(Y)
-    n = atoms.f * np.real(Yrs.conj() * Yrs)
-    return n
+    return atoms.f * np.real(Yrs.conj() * Yrs)
 
 
 def get_Esic(atoms, Y, n_single=None):

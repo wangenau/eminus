@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 
 
-def Harmonic(atoms):
+def harmonic(atoms):
     '''Harmonical potential. Can be used for quantum dot calculations.
 
     Args:
@@ -18,7 +18,7 @@ def Harmonic(atoms):
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
 
-def Coulomb(atoms):
+def coulomb(atoms):
     '''All-electron Coulomb potential.
 
     Args:
@@ -38,7 +38,7 @@ def Coulomb(atoms):
     return atoms.J(Vcoul * Sf)
 
 
-def Ge(atoms):
+def ge(atoms):
     '''Starkloff-Joannopoulos local pseudopotential for germanium.
 
     Fourier-transformed by Tomas Arias.
@@ -58,7 +58,7 @@ def Ge(atoms):
 
     with np.errstate(divide='ignore', invalid='ignore'):
         Vps = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
-                  (1 - np.exp(-2 * np.pi * Gm / lamda))
+              (1 - np.exp(-2 * np.pi * Gm / lamda))
         for n in range(5):
             Vps = Vps + (-1)**n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm)**2)
         Vps = Vps * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2
@@ -81,7 +81,7 @@ def init_pot(atoms):
     Returns:
         array: Potential in reciprocal space.
     '''
-    implemented = {'harmonic': Harmonic, 'coulomb': Coulomb, 'ge': Ge}
+    implemented = {'harmonic': harmonic, 'coulomb': coulomb, 'ge': ge}
     try:
         pot = implemented[atoms.pot]
     except KeyError:

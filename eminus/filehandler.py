@@ -84,7 +84,7 @@ def write_xyz(atoms, filename, extra=None):
         else:
             fp.write(f'{Natoms + len(extra)}\n')
         # The second line can contains a comment.
-        # Print informations about the file and program, and the file creation time.
+        # Print information about the file and program, and the file creation time.
         fp.write(f'XYZ file generated with eminus {__version__} at {ctime()}\n')
         for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')

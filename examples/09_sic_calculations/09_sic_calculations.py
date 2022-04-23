@@ -7,16 +7,16 @@ atoms = Atoms('Ne', [0, 0, 0])
 SCF(atoms)
 
 # Generate Kohn-Sham and Fermi-Löwdin orbitals
-KSOs = KSO(atoms)
-FLOs = FLO(atoms)
+KSO = KSO(atoms)
+FLO = FLO(atoms)
 
 # Calculate the self-interaction energies
 # The orbitals have to be in reciprocal space, so transform them
-esic_kso = get_Esic(atoms, atoms.J(KSOs, False))
+esic_kso = get_Esic(atoms, atoms.J(KSO, False))
 print(f'\nKSO-SIC energy = {esic_kso} Eh')
 
 # The SIC energy will also be saved in the Atoms object
 # The quality of the FLO-SIC energy will vary with the FOD guess
-get_Esic(atoms, atoms.J(FLOs, False))
+get_Esic(atoms, atoms.J(FLO, False))
 print(f'FLO-SIC energy = {atoms.energies.Esic} Eh')
 print(f'\nAll energies:\n{atoms.energies}')

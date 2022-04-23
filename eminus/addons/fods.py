@@ -5,11 +5,11 @@ from os import remove
 import numpy as np
 from numpy.linalg import norm
 try:
-    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
-    from pyscf.scf import RKS
     from pyflosic2.atoms.atoms import Atoms
     from pyflosic2.guess.pycom import pycom
     from pyflosic2.parameters.flosic_parameters import parameters
+    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
+    from pyscf.scf import RKS
 except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
@@ -40,7 +40,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)
     # Build the PySCF input format
-    atom_pyscf = [i for i in zip(atoms.atom, X)]
+    atom_pyscf = list(zip(atoms.atom, X))
 
     # Do the PySCF DFT calculation
     spin = np.sum(atoms.Z) % 2
@@ -65,7 +65,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
 
     # Get the actual FOD positions from the xyz file
     atom, X = read_xyz(f'{loc}_GUESS_COM.xyz')
-    _, _, fods = split_atom_and_fod(atom, X)
+    _, _, fods = split_fods(atom, X)
 
     if clean:
         remove(p.log_name)
@@ -73,7 +73,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     return fods
 
 
-def split_atom_and_fod(atom, X):
+def split_fods(atom, X):
     '''Split atom and FOD coordinates.
 
     Args:

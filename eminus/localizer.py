@@ -46,7 +46,7 @@ def get_R(atoms, psi, fods):
     return R
 
 
-def get_FOs(atoms, psi, fods):
+def get_FO(atoms, psi, fods):
     '''Calculate Fermi orbitals from Kohn-Sham orbitals and a set of respective FODs.
 
     Reference: J. Chem. Phys. 153, 084104.
@@ -59,15 +59,15 @@ def get_FOs(atoms, psi, fods):
     Returns:
         array: Real-space Fermi orbitals.
     '''
-    FOs = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
+    FO = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
     R = get_R(atoms, psi, fods)
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
     for i in range(len(R)):
         for j in range(atoms.Ns):
-            FOs[:, i] += R[i, j] * psi_rs[:, j]
-    return FOs
+            FO[:, i] += R[i, j] * psi_rs[:, j]
+    return FO
 
 
 def get_S(atoms, psirs):
@@ -92,7 +92,7 @@ def get_S(atoms, psirs):
     return S
 
 
-def get_FLOs(atoms, psi, fods):
+def get_FLO(atoms, psi, fods):
     '''Calculate Fermi-Löwdin orbitals by orthonormalizing Fermi orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
@@ -105,14 +105,14 @@ def get_FLOs(atoms, psi, fods):
     Returns:
         array: Real-space Fermi-Löwdin orbitals.
     '''
-    FOs = get_FOs(atoms, psi, fods)
+    FO = get_FO(atoms, psi, fods)
     # Calculate the overlap matrix for FOs
-    S = get_S(atoms, FOs)
+    S = get_S(atoms, FO)
     # Calculate eigenvalues and eigenvectors
     Q, T = eig(S)
     # Löwdins symmetric orthonormalization method
     Q12 = np.diag(1 / np.sqrt(Q))
-    return FOs @ (T @ Q12 @ T.T)
+    return FO @ (T @ Q12 @ T.T)
 
 
 def wannier_cost(atoms, psirs):

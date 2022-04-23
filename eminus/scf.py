@@ -10,7 +10,7 @@ from scipy.linalg import sqrtm
 from .energies import get_Ecoul, get_Eewald, get_Ekin, get_Eloc, get_Enonloc, get_Exc
 from .exc import get_exc
 from .gth import calc_Vnonloc
-from .utils import Diagprod, dotprod
+from .utils import diagprod, dotprod
 
 
 def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
@@ -64,14 +64,14 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     if min is None:
         min = {'pccg': 100}
 
-    # Print some useful informations
+    # Print some useful information
     if atoms.verbose >= 3:
-        print(f'--- System informations ---\n{atoms}\n')
+        print(f'--- System information ---\n{atoms}\n')
     if atoms.verbose >= 4:
-        print(f'--- Cell informations ---\nSide lengths: {atoms.a} Bohr\n'
+        print(f'--- Cell information ---\nSide lengths: {atoms.a} Bohr\n'
               f'Cut-off energy: {atoms.ecut} Hartree\n'
               f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n')
-        print('--- Calculation informations ---\n'
+        print('--- Calculation information ---\n'
              f'Number of states: {atoms.Ns}\n'
              f'Occupation per state: {atoms.f}\n'
              f'Potential: {atoms.pot}\n'
@@ -166,7 +166,7 @@ def H(atoms, W, n=None):
     Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     Vkin_psi = -0.5 * atoms.L(W)
     Vnonloc_psi = calc_Vnonloc(atoms, W)
-    return Vkin_psi + atoms.Idag(Diagprod(Veff, atoms.I(W))) + Vnonloc_psi
+    return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W))) + Vnonloc_psi
 
 
 def Q(inp, U):
@@ -557,5 +557,4 @@ def guess_gaussian(atoms):
         n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
 
     # Calculate the eigenfunctions
-    W = get_psi(atoms, W, n)
-    return W
+    return get_psi(atoms, W, n)

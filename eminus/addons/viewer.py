@@ -9,7 +9,7 @@ except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
-from .fods import split_atom_and_fod
+from .fods import split_fods
 from ..filehandler import create_pdb, read_cube, read_xyz
 
 
@@ -36,7 +36,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     if filename.endswith('.xyz'):
         # Atoms
         atom, X = read_xyz(filename)
-        atom, X, X_fod = split_atom_and_fod(atom, X)
+        atom, X, X_fod = split_fods(atom, X)
         view.add_component(TextStructure(create_pdb(atom, X)))
         view[0].clear()
         view[0].add_ball_and_stick()
@@ -50,7 +50,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     if filename.endswith('.cube'):
         # Atoms and unit cell
         atom, X, _, a, _ = read_cube(filename)
-        atom, X, X_fod = split_atom_and_fod(atom, X)
+        atom, X, X_fod = split_fods(atom, X)
         view.add_component(TextStructure(create_pdb(atom, X, a)))
         view[0].clear()
         view[0].add_ball_and_stick()

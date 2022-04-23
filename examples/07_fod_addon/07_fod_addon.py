@@ -1,6 +1,6 @@
 from eminus import Atoms, read_xyz, SCF, write_cube, write_xyz
 from eminus.addons import get_fods, remove_core_fods
-from eminus.localizer import get_FLOs
+from eminus.localizer import get_FLO
 from eminus.scf import get_psi
 
 # Start by with a DFT calculation for methane
@@ -29,14 +29,14 @@ write_xyz(atoms, 'CH4_fods.xyz', fods)
 psi = get_psi(atoms, atoms.W)
 
 # Calculate the FLOs
-FLOs = get_FLOs(atoms, psi, fods)
+FLO = get_FLO(atoms, psi, fods)
 
 # Write all FLOs to cube files
 print('\nWrite cube files:')
 for i in range(atoms.Ns):
     print(f'{i + 1} of {atoms.Ns}')
-    write_cube(atoms, FLOs[:, i], f'CH4_FLO_{i + 1}.cube')
+    write_cube(atoms, FLO[:, i], f'CH4_FLO_{i + 1}.cube')
 
 # All of the functionality above can be achieved with the following workflow function
 # from eminus.addons import FLO
-# FLOs = FLO(atoms, write_cubes=True)
+# FLO = FLO(atoms, write_cubes=True)

@@ -12,7 +12,7 @@ atoms.verbose = 1
 
 # Calculate the dipole moment
 # Make sure that the unit cell is big enough, and that the density does not extend over the borders
-# Centering the system is reccomended to achieve this
+# Centering the system is recommended to achieve this
 dip = get_dipole(atoms)
 print(f'\nDipole moments = {dip} a0')
 print(f'Total dipole moment = {ebohr2d(np.linalg.norm(dip))} D')
@@ -29,9 +29,9 @@ print('Orthonormality of Kohn-Sham orbitals:')
 check_orthonorm(atoms, psi)
 
 # Calculate the orbital variance and spread of the orbitals
-var = wannier_cost(atoms, psi)
-print(f'\nOrbital variances = {var} a0^2')
-print(f'Total spread = {np.sum(np.sqrt(var))} a0')
+cost = wannier_cost(atoms, psi)
+print(f'\nOrbital variances = {cost} a0^2')
+print(f'Total spread = {np.sum(np.sqrt(cost))} a0')
 
 # Calculate the center of mass of the density
 com = center_of_mass(atoms.r, atoms.n)
