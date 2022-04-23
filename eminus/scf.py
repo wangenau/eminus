@@ -3,7 +3,7 @@
 from timeit import default_timer
 
 import numpy as np
-from numpy.linalg import eig, inv, norm
+from numpy.linalg import eig, eigh, inv, norm
 from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 
@@ -473,7 +473,7 @@ def get_psi(atoms, Y, n=None):
         array: Eigenstates in reciprocal space.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
-    _, D = eig(mu)
+    _, D = eigh(mu)
     return Y @ D
 
 
@@ -491,8 +491,7 @@ def get_epsilon(atoms, Y, n=None):
         array: Eigenvalues.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
-    epsilon, _ = eig(mu)
-    epsilon = np.real(epsilon)
+    epsilon, _ = eigh(mu)
     return np.sort(epsilon)
 
 
@@ -546,15 +545,12 @@ def guess_gaussian(atoms):
     W = guess_random(atoms, complex=True, reproduce=True)
     W = orth(atoms, W)
 
-    eps = 1e-9
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
-
     # Calculate a density from normalized Gauss functions
-    n = np.zeros(len(atoms.r)) + eps  # We divide by n in exc functionals, so 0 would be bad
+    n = np.zeros(len(atoms.r))
     for ia in range(atoms.Natoms):
         r = norm(atoms.r - atoms.X[ia], axis=1)
         n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
-
     # Calculate the eigenfunctions
     return get_psi(atoms, W, n)
