@@ -43,7 +43,9 @@ setup(
     license='APACHE2.0',
     install_requires=['numpy', 'scipy'],
     keywords=['NextDFT'],
-    package_data={'eminus.pade_gth': ['*.gth']},
+    package_data={
+        'eminus.pade_gth': ['*.gth']
+    },
     zip_safe=False,
     extras_require={
         'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'pylibxc2', 'vispy'],
@@ -53,6 +55,6 @@ setup(
     project_urls={
         'Documentation': 'https://nextdft.gitlab.io/eminus',
         'Source': 'https://gitlab.com/nextdft/eminus',
-        'Tracker': 'https://gitlab.com/nextdft/eminus/-/issues'
+        'Bug Tracker': 'https://gitlab.com/nextdft/eminus/-/issues'
     }
 )
