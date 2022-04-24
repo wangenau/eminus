@@ -6,8 +6,8 @@ Installation
 | The code is written for Python 3.6+.
 | The following packages are needed for a minimum working installation
 
-* `numpy <https://numpy.org/>`_
-* `scipy <https://scipy.org/>`_
+* `NumPy <https://numpy.org/>`_
+* `SciPy <https://scipy.org/>`_
 
 The package and all necessary dependencies can be installed with
 
