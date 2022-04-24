@@ -207,12 +207,6 @@ class Atoms:
 
     def _set_sampling(self):
         '''Validate the s input and calculate it if necessary.'''
-        # Choose the same sampling for every direction if an integer is given
-        if isinstance(self.s, (int, np.integer)):
-            self.s = self.s * np.ones(3, dtype=int)
-        if isinstance(self.s, (list, tuple)):
-            self.s = np.asarray(self.s)
-
         # Make sampling dependent of ecut if no sampling is given
         if self.s is None:
             try:
@@ -223,9 +217,13 @@ class Atoms:
             s = 2 * s + 1
             # Calculate a fast length to optimize the FFT calculations
             # See https://github.com/scipy/scipy/blob/master/scipy/fft/_helper.py
-            for i in range(len(s)):
-                s[i] = next_fast_len(s[i])
-            self.s = s
+            self.s = [next_fast_len(i) for i in s]
+
+        # Choose the same sampling for every direction if an integer is given
+        if isinstance(self.s, (int, np.integer)):
+            self.s = self.s * np.ones(3, dtype=int)
+        if isinstance(self.s, (list, tuple)):
+            self.s = np.asarray(self.s)
         return
 
     def _set_states(self):
