@@ -40,7 +40,7 @@ def O(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -55,7 +55,7 @@ def L(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -75,7 +75,7 @@ def Linv(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -102,7 +102,7 @@ def K(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -122,7 +122,7 @@ def I(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -157,7 +157,7 @@ def J(atoms, W, full=True):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         full (bool): Wether to transform in the full or in the active space.
@@ -186,7 +186,7 @@ def Idag(atoms, W, full=False):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         full (bool): Wether to transform in the full or in the active space.
@@ -206,7 +206,7 @@ def Jdag(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -223,8 +223,8 @@ def T(atoms, W, dr):
 
     Args:
         atoms: Atoms object.
-        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
-        dr (ndarray) : Real-space shift.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        dr (ndarray): Real-space shift.
 
     Returns:
         ndarray: The operator applied on W.
