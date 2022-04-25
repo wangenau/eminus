@@ -37,13 +37,13 @@ def center_of_mass(coords, masses=None):
     '''Calculate the center of mass for a set of coordinates and masses.
 
     Args:
-        coords (array): Array of real-space coordinates.
+        coords (ndarray): Array of real-space coordinates.
 
     Keyword Args:
-        masses (array): Mass or weight for each coordinate.
+        masses (ndarray): Mass or weight for each coordinate.
 
     Returns:
-        array: Center of mass.
+        ndarray: Center of mass.
     '''
     if masses is None:
         masses = np.ones(len(coords))
@@ -55,13 +55,13 @@ def inertia_tensor(coords, masses=None):
     '''Calculate the inertia tensor for a set of coordinates and masses.
 
     Args:
-        coords (array): Array of real-space coordinates.
+        coords (ndarray): Array of real-space coordinates.
 
     Keyword Args:
-        masses (array): Mass or weight for each coordinate.
+        masses (ndarray): Mass or weight for each coordinate.
 
     Returns:
-        array: Inertia tensor.
+        ndarray: Inertia tensor.
     '''
     if masses is None:
         masses = np.ones(len(coords))
@@ -88,7 +88,7 @@ def get_dipole(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Electric dipole moment in e times Bohr.
+        ndarray: Electric dipole moment in e times Bohr.
     '''
     # The dipole may be extremely large. This can be because of periodic boundary conditions,
     # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
@@ -129,7 +129,7 @@ def check_ortho(atoms, func, eps=1e-9):
 
     Args:
         atoms: Atoms object.
-        func (array): Discretized set of functions.
+        func (ndarray): Discretized set of functions.
 
     Keyword Args:
         eps (float): Tolerance for the condition.
@@ -166,7 +166,7 @@ def check_norm(atoms, func, eps=1e-9):
 
     Args:
         atoms: Atoms object.
-        func (array): Discretized set of functions.
+        func (ndarray): Discretized set of functions.
 
     Keyword Args:
         eps (float): Tolerance for the condition.
@@ -197,7 +197,7 @@ def check_orthonorm(atoms, func):
 
     Args:
         atoms: Atoms object.
-        func (array): Discretized set of functions.
+        func (ndarray): Discretized set of functions.
 
     Returns:
         bool: Orthonormality status for the set of functions.

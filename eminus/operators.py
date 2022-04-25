@@ -40,10 +40,10 @@ def O(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     return atoms.Omega * W
 
@@ -55,10 +55,10 @@ def L(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
@@ -75,10 +75,10 @@ def Linv(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     out = np.empty_like(W, dtype=complex)
     # Ignore the division by zero for the first elements
@@ -102,10 +102,10 @@ def K(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
@@ -122,10 +122,10 @@ def I(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     n = np.prod(atoms.s)
     # If W is in the full space do nothing with W
@@ -157,13 +157,13 @@ def J(atoms, W, full=True):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         full (bool): Wether to transform in the full or in the active space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     n = np.prod(atoms.s)
     if W.ndim == 1:
@@ -186,13 +186,13 @@ def Idag(atoms, W, full=False):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         full (bool): Wether to transform in the full or in the active space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     n = np.prod(atoms.s)
     F = J(atoms, W, full)
@@ -206,10 +206,10 @@ def Jdag(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     n = np.prod(atoms.s)
     Finv = I(atoms, W)
@@ -223,11 +223,11 @@ def T(atoms, W, dr):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        dr (array): Real-space shift.
+        W (ndarray) : Expansion coefficients of unconstrained wave functions in reciprocal space.
+        dr (ndarray) : Real-space shift.
 
     Returns:
-        array: The operator applied on W.
+        ndarray: The operator applied on W.
     '''
     # Do the shift by multiplying a phase factor, given by the shift theorem
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)

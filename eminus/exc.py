@@ -8,14 +8,14 @@ def get_exc(exc, n, ret, spinpol=False):
 
     Args:
         exc (str): Exchange and correlation identifier, separated by a comma.
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
     Keyword Args:
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
-        array: Exchange-correlation energy density or potential.
+        ndarray: Exchange-correlation energy density or potential.
     '''
     exc_map = {
         'lda': 'lda_slater_x',
@@ -65,11 +65,11 @@ def mock_exc(n, ret, **kwargs):
     '''Mock exchange-correlation functional with no effect.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
-        array: Mock exchange-correlation energy density and potential.
+        ndarray: Mock exchange-correlation energy density and potential.
     '''
     return np.zeros_like(n)
 
@@ -85,14 +85,14 @@ def lda_slater_x(n, ret, alpha=2 / 3, **kwargs):
     Reference: Phys. Rev. 81, 385.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
     Keyword Args:
         alpha (float): Scaling factor.
 
     Returns:
-        array: Exchange energy density and potential.
+        ndarray: Exchange energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -114,15 +114,15 @@ def lda_slater_x_spin(n, ret, zeta, alpha=2 / 3):
     Reference: Phys. Rev. 81, 385.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
-        zeta (array): Relative spin polarization.
+        zeta (ndarray): Relative spin polarization.
 
     Keyword Args:
         alpha (float): Scaling factor.
 
     Returns:
-        array: Exchange energy density and potential.
+        ndarray: Exchange energy density and potential.
     '''
     third = 1 / 3
     p43 = 4 / 3
@@ -149,11 +149,11 @@ def lda_pw_c(n, ret, **kwargs):
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
-        array: PW correlation energy density and potential.
+        ndarray: PW correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -187,12 +187,12 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
-        zeta (array): Relative spin polarization.
+        zeta (ndarray): Relative spin polarization.
 
     Returns:
-        array: PW correlation energy density and potential.
+        ndarray: PW correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -214,7 +214,7 @@ def lda_pw_c_spin(n, ret, zeta, **kwargs):
             i (int): Index to choose unpolarized (0), polarized (1), or antiferromagnetic (2) fit.
 
         Returns:
-            tuple(array, array): PW fit and the derivative.
+            tuple[ndarray, ndarray]: PW fit and the derivative.
         '''
         a = (0.031091, 0.015545, 0.016887)
         a1 = (0.2137, 0.20548, 0.11125)
@@ -258,11 +258,11 @@ def lda_vwn_c(n, ret, **kwargs):
     Reference: Phys. Rev. B 22, 3812.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
     Returns:
-        array: VWN correlation energy density and potential.
+        ndarray: VWN correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -299,12 +299,12 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
     Reference: Phys. Rev. B 22, 3812.
 
     Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
-        zeta (array): Relative spin polarization.
+        zeta (ndarray): Relative spin polarization.
 
     Returns:
-        array: VWN correlation energy density and potential.
+        ndarray: VWN correlation energy density and potential.
     '''
     third = 1 / 3
     pi34 = (3 / (4 * np.pi))**third
@@ -331,7 +331,7 @@ def lda_vwn_c_spin(n, ret, zeta, **kwargs):
             i (int): Index to choose paramagnetic (0), ferromagnetic (1), or spin stiffness (2) fit.
 
         Returns:
-            tuple(array, array): Pade fit and the derivative.
+            tuple[ndarray, ndarray]: Pade fit and the derivative.
         '''
         a = (0.0310907, 0.01554535, -0.01688686394039)
         b = (3.72744, 7.06042, 1.13107)

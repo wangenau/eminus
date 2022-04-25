@@ -44,7 +44,7 @@ def get_Ekin(atoms, Y):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         float: Kinetic energy in Hartree.
@@ -60,7 +60,7 @@ def get_Ecoul(atoms, n):
 
     Args:
         atoms: Atoms object.
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Returns:
         float: Coulomb energy in Hartree.
@@ -77,7 +77,7 @@ def get_Exc(atoms, n, spinpol=False):
 
     Args:
         atoms: Atoms object.
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Keyword Args:
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
@@ -95,7 +95,7 @@ def get_Eloc(atoms, n):
 
     Args:
         atoms: Atoms object.
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Returns:
         float: Local energy contribution in Hartree.
@@ -111,7 +111,7 @@ def get_Enonloc(atoms, Y):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
         float: Non-local GTH energy contribution in Hartree.
@@ -236,10 +236,10 @@ def get_n_single(atoms, Y):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        array: Single-electron densities.
+        ndarray: Single-electron densities.
     '''
     Yrs = atoms.I(Y)
     return atoms.f * np.real(Yrs.conj() * Yrs)
@@ -252,10 +252,10 @@ def get_Esic(atoms, Y, n_single=None):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n_single(array): Single-electron densities.
+        n_single (ndarray): Single-electron densities.
 
     Returns:
         float: PZ self-interaction energy.

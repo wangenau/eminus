@@ -21,7 +21,7 @@ def init_gth_loc(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Local GTH potential contribution.
+        ndarray: Local GTH potential contribution.
     '''
     G2 = atoms.G2
     atom = atoms.atom
@@ -69,7 +69,7 @@ def init_gth_nonloc(atoms):
         atoms: Atoms object.
 
     Returns:
-        tuple(int, array, array): NbetaNL, prj2beta, and betaNL.
+        tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
     '''
     Natoms = atoms.Natoms
     Npoints = len(atoms.G2c)
@@ -113,10 +113,10 @@ def calc_Vnonloc(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: Non-local GTH potential contribution.
+        ndarray: Non-local GTH potential contribution.
     '''
     Npoints = len(W)
     Nstates = atoms.Ns
@@ -154,11 +154,11 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
         psp (dict): GTH parameters.
         l (int): Angular momentum number.
         iprj (int): Nproj_l index.
-        Gm (array): Magnitude of G-vectors.
+        Gm (ndarray): Magnitude of G-vectors.
         Omega (float): Unit cell volume.
 
     Returns:
-        array: GTH projector.
+        ndarray: GTH projector.
     '''
     rrl = psp['rp'][l]
     Gr2 = (Gm * rrl)**2

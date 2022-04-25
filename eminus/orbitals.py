@@ -15,7 +15,7 @@ def KSO(atoms, write_cubes=False, **kwargs):
         write_cubes (bool): Write orbitals to cube files.
 
     Returns:
-        array: Real-space Kohn-Sham orbitals.
+        ndarray: Real-space Kohn-Sham orbitals.
     '''
     # Calculate eigenfunctions and transform to real-space
     KSO = atoms.I(get_psi(atoms, atoms.W))
@@ -38,10 +38,10 @@ def FO(atoms, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
-        fods (array): Fermi-orbital descriptors.
+        fods (ndarray): Fermi-orbital descriptors.
 
     Returns:
-        array: Real-space Fermi orbitals.
+        ndarray: Real-space Fermi orbitals.
     '''
     # Late import addons
     from .addons.fods import get_fods, remove_core_fods
@@ -71,10 +71,10 @@ def FLO(atoms, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
-        fods (array): Fermi-orbital descriptors.
+        fods (ndarray): Fermi-orbital descriptors.
 
     Returns:
-        array: Real-space Fermi-Löwdin orbitals.
+        ndarray: Real-space Fermi-Löwdin orbitals.
     '''
     # Late import addons
     from .addons.fods import get_fods, remove_core_fods

@@ -23,7 +23,7 @@ def read_xyz(filename, info=False):
         info (bool): Display file comments.
 
     Returns:
-        tuple(list, array): Atom species and positions.
+        tuple[list, ndarray]: Atom species and positions.
     '''
     if not filename.endswith('.xyz'):
         filename = f'{filename}.xyz'
@@ -62,7 +62,7 @@ def write_xyz(atoms, filename, extra=None):
         filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (array): Extra coordinates to write.
+        extra (ndarray): Extra coordinates to write.
     '''
     atom = atoms.atom
     Natoms = atoms.Natoms
@@ -108,7 +108,7 @@ def read_cube(filename, info=False):
         info (bool): Display file comments.
 
     Returns:
-        tuple(list, array, float, array, int): Species, positions, charges, cell size, and sampling.
+        tuple[list, ndarray, float, ndarray, int]: Species, positions, charges, cell size, sampling.
     '''
     if not filename.endswith('.cube'):
         filename = f'{filename}.cube'
@@ -156,11 +156,11 @@ def write_cube(atoms, field, filename, extra=None):
 
     Args:
         atoms: Atoms object.
-        field (array): Real-space field data.
+        field (ndarray): Real-space field data.
         filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (array): Extra coordinates to write.
+        extra (ndarray): Extra coordinates to write.
     '''
     # Atomic units are assumed, so there is no need for conversion.
     atom = atoms.atom
@@ -267,7 +267,7 @@ def create_pdb(atom, X, a=None):
 
     Args:
         atom (list): Atom symbols.
-        X (array): Atom positions.
+        X (ndarray): Atom positions.
 
     Keyword Args:
         a (float): Cell size.

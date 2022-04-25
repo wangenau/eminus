@@ -87,10 +87,10 @@ def view_grid(coords, extra=None):
     '''Display 3D-coordinates, e.g., grid points.
 
     Args:
-        coords (array): Grid points.
+        coords (ndarray): Grid points.
 
     Keyword Args:
-        extra (array): Extra coordinates to display.
+        extra (ndarray): Extra coordinates to display.
 
     Returns:
         SceneCanvas: Viewable object.

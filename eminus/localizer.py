@@ -9,11 +9,11 @@ def eval_psi(atoms, psi, r):
 
     Args:
         atoms: Atoms object.
-        psi (array): Set of orbitals in reciprocal space.
-        r (array): Real-space positions.
+        psi (ndarray): Set of orbitals in reciprocal space.
+        r (ndarray): Real-space positions.
 
     Returns:
-        array: Values of psi at points r.
+        ndarray: Values of psi at points r.
     '''
     # Shift the evaluation point to (0,0,0), because we always have a lattice point there
     psi_T = atoms.T(psi, -r)
@@ -29,11 +29,11 @@ def get_R(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (array): Set of orbitals in reciprocal space.
-        fods (array): Fermi-orbital descriptors.
+        psi (ndarray): Set of orbitals in reciprocal space.
+        fods (ndarray): Fermi-orbital descriptors.
 
     Returns:
-        array: Transformation matrix R.
+        ndarray: Transformation matrix R.
     '''
     # We only calculate occupied orbitals, so a zero matrix is enough
     R = np.empty((len(fods), len(fods)), dtype=complex)
@@ -53,11 +53,11 @@ def get_FO(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (array): Set of orbitals in reciprocal space.
-        fods (array): Fermi-orbital descriptors.
+        psi (ndarray): Set of orbitals in reciprocal space.
+        fods (ndarray): Fermi-orbital descriptors.
 
     Returns:
-        array: Real-space Fermi orbitals.
+        ndarray: Real-space Fermi orbitals.
     '''
     FO = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
@@ -77,10 +77,10 @@ def get_S(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (array): Set of orbitals in real-space.
+        psirs (ndarray): Set of orbitals in real-space.
 
     Returns:
-        array: Overlap matrix S.
+        ndarray: Overlap matrix S.
     '''
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.Ns, atoms.Ns), dtype=complex)
@@ -99,11 +99,11 @@ def get_FLO(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (array): Set of orbitals in reciprocal space.
-        fods (array): Fermi-orbital descriptors.
+        psi (ndarray): Set of orbitals in reciprocal space.
+        fods (ndarray): Fermi-orbital descriptors.
 
     Returns:
-        array: Real-space Fermi-Löwdin orbitals.
+        ndarray: Real-space Fermi-Löwdin orbitals.
     '''
     FO = get_FO(atoms, psi, fods)
     # Calculate the overlap matrix for FOs
@@ -122,10 +122,10 @@ def wannier_cost(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (array): Set of orbitals in real-space.
+        psirs (ndarray): Set of orbitals in real-space.
 
     Returns:
-        array: Variance per orbital.
+        ndarray: Variance per orbital.
     '''
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
@@ -143,10 +143,10 @@ def wannier_center(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (array): Set of orbitals in real-space.
+        psirs (ndarray): Set of orbitals in real-space.
 
     Returns:
-        array: Wannier centers per orbital.
+        ndarray: Wannier centers per orbital.
     '''
     dV = atoms.Omega / np.prod(atoms.s)
     r = atoms.r
@@ -164,10 +164,10 @@ def second_moment(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (array): Set of orbitals in real-space.
+        psirs (ndarray): Set of orbitals in real-space.
 
     Returns:
-        array: Second moments per orbital.
+        ndarray: Second moments per orbital.
     '''
     dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2

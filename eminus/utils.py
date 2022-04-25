@@ -8,11 +8,11 @@ def diagprod(a, B):
     '''Efficiently calculate the expression Diag(a) * B.
 
     Args:
-        a (array): Single vector.
-        B (array): Matrix.
+        a (ndarray): Single vector.
+        B (ndarray): Matrix.
 
     Returns:
-        array: The expressions result.
+        ndarray: The expressions result.
     '''
     # Reshape a to a column vector
     a_col = a[:, None]
@@ -23,8 +23,8 @@ def dotprod(a, b):
     '''Efficiently calculate the expression a * b.
 
     Args:
-        a (array): Array of vectors.
-        b (array): Array of vectors.
+        a (ndarray): Array of vectors.
+        b (ndarray): Array of vectors.
 
     Returns:
         float: The expressions result
@@ -39,10 +39,10 @@ def Ylm_real(l, m, R):
     Args:
         l (int): Angular momentum number.
         m (int): Magnetic quantum number.
-        R (array): Real-space position vector or array of real-space position vectors.
+        R (ndarray): Real-space position vector or array of real-space position vectors.
 
     Returns:
-        array: Spherical harmonics.
+        ndarray: Spherical harmonics.
     '''
     # Account for single vectors
     if R.ndim == 1:

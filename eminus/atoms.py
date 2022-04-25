@@ -17,51 +17,51 @@ class Atoms:
     '''Atoms object that holds all system and cell parameters.
 
     Args:
-        atom (str or list or tuple): Atom symbols.
+        atom (str | list | tuple): Atom symbols.
 
             Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']; ('C', 'H', 'H', 'H', 'H')
-        X (list or tuple or array): Atom positions.
+        X (list | tuple | ndarray): Atom positions.
 
             Examples: (0, 0, 0); array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
 
     Keyword Args:
-        a (float or list or tuple or array): Cell size or vacuum size.
+        a (float | list | tuple | ndarray): Cell size or vacuum size.
 
             A cuboidal box with the same side lengths will be created.
 
             Examples: 10; [10, 10, 10]; (7, 8, 9),
             Default: 20 Bohr (ca. 10.5 Angstrom).
-        ecut (float or None): Cut-off energy.
+        ecut (float | None): Cut-off energy.
 
             None will disable the G-Vector truncation (needs a separate s).
             Default: 20 Hartree (ca. 544 eV).
-        Z (int or list or tuple or array or None): Valence charge per atom.
+        Z (int | list | tuple | ndarray | None): Valence charge per atom.
 
             The charges should not differ for same species. None will use valence charges from GTH
             files. The same charge for every atom will be assumed for single integers.
 
             Example: 1; [4, 1, 1, 1, 1],
             Default: None
-        s (int or list or tuple or array or None): Real-space sampling of the cell.
+        s (int | list | tuple | ndarray | None): Real-space sampling of the cell.
 
             None will make the sampling dependent on a and ecut.
 
             Example: 30; [30, 40, 50]; array([30, 40, 50]),
             Default: None
-        f (float or list or tuple or array or None): Occupation numbers per state.
+        f (float | list | tuple | ndarray | None): Occupation numbers per state.
 
             The last state will be adjusted if the sum of f is not equal to the sum of Z.
             None will assume occupations of 2.
 
             Example: 2; [2, 2, 2, 2]; array([2, 2/3, 2/3, 2/3]),
             Default: None
-        Ns (int or None): Number of states.
+        Ns (int | None): Number of states.
 
             None will get the number of states from f or assume occupations of 2 and divide the sum
             of Z by it.
 
             Default: None
-        center (bool or str): Center the system inside the cell (case insensitive).
+        center (bool | str): Center the system inside the cell (case insensitive).
 
             Align the geometric center of mass with the center of the call and rotate the system,
             such that its geometric moment of inertia aligns with the coordinate axes.
@@ -259,7 +259,7 @@ class Atoms:
         '''Build index matrices M and N to build the real and reciprocal space samplings.
 
         Returns:
-            tuple(array, array): Index matrices.
+            tuple[ndarray, ndarray]: Index matrices.
         '''
         # Build index matrix M
         ms = np.arange(np.prod(self.s))
@@ -279,7 +279,7 @@ class Atoms:
         '''Build the unit cell and create the respective sampling.
 
         Args:
-            M (array): Index matrix.
+            M (ndarray): Index matrix.
         '''
         # Build a cuboidal unit cell and calculate its volume
         R = self.a * np.eye(3)
@@ -293,7 +293,7 @@ class Atoms:
         '''Build G-vectors, build squared magnitudes G2, and generate the active space.
 
         Args:
-            N (array): Index matrix.
+            N (ndarray): Index matrix.
         '''
         # Build G-vectors
         G = 2 * np.pi * N @ inv(self.R)

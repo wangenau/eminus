@@ -30,7 +30,7 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
-        min (dict or None): Dictionary to set the order and number of steps per minimization method.
+        min (dict | None): Dictionary to set the order and number of steps per minimization method.
 
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
             Default: None (will default to {'pccg': 100})
@@ -148,13 +148,13 @@ def H(atoms, W, n=None):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Returns:
-        array: Hamiltonian applied on W.
+        ndarray: Hamiltonian applied on W.
     '''
     Y = orth(atoms, W)  # Orthogonalize at the start
     if n is None:
@@ -181,11 +181,11 @@ def Q(inp, U):
     '''Operator needed to calculate gradients with non-constant occupations.
 
     Args:
-        inp (array): Coefficients input array.
-        U (array): Overlap of wave functions.
+        inp (ndarray): Coefficients input array.
+        U (ndarray): Overlap of wave functions.
 
     Returns:
-        array: Q operator result.
+        ndarray: Q operator result.
     '''
     mu, V = eig(U)
     mu = mu[:, None]
@@ -199,7 +199,7 @@ def get_E(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         float: Total energy.
@@ -219,10 +219,10 @@ def get_grad(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: Gradient.
+        ndarray: Gradient.
     '''
     F = np.diag(atoms.f)
     HW = H(atoms, W)
@@ -286,7 +286,7 @@ def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
         Nit (int): Maximum number of SCF steps.
         etol (float): Convergence tolerance of the total energy.
 
@@ -294,7 +294,7 @@ def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
         beta (float): SCF step size.
 
     Returns:
-        tuple(array, list): Wave functions and total energies per SCF cycle.
+        tuple[ndarray, list]: Wave functions and total energies per SCF cycle.
     '''
     Elist = []
 
@@ -312,7 +312,7 @@ def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
         Nit (int): Maximum number of SCF steps.
         etol (float): Convergence tolerance of the total energy.
 
@@ -320,7 +320,7 @@ def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
         betat (float): SCF step size.
 
     Returns:
-        tuple(array, list): Wave functions and energies per SCF cycle.
+        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -358,7 +358,7 @@ def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
         Nit (int): Maximum number of SCF steps.
         etol (float): Convergence tolerance of the total energy.
 
@@ -366,7 +366,7 @@ def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
         betat (float): SCF step size.
 
     Returns:
-        tuple(array, list): Wave functions and energies per SCF cycle.
+        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -404,7 +404,7 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
         Nit (int): Maximum number of SCF steps.
         etol (float): Convergence tolerance of the total energy.
 
@@ -413,7 +413,7 @@ def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
         cgform (int): Conjugated-gradient form for the pccg minimization.
 
     Returns:
-        tuple(array, list): Wave functions and energies per SCF cycle.
+        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
     '''
     Elist = []
 
@@ -463,10 +463,10 @@ def orth(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (array): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        array: Orthogonalized wave functions.
+        ndarray: Orthogonalized wave functions.
     '''
     # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
@@ -477,13 +477,13 @@ def get_psi(atoms, Y, n=None):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Returns:
-        array: Eigenstates in reciprocal space.
+        ndarray: Eigenstates in reciprocal space.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
     _, D = eigh(mu)
@@ -495,13 +495,13 @@ def get_epsilon(atoms, Y, n=None):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n (array): Real-space electronic density.
+        n (ndarray): Real-space electronic density.
 
     Returns:
-        array: Eigenvalues.
+        ndarray: Eigenvalues.
     '''
     mu = Y.conj().T @ H(atoms, Y, n)
     epsilon, _ = eigh(mu)
@@ -513,10 +513,10 @@ def get_n_total(atoms, Y):
 
     Args:
         atoms: Atoms object.
-        Y (array): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        array: Electronic density.
+        ndarray: Electronic density.
     '''
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
@@ -535,7 +535,7 @@ def guess_random(atoms, complex=True, reproduce=False):
         reproduce (bool): Use a set seed for reproducible random numbers.
 
     Returns:
-        array: Initial-guess orthogonal wave functions in reciprocal space.
+        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     if reproduce:
         seed(42)
@@ -553,7 +553,7 @@ def guess_gaussian(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Initial-guess orthogonal wave functions in reciprocal space.
+        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     # Start with a randomized basis set
     W = guess_random(atoms, complex=True, reproduce=True)

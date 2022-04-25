@@ -33,7 +33,7 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
         clean (bool): Remove log files.
 
     Returns:
-        array: FOD positions.
+        ndarray: FOD positions.
     '''
     loc = loc.upper()
 
@@ -78,10 +78,10 @@ def split_fods(atom, X):
 
     Args:
         atom (list): Atom symbols.
-        X (array): Atom positions.
+        X (ndarray): Atom positions.
 
     Returns:
-        tuple(list, array, array): Atom types, the respective coordinates, and FOD positions.
+        tuple[list, ndarray, ndarray]: Atom types, the respective coordinates, and FOD positions.
     '''
     X_fod = []
     # Iterate in reverted order, because we may delete elements
@@ -99,10 +99,10 @@ def remove_core_fods(atoms, fods):
 
     Args:
         atoms: Atoms object.
-        fods (array): FOD positions.
+        fods (ndarray): FOD positions.
 
     Returns:
-        array: Valence FOD positions.
+        ndarray: Valence FOD positions.
     '''
     for ia in range(atoms.Natoms):
         n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]

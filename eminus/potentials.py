@@ -11,7 +11,7 @@ def harmonic(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Harmonical potential in reciprocal space.
+        ndarray: Harmonical potential in reciprocal space.
     '''
     freq = 2
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
@@ -26,7 +26,7 @@ def coulomb(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Coulomb potential in reciprocal space.
+        ndarray: Coulomb potential in reciprocal space.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
     # Ignore the division by zero for the first elements
@@ -49,7 +49,7 @@ def ge(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Germanium pseudopotential in reciprocal space.
+        ndarray: Germanium pseudopotential in reciprocal space.
     '''
     Z = 4  # Potential should only be used for germanium
     lamda = 18.5
@@ -80,7 +80,7 @@ def init_pot(atoms):
         atoms: Atoms object.
 
     Returns:
-        array: Potential in reciprocal space.
+        ndarray: Potential in reciprocal space.
     '''
     implemented = {'harmonic': harmonic, 'coulomb': coulomb, 'ge': ge}
     try:

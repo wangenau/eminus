@@ -18,13 +18,13 @@ def libxc_functional(exc, n, ret, spinpol):
     Reference: SoftwareX 7, 1.
 
     Args:
-        exc (str or int): Exchange or correlation identifier.
-        n (array): Real-space electronic density.
+        exc (str | int): Exchange or correlation identifier.
+        n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
-        array: Exchange or correlation energy density or potential.
+        ndarray: Exchange or correlation energy density or potential.
     '''
     if spinpol:
         print('WARNING: The LibXC routine will still use an unpolarized functional.')

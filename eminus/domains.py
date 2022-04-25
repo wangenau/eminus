@@ -11,16 +11,16 @@ def domain_cuboid(atoms, length, centers=None):
 
     Args:
         atoms: Atoms object.
-        length (int or float or list or array): Side length or lengths of the cuboid.
+        length (int | float | list | ndarray): Side length or lengths of the cuboid.
 
     Keyword Args:
-        centers (array): Center of the cuboid.
+        centers (ndarray): Center of the cuboid.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.
 
     Returns:
-        array: Boolean mask.
+        ndarray: Boolean mask.
     '''
     if isinstance(length, (int, float)):
         length = length * np.ones(3)
@@ -45,11 +45,11 @@ def domain_isovalue(field, isovalue):
     '''Generate a mask for an isovalue real-space domain.
 
     Args:
-        field (array): Real-space field data.
+        field (ndarray): Real-space field data.
         isovalue (float): Isovalue for the truncation.
 
     Returns:
-        array: Boolean mask.
+        ndarray: Boolean mask.
     '''
     return np.abs(field) > isovalue
 
@@ -62,13 +62,13 @@ def domain_sphere(atoms, radius, centers=None):
         radius (float): Radius of the sphere.
 
     Keyword Args:
-        centers (array): Center of the sphere.
+        centers (ndarray): Center of the sphere.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.
 
     Returns:
-        array: Boolean mask.
+        ndarray: Boolean mask.
     '''
     if centers is None:
         centers = center_of_mass(atoms.X)
@@ -88,11 +88,11 @@ def truncate(field, mask):
     This will not return a smaller array but set all truncated values to zero.
 
     Args:
-        field (array): Real-space field data.
-        mask (array): Boolean mask.
+        field (ndarray): Real-space field data.
+        mask (ndarray): Boolean mask.
 
     Returns:
-        array: Boolean mask.
+        ndarray: Boolean mask.
     '''
     field_trunc = np.copy(field)
     field_trunc[~mask] = 0
