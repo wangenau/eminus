@@ -4,7 +4,6 @@ from eminus import __path__, Atoms, read_xyz, SCF
 from numpy.testing import assert_allclose
 
 # Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
-# These values can be generated with the file ref_spin_paired.jl
 Etot_ref = [-2.54356557, -1.10228799, -0.76598438, -7.70803736, -29.88936935]
 
 
