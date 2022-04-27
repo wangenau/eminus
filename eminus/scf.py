@@ -3,6 +3,7 @@
 
 Reference: Comput. Phys. Commun. 128, 1.
 '''
+import logging
 from timeit import default_timer
 
 import numpy as np
@@ -68,19 +69,18 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         min = {'pccg': 100}
 
     # Print some useful information
-    if atoms.verbose >= 3:
-        print(f'--- System information ---\n{atoms}\n')
-    if atoms.verbose >= 4:
-        print(f'--- Cell information ---\nSide lengths: {atoms.a} Bohr\n'
-              f'Cut-off energy: {atoms.ecut} Hartree\n'
-              f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n')
-        print('--- Calculation information ---\n'
-             f'Number of states: {atoms.Ns}\n'
-             f'Occupation per state: {atoms.f}\n'
-             f'Potential: {atoms.pot}\n'
-             f'Non-local contribution: {atoms.NbetaNL > 0}\n'
-             f'XC functionals: {atoms.exc}\n'
-             f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
+    atoms.log.debug(f'--- System information ---\n{atoms}\n'
+                    '\n--- Cell information ---\n'
+                    f'Side lengths: {atoms.a} Bohr\n'
+                    f'Cut-off energy: {atoms.ecut} Hartree\n'
+                    f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n'
+                    '\n--- Calculation information ---\n'
+                    f'Number of states: {atoms.Ns}\n'
+                    f'Occupation per state: {atoms.f}\n'
+                    f'Potential: {atoms.pot}\n'
+                    f'Non-local contribution: {atoms.NbetaNL > 0}\n'
+                    f'XC functionals: {atoms.exc}\n'
+                    f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
 
     # Set up basis functions
     guess = guess.lower()
@@ -95,47 +95,41 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     atoms.energies.Eewald = get_Eewald(atoms)
 
     # Start minimization procedures
-    if atoms.verbose >= 3:
-        print('--- SCF data ---')
+    atoms.log.debug('--- SCF data ---')
     Etots = []
     for imin in min:
         start = default_timer()
-        if atoms.verbose >= 2:
-            print(f'Start {minimizer[imin]["name"]}...')
+        atoms.log.info(f'Start {minimizer[imin]["name"]}...')
         W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
         end = default_timer()
         minimizer[imin]['time'] = end - start
         minimizer[imin]['iteration'] = len(Elist)
         Etots += Elist
-    if atoms.verbose >= 1:
-        if abs(Etots[-2] - Etots[-1]) < etol:
-            print(f'SCF converged after {len(Etots)} iterations.')
-        else:
-            print('SCF not converged!')
+    if abs(Etots[-2] - Etots[-1]) < etol:
+        atoms.log.info(f'SCF converged after {len(Etots)} iterations.')
+    else:
+        atoms.log.warning('SCF not converged!')
 
     # Print SCF data
-    if atoms.verbose >= 2:
-        if atoms.verbose >= 3:
-            print(f'\n--- SCF results ---\nStarting guess: {guess}')
+    if atoms.log.level <= logging.INFO:
+        atoms.log.debug(f'\n--- SCF results ---\nStarting guess: {guess}')
         t_total = 0
         for imin in min:
             N = minimizer[imin]['iteration']
             t = minimizer[imin]['time']
             t_total += t
-            if atoms.verbose >= 4:
-                print(f'\nMinimizer: {imin}'
-                      f'\nIterations:\t{N}'
-                      f'\nTime:\t\t{t:.5f}s'
-                      f'\nTime/Iteration:\t{t / N:.5f}s')
-        print(f'Total SCF time: {t_total:.5f}s')
+            atoms.log.debug(f'\nMinimizer: {imin}'
+                            f'\nIterations:\t{N}'
+                            f'\nTime:\t\t{t:.5f}s'
+                            f'\nTime/Iteration:\t{t / N:.5f}s')
+        atoms.log.info(f'Total SCF time: {t_total:.5f}s')
 
     # Print energy data
-    if atoms.verbose >= 3:
-        print('\n--- Energy data ---')
-    if atoms.verbose >= 4:
-        print(f'{atoms.energies}')
-    elif atoms.verbose >= 1:
-        print(f'Total energy: {atoms.energies.Etot:.9f} Eh')
+    if atoms.log.level <= logging.DEBUG:
+        atoms.log.debug('\n--- Energy data ---')
+        atoms.log.debug(f'{atoms.energies}')
+    else:
+        atoms.log.info(f'Total energy: {atoms.energies.Etot:.9f} Eh')
 
     # Save basis functions and density to reuse them later
     atoms.W = orth(atoms, W)
@@ -265,19 +259,17 @@ def check_energies(atoms, Elist, etol, linmin=None, cg=None):
     else:
         cg = ''
 
-    if atoms.verbose >= 5:
-        print(f'Iteration: {Nit} {linmin} {cg}\n{atoms.energies}\n')
-    elif atoms.verbose >= 4:
-        print(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
-    elif atoms.verbose >= 3:
-        print(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
+    if atoms.log.level <= logging.DEBUG:
+        atoms.log.debug(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
+    else:
+        atoms.log.info(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
 
     # Check for convergence
     if Nit > 1:
         if abs(Elist[-2] - Elist[-1]) < etol:
             return True
-        if Elist[-1] > Elist[-2] and atoms.verbose >= 3:
-            print('WARNING: Total energy is not decreasing.')
+        if Elist[-1] > Elist[-2]:
+            atoms.log.warning('Total energy is not decreasing.')
     return False
 
 

@@ -3,6 +3,8 @@
 import numpy as np
 from numpy.linalg import eig, norm
 
+from .logger import log
+
 
 def eval_psi(atoms, psi, r):
     '''Evaluate orbitals at given coordinate points.
@@ -131,10 +133,8 @@ def wannier_cost(atoms, psirs):
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
     costs = moments - norm(centers, axis=1)**2
-    if atoms.verbose >= 3:
-        print(f'Centers:\n{centers}\nMoments:\n{moments}')
-    if atoms.verbose >= 2:
-        print(f'Costs:\n{costs}')
+    log.debug(f'Centers:\n{centers}\nMoments:\n{moments}')
+    log.info(f'Costs:\n{costs}')
     return costs
 
 

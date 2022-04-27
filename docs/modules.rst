@@ -17,6 +17,7 @@ Modules
    eminus.filehandler
    eminus.gth
    eminus.localizer
+   eminus.logger
    eminus.operators
    eminus.orbitals
    eminus.potentials

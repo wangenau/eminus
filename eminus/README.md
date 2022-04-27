@@ -12,6 +12,7 @@ Main source code directory.
 | filehandler.py | Input/output functions |
 | gth.py         | GTH pseudopotential functions |
 | localizer.py   | Localization routines |
+| logger.py      | Logging configuration |
 | operators.py   | Plane-wave basis-set dependent operators |
 | orbitals.py    | Orbital generation workflows |
 | potentials.py  | Miscellaneous (pseudo-)potentials |

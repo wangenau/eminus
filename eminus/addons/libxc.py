@@ -9,6 +9,8 @@ except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
+from ..logger import log
+
 
 def libxc_functional(exc, n, ret, spinpol):
     '''Handle LibXC exchange-correlation functionals.
@@ -27,7 +29,7 @@ def libxc_functional(exc, n, ret, spinpol):
         ndarray: Exchange or correlation energy density or potential.
     '''
     if spinpol:
-        print('WARNING: The LibXC routine will still use an unpolarized functional.')
+        log.warning('The LibXC routine will still use an unpolarized functional.')
     spin = 'unpolarized'
 
     inp = {'rho': n}

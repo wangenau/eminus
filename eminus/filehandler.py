@@ -7,20 +7,18 @@ from time import ctime
 import numpy as np
 
 from .data import number2symbol, symbol2number
+from .logger import log
 from .units import ang2bohr, bohr2ang
 from .version import __version__
 
 
-def read_xyz(filename, info=False):
+def read_xyz(filename):
     '''Load atom species and positions from xyz files.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
         filename (str): xyz input file path/name.
-
-    Keyword Args:
-        info (bool): Display file comments.
 
     Returns:
         tuple[list, ndarray]: Atom species and positions.
@@ -36,8 +34,7 @@ def read_xyz(filename, info=False):
 
         # The second line can contain a comment, print it if available
         comment = lines[1].strip()
-        if info:
-            print(f'XYZ file comment: "{comment}"')
+        log.info(f'XYZ file comment: "{comment}"')
 
         atom = []
         X = []
@@ -95,7 +92,7 @@ def write_xyz(atoms, filename, extra=None):
     return
 
 
-def read_cube(filename, info=False):
+def read_cube(filename):
     '''Load atom and cell data from cube files.
 
     There is no standard for cube files. The following format has been used.
@@ -103,9 +100,6 @@ def read_cube(filename, info=False):
 
     Args:
         filename (str): cube input file path/name.
-
-    Keyword Args:
-        info (bool): Display file comments.
 
     Returns:
         tuple[list, ndarray, float, ndarray, int]: Species, positions, charges, cell size, sampling.
@@ -119,8 +113,7 @@ def read_cube(filename, info=False):
 
         # The first and second line can contain comments, print them if available
         comment = f'{lines[0].strip()}\n{lines[1].strip()}'
-        if info:
-            print(f'XYZ file comment: "{comment}"')
+        log.info(f'XYZ file comment: "{comment}"')
 
         # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/s
         # A cuboidal unit cell is assumed, so only use the diagonal entries

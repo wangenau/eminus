@@ -8,6 +8,7 @@ from scipy.fft import next_fast_len
 
 from .energies import Energy
 from .gth import init_gth_loc, init_gth_nonloc, read_gth
+from .logger import create_logger, get_level
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .potentials import init_pot
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
@@ -78,14 +79,16 @@ class Atoms:
 
             Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
             Default: 'lda,vwn'
-        verbose (int): Level of output.
+        verbose (int | str): Level of output (case insensitive).
 
-            Larger numbers mean more output.
+            Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
+            An integer value can be used as well, where larger numbers mean more output, starting
+            from 0.
 
-            Default: 3
+            Default: 'INFO'
     '''
     def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, center=False,
-                 pot='gth', exc='lda,vwn', verbose=3):
+                 pot='gth', exc='lda,vwn', verbose='INFO'):
         self.atom = atom        # Atom symbols
         self.X = X              # Atom positions
         self.a = a              # Cell/Vacuum size
@@ -97,7 +100,6 @@ class Atoms:
         self.center = center    # Center molecule in cell
         self.pot = pot.lower()  # Used pseudopotential
         self.exc = exc.lower()  # Exchange-correlation functional
-        self.verbose = verbose  # Output control
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
@@ -114,6 +116,10 @@ class Atoms:
         self.NbetaNL = 0      # Number of projector functions for the non-local gth potential
         self.prj2beta = None  # Index matrix to map to the correct projector function
         self.betaNL = None    # Atomic-centered projector functions
+
+        # Initialize logger and update
+        self.log = create_logger(self)
+        self.verbose = verbose
         self.update()
 
         # Parameters after the SCF calculation
@@ -212,7 +218,7 @@ class Atoms:
             try:
                 s = np.int_(self.a / cutoff2gridspacing(self.ecut))
             except TypeError:
-                print('ERROR: No ecut provided, please enter a valid s.')
+                self.log.error('No ecut provided, please enter a valid s.')
             # Multiply by two and add one to match PWDFT
             s = 2 * s + 1
             # Calculate a fast length to optimize the FFT calculations
@@ -336,6 +342,17 @@ class Atoms:
         for i in range(Natoms):
             out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i][0]:10.5f}  {X[i][1]:10.5f}  {X[i][2]:10.5f}'
         return out
+
+    @property
+    def verbose(self):
+        '''Verbosity level.'''
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, level):
+        '''Verbosity setter to sync the logger with the property.'''
+        self._verbose = get_level(level)
+        self.log.setLevel(self._verbose)
 
     def O(self, inp):
         '''Overlap operator :func:`~eminus.operators.O`.'''

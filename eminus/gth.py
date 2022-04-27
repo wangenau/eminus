@@ -9,6 +9,7 @@ from os.path import basename
 import numpy as np
 
 from . import __path__
+from .logger import log
 from .utils import Ylm_real
 
 
@@ -186,7 +187,7 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
         # Only one projector
         Vprj = Gm**3 * np.exp(-0.5 * Gr2) / np.sqrt(105)
     else:
-        print(f'ERROR: No projector found for l={l}')
+        log.error(f'No projector found for l={l}')
 
     pre = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / Omega)
     return pre * Vprj
@@ -216,10 +217,10 @@ def read_gth(system, charge=None, psp_path=None):
         try:
             f_psp = files[0]
         except IndexError:
-            print(f'ERROR: There is no GTH pseudopotential in {psp_path} for "{system}"')
+            log.exception(f'There is no GTH pseudopotential in {psp_path} for "{system}"')
         if len(files) > 1:
-            print(f'INFO: Multiple pseudopotentials found for "{system}". '
-                  f'Continue with "{basename(f_psp)}".')
+            log.info(f'Multiple pseudopotentials found for "{system}". '
+                     f'Continue with "{basename(f_psp)}".')
 
     psp = {}
     cloc = np.zeros(4)
@@ -258,5 +259,5 @@ def read_gth(system, charge=None, psp_path=None):
                         h[k, j, i] = h[k, i, j]
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
-        print(f'ERROR: There is no GTH pseudopotential for "{basename(f_psp)}"')
+        log.exception(f'There is no GTH pseudopotential for "{basename(f_psp)}"')
     return psp

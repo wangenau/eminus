@@ -2,6 +2,7 @@
 '''Various tools to check physical properties.'''
 import numpy as np
 
+from .logger import log
 from .scf import get_epsilon
 
 
@@ -95,7 +96,7 @@ def get_dipole(atoms):
     # One fix can be to center the atom/molecule inside the box.
     n = atoms.n
     if n is None:
-        print('ERROR: There is no density to calculate a dipole.')
+        log.error('There is no density to calculate a dipole.')
         return 0
 
     # Diple moment: mu = \sum Z*X - \int n(r)*r dr
@@ -139,7 +140,7 @@ def check_ortho(atoms, func, eps=1e-9):
     '''
     # It makes no sense to calculate anything for only one function
     if len(func) == 1:
-        print('WARNING: Need at least two functions to check their orthogonality.')
+        log.warning('Need at least two functions to check their orthogonality.')
         return True
 
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
@@ -155,9 +156,8 @@ def check_ortho(atoms, func, eps=1e-9):
             res = dV * np.sum(func[:, i].conj() * func[:, j])
             tmp_bool = abs(res) < eps
             ortho_bool *= tmp_bool
-            if atoms.verbose >= 3:
-                print(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
-    print(f'Orthogonal: {ortho_bool}')
+            log.debug(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
+    log.info(f'Orthogonal: {ortho_bool}')
     return ortho_bool
 
 
@@ -186,9 +186,8 @@ def check_norm(atoms, func, eps=1e-9):
         res = dV * np.sum(func[:, i].conj() * func[:, i])
         tmp_bool = abs(1 - res) < eps
         norm_bool *= tmp_bool
-        if atoms.verbose >= 3:
-            print(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
-    print(f'Normalized: {norm_bool}')
+        log.debug(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
+    log.info(f'Normalized: {norm_bool}')
     return norm_bool
 
 
@@ -204,5 +203,5 @@ def check_orthonorm(atoms, func):
     '''
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
-    print(f'Orthonormal: {ortho_bool * norm_bool}')
+    log.info(f'Orthonormal: {ortho_bool * norm_bool}')
     return ortho_bool * norm_bool

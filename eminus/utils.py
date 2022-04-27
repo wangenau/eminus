@@ -3,6 +3,8 @@
 import numpy as np
 from numpy.linalg import norm
 
+from .logger import log
+
 
 def diagprod(a, B):
     '''Efficiently calculate the expression Diag(a) * B.
@@ -81,7 +83,7 @@ def Ylm_real(l, m, R):
         elif m == 1:  # px
             ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.cos(phi)
         else:
-            print(f'ERROR: No definition found for Ylm({l}, {m})')
+            log.error(f'No definition found for Ylm({l}, {m})')
     elif l == 2:
         if m == -2:    # dxy
             ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.sin(2 * phi)
@@ -94,7 +96,7 @@ def Ylm_real(l, m, R):
         elif m == 2:   # dx2-y2
             ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.cos(2 * phi)
         else:
-            print(f'ERROR: No definition found for Ylm({l}, {m})')
+            log.error(f'No definition found for Ylm({l}, {m})')
     elif l == 3:
         if m == -3:
             ylm = 0.25 * np.sqrt(35 / 2 / np.pi) * sint**3 * np.sin(3 * phi)
@@ -111,7 +113,7 @@ def Ylm_real(l, m, R):
         elif m == 3:
             ylm = 0.25 * np.sqrt(35 / 2 / np.pi) * sint**3 * np.cos(3 * phi)
         else:
-            print(f'ERROR: No definition found for Ylm({l}, {m})')
+            log.error(f'No definition found for Ylm({l}, {m})')
     else:
-        print(f'ERROR: No definition found for Ylm({l}, {m})')
+        log.error(f'No definition found for Ylm({l}, {m})')
     return ylm

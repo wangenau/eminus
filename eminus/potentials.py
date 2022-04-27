@@ -3,6 +3,8 @@
 import numpy as np
 from numpy.linalg import norm
 
+from .logger import log
+
 
 def harmonic(atoms):
     '''Harmonical potential. Can be used for quantum dot calculations.
@@ -86,5 +88,5 @@ def init_pot(atoms):
     try:
         pot = implemented[atoms.pot]
     except KeyError:
-        print(f'ERROR: No potential found for "{atoms.pot}"')
+        log.exception(f'No potential found for "{atoms.pot}"')
     return pot(atoms)
