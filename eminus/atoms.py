@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''Atoms object definition.'''
-from re import sub
+import re
 
 import numpy as np
 from numpy.linalg import det, eig, inv
@@ -147,7 +147,7 @@ class Atoms:
         if isinstance(self.atom, str):
             # Insert a whitespace before every capital letter, these can appear once or none at all
             # Or insert before digits, these can appear at least once
-            self.atom = sub(r'([A-Z?]|\d+)', r' \1', self.atom).split()
+            self.atom = re.sub(r'([A-Z?]|\d+)', r' \1', self.atom).split()
             atom = []
             for ia in self.atom:
                 if ia.isdigit():

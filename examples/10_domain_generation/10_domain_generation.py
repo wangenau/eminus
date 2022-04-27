@@ -1,4 +1,4 @@
-from timeit import default_timer
+import timeit
 
 from eminus import Atoms, read_xyz, SCF
 from eminus.addons import view_grid
@@ -43,18 +43,18 @@ view_grid(atoms.r[mask], atoms.X)
 ni = get_n_single(atoms, atoms.J(psi))
 
 # Calculate the SIC energy for untruncated densities
-start = default_timer()
+start = timeit.default_timer()
 esic = get_Esic(atoms, atoms.W, ni)
-end = default_timer()
+end = timeit.default_timer()
 print(f'Esic(untruncated) = {esic:.9f} Eh\nTime(untruncated) =  {end - start:.6f} s')
 
 # Calculate the SIC energy for truncated densities
 # One can notice a small energy deviation, but a faster calculation time
 mask = domain_isovalue(ni, 1e-4)
 ni_trunc = truncate(ni, mask)
-start = default_timer()
+start = timeit.default_timer()
 esic_trunc = get_Esic(atoms, atoms.W, ni_trunc)
-end = default_timer()
+end = timeit.default_timer()
 print(f'Esic( truncated ) = {esic_trunc:.9f} Eh\nTime( truncated ) =  {end - start:.6f} s')
 
 # The truncated SIC energy will converge for smaller isovalues to the untruncated value

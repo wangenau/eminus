@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Test total energies for a small set of systems.'''
-from eminus import __path__, Atoms, read_xyz, SCF
+import eminus
+from eminus import Atoms, read_xyz, SCF
 from numpy.testing import assert_allclose
 
 # Total energies calculated with PWDFT.jl for He, H2, LiH, CH4, and Ne with same parameters as below
@@ -9,7 +10,7 @@ Etot_ref = [-2.54356557, -1.10228799, -0.76598438, -7.70803736, -29.88936935]
 
 def calc_spin_paired(system, E_ref):
     '''Compare total energies for a test system with a reference value.'''
-    path = f'{__path__[0]}/../tests/spin_paired'
+    path = f'{eminus.__path__[0]}/../tests/spin_paired'
     a = 16
     ecut = 10
     s = 48

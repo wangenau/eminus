@@ -3,8 +3,8 @@
 
 Reference: Phys. Rev. B 54, 1703.
 '''
-from glob import glob
-from os.path import basename
+import glob
+import os
 
 import numpy as np
 
@@ -212,7 +212,7 @@ def read_gth(system, charge=None, psp_path=None):
     if charge is not None:
         f_psp = f'{psp_path}{system}-q{charge}.gth'
     else:
-        files = glob(f'{psp_path}{system}-q*')
+        files = glob.glob(f'{psp_path}{system}-q*')
         files.sort()
         try:
             f_psp = files[0]
@@ -220,7 +220,7 @@ def read_gth(system, charge=None, psp_path=None):
             log.exception(f'There is no GTH pseudopotential in {psp_path} for "{system}"')
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{system}". '
-                     f'Continue with "{basename(f_psp)}".')
+                     f'Continue with "{os.path.basename(f_psp)}".')
 
     psp = {}
     cloc = np.zeros(4)
@@ -259,5 +259,5 @@ def read_gth(system, charge=None, psp_path=None):
                         h[k, j, i] = h[k, i, j]
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
-        log.exception(f'There is no GTH pseudopotential for "{basename(f_psp)}"')
+        log.exception(f'There is no GTH pseudopotential for "{os.path.basename(f_psp)}"')
     return psp

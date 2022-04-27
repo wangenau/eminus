@@ -22,13 +22,13 @@ The active space is the truncated reciprocal space by restricting it with a sphe
 
 Reference: Comput. Phys. Commun. 128, 1.
 '''
-from os import environ
+import os
 
 import numpy as np
 from scipy.fft import fftn, ifftn
 
 try:
-    THREADS = int(environ['OMP_NUM_THREADS'])
+    THREADS = int(os.environ['OMP_NUM_THREADS'])
 except KeyError:
     THREADS = None
 

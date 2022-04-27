@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 '''Test functionality of examples.'''
-from os import chdir, remove
-from os.path import exists
-from runpy import run_path
+import os
+import runpy
 
-from eminus import __path__
+import eminus
 
 
 def execute_example(name):
     '''Test the execution of a given Python script.'''
-    chdir(f'{__path__[0]}/../examples/{name}')
+    os.chdir(f'{eminus.__path__[0]}/../examples/{name}')
 
     try:
-        run_path(f'{name}.py')
+        runpy.run_path(f'{name}.py')
     except Exception as err:
         print(f'Test for {name} failed.')
         raise SystemExit(err) from None
@@ -24,8 +23,8 @@ def execute_example(name):
 def clean_example(trash):
     '''Clean the example folder after running the script.'''
     for it in trash:
-        if exists(it):
-            remove(it)
+        if os.path.exists(it):
+            os.remove(it)
     return
 
 

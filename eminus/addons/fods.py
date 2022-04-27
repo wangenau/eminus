@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''Fermi-orbital descriptor generation.'''
-from os import remove
+import os
 
 import numpy as np
 from numpy.linalg import norm
@@ -68,8 +68,8 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     _, _, fods = split_fods(atom, X)
 
     if clean:
-        remove(p.log_name)
-        remove(f'{loc}_GUESS_COM.xyz')
+        os.remove(p.log_name)
+        os.remove(f'{loc}_GUESS_COM.xyz')
     return fods
 
 

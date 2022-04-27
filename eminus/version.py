@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Package version number and version info function.'''
-from os import environ
-from sys import version
+import os
+import sys
 
 __version__ = '1.0.1'
 dependencies = ('numpy', 'scipy')
@@ -11,7 +11,7 @@ addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
 def info():
     '''Print version numbers and availability of packages.'''
     print('--- Version infos ---')
-    print(f'python      : {version.split()[0]}')
+    print(f'python      : {sys.version.split()[0]}')
     print(f'eminus      : {__version__}')
     for pkg in dependencies + addons:
         try:
@@ -29,7 +29,7 @@ def info():
 
     print('\n--- Performance infos ---')
     try:
-        THREADS = int(environ['OMP_NUM_THREADS'])
+        THREADS = int(os.environ['OMP_NUM_THREADS'])
     except KeyError:
         THREADS = 1
         print('INFO: No OMP_NUM_THREADS environment variable was found.\n'

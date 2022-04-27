@@ -4,7 +4,7 @@
 Reference: Comput. Phys. Commun. 128, 1.
 '''
 import logging
-from timeit import default_timer
+import timeit
 
 import numpy as np
 from numpy.linalg import eig, eigh, inv, norm
@@ -98,10 +98,10 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
     atoms.log.debug('--- SCF data ---')
     Etots = []
     for imin in min:
-        start = default_timer()
+        start = timeit.default_timer()
         atoms.log.info(f'Start {minimizer[imin]["name"]}...')
         W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
-        end = default_timer()
+        end = timeit.default_timer()
         minimizer[imin]['time'] = end - start
         minimizer[imin]['iteration'] = len(Elist)
         Etots += Elist

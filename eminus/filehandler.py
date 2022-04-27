@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
-from pickle import dump, HIGHEST_PROTOCOL, load
-from textwrap import fill
-from time import ctime
+import pickle
+import textwrap
+import time
 
 import numpy as np
 
@@ -82,7 +82,7 @@ def write_xyz(atoms, filename, extra=None):
             fp.write(f'{Natoms + len(extra)}\n')
         # The second line can contains a comment.
         # Print information about the file and program, and the file creation time.
-        fp.write(f'XYZ file generated with eminus {__version__} at {ctime()}\n')
+        fp.write(f'XYZ file generated with eminus {__version__} at {time.ctime()}\n')
         for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Add extra coordinates if desired. The atom symbol will default to X (no atom type).
@@ -182,7 +182,7 @@ def write_cube(atoms, field, filename, extra=None):
     with open(filename, 'w') as fp:
         # The first two lines have to be a comment.
         # Print file creation time and information about the file and program.
-        fp.write(f'{ctime()}\n')
+        fp.write(f'{time.ctime()}\n')
         fp.write(f'Cube file generated with eminus {__version__}\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
@@ -211,7 +211,7 @@ def write_cube(atoms, field, filename, extra=None):
             data_str = '%+1.5e  ' * s[2] % tuple(field[i * s[2]:(i + 1) * s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
-            fp.write(f'{fill(data_str, width=90)}\n\n')
+            fp.write(f'{textwrap.fill(data_str, width=90)}\n\n')
     return
 
 
@@ -228,7 +228,7 @@ def save_atoms(atoms, filename):
         filename = f'{filename}.pickle'
 
     with open(filename, 'wb') as fp:
-        dump(atoms, fp, HIGHEST_PROTOCOL)
+        pickle.dump(atoms, fp, pickle.HIGHEST_PROTOCOL)
     return
 
 
@@ -247,7 +247,7 @@ def load_atoms(filename):
         filename = f'{filename}.pickle'
 
     with open(filename, 'rb') as fh:
-        return load(fh)
+        return pickle.load(fh)
 
 
 def create_pdb(atom, X, a=None):
