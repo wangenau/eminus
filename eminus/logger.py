@@ -60,7 +60,7 @@ def get_level(verbose):
 
 # Create a base logger that can be used outside of classes
 log = logging
-verbose = 'INFO'
+verbose = 'WARNING'
 
 # Basic logger setup
 formatter = LogFormatter()
