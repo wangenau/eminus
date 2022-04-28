@@ -4,7 +4,30 @@ import logging
 import sys
 
 
-class LogFormatter(logging.Formatter):
+class CustomLogger(logging.Logger):
+    '''Custom logger for the usage outside of classes.
+
+    This is just a basic logger, but with an added verbose property.
+
+    Args:
+        name (str): Logger name.
+    '''
+    def __init__(self, name):
+        super(CustomLogger, self).__init__(name)
+
+    @property
+    def verbose(self):
+        '''Verbosity level.'''
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, level):
+        '''Verbosity setter to sync the logger with the property.'''
+        self._verbose = get_level(level)
+        self.setLevel(level)
+
+
+class CustomFormatter(logging.Formatter):
     '''Custom logger formatter.
 
     Inherited from logging.Formatter.
@@ -59,12 +82,11 @@ def get_level(verbose):
 # to set up the basic logger configuration
 
 # Create a base logger that can be used outside of classes
-log = logging
-verbose = 'WARNING'
+log = CustomLogger(__name__)
+log.verbose = 'WARNING'
 
 # Basic logger setup
-formatter = LogFormatter()
+formatter = CustomFormatter()
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(formatter)
 logging.root.addHandler(handler)
-logging.root.setLevel(get_level(verbose))
