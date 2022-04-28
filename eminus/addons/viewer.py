@@ -2,6 +2,12 @@
 '''Viewer functions for Jupyter notebooks.'''
 import numpy as np
 from numpy.linalg import norm
+try:
+    from nglview import NGLWidget, TextStructure
+    from vispy import scene
+except ImportError:
+    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
+          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from .fods import split_fods
 from ..filehandler import create_pdb, read_cube, read_xyz
@@ -22,12 +28,6 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     Returns:
         NGLWidget: Viewable object.
     '''
-    # Late import so one can use nglview without installing vispy
-    try:
-        from nglview import NGLWidget, TextStructure
-    except ImportError:
-        print('ERROR: Necessary addon dependencies not found. To use this module,\n'
-              '       install the package with addons, e.g., with "pip install eminus[addons]"')
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
     view = NGLWidget(**kwargs)
@@ -95,12 +95,6 @@ def view_grid(coords, extra=None):
     Returns:
         SceneCanvas: Viewable object.
     '''
-    # Late import so one can use vispy without installing nglview
-    try:
-        from vispy import scene
-    except ImportError:
-        print('ERROR: Necessary addon dependencies not found. To use this module,\n'
-              '       install the package with addons, e.g., with "pip install eminus[addons]"')
     # Set up view
     canvas = scene.SceneCanvas(keys='interactive', show=True, size=(400, 400))
     view = canvas.central_widget.add_view()
