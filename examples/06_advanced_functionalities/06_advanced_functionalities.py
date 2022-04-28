@@ -1,3 +1,4 @@
+import eminus
 from eminus import Atoms, SCF, write_cube
 from eminus.localizer import wannier_cost
 from eminus.scf import get_psi
@@ -6,9 +7,8 @@ from eminus.units import ebohr2d, ha2kcalmol
 import numpy as np
 
 # Start by with a simple DFT calculation for neon
-atoms = Atoms('Ne', [0, 0, 0], center=True, verbose=2)
+atoms = Atoms('Ne', [0, 0, 0], center=True)
 SCF(atoms)
-atoms.verbose = 1
 
 # Calculate the dipole moment
 # Make sure that the unit cell is big enough, and that the density does not extend over the borders
@@ -27,6 +27,9 @@ psi = atoms.I(get_psi(atoms, atoms.W))
 # Check orthonormality of Kohn-Sham orbitals
 print('Orthonormality of Kohn-Sham orbitals:')
 check_orthonorm(atoms, psi)
+
+# Some functions are controlled with a global logging level that can be changed with
+eminus.log.verbose = 4
 
 # Calculate the orbital variance and spread of the orbitals
 cost = wannier_cost(atoms, psi)

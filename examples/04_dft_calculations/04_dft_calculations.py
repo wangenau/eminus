@@ -23,7 +23,7 @@ etol = 1e-8
 cgform = 2
 
 # The amount of output can be controlled with the verbosity level
-atoms.verbose = 5
+atoms.verbose = 4
 
 # Start a new calculation with new parameters
 print('\nSecond calculation with more output:')
