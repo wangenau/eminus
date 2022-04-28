@@ -24,7 +24,7 @@ class CustomLogger(logging.Logger):
     def verbose(self, level):
         '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
-        self.setLevel(level)
+        self.setLevel(self._verbose)
 
 
 class CustomFormatter(logging.Formatter):
