@@ -9,8 +9,9 @@ Minimal usage example to do a DFT calculation for helium::
 '''
 from .atoms import Atoms
 from .filehandler import load_atoms, read_cube, read_xyz, save_atoms, write_cube, write_xyz
+from .logger import log
 from .scf import get_epsilon, get_psi, SCF
 from .version import __version__, info
 
-__all__ = ['Atoms', 'get_epsilon', 'get_psi', 'info', 'load_atoms', 'read_cube', 'read_xyz',
+__all__ = ['Atoms', 'get_epsilon', 'get_psi', 'info', 'load_atoms', 'log', 'read_cube', 'read_xyz',
            'save_atoms', 'SCF', 'write_cube', 'write_xyz', '__version__']

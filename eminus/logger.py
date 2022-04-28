@@ -82,7 +82,8 @@ def get_level(verbose):
 # to set up the basic logger configuration
 
 # Create a base logger that can be used outside of classes
-log = CustomLogger(__name__)
+logging.setLoggerClass(CustomLogger)
+log = logging.getLogger('eminus')
 log.verbose = 'WARNING'
 
 # Basic logger setup
