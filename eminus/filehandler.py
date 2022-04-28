@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
+import glob
+import os
 import pickle
 import textwrap
 import time
 
 import numpy as np
 
+from . import __path__
 from .data import number2symbol, symbol2number
 from .logger import log
 from .units import ang2bohr, bohr2ang
@@ -313,3 +316,73 @@ def create_pdb(atom, X, a=None):
         # pdb += '  '                       # 79-80 Charge
     pdb = f'{pdb}\nENDMDL'
     return pdb
+
+
+def read_gth(system, charge=None, psp_path=None):
+    '''Read GTH files for a given system.
+
+    Args:
+        system (str): Atom name.
+
+    Keyword Args:
+        charge (int): Valence charge.
+        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/pade_gth/.
+
+    Returns:
+        dict: GTH parameters.
+    '''
+    if psp_path is None:
+        psp_path = f'{__path__[0]}/pade_gth/'
+
+    if charge is not None:
+        f_psp = f'{psp_path}{system}-q{charge}.gth'
+    else:
+        files = glob.glob(f'{psp_path}{system}-q*')
+        files.sort()
+        try:
+            f_psp = files[0]
+        except IndexError:
+            log.exception(f'There is no GTH pseudopotential in {psp_path} for "{system}"')
+        if len(files) > 1:
+            log.info(f'Multiple pseudopotentials found for "{system}". '
+                     f'Continue with "{os.path.basename(f_psp)}".')
+
+    psp = {}
+    cloc = np.zeros(4)
+    rp = np.zeros(4)
+    Nproj_l = np.zeros(4, dtype=int)
+    h = np.zeros([4, 3, 3])
+    try:
+        with open(f_psp, 'r') as fh:
+            # Skip the first line, since we don't need the atom symbol here. If needed, use
+            # psp['atom'] = fh.readline().split()[0]  # Atom symbol
+            fh.readline()
+            N_all = fh.readline().split()
+            N_s, N_p, N_d, N_f = int(N_all[0]), int(N_all[1]), int(N_all[2]), int(N_all[3])
+            psp['Zion'] = N_s + N_p + N_d + N_f  # Ionic charge
+            # Skip the number of local coefficients, since we don't need it. If needed, use
+            # rloc, n_c_local = fh.readline().split()
+            # psp['n_c_local'] = int(n_c_local)  # Number of local coefficients
+            rloc = fh.readline().split()[0]
+            psp['rloc'] = float(rloc)  # Range of local Gaussian charge distribution
+            for i, val in enumerate(fh.readline().split()):
+                cloc[i] = float(val)
+            psp['cloc'] = cloc  # Coefficients for the local part
+            lmax = int(fh.readline().split()[0])
+            psp['lmax'] = lmax  # Maximal angular momentum in the non-local part
+            for iiter in range(lmax):
+                rp[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
+                for jiter in range(Nproj_l[iiter]):
+                    tmp = fh.readline().split()
+                    for iread, kiter in enumerate(range(jiter, Nproj_l[iiter])):
+                        h[iiter, jiter, kiter] = float(tmp[iread])
+            psp['rp'] = rp  # Projector radius for each angular momentum
+            psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
+            for k in range(3):
+                for i in range(2):
+                    for j in range(i + 1, 2):
+                        h[k, j, i] = h[k, i, j]
+            psp['h'] = h  # Projector coupling coefficients per AM channel
+    except FileNotFoundError:
+        log.exception(f'There is no GTH pseudopotential for "{os.path.basename(f_psp)}"')
+    return psp

@@ -7,7 +7,8 @@ from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
 from .energies import Energy
-from .gth import init_gth_loc, init_gth_nonloc, read_gth
+from .filehandler import read_gth
+from .gth import init_gth_loc, init_gth_nonloc
 from .logger import create_logger, get_level
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .potentials import init_pot
