@@ -82,7 +82,7 @@ def examples_generate(app):
                             f'examples/{example}/{example}.ipynb>`_.\n')
                 # Add download buttons
                 fp.write('\nDownload')
-                files = glob.glob(f'examples/{example}/[!README.rst]*')
+                files = glob.glob(f'examples/{example}/[!README.rst, !__pycache_]*')
                 files.sort()
                 for file in files:
                     fp.write(f' :download:`{file.split("/")[-1]} <../../{file}>`')
