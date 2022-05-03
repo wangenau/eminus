@@ -25,8 +25,7 @@ def scf_step(scf):
     scf.Y = orth(scf.atoms, scf.W)
     scf.n = get_n_total(scf.atoms, scf.Y)
     scf.phi = solve_poisson(scf.atoms, scf.n)
-    scf.exc = get_xc(scf.xc, scf.n, 'density')
-    scf.vxc = get_xc(scf.xc, scf.n, 'potential')
+    scf.exc, scf.vxc = get_xc(scf.xc, scf.n)
     return get_E(scf)
 
 

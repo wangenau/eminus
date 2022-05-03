@@ -110,7 +110,7 @@ def get_Exc(scf, n, exc=None, spinpol=False):
     '''
     atoms = scf.atoms
     if exc is None:
-        exc = get_xc(scf.xc, n, 'density')
+        exc = get_xc(scf.xc, n)[0]
     # Exc = (J(n))dag O(J(exc))
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 

@@ -129,7 +129,7 @@ def H(scf, W, Y=None, n=None, phi=None, vxc=None):
     if phi is None:
         phi = solve_poisson(atoms, n)
     if vxc is None:
-        vxc = get_xc(scf.xc, n, 'potential')
+        vxc = get_xc(scf.xc, n)[1]
 
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc')Jdag(O(J(n)))
