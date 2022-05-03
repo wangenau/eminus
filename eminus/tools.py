@@ -2,8 +2,8 @@
 '''Various tools to check physical properties.'''
 import numpy as np
 
+from .dft import get_epsilon
 from .logger import log
-from .scf import get_epsilon
 
 
 def cutoff2gridspacing(E):

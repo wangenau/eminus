@@ -1,29 +1,34 @@
 #!/usr/bin/env python3
-'''SCF calculation functionalities with relevant sub-function.
-
-Reference: Comput. Phys. Commun. 128, 1.
-'''
+'''SCF class definition.'''
 import logging
 import timeit
 
-import numpy as np
-from numpy.linalg import eig, eigh, inv, norm
-from numpy.random import randn, seed
-from scipy.linalg import sqrtm
-
-from .energies import get_Ecoul, get_Eewald, get_Ekin, get_Eloc, get_Enonloc, get_Exc
-from .exc import get_exc
-from .gth import calc_Vnonloc
-from .utils import diagprod, dotprod
+from .dft import guess_gaussian, guess_random, orth
+from .energies import Energy, get_Eewald, get_Esic
+from .filehandler import read_gth
+from .gth import init_gth_loc, init_gth_nonloc
+from .logger import create_logger, get_level
+from .minimizer import lm, pccg, pclm, sd  # noqa: F401
+from .potentials import init_pot
 
 
-def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
+class SCF:
     '''SCF function to handle direct minimizations.
 
     Args:
         atoms: Atoms object.
 
     Keyword Args:
+        xc (str): Comma-separated exchange-correlation functional description (case insensitive).
+
+            Adding 'libxc:' before a functional will try to use the LibXC interface.
+
+            Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
+            Default: 'lda,vwn'
+        pot (str): Type of pseudopotential (case insensitive).
+
+            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge',
+            Default: 'gth'
         guess (str): Initial guess method for the basis functions (case insensitive).
 
             Example: 'Gauss'; 'gaussian'; 'random'; 'rand',
@@ -31,531 +36,175 @@ def SCF(atoms, guess='gaussian', etol=1e-7, min=None, cgform=1):
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
-        min (dict | None): Dictionary to set the order and number of steps per minimization method.
-
-            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
-            Default: None (will default to {'pccg': 100})
         cgform (int):  Conjugated-gradient form for the pccg minimization.
 
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
 
             Default: 1
+        min (dict | None): Dictionary to set the order and number of steps per minimization method.
 
-    Returns:
-        float: Total energy.
+            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
+            Default: None (will default to {'pccg': 100})
+        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
+
+            Default: False
+        verbose (int | str): Level of output (case insensitive).
+
+            Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
+            An integer value can be used as well, where larger numbers mean more output, starting
+            from 0.
+
+            Default: 'info'
     '''
-    # Map minimization names and functions, also use this dict to save times and iterations
-    minimizer = {
-        'sd': {
-            'func': sd,
-            'name': 'steepest descent minimization'
-        },
-        'lm': {
-            'func': lm,
-            'name': 'line minimization'
-        },
-        'pclm': {
-            'func': pclm,
-            'name': 'preconditioned line minimization'
-        },
-        'pccg': {
-            'func': pccg,
-            'name': 'preconditioned conjugate-gradient minimization'
-        }
-    }
+    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='gaussian', etol=1e-7, cgform=1,
+                 sic=False, min=None, verbose=None):
+        self.atoms = atoms      # Atoms object
+        self.xc = xc.lower()    # Exchange-correlation functional
+        self.pot = pot.lower()  # Used pseudopotential
+        self.guess = guess      # Initial wave functions guess
+        self.etol = etol        # Total energy convergence tolerance
+        self.cgform = cgform    # Conjugate gradient form
+        self.sic = sic          # Calculate the sic energy
 
-    # Set min here, better not use mutable data types in signatures
-    if min is None:
-        min = {'pccg': 100}
-
-    # Print some useful information
-    atoms.log.debug(f'--- System information ---\n{atoms}\n'
-                    '\n--- Cell information ---\n'
-                    f'Side lengths: {atoms.a} Bohr\n'
-                    f'Cut-off energy: {atoms.ecut} Hartree\n'
-                    f'Sampling per axis: ({atoms.s[0]}, {atoms.s[1]}, {atoms.s[2]})\n'
-                    '\n--- Calculation information ---\n'
-                    f'Number of states: {atoms.Ns}\n'
-                    f'Occupation per state: {atoms.f}\n'
-                    f'Potential: {atoms.pot}\n'
-                    f'Non-local contribution: {atoms.NbetaNL > 0}\n'
-                    f'XC functionals: {atoms.exc}\n'
-                    f'Compression: {len(atoms.G2) / len(atoms.G2c):.5f}\n')
-
-    # Set up basis functions
-    guess = guess.lower()
-    if guess in ('gauss', 'gaussian'):
-        # Start with gaussians at atom positions
-        W = guess_gaussian(atoms)
-    elif guess in ('rand', 'random'):
-        # Start with randomized, complex basis functions with a random seed
-        W = guess_random(atoms, complex=True, reproduce=True)
-
-    # Calculate Ewald energy that only depends on the system geometry
-    atoms.energies.Eewald = get_Eewald(atoms)
-
-    # Start minimization procedures
-    atoms.log.debug('--- SCF data ---')
-    Etots = []
-    for imin in min:
-        start = timeit.default_timer()
-        atoms.log.info(f'Start {minimizer[imin]["name"]}...')
-        W, Elist = minimizer[imin]['func'](atoms, W, min[imin], etol, cgform=cgform)
-        end = timeit.default_timer()
-        minimizer[imin]['time'] = end - start
-        minimizer[imin]['iteration'] = len(Elist)
-        Etots += Elist
-    if abs(Etots[-2] - Etots[-1]) < etol:
-        atoms.log.info(f'SCF converged after {len(Etots)} iterations.')
-    else:
-        atoms.log.warning('SCF not converged!')
-
-    # Print SCF data
-    if atoms.log.level <= logging.INFO:
-        atoms.log.debug(f'\n--- SCF results ---\nStarting guess: {guess}')
-        t_total = 0
-        for imin in min:
-            N = minimizer[imin]['iteration']
-            t = minimizer[imin]['time']
-            t_total += t
-            atoms.log.debug(f'\nMinimizer: {imin}'
-                            f'\nIterations:\t{N}'
-                            f'\nTime:\t\t{t:.5f}s'
-                            f'\nTime/Iteration:\t{t / N:.5f}s')
-        atoms.log.info(f'Total SCF time: {t_total:.5f}s')
-
-    # Print energy data
-    if atoms.log.level <= logging.DEBUG:
-        atoms.log.debug('\n--- Energy data ---')
-        atoms.log.debug(f'{atoms.energies}')
-    else:
-        atoms.log.info(f'Total energy: {atoms.energies.Etot:.9f} Eh')
-
-    # Save basis functions and density to reuse them later
-    atoms.W = orth(atoms, W)
-    atoms.n = get_n_total(atoms, atoms.W)
-    return atoms.energies.Etot
-
-
-def H(atoms, W, n=None):
-    '''Left-hand side of the eigenvalue equation.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
-    Returns:
-        ndarray: Hamiltonian applied on W.
-    '''
-    Y = orth(atoms, W)  # Orthogonalize at the start
-    if n is None:
-        n = get_n_total(atoms, Y)
-    # Solve the Poisson equation
-    # phi = -4 pi Linv(O(J(n)))
-    phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
-
-    # We get the full potential in the functional definition (different to the DFT++ notation)
-    # Normally Vxc = Jdag(O(J(exc))) + diag(exc')Jdag(O(J(n)))
-    vxc = get_exc(atoms.exc, n, 'potential')
-    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
-
-    # Vkin = -0.5 L(W)
-    Vkin_psi = -0.5 * atoms.L(W)
-    # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
-    Veff = atoms.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
-    Vnonloc_psi = calc_Vnonloc(atoms, W)
-    # H = Vkin + Idag(diag(Veff))I + Vnonloc
-    return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W))) + Vnonloc_psi
-
-
-def Q(inp, U):
-    '''Operator needed to calculate gradients with non-constant occupations.
-
-    Args:
-        inp (ndarray): Coefficients input array.
-        U (ndarray): Overlap of wave functions.
-
-    Returns:
-        ndarray: Q operator result.
-    '''
-    mu, V = eig(U)
-    mu = mu[:, None]
-    denom = np.sqrt(mu) @ np.ones((1, len(mu)))
-    denom = denom + denom.conj().T
-    return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
-
-
-def get_E(atoms, W):
-    '''Calculate all energy contributions and update Atoms energies.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        float: Total energy.
-    '''
-    Y = orth(atoms, W)
-    n = get_n_total(atoms, Y)
-    atoms.energies.Ekin = get_Ekin(atoms, Y)
-    atoms.energies.Eloc = get_Eloc(atoms, n)
-    atoms.energies.Enonloc = get_Enonloc(atoms, Y)
-    atoms.energies.Ecoul = get_Ecoul(atoms, n)
-    atoms.energies.Exc = get_Exc(atoms, n)
-    return atoms.energies.Etot
-
-
-def get_grad(atoms, W):
-    '''Calculate the energy gradient with respect to W.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Gradient.
-    '''
-    F = np.diag(atoms.f)
-    HW = H(atoms, W)
-    WHW = W.conj().T @ HW
-    # U = Wdag O(W)
-    U = W.conj().T @ atoms.O(W)
-    invU = inv(U)
-    U12 = sqrtm(invU)
-    # Htilde = U^-0.5 Wdag H(W) U^-0.5
-    Ht = U12 @ WHW @ U12
-    # grad E = H(W) - O(W)U^-1 (Wdag H(W))(U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return (HW - (atoms.O(W) @ invU) @ WHW) @ (U12 @ F @ U12) + \
-           atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
-
-
-def check_energies(atoms, Elist, etol, linmin=None, cg=None):
-    '''Check the energies for every SCF cycle and handle the output.
-
-    Args:
-        atoms: Atoms object.
-        Elist (list): Total energies per SCF step.
-        etol (float): Convergence tolerance of the total energy.
-
-    Keyword Args:
-        linmin (float): Cosine between previous search direction and current gradient.
-        cg (float): Conjugate-gradient orthogonality.
-
-    Returns:
-        bool: Convergence condition.
-    '''
-    Nit = len(Elist)
-
-    # Output handling
-    if linmin is not None:
-        linmin = f'\tlinmin-test: {linmin:+.7f}'
-    else:
-        linmin = ''
-    if cg is not None:
-        cg = f'\tcg-test: {cg:+.7f}'
-    else:
-        cg = ''
-
-    if atoms.log.level <= logging.DEBUG:
-        atoms.log.debug(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f} {linmin} {cg}')
-    else:
-        atoms.log.info(f'Iteration: {Nit}  \tEtot: {atoms.energies.Etot:+.7f}')
-
-    # Check for convergence
-    if Nit > 1:
-        if abs(Elist[-2] - Elist[-1]) < etol:
-            return True
-        if Elist[-1] > Elist[-2]:
-            atoms.log.warning('Total energy is not decreasing.')
-    return False
-
-
-def sd(atoms, W, Nit, etol, beta=3e-5, **kwargs):
-    '''Steepest descent minimization algorithm.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
-        etol (float): Convergence tolerance of the total energy.
-
-    Keyword Args:
-        beta (float): SCF step size.
-
-    Returns:
-        tuple[ndarray, list]: Wave functions and total energies per SCF cycle.
-    '''
-    Elist = []
-
-    for _ in range(Nit):
-        W = W - beta * get_grad(atoms, W)
-        E = get_E(atoms, W)
-        Elist.append(E)
-        if check_energies(atoms, Elist, etol):
-            break
-    return W, Elist
-
-
-def lm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
-    '''Line minimization algorithm.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
-        etol (float): Convergence tolerance of the total energy.
-
-    Keyword Args:
-        betat (float): SCF step size.
-
-    Returns:
-        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
-    '''
-    Elist = []
-
-    # Do the first step without the linmin test
-    g = get_grad(atoms, W)
-    d = -g
-    gt = get_grad(atoms, W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + beta * d
-    E = get_E(atoms, W)
-    Elist.append(E)
-    check_energies(atoms, Elist, etol)
-
-    for _ in range(1, Nit):
-        g = get_grad(atoms, W)
-        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
-        d = -g
-        gt = get_grad(atoms, W + betat * d)
-        # The denominator can get zero, add this check to prevent this
-        denom = dotprod(g - gt, d)
-        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            beta = betat * dotprod(g, d) / denom
+        # Set min here, better not use mutable data types in signatures
+        if min is None:
+            self.min = {'pccg': 100}
         else:
-            beta = betat * dotprod(g, d) / 1e-16
-        W = W + beta * d
-        E = get_E(atoms, W)
-        Elist.append(E)
-        if check_energies(atoms, Elist, etol, linmin):
-            break
-    return W, Elist
+            self.min = min
 
-
-def pclm(atoms, W, Nit, etol, betat=3e-5, **kwargs):
-    '''Preconditioned line minimization algorithm.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
-        etol (float): Convergence tolerance of the total energy.
-
-    Keyword Args:
-        betat (float): SCF step size.
-
-    Returns:
-        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
-    '''
-    Elist = []
-
-    # Do the first step without the linmin test
-    g = get_grad(atoms, W)
-    d = -atoms.K(g)
-    gt = get_grad(atoms, W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + beta * d
-    E = get_E(atoms, W)
-    Elist.append(E)
-    check_energies(atoms, Elist, etol)
-
-    for _ in range(1, Nit):
-        g = get_grad(atoms, W)
-        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
-        d = -atoms.K(g)
-        gt = get_grad(atoms, W + betat * d)
-        # The denominator can get zero, add this check to prevent this
-        denom = dotprod(g - gt, d)
-        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            beta = betat * dotprod(g, d) / denom
+        # Initialize logger
+        self.log = create_logger(self)
+        if verbose is None:
+            self.verbose = atoms.verbose
         else:
-            beta = betat * dotprod(g, d) / 1e-16
-        W = W + beta * d
-        E = get_E(atoms, W)
-        Elist.append(E)
-        if check_energies(atoms, Elist, etol, linmin):
-            break
-    return W, Elist
+            self.verbose = verbose
 
+        # Set up final and intermediate results
+        self.W = None             # Basis functions
+        self.n = None             # Electronic density
+        self.energies = Energy()  # Energy object that holds energy contributions
+        self.clear()
 
-def pccg(atoms, W, Nit, etol, betat=3e-5, cgform=1):
-    '''Preconditioned conjugate-gradient algorithm.
+        # Parameters that will be built out of the inputs
+        self.GTH = {}         # Dictionary of GTH parameters per atom species
+        self.Vloc = None      # Local pseudopotential contribution
+        self.NbetaNL = 0      # Number of projector functions for the non-local gth potential
+        self.prj2beta = None  # Index matrix to map to the correct projector function
+        self.betaNL = None    # Atomic-centered projector functions
+        self.initialize()
 
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
-        etol (float): Convergence tolerance of the total energy.
+    def clear(self):
+        '''Initialize and clear intermediate results.'''
+        self.Y = None     # Orthogonal wave functions
+        self.n = None     # Electronic density
+        self.phi = None   # Hartree field
+        self.exc = None   # Exchange-correlation energy density
+        self.vxc = None   # Exchange-correlation potential
+        return
 
-    Keyword Args:
-        betat (float): SCF step size.
-        cgform (int): Conjugated-gradient form for the pccg minimization.
+    def initialize(self):
+        '''Validate inputs, update them and build all necessary parameters.'''
+        self._set_potential()
+        self._init_W()
+        return
 
-    Returns:
-        tuple[ndarray, list]: Wave functions and energies per SCF cycle.
-    '''
-    Elist = []
+    def run(self, **kwargs):
+        '''Run the self-consistent field (SCF) calculation.'''
+        self.log.debug(f'--- System information ---\n{self.atoms}\n'
+                       f'Number of states: {self.atoms.Ns}\n'
+                       f'Occupation per state: {self.atoms.f}\n'
+                       f'\n--- Cell information ---\nSide lengths: {self.atoms.a} Bohr\n'
+                       f'Sampling per axis: {self.atoms.s}\n'
+                       f'Cut-off energy: {self.atoms.ecut} Hartree\n'
+                       f'Compression: {len(self.atoms.G2) / len(self.atoms.G2c):.5f}\n'
+                       f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
 
-    # Do the first step without the linmin and cg test
-    g = get_grad(atoms, W)
-    d = -atoms.K(g)
-    gt = get_grad(atoms, W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-    W = W + beta * d
-    dold = d
-    gold = g
-    E = get_E(atoms, W)
-    Elist.append(E)
-    check_energies(atoms, Elist, etol)
+        # Calculate Ewald energy that only depends on the system geometry
+        self.energies.Eewald = get_Eewald(self.atoms)
 
-    for _ in range(1, Nit):
-        g = get_grad(atoms, W)
-        linmin = dotprod(g, dold) / np.sqrt(dotprod(g, g) * dotprod(dold, dold))
-        cg = dotprod(g, atoms.K(gold)) / np.sqrt(dotprod(g, atoms.K(g)) *
-             dotprod(gold, atoms.K(gold)))
-        if cgform == 1:  # Fletcher-Reeves
-            beta = dotprod(g, atoms.K(g)) / dotprod(gold, atoms.K(gold))
-        elif cgform == 2:  # Polak-Ribiere
-            beta = dotprod(g - gold, atoms.K(g)) / dotprod(gold, atoms.K(gold))
-        elif cgform == 3:  # Hestenes-Stiefel
-            beta = dotprod(g - gold, atoms.K(g)) / dotprod(g - gold, dold)
-        d = -atoms.K(g) + beta * dold
-        gt = get_grad(atoms, W + betat * d)
-        # The denominator can get zero, add this check to prevent this
-        denom = dotprod(g - gt, d)
-        if abs(denom) > 1e-16:  # 1e-16 is the range under float64 machine precision
-            beta = betat * dotprod(g, d) / denom
+        # Start minimization procedures
+        Etots = []
+        minimizer_log = {}
+        for imin in self.min:
+            self.log.info(f'Start {eval(imin).__name__}...')
+            start = timeit.default_timer()
+            Elist = eval(imin)(self, self.min[imin], **kwargs)  # Call minimizer
+            end = timeit.default_timer()
+            minimizer_log[imin] = {}  # Create an entry for the current minimizer
+            minimizer_log[imin]['time'] = end - start  # Save time in dictionary
+            minimizer_log[imin]['iter'] = len(Elist)  # Save iterations in dictionary
+            Etots += Elist  # Append energies from minimizer
+            # Do not start other minimizations if one converged
+            if abs(Etots[-2] - Etots[-1]) < self.etol:
+                break
+        if abs(Etots[-2] - Etots[-1]) < self.etol:
+            self.log.info(f'SCF converged after {len(Etots)} iterations.')
         else:
-            beta = betat * dotprod(g, d) / 1e-16
-        W = W + beta * d
-        dold = d
-        gold = g
-        E = get_E(atoms, W)
-        Elist.append(E)
-        if check_energies(atoms, Elist, etol, linmin, cg):
-            break
-    return W, Elist
+            self.log.warning('SCF not converged!')
 
+        # Print SCF data
+        self.log.debug('\n--- SCF results ---')
+        t_tot = 0
+        for imin in self.min:
+            N = minimizer_log[imin]['iter']
+            t = minimizer_log[imin]['time']
+            t_tot += t
+            self.log.debug(f'Minimizer: {imin}'
+                           f'\nIterations:\t{N}'
+                           f'\nTime:\t\t{t:.5f}s'
+                           f'\nTime/Iteration:\t{t / N:.5f}s')
+        self.log.info(f'Total SCF time: {t_tot:.5f}s')
 
-def orth(atoms, W):
-    '''Orthogonalize coefficient matrix W.
+        # Calculate SIc energy if desired
+        if self.sic:
+            self.energies.Esic = get_Esic(self, orth(self.atoms, self.W))
 
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        # Print energy data
+        if self.log.level <= logging.DEBUG:
+            self.log.debug(f'\n--- Energy data ---\n{self.energies}')
+        else:
+            self.log.info(f'Total energy: {self.energies.Etot:.9f} Eh')
+        return self.energies.Etot
 
-    Returns:
-        ndarray: Orthogonalized wave functions.
-    '''
-    # Y = W (Wdag O(W))^-0.5
-    return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
+    def _set_potential(self):
+        '''Build the potential.'''
+        atoms = self.atoms
+        if self.pot == 'gth':
+            for ia in range(atoms.Natoms):
+                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia])
+            # Set up the local and non-local part
+            self.Vloc = init_gth_loc(self)
+            self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
+        else:
+            self.Vloc = init_pot(atoms)
+        return
 
+    def _init_W(self):
+        '''Initialize wave functions.'''
+        if self.guess in ('gauss', 'gaussian'):
+            # Start with gaussians at atom positions
+            self.W = guess_gaussian(self)
+        elif self.guess in ('rand', 'random'):
+            # Start with randomized, complex basis functions with a random seed
+            self.W = guess_random(self, complex=True, reproduce=True)
+        return
 
-def get_psi(atoms, Y, n=None):
-    '''Calculate eigenstates from H.
+    def __repr__(self):
+        '''Print the parameters stored in the SCF object.'''
+        return f'XC functionals: {self.xc}\n' \
+               f'Potential: {self.pot}\n' \
+               f'Starting guess: {self.guess}\n' \
+               f'Convergence tolerance: {self.etol}\n' \
+               f'Non-local contribution: {self.NbetaNL > 0}'
 
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+    @property
+    def verbose(self):
+        '''Verbosity level.'''
+        return self._verbose
 
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
-    Returns:
-        ndarray: Eigenstates in reciprocal space.
-    '''
-    mu = Y.conj().T @ H(atoms, Y, n)
-    _, D = eigh(mu)
-    return Y @ D
-
-
-def get_epsilon(atoms, Y, n=None):
-    '''Calculate eigenvalues from H.
-
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
-    Returns:
-        ndarray: Eigenvalues.
-    '''
-    mu = Y.conj().T @ H(atoms, Y, n)
-    epsilon, _ = eigh(mu)
-    return np.sort(epsilon)
-
-
-def get_n_total(atoms, Y):
-    '''Calculate the total electronic density.
-
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Electronic density.
-    '''
-    # n = (IW) F (IW)dag
-    Yrs = atoms.I(Y)
-    n = atoms.f * np.real(Yrs.conj() * Yrs)
-    return np.sum(n, axis=1)
-
-
-def guess_random(atoms, complex=True, reproduce=False):
-    '''Generate random initial-guess coefficients as starting values.
-
-    Args:
-        atoms: Atoms object.
-
-    Keyword Args:
-        complex (bool): Use complex numbers for the random guess.
-        reproduce (bool): Use a set seed for reproducible random numbers.
-
-    Returns:
-        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
-    '''
-    if reproduce:
-        seed(42)
-    if complex:
-        W = randn(len(atoms.G2c), atoms.Ns) + 1j * randn(len(atoms.G2c), atoms.Ns)
-    else:
-        W = randn(len(atoms.G2c), atoms.Ns)
-    return orth(atoms, W)
-
-
-def guess_gaussian(atoms):
-    '''Generate initial-guess coefficients using normalized Gaussians as starting values.
-
-    Args:
-        atoms: Atoms object.
-
-    Returns:
-        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
-    '''
-    # Start with a randomized basis set
-    W = guess_random(atoms, complex=True, reproduce=True)
-    W = orth(atoms, W)
-    sigma = 0.5
-    normal = (2 * np.pi * sigma**2)**(3 / 2)
-    # Calculate a density from normalized Gauss functions
-    n = np.zeros(len(atoms.r))
-    for ia in range(atoms.Natoms):
-        r = norm(atoms.r - atoms.X[ia], axis=1)
-        n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
-    # Calculate the eigenfunctions
-    return get_psi(atoms, W, n)
+    @verbose.setter
+    def verbose(self, level):
+        '''Verbosity setter to sync the logger with the property.'''
+        self._verbose = get_level(level)
+        self.log.setLevel(self._verbose)
+        return

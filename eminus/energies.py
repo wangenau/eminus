@@ -4,7 +4,8 @@ import numpy as np
 from numpy.linalg import inv
 from scipy.special import erfc
 
-from .exc import get_exc
+from .dft import get_n_single, solve_poisson
+from .xc import get_xc
 
 
 class Energy:
@@ -13,21 +14,21 @@ class Energy:
 
     def __init__(self):
         self.Ekin = 0
-        self.Eloc = 0
-        self.Enonloc = 0
         self.Ecoul = 0
         self.Exc = 0
+        self.Eloc = 0
+        self.Enonloc = 0
         self.Eewald = 0
         self.Esic = 0
 
     @property
     def Etot(self):
         '''Total energy is the sum of all energy contributions.'''
-        return self.Ekin + self.Eloc + self.Enonloc + self.Ecoul + self.Exc + self.Eewald + \
+        return self.Ekin + self.Ecoul + self.Exc + self.Eloc + self.Enonloc + self.Eewald + \
                self.Esic
 
     def __repr__(self):
-        '''Printe the energies stored in the Energy object.'''
+        '''Print the energies stored in the Energy object.'''
         out = ''
         for ie in self.__slots__:
             energy = eval('self.' + ie)
@@ -35,6 +36,23 @@ class Energy:
                 out = f'{out}{ie.ljust(8)}: {energy:+.9f} Eh\n'
         out = f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
         return out
+
+
+def get_E(scf):
+    '''Calculate all energy contributions and update Atoms energies needed in one SCF step.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        float: Total energy.
+    '''
+    scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
+    scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
+    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc)
+    scf.energies.Eloc = get_Eloc(scf, scf.n)
+    scf.energies.Enonloc = get_Enonloc(scf, scf.Y)
+    return scf.energies.Etot
 
 
 def get_Ekin(atoms, Y):
@@ -53,7 +71,7 @@ def get_Ekin(atoms, Y):
     return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
 
 
-def get_Ecoul(atoms, n):
+def get_Ecoul(atoms, n, phi=None):
     '''Calculate the Coulomb energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -62,35 +80,42 @@ def get_Ecoul(atoms, n):
         atoms: Atoms object.
         n (ndarray): Real-space electronic density.
 
+    Kwargs:
+        phi (ndarray): Hartree ﬁeld.
+
     Returns:
         float: Coulomb energy in Hartree.
     '''
+    if phi is None:
+        phi = solve_poisson(atoms, n)
     # Ecoul = -(J(n))dag O(phi)
-    phi = -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(atoms, n, spinpol=False):
+def get_Exc(scf, n, exc=None, spinpol=False):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
+        exc (ndarray): Exchange-correlation energy density.
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
         float: Exchange-correlation energy in Hartree.
     '''
+    atoms = scf.atoms
+    if exc is None:
+        exc = get_xc(scf.xc, n, 'density')
     # Exc = (J(n))dag O(J(exc))
-    exc = get_exc(atoms.exc, n, 'density', spinpol)
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
-def get_Eloc(atoms, n):
+def get_Eloc(scf, n):
     '''Calculate the local energy contribution.
 
     Args:
@@ -100,11 +125,11 @@ def get_Eloc(atoms, n):
     Returns:
         float: Local energy contribution in Hartree.
     '''
-    return np.real(atoms.Vloc.conj().T @ n)
+    return np.real(scf.Vloc.conj().T @ n)
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
-def get_Enonloc(atoms, Y):
+def get_Enonloc(scf, Y):
     '''Calculate the non-local GTH energy contribution.
 
     Reference: Phys. Rev. B 54, 1703.
@@ -116,19 +141,20 @@ def get_Enonloc(atoms, Y):
     Returns:
         float: Non-local GTH energy contribution in Hartree.
     '''
+    atoms = scf.atoms
     Enonloc = 0
-    if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
+    if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         Natoms = atoms.Natoms
         Nstates = atoms.Ns
-        prj2beta = atoms.prj2beta
-        betaNL = atoms.betaNL
+        prj2beta = scf.prj2beta
+        betaNL = scf.betaNL
 
         betaNL_psi = (Y.conj().T @ betaNL).conj()
 
         for ist in range(Nstates):
             enl = 0
             for ia in range(Natoms):
-                psp = atoms.GTH[atoms.atom[ia]]
+                psp = scf.GTH[atoms.atom[ia]]
                 for l in range(psp['lmax']):
                     for m in range(-l, l + 1):
                         for iprj in range(psp['Nproj_l'][l]):
@@ -231,21 +257,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     return Eewald
 
 
-def get_n_single(atoms, Y):
-    '''Calculate the single-electron densities.
-
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Single-electron densities.
-    '''
-    Yrs = atoms.I(Y)
-    return atoms.f * np.real(Yrs.conj() * Yrs)
-
-
-def get_Esic(atoms, Y, n_single=None):
+def get_Esic(scf, Y, n_single=None):
     '''Calculate the Perdew-Zunger self-interaction energy.
 
     Reference: Phys. Rev. B 23, 5048.
@@ -260,6 +272,7 @@ def get_Esic(atoms, Y, n_single=None):
     Returns:
         float: PZ self-interaction energy.
     '''
+    atoms = scf.atoms
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:
         n_single = get_n_single(atoms, Y)
@@ -269,8 +282,8 @@ def get_Esic(atoms, Y, n_single=None):
         ni = n_single[:, i] / atoms.f[i]
         coul = get_Ecoul(atoms, ni)
         # The exchange part for a SIC correction has to be spin polarized
-        xc = get_Exc(atoms, ni, spinpol=True)
+        xc = get_Exc(scf, ni, spinpol=True)
         # SIC energy is scaled by the occupation number
         Esic += (coul + xc) * atoms.f[i]
-    atoms.energies.Esic = Esic
+    scf.energies.Esic = Esic
     return Esic

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
+from .dft import get_psi
 from .filehandler import write_cube
 from .localizer import get_FLO, get_FO
-from .scf import get_psi
 
 
 def KSO(atoms, write_cubes=False, **kwargs):

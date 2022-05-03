@@ -9,17 +9,18 @@ from .logger import log
 from .utils import Ylm_real
 
 
-def init_gth_loc(atoms):
+def init_gth_loc(scf):
     '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Local GTH potential contribution.
     '''
+    atoms = scf.atoms
     G2 = atoms.G2
     atom = atoms.atom
     species = set(atom)
@@ -27,7 +28,7 @@ def init_gth_loc(atoms):
 
     Vloc = np.zeros(len(G2))
     for isp in species:
-        psp = atoms.GTH[isp]
+        psp = scf.GTH[isp]
         rloc = psp['rloc']
         Zion = psp['Zion']
         c1 = psp['cloc'][0]
@@ -57,17 +58,18 @@ def init_gth_loc(atoms):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
-def init_gth_nonloc(atoms):
+def init_gth_nonloc(scf):
     '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
     '''
+    atoms = scf.atoms
     Natoms = atoms.Natoms
     Npoints = len(atoms.G2c)
     Omega = atoms.Omega
@@ -77,7 +79,7 @@ def init_gth_nonloc(atoms):
 
     NbetaNL = 0
     for ia in range(Natoms):
-        psp = atoms.GTH[atoms.atom[ia]]
+        psp = scf.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
@@ -92,7 +94,7 @@ def init_gth_nonloc(atoms):
     for ia in range(Natoms):
         # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
-        psp = atoms.GTH[atoms.atom[ia]]
+        psp = scf.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
@@ -103,32 +105,33 @@ def init_gth_nonloc(atoms):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
-def calc_Vnonloc(atoms, W):
+def calc_Vnonloc(scf, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
         ndarray: Non-local GTH potential contribution.
     '''
+    atoms = scf.atoms
     Npoints = len(W)
     Nstates = atoms.Ns
 
     Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
-    if atoms.NbetaNL > 0:  # Only calculate non-local potential if necessary
+    if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         Natoms = atoms.Natoms
-        prj2beta = atoms.prj2beta
-        betaNL = atoms.betaNL
+        prj2beta = scf.prj2beta
+        betaNL = scf.betaNL
 
         betaNL_psi = (W.conj().T @ betaNL).conj()
 
         for ist in range(Nstates):
             for ia in range(Natoms):
-                psp = atoms.GTH[atoms.atom[ia]]
+                psp = scf.GTH[atoms.atom[ia]]
                 for l in range(psp['lmax']):
                     for m in range(-l, l + 1):
                         for iprj in range(psp['Nproj_l'][l]):

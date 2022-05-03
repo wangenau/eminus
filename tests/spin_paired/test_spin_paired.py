@@ -18,7 +18,7 @@ def calc_spin_paired(system, E_ref):
 
     atom, X = read_xyz(f'{path}/{system}.xyz')
     atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, s=s, verbose=verbose)
-    E = SCF(atoms)
+    E = SCF(atoms).run()
 
     try:
         assert_allclose(E, E_ref)

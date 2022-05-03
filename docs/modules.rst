@@ -11,13 +11,14 @@ Modules
    eminus
    eminus.atoms
    eminus.data
+   eminus.dft
    eminus.domains
    eminus.energies
-   eminus.exc
    eminus.filehandler
    eminus.gth
    eminus.localizer
    eminus.logger
+   eminus.minimizer
    eminus.operators
    eminus.orbitals
    eminus.potentials
@@ -26,6 +27,7 @@ Modules
    eminus.units
    eminus.utils
    eminus.version
+   eminus.xc
    eminus.addons
    eminus.addons.fods
    eminus.addons.libxc

@@ -24,6 +24,9 @@ def diagprod(a, B):
 def dotprod(a, b):
     '''Efficiently calculate the expression a * b.
 
+    Add an extra check to make sure the result is never zero since this function is used as a
+    denominator in minimizers.
+
     Args:
         a (ndarray): Array of vectors.
         b (ndarray): Array of vectors.
@@ -31,7 +34,11 @@ def dotprod(a, b):
     Returns:
         float: The expressions result
     '''
-    return np.real(np.trace(a.conj().T @ b))
+    eps = 1e-15  # 2.22e-16 is the range of float64 machine precision
+    res = np.real(np.trace(a.conj().T @ b))
+    if abs(res) < eps:
+        return eps
+    return res
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl

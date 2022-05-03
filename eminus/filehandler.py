@@ -218,25 +218,25 @@ def write_cube(atoms, field, filename, extra=None):
     return
 
 
-def save_atoms(atoms, filename):
-    '''Save atoms objects in a pickle file.
+def save(object, filename):
+    '''Save objects in a pickle file.
 
     This function is for personal use only. Never load a file you haven't saved yourself!
 
     Args:
-        atoms: Atoms object.
+        object: Class object.
         filename (str): xyz input file path/name.
     '''
     if not filename.endswith(('.pickle', '.pkl')):
         filename = f'{filename}.pickle'
 
     with open(filename, 'wb') as fp:
-        pickle.dump(atoms, fp, pickle.HIGHEST_PROTOCOL)
+        pickle.dump(object, fp, pickle.HIGHEST_PROTOCOL)
     return
 
 
-def load_atoms(filename):
-    '''Load atoms objects from a pickle file.
+def load(filename):
+    '''Load objects from a pickle file.
 
     This function is for personal use only. Never load a file you haven't saved yourself!
 
@@ -244,7 +244,7 @@ def load_atoms(filename):
         filename (str): xyz input file path/name.
 
     Returns:
-        Atoms object.
+        Class object.
     '''
     if not filename.endswith(('.pickle', '.pkl')):
         filename = f'{filename}.pickle'

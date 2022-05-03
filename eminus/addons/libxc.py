@@ -12,7 +12,7 @@ except ImportError:
 from ..logger import log
 
 
-def libxc_functional(exc, n, ret, spinpol):
+def libxc_functional(xc, n, ret, spinpol):
     '''Handle LibXC exchange-correlation functionals.
 
     Only LDA functionals should be used.
@@ -20,7 +20,7 @@ def libxc_functional(exc, n, ret, spinpol):
     Reference: SoftwareX 7, 1.
 
     Args:
-        exc (str | int): Exchange or correlation identifier.
+        xc (str | int): Exchange or correlation identifier.
         n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
         spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
@@ -35,9 +35,9 @@ def libxc_functional(exc, n, ret, spinpol):
     inp = {'rho': n}
     # LibXC functionals have one integer and one string identifier
     try:
-        func = LibXCFunctional(int(exc), spin)
+        func = LibXCFunctional(int(xc), spin)
     except ValueError:
-        func = LibXCFunctional(exc, spin)
+        func = LibXCFunctional(xc, spin)
     out = func.compute(inp)
     if ret == 'density':
         return out['zk'].ravel()

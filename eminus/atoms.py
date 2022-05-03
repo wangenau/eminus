@@ -1,17 +1,14 @@
 #!/usr/bin/env python3
-'''Atoms object definition.'''
+'''Atoms class definition.'''
 import re
 
 import numpy as np
 from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
-from .energies import Energy
 from .filehandler import read_gth
-from .gth import init_gth_loc, init_gth_nonloc
 from .logger import create_logger, get_level
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
-from .potentials import init_pot
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
@@ -50,6 +47,13 @@ class Atoms:
 
             Example: 30; [30, 40, 50]; array([30, 40, 50]),
             Default: None
+        center (bool | str): Center the system inside the cell (case insensitive).
+
+            Align the geometric center of mass with the center of the call and rotate the system,
+            such that its geometric moment of inertia aligns with the coordinate axes.
+
+            Example: True; 'shift'; 'rotate',
+            Default: False
         f (float | list | tuple | ndarray | None): Occupation numbers per state.
 
             The last state will be adjusted if the sum of f is not equal to the sum of Z.
@@ -63,44 +67,25 @@ class Atoms:
             of Z by it.
 
             Default: None
-        center (bool | str): Center the system inside the cell (case insensitive).
-
-            Align the geometric center of mass with the center of the call and rotate the system,
-            such that its geometric moment of inertia aligns with the coordinate axes.
-
-            Example: True; 'shift'; 'rotate',
-            Default: False
-        pot (str): Type of pseudopotential (case insensitive).
-
-            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge',
-            Default: 'gth'
-        exc (str): Comma-separated exchange-correlation functional description (case insensitive).
-
-            Adding 'libxc:' before a functional will try to use the LibXC interface.
-
-            Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
-            Default: 'lda,vwn'
         verbose (int | str): Level of output (case insensitive).
 
             Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
             An integer value can be used as well, where larger numbers mean more output, starting
             from 0.
 
-            Default: 'INFO'
+            Default: 'info'
     '''
-    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, f=None, Ns=None, center=False,
-                 pot='gth', exc='lda,vwn', verbose='INFO'):
+    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, f=None, Ns=None,
+                 verbose='info'):
         self.atom = atom        # Atom symbols
         self.X = X              # Atom positions
         self.a = a              # Cell/Vacuum size
         self.ecut = ecut        # Cut-off energy
         self.Z = Z              # Valence charges
         self.s = s              # Cell sampling
+        self.center = center    # Center molecule in cell
         self.f = f              # Occupation numbers
         self.Ns = Ns            # Number of states
-        self.center = center    # Center molecule in cell
-        self.pot = pot.lower()  # Used pseudopotential
-        self.exc = exc.lower()  # Exchange-correlation functional
 
         # Parameters that will be built out of the inputs
         self.Natoms = None    # Number of atoms
@@ -112,21 +97,11 @@ class Atoms:
         self.active = None    # Mask for active G-vectors
         self.G2c = None       # Truncated squared magnitudes of G-vectors
         self.Sf = None        # Structure factor
-        self.GTH = {}         # Dictionary of GTH parameters per atom species
-        self.Vloc = None      # Local pseudopotential contribution
-        self.NbetaNL = 0      # Number of projector functions for the non-local gth potential
-        self.prj2beta = None  # Index matrix to map to the correct projector function
-        self.betaNL = None    # Atomic-centered projector functions
 
         # Initialize logger and update
         self.log = create_logger(self)
         self.verbose = verbose
         self.update()
-
-        # Parameters after the SCF calculation
-        self.W = None             # Basis functions
-        self.n = None             # Electronic density
-        self.energies = Energy()  # Energy object that holds energy contributions
 
     def update(self):
         '''Validate inputs, update them and build all necessary parameters.'''
@@ -139,7 +114,6 @@ class Atoms:
         M, N = self._get_index_matrices()
         self._set_cell(M)
         self._set_G(N)
-        self._set_potential()
         return
 
     def _set_atom(self):
@@ -205,6 +179,7 @@ class Atoms:
             I = inertia_tensor(self.X)
             _, eigvecs = eig(I)
             self.X = (inv(eigvecs) @ self.X.T).T
+
         # Shift system such that its geometric center of mass is in the center of the unit cell
         if self.center or self.center == 'shift':
             X = self.X
@@ -243,6 +218,7 @@ class Atoms:
         # If one occupation and the number of states is given, use it for every state
         if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
             self.f = self.f * np.ones(self.Ns)
+
         # If no occupations and the number of states is given, assume 2
         if self.f is None and self.Ns is not None:
             self.f = 2 * np.ones(self.Ns)
@@ -254,6 +230,7 @@ class Atoms:
             # Assume the number of states by dividing the total valence charge by the occupations
             Ztot = np.sum(self.Z)
             self.Ns = int(np.ceil(Ztot / self.f))
+
         # If the sum of valence charges is not divisible by occupations, change the last occupation
         if isinstance(self.f, (int, np.integer, float, np.floating)):
             mod = np.sum(self.Z) % self.f
@@ -308,6 +285,7 @@ class Atoms:
         # Calculate squared-magnitudes of G-vectors
         G2 = np.sum(G**2, axis=1)
         self.G2 = G2
+
         # Calculate the G2 restriction
         if self.ecut is not None:
             active = np.nonzero(G2 <= 2 * self.ecut)
@@ -320,20 +298,8 @@ class Atoms:
         self.Sf = np.exp(1j * G @ self.X.conj().T).T
         return
 
-    def _set_potential(self):
-        '''Build the potential.'''
-        if self.pot == 'gth':
-            for ia in range(self.Natoms):
-                self.GTH[self.atom[ia]] = read_gth(self.atom[ia], self.Z[ia])
-            # Setup for the local and non-local part
-            self.Vloc = init_gth_loc(self)
-            self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
-        else:
-            self.Vloc = init_pot(self)
-        return
-
     def __repr__(self):
-        '''Print the atom parameters stored in the Atoms object.'''
+        '''Print the parameters stored in the Atoms object.'''
         atom = self.atom
         Natoms = self.Natoms
         X = self.X
@@ -354,6 +320,7 @@ class Atoms:
         '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
         self.log.setLevel(self._verbose)
+        return
 
     def O(self, inp):
         '''Overlap operator :func:`~eminus.operators.O`.'''
@@ -366,10 +333,6 @@ class Atoms:
     def Linv(self, inp):
         '''Inverse Laplacian operator :func:`~eminus.operators.Linv`.'''
         return Linv(self, inp)
-
-    def K(self, inp):
-        '''Preconditioning operator :func:`~eminus.operators.K`.'''
-        return K(self, inp)
 
     def I(self, inp):
         '''Transformation from reciprocal to real-space :func:`~eminus.operators.I`.'''
@@ -386,6 +349,10 @@ class Atoms:
     def Jdag(self, inp):
         '''Conj. transformation from reciprocal to real-space :func:`~eminus.operators.Jdag`.'''
         return Jdag(self, inp)
+
+    def K(self, inp):
+        '''Preconditioning operator :func:`~eminus.operators.K`.'''
+        return K(self, inp)
 
     def T(self, inp, dr):
         '''Translation operator :func:`~eminus.operators.T`.'''

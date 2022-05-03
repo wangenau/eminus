@@ -78,6 +78,29 @@ def get_level(verbose):
     return level
 
 
+def name(newname):
+    '''Add a name to functions without evaluating them for better logging.
+
+    Args:
+        newname (str): Function name.
+
+    Returns:
+        Callable: Decorator.
+    '''
+    def decorator(f):
+        '''Decorator.
+
+        Args:
+            f (Callable): Function to name.
+
+        Returns:
+            Callable: Function.
+        '''
+        f.__name__ = newname
+        return f
+    return decorator
+
+
 # The following code is not guarded by a function because it has to be run once the logger is called
 # to set up the basic logger configuration
 

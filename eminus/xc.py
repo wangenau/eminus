@@ -3,11 +3,11 @@
 import numpy as np
 
 
-def get_exc(exc, n, ret, spinpol=False):
+def get_xc(xc, n, ret, spinpol=False):
     '''Handle and get exchange-correlation functionals.
 
     Args:
-        exc (str): Exchange and correlation identifier, separated by a comma.
+        xc (str): Exchange and correlation identifier, separated by a comma.
         n (ndarray): Real-space electronic density.
         ret (str): Choose whether to return the energy density or the potential.
 
@@ -17,18 +17,18 @@ def get_exc(exc, n, ret, spinpol=False):
     Returns:
         ndarray: Exchange-correlation energy density or potential.
     '''
-    exc_map = {
+    xc_map = {
         'lda': 'lda_slater_x',
         'pw': 'lda_pw_c',
         'vwn': 'lda_vwn_c'
     }
-    exch, corr = exc.split(',')
+    exch, corr = xc.split(',')
 
     # Only use non-zero values of the density
     n_nz = n[np.nonzero(n)]
 
     # Only import libxc interface if necessary
-    if 'libxc' in exc:
+    if 'libxc' in xc:
         from .addons.libxc import libxc_functional
 
     # Handle exchange part
@@ -36,7 +36,7 @@ def get_exc(exc, n, ret, spinpol=False):
         exch = exch.split(':')[1]
         x = libxc_functional(exch, n_nz, ret, spinpol)
     else:
-        f_exch = exc_map.get(exch, 'mock_exc')
+        f_exch = xc_map.get(exch, 'mock_xc')
         if spinpol:
             f_exch = f'{f_exch}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
@@ -48,7 +48,7 @@ def get_exc(exc, n, ret, spinpol=False):
         corr = corr.split(':')[1]
         c = libxc_functional(corr, n_nz, ret, spinpol)
     else:
-        f_corr = exc_map.get(corr, 'mock_exc')
+        f_corr = xc_map.get(corr, 'mock_xc')
         if spinpol:
             f_corr = f'{f_corr}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
@@ -61,7 +61,7 @@ def get_exc(exc, n, ret, spinpol=False):
     return xc
 
 
-def mock_exc(n, ret, **kwargs):
+def mock_xc(n, ret, **kwargs):
     '''Mock exchange-correlation functional with no effect.
 
     Args:
@@ -74,7 +74,7 @@ def mock_exc(n, ret, **kwargs):
     return np.zeros_like(n)
 
 
-mock_exc_spin = mock_exc
+mock_xc_spin = mock_xc
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl

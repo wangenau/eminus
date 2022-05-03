@@ -95,26 +95,6 @@ def Linv(atoms, W):
     return out
 
 
-def K(atoms, W):
-    '''Preconditioning operator.
-
-    This operator acts on the options 3 and 5.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        ndarray: The operator applied on W.
-    '''
-    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
-    if len(W) == len(atoms.G2c):
-        G2 = atoms.G2c[:, None]
-    else:
-        G2 = atoms.G2[:, None]
-    return W / (1 + G2)
-
-
 def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
@@ -214,6 +194,26 @@ def Jdag(atoms, W):
     n = np.prod(atoms.s)
     Finv = I(atoms, W)
     return Finv / n
+
+
+def K(atoms, W):
+    '''Preconditioning operator.
+
+    This operator acts on the options 3 and 5.
+
+    Args:
+        atoms: Atoms object.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: The operator applied on W.
+    '''
+    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    if len(W) == len(atoms.G2c):
+        G2 = atoms.G2c[:, None]
+    else:
+        G2 = atoms.G2[:, None]
+    return W / (1 + G2)
 
 
 def T(atoms, W, dr):
