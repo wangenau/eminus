@@ -14,10 +14,9 @@ def calc_spin_paired(system, E_ref):
     a = 16
     ecut = 10
     s = 48
-    verbose = 0
 
     atom, X = read_xyz(f'{path}/{system}.xyz')
-    atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, s=s, verbose=verbose)
+    atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, s=s)
     E = SCF(atoms).run()
 
     try:
