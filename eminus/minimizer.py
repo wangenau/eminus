@@ -111,6 +111,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         list: Total energies per SCF cycle.
     '''
     costs = []
+    linmin = ''
 
     # Do the first step without the linmin test
     g = grad(scf, scf.W)
@@ -125,7 +126,8 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
     for _ in range(1, Nit):
         g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+        if scf.log.level <= logging.DEBUG:
+            linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -g
         gt = grad(scf, scf.W + betat * d)
         beta = betat * dotprod(g, d) / dotprod(g - gt, d)
@@ -157,6 +159,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     '''
     atoms = scf.atoms
     costs = []
+    linmin = ''
 
     # Do the first step without the linmin test
     g = grad(scf, scf.W)
@@ -171,7 +174,8 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
 
     for _ in range(1, Nit):
         g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+        if scf.log.level <= logging.DEBUG:
+            linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
         d = -atoms.K(g)
         gt = grad(scf, scf.W + betat * d)
         beta = betat * dotprod(g, d) / dotprod(g - gt, d)
@@ -202,6 +206,8 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         list: Total energies per SCF cycle.
     '''
     costs = []
+    linmin = ''
+    cg = ''
 
     # Do the first step without the linmin and cg test
     g = grad(scf, scf.W)
@@ -218,9 +224,10 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
     for _ in range(1, Nit):
         g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
-        cg = dotprod(g, g_old) / np.sqrt(dotprod(g, g) *
-             dotprod(g_old, g_old))
+        if scf.log.level <= logging.DEBUG:
+            linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
+            cg = dotprod(g, g_old) / np.sqrt(dotprod(g, g) *
+                 dotprod(g_old, g_old))
         if scf.cgform == 1:  # Fletcher-Reeves
             beta = dotprod(g, g) / dotprod(g_old, g_old)
         elif scf.cgform == 2:  # Polak-Ribiere
@@ -260,6 +267,8 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     '''
     atoms = scf.atoms
     costs = []
+    linmin = ''
+    cg = ''
 
     # Do the first step without the linmin and cg test
     g = grad(scf, scf.W)
@@ -276,9 +285,10 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
 
     for _ in range(1, Nit):
         g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
-        cg = dotprod(g, atoms.K(g_old)) / np.sqrt(dotprod(g, atoms.K(g)) *
-             dotprod(g_old, atoms.K(g_old)))
+        if scf.log.level <= logging.DEBUG:
+            linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
+            cg = dotprod(g, atoms.K(g_old)) / np.sqrt(dotprod(g, atoms.K(g)) *
+                 dotprod(g_old, atoms.K(g_old)))
         if scf.cgform == 1:  # Fletcher-Reeves
             beta = dotprod(g, atoms.K(g)) / dotprod(g_old, atoms.K(g_old))
         elif scf.cgform == 2:  # Polak-Ribiere
