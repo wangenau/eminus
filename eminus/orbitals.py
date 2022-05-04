@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
-from .dft import get_psi
+from .dft import get_psi, orth
 from .filehandler import write_cube
 from .localizer import get_FLO, get_FO
 
 
-def KSO(atoms, write_cubes=False, **kwargs):
+def KSO(scf, write_cubes=False, **kwargs):
     '''Generate Kohn-Sham orbitals and optionally save them as cube files.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
@@ -17,8 +17,10 @@ def KSO(atoms, write_cubes=False, **kwargs):
     Returns:
         ndarray: Real-space Kohn-Sham orbitals.
     '''
+    atoms = scf.atoms
     # Calculate eigenfunctions and transform to real-space
-    KSO = atoms.I(get_psi(atoms, atoms.W))
+    Y = orth(atoms, scf.W)
+    KSO = atoms.I(get_psi(scf, Y))
     if write_cubes:
         name = ''
         for ia in set(atoms.atom):
@@ -28,13 +30,13 @@ def KSO(atoms, write_cubes=False, **kwargs):
     return KSO
 
 
-def FO(atoms, write_cubes=False, fods=None):
+def FO(scf, write_cubes=False, fods=None):
     '''Generate Fermi orbitals and optionally save them as cube files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
@@ -43,10 +45,12 @@ def FO(atoms, write_cubes=False, fods=None):
     Returns:
         ndarray: Real-space Fermi orbitals.
     '''
-    # Late import addons
+    # Lazy import addons
     from .addons.fods import get_fods, remove_core_fods
+    atoms = scf.atoms
     # Calculate eigenfunctions
-    KSO = get_psi(atoms, atoms.W)
+    Y = orth(atoms, scf.W)
+    KSO = get_psi(scf, Y)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
@@ -61,13 +65,13 @@ def FO(atoms, write_cubes=False, fods=None):
     return FO
 
 
-def FLO(atoms, write_cubes=False, fods=None):
+def FLO(scf, write_cubes=False, fods=None):
     '''Generate Fermi-Löwdin orbitals and optionally save them as cube files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
@@ -76,10 +80,12 @@ def FLO(atoms, write_cubes=False, fods=None):
     Returns:
         ndarray: Real-space Fermi-Löwdin orbitals.
     '''
-    # Late import addons
+    # Lazy import addons
     from .addons.fods import get_fods, remove_core_fods
+    atoms = scf.atoms
     # Calculate eigenfunctions
-    KSO = get_psi(atoms, atoms.W)
+    Y = orth(atoms, scf.W)
+    KSO = get_psi(scf, Y)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)

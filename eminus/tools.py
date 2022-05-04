@@ -2,7 +2,7 @@
 '''Various tools to check physical properties.'''
 import numpy as np
 
-from .dft import get_epsilon
+from .dft import get_epsilon, orth
 from .logger import log
 
 
@@ -80,13 +80,13 @@ def inertia_tensor(coords, masses=None):
     return I
 
 
-def get_dipole(atoms):
+def get_dipole(scf):
     '''Calculate the electric dipole moment.
 
     Reference: J. Chem. Phys. 155, 224109.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Electric dipole moment in e times Bohr.
@@ -94,7 +94,8 @@ def get_dipole(atoms):
     # The dipole may be extremely large. This can be because of periodic boundary conditions,
     # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
-    n = atoms.n
+    atoms = scf.atoms
+    n = scf.n
     if n is None:
         log.error('There is no density to calculate a dipole.')
         return 0
@@ -110,7 +111,7 @@ def get_dipole(atoms):
     return mu
 
 
-def get_IP(atoms):
+def get_IP(scf):
     '''Calculate the ionization potential by calculating the negative HOMO energy.
 
     Reference: Physica 1, 104.
@@ -121,7 +122,8 @@ def get_IP(atoms):
     Returns:
         float: Ionization potential in Hartree.
     '''
-    epsilon = get_epsilon(atoms, atoms.W)
+    Y = orth(scf.atoms, scf.W)
+    epsilon = get_epsilon(scf, Y)
     return -epsilon[-1]
 
 

@@ -17,7 +17,7 @@ a = 20
 # Cut-off energy
 ecut = 20
 
-# Valence charge per atom. The charges should not differ for the same species.
+# Valence charge per atom, the charges should not differ for the same species
 # None will use valence charges from GTH pseudopotentials
 Z = [5, 5]
 
@@ -25,35 +25,23 @@ Z = [5, 5]
 s = 40
 
 # Occupation numbers per state
-# None will assume occupations of 2. The last state will be adjusted if the sum of f is not equal to
-# the sum of Z.
+# None will assume occupations of 2
+# The last state will be adjusted if the sum of f is not equal to the sum of Z
 f = [2, 2, 2, 2, 2]
 
 # Number of states
 # None will get the number of states from f or assume occupations of 2
 Ns = 5
 
-# Level of output. Larger numbers mean more output.
-verbose = 4
-
-# Type of pseudopotential (case insensitive).
-pot = 'gth'
-
 # Center the system inside the box by its geometric center of mass and rotate it such that its
-# geometric moment of inertia aligns with the coordinate axes.
+# geometric moment of inertia aligns with the coordinate axes
 center = True
 
-# Exchange-correlation functional description (case insensitive), separated by a comma.
-exc = 'lda,pw'
-
-# The libxc interface can be used by adding 'libxc:' before a functional
-# Names and numbers can be used, and mixed with the internal functionals as well
-# exc = 'libxc:LDA_X,libxc:LDA_C_PW'
-# exc = 'libxc:1,pw'
+# Level of output, larger numbers mean more output
+verbose = 4
 
 # Create an object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, f=f, Ns=Ns, verbose=verbose,
-              pot=pot, center=center, exc=exc)
+atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, f=f, Ns=Ns, verbose=verbose)
 print(f'New Atoms object:\n{atoms}\n')
 
 # You can always manipulate the object freely by displaying or editing properties

@@ -52,18 +52,22 @@ def read_xyz(filename):
     return atom, X
 
 
-def write_xyz(atoms, filename, extra=None):
+def write_xyz(object, filename, extra=None):
     '''Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         filename (str): xyz output file path/name.
 
     Keyword Args:
         extra (ndarray): Extra coordinates to write.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     atom = atoms.atom
     Natoms = atoms.Natoms
     X = atoms.X
@@ -85,7 +89,7 @@ def write_xyz(atoms, filename, extra=None):
             fp.write(f'{Natoms + len(extra)}\n')
         # The second line can contains a comment.
         # Print information about the file and program, and the file creation time.
-        fp.write(f'XYZ file generated with eminus {__version__} at {time.ctime()}\n')
+        fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(Natoms):
             fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
         # Add extra coordinates if desired. The atom symbol will default to X (no atom type).
@@ -144,20 +148,24 @@ def read_cube(filename):
     return atom, X, Z, a, s
 
 
-def write_cube(atoms, field, filename, extra=None):
+def write_cube(object, field, filename, extra=None):
     '''Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         field (ndarray): Real-space field data.
         filename (str): xyz output file path/name.
 
     Keyword Args:
         extra (ndarray): Extra coordinates to write.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     # Atomic units are assumed, so there is no need for conversion.
     atom = atoms.atom
     Natoms = atoms.Natoms
@@ -184,9 +192,8 @@ def write_cube(atoms, field, filename, extra=None):
 
     with open(filename, 'w') as fp:
         # The first two lines have to be a comment.
-        # Print file creation time and information about the file and program.
-        fp.write(f'{time.ctime()}\n')
-        fp.write(f'Cube file generated with eminus {__version__}\n')
+        # Print information about the file and program, and the file creation time.
+        fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
         if extra is None:

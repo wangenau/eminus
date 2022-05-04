@@ -1,28 +1,30 @@
 import eminus
 from eminus import Atoms, SCF, write_cube
+from eminus.dft import get_psi
 from eminus.localizer import wannier_cost
-from eminus.scf import get_psi
 from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_IP
 from eminus.units import ebohr2d, ha2kcalmol
 import numpy as np
 
 # Start by with a simple DFT calculation for neon
 atoms = Atoms('Ne', [0, 0, 0], center=True)
-SCF(atoms)
+scf = SCF(atoms)
+scf.run()
 
 # Calculate the dipole moment
 # Make sure that the unit cell is big enough, and that the density does not extend over the borders
 # Centering the system is recommended to achieve this
-dip = get_dipole(atoms)
+dip = get_dipole(scf)
 print(f'\nDipole moments = {dip} a0')
 print(f'Total dipole moment = {ebohr2d(np.linalg.norm(dip))} D')
 
 # Calculate ionization potentials
-ip = get_IP(atoms)
+ip = get_IP(scf)
 print(f'\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n')
 
 # Transform the orbitals to real-space to get the Kohn-Sham orbitals
-psi = atoms.I(get_psi(atoms, atoms.W))
+# Make sure to use orthogonal wave functions to generate them
+psi = atoms.I(get_psi(scf, scf.Y))
 
 # Check orthonormality of Kohn-Sham orbitals
 print('Orthonormality of Kohn-Sham orbitals:')
@@ -37,7 +39,7 @@ print(f'\nOrbital variances = {cost} a0^2')
 print(f'Total spread = {np.sum(np.sqrt(cost))} a0')
 
 # Calculate the center of mass of the density
-com = center_of_mass(atoms.r, atoms.n)
+com = center_of_mass(atoms.r, scf.n)
 print(f'\nDensity center of mass = {com} a0')
 print(f'Neon position = {atoms.X[0]} a0')
 
