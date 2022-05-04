@@ -184,9 +184,66 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     return costs
 
 
-@name('preconditioned conjugate-gradient')
+@name('conjugate-gradient minimization')
+def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+    '''Conjugate-gradient minimization algorithm.
+
+    Args:
+        scf: SCF object.
+        Nit (int): Maximum number of SCF steps.
+
+    Keyword Args:
+        cost (Callable): Function that will run every SCF step.
+        grad (Callable): Function that calculates the respective gradient.
+        condition (Callable): Function to check and log the convergence condition.
+        betat (float): SCF step size.
+
+    Returns:
+        list: Total energies per SCF cycle.
+    '''
+    costs = []
+
+    # Do the first step without the linmin and cg test
+    g = grad(scf, scf.W)
+    d = -g
+    gt = grad(scf, scf.W + betat * d)
+    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    d_old = d
+    g_old = g
+
+    scf.W = scf.W + beta * d
+    c = cost(scf)
+    costs.append(c)
+    condition(scf, costs)
+
+    for _ in range(1, Nit):
+        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+        linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
+        cg = dotprod(g, g_old) / np.sqrt(dotprod(g, g) *
+             dotprod(g_old, g_old))
+        if scf.cgform == 1:  # Fletcher-Reeves
+            beta = dotprod(g, g) / dotprod(g_old, g_old)
+        elif scf.cgform == 2:  # Polak-Ribiere
+            beta = dotprod(g - g_old, g) / dotprod(g_old, g_old)
+        elif scf.cgform == 3:  # Hestenes-Stiefel
+            beta = dotprod(g - g_old, g) / dotprod(g - g_old, d_old)
+        d = -g + beta * d_old
+        gt = grad(scf, scf.W + betat * d)
+        beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+        d_old = d
+        g_old = g
+
+        scf.W = scf.W + beta * d
+        c = cost(scf)
+        costs.append(c)
+        if condition(scf, costs, linmin, cg):
+            break
+    return costs
+
+
+@name('preconditioned conjugate-gradient minimization')
 def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
-    '''Preconditioned conjugate-gradient algorithm.
+    '''Preconditioned conjugate-gradient minimization algorithm.
 
     Args:
         scf: SCF object.

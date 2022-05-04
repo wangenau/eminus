@@ -8,7 +8,7 @@ from .energies import Energy, get_Eewald, get_Esic
 from .filehandler import read_gth
 from .gth import init_gth_loc, init_gth_nonloc
 from .logger import create_logger, get_level
-from .minimizer import lm, pccg, pclm, sd  # noqa: F401
+from .minimizer import cg, lm, pccg, pclm, sd  # noqa: F401
 from .potentials import init_pot
 
 
