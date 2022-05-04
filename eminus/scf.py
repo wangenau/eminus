@@ -3,7 +3,7 @@
 import logging
 import timeit
 
-from .dft import guess_gaussian, guess_random, orth
+from .dft import guess_gaussian, guess_random
 from .energies import Energy, get_Eewald, get_Esic
 from .filehandler import read_gth
 from .gth import init_gth_loc, init_gth_nonloc
@@ -155,9 +155,9 @@ class SCF:
                            f'\nTime/Iteration:\t{t / N:.5f}s')
         self.log.info(f'Total SCF time: {t_tot:.5f}s')
 
-        # Calculate SIc energy if desired
+        # Calculate SIC energy if desired
         if self.sic:
-            self.energies.Esic = get_Esic(self, orth(self.atoms, self.W))
+            self.energies.Esic = get_Esic(self, self.W)
 
         # Print energy data
         if self.log.level <= logging.DEBUG:

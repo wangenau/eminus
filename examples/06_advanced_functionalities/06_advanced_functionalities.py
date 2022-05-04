@@ -24,7 +24,7 @@ print(f'\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n')
 
 # Transform the orbitals to real-space to get the Kohn-Sham orbitals
 # Make sure to use orthogonal wave functions to generate them
-psi = atoms.I(get_psi(scf, scf.Y))
+psi = atoms.I(get_psi(scf, scf.W))
 
 # Check orthonormality of Kohn-Sham orbitals
 print('Orthonormality of Kohn-Sham orbitals:')

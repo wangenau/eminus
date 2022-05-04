@@ -160,12 +160,12 @@ def Q(inp, U):
     return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
 
 
-def get_psi(scf, Y, n=None):
+def get_psi(scf, W, n=None):
     '''Calculate eigenstates from H.
 
     Args:
         scf: SCF object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         n (ndarray): Real-space electronic density.
@@ -173,17 +173,18 @@ def get_psi(scf, Y, n=None):
     Returns:
         ndarray: Eigenstates in reciprocal space.
     '''
+    Y = orth(scf.atoms, W)
     mu = Y.conj().T @ H(scf, W=Y, n=n)
     _, D = eigh(mu)
     return Y @ D
 
 
-def get_epsilon(scf, Y, n=None):
+def get_epsilon(scf, W, n=None):
     '''Calculate eigenvalues from H.
 
     Args:
         scf: SCF object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         n (ndarray): Real-space electronic density.
@@ -191,6 +192,7 @@ def get_epsilon(scf, Y, n=None):
     Returns:
         ndarray: Eigenvalues.
     '''
+    Y = orth(scf.atoms, W)
     mu = Y.conj().T @ H(scf, W=Y, n=n)
     epsilon, _ = eigh(mu)
     return np.sort(epsilon)

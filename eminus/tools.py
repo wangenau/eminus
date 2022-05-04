@@ -2,7 +2,7 @@
 '''Various tools to check physical properties.'''
 import numpy as np
 
-from .dft import get_epsilon, orth
+from .dft import get_epsilon
 from .logger import log
 
 
@@ -122,8 +122,7 @@ def get_IP(scf):
     Returns:
         float: Ionization potential in Hartree.
     '''
-    Y = orth(scf.atoms, scf.W)
-    epsilon = get_epsilon(scf, Y)
+    epsilon = get_epsilon(scf, scf.W)
     return -epsilon[-1]
 
 

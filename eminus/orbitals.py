@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
-from .dft import get_psi, orth
+from .dft import get_psi
 from .filehandler import write_cube
 from .localizer import get_FLO, get_FO
 
@@ -19,8 +19,7 @@ def KSO(scf, write_cubes=False, **kwargs):
     '''
     atoms = scf.atoms
     # Calculate eigenfunctions and transform to real-space
-    Y = orth(atoms, scf.W)
-    KSO = atoms.I(get_psi(scf, Y))
+    KSO = atoms.I(get_psi(scf, scf.W))
     if write_cubes:
         name = ''
         for ia in set(atoms.atom):
@@ -49,8 +48,7 @@ def FO(scf, write_cubes=False, fods=None):
     from .addons.fods import get_fods, remove_core_fods
     atoms = scf.atoms
     # Calculate eigenfunctions
-    Y = orth(atoms, scf.W)
-    KSO = get_psi(scf, Y)
+    KSO = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
@@ -84,8 +82,7 @@ def FLO(scf, write_cubes=False, fods=None):
     from .addons.fods import get_fods, remove_core_fods
     atoms = scf.atoms
     # Calculate eigenfunctions
-    Y = orth(atoms, scf.W)
-    KSO = get_psi(scf, Y)
+    KSO = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)

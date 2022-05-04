@@ -27,7 +27,7 @@ print(f'\nCore FODs:\n{fods}')
 write_xyz(atoms, 'CH4_fods.xyz', fods)
 
 # Generate the Kohn-Sham orbitals
-psi = get_psi(scf, scf.Y)
+psi = get_psi(scf, scf.W)
 
 # Calculate the FLOs
 FLO = get_FLO(atoms, psi, fods)
