@@ -44,7 +44,7 @@ class SCF:
         min (dict | None): Dictionary to set the order and number of steps per minimization method.
 
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
-            Default: None (will default to {'pccg': 100})
+            Default: None (will default to {'pccg': 250})
         sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
 
             Default: False
@@ -68,7 +68,7 @@ class SCF:
 
         # Set min here, better not use mutable data types in signatures
         if min is None:
-            self.min = {'pccg': 100}
+            self.min = {'pccg': 250}
         else:
             self.min = min
 
