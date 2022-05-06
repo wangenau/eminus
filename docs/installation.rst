@@ -9,7 +9,7 @@ Installation
 * `NumPy <https://numpy.org/>`_
 * `SciPy <https://scipy.org/>`_
 
-The package and all necessary dependencies can be installed with
+The `package <https://pypi.org/project/eminus/>`_ and all necessary dependencies can be installed with
 
 .. code-block:: bash
 
