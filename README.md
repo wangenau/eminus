@@ -23,12 +23,6 @@ The package and all necessary dependencies can be installed using pip
 pip install eminus
 ```
 
-To also install all optional dependencies to use built-in addons, use
-
-```bash
-pip install eminus[addons]
-```
-
 ## License
 
 This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/nextdft/eminus/-/blob/master/LICENSE) file for details.
