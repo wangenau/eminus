@@ -9,7 +9,7 @@ before_script:
   # libgomp1 is not included in slim docker images, but needed for numpy
   - apt-get install -y libgomp1 --no-install-recommends
   # Disable warnings about running pip as root user
-  - pip config set global.root-user-action=ignore
+  - pip config set global.root-user-action ignore
   - pip install --upgrade pip
   - pip install -e .
 
