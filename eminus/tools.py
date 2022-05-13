@@ -117,7 +117,7 @@ def get_IP(scf):
     Reference: Physica 1, 104.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         float: Ionization potential in Hartree.

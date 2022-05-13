@@ -119,7 +119,7 @@ def get_Eloc(scf, n):
     '''Calculate the local energy contribution.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
         n (ndarray): Real-space electronic density.
 
     Returns:
@@ -135,7 +135,7 @@ def get_Enonloc(scf, Y):
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
@@ -263,7 +263,7 @@ def get_Esic(scf, Y, n_single=None):
     Reference: Phys. Rev. B 23, 5048.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
