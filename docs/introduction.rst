@@ -3,11 +3,11 @@
 Introduction
 ************
 
+.. image:: https://img.shields.io/badge/language-Python3-green.svg
+   :target: https://www.python.org
+
 .. image:: https://img.shields.io/badge/license-APACHE2-lightgrey.svg
    :target: https://gitlab.com/nextdft/eminus/-/blob/master/LICENSE
-
-.. image:: https://img.shields.io/badge/language-Python3-green.svg
-  :target: https://www.python.org/
 
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
