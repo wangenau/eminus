@@ -75,18 +75,18 @@ def ge(atoms):
     return atoms.J(Vps * Sf)
 
 
-def init_pot(atoms):
+def init_pot(scf):
     '''Handle and initialize potentials.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Potential in reciprocal space.
     '''
-    implemented = {'harmonic': harmonic, 'coulomb': coulomb, 'ge': ge}
     try:
-        pot = implemented[atoms.pot]
-    except KeyError:
-        log.exception(f'No potential found for "{atoms.pot}"')
-    return pot(atoms)
+        pot = eval(scf.pot)(scf.atoms)
+    except NameError:
+        log.exception(f'No potential found for "{scf.pot}"')
+        raise
+    return pot

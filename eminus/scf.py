@@ -176,7 +176,7 @@ class SCF:
             self.Vloc = init_gth_loc(self)
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
         else:
-            self.Vloc = init_pot(atoms)
+            self.Vloc = init_pot(self)
         return
 
     def _init_W(self):
