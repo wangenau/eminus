@@ -151,9 +151,9 @@ class SCF:
             t_tot += t
             self.log.debug(f'Minimizer: {imin}'
                            f'\nIterations:\t{N}'
-                           f'\nTime:\t\t{t:.5f}s'
-                           f'\nTime/Iteration:\t{t / N:.5f}s')
-        self.log.info(f'Total SCF time: {t_tot:.5f}s')
+                           f'\nTime:\t\t{t:.5f} s'
+                           f'\nTime/Iteration:\t{t / N:.5f} s')
+        self.log.info(f'Total SCF time: {t_tot:.5f} s')
 
         # Calculate SIC energy if desired
         if self.sic:
