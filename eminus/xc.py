@@ -54,7 +54,7 @@ def get_xc(xc, n, spinpol=False):
         ec, vc = libxc_functional(corr, n_nz, spinpol)
     else:
         try:
-            f_corr = xc_map[exch]
+            f_corr = xc_map[corr]
         except KeyError:
             f_corr = 'mock_xc'
             log.warning('Use a mock functional for the correlation part.')
