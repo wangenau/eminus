@@ -325,11 +325,11 @@ def create_pdb(atom, X, a=None):
     return pdb
 
 
-def read_gth(system, charge=None, psp_path=None):
-    '''Read GTH files for a given system.
+def read_gth(atom, charge=None, psp_path=None):
+    '''Read GTH files for a given atom.
 
     Args:
-        system (str): Atom name.
+        atom (str): Atom name.
 
     Keyword Args:
         charge (int): Valence charge.
@@ -342,16 +342,16 @@ def read_gth(system, charge=None, psp_path=None):
         psp_path = f'{__path__[0]}/pade_gth/'
 
     if charge is not None:
-        f_psp = f'{psp_path}{system}-q{charge}.gth'
+        f_psp = f'{psp_path}{atom}-q{charge}.gth'
     else:
-        files = glob.glob(f'{psp_path}{system}-q*')
+        files = glob.glob(f'{psp_path}{atom}-q*')
         files.sort()
         try:
             f_psp = files[0]
         except IndexError:
-            log.exception(f'There is no GTH pseudopotential in {psp_path} for "{system}"')
+            log.exception(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
         if len(files) > 1:
-            log.info(f'Multiple pseudopotentials found for "{system}". '
+            log.info(f'Multiple pseudopotentials found for "{atom}". '
                      f'Continue with "{os.path.basename(f_psp)}".')
 
     psp = {}
