@@ -7,13 +7,13 @@ from .logger import log
 
 
 def harmonic(atoms):
-    '''Harmonical potential. Can be used for quantum dot calculations.
+    '''Harmonic potential. Can be used for quantum dot calculations.
 
     Args:
         atoms: Atoms object.
 
     Returns:
-        ndarray: Harmonical potential in reciprocal space.
+        ndarray: Harmonic potential in reciprocal space.
     '''
     freq = 2
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)

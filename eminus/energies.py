@@ -210,9 +210,9 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     x = np.sum(Z**2)
     totalcharge = np.sum(Z)
 
-    # Start by calculaton the self-energy
+    # Start by calculating the self-energy
     Eewald = -nu * x / np.sqrt(np.pi)
-    # Add the electroneutrality-term
+    # Add the electroneutrality term
     Eewald += -np.pi * totalcharge**2 / (2 * Omega * nu**2)
 
     tmax = np.sqrt(0.5 * gexp) / nu

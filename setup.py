@@ -16,7 +16,7 @@ with open('README.md', 'r') as fh:
 setup(
     name='eminus',
     version=version['__version__'],
-    description='A plane wave density funtional theory code.',
+    description='A plane wave density functional theory code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Wanja Timm Schulze',

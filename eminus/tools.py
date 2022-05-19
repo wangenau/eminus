@@ -67,7 +67,7 @@ def inertia_tensor(coords, masses=None):
     if masses is None:
         masses = np.ones(len(coords))
 
-    # The inertia tensor for a set of point masses can be calculated with simple sumation
+    # The inertia tensor for a set of point masses can be calculated with simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
     I = np.empty((3, 3))
     I[0][0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
