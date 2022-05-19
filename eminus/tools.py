@@ -126,11 +126,11 @@ def get_IP(scf):
     return -epsilon[-1]
 
 
-def check_ortho(atoms, func, eps=1e-9):
+def check_ortho(object, func, eps=1e-9):
     '''Check the orthogonality condition for a set of functions.
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Keyword Args:
@@ -143,7 +143,10 @@ def check_ortho(atoms, func, eps=1e-9):
     if len(func) == 1:
         log.warning('Need at least two functions to check their orthogonality.')
         return True
-
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
@@ -162,11 +165,11 @@ def check_ortho(atoms, func, eps=1e-9):
     return ortho_bool
 
 
-def check_norm(atoms, func, eps=1e-9):
+def check_norm(object, func, eps=1e-9):
     '''Check the normalization condition for a set of functions.
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Keyword Args:
@@ -175,6 +178,10 @@ def check_norm(atoms, func, eps=1e-9):
     Returns:
         bool: Normalization status for the set of functions.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
@@ -192,16 +199,20 @@ def check_norm(atoms, func, eps=1e-9):
     return norm_bool
 
 
-def check_orthonorm(atoms, func):
+def check_orthonorm(object, func):
     '''Check the orthonormality conditions for a set of functions.
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Returns:
         bool: Orthonormality status for the set of functions.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')

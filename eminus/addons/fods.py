@@ -19,13 +19,13 @@ from ..filehandler import read_xyz
 from ..units import bohr2ang
 
 
-def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
+def get_fods(object, basis='pc-0', loc='FB', clean=True):
     '''Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
 
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
@@ -35,6 +35,10 @@ def get_fods(atoms, basis='pc-0', loc='FB', clean=True):
     Returns:
         ndarray: FOD positions.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
     loc = loc.upper()
 
     # Convert to Angstrom for PySCF
@@ -94,16 +98,21 @@ def split_fods(atom, X):
     return atom, X, X_fod
 
 
-def remove_core_fods(atoms, fods):
+def remove_core_fods(object, fods):
     '''Remove core FODs from a set of FOD coordinates.
 
     Args:
-        atoms: Atoms object.
+        object: Atoms or SCF object.
         fods (ndarray): FOD positions.
 
     Returns:
         ndarray: Valence FOD positions.
     '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
     for ia in range(atoms.Natoms):
         n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
         # In the spin-paired case two electrons are one state
