@@ -350,6 +350,7 @@ def read_gth(atom, charge=None, psp_path=None):
             f_psp = files[0]
         except IndexError:
             log.exception(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
+            raise
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". '
                      f'Continue with "{os.path.basename(f_psp)}".')
@@ -392,4 +393,5 @@ def read_gth(atom, charge=None, psp_path=None):
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
         log.exception(f'There is no GTH pseudopotential for "{os.path.basename(f_psp)}"')
+        raise
     return psp
