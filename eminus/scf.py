@@ -36,7 +36,7 @@ class SCF:
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
-        cgform (int):  Conjugated-gradient form for the pccg minimization.
+        cgform (int): Conjugated-gradient form for the pccg minimization.
 
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
 
@@ -126,7 +126,11 @@ class SCF:
         Etots = []
         minimizer_log = {}
         for imin in self.min:
-            self.log.info(f'Start {eval(imin).__name__}...')
+            try:
+                self.log.info(f'Start {eval(imin).__name__}...')
+            except NameError:
+                self.log.exception(f'No minimizer found for "{imin}"')
+                raise
             start = timeit.default_timer()
             Elist = eval(imin)(self, self.min[imin], **kwargs)  # Call minimizer
             end = timeit.default_timer()
@@ -157,7 +161,7 @@ class SCF:
 
         # Calculate SIC energy if desired
         if self.sic:
-            self.energies.Esic = get_Esic(self, self.W)
+            self.energies.Esic = get_Esic(self, self.Y)
 
         # Print energy data
         if self.log.level <= logging.DEBUG:
@@ -187,6 +191,8 @@ class SCF:
         elif self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
             self.W = guess_random(self, complex=True, reproduce=True)
+        else:
+            self.log.error(f'No guess found for "{self.guess}"')
         return
 
     def __repr__(self):
