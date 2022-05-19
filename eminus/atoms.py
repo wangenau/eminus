@@ -77,26 +77,26 @@ class Atoms:
     '''
     def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, f=None, Ns=None,
                  verbose='info'):
-        self.atom = atom        # Atom symbols
-        self.X = X              # Atom positions
-        self.a = a              # Cell/Vacuum size
-        self.ecut = ecut        # Cut-off energy
-        self.Z = Z              # Valence charges
-        self.s = s              # Cell sampling
-        self.center = center    # Center molecule in cell
-        self.f = f              # Occupation numbers
-        self.Ns = Ns            # Number of states
+        self.atom = atom      # Atom symbols
+        self.X = X            # Atom positions
+        self.a = a            # Cell/Vacuum size
+        self.ecut = ecut      # Cut-off energy
+        self.Z = Z            # Valence charges
+        self.s = s            # Cell sampling
+        self.center = center  # Center molecule in cell
+        self.f = f            # Occupation numbers
+        self.Ns = Ns          # Number of states
 
         # Parameters that will be built out of the inputs
-        self.Natoms = None    # Number of atoms
-        self.R = None         # Unit cell
-        self.Omega = None     # Unit cell volume
-        self.r = None         # Sample points in unit cell
-        self.G = None         # G-vectors
-        self.G2 = None        # Squared magnitudes of G-vectors
-        self.active = None    # Mask for active G-vectors
-        self.G2c = None       # Truncated squared magnitudes of G-vectors
-        self.Sf = None        # Structure factor
+        self.Natoms = None  # Number of atoms
+        self.R = None       # Unit cell
+        self.Omega = None   # Unit cell volume
+        self.r = None       # Sample points in unit cell
+        self.G = None       # G-vectors
+        self.G2 = None      # Squared magnitudes of G-vectors
+        self.active = None  # Mask for active G-vectors
+        self.G2c = None     # Truncated squared magnitudes of G-vectors
+        self.Sf = None      # Structure factor
 
         # Initialize logger and update
         self.log = create_logger(self)

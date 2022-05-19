@@ -13,13 +13,13 @@ class Energy:
     __slots__ = ['Ekin', 'Eloc', 'Enonloc', 'Ecoul', 'Exc', 'Eewald', 'Esic']
 
     def __init__(self):
-        self.Ekin = 0
-        self.Ecoul = 0
-        self.Exc = 0
-        self.Eloc = 0
-        self.Enonloc = 0
-        self.Eewald = 0
-        self.Esic = 0
+        self.Ekin = 0     # Kinetic energy
+        self.Ecoul = 0    # Coulomb energy
+        self.Exc = 0      # Exchange-correlation energy
+        self.Eloc = 0     # Local energy
+        self.Enonloc = 0  # Non-local energy
+        self.Eewald = 0   # Ewald energy
+        self.Esic = 0     # Self-interaction correction energy
 
     @property
     def Etot(self):
