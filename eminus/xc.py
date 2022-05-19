@@ -2,6 +2,8 @@
 '''parametrizations of exchange-correlation functionals.'''
 import numpy as np
 
+from .logger import log
+
 
 def get_xc(xc, n, spinpol=False):
     '''Handle and get exchange-correlation functionals.
@@ -35,7 +37,11 @@ def get_xc(xc, n, spinpol=False):
         exch = exch.split(':')[1]
         ex, vx = libxc_functional(exch, n_nz, spinpol)
     else:
-        f_exch = xc_map.get(exch, 'mock_xc')
+        try:
+            f_exch = xc_map[exch]
+        except KeyError:
+            f_exch = 'mock_xc'
+            log.warning('Use a mock functional for the exchange part.')
         if spinpol:
             f_exch = f'{f_exch}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
@@ -47,7 +53,11 @@ def get_xc(xc, n, spinpol=False):
         corr = corr.split(':')[1]
         ec, vc = libxc_functional(corr, n_nz, spinpol)
     else:
-        f_corr = xc_map.get(corr, 'mock_xc')
+        try:
+            f_corr = xc_map[exch]
+        except KeyError:
+            f_corr = 'mock_xc'
+            log.warning('Use a mock functional for the correlation part.')
         if spinpol:
             f_corr = f'{f_corr}_spin'
         # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
