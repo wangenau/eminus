@@ -80,13 +80,16 @@ def inertia_tensor(coords, masses=None):
     return I
 
 
-def get_dipole(scf):
+def get_dipole(scf, n=None):
     '''Calculate the electric dipole moment.
 
     Reference: J. Chem. Phys. 155, 224109.
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        n (float): Real-space electronic density.
 
     Returns:
         ndarray: Electric dipole moment in e times Bohr.
@@ -95,8 +98,9 @@ def get_dipole(scf):
     # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
     # One fix can be to center the atom/molecule inside the box.
     atoms = scf.atoms
-    n = scf.n
     if n is None:
+        n = scf.n
+    if scf.n is None:
         log.error('There is no density to calculate a dipole.')
         return 0
 
