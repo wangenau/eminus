@@ -3,6 +3,7 @@
 from .dft import get_psi
 from .filehandler import write_cube
 from .localizer import get_FLO, get_FO
+from .logger import log
 
 
 def KSO(scf, write_cubes=False, **kwargs):
@@ -18,14 +19,11 @@ def KSO(scf, write_cubes=False, **kwargs):
         ndarray: Real-space Kohn-Sham orbitals.
     '''
     atoms = scf.atoms
+
     # Calculate eigenfunctions and transform to real-space
     KSO = atoms.I(get_psi(scf, scf.W))
     if write_cubes:
-        name = ''
-        for ia in set(atoms.atom):
-            name += f'{ia}{atoms.atom.count(ia)}'
-        for i in range(atoms.Ns):
-            write_cube(atoms, KSO[:, i], f'{name}_KSO_{i}.cube')
+        cube_writer(atoms, KSO, 'KSO')
     return KSO
 
 
@@ -47,19 +45,17 @@ def FO(scf, write_cubes=False, fods=None):
     # Lazy import addons
     from .addons.fods import get_fods, remove_core_fods
     atoms = scf.atoms
+
     # Calculate eigenfunctions
     KSO = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
+
     # The FO functions needs orbitals in reciprocal space as input
     FO = get_FO(atoms, KSO, fods)
     if write_cubes:
-        name = ''
-        for ia in set(atoms.atom):
-            name += f'{ia}{atoms.atom.count(ia)}'
-        for i in range(atoms.Ns):
-            write_cube(atoms, FO[:, i], f'{name}_FO_{i}.cube')
+        cube_writer(atoms, FO, 'FO')
     return FO
 
 
@@ -81,17 +77,36 @@ def FLO(scf, write_cubes=False, fods=None):
     # Lazy import addons
     from .addons.fods import get_fods, remove_core_fods
     atoms = scf.atoms
+
     # Calculate eigenfunctions
     KSO = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
+
     # The FLO functions needs orbitals in reciprocal space as input
     FLO = get_FLO(atoms, KSO, fods)
     if write_cubes:
-        name = ''
-        for ia in set(atoms.atom):
-            name += f'{ia}{atoms.atom.count(ia)}'
-        for i in range(atoms.Ns):
-            write_cube(atoms, FLO[:, i], f'{name}_FLO_{i}.cube')
+        cube_writer(atoms, FLO, 'FLO')
     return FLO
+
+
+def cube_writer(atoms, orbitals, type):
+    '''Simple cube file writer function.
+
+    Args:
+        atoms: Atoms object.
+        orbitals (ndarray): Real-space orbitals.
+        type (str): Orbital type for the cube file names.
+    '''
+    # Create the system name
+    name = ''
+    for ia in set(atoms.atom):
+        # Skip the amount of atoms if it is one
+        na = atoms.atom.count(ia)
+        name += f'{ia}{na if na > 1 else ""}'
+
+    for i in range(atoms.Ns):
+        log.info(f'Write {name}_{type}_{i}.cube...')
+        write_cube(atoms, orbitals[:, i], f'{name}_{type}_{i}.cube')
+    return
