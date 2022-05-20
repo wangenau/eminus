@@ -6,6 +6,7 @@ import sys
 __version__ = '1.0.1'
 dependencies = ('numpy', 'scipy')
 addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
+dev = ('pytest', 'flake8', 'sphinx', 'furo')
 
 
 def info():
@@ -13,7 +14,7 @@ def info():
     print('--- Version infos ---')
     print(f'python      : {sys.version.split()[0]}')
     print(f'eminus      : {__version__}')
-    for pkg in dependencies + addons:
+    for pkg in dependencies + addons + dev:
         try:
             exec(f'import {pkg}')
             try:
