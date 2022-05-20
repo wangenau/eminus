@@ -62,6 +62,7 @@ def test_07():
 
 def test_08():
     clean_example(['CH4_density.cube', 'CH4_fods.xyz'])
+    pass
 
 
 def test_09():
@@ -69,7 +70,7 @@ def test_09():
 
 
 def test_10():
-    execute_example('10_domain_generation')
+    pass
 
 
 if __name__ == '__main__':
