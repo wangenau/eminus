@@ -113,6 +113,10 @@ def remove_core_fods(object, fods):
     except AttributeError:
         atoms = object
 
+    # If the number of valence electrons is the same as the number of FODs, do nothing
+    if len(fods) == np.sum(atoms.Z) // 2:
+        return fods
+
     for ia in range(atoms.Natoms):
         n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
         # In the spin-paired case two electrons are one state
