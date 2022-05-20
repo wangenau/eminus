@@ -34,8 +34,7 @@ class Energy:
             energy = eval('self.' + ie)
             if energy != 0:
                 out = f'{out}{ie.ljust(8)}: {energy:+.9f} Eh\n'
-        out = f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
-        return out
+        return f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
 
 
 def get_E(scf):

@@ -321,8 +321,7 @@ def create_pdb(atom, X, a=None):
         pdb += '          '
         pdb += f'{atom[ia]}'.rjust(2)       # 77-78 Element symbol
         # pdb += '  '                       # 79-80 Charge
-    pdb = f'{pdb}\nENDMDL'
-    return pdb
+    return f'{pdb}\nENDMDL'
 
 
 def read_gth(atom, charge=None, psp_path=None):
