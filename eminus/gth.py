@@ -21,9 +21,9 @@ def init_gth_loc(scf):
         ndarray: Local GTH potential contribution.
     '''
     atoms = scf.atoms
-    G2 = atoms.G2
     atom = atoms.atom
     species = set(atom)
+    G2 = atoms.G2
     omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
 
     Vloc = np.zeros(len(G2))
@@ -72,7 +72,6 @@ def init_gth_nonloc(scf):
     atoms = scf.atoms
     Natoms = atoms.Natoms
     Npoints = len(atoms.G2c)
-    Omega = atoms.Omega
 
     prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
@@ -99,7 +98,7 @@ def init_gth_nonloc(scf):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
-                                       eval_proj_G(psp, l, iprj + 1, Gm, Omega) * Sf
+                                       eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL
 

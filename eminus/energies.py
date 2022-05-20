@@ -276,6 +276,7 @@ def get_Esic(scf, Y, n_single=None):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:
         n_single = get_n_single(atoms, Y)
+
     Esic = 0
     for i in range(atoms.Ns):
         # Normalize single-particle densities to 1

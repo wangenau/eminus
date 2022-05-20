@@ -104,7 +104,7 @@ def get_dipole(scf, n=None):
         log.error('There is no density to calculate a dipole.')
         return 0
 
-    # Diple moment: mu = \sum Z*X - \int n(r)*r dr
+    # Diple moment: mu = \sum Z X - \int n(r) r dr
     mu = np.array([0, 0, 0], dtype=float)
     for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.X[i]

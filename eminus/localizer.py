@@ -39,6 +39,7 @@ def get_R(atoms, psi, fods):
     '''
     # We only calculate occupied orbitals, so a zero matrix is enough
     R = np.empty((len(fods), len(fods)), dtype=complex)
+
     for i in range(len(fods)):
         # Get the value at one FOD position for all psi
         psi_fod = eval_psi(atoms, psi, fods[i])
@@ -64,6 +65,7 @@ def get_FO(atoms, psi, fods):
     FO = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
     # Get the transformation matrix R
     R = get_R(atoms, psi, fods)
+
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
     for i in range(len(R)):

@@ -27,9 +27,9 @@ def libxc_functional(xc, n, spinpol):
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
+    # FIXME: Compare LibXC and internal polarized functionals
     if spinpol:
         log.warning('The LibXC routine will still use an unpolarized functional.')
-    # FIXME: Compare LibXC and internal polarized functionals
     spin = 'unpolarized'
 
     inp = {'rho': n}

@@ -31,6 +31,7 @@ def coulomb(atoms):
         ndarray: Coulomb potential in reciprocal space.
     '''
     Z = atoms.Z[0]  # Potential should only be used for same species
+
     # Ignore the division by zero for the first elements
     # One could do some proper indexing with [1:] but indexing is slow
     with np.errstate(divide='ignore', invalid='ignore'):

@@ -118,6 +118,7 @@ def I(atoms, W):
         else:
             Wfft = np.zeros((n, atoms.Ns), dtype=complex)
         Wfft[atoms.active] = W
+
     if W.ndim == 1:
         Wfft = Wfft.reshape(atoms.s)
         Finv = ifftn(Wfft, workers=THREADS).ravel()
@@ -152,6 +153,7 @@ def J(atoms, W, full=True):
     else:
         Wfft = W.reshape(np.append(atoms.s, atoms.Ns))
         F = fftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Ns))
+
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:

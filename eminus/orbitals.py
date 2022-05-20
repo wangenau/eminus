@@ -102,7 +102,7 @@ def cube_writer(atoms, orbitals, type):
     # Create the system name
     name = ''
     for ia in set(atoms.atom):
-        # Skip the amount of atoms if it is one
+        # Skip the number of atoms if it is equal to one
         na = atoms.atom.count(ia)
         name += f'{ia}{na if na > 1 else ""}'
 

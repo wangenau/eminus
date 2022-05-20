@@ -37,6 +37,7 @@ def get_xc(xc, n, spinpol=False):
         exch = exch.split(':')[1]
         ex, vx = libxc_functional(exch, n_nz, spinpol)
     else:
+        # If the desired functional is not implemented use a mock functional
         try:
             f_exch = xc_map[exch]
         except KeyError:
@@ -53,6 +54,7 @@ def get_xc(xc, n, spinpol=False):
         corr = corr.split(':')[1]
         ec, vc = libxc_functional(corr, n_nz, spinpol)
     else:
+        # If the desired functional is not implemented use a mock functional
         try:
             f_corr = xc_map[corr]
         except KeyError:

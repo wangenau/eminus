@@ -97,7 +97,7 @@ def get_grad(scf, W, Y=None, n=None, phi=None, vxc=None):
     U12 = sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
-    # grad E = H(W) - O(W)U^-1 (Wdag H(W))(U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
+    # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
     return (HW - (atoms.O(W) @ invU) @ WHW) @ (U12 @ F @ U12) + \
            atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
@@ -119,7 +119,6 @@ def H(scf, W, Y=None, n=None, phi=None, vxc=None):
         ndarray: Hamiltonian applied on W.
     '''
     atoms = scf.atoms
-
     # One can calculate everything from W,
     # but one can also use already computed results to save time
     if Y is None:
@@ -132,7 +131,7 @@ def H(scf, W, Y=None, n=None, phi=None, vxc=None):
         vxc = get_xc(scf.xc, n)[1]
 
     # We get the full potential in the functional definition (different to the DFT++ notation)
-    # Normally Vxc = Jdag(O(J(exc))) + diag(exc')Jdag(O(J(n)))
+    # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n)))
     Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W)
