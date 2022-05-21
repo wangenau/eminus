@@ -53,7 +53,6 @@ setup(
     },
     python_requires='>=3.6',
     project_urls={
-        'Documentation': 'https://nextdft.gitlab.io/eminus',
         'Source': 'https://gitlab.com/nextdft/eminus',
         'Bug Tracker': 'https://gitlab.com/nextdft/eminus/-/issues'
     }
