@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''parametrizations of exchange-correlation functionals.'''
+'''Parametrizations of exchange-correlation functionals.'''
 import numpy as np
 
 from .logger import log
