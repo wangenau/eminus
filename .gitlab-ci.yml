@@ -56,4 +56,3 @@ pages:
       - docs/*
       - docs/**/*
       - examples/**/*
-      - eminus/version.py
