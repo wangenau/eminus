@@ -258,7 +258,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
 def lda_vwn_c(n, **kwargs):
-    '''Vosko, Wilk, and Nusair parametrization of the correlation functional (spin-paired).
+    '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 7 in LibXC.
     Reference: Phys. Rev. B 22, 3812.
@@ -297,7 +297,7 @@ def lda_vwn_c(n, **kwargs):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def lda_vwn_c_spin(n, zeta, **kwargs):
-    '''Vosko, Wilk, and Nusair parametrization of the correlation functional (spin-polarized).
+    '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 7 in LibXC.
     Reference: Phys. Rev. B 22, 3812.
