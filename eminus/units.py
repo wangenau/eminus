@@ -137,7 +137,7 @@ def ebohr2d(p):
     '''Convert e * Bohr to Debye.
 
     Args:
-        p (float | ndarray): Electric dipole moment in e times Bohr.
+        p (float | ndarray): Electric dipole moment in e * Bohr.
 
     Returns:
         float | ndarray: Electric dipole moment in Debye.
@@ -152,6 +152,6 @@ def d2ebohr(p):
         p (float | ndarray): Electric dipole moment in Debye.
 
     Returns:
-        float | ndarray: Electric dipole moment in e times Bohr.
+        float | ndarray: Electric dipole moment in e * Bohr.
     '''
     return p / Debye

@@ -92,7 +92,7 @@ def get_dipole(scf, n=None):
         n (float): Real-space electronic density.
 
     Returns:
-        ndarray: Electric dipole moment in e times Bohr.
+        ndarray: Electric dipole moment in e * Bohr.
     '''
     # The dipole may be extremely large. This can be because of periodic boundary conditions,
     # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
