@@ -38,7 +38,7 @@ class Energy:
 
 
 def get_E(scf):
-    '''Calculate all energy contributions and update Atoms energies needed in one SCF step.
+    '''Calculate energy contributions and update energies needed in one SCF step.
 
     Args:
         scf: SCF object.
