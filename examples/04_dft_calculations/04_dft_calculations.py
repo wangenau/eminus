@@ -43,7 +43,7 @@ scf = SCF(atoms=atoms, xc=xc, pot=pot, guess=guess, etol=etol, min=min_dict, cgf
           verbose=verbose)
 etot = scf.run()
 
-# The total energy is a return value of the SCF function, but it is saved in the SCF object as well
-# with all energy contributions
+# The total energy is a return value of the SCF function, but it is saved in the SCF object
+# as well with all energy contributions
 print(f'\nEnergy from SCF function = {etot} Eh')
 print(f'\nEnergy in Atoms object:\n{scf.energies}')

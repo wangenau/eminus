@@ -33,15 +33,16 @@ f = [2, 2, 2, 2, 2]
 # None will get the number of states from f or assume occupations of 2
 Ns = 5
 
-# Center the system inside the box by its geometric center of mass and rotate it such that its
-# geometric moment of inertia aligns with the coordinate axes
+# Center the system inside the box by its geometric center of mass and rotate it
+# such that its geometric moment of inertia aligns with the coordinate axes
 center = True
 
 # Level of output, larger numbers mean more output
 verbose = 4
 
 # Create an object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, f=f, Ns=Ns, verbose=verbose)
+atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, f=f, Ns=Ns,
+              verbose=verbose)
 print(f'New Atoms object:\n{atoms}\n')
 
 # You can always manipulate the object freely by displaying or editing properties
