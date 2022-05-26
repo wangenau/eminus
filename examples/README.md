@@ -18,5 +18,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
 * Each example has its own subfolder
-* Each subfolder contains a README.rst
+* Each subfolder contains a README.rst with a title
 * Each subfolder can contain one Python script or one Jupyter notebook with the same name as the subfolder
+* Comments that should be displayed as text start with ##
+* Comments that should be displayed in code blocks start with #

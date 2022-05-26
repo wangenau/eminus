@@ -4,10 +4,6 @@
 For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 '''
-import glob
-import os
-import shutil
-
 import eminus
 
 project = 'eminus'
@@ -56,50 +52,14 @@ def dunder_skip(app, what, name, obj, would_skip, options):
     return would_skip
 
 
-def examples_generate(app):
-    '''Automatically generate examples page from examples folder.'''
-    # Copy template file and create examples folder
-    os.makedirs('docs/_examples', exist_ok=True)
-    shutil.copy2('docs/_templates/custom-examples.rst', 'docs/_examples/examples.rst')
-    # Get list of examples from subfolders
-    examples = os.listdir('examples')
-    examples = [name for name in examples if os.path.isdir(os.path.join('examples', name))]
-    examples.sort()
-
-    with open('docs/_examples/examples.rst', 'a') as f_index:
-        for example in examples:
-            # Create example subfile
-            with open(f'docs/_examples/{example}.rst', 'w') as fp:
-                fp.write(f'.. _{example}:\n')
-                # Include readme
-                fp.write(f'\n.. include:: ../../examples/{example}/README.rst\n')
-                # Include script if one exists
-                if os.path.exists(f'examples/{example}/{example}.py'):
-                    fp.write(f'\n.. literalinclude:: ../../examples/{example}/{example}.py\n')
-                if os.path.exists(f'examples/{example}/{example}.ipynb'):
-                    fp.write('\nSee a preview of the notebook '
-                             '`here <https://gitlab.com/nextdft/eminus/-/blob/master/'
-                            f'examples/{example}/{example}.ipynb>`_.\n')
-                # Add download buttons
-                fp.write('\nDownload')
-                files = glob.glob(f'examples/{example}/[!README.rst, !__pycache_]*')
-                files.sort()
-                for file in files:
-                    fp.write(f' :download:`{file.split("/")[-1]} <../../{file}>`')
-            # Add example subfile to index
-            f_index.write(f'\n   {example}.rst')
-    return
-
-
-def examples_remove(app, exception):
-    '''Remove generated examples after build.'''
-    shutil.rmtree('docs/_examples')
-    return
-
-
 def setup(app):
     '''Customized build process.'''
-    app.connect('builder-inited', examples_generate)
+    import os
+    import sys
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    import examples_builder
+
+    app.connect('builder-inited', examples_builder.generate)
     app.connect('autodoc-skip-member', dunder_skip)
-    app.connect('build-finished', examples_remove)
+    app.connect('build-finished', examples_builder.remove)
     return
