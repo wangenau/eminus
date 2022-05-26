@@ -12,8 +12,9 @@ ignore = E126, E127, E128, \  # Over- and under-indentation
          D417                 # A bug results in false positives
                               # TODO: Remove if pydocstyle gets updated
 
-# Ignore missing docstring in public modules or functions
-# Ignore too many leading '#' in examples for the custom examples generation
+# D100, D103: Ignore missing docstrings in public modules or functions
+# E266: Ignore too many leading "#" for the custom examples generation
+# E501, W505: Ignore line length warnings
 per-file-ignores = examples/*:D100,E266,E501,W505,
                    tests/*:D103
 
