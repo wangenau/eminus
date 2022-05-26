@@ -3,7 +3,6 @@
 Further information
 *******************
 
-- The source code for eminus is openly available at `GitLab <https://gitlab.com/nextdft/eminus>`_.
 - The code has been described in a `master thesis <https://www.researchgate.net/publication/356537762_Domain-averaged_Fermi_holes_A_self-interaction_correction_perspective>`_.
 - This thesis comes with an in-detail explanation of a minimalistic implementation called `SimpleDFT <https://gitlab.com/nextdft/simpledft>`_.
 - For more information about implementing DFT using the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ formulation, fantastic lectures from Tomas Arias can be found `here <https://jdftx.org/PracticalDFT.html>`_.
