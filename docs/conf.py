@@ -8,9 +8,9 @@ import eminus
 
 project = 'eminus'
 author = 'Wanja Timm Schulze'
-copyright = '2021, Wanja Timm Schulze'
+copyright = '2021-2022, Wanja Timm Schulze'
 version = eminus.__version__
-release = eminus.__version__
+release = eminus.__version__.rpartition('.')[0]
 
 extensions = [
     'sphinx.ext.autodoc',
