@@ -37,7 +37,7 @@ Feature overview
 How to cite
 ===========
 
-The project has been published with `Zenodo <https://zenodo.org/record/5720636>`_ and has an assigned DOI. The following BibTeX key can be used
+The project has been published with `Zenodo <https://doi.org/10.5281/zenodo.5720635>`_ and has an assigned DOI. The following BibTeX key can be used
 
 .. code-block:: TeX
 
@@ -46,6 +46,6 @@ The project has been published with `Zenodo <https://zenodo.org/record/5720636>`
    title     = {eminus},
    year      = {2021},
    month     = nov,
-   doi       = {10.5281/zenodo.5720636},
+   doi       = {10.5281/zenodo.5720635},
    publisher = {Zenodo},
   }
