@@ -30,7 +30,7 @@ The corresponding Python code (implying that the operators have been implemented
 Feature overview
 ================
 
-.. figure:: _images/eminus_features.svg
+.. figure:: _images/features.svg
    :align: center
    :figwidth: 100%
 
