@@ -68,5 +68,5 @@ def setup(app):
 
     app.connect('builder-inited', examples_builder.generate)
     app.connect('autodoc-skip-member', dunder_skip)
-    app.connect('build-finished', examples_builder.remove)
+    app.connect('build-finished', examples_builder.clean)
     return

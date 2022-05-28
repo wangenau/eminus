@@ -6,7 +6,7 @@ import re
 import shutil
 
 
-def generate(app):
+def generate(*args):
     '''Automatically generate examples page from examples folder.'''
     # Copy template file and create examples folder
     os.makedirs('docs/_examples', exist_ok=True)
@@ -23,14 +23,14 @@ def generate(app):
                 fp.write(f'.. _{example}:\n')
                 # Include readme
                 fp.write(f'\n.. include:: ../../examples/{example}/README.rst\n')
-                # Parse the script if one exists
+                # Parse the script if it exists
                 if os.path.exists(f'examples/{example}/{example}.py'):
                     fp.write(parse(f'examples/{example}/{example}.py'))
                 if os.path.exists(f'examples/{example}/{example}.ipynb'):
                     fp.write('\nSee a preview of the notebook '
                              '`here <https://gitlab.com/nextdft/eminus/-/blob/master/'
                             f'examples/{example}/{example}.ipynb>`_.\n')
-                # Add download buttons
+                # Add download links
                 fp.write('\nDownload')
                 files = glob.glob(f'examples/{example}/[!README.rst, !__pycache_]*')
                 files.sort()
@@ -41,15 +41,15 @@ def generate(app):
     return
 
 
-def parse(file):
-    '''Parse Python files to display them as rst files.'''
+def parse(script):
+    '''Parse Python scripts to display them as rst files.'''
     # Start with a horizontal line
     rst = '\n----\n'
     last_block_was_code = False
 
-    with open(file, 'r') as fh:
+    with open(script, 'r') as fh:
         for line in fh.readlines():
-            # Text blocks start with ##
+            # Text blocks start with "##""
             if line.startswith('##'):
                 rst += f'\n{line.replace("## ", "")}'
                 last_block_was_code = False
@@ -65,7 +65,7 @@ def parse(file):
     return re.sub(comp, r':code:`\1`', rst)
 
 
-def remove(app, exception):
+def clean(*args):
     '''Remove generated examples after build.'''
     shutil.rmtree('docs/_examples')
     return
