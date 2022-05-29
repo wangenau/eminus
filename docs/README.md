@@ -1,6 +1,6 @@
 # docs
 
-[Sphinx](https://www.sphinx-doc.org/) documentation pages using the [Furo](https://pradyunsg.me/furo/).
+[Sphinx](https://www.sphinx-doc.org) documentation pages using the [Furo](https://pradyunsg.me/furo).
 
 Both packages can be installed with
 

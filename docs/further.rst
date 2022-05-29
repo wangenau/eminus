@@ -9,7 +9,7 @@ Further information
 - The code `JDFTx <https://jdftx.org/index.html>`_ from Ravishankar Sundararaman et al. offers a great reference implementation in C++ using DFT++.
 - Another great read is the book by Fadjar Fathurrahman et al. called `Implementing Density Functional Theory Calculations <https://github.com/f-fathurrahman/ImplementingDFT>`_.
 - This book outlines an implementation in Julia using a different formulation called `PWDFT.jl <https://github.com/f-fathurrahman/PWDFT.jl>`_.
-- More open-source codes related to DFT, SIC, and more can be found on the `NextDFT <https://nextdft.gitlab.io/nextdft/>`_ and `OpenSIC <https://opensic.gitlab.io/opensic/>`_ pages.
+- More open-source codes related to DFT, SIC, and more can be found on the `NextDFT <https://nextdft.gitlab.io/nextdft>`_ and `OpenSIC <https://opensic.gitlab.io/opensic>`_ pages.
 
 Development
 ===========
@@ -32,7 +32,7 @@ Testing
 -------
 
 | To verify that changes work as intended, tests can be found in the `tests folder <https://gitlab.com/nextdft/eminus/-/tree/master/tests>`_.
-| They can be executed using the Python interpreter or with `pytest <https://docs.pytest.org/>`_.
+| They can be executed using the Python interpreter or with `pytest <https://docs.pytest.org>`_.
 | pytest can be installed and executed with
 
 .. code-block:: bash
@@ -43,7 +43,7 @@ Testing
 Linting
 -------
 
-| This code is lint-checked with `flake8 <https://flake8.pycqa.org/>`_, using a custom `configuration file <https://gitlab.com/nextdft/eminus/-/tree/master/.flake8>`_.
+| This code is lint-checked with `flake8 <https://flake8.pycqa.org>`_, using a custom `configuration file <https://gitlab.com/nextdft/eminus/-/tree/master/.flake8>`_.
 | To install flake8 and do a lint check, use
 
 .. code-block:: bash
@@ -53,7 +53,7 @@ Linting
 
 Documentation
 -------------
-| The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org/>`_, using a custom theme called `Furo <https://pradyunsg.me/furo/>`_.
+| The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org>`_, using a custom theme called `Furo <https://pradyunsg.me/furo>`_.
 | Both packages can be installed and the webpage can be built with
 
 .. code-block:: bash

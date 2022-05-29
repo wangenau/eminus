@@ -6,10 +6,10 @@ Installation
 | The code is written for Python 3.6+.
 | The following packages are needed for a minimum working installation
 
-* `NumPy <https://numpy.org/>`_
-* `SciPy <https://scipy.org/>`_
+* `NumPy <https://numpy.org>`_
+* `SciPy <https://scipy.org>`_
 
-The `package <https://pypi.org/project/eminus/>`_ and all necessary dependencies can be installed with
+The `package <https://pypi.org/project/eminus>`_ and all necessary dependencies can be installed with
 
 .. code-block:: bash
 

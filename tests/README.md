@@ -8,7 +8,7 @@ Unit tests to ensure the code is performing correctly.
 | operators   | Test operator identities |
 | spin_paired | Test spin paired DFT calculations |
 
-The tests can be run with your Python interpreter or using [pytest](https://docs.pytest.org/).
+The tests can be run with your Python interpreter or using [pytest](https://docs.pytest.org).
 
 pytest can be installed with
 

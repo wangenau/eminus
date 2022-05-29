@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Interface to use LibXC functionals.
 
-For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals/
+For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
 '''
 try:
     from pylibxc import LibXCFunctional
