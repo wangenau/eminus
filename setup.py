@@ -41,7 +41,7 @@ setup(
         'Topic :: Software Development'
     ],
     license='APACHE2.0',
-    install_requires=['numpy', 'scipy'],
+    install_requires=['numpy>=1.13.3', 'scipy>=1.4'],
     keywords=['NextDFT'],
     package_data={
         'eminus.pade_gth': ['*.gth']
