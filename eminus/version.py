@@ -37,7 +37,7 @@ def info():
               'To improve performance, add "export OMP_NUM_THREADS=THREADS" to your ".bashrc".\n'
               'Make sure to replace "THREADS", typically with the number of cores your CPU has.')
     finally:
-        print(f'FFT operations will run on {THREADS} thread{"s" if THREADS!=1 else ""}.')
+        print(f'FFT operations will run on {THREADS} thread{"s" if THREADS != 1 else ""}.')
     return
 
 

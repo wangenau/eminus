@@ -41,15 +41,31 @@ setup(
         'Topic :: Software Development'
     ],
     license='APACHE2.0',
-    install_requires=['numpy>=1.13.3', 'scipy>=1.4'],
+    install_requires=[
+        'numpy>=1.13.3',
+        'scipy>=1.4'
+    ],
     keywords=['NextDFT'],
     package_data={
         'eminus.pade_gth': ['*.gth']
     },
     zip_safe=False,
     extras_require={
-        'addons': ['jupyter_rfb', 'nglview', 'notebook', 'pyflosic2', 'pylibxc2', 'vispy'],
-        'dev': ['flake8', 'flake8-docstrings', 'flake8-import-order', 'furo', 'pytest', 'sphinx']
+        'addons': [
+            'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
+            'nglview>=2.6.5',  # Molecule and isosurface viewer
+            'pyflosic2>=2*',  # PyCOM FOD guesser
+            'pylibxc2>=6',  # More exchange-correlation functionals
+            'vispy>=0.8.0'  # Grid visualization
+        ],
+        'dev': [
+            'flake8>=3.7',  # Style guide checker
+            'flake8-docstrings>=1.4',  # Docstring style guide extension
+            'flake8-import-order>=0.9',  # Import statement style guide extension
+            'furo>=2022.02.14.1',  # Documentation theme
+            'pytest>=2.8',  # Test utilities
+            'sphinx>=4'  # Documentation builder
+        ]
     },
     python_requires='>=3.6',
     project_urls={

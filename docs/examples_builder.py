@@ -49,7 +49,7 @@ def parse(script):
 
     with open(script, 'r') as fh:
         for line in fh.readlines():
-            # Text blocks start with "##""
+            # Text blocks start with "## "
             if line.startswith('##'):
                 rst += f'\n{line.replace("## ", "")}'
                 last_block_was_code = False
