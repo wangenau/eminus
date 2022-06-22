@@ -241,7 +241,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
 
     ecU, vcU = pw_fit(0)  # Unpolarized
     ecP, vcP = pw_fit(1)  # Polarized
-    ac, dac = pw_fit(2)  # Spin stiffness
+    ac, dac = pw_fit(2)   # Spin stiffness
 
     fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
     ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
@@ -362,7 +362,7 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
 
     ecP, vcP = pade_fit(0)  # Paramagnetic fit
     ecF, vcF = pade_fit(1)  # Ferromagnetic fit
-    ac, dac = pade_fit(2)  # Spin stiffness
+    ac, dac = pade_fit(2)   # Spin stiffness
 
     ac = ac * iddfz0
     De = ecF - ecP - ac  # e_c[F] - e_c[P] - alpha_c/(ddf/ddz(z=0))
