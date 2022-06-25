@@ -89,9 +89,9 @@ class Atoms:
 
         # Parameters that will be built out of the inputs
         self.Natoms = None  # Number of atoms
-        self.R = None       # Unit cell
-        self.Omega = None   # Unit cell volume
-        self.r = None       # Sample points in unit cell
+        self.R = None       # Cell
+        self.Omega = None   # Cell volume
+        self.r = None       # Sample points in cell
         self.G = None       # G-vectors
         self.G2 = None      # Squared magnitudes of G-vectors
         self.active = None  # Mask for active G-vectors
@@ -180,7 +180,7 @@ class Atoms:
             _, eigvecs = eig(I)
             self.X = (inv(eigvecs) @ self.X.T).T
 
-        # Shift system such that its geometric center of mass is in the center of the unit cell
+        # Shift system such that its geometric center of mass is in the center of the cell
         if self.center or self.center == 'shift':
             X = self.X
             com = center_of_mass(X)
@@ -260,12 +260,12 @@ class Atoms:
         return M, N
 
     def _set_cell(self, M):
-        '''Build the unit cell and create the respective sampling.
+        '''Build cell and create the respective sampling.
 
         Args:
             M (ndarray): Index matrix.
         '''
-        # Build a cuboidal unit cell and calculate its volume
+        # Build a cuboidal cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
         self.Omega = np.abs(det(R))

@@ -48,7 +48,7 @@ def view_mol(filename, isovalue=0.01, **kwargs):
         view.center()
 
     if filename.endswith('.cube'):
-        # Atoms and unit cell
+        # Atoms and cell
         atom, X, _, a, _ = read_cube(filename)
         atom, X, X_fod = split_fods(atom, X)
         view.add_component(TextStructure(create_pdb(atom, X, a)))

@@ -12,7 +12,7 @@ scf = SCF(atoms)
 scf.run()
 
 ## Calculate the dipole moment
-## Make sure that the unit cell is big enough, and that the density does not extend over the borders
+## Make sure that the cell is big enough, and that the density does not extend over the borders
 ## Centering the system is recommended to achieve this
 dip = get_dipole(scf)
 print(f'\nDipole moments = {dip} a0')

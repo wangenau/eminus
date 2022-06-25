@@ -114,7 +114,7 @@ def read_cube(filename):
     if not filename.endswith('.cube'):
         filename = f'{filename}.cube'
 
-    # Atomic units and a cuboidal unit cell that starts at (0,0,0) are assumed.
+    # Atomic units and a cuboidal cell that starts at (0,0,0) are assumed.
     with open(filename, 'r') as fh:
         lines = fh.readlines()
 
@@ -122,8 +122,8 @@ def read_cube(filename):
         comment = f'{lines[0].strip()}\n{lines[1].strip()}'
         log.info(f'XYZ file comment: "{comment}"')
 
-        # Line 4 to 6 contain the sampling per axis, and the unit cell basis vectors with length a/s
-        # A cuboidal unit cell is assumed, so only use the diagonal entries
+        # Line 4 to 6 contain the sampling per axis, and the cell basis vectors with length a/s
+        # A cuboidal cell is assumed, so only use the diagonal entries
         s = np.empty(3, dtype=int)
         a = np.empty(3)
         for i, line in enumerate(lines[3:6]):

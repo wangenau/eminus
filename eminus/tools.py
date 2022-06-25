@@ -151,7 +151,7 @@ def check_ortho(object, func, eps=1e-9):
         atoms = object.atoms
     except AttributeError:
         atoms = object
-    # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
+    # We integrate over our cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
     dV = atoms.Omega / np.prod(atoms.s)
@@ -186,7 +186,7 @@ def check_norm(object, func, eps=1e-9):
         atoms = object.atoms
     except AttributeError:
         atoms = object
-    # We integrate over our unit cell, the integration borders then become a=0 and b=cell length
+    # We integrate over our cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
     dV = atoms.Omega / np.prod(atoms.s)
