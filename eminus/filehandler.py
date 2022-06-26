@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
 import glob
+import importlib
 import os
 import pickle
 import textwrap
@@ -8,7 +9,6 @@ import time
 
 import numpy as np
 
-from . import __path__
 from .data import number2symbol, symbol2number
 from .logger import log
 from .units import ang2bohr, bohr2ang
@@ -338,7 +338,8 @@ def read_gth(atom, charge=None, psp_path=None):
         dict: GTH parameters.
     '''
     if psp_path is None:
-        psp_path = f'{__path__[0]}/pade_gth/'
+        module_path = importlib.machinery.PathFinder().find_module('eminus').get_filename()
+        psp_path = f'{os.path.dirname(module_path)}/pade_gth/'
 
     if charge is not None:
         f_psp = f'{psp_path}{atom}-q{charge}.gth'

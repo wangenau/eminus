@@ -59,7 +59,7 @@ def check_energies(scf, Elist, linmin='', cg=''):
     if iteration > 1:
         if abs(Elist[-2] - Elist[-1]) < scf.etol:
             return True
-        elif Elist[-1] > Elist[-2]:
+        if Elist[-1] > Elist[-2]:
             scf.log.warning('Total energy is not decreasing.')
     return False
 

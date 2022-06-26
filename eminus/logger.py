@@ -13,7 +13,7 @@ class CustomLogger(logging.Logger):
         name (str): Logger name.
     '''
     def __init__(self, name):
-        super(CustomLogger, self).__init__(name)
+        super().__init__(name)
 
     @property
     def verbose(self):
