@@ -91,7 +91,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None):
+def get_Exc(scf, n, exc=None, spinpol=False):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -102,13 +102,14 @@ def get_Exc(scf, n, exc=None):
 
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
+        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
 
     Returns:
         float: Exchange-correlation energy in Hartree.
     '''
     atoms = scf.atoms
     if exc is None:
-        exc = get_xc(scf.xc, n)[0]
+        exc = get_xc(scf.xc, n, spinpol)[0]
     # Exc = (J(n))dag O(J(exc))
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
