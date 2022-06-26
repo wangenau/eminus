@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Basis set dependent operators for a plane-wave basis.
+'''Basis set dependent operators for a plane wave basis.
 
 These operators act on discretized wave functions, i.e., the arrays W.
 
