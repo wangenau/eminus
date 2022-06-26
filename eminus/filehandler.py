@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
 import glob
-import importlib
+import inspect
 import os
 import pickle
 import textwrap
@@ -338,8 +338,8 @@ def read_gth(atom, charge=None, psp_path=None):
         dict: GTH parameters.
     '''
     if psp_path is None:
-        module_path = importlib.machinery.PathFinder().find_module('eminus').get_filename()
-        psp_path = f'{os.path.dirname(module_path)}/pade_gth/'
+        file_path = inspect.getfile(inspect.currentframe())
+        psp_path = f'{os.path.dirname(file_path)}/pade_gth/'
 
     if charge is not None:
         f_psp = f'{psp_path}{atom}-q{charge}.gth'
