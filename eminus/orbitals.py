@@ -106,7 +106,14 @@ def cube_writer(atoms, orbitals, type):
         na = atoms.atom.count(ia)
         name += f'{ia}{na if na > 1 else ""}'
 
-    for i in range(atoms.Ns):
-        log.info(f'Write {name}_{type}_{i}.cube...')
-        write_cube(atoms, orbitals[:, i], f'{name}_{type}_{i}.cube')
+    n_spin = ''
+    for spin in range(atoms.Nspin):
+        for i in range(atoms.Ns):
+            if atoms.f[spin, i] > 0:
+                if atoms.Nspin == 2:
+                    n_spin = f'{"_up" if spin == 0 else "_dn"}'
+                    print(n_spin)
+                filename = f'{name}_{type}_{i}{n_spin}.cube'
+                log.info(f'Write {filename}...')
+                write_cube(atoms, orbitals[spin, :, i], filename)
     return

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 '''Test functionality of examples.'''
+import inspect
 import os
 import runpy
-
-import eminus
 
 
 def execute_example(name):
     '''Test the execution of a given Python script.'''
-    os.chdir(f'{eminus.__path__[0]}/../examples/{name}')
+    file_path = inspect.getfile(inspect.currentframe())
+    os.chdir(f'{os.path.dirname(file_path)}/../../examples/{name}')
 
     try:
         runpy.run_path(f'{name}.py')
@@ -61,7 +61,6 @@ def test_07():
 
 
 def test_08():
-    clean_example(['CH4_density.cube', 'CH4_fods.xyz'])
     pass
 
 
@@ -74,6 +73,8 @@ def test_10():
 
 
 if __name__ == '__main__':
+    import timeit
+    start = timeit.default_timer()
     test_01()
     test_02()
     test_03()
@@ -84,3 +85,5 @@ if __name__ == '__main__':
     test_08()
     test_09()
     test_10()
+    end = timeit.default_timer()
+    print(f'Test for examples execution passed in {end - start:.3f} s.')

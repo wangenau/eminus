@@ -28,8 +28,7 @@ def generate(*args):
                     fp.write(parse(f'examples/{example}/{example}.py'))
                 if os.path.exists(f'examples/{example}/{example}.ipynb'):
                     fp.write('\nSee a preview of the notebook '
-                             '`here <https://gitlab.com/nextdft/eminus/-/blob/master/'
-                            f'examples/{example}/{example}.ipynb>`_.\n')
+                            f'`here <https://nextdft.gitlab.io/eminus/_static/{example}.html>`_.\n')
                 # Add download links
                 fp.write('\nDownload')
                 files = glob.glob(f'examples/{example}/[!README.rst, !__pycache_]*')

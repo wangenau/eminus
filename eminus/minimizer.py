@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from .dft import get_grad, get_n_total, orth, solve_poisson
+from .dft import get_grad, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E
 from .logger import name
 from .utils import dotprod
@@ -22,10 +22,12 @@ def scf_step(scf):
     Returns:
         float: Total energy.
     '''
-    scf.Y = orth(scf.atoms, scf.W)
-    scf.n = get_n_total(scf.atoms, scf.Y)
-    scf.phi = solve_poisson(scf.atoms, scf.n)
-    scf.exc, scf.vxc = get_xc(scf.xc, scf.n)
+    atoms = scf.atoms
+    scf.Y = orth(atoms, scf.W)
+    scf.n = get_n_total(atoms, scf.Y)
+    scf.n_spin = get_n_spin(atoms, scf.Y, scf.n)
+    scf.phi = solve_poisson(atoms, scf.n)
+    scf.exc, scf.vxc = get_xc(scf.xc, scf.n_spin, atoms.Nspin)
     return get_E(scf)
 
 
@@ -45,21 +47,23 @@ def check_energies(scf, Elist, linmin='', cg=''):
     '''
     iteration = len(Elist)
 
-    # Output handling
-    if not isinstance(linmin, str):
-        linmin = f' \tlinmin-test: {linmin:+.7f}'
-    if not isinstance(cg, str):
-        cg = f' \tcg-test: {cg:+.7f}'
     if scf.log.level <= logging.DEBUG:
-        scf.log.debug(f'Iteration: {iteration}  \tEtot: {scf.energies.Etot:+.7f}{linmin}{cg}')
+        with np.printoptions(formatter={'float': '{:+0.3e}'.format}):
+            # Output handling
+            if not isinstance(linmin, str):
+                linmin = f' \tlinmin-test: {linmin}'
+            if not isinstance(cg, str):
+                cg = f' \tcg-test: {cg}'
+            scf.log.debug(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.7f}{linmin}{cg}')
     else:
-        scf.log.info(f'Iteration: {iteration}  \tEtot: {scf.energies.Etot:+.7f}')
+        scf.log.info(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.7f}')
 
-    # Check for convergence
     if iteration > 1:
+        # Check for convergence
         if abs(Elist[-2] - Elist[-1]) < scf.etol:
             return True
-        if Elist[-1] > Elist[-2]:
+        # Check if the current energy is lower than any of the last three values
+        if np.any(np.asarray(Elist[-4:-1]) < Elist[-1]):
             scf.log.warning('Total energy is not decreasing.')
     return False
 
@@ -81,6 +85,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     Returns:
         list: Total energies per SCF cycle.
     '''
+    atoms = scf.atoms
     costs = []
 
     for _ in range(Nit):
@@ -88,8 +93,9 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         costs.append(c)
         if condition(scf, costs):
             break
-        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        scf.W = scf.W - betat * g
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            scf.W[spin] = scf.W[spin] - betat * g
     return costs
 
 
@@ -110,29 +116,43 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     Returns:
         list: Total energies per SCF cycle.
     '''
+    atoms = scf.atoms
     costs = []
-    linmin = ''
+
+    # Scalars that need to be saved for each spin
+    linmin = np.empty(atoms.Nspin)
+    beta = np.empty(atoms.Nspin)
+
+    # Gradients that need to be saved for each spin
+    d = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin test
-    g = grad(scf, scf.W)
-    d = -g
-    gt = grad(scf, scf.W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    for spin in range(atoms.Nspin):
+        g = grad(scf, spin, scf.W)
+        d[spin] = -g
+        gt = grad(scf, spin, scf.W + betat * d[spin])
+        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+    # Update wave functions after calculating the gradients for each spin
+    for spin in range(atoms.Nspin):
+        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
 
     for _ in range(1, Nit):
-        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        if scf.log.level <= logging.DEBUG:
-            linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
-        d = -g
-        gt = grad(scf, scf.W + betat * d)
-        beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            # Calculate linmin each spin seperately
+            if scf.log.level <= logging.DEBUG:
+                linmin[spin] = dotprod(g, d[spin]) / np.sqrt(dotprod(g, g) *
+                               dotprod(d[spin], d[spin]))
+            d[spin] = -g
+            gt = grad(scf, spin, scf.W + betat * d[spin])
+            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+        for spin in range(atoms.Nspin):
+            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin):
@@ -159,28 +179,41 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     '''
     atoms = scf.atoms
     costs = []
-    linmin = ''
+
+    # Scalars that need to be saved for each spin
+    linmin = np.empty(atoms.Nspin)
+    beta = np.empty(atoms.Nspin)
+
+    # Gradients that need to be saved for each spin
+    d = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin test
-    g = grad(scf, scf.W)
-    d = -atoms.K(g)
-    gt = grad(scf, scf.W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+    for spin in range(atoms.Nspin):
+        g = grad(scf, spin, scf.W)
+        d[spin] = -atoms.K(g)
+        gt = grad(scf, spin, scf.W + betat * d[spin])
+        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+    # Update wave functions after calculating the gradients for each spin
+    for spin in range(atoms.Nspin):
+        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
 
     for _ in range(1, Nit):
-        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        if scf.log.level <= logging.DEBUG:
-            linmin = dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
-        d = -atoms.K(g)
-        gt = grad(scf, scf.W + betat * d)
-        beta = betat * dotprod(g, d) / dotprod(g - gt, d)
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            # Calculate linmin each spin seperately
+            if scf.log.level <= logging.DEBUG:
+                linmin[spin] = dotprod(g, d[spin]) / np.sqrt(dotprod(g, g) *
+                               dotprod(d[spin], d[spin]))
+            d[spin] = -atoms.K(g)
+            gt = grad(scf, spin, scf.W + betat * d[spin])
+            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+        for spin in range(atoms.Nspin):
+            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin):
@@ -205,42 +238,60 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     Returns:
         list: Total energies per SCF cycle.
     '''
+    atoms = scf.atoms
     costs = []
-    linmin = ''
-    cg = ''
+
+    # Scalars that need to be saved for each spin
+    linmin = np.empty(atoms.Nspin)
+    cg = np.empty(atoms.Nspin)
+    beta = np.empty(atoms.Nspin)
+
+    # Gradients that need to be saved for each spin
+    d = np.empty_like(scf.W, dtype=complex)
+    d_old = np.empty_like(scf.W, dtype=complex)
+    g_old = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin and cg test
-    g = grad(scf, scf.W)
-    d = -g
-    gt = grad(scf, scf.W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-    d_old = d
-    g_old = g
+    for spin in range(atoms.Nspin):
+        g = grad(scf, spin, scf.W)
+        d[spin] = -g
+        gt = grad(scf, spin, scf.W + betat * d[spin])
+        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+        d_old[spin] = d[spin]
+        g_old[spin] = g
+    # Update wave functions after calculating the gradients for each spin
+    for spin in range(atoms.Nspin):
+        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
 
     for _ in range(1, Nit):
-        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        if scf.log.level <= logging.DEBUG:
-            linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
-            cg = dotprod(g, g_old) / np.sqrt(dotprod(g, g) *
-                 dotprod(g_old, g_old))
-        if scf.cgform == 1:  # Fletcher-Reeves
-            beta = dotprod(g, g) / dotprod(g_old, g_old)
-        elif scf.cgform == 2:  # Polak-Ribiere
-            beta = dotprod(g - g_old, g) / dotprod(g_old, g_old)
-        elif scf.cgform == 3:  # Hestenes-Stiefel
-            beta = dotprod(g - g_old, g) / dotprod(g - g_old, d_old)
-        d = -g + beta * d_old
-        gt = grad(scf, scf.W + betat * d)
-        beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-        d_old = d
-        g_old = g
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            # Calculate linmin and cg for each spin seperately
+            if scf.log.level <= logging.DEBUG:
+                linmin[spin] = dotprod(g, d_old[spin]) / np.sqrt(dotprod(g, g) *
+                               dotprod(d_old[spin], d_old[spin]))
+                cg[spin] = dotprod(g, g_old[spin]) / np.sqrt(dotprod(g, g) *
+                           dotprod(g_old[spin], g_old[spin]))
+            if scf.cgform == 1:  # Fletcher-Reeves
+                beta[spin] = dotprod(g, g) / dotprod(g_old[spin], g_old[spin])
+            elif scf.cgform == 2:  # Polak-Ribiere
+                beta[spin] = dotprod(g - g_old[spin], g) / \
+                             dotprod(g_old[spin], g_old[spin])
+            elif scf.cgform == 3:  # Hestenes-Stiefel
+                beta[spin] = dotprod(g - g_old[spin], g) / \
+                             dotprod(g - g_old[spin], d_old[spin])
+            d[spin] = -g + beta[spin] * d_old[spin]
+            gt = grad(scf, spin, scf.W + betat * d[spin])
+            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+            d_old[spin] = d[spin]
+            g_old[spin] = g
+        for spin in range(atoms.Nspin):
+            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin, cg):
@@ -267,41 +318,58 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     '''
     atoms = scf.atoms
     costs = []
-    linmin = ''
-    cg = ''
+
+    # Scalars that need to be saved for each spin
+    linmin = np.empty(atoms.Nspin)
+    cg = np.empty(atoms.Nspin)
+    beta = np.empty(atoms.Nspin)
+
+    # Gradients that need to be saved for each spin
+    d = np.empty_like(scf.W, dtype=complex)
+    d_old = np.empty_like(scf.W, dtype=complex)
+    g_old = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin and cg test
-    g = grad(scf, scf.W)
-    d = -atoms.K(g)
-    gt = grad(scf, scf.W + betat * d)
-    beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-    d_old = d
-    g_old = g
+    for spin in range(atoms.Nspin):
+        g = grad(scf, spin, scf.W)
+        d[spin] = -atoms.K(g)
+        gt = grad(scf, spin, scf.W + betat * d[spin])
+        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+        d_old[spin] = d[spin]
+        g_old[spin] = g
+    # Update wave functions after calculating the gradients for each spin
+    for spin in range(atoms.Nspin):
+        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
 
     for _ in range(1, Nit):
-        g = grad(scf, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
-        if scf.log.level <= logging.DEBUG:
-            linmin = dotprod(g, d_old) / np.sqrt(dotprod(g, g) * dotprod(d_old, d_old))
-            cg = dotprod(g, atoms.K(g_old)) / np.sqrt(dotprod(g, atoms.K(g)) *
-                 dotprod(g_old, atoms.K(g_old)))
-        if scf.cgform == 1:  # Fletcher-Reeves
-            beta = dotprod(g, atoms.K(g)) / dotprod(g_old, atoms.K(g_old))
-        elif scf.cgform == 2:  # Polak-Ribiere
-            beta = dotprod(g - g_old, atoms.K(g)) / dotprod(g_old, atoms.K(g_old))
-        elif scf.cgform == 3:  # Hestenes-Stiefel
-            beta = dotprod(g - g_old, atoms.K(g)) / dotprod(g - g_old, d_old)
-        d = -atoms.K(g) + beta * d_old
-        gt = grad(scf, scf.W + betat * d)
-        beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-        d_old = d
-        g_old = g
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            # Calculate linmin and cg for each spin seperately
+            if scf.log.level <= logging.DEBUG:
+                linmin[spin] = dotprod(g, d_old[spin]) / np.sqrt(dotprod(g, g) *
+                               dotprod(d_old[spin], d_old[spin]))
+                cg[spin] = dotprod(g, atoms.K(g_old[spin])) / np.sqrt(dotprod(g, atoms.K(g)) *
+                           dotprod(g_old[spin], atoms.K(g_old[spin])))
+            if scf.cgform == 1:  # Fletcher-Reeves
+                beta[spin] = dotprod(g, atoms.K(g)) / dotprod(g_old[spin], atoms.K(g_old[spin]))
+            elif scf.cgform == 2:  # Polak-Ribiere
+                beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
+                             dotprod(g_old[spin], atoms.K(g_old[spin]))
+            elif scf.cgform == 3:  # Hestenes-Stiefel
+                beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
+                             dotprod(g - g_old[spin], d_old[spin])
+            d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
+            gt = grad(scf, spin, scf.W + betat * d[spin])
+            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+            d_old[spin] = d[spin]
+            g_old[spin] = g
+        for spin in range(atoms.Nspin):
+            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
-        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin, cg):

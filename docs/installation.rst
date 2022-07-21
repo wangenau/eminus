@@ -34,3 +34,5 @@ or for an installation after downloading the source code, use
 .. code-block:: bash
 
    pip install .[addons]
+
+All packages have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.

@@ -7,7 +7,7 @@ from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
 
 from .filehandler import read_gth
-from .logger import create_logger, get_level
+from .logger import create_logger, get_level, log
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
@@ -54,6 +54,10 @@ class Atoms:
 
             Example: True; 'shift'; 'rotate',
             Default: False
+        Nspin (int | None): Number of spin states.
+
+            1 for spin-paired, 2 for spin-polarized, None for automatic detection.
+            Default: 2
         f (float | list | tuple | ndarray | None): Occupation numbers per state.
 
             The last state will be adjusted if the sum of f is not equal to the sum of Z.
@@ -67,16 +71,17 @@ class Atoms:
             of Z by it.
 
             Default: None
-        verbose (int | str): Level of output (case insensitive).
+        verbose (int | str | None): Level of output (case insensitive).
 
             Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
             An integer value can be used as well, where larger numbers mean more output, starting
             from 0.
+            None will use the default global logger value 'WARNING'.
 
             Default: 'info'
     '''
-    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, f=None, Ns=None,
-                 verbose='info'):
+    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, Nspin=2, f=None,
+                 Ns=None, verbose='info'):
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
         self.a = a            # Cell/Vacuum size
@@ -84,6 +89,7 @@ class Atoms:
         self.Z = Z            # Valence charges
         self.s = s            # Cell sampling
         self.center = center  # Center molecule in cell
+        self.Nspin = Nspin    # Number of spin states
         self.f = f            # Occupation numbers
         self.Ns = Ns          # Number of states
 
@@ -100,7 +106,10 @@ class Atoms:
 
         # Initialize logger and update
         self.log = create_logger(self)
-        self.verbose = verbose
+        if verbose is None:
+            self.verbose = log.verbose
+        else:
+            self.verbose = verbose
         self.update()
 
     def update(self):
@@ -110,7 +119,7 @@ class Atoms:
         self._set_cell_size()
         self._set_positions()
         self._set_sampling()
-        self._set_states()
+        self._set_states(self.Nspin)
         M, N = self._get_index_matrices()
         self._set_cell(M)
         self._set_G(N)
@@ -118,6 +127,11 @@ class Atoms:
 
     def _set_atom(self):
         '''Validate the atom input and calculate the number of atoms.'''
+        # Quick option to set the charge for single atoms
+        if isinstance(self.atom, str) and '-q' in self.atom:
+            atom, Z = self.atom.split('-q')
+            self.atom = [atom]
+            self.Z = np.asarray(list(Z), dtype=int)
         # If a string is given for atom symbols convert them to a list of strings
         if isinstance(self.atom, str):
             # Insert a whitespace before every capital letter, these can appear once or none at all
@@ -166,9 +180,7 @@ class Atoms:
     def _set_positions(self):
         '''Validate the X and center input and center the system if desired.'''
         # We need atom positions as an two-dimensional array
-        self.X = np.asarray(self.X)
-        if self.X.ndim == 1:
-            self.X = np.array([self.X])
+        self.X = np.atleast_2d(self.X)
         if isinstance(self.center, str):
             self.center = self.center.lower()
 
@@ -194,7 +206,8 @@ class Atoms:
             try:
                 s = np.int_(self.a / cutoff2gridspacing(self.ecut))
             except TypeError:
-                self.log.error('No ecut provided, please enter a valid s.')
+                self.log.exception('No ecut provided, please enter a valid s.')
+                raise
             # Multiply by two and add one to match PWDFT
             s = 2 * s + 1
             # Calculate a fast length to optimize the FFT calculations
@@ -208,35 +221,53 @@ class Atoms:
             self.s = np.asarray(self.s)
         return
 
-    def _set_states(self):
-        '''Validate the f and Ns input and calculate the states if necessary.'''
+    def _set_states(self, Nspin):
+        '''Validate the f and Ns input and calculate the states if necessary.
+
+        Args:
+            Nspin (int | None): Number of spin states.
+        '''
+        # Use a spin-paired calculation for an even number of electrons
+        if Nspin is None:
+            if np.sum(self.Z) % 2 == 0:
+                Nspin = 1
+            else:
+                Nspin = 2
+        # Make sure Nspin is an integer
+        try:
+            self.Nspin = int(Nspin)
+        except (TypeError, ValueError):
+            self.log.exception('Nspin has to be an integer.')
+            raise
+        # Make sure the occupations are in an two-dimensional array
         if isinstance(self.f, (list, tuple)):
-            self.f = np.asarray(self.f)
+            self.f = np.atleast_2d(self.f)
+        # If occupations and spin number is not equal, reset the occupations and number of states
+        if isinstance(self.f, np.ndarray) and len(self.f) != self.Nspin:
+            self.f = None
+            self.Ns = None
+
         # If no states are provided use the length of the occupations
         if isinstance(self.f, np.ndarray) and self.Ns is None:
-            self.Ns = len(self.f)
+            self.Ns = len(self.f[0])
         # If one occupation and the number of states is given, use it for every state
         if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
-            self.f = self.f * np.ones(self.Ns)
-
-        # If no occupations and the number of states is given, assume 2
+            self.f = self.f * np.ones((self.Nspin, self.Ns))
+        # If no occupations and the number of states is given, assume 1 or 2
         if self.f is None and self.Ns is not None:
-            self.f = 2 * np.ones(self.Ns)
+            self.f = 2 / self.Nspin * np.ones((self.Nspin, self.Ns))
+
         # If the number of states is None and the occupations is a number or None, we are in trouble
         if self.Ns is None:
-            # If no occupations is given, assume 2
+            # If no occupations is given, assume 1 or 2
             if self.f is None:
-                self.f = 2
-            # Assume the number of states by dividing the total valence charge by the occupations
+                f = 2 / self.Nspin
+            # Assume the number of states by dividing the total valence charge by an occupation of 2
             Ztot = np.sum(self.Z)
-            self.Ns = int(np.ceil(Ztot / self.f))
-
-        # If the sum of valence charges is not divisible by occupations, change the last occupation
-        if isinstance(self.f, (int, np.integer, float, np.floating)):
-            mod = np.sum(self.Z) % self.f
-            self.f = self.f * np.ones(self.Ns)
-            if mod != 0:
-                self.f[-1] = mod
+            self.Ns = int(np.ceil(Ztot / 2))
+            self.f = f * np.ones((self.Nspin, self.Ns))
+            # Subtract the leftovers from the last spin state
+            self.f[-1, -1] -= np.sum(self.Z) % 2
         return
 
     def _get_index_matrices(self):
@@ -307,7 +338,7 @@ class Atoms:
 
         out = 'Atom\tCharge\tPosition'
         for i in range(Natoms):
-            out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i][0]:10.5f}  {X[i][1]:10.5f}  {X[i][2]:10.5f}'
+            out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i, 0]:10.5f}  {X[i, 1]:10.5f}  {X[i, 2]:10.5f}'
         return out
 
     @property

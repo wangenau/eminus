@@ -42,7 +42,7 @@ setup(
     ],
     license='APACHE2.0',
     install_requires=[
-        'numpy>=1.13.3',
+        'numpy>=1.15',
         'scipy>=1.4'
     ],
     keywords=['NextDFT'],
@@ -63,6 +63,7 @@ setup(
             'flake8-docstrings>=1.4',    # Docstring style guide extension
             'flake8-import-order>=0.9',  # Import statement style guide extension
             'furo>=2022.02.14.1',        # Documentation theme
+            'notebook',                  # Run and convert notebooks to HTML
             'pytest>=2.8',               # Test utilities
             'sphinx>=4'                  # Documentation builder
         ]

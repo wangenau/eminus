@@ -4,7 +4,7 @@ from eminus.dft import get_psi
 from eminus.localizer import get_FLO
 
 ## Start by with a DFT calculation for methane
-atoms = Atoms(*read_xyz('CH4.xyz'), center=True)
+atoms = Atoms(*read_xyz('CH4.xyz'), ecut=10, center=True, Nspin=1)
 scf = SCF(atoms)
 scf.run()
 
@@ -18,10 +18,11 @@ print(f'\nCore FODs:\n{fods}')
 
 ## The quality from the FOD guess can vary, but you can use these for as a solid guess
 # import numpy as np
-# fods = np.array([[10.71617803, 10.75510917, 10.73689087],
-#                  [10.82635834,  9.25127336,  9.25068483],
-#                  [ 9.24857483, 10.79169744,  9.24052496],
-#                  [ 9.25441172,  9.25005662, 10.82402898]])
+# fods = [np.array([[10.71617803, 10.75510917, 10.73689087],
+#                   [10.82635834,  9.25127336,  9.25068483],
+#                   [ 9.24857483, 10.79169744,  9.24052496],
+#                   [ 9.25441172,  9.25005662, 10.82402898]]),
+#         np.array([])]
 
 ## Write the FODs to an xyz file to view them
 write_xyz(atoms, 'CH4_fods.xyz', fods)
@@ -36,7 +37,7 @@ FLO = get_FLO(atoms, psi, fods)
 print('\nWrite cube files:')
 for i in range(atoms.Ns):
     print(f'{i + 1} of {atoms.Ns}')
-    write_cube(atoms, FLO[:, i], f'CH4_FLO_{i + 1}.cube')
+    write_cube(atoms, FLO[0, :, i], f'CH4_FLO_{i + 1}.cube')
 
 ## All of the functionality above can be achieved with the following workflow function
 # from eminus.orbitals import FLO

@@ -6,7 +6,7 @@ atom, X = read_xyz('CH4.xyz')
 
 ## To immediately create an `Atoms` object you can do the following
 ## You can also omit the file ending, they will be appended automatically
-atoms = Atoms(*read_xyz('CH4'))
+atoms = Atoms(*read_xyz('CH4'), Nspin=1)
 
 ## Cube files are supported as well
 ## Here, lattice information are given as well

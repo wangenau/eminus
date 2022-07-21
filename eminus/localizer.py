@@ -4,6 +4,7 @@ import numpy as np
 from numpy.linalg import eig, norm
 
 from .logger import log
+from .utils import handle_spin
 
 
 def eval_psi(atoms, psi, r):
@@ -62,15 +63,16 @@ def get_FO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi orbitals.
     '''
-    FO = np.zeros((len(atoms.r), atoms.Ns), dtype=complex)
-    # Get the transformation matrix R
-    R = get_R(atoms, psi, fods)
+    FO = np.zeros((atoms.Nspin, len(atoms.r), atoms.Ns), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
-    for i in range(len(R)):
-        for j in range(atoms.Ns):
-            FO[:, i] += R[i, j] * psi_rs[:, j]
+    for spin in range(atoms.Nspin):
+        # Get the transformation matrix R
+        R = get_R(atoms, psi[spin], fods[spin])
+        for i in range(len(R)):
+            for j in range(atoms.Ns):
+                FO[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
     return FO
 
 
@@ -92,7 +94,7 @@ def get_S(atoms, psirs):
     dV = atoms.Omega / np.prod(atoms.s)
     for i in range(atoms.Ns):
         for j in range(atoms.Ns):
-            S[i][j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
+            S[i, j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
 
@@ -110,13 +112,17 @@ def get_FLO(atoms, psi, fods):
         ndarray: Real-space Fermi-Löwdin orbitals.
     '''
     FO = get_FO(atoms, psi, fods)
-    # Calculate the overlap matrix for FOs
-    S = get_S(atoms, FO)
-    # Calculate eigenvalues and eigenvectors
-    Q, T = eig(S)
-    # Löwdins symmetric orthonormalization method
-    Q12 = np.diag(1 / np.sqrt(Q))
-    return FO @ (T @ Q12 @ T.T)
+    FLO = np.empty((atoms.Nspin, len(atoms.r), atoms.Ns), dtype=complex)
+
+    for spin in range(atoms.Nspin):
+        # Calculate the overlap matrix for FOs
+        S = get_S(atoms, FO[spin])
+        # Calculate eigenvalues and eigenvectors
+        Q, T = eig(S)
+        # Löwdins symmetric orthonormalization method
+        Q12 = np.diag(1 / np.sqrt(Q))
+        FLO[spin] = FO[spin] @ (T @ Q12 @ T.T)
+    return FLO
 
 
 def wannier_cost(atoms, psirs):
@@ -131,6 +137,9 @@ def wannier_cost(atoms, psirs):
     Returns:
         ndarray: Variance per orbital.
     '''
+    if psirs.ndim == 3:
+        return handle_spin(wannier_cost, atoms, psirs)
+
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
@@ -156,7 +165,7 @@ def wannier_center(atoms, psirs):
     centers = np.empty((atoms.Ns, 3))
     for i in range(atoms.Ns):
         for dim in range(3):
-            centers[i][dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
+            centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
                               axis=0))
     return centers
 

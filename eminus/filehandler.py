@@ -52,7 +52,7 @@ def read_xyz(filename):
     return atom, X
 
 
-def write_xyz(object, filename, extra=None):
+def write_xyz(object, filename, fods=None, elec_symbols=None):
     '''Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
@@ -62,7 +62,8 @@ def write_xyz(object, filename, extra=None):
         filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (ndarray): Extra coordinates to write.
+        fods (list): FOD coordinates to write.
+        elec_symbols (list): Identifier for up and down FODs.
     '''
     try:
         atoms = object.atoms
@@ -77,25 +78,33 @@ def write_xyz(object, filename, extra=None):
 
     # Convert the coordinates from atomic units to Angstrom
     X = bohr2ang(X)
-    if extra is not None:
-        extra = bohr2ang(extra)
+    if fods is not None:
+        fods = [bohr2ang(i) for i in fods]
+
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+        if 'He' in atoms.atom and atoms.Nspin == 2:
+            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                        'polarized case.')
 
     with open(filename, 'w') as fp:
         # The first line contains the number of atoms.
-        # If we add extra coordinates, add them to the count.
-        if extra is None:
+        # If we add FOD coordinates, add them to the count.
+        if fods is None:
             fp.write(f'{Natoms}\n')
         else:
-            fp.write(f'{Natoms + len(extra)}\n')
+            fp.write(f'{Natoms + len(fods[0]) + len(fods[1])}\n')
         # The second line can contains a comment.
         # Print information about the file and program, and the file creation time.
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(Natoms):
-            fp.write(f'{atom[ia]}  {X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
-        # Add extra coordinates if desired. The atom symbol will default to X (no atom type).
-        if extra is not None:
-            for ie in extra:
-                fp.write(f'X  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+            fp.write(f'{atom[ia]}  {X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
+        # Add FOD coordinates if desired. The atom symbol will default to X (no atom type).
+        if fods is not None:
+            for ie in fods[0]:
+                fp.write(f'{elec_symbols[0]}  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+            for ie in fods[1]:
+                fp.write(f'{elec_symbols[1]}  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
     return
 
 
@@ -148,7 +157,7 @@ def read_cube(filename):
     return atom, X, Z, a, s
 
 
-def write_cube(object, field, filename, extra=None):
+def write_cube(object, field, filename, fods=None, elec_symbols=None):
     '''Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
@@ -160,7 +169,8 @@ def write_cube(object, field, filename, extra=None):
         filename (str): xyz output file path/name.
 
     Keyword Args:
-        extra (ndarray): Extra coordinates to write.
+        fods (list): FOD coordinates to write.
+        elec_symbols (list): Identifier for up and down FODs.
     '''
     try:
         atoms = object.atoms
@@ -177,6 +187,12 @@ def write_cube(object, field, filename, extra=None):
 
     if not filename.endswith('.cube'):
         filename = f'{filename}.cube'
+
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+        if 'He' in atoms.atom and atoms.Nspin == 2:
+            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                        'polarized case.')
 
     # Our field data has been created in a different order than needed for cube files
     # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
@@ -196,24 +212,27 @@ def write_cube(object, field, filename, extra=None):
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
-        if extra is None:
+        if fods is None:
             fp.write(f'{Natoms}  ')
         else:
-            fp.write(f'{Natoms + len(extra)}  ')
+            fp.write(f'{Natoms + len(fods[0]) + len(fods[1])}  ')
         fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cuboidal box, so each vector only has one non-zero component
-        fp.write(f'{s[0]}  {a[0] / s[0]:.5f}  0.0  0.0\n')
-        fp.write(f'{s[1]}  0.0  {a[1] / s[1]:.5f}  0.0\n')
-        fp.write(f'{s[2]}  0.0  0.0  {a[2] / s[2]:.5f}\n')
+        fp.write(f'{s[0]}  {a[0] / s[0]:.5f}  0.0  0.0\n'
+                 f'{s[1]}  0.0  {a[1] / s[1]:.5f}  0.0\n'
+                 f'{s[2]}  0.0  0.0  {a[2] / s[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(Natoms):
-            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  ')
-            fp.write(f'{X[ia][0]:.5f}  {X[ia][1]:.5f}  {X[ia][2]:.5f}\n')
-        if extra is not None:
-            for ie in extra:
-                fp.write('0  0.00000  ')
-                fp.write(f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  '
+                     f'{X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
+        if fods is not None:
+            for ie in fods[0]:
+                fp.write(f'{symbol2number[elec_symbols[0]]}  0.00000  '
+                         f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+            for ie in fods[1]:
+                fp.write(f'{symbol2number[elec_symbols[1]]}  0.00000  '
+                         f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
         for i in range(s[0] * s[1]):
@@ -313,9 +332,9 @@ def create_pdb(atom, X, a=None):
         pdb += '1'.rjust(4)                 # 23-26 Residue sequence number
         pdb += ' '                          # 27 Code for insertions of residues
         pdb += '   '
-        pdb += f'{X[ia][0]:8.3f}'.rjust(8)  # 31-38 X orthogonal coordinate
-        pdb += f'{X[ia][1]:8.3f}'.rjust(8)  # 39-46 Y orthogonal coordinate
-        pdb += f'{X[ia][2]:8.3f}'.rjust(8)  # 47-54 Z orthogonal coordinate
+        pdb += f'{X[ia, 0]:8.3f}'.rjust(8)  # 31-38 X orthogonal coordinate
+        pdb += f'{X[ia, 1]:8.3f}'.rjust(8)  # 39-46 Y orthogonal coordinate
+        pdb += f'{X[ia, 2]:8.3f}'.rjust(8)  # 47-54 Z orthogonal coordinate
         pdb += f'{1:6.2f}'.rjust(6)         # 55-60 Occupancy
         pdb += f'{0:6.2f}'.rjust(6)         # 61-66 Temperature factor
         pdb += '          '

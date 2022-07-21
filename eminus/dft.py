@@ -9,7 +9,7 @@ from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 
 from .gth import calc_Vnonloc
-from .utils import diagprod
+from .utils import diagprod, handle_spin
 from .xc import get_xc
 
 
@@ -39,8 +39,34 @@ def get_n_total(atoms, Y):
     '''
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
-    n = atoms.f * np.real(Yrs.conj() * Yrs)
-    return np.sum(n, axis=1)
+    n = np.zeros(len(atoms.r))
+    for spin in range(atoms.Nspin):
+        n += np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    return n
+
+
+def get_n_spin(atoms, Y, n=None):
+    '''Calculate the electronic density per spin channel.
+
+    Args:
+        atoms: Atoms object.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Keyword Args:
+        n (ndarray): Real-space electronic density.
+
+    Returns:
+        ndarray: Electronic density per spin.
+    '''
+    # Return the total density in the spin-paired case
+    if n is not None and atoms.Nspin == 1:
+        return np.atleast_2d(n)
+
+    Yrs = atoms.I(Y)
+    n = np.empty((atoms.Nspin, len(atoms.r)))
+    for spin in range(atoms.Nspin):
+        n[spin] = np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    return n
 
 
 def get_n_single(atoms, Y):
@@ -54,7 +80,10 @@ def get_n_single(atoms, Y):
         ndarray: Single-electron densities.
     '''
     Yrs = atoms.I(Y)
-    return atoms.f * np.real(Yrs.conj() * Yrs)
+    n = np.empty((atoms.Nspin, len(atoms.r), atoms.Ns))
+    for spin in range(atoms.Nspin):
+        n[spin] = atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
+    return n
 
 
 def orth(atoms, W):
@@ -67,15 +96,19 @@ def orth(atoms, W):
     Returns:
         ndarray: Orthogonalized wave functions.
     '''
+    if W.ndim == 3:
+        return handle_spin(orth, atoms, W)
+
     # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_grad(scf, W, Y=None, n=None, phi=None, vxc=None):
+def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     '''Calculate the energy gradient with respect to W.
 
     Args:
         scf: SCF object.
+        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -88,25 +121,26 @@ def get_grad(scf, W, Y=None, n=None, phi=None, vxc=None):
         ndarray: Gradient.
     '''
     atoms = scf.atoms
-    F = np.diag(atoms.f)
-    HW = H(scf, W, Y, n, phi, vxc)
-    WHW = W.conj().T @ HW
+    F = np.diag(atoms.f[spin])
+    HW = H(scf, spin, W, Y, n, phi, vxc)
+    WHW = W[spin].conj().T @ HW
     # U = Wdag O(W)
-    U = W.conj().T @ atoms.O(W)
+    U = W[spin].conj().T @ atoms.O(W[spin])
     invU = inv(U)
     U12 = sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return (HW - (atoms.O(W) @ invU) @ WHW) @ (U12 @ F @ U12) + \
-           atoms.O(W) @ (U12 @ Q(Ht @ F - F @ Ht, U))
+    return (HW - (atoms.O(W[spin]) @ invU) @ WHW) @ (U12 @ F @ U12) + \
+           atoms.O(W[spin]) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
-def H(scf, W, Y=None, n=None, phi=None, vxc=None):
+def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     '''Left-hand side of the eigenvalue equation.
 
     Args:
         scf: SCF object.
+        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -128,18 +162,19 @@ def H(scf, W, Y=None, n=None, phi=None, vxc=None):
     if phi is None:
         phi = solve_poisson(atoms, n)
     if vxc is None:
-        vxc = get_xc(scf.xc, n)[1]
+        n_spin = get_n_spin(atoms, Y, n)
+        vxc = get_xc(scf.xc, n_spin, atoms.Nspin)[1]
 
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n)))
-    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc)))
+    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc[spin])))
     # Vkin = -0.5 L(W)
-    Vkin_psi = -0.5 * atoms.L(W)
+    Vkin_psi = -0.5 * atoms.L(W[spin])
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
     Veff = scf.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
-    Vnonloc_psi = calc_Vnonloc(scf, W)
+    Vnonloc_psi = calc_Vnonloc(scf, W[spin])
     # H = Vkin + Idag(diag(Veff))I + Vnonloc
-    return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W))) + Vnonloc_psi
+    return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W[spin]))) + Vnonloc_psi
 
 
 def Q(inp, U):
@@ -172,10 +207,14 @@ def get_psi(scf, W, n=None):
     Returns:
         ndarray: Eigenstates in reciprocal space.
     '''
-    Y = orth(scf.atoms, W)
-    mu = Y.conj().T @ H(scf, W=Y, n=n)
-    _, D = eigh(mu)
-    return Y @ D
+    atoms = scf.atoms
+    Y = orth(atoms, W)
+    psi = np.empty_like(Y)
+    for spin in range(atoms.Nspin):
+        mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
+        _, D = eigh(mu)
+        psi[spin] = Y[spin] @ D
+    return psi
 
 
 def get_epsilon(scf, W, n=None):
@@ -191,10 +230,14 @@ def get_epsilon(scf, W, n=None):
     Returns:
         ndarray: Eigenvalues.
     '''
-    Y = orth(scf.atoms, W)
-    mu = Y.conj().T @ H(scf, W=Y, n=n)
-    epsilon, _ = eigh(mu)
-    return np.sort(epsilon)
+    atoms = scf.atoms
+    Y = orth(atoms, W)
+    epsilon = np.empty((atoms.Nspin, atoms.Ns))
+    for spin in range(atoms.Nspin):
+        mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
+        eps, _ = eigh(mu)
+        epsilon[spin] = np.sort(eps)
+    return epsilon
 
 
 def guess_random(scf, complex=True, reproduce=True):
@@ -214,9 +257,10 @@ def guess_random(scf, complex=True, reproduce=True):
     if reproduce:
         seed(42)
     if complex:
-        W = randn(len(atoms.G2c), atoms.Ns) + 1j * randn(len(atoms.G2c), atoms.Ns)
+        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Ns) + \
+            1j * randn(atoms.Nspin, len(atoms.G2c), atoms.Ns)
     else:
-        W = randn(len(atoms.G2c), atoms.Ns)
+        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Ns)
     return orth(atoms, W)
 
 

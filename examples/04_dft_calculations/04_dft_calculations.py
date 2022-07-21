@@ -2,7 +2,7 @@ from eminus import Atoms, SCF
 
 ## Start by creating an `Atoms` object for helium
 ## Use a very small `ecut` for a fast calculation
-atoms = Atoms('He', [0, 0, 0], ecut=5)
+atoms = Atoms('He', [0, 0, 0], ecut=5, Nspin=1)
 
 ## Optional parameters with examples are listed as follows
 ## Dictionary to set the maximum amount of steps per minimization method and their order

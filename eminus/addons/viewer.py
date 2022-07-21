@@ -14,7 +14,7 @@ from ..filehandler import create_pdb, read_cube, read_xyz
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
-def view_mol(filename, isovalue=0.01, **kwargs):
+def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
     '''Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -24,10 +24,15 @@ def view_mol(filename, isovalue=0.01, **kwargs):
 
     Keyword Args:
         isovalue (float): Isovalue for sizing orbitals.
+        gui (bool): Turn on the NGLView GUI.
+        elec_symbols (list): Identifier for up and down FODs.
 
     Returns:
         NGLWidget: Viewable object.
     '''
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
     view = NGLWidget(**kwargs)
@@ -36,21 +41,28 @@ def view_mol(filename, isovalue=0.01, **kwargs):
     if filename.endswith('.xyz'):
         # Atoms
         atom, X = read_xyz(filename)
-        atom, X, X_fod = split_fods(atom, X)
+        atom, X, X_fod = split_fods(atom, X, elec_symbols)
         view.add_component(TextStructure(create_pdb(atom, X)))
         view[0].clear()
         view[0].add_ball_and_stick()
-        # FODs
-        if len(X_fod) > 0:
-            view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
+        # Spin up FODs
+        if len(X_fod[0]) > 0:
+            view.add_component(TextStructure(create_pdb([elec_symbols[0]] * len(X_fod[0]),
+                               X_fod[0])))
             view[1].clear()
-            view[1].add_ball_and_stick('_X', color='red', radius=0.1)
+            view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+        # Spin down FODs
+        if len(X_fod[1]) > 0:
+            view.add_component(TextStructure(create_pdb([elec_symbols[1]] * len(X_fod[1]),
+                               X_fod[1])))
+            view[2].clear()
+            view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
         view.center()
 
     if filename.endswith('.cube'):
         # Atoms and cell
         atom, X, _, a, _ = read_cube(filename)
-        atom, X, X_fod = split_fods(atom, X)
+        atom, X, X_fod = split_fods(atom, X, elec_symbols)
         view.add_component(TextStructure(create_pdb(atom, X, a)))
         view[0].clear()
         view[0].add_ball_and_stick()
@@ -75,12 +87,19 @@ def view_mol(filename, isovalue=0.01, **kwargs):
                             color='red',
                             opacity=0.75,
                             side='front')
-        # FODs
-        if len(X_fod) > 0:
-            view.add_component(TextStructure(create_pdb(['X'] * len(X_fod), X_fod)))
+        # Spin up FODs
+        if len(X_fod[0]) > 0:
+            view.add_component(TextStructure(create_pdb([elec_symbols[0]] * len(X_fod[0]),
+                               X_fod[0])))
             view[3].clear()
-            view[3].add_ball_and_stick('_X', color='red', radius=0.1)
-    return view
+            view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+        # Spin down FODs
+        if len(X_fod[1]) > 0:
+            view.add_component(TextStructure(create_pdb([elec_symbols[1]] * len(X_fod[1]),
+                               X_fod[1])))
+            view[4].clear()
+            view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
+    return view.display(gui=gui)
 
 
 def view_grid(coords, extra=None):

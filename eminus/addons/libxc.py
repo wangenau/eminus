@@ -9,10 +9,8 @@ except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
-from ..logger import log
 
-
-def libxc_functional(xc, n, spinpol):
+def libxc_functional(xc, n_spin, Nspin):
     '''Handle LibXC exchange-correlation functionals.
 
     Only LDA functionals should be used.
@@ -21,25 +19,22 @@ def libxc_functional(xc, n, spinpol):
 
     Args:
         xc (str | int): Exchange or correlation identifier.
-        n (ndarray): Real-space electronic density.
-        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+        Nspin (int): Number of spin states.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
-    # FIXME: Compare LibXC and internal polarized functionals
-    if spinpol:
-        log.warning('The LibXC routine will still use an unpolarized functional.')
-    spin = 'unpolarized'
-
-    inp = {'rho': n}
     # LibXC functionals have one integer and one string identifier
     try:
-        func = LibXCFunctional(int(xc), spin)
+        func = LibXCFunctional(int(xc), Nspin)
     except ValueError:
-        func = LibXCFunctional(xc, spin)
-    out = func.compute(inp)
+        func = LibXCFunctional(xc, Nspin)
 
+    # LibXC expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
+    out = func.compute({'rho': n_spin.T.ravel()})
+    # zk is a column vector, flatten it to a 1d row vector
     exc = out['zk'].ravel()
-    vxc = out['vrho'].ravel()
+    # vrho is exactly transposed from what we need
+    vxc = out['vrho'].T
     return exc, vxc

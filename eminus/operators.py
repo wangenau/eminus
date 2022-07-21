@@ -27,6 +27,8 @@ import os
 import numpy as np
 from scipy.fft import fftn, ifftn
 
+from .utils import handle_spin
+
 try:
     THREADS = int(os.environ['OMP_NUM_THREADS'])
 except KeyError:
@@ -60,6 +62,9 @@ def L(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(L, atoms, W)
+
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -80,6 +85,9 @@ def Linv(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(Linv, atoms, W)
+
     out = np.empty_like(W, dtype=complex)
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -107,6 +115,9 @@ def I(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(I, atoms, W)
+
     n = np.prod(atoms.s)
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.G2):
@@ -146,6 +157,9 @@ def J(atoms, W, full=True):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(J, atoms, W, full=full)
+
     n = np.prod(atoms.s)
     if W.ndim == 1:
         Wfft = W.reshape(atoms.s)
@@ -210,6 +224,9 @@ def K(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(K, atoms, W)
+
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -231,6 +248,9 @@ def T(atoms, W, dr):
     Returns:
         ndarray: The operator applied on W.
     '''
+    if W.ndim == 3:
+        return handle_spin(T, atoms, W, dr=dr)
+
     # Do the shift by multiplying a phase factor, given by the shift theorem
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
     # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W

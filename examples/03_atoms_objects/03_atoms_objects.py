@@ -24,6 +24,9 @@ Z = [5, 5]
 ## Real-space sampling of the cell using an equidistant grid
 s = 40
 
+## Number of spin channels
+Nspin = 1
+
 ## Occupation numbers per state
 ## `None` will assume occupations of 2
 ## The last state will be adjusted if the sum of `f` is not equal to the sum of `Z`
@@ -40,7 +43,7 @@ center = True
 verbose = 4
 
 ## Create an `Atoms` object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, f=f, Ns=Ns,
+atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, Nspin=Nspin, f=f, Ns=Ns,
               verbose=verbose)
 print(f'New Atoms object:\n{atoms}\n')
 

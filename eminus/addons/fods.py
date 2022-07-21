@@ -9,17 +9,17 @@ try:
     from pyflosic2.guess.pycom import pycom
     from pyflosic2.parameters.flosic_parameters import parameters
     from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
-    from pyscf.scf import RKS
+    from pyscf.scf import UKS, RKS
 except ImportError:
     print('ERROR: Necessary addon dependencies not found. To use this module,\n'
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from ..data import symbol2number
-from ..filehandler import read_xyz
-from ..units import bohr2ang
+from ..logger import log
+from ..units import ang2bohr, bohr2ang
 
 
-def get_fods(object, basis='pc-0', loc='FB', clean=True):
+def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     '''Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
@@ -31,6 +31,7 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True):
         basis (str): Basis set for the DFT calculation.
         loc (str): Localization method (case insensitive).
         clean (bool): Remove log files.
+        elec_symbols (list): Identifier for up and down FODs.
 
     Returns:
         ndarray: FOD positions.
@@ -41,35 +42,56 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True):
         atoms = object
     loc = loc.upper()
 
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+        if 'He' in atoms.atom and atoms.Nspin == 2:
+            log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
+                        'polarized case.')
+
     # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)
     # Build the PySCF input format
     atom_pyscf = list(zip(atoms.atom, X))
 
+    # Spin in PySCF is the difference of up and down electrons
+    if atoms.Nspin == 2:
+        spin = int(np.sum(atoms.f[0] - atoms.f[1]))
+    else:
+        spin = np.sum(atoms.Z) % 2
+
     # Do the PySCF DFT calculation
-    spin = np.sum(atoms.Z) % 2
     mol = M(atom=atom_pyscf, basis=basis, spin=spin)
-    mf = RKS(mol=mol)
+    if atoms.Nspin == 2:
+        mf = UKS(mol=mol)
+    else:
+        mf = RKS(mol=mol)
     mf.verbose = 0
     mf.kernel()
 
     # Add some FODs to the positions, otherwise the method will not work
-    extra = np.zeros((atoms.Ns, 3))
-    atom_pyflosic = atoms.atom + ['X'] * len(extra)
-    X_pyflosic = np.vstack((X, extra))
+    extra_up = np.zeros((len(np.nonzero(atoms.f[0])[0]), 3))
+    atom_pyflosic = atoms.atom + [elec_symbols[0]] * len(extra_up)
+    X_pyflosic = np.vstack((X, extra_up))
+    if atoms.Nspin == 2:
+        extra_down = np.zeros((len(np.nonzero(atoms.f[1])[0]), 3))
+        atom_pyflosic = atom_pyflosic + [elec_symbols[1]] * len(extra_down)
+        X_pyflosic = np.vstack((X_pyflosic, extra_down))
 
-    # Do the pycom FOD generation
-    atoms = Atoms(atom_pyflosic, X_pyflosic, elec_symbols=['X', None], spin=spin)
-    p = parameters(mode='restricted')
-    p.init_atoms(atoms)
+    # Do the PyCOM FOD generation
+    atoms_pyflosic = Atoms(atom_pyflosic, X_pyflosic, elec_symbols=elec_symbols, spin=spin)
+    if atoms.Nspin == 2:
+        p = parameters(mode='unrestricted')
+    else:
+        p = parameters(mode='restricted')
+    p.init_atoms(atoms_pyflosic)
     p.basis = basis
     p.pycom_loc = loc
     pc = pycom(mf=mf, p=p)
     pc.get_guess()
 
-    # Get the actual FOD positions from the xyz file
-    atom, X = read_xyz(f'{loc}_GUESS_COM.xyz')
-    _, _, fods = split_fods(atom, X)
+    fod1 = ang2bohr(pc.p.fod1.positions)
+    fod2 = ang2bohr(pc.p.fod2.positions)
+    fods = [np.asarray(fod1), np.asarray(fod2)]
 
     if clean:
         os.remove(p.log_name)
@@ -77,24 +99,35 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True):
     return fods
 
 
-def split_fods(atom, X):
+def split_fods(atom, X, elec_symbols=None):
     '''Split atom and FOD coordinates.
 
     Args:
         atom (list): Atom symbols.
         X (ndarray): Atom positions.
 
+    Keyword Args:
+        elec_symbols (list): Identifier for up and down FODs.
+
     Returns:
-        tuple[list, ndarray, ndarray]: Atom types, the respective coordinates, and FOD positions.
+        tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
     '''
-    X_fod = []
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+
+    X_fod_up = []
+    X_fod_dn = []
     # Iterate in reverted order, because we may delete elements
     for ia in range(len(X) - 1, -1, -1):
-        if atom[ia] == 'X':
-            X_fod.append(X[ia])
+        if atom[ia] in elec_symbols:
+            if atom[ia] in elec_symbols[0]:
+                X_fod_up.append(X[ia])
+            if atom[ia] in elec_symbols[1]:
+                X_fod_dn.append(X[ia])
             X = np.delete(X, ia, axis=0)
             del atom[ia]
-    X_fod = np.asarray(X_fod)
+
+    X_fod = [np.asarray(X_fod_up), np.asarray(X_fod_dn)]
     return atom, X, X_fod
 
 
@@ -114,17 +147,21 @@ def remove_core_fods(object, fods):
         atoms = object
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
-    if len(fods) == np.sum(atoms.Z) // 2:
+    if atoms.Nspin == 1 and len(fods[0]) == np.sum(atoms.f[0]):
+        return fods
+    if atoms.Nspin == 2 and len(fods[0]) == np.sum(atoms.f[0]) \
+                        and len(fods[1]) == np.sum(atoms.f[1]):
         return fods
 
-    for ia in range(atoms.Natoms):
-        n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
-        # In the spin-paired case two electrons are one state
-        # Since only core states are removed in pseudopotentials this value is divisible by 2
-        # +1 to account for uneven amount of core FODs (e.g., for hydrogen)
-        n_core = (n_core + 1) // 2
-        dist = norm(fods - atoms.X[ia], axis=1)
-        idx = np.argsort(dist)
-        # Remove core FODs with the smallest distance to the core
-        fods = np.delete(fods, idx[:n_core], axis=0)
+    for spin in range(atoms.Nspin):
+        for ia in range(atoms.Natoms):
+            n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
+            # In the spin-paired case two electrons are one state
+            # Since only core states are removed in pseudopotentials this value is divisible by 2
+            # +1 to account for uneven amount of core FODs (e.g., for hydrogen)
+            n_core = (n_core + 1) // 2
+            dist = norm(fods[spin] - atoms.X[ia], axis=1)
+            idx = np.argsort(dist)
+            # Remove core FODs with the smallest distance to the core
+            fods[spin] = np.delete(fods[spin], idx[:n_core], axis=0)
     return fods

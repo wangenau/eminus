@@ -70,13 +70,13 @@ def inertia_tensor(coords, masses=None):
     # The inertia tensor for a set of point masses can be calculated with simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
     I = np.empty((3, 3))
-    I[0][0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
-    I[1][1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
-    I[2][2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))
+    I[0, 0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
+    I[1, 1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
+    I[2, 2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))
 
-    I[0][1] = I[1][0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
-    I[0][2] = I[2][0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
-    I[1][2] = I[2][1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
+    I[0, 1] = I[1, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
+    I[0, 2] = I[2, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
+    I[1, 2] = I[2, 1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
     return I
 
 
@@ -127,6 +127,8 @@ def get_IP(scf):
         float: Ionization potential in Hartree.
     '''
     epsilon = get_epsilon(scf, scf.W)
+    # Add up spin states
+    epsilon = np.sum(epsilon, axis=0)
     return -epsilon[-1]
 
 
@@ -143,14 +145,16 @@ def check_ortho(object, func, eps=1e-9):
     Returns:
         bool: Orthogonality status for the set of functions.
     '''
-    # It makes no sense to calculate anything for only one function
-    if len(func) == 1:
-        log.warning('Need at least two functions to check their orthogonality.')
-        return True
+    func = np.atleast_3d(func)
     try:
         atoms = object.atoms
     except AttributeError:
         atoms = object
+    # It makes no sense to calculate anything for only one function
+    if atoms.Ns == 1:
+        log.warning('Need at least two functions to check their orthogonality.')
+        return True
+
     # We integrate over our cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
@@ -159,12 +163,13 @@ def check_ortho(object, func, eps=1e-9):
     ortho_bool = True
     # Check the condition for every combination
     # Orthogonality condition: \int func1^* func2 dr = 0
-    for i in range(func.shape[1]):
-        for j in range(i + 1, func.shape[1]):
-            res = dV * np.sum(func[:, i].conj() * func[:, j])
-            tmp_bool = abs(res) < eps
-            ortho_bool *= tmp_bool
-            log.debug(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
+    for spin in range(atoms.Nspin):
+        for i in range(atoms.Ns):
+            for j in range(i + 1, atoms.Ns):
+                res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
+                tmp_bool = abs(res) < eps
+                ortho_bool *= tmp_bool
+                log.debug(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
     log.info(f'Orthogonal: {ortho_bool}')
     return ortho_bool
 
@@ -182,6 +187,7 @@ def check_norm(object, func, eps=1e-9):
     Returns:
         bool: Normalization status for the set of functions.
     '''
+    func = np.atleast_3d(func)
     try:
         atoms = object.atoms
     except AttributeError:
@@ -194,11 +200,12 @@ def check_norm(object, func, eps=1e-9):
     norm_bool = True
     # Check the condition for every function
     # Normality condition: \int func^* func dr = 1
-    for i in range(func.shape[1]):
-        res = dV * np.sum(func[:, i].conj() * func[:, i])
-        tmp_bool = abs(1 - res) < eps
-        norm_bool *= tmp_bool
-        log.debug(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
+    for spin in range(atoms.Nspin):
+        for i in range(atoms.Ns):
+            res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
+            tmp_bool = abs(1 - res) < eps
+            norm_bool *= tmp_bool
+            log.debug(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
     log.info(f'Normalized: {norm_bool}')
     return norm_bool
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 '''SCF class definition.'''
+import copy
 import logging
 import timeit
 
@@ -13,7 +14,7 @@ from .potentials import init_pot
 
 
 class SCF:
-    '''SCF function to handle direct minimizations.
+    '''Perform direct minimizations.
 
     Args:
         atoms: Atoms object.
@@ -58,19 +59,19 @@ class SCF:
     '''
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='gaussian', etol=1e-7, cgform=1,
                  sic=False, min=None, verbose=None):
-        self.atoms = atoms      # Atoms object
-        self.xc = xc.lower()    # Exchange-correlation functional
-        self.pot = pot.lower()  # Used pseudopotential
-        self.guess = guess      # Initial wave functions guess
-        self.etol = etol        # Total energy convergence tolerance
-        self.cgform = cgform    # Conjugate gradient form
-        self.sic = sic          # Calculate the sic energy
+        self.atoms = copy.copy(atoms)  # Atoms object
+        self.xc = xc.lower()           # Exchange-correlation functional
+        self.pot = pot.lower()         # Used pseudopotential
+        self.guess = guess             # Initial wave functions guess
+        self.etol = etol               # Total energy convergence tolerance
+        self.cgform = cgform           # Conjugate gradient form
+        self.sic = sic                 # Calculate the sic energy
+        self.min = min                 # Minimization methods
 
         # Set min here, better not use mutable data types in signatures
-        if min is None:
-            self.min = {'pccg': 250}
-        else:
-            self.min = min
+        if self.min is None:
+            # For systems with bad convergence throw in some sd steps
+            self.min = {'sd': 10, 'pccg': 250}
 
         # Initialize logger
         self.log = create_logger(self)
@@ -95,11 +96,11 @@ class SCF:
 
     def clear(self):
         '''Initialize and clear intermediate results.'''
-        self.Y = None    # Orthogonal wave functions
-        self.n = None    # Electronic density
-        self.phi = None  # Hartree field
-        self.exc = None  # Exchange-correlation energy density
-        self.vxc = None  # Exchange-correlation potential
+        self.Y = None         # Orthogonal wave functions
+        self.n_single = None  # Electronic densities per spin
+        self.phi = None       # Hartree field
+        self.exc = None       # Exchange-correlation energy density
+        self.vxc = None       # Exchange-correlation potential
         return
 
     def initialize(self):
@@ -111,8 +112,9 @@ class SCF:
     def run(self, **kwargs):
         '''Run the self-consistent field (SCF) calculation.'''
         self.log.debug(f'--- System information ---\n{self.atoms}\n'
+                       f'Spin handling: {"un" if self.atoms.Nspin == 1 else ""}polarized\n'
                        f'Number of states: {self.atoms.Ns}\n'
-                       f'Occupation per state: {self.atoms.f}\n'
+                       f'Occupation per state:\n{self.atoms.f}\n'
                        f'\n--- Cell information ---\nSide lengths: {self.atoms.a} Bohr\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Hartree\n'
@@ -139,9 +141,9 @@ class SCF:
             minimizer_log[imin]['iter'] = len(Elist)  # Save iterations in dictionary
             Etots += Elist  # Append energies from minimizer
             # Do not start other minimizations if one converged
-            if abs(Etots[-2] - Etots[-1]) < self.etol:
+            if len(Etots) > 1 and abs(Etots[-2] - Etots[-1]) < self.etol:
                 break
-        if abs(Etots[-2] - Etots[-1]) < self.etol:
+        if len(Etots) > 1 and abs(Etots[-2] - Etots[-1]) < self.etol:
             self.log.info(f'SCF converged after {len(Etots)} iterations.')
         else:
             self.log.warning('SCF not converged!')
@@ -149,7 +151,7 @@ class SCF:
         # Print SCF data
         self.log.debug('\n--- SCF results ---')
         t_tot = 0
-        for imin in self.min:
+        for imin in minimizer_log:
             N = minimizer_log[imin]['iter']
             t = minimizer_log[imin]['time']
             t_tot += t
@@ -213,4 +215,28 @@ class SCF:
         '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
         self.log.setLevel(self._verbose)
+        return
+
+
+class RSCF(SCF):
+    '''SCF class for spin-paired systems. '''  # noqa: D210
+    __doc__ += SCF.__doc__
+
+    def initialize(self):
+        '''Validate inputs, update them and build all necessary parameters.'''
+        self.atoms._set_states(Nspin=1)
+        self._set_potential()
+        self._init_W()
+        return
+
+
+class USCF(SCF):
+    '''SCF class for spin-polarized systems. '''  # noqa: D210
+    __doc__ += SCF.__doc__
+
+    def initialize(self):
+        '''Validate inputs, update them and build all necessary parameters.'''
+        self.atoms._set_states(Nspin=2)
+        self._set_potential()
+        self._init_W()
         return

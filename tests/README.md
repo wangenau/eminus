@@ -2,11 +2,11 @@
 
 Unit tests to ensure the code is performing correctly.
 
-| Folder      | Description |
-| :---------: | :---------: |
-| examples    | Test examples execution |
-| operators   | Test operator identities |
-| spin_paired | Test spin paired DFT calculations |
+| Folder           | Description |
+| :--------------: | :---------: |
+| dft_calculations | Test DFT calculations |
+| examples         | Test examples execution |
+| operators        | Test operator identities |
 
 The tests can be run with your Python interpreter or using [pytest](https://docs.pytest.org).
 

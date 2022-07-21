@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 '''Calculate different energy contributions.'''
+import math
+
 import numpy as np
 from numpy.linalg import inv
-from scipy.special import erfc
 
-from .dft import get_n_single, solve_poisson
+from .dft import get_n_single, get_n_spin, solve_poisson
 from .xc import get_xc
 
 
@@ -48,7 +49,7 @@ def get_E(scf):
     '''
     scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
     scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
-    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc)
+    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, scf.atoms.Nspin)
     scf.energies.Eloc = get_Eloc(scf, scf.n)
     scf.energies.Enonloc = get_Enonloc(scf, scf.Y)
     return scf.energies.Etot
@@ -67,7 +68,11 @@ def get_Ekin(atoms, Y):
         float: Kinetic energy in Hartree.
     '''
     # Ekin = -0.5 Tr(F Wdag L(W))
-    return np.real(-0.5 * np.trace(np.diag(atoms.f) @ (Y.conj().T @ atoms.L(Y))))
+    Ekin = 0
+    for spin in range(atoms.Nspin):
+        F = np.diag(atoms.f[spin])
+        Ekin += -0.5 * np.trace(F @ (Y[spin].conj().T @ atoms.L(Y[spin])))
+    return np.real(Ekin)
 
 
 def get_Ecoul(atoms, n, phi=None):
@@ -91,7 +96,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None, spinpol=False):
+def get_Exc(scf, n, exc=None, Y=None, Nspin=2):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -102,14 +107,16 @@ def get_Exc(scf, n, exc=None, spinpol=False):
 
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
-        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Nspin (int): Number of spin states.
 
     Returns:
         float: Exchange-correlation energy in Hartree.
     '''
     atoms = scf.atoms
     if exc is None:
-        exc = get_xc(scf.xc, n, spinpol)[0]
+        n_spin = get_n_spin(scf.atoms, Y)
+        exc = get_xc(scf.xc, n_spin, Nspin)[0]
     # Exc = (J(n))dag O(J(exc))
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
@@ -148,22 +155,23 @@ def get_Enonloc(scf, Y):
         prj2beta = scf.prj2beta
         betaNL = scf.betaNL
 
-        betaNL_psi = (Y.conj().T @ betaNL).conj()
+        for spin in range(atoms.Nspin):
+            betaNL_psi = (Y[spin].conj().T @ betaNL).conj()
 
-        for ist in range(Nstates):
-            enl = 0
-            for ia in range(Natoms):
-                psp = scf.GTH[atoms.atom[ia]]
-                for l in range(psp['lmax']):
-                    for m in range(-l, l + 1):
-                        for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                            for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                                hij = psp['h'][l, iprj, jprj]
-                                enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
-                                       betaNL_psi[ist, jbeta])
-            Enonloc += atoms.f[ist] * enl
+            for ist in range(Nstates):
+                enl = 0
+                for ia in range(Natoms):
+                    psp = scf.GTH[atoms.atom[ia]]
+                    for l in range(psp['lmax']):
+                        for m in range(-l, l + 1):
+                            for iprj in range(psp['Nproj_l'][l]):
+                                ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                                for jprj in range(psp['Nproj_l'][l]):
+                                    jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                    hij = psp['h'][l, iprj, jprj]
+                                    enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
+                                           betaNL_psi[ist, jbeta])
+                Enonloc += atoms.f[spin, ist] * enl
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Enonloc * atoms.Omega
 
@@ -232,7 +240,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
                             T = i * t1 + j * t2 + k * t3
                             rmag = np.sqrt(np.sum((dX - T)**2))
                             # Add the real-space contribution
-                            Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
+                            Eewald += 0.5 * ZiZj * math.erfc(rmag * nu) / rmag
 
     mmm1 = np.rint(gcut / g1m + 1.5)
     mmm2 = np.rint(gcut / g2m + 1.5)
@@ -277,13 +285,15 @@ def get_Esic(scf, Y, n_single=None):
         n_single = get_n_single(atoms, Y)
 
     Esic = 0
-    for i in range(atoms.Ns):
-        # Normalize single-particle densities to 1
-        ni = n_single[:, i] / atoms.f[i]
-        coul = get_Ecoul(atoms, ni)
-        # The exchange part for a SIC correction has to be spin polarized
-        xc = get_Exc(scf, ni, spinpol=True)
-        # SIC energy is scaled by the occupation number
-        Esic += (coul + xc) * atoms.f[i]
+    for spin in range(atoms.Nspin):
+        for i in range(atoms.Ns):
+            # Normalize single-particle densities to 1
+            if atoms.f[spin, i] > 0:
+                ni = n_single[spin, :, i] / atoms.f[spin, i]
+                coul = get_Ecoul(atoms, ni)
+                # The exchange part for a SIC correction has to be spin polarized
+                xc = get_Exc(scf, ni, Y=Y, Nspin=2)
+                # SIC energy is scaled by the occupation number
+                Esic += (coul + xc) * atoms.f[spin, i]
     scf.energies.Esic = Esic
     return Esic

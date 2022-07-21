@@ -73,7 +73,7 @@ def init_gth_nonloc(scf):
     Natoms = atoms.Natoms
     Npoints = len(atoms.G2c)
 
-    prj2beta = np.zeros([3, Natoms, 4, 7], dtype=int)
+    prj2beta = np.empty([3, Natoms, 4, 7], dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
@@ -89,7 +89,7 @@ def init_gth_nonloc(scf):
     Gm = np.sqrt(atoms.G2c)
 
     ibeta = 0
-    betaNL = np.zeros([Npoints, NbetaNL], dtype=complex)
+    betaNL = np.empty([Npoints, NbetaNL], dtype=complex)
     for ia in range(Natoms):
         # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))

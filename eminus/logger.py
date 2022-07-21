@@ -71,6 +71,8 @@ def get_level(verbose):
         3: 'INFO',
         4: 'DEBUG'
     }
+    if verbose is None:
+        return log.verbose
     if isinstance(verbose, int):
         level = log_levels.get(verbose, 'DEBUG')
     else:

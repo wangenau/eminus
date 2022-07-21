@@ -124,3 +124,18 @@ def Ylm_real(l, m, R):
     else:
         log.error(f'No definition found for Ylm({l}, {m})')
     return ylm
+
+
+def handle_spin(func, atoms, W, *args, **kwargs):
+    '''Handle wave functions with a dimensions for the spin by calculating each channel seperately.
+
+    Args:
+        operator (Callable): Operator function.
+        atoms: Atoms object.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: The operator applied on W.
+    '''
+    # If one is brave enough one could add multithreading for the spin-polarized case right here
+    return np.asarray([func(atoms, Wi, *args, **kwargs) for Wi in W])

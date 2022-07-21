@@ -5,15 +5,13 @@ import numpy as np
 from .logger import log
 
 
-def get_xc(xc, n, spinpol=False):
+def get_xc(xc, n_spin, Nspin):
     '''Handle and get exchange-correlation functionals.
 
     Args:
         xc (str): Exchange and correlation identifier, separated by a comma.
-        n (ndarray): Real-space electronic density.
-
-    Keyword Args:
-        spinpol (bool): Choose if a spin-polarized exchange-correlation functional will be used.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+        Nspin (int): Number of spin states.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
@@ -26,16 +24,21 @@ def get_xc(xc, n, spinpol=False):
     exch, corr = xc.split(',')
 
     # Only use non-zero values of the density
+    n = np.sum(n_spin, axis=0)
     n_nz = n[np.nonzero(n)]
 
     # Only import libxc interface if necessary
     if 'libxc' in xc:
         from .addons.libxc import libxc_functional
+    # Zeta is not needed in LibXC
+    else:
+        # Zeta is only needed for non-zero values of the density
+        zeta_nz = get_zeta(n_spin)[np.nonzero(n)]
 
     # Handle exchange part
     if 'libxc' in exch:
         exch = exch.split(':')[1]
-        ex, vx = libxc_functional(exch, n_nz, spinpol)
+        ex, vx = libxc_functional(exch, n_spin, Nspin)
     else:
         # If the desired functional is not implemented use a mock functional
         try:
@@ -43,16 +46,21 @@ def get_xc(xc, n, spinpol=False):
         except KeyError:
             f_exch = 'mock_xc'
             log.warning('Use a mock functional for the exchange part.')
-        if spinpol:
+        if Nspin == 2:
             f_exch = f'{f_exch}_spin'
-        # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
-        #        spin-unpolarized calculations
-        ex, vx = eval(f_exch)(n_nz, zeta=np.ones_like(n_nz))
+        ex_nz, vx_nz = eval(f_exch)(n_nz, zeta=zeta_nz)
+
+        # Map the non-zero values back to the right dimension
+        ex = np.zeros_like(n)
+        ex[np.nonzero(n)] = ex_nz
+        vx = np.zeros_like(n_spin)
+        for spin in range(Nspin):
+            vx[spin, np.nonzero(n)] = vx_nz[spin]
 
     # Handle correlation part
     if 'libxc' in corr:
         corr = corr.split(':')[1]
-        ec, vc = libxc_functional(corr, n_nz, spinpol)
+        ec, vc = libxc_functional(corr, n_spin, Nspin)
     else:
         # If the desired functional is not implemented use a mock functional
         try:
@@ -60,22 +68,37 @@ def get_xc(xc, n, spinpol=False):
         except KeyError:
             f_corr = 'mock_xc'
             log.warning('Use a mock functional for the correlation part.')
-        if spinpol:
+        if Nspin == 2:
             f_corr = f'{f_corr}_spin'
-        # FIXME: In spin-polarized calculations zeta is normally not one, only when coming from
-        #        spin-unpolarized calculations
-        ec, vc = eval(f_corr)(n_nz, zeta=np.ones_like(n_nz))
+        ec_nz, vc_nz = eval(f_corr)(n_nz, zeta=zeta_nz)
 
-    # Use zero as the result for zero values
-    exc = np.zeros_like(n)
-    exc[np.nonzero(n)] = ex + ec
-    vxc = np.zeros_like(n)
-    vxc[np.nonzero(n)] = vx + vc
-    return exc, vxc
+        # Map the non-zero values back to the right dimension
+        ec = np.zeros_like(n)
+        ec[np.nonzero(n)] = ec_nz
+        vc = np.zeros_like(n_spin)
+        for spin in range(Nspin):
+            vc[spin, np.nonzero(n)] = vc_nz[spin]
+
+    return ex + ec, vx + vc
+
+
+def get_zeta(n_spin):
+    '''Calculate the relative spin polarization.
+
+    Args:
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+
+    Returns:
+        ndarray: Relative spin polarization.
+    '''
+    # If only one spin is given return an array of ones as if the density only is in one channel
+    if len(n_spin) == 1:
+        return np.ones_like(n_spin[0])
+    return (n_spin[0] - n_spin[1]) / (n_spin[0] + n_spin[1])
 
 
 def mock_xc(n, **kwargs):
-    '''Mock exchange-correlation functional with no effect.
+    '''Mock exchange-correlation functional with no effect (spin-paired).
 
     Args:
         n (ndarray): Real-space electronic density.
@@ -84,10 +107,20 @@ def mock_xc(n, **kwargs):
         tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
     '''
     zeros = np.zeros_like(n)
-    return zeros, zeros
+    return zeros, np.array([zeros])
 
 
-mock_xc_spin = mock_xc
+def mock_xc_spin(n, **kwargs):
+    '''Mock exchange-correlation functional with no effect (spin-polarized).
+
+    Args:
+        n (ndarray): Real-space electronic density.
+
+    Returns:
+        tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
+    '''
+    zeros = np.zeros_like(n)
+    return zeros, np.array([zeros, zeros])
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
@@ -113,7 +146,7 @@ def lda_slater_x(n, alpha=2 / 3, **kwargs):
 
     ex = f * alpha / rs
     vx = 4 / 3 * ex
-    return ex, vx
+    return ex, np.array([vx])
 
 
 # Adapted from
@@ -147,7 +180,7 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
 
     vxup = p43 * f * alpha * rho13p
     vxdw = p43 * f * alpha * rho13m
-    return ex, [vxup, vxdw]
+    return ex, np.array([vxup, vxdw])
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
@@ -184,7 +217,7 @@ def lda_pw_c(n, **kwargs):
 
     dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
     vc = -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
-    return ec, vc
+    return ec, np.array([vc])
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
@@ -253,7 +286,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     vcdw = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
            (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
            (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
-    return ec, [vcup, vcdw]
+    return ec, np.array([vcup, vcdw])
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
@@ -292,7 +325,7 @@ def lda_vwn_c(n, **kwargs):
     tt = tx * tx + q * q
     vc = ec - rs12 * a / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
          f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
-    return ec, vc
+    return ec, np.array([vc])
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
@@ -375,4 +408,4 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
 
     vcup = dec1 + (1 - zeta) * dec2
     vcdw = dec1 - (1 + zeta) * dec2
-    return ec, [vcup, vcdw]
+    return ec, np.array([vcup, vcdw])

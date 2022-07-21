@@ -7,7 +7,7 @@ from eminus.units import ebohr2d, ha2kcalmol
 import numpy as np
 
 ## Start by with a simple DFT calculation for neon
-atoms = Atoms('Ne', [0, 0, 0], center=True)
+atoms = Atoms('Ne', [0, 0, 0], ecut=10, center=True, Nspin=1)
 scf = SCF(atoms)
 scf.run()
 
@@ -26,12 +26,12 @@ print(f'\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n')
 ## Make sure to use orthogonal wave functions to generate them
 psi = atoms.I(get_psi(scf, scf.W))
 
+## Some functions are controlled with a global logging level that can be changed with
+eminus.log.verbose = 3
+
 ## Check orthonormality of Kohn-Sham orbitals
 print('Orthonormality of Kohn-Sham orbitals:')
 check_orthonorm(atoms, psi)
-
-## Some functions are controlled with a global logging level that can be changed with
-eminus.log.verbose = 4
 
 ## Calculate the orbital variance and spread of the orbitals
 cost = wannier_cost(atoms, psi)
@@ -47,4 +47,4 @@ print(f'Neon position = {atoms.X[0]} a0')
 print('\nWrite cube files:')
 for i in range(atoms.Ns):
     print(f'{i + 1} of {atoms.Ns}')
-    write_cube(atoms, psi[:, i], f'Ne_{i + 1}.cube')
+    write_cube(atoms, psi[0, :, i], f'Ne_{i + 1}.cube')
