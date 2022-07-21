@@ -64,4 +64,4 @@ pages:
       - docs/**/*
       - examples/**/*
     refs:
-      - master
+      - main

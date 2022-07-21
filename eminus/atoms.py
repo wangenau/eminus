@@ -211,7 +211,7 @@ class Atoms:
             # Multiply by two and add one to match PWDFT
             s = 2 * s + 1
             # Calculate a fast length to optimize the FFT calculations
-            # See https://github.com/scipy/scipy/blob/master/scipy/fft/_helper.py
+            # See https://github.com/scipy/scipy/blob/main/scipy/fft/_helper.py
             self.s = [next_fast_len(i) for i in s]
 
         # Choose the same sampling for every direction if an integer is given

@@ -31,7 +31,7 @@ To install all packages needed for development as listed below, use the followin
 Testing
 -------
 
-| To verify that changes work as intended, tests can be found in the `tests folder <https://gitlab.com/nextdft/eminus/-/tree/master/tests>`_.
+| To verify that changes work as intended, tests can be found in the `tests folder <https://gitlab.com/nextdft/eminus/-/tree/main/tests>`_.
 | They can be executed using the Python interpreter or with `pytest <https://docs.pytest.org>`_.
 | pytest can be installed and executed with
 
@@ -43,7 +43,7 @@ Testing
 Linting
 -------
 
-| This code is lint-checked with `flake8 <https://flake8.pycqa.org>`_, using a custom `configuration file <https://gitlab.com/nextdft/eminus/-/tree/master/.flake8>`_.
+| This code is lint-checked with `flake8 <https://flake8.pycqa.org>`_, using a custom `configuration file <https://gitlab.com/nextdft/eminus/-/tree/main/.flake8>`_.
 | To install flake8 and do a lint check, use
 
 .. code-block:: bash

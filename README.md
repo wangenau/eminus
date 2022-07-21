@@ -1,8 +1,8 @@
-![eminus logo](https://gitlab.com/nextdft/eminus/-/raw/master/docs/logo/eminus_logo.png)
+![eminus logo](https://gitlab.com/nextdft/eminus/-/raw/main/docs/logo/eminus_logo.png)
 
 # eminus
 [![language](https://img.shields.io/badge/language-Python3-green)](https://www.python.org)
-[![license](https://img.shields.io/badge/license-APACHE2-lightgrey)](https://gitlab.com/nextdft/eminus/-/blob/master/LICENSE)
+[![license](https://img.shields.io/badge/license-APACHE2-lightgrey)](https://gitlab.com/nextdft/eminus/-/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
 
 eminus is a plane wave density functional theory (DFT) code.
@@ -25,4 +25,4 @@ pip install eminus
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/nextdft/eminus/-/blob/master/LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](https://gitlab.com/nextdft/eminus/-/blob/main/LICENSE) file for details.
