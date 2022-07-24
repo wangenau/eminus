@@ -9,7 +9,7 @@ from numpy.random import randn, seed
 from scipy.linalg import sqrtm
 
 from .gth import calc_Vnonloc
-from .utils import diagprod, handle_spin
+from .utils import diagprod, handle_spin_gracefully
 from .xc import get_xc
 
 
@@ -86,6 +86,7 @@ def get_n_single(atoms, Y):
     return n
 
 
+@handle_spin_gracefully
 def orth(atoms, W):
     '''Orthogonalize coefficient matrix W.
 
@@ -96,9 +97,6 @@ def orth(atoms, W):
     Returns:
         ndarray: Orthogonalized wave functions.
     '''
-    if W.ndim == 3:
-        return handle_spin(orth, atoms, W)
-
     # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 

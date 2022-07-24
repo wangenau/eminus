@@ -126,16 +126,26 @@ def Ylm_real(l, m, R):
     return ylm
 
 
-def handle_spin(func, atoms, W, *args, **kwargs):
-    '''Handle wave functions with a dimensions for the spin by calculating each channel seperately.
+def handle_spin_gracefully(func):
+    '''Handle wave functions with a dimension for the spin by calculating each channel seperately.
+
+    This can only be applied if the only spin-dependent indexing is the wave function W.
+
+    Implementing the explicit handling of spin adds an extra layer of complexity where one has to
+    loop over the spin states in many places. We can hide this complexity using this decorator while
+    still supporting many usecases, e.g., the operators previously act on arrays containing wave
+    functions of all states and of one state only. This decorator maintains this functionality and
+    adds the option to act on arrays containing wave functions of all spins and all states as well.
 
     Args:
-        operator (Callable): Operator function.
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        func (Callable): Function that acts on spin-states.
 
     Returns:
-        ndarray: The operator applied on W.
+        Callable: Decorator.
     '''
-    # If one is brave enough one could add multithreading for the spin-polarized case right here
-    return np.asarray([func(atoms, Wi, *args, **kwargs) for Wi in W])
+    def decorator(atoms, W, *args, **kwargs):
+        if W.ndim == 3:
+            # If one is brave enough one could add multiprocessing over spin states case right here
+            return np.asarray([func(atoms, Wi, *args, **kwargs) for Wi in W])
+        return func(atoms, W, *args, **kwargs)
+    return decorator

@@ -27,7 +27,7 @@ import os
 import numpy as np
 from scipy.fft import fftn, ifftn
 
-from .utils import handle_spin
+from .utils import handle_spin_gracefully
 
 try:
     THREADS = int(os.environ['OMP_NUM_THREADS'])
@@ -35,6 +35,7 @@ except KeyError:
     THREADS = None
 
 
+# Spin handling is trivial for this operator
 def O(atoms, W):
     '''Overlap operator.
 
@@ -50,6 +51,7 @@ def O(atoms, W):
     return atoms.Omega * W
 
 
+@handle_spin_gracefully
 def L(atoms, W):
     '''Laplacian operator.
 
@@ -62,9 +64,6 @@ def L(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(L, atoms, W)
-
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -73,6 +72,7 @@ def L(atoms, W):
     return -atoms.Omega * G2 * W
 
 
+@handle_spin_gracefully
 def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
@@ -85,9 +85,6 @@ def Linv(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(Linv, atoms, W)
-
     out = np.empty_like(W, dtype=complex)
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -103,6 +100,7 @@ def Linv(atoms, W):
     return out
 
 
+@handle_spin_gracefully
 def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
@@ -115,9 +113,6 @@ def I(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(I, atoms, W)
-
     n = np.prod(atoms.s)
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.G2):
@@ -142,6 +137,7 @@ def I(atoms, W):
     return Finv * n
 
 
+@handle_spin_gracefully
 def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
@@ -157,9 +153,6 @@ def J(atoms, W, full=True):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(J, atoms, W, full=full)
-
     n = np.prod(atoms.s)
     if W.ndim == 1:
         Wfft = W.reshape(atoms.s)
@@ -175,6 +168,7 @@ def J(atoms, W, full=True):
     return F / n
 
 
+# No spin handle is needed since J already has one
 def Idag(atoms, W, full=False):
     '''Conjugated backwards transformation from real-space to reciprocal space.
 
@@ -195,6 +189,7 @@ def Idag(atoms, W, full=False):
     return F * n
 
 
+# No spin handle is needed since I already has one
 def Jdag(atoms, W):
     '''Conjugated forward transformation from reciprocal space to real-space.
 
@@ -212,6 +207,7 @@ def Jdag(atoms, W):
     return Finv / n
 
 
+@handle_spin_gracefully
 def K(atoms, W):
     '''Preconditioning operator.
 
@@ -224,9 +220,6 @@ def K(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(K, atoms, W)
-
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -235,6 +228,7 @@ def K(atoms, W):
     return W / (1 + G2)
 
 
+@handle_spin_gracefully
 def T(atoms, W, dr):
     '''Translation operator.
 
@@ -248,9 +242,6 @@ def T(atoms, W, dr):
     Returns:
         ndarray: The operator applied on W.
     '''
-    if W.ndim == 3:
-        return handle_spin(T, atoms, W, dr=dr)
-
     # Do the shift by multiplying a phase factor, given by the shift theorem
     factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
     # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W

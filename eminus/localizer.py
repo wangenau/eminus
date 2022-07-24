@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import eig, norm
 
 from .logger import log
-from .utils import handle_spin
+from .utils import handle_spin_gracefully
 
 
 def eval_psi(atoms, psi, r):
@@ -125,6 +125,7 @@ def get_FLO(atoms, psi, fods):
     return FLO
 
 
+@handle_spin_gracefully
 def wannier_cost(atoms, psirs):
     '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
@@ -137,9 +138,6 @@ def wannier_cost(atoms, psirs):
     Returns:
         ndarray: Variance per orbital.
     '''
-    if psirs.ndim == 3:
-        return handle_spin(wannier_cost, atoms, psirs)
-
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)

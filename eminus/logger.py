@@ -90,14 +90,6 @@ def name(newname):
         Callable: Decorator.
     '''
     def decorator(f):
-        '''Decorator.
-
-        Args:
-            f (Callable): Function to name.
-
-        Returns:
-            Callable: Function.
-        '''
         f.__name__ = newname
         return f
     return decorator
