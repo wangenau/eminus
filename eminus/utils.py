@@ -41,89 +41,77 @@ def dotprod(a, b):
     return res
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/Ylm_real.jl
-def Ylm_real(l, m, R):
-    '''Calculate spherical harmonics.
+def Ylm_real(l, m, G):
+    '''Calculate real spherical harmonics from cartesian coordinates.
 
     Args:
         l (int): Angular momentum number.
         m (int): Magnetic quantum number.
-        R (ndarray): Real-space position vector or array of real-space position vectors.
+        G (ndarray): Recipocal lattice vector or array of lattice vectors.
 
     Returns:
-        ndarray: Spherical harmonics.
+        ndarray: Real spherical harmonics.
     '''
+    eps = 1e-9
     # Account for single vectors
-    if R.ndim == 1:
-        R = np.array([R])
+    G = np.atleast_2d(G)
 
     # No need to calculate more for l=0
     if l == 0:
-        return 0.5 * np.sqrt(1 / np.pi) * np.ones(len(R))
+        return 0.5 * np.sqrt(1 / np.pi) * np.ones(len(G))
 
-    # Account for small norm, if norm(R) < eps: cost=0
-    eps = 1e-9
-    Rmod = norm(R, axis=1)
-    cost = np.zeros(len(R))
-    cost_idx = Rmod > eps
-    cost[cost_idx] = R[cost_idx, 2] / Rmod[cost_idx]
+    # cos(theta)=Gz/|G|
+    Gm = norm(G, axis=1)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        cos_theta = G[:, 2] / Gm
+    # Account for small magnitudes, if norm(G) < eps: cos_theta=0
+    cos_theta[Gm < eps] = 0
 
-    # Vectorized version of sqrt(max(0, 1-cost^2))
-    sint = np.sqrt(np.amax([np.zeros(len(R)), 1 - cost**2], axis=0))
+    # Vectorized version of sin(theta)=sqrt(max(0, 1-cos_theta^2))
+    sin_theta = np.sqrt(np.amax((np.zeros_like(cos_theta), 1 - cos_theta**2), axis=0))
 
-    # If Rx=0: phi=pi/2*sign(Ry)
-    phi = -np.pi / 2 * np.ones(len(R))
-    phi_idx = R[:, 1] >= 0
-    phi[phi_idx] = np.pi / 2 * np.ones(len(phi[phi_idx]))
-
-    # Beware the arctan, it is defined with modulo pi
-    phi_idx = R[:, 0] < -eps
-    phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0]) + np.pi
-    phi_idx = R[:, 0] > eps
-    phi[phi_idx] = np.arctan(R[phi_idx, 1] / R[phi_idx, 0])
+    # phi=arctan(Gy/Gx)
+    phi = np.arctan2(G[:, 1], G[:, 0])
+    # If Gx=0: phi=pi/2*sign(Gy)
+    phi_idx = (eps > G[:, 0]) & (G[:, 0] > -eps)
+    phi[phi_idx] = np.pi / 2 * np.sign(G[phi_idx, 1])
 
     if l == 1:
         if m == -1:   # py
-            ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.sin(phi)
+            return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.sin(phi)
         elif m == 0:  # pz
-            ylm = 0.5 * np.sqrt(3 / np.pi) * cost
+            return 0.5 * np.sqrt(3 / np.pi) * cos_theta
         elif m == 1:  # px
-            ylm = 0.5 * np.sqrt(3 / np.pi) * sint * np.cos(phi)
-        else:
-            log.error(f'No definition found for Ylm({l}, {m})')
+            return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.cos(phi)
     elif l == 2:
         if m == -2:    # dxy
-            ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.sin(2 * phi)
+            return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.sin(2 * phi)
         elif m == -1:  # dyz
-            ylm = np.sqrt(15 / 4 / np.pi) * cost * sint * np.sin(phi)
+            return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.sin(phi)
         elif m == 0:   # dz2
-            ylm = 0.25 * np.sqrt(5 / np.pi) * (3 * cost**2 - 1)
+            return 0.25 * np.sqrt(5 / np.pi) * (3 * cos_theta**2 - 1)
         elif m == 1:   # dxz
-            ylm = np.sqrt(15 / 4 / np.pi) * cost * sint * np.cos(phi)
+            return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.cos(phi)
         elif m == 2:   # dx2-y2
-            ylm = np.sqrt(15 / 16 / np.pi) * sint**2 * np.cos(2 * phi)
-        else:
-            log.error(f'No definition found for Ylm({l}, {m})')
+            return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.cos(2 * phi)
     elif l == 3:
         if m == -3:
-            ylm = 0.25 * np.sqrt(35 / 2 / np.pi) * sint**3 * np.sin(3 * phi)
+            return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.sin(3 * phi)
         elif m == -2:
-            ylm = 0.25 * np.sqrt(105 / np.pi) * sint**2 * cost * np.sin(2 * phi)
+            return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.sin(2 * phi)
         elif m == -1:
-            ylm = 0.25 * np.sqrt(21 / 2 / np.pi) * sint * (5 * cost**2 - 1) * np.sin(phi)
+            return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.sin(phi)
         elif m == 0:
-            ylm = 0.25 * np.sqrt(7 / np.pi) * (5 * cost**3 - 3 * cost)
+            return 0.25 * np.sqrt(7 / np.pi) * (5 * cos_theta**3 - 3 * cos_theta)
         elif m == 1:
-            ylm = 0.25 * np.sqrt(21 / 2 / np.pi) * sint * (5 * cost**2 - 1) * np.cos(phi)
+            return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.cos(phi)
         elif m == 2:
-            ylm = 0.25 * np.sqrt(105 / np.pi) * sint**2 * cost * np.cos(2 * phi)
+            return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.cos(2 * phi)
         elif m == 3:
-            ylm = 0.25 * np.sqrt(35 / 2 / np.pi) * sint**3 * np.cos(3 * phi)
-        else:
-            log.error(f'No definition found for Ylm({l}, {m})')
-    else:
-        log.error(f'No definition found for Ylm({l}, {m})')
-    return ylm
+            return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
+
+    log.error(f'No definition found for Ylm({l}, {m})')
+    return
 
 
 def handle_spin_gracefully(func):
