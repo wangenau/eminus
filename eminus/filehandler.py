@@ -378,37 +378,36 @@ def read_gth(atom, charge=None, psp_path=None):
     cloc = np.zeros(4)
     rp = np.zeros(4)
     Nproj_l = np.zeros(4, dtype=int)
-    h = np.zeros([4, 3, 3])
+    h = np.zeros((4, 3, 3))
     try:
         with open(f_psp, 'r') as fh:
+            atom = fh.readline()
             # Skip the first line, since we don't need the atom symbol here. If needed, use
-            # psp['atom'] = fh.readline().split()[0]  # Atom symbol
-            fh.readline()
+            # psp['atom'] = atom.split()[0]  # Atom symbol
             N_all = fh.readline().split()
-            N_s, N_p, N_d, N_f = int(N_all[0]), int(N_all[1]), int(N_all[2]), int(N_all[3])
-            psp['Zion'] = N_s + N_p + N_d + N_f  # Ionic charge
+            psp['Zion'] = sum([int(N) for N in N_all])  # Ionic charge
+            loc = fh.readline().split()
+            psp['rloc'] = float(loc[0])  # Range of local Gaussian charge distribution
             # Skip the number of local coefficients, since we don't need it. If needed, use
-            # rloc, n_c_local = fh.readline().split()
-            # psp['n_c_local'] = int(n_c_local)  # Number of local coefficients
-            rloc = fh.readline().split()[0]
-            psp['rloc'] = float(rloc)  # Range of local Gaussian charge distribution
-            for i, val in enumerate(fh.readline().split()):
+            # psp['n_c_local'] = int(loc[1])  # Number of local coefficients
+            for i, val in enumerate(loc[2:]):
                 cloc[i] = float(val)
             psp['cloc'] = cloc  # Coefficients for the local part
             lmax = int(fh.readline().split()[0])
             psp['lmax'] = lmax  # Maximal angular momentum in the non-local part
-            for iiter in range(lmax):
-                rp[iiter], Nproj_l[iiter] = [float(i) for i in fh.readline().split()]
-                for jiter in range(Nproj_l[iiter]):
-                    tmp = fh.readline().split()
-                    for iread, kiter in enumerate(range(jiter, Nproj_l[iiter])):
-                        h[iiter, jiter, kiter] = float(tmp[iread])
+
+            for i in range(lmax):
+                proj = fh.readline().split()
+                rp[i], Nproj_l[i] = float(proj[0]), int(proj[1])
+                for k, val in enumerate(proj[2:]):
+                    h[i, 0, k] = float(val)
+                h[i, 1, 0] = h[i, 0, 1]
+                for j in range(1, Nproj_l[i]):
+                    proj = fh.readline().split()
+                    for k, val in enumerate(proj):
+                        h[i, j, j + k] = float(val)
             psp['rp'] = rp  # Projector radius for each angular momentum
             psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
-            for k in range(3):
-                for i in range(2):
-                    for j in range(i + 1, 2):
-                        h[k, j, i] = h[k, i, j]
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
         log.exception(f'There is no GTH pseudopotential for "{os.path.basename(f_psp)}"')
