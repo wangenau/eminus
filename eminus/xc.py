@@ -123,7 +123,6 @@ def mock_xc_spin(n, **kwargs):
     return zeros, np.array([zeros, zeros])
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater.jl
 def lda_slater_x(n, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-paired).
 
@@ -149,8 +148,6 @@ def lda_slater_x(n, alpha=2 / 3, **kwargs):
     return ex, np.array([vx])
 
 
-# Adapted from
-# https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_x_slater_spin.jl
 def lda_slater_x_spin(n, zeta, alpha=2 / 3):
     '''Slater exchange functional (spin-polarized).
 
@@ -183,7 +180,6 @@ def lda_slater_x_spin(n, zeta, alpha=2 / 3):
     return ex, np.array([vxup, vxdw])
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw.jl
 def lda_pw_c(n, **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-paired).
 
@@ -220,7 +216,6 @@ def lda_pw_c(n, **kwargs):
     return ec, np.array([vc])
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_pw_spin.jl
 def lda_pw_c_spin(n, zeta, **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
@@ -289,7 +284,6 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     return ec, np.array([vcup, vcdw])
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn.jl
 def lda_vwn_c(n, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
@@ -328,7 +322,6 @@ def lda_vwn_c(n, **kwargs):
     return ec, np.array([vc])
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/XC_funcs/XC_c_vwn_spin.jl
 def lda_vwn_c_spin(n, zeta, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 
