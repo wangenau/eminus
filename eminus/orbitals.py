@@ -108,7 +108,7 @@ def cube_writer(atoms, orbitals, type):
 
     n_spin = ''
     for spin in range(atoms.Nspin):
-        for i in range(atoms.Ns):
+        for i in range(atoms.Nstate):
             if atoms.f[spin, i] > 0:
                 if atoms.Nspin == 2:
                     n_spin = f'{"_up" if spin == 0 else "_dn"}'

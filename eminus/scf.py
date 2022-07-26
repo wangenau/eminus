@@ -113,7 +113,7 @@ class SCF:
         '''Run the self-consistent field (SCF) calculation.'''
         self.log.debug(f'--- System information ---\n{self.atoms}\n'
                        f'Spin handling: {"un" if self.atoms.Nspin == 1 else ""}polarized\n'
-                       f'Number of states: {self.atoms.Ns}\n'
+                       f'Number of states: {self.atoms.Nstate}\n'
                        f'Occupation per state:\n{self.atoms.f}\n'
                        f'\n--- Cell information ---\nSide lengths: {self.atoms.a} Bohr\n'
                        f'Sampling per axis: {self.atoms.s}\n'

@@ -122,7 +122,7 @@ def I(atoms, W):
         if W.ndim == 1:
             Wfft = np.zeros(n, dtype=complex)
         else:
-            Wfft = np.zeros((n, atoms.Ns), dtype=complex)
+            Wfft = np.zeros((n, atoms.Nstate), dtype=complex)
         Wfft[atoms.active] = W
 
     if W.ndim == 1:
@@ -131,9 +131,9 @@ def I(atoms, W):
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
-        Wfft = Wfft.reshape(np.append(atoms.s, atoms.Ns))
+        Wfft = Wfft.reshape(np.append(atoms.s, atoms.Nstate))
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = ifftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Ns))
+        Finv = ifftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Nstate))
     return Finv * n
 
 
@@ -158,8 +158,8 @@ def J(atoms, W, full=True):
         Wfft = W.reshape(atoms.s)
         F = fftn(Wfft, workers=THREADS).ravel()
     else:
-        Wfft = W.reshape(np.append(atoms.s, atoms.Ns))
-        F = fftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Ns))
+        Wfft = W.reshape(np.append(atoms.s, atoms.Nstate))
+        F = fftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Nstate))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space

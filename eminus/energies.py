@@ -153,7 +153,7 @@ def get_Enonloc(scf, Y):
         for spin in range(atoms.Nspin):
             betaNL_psi = (Y[spin].conj().T @ scf.betaNL).conj()
 
-            for ist in range(atoms.Ns):
+            for ist in range(atoms.Nstate):
                 enl = 0
                 for ia in range(atoms.Natoms):
                     psp = scf.GTH[atoms.atom[ia]]
@@ -272,7 +272,7 @@ def get_Esic(scf, Y, n_single=None):
 
     Esic = 0
     for spin in range(atoms.Nspin):
-        for i in range(atoms.Ns):
+        for i in range(atoms.Nstate):
             # Normalize single-particle densities to 1
             if atoms.f[spin, i] > 0:
                 ni = n_single[spin, :, i] / atoms.f[spin, i]

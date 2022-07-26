@@ -80,7 +80,7 @@ def get_n_single(atoms, Y):
         ndarray: Single-electron densities.
     '''
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.Nspin, len(atoms.r), atoms.Ns))
+    n = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate))
     for spin in range(atoms.Nspin):
         n[spin] = atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
     return n
@@ -230,7 +230,7 @@ def get_epsilon(scf, W, n=None):
     '''
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((atoms.Nspin, atoms.Ns))
+    epsilon = np.empty((atoms.Nspin, atoms.Nstate))
     for spin in range(atoms.Nspin):
         mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
         eps, _ = eigh(mu)
@@ -255,10 +255,10 @@ def guess_random(scf, complex=True, reproduce=True):
     if reproduce:
         seed(42)
     if complex:
-        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Ns) + \
-            1j * randn(atoms.Nspin, len(atoms.G2c), atoms.Ns)
+        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate) + \
+            1j * randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
     else:
-        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Ns)
+        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
     return orth(atoms, W)
 
 

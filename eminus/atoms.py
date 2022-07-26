@@ -65,7 +65,7 @@ class Atoms:
 
             Example: 2; [2, 2, 2, 2]; array([2, 2/3, 2/3, 2/3]),
             Default: None
-        Ns (int | None): Number of states.
+        Nstate (int | None): Number of states.
 
             None will get the number of states from f or assume occupations of 2 and divide the sum
             of Z by it.
@@ -81,7 +81,7 @@ class Atoms:
             Default: 'info'
     '''
     def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, Nspin=2, f=None,
-                 Ns=None, verbose='info'):
+                 Nstate=None, verbose='info'):
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
         self.a = a            # Cell/Vacuum size
@@ -91,7 +91,7 @@ class Atoms:
         self.center = center  # Center molecule in cell
         self.Nspin = Nspin    # Number of spin states
         self.f = f            # Occupation numbers
-        self.Ns = Ns          # Number of states
+        self.Nstate = Nstate  # Number of states
 
         # Parameters that will be built out of the inputs
         self.Natoms = None  # Number of atoms
@@ -222,7 +222,7 @@ class Atoms:
         return
 
     def _set_states(self, Nspin):
-        '''Validate the f and Ns input and calculate the states if necessary.
+        '''Validate the f and Nstate input and calculate the states if necessary.
 
         Args:
             Nspin (int | None): Number of spin states.
@@ -245,27 +245,27 @@ class Atoms:
         # If occupations and spin number is not equal, reset the occupations and number of states
         if isinstance(self.f, np.ndarray) and len(self.f) != self.Nspin:
             self.f = None
-            self.Ns = None
+            self.Nstate = None
 
         # If no states are provided use the length of the occupations
-        if isinstance(self.f, np.ndarray) and self.Ns is None:
-            self.Ns = len(self.f[0])
+        if isinstance(self.f, np.ndarray) and self.Nstate is None:
+            self.Nstate = len(self.f[0])
         # If one occupation and the number of states is given, use it for every state
-        if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Ns is not None:
-            self.f = self.f * np.ones((self.Nspin, self.Ns))
+        if isinstance(self.f, (int, np.integer, float, np.floating)) and self.Nstate is not None:
+            self.f = self.f * np.ones((self.Nspin, self.Nstate))
         # If no occupations and the number of states is given, assume 1 or 2
-        if self.f is None and self.Ns is not None:
-            self.f = 2 / self.Nspin * np.ones((self.Nspin, self.Ns))
+        if self.f is None and self.Nstate is not None:
+            self.f = 2 / self.Nspin * np.ones((self.Nspin, self.Nstate))
 
         # If the number of states is None and the occupations is a number or None, we are in trouble
-        if self.Ns is None:
+        if self.Nstate is None:
             # If no occupations is given, assume 1 or 2
             if self.f is None:
                 f = 2 / self.Nspin
             # Assume the number of states by dividing the total valence charge by an occupation of 2
             Ztot = np.sum(self.Z)
-            self.Ns = int(np.ceil(Ztot / 2))
-            self.f = f * np.ones((self.Nspin, self.Ns))
+            self.Nstate = int(np.ceil(Ztot / 2))
+            self.f = f * np.ones((self.Nspin, self.Nstate))
             # Subtract the leftovers from the last spin state
             self.f[-1, -1] -= np.sum(self.Z) % 2
         return

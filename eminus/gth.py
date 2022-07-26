@@ -117,7 +117,7 @@ def calc_Vnonloc(scf, W):
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         betaNL_psi = (W.conj().T @ scf.betaNL).conj()
 
-        for ist in range(atoms.Ns):
+        for ist in range(atoms.Nstate):
             for ia in range(atoms.Natoms):
                 psp = scf.GTH[atoms.atom[ia]]
                 for l in range(psp['lmax']):

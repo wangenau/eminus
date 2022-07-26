@@ -63,7 +63,7 @@ def get_FO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi orbitals.
     '''
-    FO = np.zeros((atoms.Nspin, len(atoms.r), atoms.Ns), dtype=complex)
+    FO = np.zeros((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
@@ -71,7 +71,7 @@ def get_FO(atoms, psi, fods):
         # Get the transformation matrix R
         R = get_R(atoms, psi[spin], fods[spin])
         for i in range(len(R)):
-            for j in range(atoms.Ns):
+            for j in range(atoms.Nstate):
                 FO[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
     return FO
 
@@ -89,11 +89,11 @@ def get_S(atoms, psirs):
         ndarray: Overlap matrix S.
     '''
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
-    S = np.empty((atoms.Ns, atoms.Ns), dtype=complex)
+    S = np.empty((atoms.Nstate, atoms.Nstate), dtype=complex)
 
     dV = atoms.Omega / np.prod(atoms.s)
-    for i in range(atoms.Ns):
-        for j in range(atoms.Ns):
+    for i in range(atoms.Nstate):
+        for j in range(atoms.Nstate):
             S[i, j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
@@ -112,7 +112,7 @@ def get_FLO(atoms, psi, fods):
         ndarray: Real-space Fermi-Löwdin orbitals.
     '''
     FO = get_FO(atoms, psi, fods)
-    FLO = np.empty((atoms.Nspin, len(atoms.r), atoms.Ns), dtype=complex)
+    FLO = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
     for spin in range(atoms.Nspin):
         # Calculate the overlap matrix for FOs
@@ -159,8 +159,8 @@ def wannier_center(atoms, psirs):
     '''
     dV = atoms.Omega / np.prod(atoms.s)
 
-    centers = np.empty((atoms.Ns, 3))
-    for i in range(atoms.Ns):
+    centers = np.empty((atoms.Nstate, 3))
+    for i in range(atoms.Nstate):
         for dim in range(3):
             centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
                                            psirs[:, i], axis=0))
@@ -180,7 +180,7 @@ def second_moment(atoms, psirs):
     dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2
 
-    moments = np.empty(atoms.Ns)
-    for i in range(atoms.Ns):
+    moments = np.empty(atoms.Nstate)
+    for i in range(atoms.Nstate):
         moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments

@@ -8,12 +8,12 @@ from numpy.testing import assert_allclose
 # Create an Atoms object to build mock wave functions
 atoms = Atoms('Ne', [0, 0, 0], ecut=1)
 W_tests = {
-    'full': randn(len(atoms.G2), atoms.Ns),
-    'active': randn(len(atoms.G2c), atoms.Ns),
+    'full': randn(len(atoms.G2), atoms.Nstate),
+    'active': randn(len(atoms.G2c), atoms.Nstate),
     'full_single': randn(len(atoms.G2)),
     'active_single': randn(len(atoms.G2c)),
-    'full_spin': randn(2, len(atoms.G2), atoms.Ns),
-    'active_spin': randn(2, len(atoms.G2c), atoms.Ns)
+    'full_spin': randn(atoms.Nspin, len(atoms.G2), atoms.Nstate),
+    'active_spin': randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
 }
 
 

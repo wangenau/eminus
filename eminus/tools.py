@@ -151,7 +151,7 @@ def check_ortho(object, func, eps=1e-9):
     except AttributeError:
         atoms = object
     # It makes no sense to calculate anything for only one function
-    if atoms.Ns == 1:
+    if atoms.Nstate == 1:
         log.warning('Need at least two functions to check their orthogonality.')
         return True
 
@@ -164,8 +164,8 @@ def check_ortho(object, func, eps=1e-9):
     # Check the condition for every combination
     # Orthogonality condition: \int func1^* func2 dr = 0
     for spin in range(atoms.Nspin):
-        for i in range(atoms.Ns):
-            for j in range(i + 1, atoms.Ns):
+        for i in range(atoms.Nstate):
+            for j in range(i + 1, atoms.Nstate):
                 res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
@@ -201,7 +201,7 @@ def check_norm(object, func, eps=1e-9):
     # Check the condition for every function
     # Normality condition: \int func^* func dr = 1
     for spin in range(atoms.Nspin):
-        for i in range(atoms.Ns):
+        for i in range(atoms.Nstate):
             res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
