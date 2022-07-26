@@ -26,7 +26,7 @@ def init_gth_loc(scf):
     G2 = atoms.G2
     omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
 
-    Vloc = np.zeros(len(G2))
+    Vloc = np.zeros_like(G2)
     for isp in species:
         psp = scf.GTH[isp]
         rloc = psp['rloc']
@@ -73,7 +73,7 @@ def init_gth_nonloc(scf):
     Natoms = atoms.Natoms
     Npoints = len(atoms.G2c)
 
-    prj2beta = np.empty([3, Natoms, 4, 7], dtype=int)
+    prj2beta = np.empty((3, Natoms, 4, 7), dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
@@ -89,7 +89,7 @@ def init_gth_nonloc(scf):
     Gm = np.sqrt(atoms.G2c)
 
     ibeta = 0
-    betaNL = np.empty([Npoints, NbetaNL], dtype=complex)
+    betaNL = np.empty((Npoints, NbetaNL), dtype=complex)
     for ia in range(Natoms):
         # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
@@ -120,7 +120,7 @@ def calc_Vnonloc(scf, W):
     Npoints = len(W)
     Nstates = atoms.Ns
 
-    Vpsi = np.zeros([Npoints, Nstates], dtype=complex)
+    Vpsi = np.zeros((Npoints, Nstates), dtype=complex)
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         Natoms = atoms.Natoms
         prj2beta = scf.prj2beta
