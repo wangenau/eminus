@@ -43,7 +43,7 @@ def init_gth_loc(scf):
             Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2 + \
                 np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
                 (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
-                c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
+                 c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
         # Special case for G=(0,0,0), same as in QE
         Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
             (2 * np.pi)**1.5 * rloc**3 * (c1 + 3 * c2 + 15 * c3 + 105 * c4)

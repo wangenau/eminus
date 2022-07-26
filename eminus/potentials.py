@@ -69,8 +69,9 @@ def ge(atoms):
 
     # Special case for G=(0,0,0)
     n = np.arange(1, 5)
-    Vps[0] = 4 * np.pi * Z * (1 + np.exp(-lamda * rc)) * (rc**2 / 2 + 1 / lamda**2 * (np.pi**2 / 6 +
-             np.sum((-1)**n * np.exp(-lamda * rc * n) / n**2)))
+    Vps[0] = 4 * np.pi * Z * (1 + np.exp(-lamda * rc)) * \
+        (rc**2 / 2 + 1 / lamda**2 * (np.pi**2 / 6 +
+         np.sum((-1)**n * np.exp(-lamda * rc * n) / n**2)))
 
     Sf = np.sum(atoms.Sf, axis=0)
     return atoms.J(Vps * Sf)

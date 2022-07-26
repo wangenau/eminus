@@ -4,13 +4,12 @@ max-doc-length  = 100
 docstring-convention = google
 import-order-style   = google
 
-ignore = E128, \              # Under-indentation
-         E741, E743, \        # Ambiguous variable names and function definitions
-         W504, \              # Line break after binary operator
-         D107, \              # Missing docstring in __init__
-         D300, \              # Use double quotes for docstrings
-         D417                 # A bug results in false positives
-                              # TODO: Remove if pydocstyle gets updated
+ignore = E741, E743, \  # Ambiguous variable names and function definitions
+         W504, \        # Line break after binary operator
+         D107, \        # Missing docstring in __init__
+         D300, \        # Use double quotes for docstrings
+         D417           # A bug results in false positives
+                        # TODO: Remove if pydocstyle ever gets updated
 
 # D100, D103: Ignore missing docstrings in public modules or functions
 # E266: Ignore too many leading "#" for the custom examples generation

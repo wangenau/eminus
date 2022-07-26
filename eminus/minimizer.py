@@ -145,8 +145,8 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
             # Calculate linmin each spin seperately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d[spin]) / np.sqrt(dotprod(g, g) *
-                               dotprod(d[spin], d[spin]))
+                linmin[spin] = dotprod(g, d[spin]) / \
+                    np.sqrt(dotprod(g, g) * dotprod(d[spin], d[spin]))
             d[spin] = -g
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -206,8 +206,8 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
             # Calculate linmin each spin seperately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d[spin]) / np.sqrt(dotprod(g, g) *
-                               dotprod(d[spin], d[spin]))
+                linmin[spin] = dotprod(g, d[spin]) / \
+                    np.sqrt(dotprod(g, g) * dotprod(d[spin], d[spin]))
             d[spin] = -atoms.K(g)
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -272,10 +272,10 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
             # Calculate linmin and cg for each spin seperately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d_old[spin]) / np.sqrt(dotprod(g, g) *
-                               dotprod(d_old[spin], d_old[spin]))
-                cg[spin] = dotprod(g, g_old[spin]) / np.sqrt(dotprod(g, g) *
-                           dotprod(g_old[spin], g_old[spin]))
+                linmin[spin] = dotprod(g, d_old[spin]) / \
+                    np.sqrt(dotprod(g, g) * dotprod(d_old[spin], d_old[spin]))
+                cg[spin] = dotprod(g, g_old[spin]) / \
+                    np.sqrt(dotprod(g, g) * dotprod(g_old[spin], g_old[spin]))
             if scf.cgform == 1:  # Fletcher-Reeves
                 beta[spin] = dotprod(g, g) / dotprod(g_old[spin], g_old[spin])
             elif scf.cgform == 2:  # Polak-Ribiere
@@ -350,10 +350,10 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
             # Calculate linmin and cg for each spin seperately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d_old[spin]) / np.sqrt(dotprod(g, g) *
-                               dotprod(d_old[spin], d_old[spin]))
-                cg[spin] = dotprod(g, atoms.K(g_old[spin])) / np.sqrt(dotprod(g, atoms.K(g)) *
-                           dotprod(g_old[spin], atoms.K(g_old[spin])))
+                linmin[spin] = dotprod(g, d_old[spin]) / \
+                    np.sqrt(dotprod(g, g) * dotprod(d_old[spin], d_old[spin]))
+                cg[spin] = dotprod(g, atoms.K(g_old[spin])) / \
+                    np.sqrt(dotprod(g, atoms.K(g)) * dotprod(g_old[spin], atoms.K(g_old[spin])))
             if scf.cgform == 1:  # Fletcher-Reeves
                 beta[spin] = dotprod(g, atoms.K(g)) / dotprod(g_old[spin], atoms.K(g_old[spin]))
             elif scf.cgform == 2:  # Polak-Ribiere

@@ -170,7 +170,7 @@ def get_Enonloc(scf, Y):
                                     jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                     hij = psp['h'][l, iprj, jprj]
                                     enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
-                                           betaNL_psi[ist, jbeta])
+                                                         betaNL_psi[ist, jbeta])
                 Enonloc += atoms.f[spin, ist] * enl
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Enonloc * atoms.Omega

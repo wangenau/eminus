@@ -164,7 +164,7 @@ def wannier_center(atoms, psirs):
     for i in range(atoms.Ns):
         for dim in range(3):
             centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
-                              axis=0))
+                                           axis=0))
     return centers
 
 

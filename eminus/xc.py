@@ -277,10 +277,10 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
     vcup = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 + \
         (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
-        (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
+         (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
     vcdw = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
         (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
-        (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
+         (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
     return ec, np.array([vcup, vcdw])
 
 
@@ -318,7 +318,7 @@ def lda_vwn_c(n, **kwargs):
     tx = 2 * rs12 + b
     tt = tx * tx + q * q
     vc = ec - rs12 * a / 6 * (2 / rs12 - tx / fx - 4 * b / tt -
-         f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
+                              f2 * (2 / (rs12 - x0) - tx / fx - 4 * (2 * x0 + b) / tt))
     return ec, np.array([vc])
 
 
@@ -376,14 +376,15 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
         fx = rs + b[i] * sqrtrs + c[i]
 
         fit = a[i] * (np.log(rs / fx) + tbQ[i] * atg -
-              bx0fx0[i] * (np.log(xx0 * xx0 / fx) + (tbQ[i] + 4 * x0[i] / Q[i]) * atg))
+                      bx0fx0[i] * (np.log(xx0 * xx0 / fx) + (tbQ[i] + 4 * x0[i] / Q[i]) * atg))
 
         txb = 2 * sqrtrs + b[i]
         txbfx = txb / fx
         itxbQ = 1 / (txb * txb + Q[i] * Q[i])
 
-        dfit = fit - a[i] / 3 + a[i] * sqrtrs / 6 * (txbfx + 4 * b[i] * itxbQ +
-               bx0fx0[i] * (2 / xx0 - txbfx - 4 * (b[i] + 2 * x0[i]) * itxbQ))
+        dfit = fit - a[i] / 3 + a[i] * sqrtrs / 6 * \
+            (txbfx + 4 * b[i] * itxbQ + bx0fx0[i] *
+             (2 / xx0 - txbfx - 4 * (b[i] + 2 * x0[i]) * itxbQ))
         return fit, dfit
 
     ecP, vcP = pade_fit(0)  # Paramagnetic fit
