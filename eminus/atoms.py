@@ -331,14 +331,10 @@ class Atoms:
 
     def __repr__(self):
         '''Print the parameters stored in the Atoms object.'''
-        atom = self.atom
-        Natoms = self.Natoms
-        X = self.X
-        Z = self.Z
-
         out = 'Atom\tCharge\tPosition'
-        for i in range(Natoms):
-            out = f'{out}\n{atom[i]}\t{Z[i]}\t{X[i, 0]:10.5f}  {X[i, 1]:10.5f}  {X[i, 2]:10.5f}'
+        for i in range(self.Natoms):
+            out = f'{out}\n{self.atom[i]}\t{self.Z[i]}\t' \
+                  f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
         return out
 
     @property

@@ -158,13 +158,12 @@ def wannier_center(atoms, psirs):
         ndarray: Wannier centers per orbital.
     '''
     dV = atoms.Omega / np.prod(atoms.s)
-    r = atoms.r
 
     centers = np.empty((atoms.Ns, 3))
     for i in range(atoms.Ns):
         for dim in range(3):
-            centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * r[:, dim] * psirs[:, i],
-                                           axis=0))
+            centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
+                                           psirs[:, i], axis=0))
     return centers
 
 

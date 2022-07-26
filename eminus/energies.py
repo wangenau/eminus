@@ -150,24 +150,19 @@ def get_Enonloc(scf, Y):
     atoms = scf.atoms
     Enonloc = 0
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        Natoms = atoms.Natoms
-        Nstates = atoms.Ns
-        prj2beta = scf.prj2beta
-        betaNL = scf.betaNL
-
         for spin in range(atoms.Nspin):
-            betaNL_psi = (Y[spin].conj().T @ betaNL).conj()
+            betaNL_psi = (Y[spin].conj().T @ scf.betaNL).conj()
 
-            for ist in range(Nstates):
+            for ist in range(atoms.Ns):
                 enl = 0
-                for ia in range(Natoms):
+                for ia in range(atoms.Natoms):
                     psp = scf.GTH[atoms.atom[ia]]
                     for l in range(psp['lmax']):
                         for m in range(-l, l + 1):
                             for iprj in range(psp['Nproj_l'][l]):
-                                ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                                ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                                 for jprj in range(psp['Nproj_l'][l]):
-                                    jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                    jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                     hij = psp['h'][l, iprj, jprj]
                                     enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
                                                          betaNL_psi[ist, jbeta])
@@ -195,18 +190,12 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
-    Natoms = atoms.Natoms
-    X = atoms.X
-    Z = atoms.Z
-    Omega = atoms.Omega
-    R = atoms.R
-
-    t1, t2, t3 = R
+    t1, t2, t3 = atoms.R
     t1m = np.sqrt(t1 @ t1)
     t2m = np.sqrt(t2 @ t2)
     t3m = np.sqrt(t3 @ t3)
 
-    g1, g2, g3 = 2 * np.pi * inv(R.conj().T)
+    g1, g2, g3 = 2 * np.pi * inv(atoms.R.conj().T)
     g1m = np.sqrt(g1 @ g1)
     g2m = np.sqrt(g2 @ g2)
     g3m = np.sqrt(g3 @ g3)
@@ -214,25 +203,23 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     gexp = -np.log(gamma)
     nu = 0.5 * np.sqrt(gcut**2 / gexp)
 
-    x = np.sum(Z**2)
-    totalcharge = np.sum(Z)
+    x = np.sum(atoms.Z**2)
+    totalcharge = np.sum(atoms.Z)
 
     # Start by calculating the self-energy
     Eewald = -nu * x / np.sqrt(np.pi)
     # Add the electroneutrality term
-    Eewald += -np.pi * totalcharge**2 / (2 * Omega * nu**2)
+    Eewald += -np.pi * totalcharge**2 / (2 * atoms.Omega * nu**2)
 
     tmax = np.sqrt(0.5 * gexp) / nu
     mmm1 = np.rint(tmax / t1m + 1.5)
     mmm2 = np.rint(tmax / t2m + 1.5)
     mmm3 = np.rint(tmax / t3m + 1.5)
 
-    dX = np.empty(3)
-    T = np.empty(3)
-    for ia in range(Natoms):
-        for ja in range(Natoms):
-            dX = X[ia] - X[ja]
-            ZiZj = Z[ia] * Z[ja]
+    for ia in range(atoms.Natoms):
+        for ja in range(atoms.Natoms):
+            dX = atoms.X[ia] - atoms.X[ja]
+            ZiZj = atoms.Z[ia] * atoms.Z[ja]
             for i in np.arange(-mmm1, mmm1 + 1):
                 for j in np.arange(-mmm2, mmm2 + 1):
                     for k in np.arange(-mmm3, mmm3 + 1):
@@ -246,11 +233,10 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     mmm2 = np.rint(gcut / g2m + 1.5)
     mmm3 = np.rint(gcut / g3m + 1.5)
 
-    G = np.empty(3)
-    for ia in range(Natoms):
-        for ja in range(Natoms):
-            dX = X[ia] - X[ja]
-            ZiZj = Z[ia] * Z[ja]
+    for ia in range(atoms.Natoms):
+        for ja in range(atoms.Natoms):
+            dX = atoms.X[ia] - atoms.X[ja]
+            ZiZj = atoms.Z[ia] * atoms.Z[ja]
             for i in np.arange(-mmm1, mmm1 + 1):
                 for j in np.arange(-mmm2, mmm2 + 1):
                     for k in np.arange(-mmm3, mmm3 + 1):
@@ -259,7 +245,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
                             GX = np.sum(G * dX)
                             G2 = np.sum(G**2)
                             # Add the reciprocal space contribution
-                            x = 2 * np.pi / Omega * np.exp(-0.25 * G2 / nu**2) / G2
+                            x = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
                             Eewald += x * ZiZj * np.cos(GX)
     return Eewald
 

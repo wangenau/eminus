@@ -69,15 +69,12 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
         atoms = object.atoms
     except AttributeError:
         atoms = object
-    atom = atoms.atom
-    Natoms = atoms.Natoms
-    X = atoms.X
 
     if not filename.endswith('.xyz'):
         filename = f'{filename}.xyz'
 
     # Convert the coordinates from atomic units to Angstrom
-    X = bohr2ang(X)
+    X = bohr2ang(atoms.X)
     if fods is not None:
         fods = [bohr2ang(i) for i in fods]
 
@@ -91,14 +88,14 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
         # The first line contains the number of atoms.
         # If we add FOD coordinates, add them to the count.
         if fods is None:
-            fp.write(f'{Natoms}\n')
+            fp.write(f'{atoms.Natoms}\n')
         else:
-            fp.write(f'{Natoms + len(fods[0]) + len(fods[1])}\n')
+            fp.write(f'{atoms.Natoms + len(fods[0]) + len(fods[1])}\n')
         # The second line can contains a comment.
         # Print information about the file and program, and the file creation time.
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
-        for ia in range(Natoms):
-            fp.write(f'{atom[ia]}  {X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
+        for ia in range(atoms.Natoms):
+            fp.write(f'{atoms.atom[ia]}  {X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
         # Add FOD coordinates if desired. The atom symbol will default to X (no atom type).
         if fods is not None:
             for ie in fods[0]:
@@ -172,18 +169,11 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
     '''
+    # Atomic units are assumed, so there is no need for conversion.
     try:
         atoms = object.atoms
     except AttributeError:
         atoms = object
-    # Atomic units are assumed, so there is no need for conversion.
-    atom = atoms.atom
-    Natoms = atoms.Natoms
-    a = atoms.a
-    r = atoms.r
-    s = atoms.s
-    X = atoms.X
-    Z = atoms.Z
 
     if not filename.endswith('.cube'):
         filename = f'{filename}.cube'
@@ -197,10 +187,10 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
     # Our field data has been created in a different order than needed for cube files
     # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
     idx = []
-    for Nx in range(s[0]):
-        for Ny in range(s[1]):
-            for Nz in range(s[2]):
-                idx.append(Nx + Ny * s[0] + Nz * s[0] * s[1])
+    for Nx in range(atoms.s[0]):
+        for Ny in range(atoms.s[1]):
+            for Nz in range(atoms.s[2]):
+                idx.append(Nx + Ny * atoms.s[0] + Nz * atoms.s[0] * atoms.s[1])
     idx = np.asarray(idx)
 
     # Make sure we have real valued data in the correct order
@@ -213,19 +203,19 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
         if fods is None:
-            fp.write(f'{Natoms}  ')
+            fp.write(f'{atoms.Natoms}  ')
         else:
-            fp.write(f'{Natoms + len(fods[0]) + len(fods[1])}  ')
-        fp.write(f'{min(r[:, 0]):.5f}  {min(r[:, 1]):.5f}  {min(r[:, 2]):.5f}\n')
+            fp.write(f'{atoms.Natoms + len(fods[0]) + len(fods[1])}  ')
+        fp.write(f'{min(atoms.r[:, 0]):.5f}  {min(atoms.r[:, 1]):.5f}  {min(atoms.r[:, 2]):.5f}\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cuboidal box, so each vector only has one non-zero component
-        fp.write(f'{s[0]}  {a[0] / s[0]:.5f}  0.0  0.0\n'
-                 f'{s[1]}  0.0  {a[1] / s[1]:.5f}  0.0\n'
-                 f'{s[2]}  0.0  0.0  {a[2] / s[2]:.5f}\n')
+        fp.write(f'{atoms.s[0]}  {atoms.a[0] / atoms.s[0]:.5f}  0.0  0.0\n'
+                 f'{atoms.s[1]}  0.0  {atoms.a[1] / atoms.s[1]:.5f}  0.0\n'
+                 f'{atoms.s[2]}  0.0  0.0  {atoms.a[2] / atoms.s[2]:.5f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
-        for ia in range(Natoms):
-            fp.write(f'{symbol2number[atom[ia]]}  {Z[ia]:.5f}  '
-                     f'{X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
+        for ia in range(atoms.Natoms):
+            fp.write(f'{symbol2number[atoms.atom[ia]]}  {atoms.Z[ia]:.5f}  '
+                     f'{atoms.X[ia, 0]:.5f}  {atoms.X[ia, 1]:.5f}  {atoms.X[ia, 2]:.5f}\n')
         if fods is not None:
             for ie in fods[0]:
                 fp.write(f'{symbol2number[elec_symbols[0]]}  0.00000  '
@@ -235,9 +225,9 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
                          f'{ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
-        for i in range(s[0] * s[1]):
+        for i in range(atoms.s[0] * atoms.s[1]):
             # Print every round of values, so we can add empty lines between them
-            data_str = '%+1.5e  ' * s[2] % tuple(field[i * s[2]:(i + 1) * s[2]])
+            data_str = '%+1.5e  ' * atoms.s[2] % tuple(field[i * atoms.s[2]:(i + 1) * atoms.s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
             fp.write(f'{textwrap.fill(data_str, width=90)}\n\n')

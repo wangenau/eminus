@@ -21,12 +21,10 @@ def init_gth_loc(scf):
         ndarray: Local GTH potential contribution.
     '''
     atoms = scf.atoms
-    atom = atoms.atom
-    species = set(atom)
-    G2 = atoms.G2
+    species = set(atoms.atom)
     omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
 
-    Vloc = np.zeros_like(G2)
+    Vloc = np.zeros_like(atoms.G2)
     for isp in species:
         psp = scf.GTH[isp]
         rloc = psp['rloc']
@@ -36,11 +34,11 @@ def init_gth_loc(scf):
         c3 = psp['cloc'][2]
         c4 = psp['cloc'][3]
 
-        rlocG2 = G2 * rloc**2
+        rlocG2 = atoms.G2 * rloc**2
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide='ignore', invalid='ignore'):
-            Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2 + \
+            Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / atoms.G2 + \
                 np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
                 (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
                  c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
@@ -50,8 +48,8 @@ def init_gth_loc(scf):
 
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
-        for ia in range(len(atom)):
-            if atom[ia] == isp:
+        for ia in range(len(atoms.atom)):
+            if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
         Vloc += np.real(atoms.J(Vsp * Sf))
     return Vloc
@@ -70,14 +68,11 @@ def init_gth_nonloc(scf):
         tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
     '''
     atoms = scf.atoms
-    Natoms = atoms.Natoms
-    Npoints = len(atoms.G2c)
-
-    prj2beta = np.empty((3, Natoms, 4, 7), dtype=int)
+    prj2beta = np.empty((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
-    for ia in range(Natoms):
+    for ia in range(atoms.Natoms):
         psp = scf.GTH[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
@@ -89,8 +84,8 @@ def init_gth_nonloc(scf):
     Gm = np.sqrt(atoms.G2c)
 
     ibeta = 0
-    betaNL = np.empty((Npoints, NbetaNL), dtype=complex)
-    for ia in range(Natoms):
+    betaNL = np.empty((len(atoms.G2c), NbetaNL), dtype=complex)
+    for ia in range(atoms.Natoms):
         # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
         psp = scf.GTH[atoms.atom[ia]]
@@ -117,28 +112,22 @@ def calc_Vnonloc(scf, W):
         ndarray: Non-local GTH potential contribution.
     '''
     atoms = scf.atoms
-    Npoints = len(W)
-    Nstates = atoms.Ns
+    Vpsi = np.zeros_like(W, dtype=complex)
 
-    Vpsi = np.zeros((Npoints, Nstates), dtype=complex)
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        Natoms = atoms.Natoms
-        prj2beta = scf.prj2beta
-        betaNL = scf.betaNL
+        betaNL_psi = (W.conj().T @ scf.betaNL).conj()
 
-        betaNL_psi = (W.conj().T @ betaNL).conj()
-
-        for ist in range(Nstates):
-            for ia in range(Natoms):
+        for ist in range(atoms.Ns):
+            for ia in range(atoms.Natoms):
                 psp = scf.GTH[atoms.atom[ia]]
                 for l in range(psp['lmax']):
                     for m in range(-l, l + 1):
                         for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                            ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                             for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
-                                Vpsi[:, ist] += hij * betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
+                                Vpsi[:, ist] += hij * scf.betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 
