@@ -89,7 +89,24 @@ symbol2number = {
     'Bi': 83,
     'Po': 84,
     'At': 85,
-    'Rn': 86
+    'Rn': 86,
+    # 'Fr': 87,
+    # 'Ra': 88,
+    'Ac': 89,
+    'Th': 90,
+    'Pa': 91,
+    'U': 92,
+    'Np': 93,
+    'Pu': 94,
+    'Am': 95,
+    'Cm': 96,
+    'Bk': 97,
+    'Cf': 98,
+    'Es': 99,
+    'Fm': 100,
+    'Md': 101,
+    'No': 102,
+    'Lr': 103
 }
 
 # Map atom numbers and atom symbols
