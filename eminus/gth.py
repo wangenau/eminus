@@ -41,12 +41,12 @@ def init_gth_loc(scf):
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide='ignore', invalid='ignore'):
             Vsp = -4 * np.pi * Zion / omega * np.exp(-0.5 * rlocG2) / G2 + \
-                  np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
-                  (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
-                  c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
+                np.sqrt((2 * np.pi)**3) * rloc**3 / omega * np.exp(-0.5 * rlocG2) * \
+                (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG2**2) +
+                c4 * (105 - 105 * rlocG2 + 21 * rlocG2**2 - rlocG2**3))
         # Special case for G=(0,0,0), same as in QE
         Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
-                 (2 * np.pi)**1.5 * rloc**3 * (c1 + 3 * c2 + 15 * c3 + 105 * c4)
+            (2 * np.pi)**1.5 * rloc**3 * (c1 + 3 * c2 + 15 * c3 + 105 * c4)
 
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
@@ -98,7 +98,7 @@ def init_gth_nonloc(scf):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
                     betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
-                                       eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
+                        eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
                     ibeta += 1
     return NbetaNL, prj2beta, betaNL
 

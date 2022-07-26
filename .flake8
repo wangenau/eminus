@@ -4,7 +4,7 @@ max-doc-length  = 100
 docstring-convention = google
 import-order-style   = google
 
-ignore = E126, E127, E128, \  # Over- and under-indentation
+ignore = E128, \              # Under-indentation
          E741, E743, \        # Ambiguous variable names and function definitions
          W504, \              # Line break after binary operator
          D107, \              # Missing docstring in __init__

@@ -26,7 +26,7 @@ class Energy:
     def Etot(self):
         '''Total energy is the sum of all energy contributions.'''
         return self.Ekin + self.Ecoul + self.Exc + self.Eloc + self.Enonloc + self.Eewald + \
-               self.Esic
+            self.Esic
 
     def __repr__(self):
         '''Print the energies stored in the Energy object.'''

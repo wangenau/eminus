@@ -264,7 +264,7 @@ def lda_pw_c_spin(n, zeta, **kwargs):
 
         fit = -2 * a[i] * (1 + a1[i] * rs) * olog
         dfit = -2 * a[i] * (1 + 2 / 3 * a1[i] * rs) * olog - \
-               2 / 3 * a[i] * (1 + a1[i] * rs) * dom / (om * (om + 1))
+            2 / 3 * a[i] * (1 + a1[i] * rs) * dom / (om * (om + 1))
         return fit, dfit
 
     ecU, vcU = pw_fit(0)  # Unpolarized
@@ -276,11 +276,11 @@ def lda_pw_c_spin(n, zeta, **kwargs):
 
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
     vcup = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 + \
-           (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
-           (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
+        (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+        (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
     vcdw = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
-           (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
-           (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
+        (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+        (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
     return ec, np.array([vcup, vcdw])
 
 

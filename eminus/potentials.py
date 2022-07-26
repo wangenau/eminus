@@ -62,7 +62,7 @@ def ge(atoms):
 
     with np.errstate(divide='ignore', invalid='ignore'):
         Vps = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
-              (1 - np.exp(-2 * np.pi * Gm / lamda))
+            (1 - np.exp(-2 * np.pi * Gm / lamda))
         for n in range(5):
             Vps = Vps + (-1)**n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm)**2)
         Vps = Vps * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2

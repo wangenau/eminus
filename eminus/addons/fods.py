@@ -150,7 +150,7 @@ def remove_core_fods(object, fods):
     if atoms.Nspin == 1 and len(fods[0]) == np.sum(atoms.f[0]):
         return fods
     if atoms.Nspin == 2 and len(fods[0]) == np.sum(atoms.f[0]) \
-                        and len(fods[1]) == np.sum(atoms.f[1]):
+            and len(fods[1]) == np.sum(atoms.f[1]):
         return fods
 
     for spin in range(atoms.Nspin):

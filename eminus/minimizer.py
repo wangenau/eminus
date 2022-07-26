@@ -280,10 +280,10 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
                 beta[spin] = dotprod(g, g) / dotprod(g_old[spin], g_old[spin])
             elif scf.cgform == 2:  # Polak-Ribiere
                 beta[spin] = dotprod(g - g_old[spin], g) / \
-                             dotprod(g_old[spin], g_old[spin])
+                    dotprod(g_old[spin], g_old[spin])
             elif scf.cgform == 3:  # Hestenes-Stiefel
                 beta[spin] = dotprod(g - g_old[spin], g) / \
-                             dotprod(g - g_old[spin], d_old[spin])
+                    dotprod(g - g_old[spin], d_old[spin])
             d[spin] = -g + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -358,10 +358,10 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
                 beta[spin] = dotprod(g, atoms.K(g)) / dotprod(g_old[spin], atoms.K(g_old[spin]))
             elif scf.cgform == 2:  # Polak-Ribiere
                 beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
-                             dotprod(g_old[spin], atoms.K(g_old[spin]))
+                    dotprod(g_old[spin], atoms.K(g_old[spin]))
             elif scf.cgform == 3:  # Hestenes-Stiefel
                 beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
-                             dotprod(g - g_old[spin], d_old[spin])
+                    dotprod(g - g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
