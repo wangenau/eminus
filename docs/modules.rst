@@ -32,4 +32,4 @@ Modules
    eminus.addons.fods
    eminus.addons.libxc
    eminus.addons.viewer
-   eminus.pade_gth
+   eminus.pade

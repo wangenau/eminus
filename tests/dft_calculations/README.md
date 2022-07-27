@@ -12,7 +12,7 @@ The reference data can be created with the Julia package [PWDFT.jl](https://gith
 using PWDFT
 
 systems = ["H", "H2", "He", "Li", "LiH", "CH4", "Ne"]
-psp_path = "../../eminus/pade_gth/"
+psp_path = "../../eminus/pade/"
 psps = [
     [joinpath(psp_path, "H-q1.gth")],
     [joinpath(psp_path, "H-q1.gth")],

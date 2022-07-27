@@ -47,7 +47,7 @@ setup(
     ],
     keywords=['NextDFT'],
     package_data={
-        'eminus.pade_gth': ['*.gth']
+        'eminus.pade': ['*-q*']
     },
     zip_safe=False,
     extras_require={
