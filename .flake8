@@ -12,9 +12,8 @@ ignore = E741, E743, \  # Ambiguous variable names and function definitions
                         # TODO: Remove if pydocstyle ever gets updated
 
 # D100, D103: Ignore missing docstrings in public modules or functions
-# E266: Ignore too many leading "#" for the custom examples generation
 # E501, W505: Ignore line length warnings
-per-file-ignores = examples/*:D100,E266,E501,W505,
+per-file-ignores = examples/*:D100,E501,W505,
                    tests/*:D103
 
 # Exclude the generated docs folder
