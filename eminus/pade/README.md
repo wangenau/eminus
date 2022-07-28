@@ -8,6 +8,6 @@ Files taken from: https://github.com/cp2k/cp2k-data
 
 The files can be updated with (only for maintaining purposes)
 
-```bash
+```terminal
 python __init__.py
 ```

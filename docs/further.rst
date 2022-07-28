@@ -16,7 +16,7 @@ Development
 
 To apply changes to the code without reinstalling the code, install eminus with
 
-.. code-block:: bash
+.. code-block:: console
 
    git clone https://gitlab.com/nextdft/eminus.git
    cd eminus
@@ -24,7 +24,7 @@ To apply changes to the code without reinstalling the code, install eminus with
 
 To install all packages needed for development as listed below, use the following option
 
-.. code-block:: bash
+.. code-block:: console
 
    pip install -e .[dev]
 
@@ -35,7 +35,7 @@ Testing
 | They can be executed using the Python interpreter or with `pytest <https://docs.pytest.org>`_.
 | pytest can be installed and executed with
 
-.. code-block:: bash
+.. code-block:: console
 
    pip install pytest
    pytest
@@ -46,7 +46,7 @@ Linting
 | This code is lint-checked with `flake8 <https://flake8.pycqa.org>`_, using a custom `configuration file <https://gitlab.com/nextdft/eminus/-/tree/main/.flake8>`_.
 | To install flake8 and do a lint check, use
 
-.. code-block:: bash
+.. code-block:: console
 
    pip install flake8 flake8-docstrings flake8-import-order
    flake8
@@ -56,7 +56,7 @@ Documentation
 | The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org>`_, using a custom theme called `Furo <https://pradyunsg.me/furo>`_.
 | Both packages can be installed and the webpage can be built with
 
-.. code-block:: bash
+.. code-block:: console
 
    pip install sphinx furo
    sphinx-build -b html ./docs ./public

@@ -6,7 +6,7 @@ The geometries used are experimental data taken from [CCCBDB](https://cccbdb.nis
 
 The reference data can be created with the Julia package [PWDFT.jl](https://github.com/f-fathurrahman/PWDFT.jl) using
 
-```bash
+```terminal
 # using Pkg
 # Pkg.add(PackageSpec(url="https://github.com/f-fathurrahman/PWDFT.jl"))
 using PWDFT

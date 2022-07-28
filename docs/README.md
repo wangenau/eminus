@@ -4,12 +4,12 @@
 
 Both packages can be installed with
 
-```bash
+```terminal
 pip install sphinx furo
 ```
 
 The document can be built to the public folder using
 
-```bash
+```terminal
 sphinx-build -b html ./docs ./public
 ```

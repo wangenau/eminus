@@ -12,12 +12,12 @@ The tests can be run with your Python interpreter or using [pytest](https://docs
 
 pytest can be installed with
 
-```bash
+```terminal
 pip install pytest
 ```
 
 Running all tests can be simply performed with
 
-```bash
+```terminal
 pytest
 ```

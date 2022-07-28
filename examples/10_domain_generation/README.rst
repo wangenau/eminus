@@ -5,6 +5,6 @@ Domain generation
 | The option to display and work with them will be shown.
 | It can be executed as a Jupyter notebook with the following command
 
-.. code-block:: bash
+.. code-block:: console
 
    jupyter notebook 10_domain_generation.ipynb

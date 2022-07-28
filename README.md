@@ -19,7 +19,7 @@ To learn more about the implementation, take a look inside the [documentation](h
 
 The package and all necessary dependencies can be installed using pip
 
-```bash
+```terminal
 pip install eminus
 ```
 
