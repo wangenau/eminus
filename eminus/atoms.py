@@ -163,8 +163,8 @@ class Atoms:
         if self.Z is None:
             Z = []
             for ia in range(self.Natoms):
-                GTH_dict = read_gth(self.atom[ia])
-                Z.append(GTH_dict['Zion'])
+                gth_dict = read_gth(self.atom[ia])
+                Z.append(gth_dict['Zion'])
             self.Z = np.asarray(Z)
         return
 

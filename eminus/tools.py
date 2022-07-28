@@ -115,7 +115,7 @@ def get_dipole(scf, n=None):
     return mu
 
 
-def get_IP(scf):
+def get_ip(scf):
     '''Calculate the ionization potential by calculating the negative HOMO energy.
 
     Reference: Physica 1, 104.

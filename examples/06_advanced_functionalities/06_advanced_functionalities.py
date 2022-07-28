@@ -4,7 +4,7 @@ import eminus
 from eminus import Atoms, SCF, write_cube
 from eminus.dft import get_psi
 from eminus.localizer import wannier_cost
-from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_IP
+from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_ip
 from eminus.units import ebohr2d, ha2kcalmol
 
 # # Start by with a simple DFT calculation for neon
@@ -20,7 +20,7 @@ print(f'\nDipole moments = {dip} a0')
 print(f'Total dipole moment = {ebohr2d(np.linalg.norm(dip))} D')
 
 # # Calculate ionization potentials
-ip = get_IP(scf)
+ip = get_ip(scf)
 print(f'\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n')
 
 # # Transform the orbitals to real-space to get the Kohn-Sham orbitals
