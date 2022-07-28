@@ -70,7 +70,8 @@ setup(
     },
     python_requires='>=3.6',
     project_urls={
-        'Source': 'https://gitlab.com/nextdft/eminus',
-        'Bug Tracker': 'https://gitlab.com/nextdft/eminus/-/issues'
+        'Bug Tracker': 'https://gitlab.com/nextdft/eminus/-/issues',
+        'Changelog': 'https://nextdft.gitlab.io/eminus/changelog.html',
+        'Source': 'https://gitlab.com/nextdft/eminus'
     }
 )
