@@ -1,10 +1,11 @@
+import numpy as np
+
 import eminus
 from eminus import Atoms, SCF, write_cube
 from eminus.dft import get_psi
 from eminus.localizer import wannier_cost
 from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_IP
 from eminus.units import ebohr2d, ha2kcalmol
-import numpy as np
 
 # # Start by with a simple DFT calculation for neon
 atoms = Atoms('Ne', [0, 0, 0], ecut=10, center=True, Nspin=1)

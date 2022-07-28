@@ -3,6 +3,7 @@ max-line-length = 100
 max-doc-length  = 100
 docstring-convention = google
 import-order-style   = google
+application-import-names = eminus
 
 ignore = E741, E743, \  # Ambiguous variable names and function definitions
          W504, \        # Line break after binary operator

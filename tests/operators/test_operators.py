@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 '''Test operator identities.'''
-from eminus import Atoms
 import numpy as np
 from numpy.random import randn
 from numpy.testing import assert_allclose
+
+from eminus import Atoms
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms('Ne', [0, 0, 0], ecut=1)

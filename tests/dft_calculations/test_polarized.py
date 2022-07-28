@@ -3,8 +3,9 @@
 import inspect
 import os
 
-from eminus import Atoms, read_xyz, USCF
 from numpy.testing import assert_allclose
+
+from eminus import Atoms, read_xyz, USCF
 
 # Total energies from a spin-polarized calculation with PWDFT.jl with same parameters as below
 E_ref = {
