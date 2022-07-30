@@ -148,27 +148,26 @@ def get_Enonloc(scf, Y):
         float: Non-local GTH energy contribution in Hartree.
     '''
     atoms = scf.atoms
+
     Enonloc = 0
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         for spin in range(atoms.Nspin):
             betaNL_psi = (Y[spin].conj().T @ scf.betaNL).conj()
 
-            for ist in range(atoms.Nstate):
-                enl = 0
-                for ia in range(atoms.Natoms):
-                    psp = scf.GTH[atoms.atom[ia]]
-                    for l in range(psp['lmax']):
-                        for m in range(-l, l + 1):
-                            for iprj in range(psp['Nproj_l'][l]):
-                                ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                                for jprj in range(psp['Nproj_l'][l]):
-                                    jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                                    hij = psp['h'][l, iprj, jprj]
-                                    enl += hij * np.real(betaNL_psi[ist, ibeta].conj() *
-                                                         betaNL_psi[ist, jbeta])
-                Enonloc += atoms.f[spin, ist] * enl
+            enl = np.zeros(atoms.Nstate, dtype=complex)
+            for ia in range(atoms.Natoms):
+                psp = scf.GTH[atoms.atom[ia]]
+                for l in range(psp['lmax']):
+                    for m in range(-l, l + 1):
+                        for iprj in range(psp['Nproj_l'][l]):
+                            ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                            for jprj in range(psp['Nproj_l'][l]):
+                                jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                hij = psp['h'][l, iprj, jprj]
+                                enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
+            Enonloc += np.sum(atoms.f[spin] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
-    return Enonloc * atoms.Omega
+    return np.real(Enonloc * atoms.Omega)
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl

@@ -112,22 +112,21 @@ def calc_Vnonloc(scf, W):
         ndarray: Non-local GTH potential contribution.
     '''
     atoms = scf.atoms
-    Vpsi = np.zeros_like(W, dtype=complex)
 
+    Vpsi = np.zeros_like(W, dtype=complex)
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
         betaNL_psi = (W.conj().T @ scf.betaNL).conj()
 
-        for ist in range(atoms.Nstate):
-            for ia in range(atoms.Natoms):
-                psp = scf.GTH[atoms.atom[ia]]
-                for l in range(psp['lmax']):
-                    for m in range(-l, l + 1):
-                        for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                            for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                                hij = psp['h'][l, iprj, jprj]
-                                Vpsi[:, ist] += hij * scf.betaNL[:, ibeta] * betaNL_psi[ist, jbeta]
+        for ia in range(atoms.Natoms):
+            psp = scf.GTH[atoms.atom[ia]]
+            for l in range(psp['lmax']):
+                for m in range(-l, l + 1):
+                    for iprj in range(psp['Nproj_l'][l]):
+                        ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                        for jprj in range(psp['Nproj_l'][l]):
+                            jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                            hij = psp['h'][l, iprj, jprj]
+                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.betaNL[:, ibeta][:, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 
