@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 '''Calculate different energy contributions.'''
-import math
-
 import numpy as np
-from numpy.linalg import inv
+from numpy.linalg import inv, norm
+from scipy.special import erfc
 
 from .dft import get_n_single, get_n_spin, solve_poisson
 from .xc import get_xc
@@ -170,7 +169,6 @@ def get_Enonloc(scf, Y):
     return np.real(Enonloc * atoms.Omega)
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_E_NN.jl
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
     '''Calculate the Ewald energy.
 
@@ -189,63 +187,72 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
-    t1, t2, t3 = atoms.R
-    t1m = np.sqrt(t1 @ t1)
-    t2m = np.sqrt(t2 @ t2)
-    t3m = np.sqrt(t3 @ t3)
+    def get_index_matrix(s):
+        '''Create all index vectors of periodic images.
 
-    g1, g2, g3 = 2 * np.pi * inv(atoms.R.conj().T)
-    g1m = np.sqrt(g1 @ g1)
-    g2m = np.sqrt(g2 @ g2)
-    g3m = np.sqrt(g3 @ g3)
+        Args:
+            s (ndarray): Number of images per lattice vector.
 
+        Returns:
+            ndarray: Index matrix.
+        '''
+        m1 = np.arange(-s[0], s[0] + 1)
+        m2 = np.arange(-s[1], s[1] + 1)
+        m3 = np.arange(-s[2], s[2] + 1)
+        M = np.transpose(np.meshgrid(m1, m2, m3)).reshape(-1, 3)
+        # Delete the [0, 0, 0] element, to prevent checking for it in every loop
+        return M[~np.all(M == 0, axis=1)]
+
+    # Calculate the Ewald splitting parameter nu
     gexp = -np.log(gamma)
     nu = 0.5 * np.sqrt(gcut**2 / gexp)
 
-    x = np.sum(atoms.Z**2)
-    totalcharge = np.sum(atoms.Z)
-
     # Start by calculating the self-energy
-    Eewald = -nu * x / np.sqrt(np.pi)
+    Eewald = -nu / np.sqrt(np.pi) * np.sum(atoms.Z**2)
     # Add the electroneutrality term
-    Eewald += -np.pi * totalcharge**2 / (2 * atoms.Omega * nu**2)
+    Eewald += -np.pi * np.sum(atoms.Z)**2 / (2 * nu**2 * atoms.Omega)
 
+    # Calculate the real-space contribution
+    # Calculate the amount of images that have to be considered per axis
+    Rm = norm(atoms.R, axis=1)
     tmax = np.sqrt(0.5 * gexp) / nu
-    mmm1 = np.rint(tmax / t1m + 1.5)
-    mmm2 = np.rint(tmax / t2m + 1.5)
-    mmm3 = np.rint(tmax / t3m + 1.5)
+    s = np.rint(tmax / Rm + 1.5)
+    # Collect all box index vector in a matrix
+    M = get_index_matrix(s)
+    # Calculate the translation vectors
+    T = M @ atoms.R
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
             dX = atoms.X[ia] - atoms.X[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            for i in np.arange(-mmm1, mmm1 + 1):
-                for j in np.arange(-mmm2, mmm2 + 1):
-                    for k in np.arange(-mmm3, mmm3 + 1):
-                        if (ia != ja) or ((abs(i) + abs(j) + abs(k)) != 0):
-                            T = i * t1 + j * t2 + k * t3
-                            rmag = np.sqrt(np.sum((dX - T)**2))
-                            # Add the real-space contribution
-                            Eewald += 0.5 * ZiZj * math.erfc(rmag * nu) / rmag
+            rmag = np.sqrt(np.sum((dX - T)**2, axis=1))
+            # Add the real-space contribution
+            Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
+            # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
+            if ia != ja:
+                rmag = np.sqrt(np.sum(dX**2))
+                Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
-    mmm1 = np.rint(gcut / g1m + 1.5)
-    mmm2 = np.rint(gcut / g2m + 1.5)
-    mmm3 = np.rint(gcut / g3m + 1.5)
+    # Calculate the reciprocal space contribution
+    # Calculate the amount of reciprocal images that have to be considered per axis
+    g = 2 * np.pi * inv(atoms.R.T)
+    gm = norm(g, axis=1)
+    s = np.rint(gcut / gm + 1.5)
+    # Collect all box index vector in a matrix
+    M = get_index_matrix(s)
+    # Calculate the reciprocal translation vectors and precompute the prefactor
+    G = M @ g
+    G2 = np.sum(G**2, axis=1)
+    prefactor = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
             dX = atoms.X[ia] - atoms.X[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            for i in np.arange(-mmm1, mmm1 + 1):
-                for j in np.arange(-mmm2, mmm2 + 1):
-                    for k in np.arange(-mmm3, mmm3 + 1):
-                        if (abs(i) + abs(j) + abs(k)) != 0:
-                            G = i * g1 + j * g2 + k * g3
-                            GX = np.sum(G * dX)
-                            G2 = np.sum(G**2)
-                            # Add the reciprocal space contribution
-                            x = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
-                            Eewald += x * ZiZj * np.cos(GX)
+            GX = np.sum(G * dX, axis=1)
+            # Add the reciprocal space contribution
+            Eewald += ZiZj * np.sum(prefactor * np.cos(GX))
     return Eewald
 
 
