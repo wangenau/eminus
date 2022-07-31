@@ -187,7 +187,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
-    def get_index_matrix(s):
+    def get_index_vectors(s):
         '''Create all index vectors of periodic images.
 
         Args:
@@ -218,7 +218,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     tmax = np.sqrt(0.5 * gexp) / nu
     s = np.rint(tmax / Rm + 1.5)
     # Collect all box index vector in a matrix
-    M = get_index_matrix(s)
+    M = get_index_vectors(s)
     # Calculate the translation vectors
     T = M @ atoms.R
 
@@ -240,7 +240,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     gm = norm(g, axis=1)
     s = np.rint(gcut / gm + 1.5)
     # Collect all box index vector in a matrix
-    M = get_index_matrix(s)
+    M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
     G2 = np.sum(G**2, axis=1)
