@@ -26,8 +26,8 @@ flake8:
       - examples/*
       - tests/*
 
-# Test code functionality
-pytest:
+# Test code functionality for the oldest and newest supported Python version
+.pytest:
   stage: test
   script:
     - pip install pytest
@@ -37,6 +37,11 @@ pytest:
       - eminus/*
       - eminus/**/*
       - tests/*
+pytest-newest:
+  extends: .pytest
+pytest-oldest:
+  image: python:3.6-slim
+  extends: .pytest
 
 # Build documentation
 pages:
