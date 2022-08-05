@@ -18,8 +18,9 @@ dev
     - GUI option for viewer and better examples
     - Rename Ns to Nstate to avoid confusion with Nspin
     - Set charge directly in atom when calculating single atoms
-    - Some code style improvements
-    - Misc performance improvements (e.g. in Ylm_real)
+    - CI tests for the minimal Python version
+    - Some code style improvements (e.g. using pathlib over os.path)
+    - Misc performance improvements (e.g. in Ylm_real and get_Eewald)
     - Fix some bugs (e.g. the LibXC interface for spin-polarized systems)
 
 v2.0.0 - May 20, 2020
