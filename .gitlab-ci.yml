@@ -20,8 +20,8 @@ flake8:
     - flake8
   only:
     changes:
-      - /*.py
-      - /**/*.py
+      - ./*.py
+      - ./**/*.py
 
 # Test code functionality for the oldest and newest supported python version
 .pytest:
