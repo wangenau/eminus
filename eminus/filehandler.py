@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
-import glob
 import inspect
-import os
+import pathlib
 import pickle
 import textwrap
 import time
@@ -347,22 +346,21 @@ def read_gth(atom, charge=None, psp_path=None):
         dict: GTH parameters.
     '''
     if psp_path is None:
-        file_path = inspect.getfile(inspect.currentframe())
-        psp_path = f'{os.path.dirname(file_path)}/pade/'
+        file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+        psp_path = file_path.joinpath('pade')
 
     if charge is not None:
-        f_psp = f'{psp_path}{atom}-q{charge}'
+        f_psp = psp_path.joinpath(f'{atom}-q{charge}')
     else:
-        files = glob.glob(f'{psp_path}{atom}-q*')
-        files.sort()
+        files = sorted(psp_path.glob(f'{atom}-q*'))
         try:
-            f_psp = files[0]
+            f_psp = pathlib.Path(files[0])
         except IndexError:
             log.exception(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
             raise
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". '
-                     f'Continue with "{os.path.basename(f_psp)}".')
+                     f'Continue with "{f_psp.name}".')
 
     psp = {}
     cloc = np.zeros(4)
@@ -402,6 +400,6 @@ def read_gth(atom, charge=None, psp_path=None):
             psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
-        log.exception(f'There is no GTH pseudopotential for "{os.path.basename(f_psp)}"')
+        log.exception(f'There is no GTH pseudopotential for "{f_psp.name}"')
         raise
     return psp

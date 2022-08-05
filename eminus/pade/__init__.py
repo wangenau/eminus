@@ -6,12 +6,12 @@ Reference: Phys. Rev. B 54, 1703.
 
 if __name__ == '__main__':
     import inspect
-    import os
+    import pathlib
     import shutil
     import urllib.request
     import zipfile
 
-    psp_path = os.path.dirname(inspect.getfile(inspect.currentframe()))
+    psp_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     file = 'master.zip'
     # Download files
     url = f'https://github.com/cp2k/cp2k-data/archive/refs/heads/{file}'
@@ -20,9 +20,9 @@ if __name__ == '__main__':
     with zipfile.ZipFile(file, 'r') as fzip:
         fzip.extractall()
     # Move files
-    pade_path = f'{psp_path}/cp2k-data-master/potentials/Goedecker/cp2k/pade'
-    for f in os.listdir(pade_path):
-        shutil.move(f'{pade_path}/{f}', f'{psp_path}/{f}')
+    pade_path = psp_path.joinpath('cp2k-data-master/potentials/Goedecker/cp2k/pade')
+    for f in pade_path.iterdir():
+        shutil.move(f, psp_path.joinpath(f.name))
     # Cleanup
-    os.remove(file)
+    psp_path.joinpath(file).unlink()
     shutil.rmtree('cp2k-data-master')

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''Fermi-orbital descriptor generation.'''
-import os
+import pathlib
 
 import numpy as np
 from numpy.linalg import norm
@@ -94,8 +94,8 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     fods = [np.asarray(fod1), np.asarray(fod2)]
 
     if clean:
-        os.remove(p.log_name)
-        os.remove(f'{loc}_GUESS_COM.xyz')
+        pathlib.Path(p.log_name).unlink()
+        pathlib.Path(f'{loc}_GUESS_COM.xyz').unlink()
     return fods
 
 

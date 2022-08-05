@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Test total energies for a small set of spin-polarized and -unpolarized systems.'''
 import inspect
-import os
+import pathlib
 
 from numpy.testing import assert_allclose
 
@@ -21,7 +21,7 @@ E_ref = {
 
 def calc_polarized(system):
     '''Compare total energies for a test system with a reference value (spin-polarized).'''
-    file_path = inspect.getfile(inspect.currentframe())
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     a = 10
     ecut = 10
     s = 30
@@ -29,7 +29,7 @@ def calc_polarized(system):
     guess = 'random'
     etol = 1e-6
 
-    atom, X = read_xyz(f'{os.path.dirname(file_path)}/{system}.xyz')
+    atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
     E = USCF(atoms, xc=xc, guess=guess, etol=etol).run()
 

@@ -2,13 +2,14 @@
 '''Test functionality of examples.'''
 import inspect
 import os
+import pathlib
 import runpy
 
 
 def execute_example(name):
     '''Test the execution of a given Python script.'''
-    file_path = inspect.getfile(inspect.currentframe())
-    os.chdir(f'{os.path.dirname(file_path)}/../../examples/{name}')
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
     try:
         runpy.run_path(f'{name}.py')
@@ -23,8 +24,9 @@ def execute_example(name):
 def clean_example(trash):
     '''Clean the example folder after running the script.'''
     for it in trash:
-        if os.path.exists(it):
-            os.remove(it)
+        path = pathlib.Path(it)
+        if path.exists():
+            path.unlink()
     return
 
 
