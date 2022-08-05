@@ -35,11 +35,16 @@ flake8:
       - eminus/**/*.py
       - tests/*.py
       - tests/**/*.py
-pytest-newest:
+pytest-3.10:
   extends: .pytest
-pytest-oldest:
+pytest-3.6:
+  extends: .pytest
   image: python:3.6-slim
-  extends: .pytest
+  before_script:
+    - apt-get update -y
+    - apt-get install -y libgomp1 --no-install-recommends
+    - pip install numpy==1.15.0 scipy==1.4.0
+    - pip install -e .
 
 # Build documentation
 pages:
