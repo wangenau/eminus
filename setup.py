@@ -52,11 +52,11 @@ setup(
     zip_safe=False,
     extras_require={
         'addons': [
-            'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
-            'nglview>=2.6.5',      # Molecule and isosurface viewer
-            'pyflosic2>=2*',       # PyCOM FOD guesser
-            'pylibxc2>=6',         # More exchange-correlation functionals
-            'vispy>=0.8'           # Grid visualization
+            'jupyter_rfb>=0.1.1',   # Run VisPy in notebooks
+            'nglview>=2.6.5',       # Molecule and isosurface viewer
+            'pyflosic2>=2.0.0rc0',  # PyCOM FOD guesser
+            'pylibxc2>=6',          # More exchange-correlation functionals
+            'vispy>=0.8'            # Grid visualization
         ],
         'dev': [
             'flake8>=3.7',               # Style guide checker
