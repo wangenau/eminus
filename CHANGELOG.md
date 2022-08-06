@@ -8,6 +8,7 @@ dev
     - Support for spin polarized-systems!
     - Rewritten GTH parser to use the CP2K file format
     - This adds support for the elements Ac to Lr
+    - Built-in Chachiyo correlation functional
 - Updated docs
     - Improved displaying of examples in documentation
     - Convert notebooks to HTML pages
