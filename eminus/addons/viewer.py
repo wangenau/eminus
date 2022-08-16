@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Viewer functions for Jupyter notebooks.'''
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 try:
     from nglview import NGLWidget, TextStructure
     from vispy import scene

@@ -4,9 +4,8 @@
 Reference: Comput. Phys. Commun. 128, 1.
 '''
 import numpy as np
-from numpy.linalg import eig, eigh, inv, norm
 from numpy.random import randn, seed
-from scipy.linalg import sqrtm
+from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
 from .utils import diagprod, handle_spin_gracefully
@@ -233,8 +232,7 @@ def get_epsilon(scf, W, n=None):
     epsilon = np.empty((atoms.Nspin, atoms.Nstate))
     for spin in range(atoms.Nspin):
         mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
-        eps, _ = eigh(mu)
-        epsilon[spin] = np.sort(eps)
+        epsilon[spin] = np.sort(eigvalsh(mu))
     return epsilon
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Calculate different energy contributions.'''
 import numpy as np
-from numpy.linalg import inv, norm
+from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_n_single, get_n_spin, solve_poisson
@@ -226,12 +226,12 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         for ja in range(atoms.Natoms):
             dX = atoms.X[ia] - atoms.X[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            rmag = np.sqrt(np.sum((dX - T)**2, axis=1))
+            rmag = np.sqrt(norm(dX - T, axis=1)**2)
             # Add the real-space contribution
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = np.sqrt(np.sum(dX**2))
+                rmag = np.sqrt(norm(dX)**2)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
     # Calculate the reciprocal space contribution
@@ -243,7 +243,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
-    G2 = np.sum(G**2, axis=1)
+    G2 = norm(G, axis=1)**2
     prefactor = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):

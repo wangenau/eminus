@@ -3,7 +3,7 @@
 import pathlib
 
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 try:
     from pyflosic2.atoms.atoms import Atoms
     from pyflosic2.guess.pycom import pycom

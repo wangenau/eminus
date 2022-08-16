@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Functions to generate masks to restrict real-space fields to domains.'''
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 
 from .tools import center_of_mass
 

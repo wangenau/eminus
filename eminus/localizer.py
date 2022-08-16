@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Utilities to localize and analyze orbitals.'''
 import numpy as np
-from numpy.linalg import eig, norm
+from scipy.linalg import eig, norm
 
 from .logger import log
 from .utils import handle_spin_gracefully

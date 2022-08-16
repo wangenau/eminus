@@ -3,8 +3,8 @@
 import re
 
 import numpy as np
-from numpy.linalg import det, eig, inv
 from scipy.fft import next_fast_len
+from scipy.linalg import det, eig, inv, norm
 
 from .filehandler import read_gth
 from .logger import create_logger, get_level, log
@@ -314,7 +314,7 @@ class Atoms:
         G = 2 * np.pi * N @ inv(self.R)
         self.G = G
         # Calculate squared-magnitudes of G-vectors
-        G2 = np.sum(G**2, axis=1)
+        G2 = norm(G, axis=1)**2
         self.G2 = G2
 
         # Calculate the G2 restriction

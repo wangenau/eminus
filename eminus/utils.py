@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Linear algebra calculation utilities.'''
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 
 from .logger import log
 
