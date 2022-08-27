@@ -25,7 +25,7 @@ def generate(*args):
                 if example.joinpath(f'{example.name}.py').exists():
                     fp.write(parse(f'{example}/{example.name}.py'))
                 if example.joinpath(f'{example.name}.ipynb').exists():
-                    fp.write('\nSee a preview of the notebook `here <https://nextdft.gitlab.io/'
+                    fp.write('\nSee a preview of the notebook `here <https://esp42.gitlab.io/sage/'
                              f'eminus/_static/{example.name}.html>`_.\n')
                 # Add download links
                 fp.write('\nDownload')

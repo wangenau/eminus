@@ -7,7 +7,7 @@ Introduction
    :target: https://www.python.org
 
 .. image:: https://img.shields.io/badge/license-APACHE2-lightgrey.svg
-   :target: https://gitlab.com/nextdft/eminus/-/blob/main/LICENSE
+   :target: https://gitlab.com/esp42/sage/eminus/-/blob/main/LICENSE
 
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841

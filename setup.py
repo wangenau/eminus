@@ -21,7 +21,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
-    url='https://nextdft.gitlab.io/eminus',
+    url='https://esp42.gitlab.io/sage/eminus',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -45,7 +45,7 @@ setup(
         'numpy>=1.15',
         'scipy>=1.4'
     ],
-    keywords=['NextDFT'],
+    keywords=['ESP'],
     package_data={
         'eminus.pade': ['*-q*']
     },
@@ -70,8 +70,8 @@ setup(
     },
     python_requires='>=3.6',
     project_urls={
-        'Bug Tracker': 'https://gitlab.com/nextdft/eminus/-/issues',
-        'Changelog': 'https://nextdft.gitlab.io/eminus/changelog.html',
-        'Source': 'https://gitlab.com/nextdft/eminus'
+        'Bug Tracker': 'https://gitlab.com/esp42/sage/eminus/-/issues',
+        'Changelog': 'https://esp42.gitlab.io/sage/eminus/changelog.html',
+        'Source': 'https://gitlab.com/esp42/sage/eminus'
     }
 )

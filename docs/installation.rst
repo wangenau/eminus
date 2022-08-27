@@ -19,7 +19,7 @@ Alternatively, you can create an installation by downloading the source code
 
 .. code-block:: console
 
-   git clone https://gitlab.com/nextdft/eminus.git
+   git clone https://gitlab.com/esp42/sage/eminus.git
    cd eminus
    pip install .
 
