@@ -4,7 +4,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_n_single, get_n_spin, solve_poisson
+from .dft import get_n_single, solve_poisson
 from .xc import get_xc
 
 
