@@ -5,7 +5,7 @@ dev
 ---
 
 - New features
-    - Support for spin polarized-systems!
+    - Support for spin-polarized systems!
     - Rewritten GTH parser to use the CP2K file format
     - This adds support for the elements Ac to Lr
     - Built-in Chachiyo correlation functional

@@ -95,7 +95,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None, Y=None, Nspin=2):
+def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -106,7 +106,7 @@ def get_Exc(scf, n, exc=None, Y=None, Nspin=2):
 
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
         Nspin (int): Number of spin states.
 
     Returns:
@@ -114,7 +114,6 @@ def get_Exc(scf, n, exc=None, Y=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        n_spin = get_n_spin(scf.atoms, Y)
         exc = get_xc(scf.xc, n_spin, Nspin)[0]
     # Exc = (J(n))dag O(J(exc))
     return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
@@ -277,14 +276,18 @@ def get_Esic(scf, Y, n_single=None):
         n_single = get_n_single(atoms, Y)
 
     Esic = 0
-    for spin in range(atoms.Nspin):
-        for i in range(atoms.Nstate):
-            # Normalize single-particle densities to 1
+    for i in range(atoms.Nstate):
+        for spin in range(atoms.Nspin):
             if atoms.f[spin, i] > 0:
-                ni = n_single[spin, :, i] / atoms.f[spin, i]
-                coul = get_Ecoul(atoms, ni)
-                # The exchange part for a SIC correction has to be spin polarized
-                xc = get_Exc(scf, ni, Y=Y, Nspin=2)
+                # Create normalized single-particle densities in the form of electronic densities
+                # per spin channel, since spin-polarized functionals expect this form
+                ni = np.zeros((2, len(n_single[0])))
+                # Normalize single-particle densities to 1
+                ni[0] = n_single[spin, :, i] / atoms.f[spin, i]
+
+                coul = get_Ecoul(atoms, ni[0])
+                # The exchange part for a SIC correction has to be spin-polarized
+                xc = get_Exc(scf, ni[0], n_spin=ni, Nspin=2)
                 # SIC energy is scaled by the occupation number
                 Esic += (coul + xc) * atoms.f[spin, i]
     scf.energies.Esic = Esic
