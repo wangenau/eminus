@@ -453,12 +453,12 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
     ecF, vcF = pade_fit(1)  # Ferromagnetic fit
     ac, dac = pade_fit(2)   # Spin stiffness
 
-    ac = ac * iddfz0
+    ac *= iddfz0
     De = ecF - ecP - ac  # e_c[F] - e_c[P] - alpha_c/(ddf/ddz(z=0))
     fzz4 = fz * zeta4
     ec = ecP + ac * fz + De * fzz4
 
-    dac = dac * iddfz0
+    dac *= iddfz0
     dec1 = vcP + dac * fz + (vcF - vcP - dac) * fzz4  # e_c-(r_s/3)*(de_c/dr_s)
     dec2 = ac * dfz + De * (4 * zeta3 * fz + zeta4 * dfz)  # de_c/dzeta
 

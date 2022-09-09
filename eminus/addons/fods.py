@@ -74,7 +74,7 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     X_pyflosic = np.vstack((X, extra_up))
     if atoms.Nspin == 2:
         extra_dn = np.zeros((len(np.nonzero(atoms.f[1])[0]), 3))
-        atom_pyflosic = atom_pyflosic + [elec_symbols[1]] * len(extra_dn)
+        atom_pyflosic += [elec_symbols[1]] * len(extra_dn)
         X_pyflosic = np.vstack((X_pyflosic, extra_dn))
 
     # Do the PyCOM FOD generation

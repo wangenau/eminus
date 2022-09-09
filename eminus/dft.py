@@ -187,8 +187,8 @@ def Q(inp, U):
     mu, V = eig(U)
     mu = mu[:, None]
     denom = np.sqrt(mu) @ np.ones((1, len(mu)))
-    denom = denom + denom.conj().T
-    return V @ ((V.conj().T @ inp @ V) / denom) @ V.conj().T
+    denom2 = denom + denom.conj().T
+    return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
 
 
 def get_psi(scf, W, n=None):
