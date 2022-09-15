@@ -96,11 +96,11 @@ class SCF:
 
     def clear(self):
         '''Initialize and clear intermediate results.'''
-        self.Y = None         # Orthogonal wave functions
-        self.n_single = None  # Electronic densities per spin
-        self.phi = None       # Hartree field
-        self.exc = None       # Exchange-correlation energy density
-        self.vxc = None       # Exchange-correlation potential
+        self.Y = None       # Orthogonal wave functions
+        self.n_spin = None  # Electronic densities per spin
+        self.phi = None     # Hartree field
+        self.exc = None     # Exchange-correlation energy density
+        self.vxc = None     # Exchange-correlation potential
         return
 
     def initialize(self):
