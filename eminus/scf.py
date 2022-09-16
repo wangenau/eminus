@@ -89,12 +89,12 @@ class SCF:
         self.clear()
 
         # Parameters that will be built out of the inputs
-        self.GTH = {}                # Dictionary of GTH parameters per atom species
-        self.Vloc = None             # Local pseudopotential contribution
-        self.NbetaNL = 0             # Number of projector functions for the non-local gth potential
-        self.prj2beta = None         # Index matrix to map to the correct projector function
-        self.betaNL = None           # Atomic-centered projector functions
-        self.print_precision = None  # Precision of the energy in the minimizer logger
+        self.GTH = {}             # Dictionary of GTH parameters per atom species
+        self.Vloc = None          # Local pseudopotential contribution
+        self.NbetaNL = 0          # Number of projector functions for the non-local gth potential
+        self.prj2beta = None      # Index matrix to map to the correct projector function
+        self.betaNL = None        # Atomic-centered projector functions
+        self.print_precision = 6  # Precision of the energy in the minimizer logger
         self.initialize()
 
     def clear(self):
