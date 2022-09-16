@@ -54,9 +54,10 @@ def check_energies(scf, Elist, linmin='', cg=''):
                 linmin = f' \tlinmin-test: {linmin}'
             if not isinstance(cg, str):
                 cg = f' \tcg-test: {cg}'
-            scf.log.debug(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.7f}{linmin}{cg}')
+            scf.log.debug(f'Iteration: {iteration} \tEtot: '
+                          f'{scf.energies.Etot:+.{scf.print_precision}f}{linmin}{cg}')
     else:
-        scf.log.info(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.7f}')
+        scf.log.info(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.{scf.print_precision}f}')
 
     if iteration > 1:
         # Check for convergence

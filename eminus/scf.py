@@ -4,6 +4,8 @@ import copy
 import logging
 import timeit
 
+import numpy as np
+
 from .dft import guess_gaussian, guess_pseudo, guess_random
 from .energies import Energy, get_Eewald, get_Esic
 from .filehandler import read_gth
@@ -87,11 +89,12 @@ class SCF:
         self.clear()
 
         # Parameters that will be built out of the inputs
-        self.GTH = {}         # Dictionary of GTH parameters per atom species
-        self.Vloc = None      # Local pseudopotential contribution
-        self.NbetaNL = 0      # Number of projector functions for the non-local gth potential
-        self.prj2beta = None  # Index matrix to map to the correct projector function
-        self.betaNL = None    # Atomic-centered projector functions
+        self.GTH = {}                # Dictionary of GTH parameters per atom species
+        self.Vloc = None             # Local pseudopotential contribution
+        self.NbetaNL = 0             # Number of projector functions for the non-local gth potential
+        self.prj2beta = None         # Index matrix to map to the correct projector function
+        self.betaNL = None           # Atomic-centered projector functions
+        self.print_precision = None  # Precision of the energy in the minimizer logger
         self.initialize()
 
     def clear(self):
@@ -107,6 +110,7 @@ class SCF:
         '''Validate inputs, update them and build all necessary parameters.'''
         self._set_potential()
         self._init_W()
+        self.print_precision = int(abs(np.log10(self.etol))) + 1
         return
 
     def run(self, **kwargs):
