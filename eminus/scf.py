@@ -4,7 +4,7 @@ import copy
 import logging
 import timeit
 
-from .dft import guess_gaussian, guess_random
+from .dft import guess_gaussian, guess_pseudo, guess_random
 from .energies import Energy, get_Eewald, get_Esic
 from .filehandler import read_gth
 from .gth import init_gth_loc, init_gth_nonloc
@@ -189,10 +189,13 @@ class SCF:
         '''Initialize wave functions.'''
         if self.guess in ('gauss', 'gaussian'):
             # Start with gaussians at atom positions
-            self.W = guess_gaussian(self)
+            self.W = guess_gaussian(self, complex=True, reproduce=True)
         elif self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
             self.W = guess_random(self, complex=True, reproduce=True)
+        elif self.guess in ('pseudo'):
+            # Start with pseudo-random numbers, mostly to compare with SimpleDFT
+            self.W = guess_pseudo(self, seed=1234)
         else:
             self.log.error(f'No guess found for "{self.guess}"')
         return

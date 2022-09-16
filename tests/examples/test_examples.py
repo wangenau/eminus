@@ -74,6 +74,10 @@ def test_10():
     pass
 
 
+def test_11():
+    execute_example('11_simpledft_examples')
+
+
 if __name__ == '__main__':
     import timeit
     start = timeit.default_timer()
@@ -87,5 +91,6 @@ if __name__ == '__main__':
     test_08()
     test_09()
     test_10()
+    test_11()
     end = timeit.default_timer()
     print(f'Test for examples execution passed in {end - start:.3f} s.')

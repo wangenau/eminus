@@ -14,7 +14,7 @@ ignore = E741, E743, \  # Ambiguous variable names and function definitions
 
 # D100, D103: Ignore missing docstrings in public modules or functions
 # E501, W505: Ignore line length warnings
-per-file-ignores = examples/*:D100,E501,W505,
+per-file-ignores = examples/*:D100,D103,E501,W505,
                    tests/*:D103
 
 # Exclude the generated docs folder

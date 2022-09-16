@@ -137,3 +137,27 @@ def handle_spin_gracefully(func):
             return np.asarray([func(object, Wspin, *args, **kwargs) for Wspin in W])
         return func(object, W, *args, **kwargs)
     return decorator
+
+
+def pseudo_uniform(size, seed=1234):
+    '''Pseudo uniform random number generator.
+
+    Args:
+        size (tuple): Dimension of the array to create.
+
+    Keyword Args:
+        seed (int): Seed to initialize the random number generator.
+
+    Return:
+        ndarray: Array with (pseudo) random numbers.
+    '''
+    W = np.zeros(size, dtype=np.complex64)
+    mult = 16807
+    mod = (2**31) - 1
+    x = (seed * mult + 1) % mod
+    for i in range(size[0]):
+        for j in range(size[1]):
+            for k in range(size[2]):
+                x = (x * mult + 1) % mod
+                W[i, j, k] = x / mod
+    return W

@@ -8,7 +8,7 @@ from numpy.random import randn, seed
 from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
-from .utils import diagprod, handle_spin_gracefully
+from .utils import diagprod, handle_spin_gracefully, pseudo_uniform
 from .xc import get_xc
 
 
@@ -260,18 +260,22 @@ def guess_random(scf, complex=True, reproduce=True):
     return orth(atoms, W)
 
 
-def guess_gaussian(scf):
+def guess_gaussian(scf, complex=True, reproduce=True):
     '''Generate initial-guess coefficients using normalized Gaussians as starting values.
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        complex (bool): Use complex numbers for the random guess.
+        reproduce (bool): Use a set seed for reproducible random numbers.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
     # Start with randomized wave functions
-    W = guess_random(scf, complex=True, reproduce=True)
+    W = guess_random(scf, complex=complex, reproduce=reproduce)
 
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
@@ -282,3 +286,20 @@ def guess_gaussian(scf):
         n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
     # Calculate the eigenfunctions
     return get_psi(scf, W, n)
+
+
+def guess_pseudo(scf, seed=1234):
+    '''Generate initial-guess coefficients using pseudo-random starting values.
+
+    Args:
+        scf: SCF object.
+
+    Keyword Args:
+        seed (int): Seed to initialize the random number generator.
+
+    Returns:
+        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
+    '''
+    atoms = scf.atoms
+    W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=1234)
+    return orth(atoms, W)
