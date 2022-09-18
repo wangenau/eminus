@@ -2,7 +2,7 @@
 '''SCF class definition.'''
 import copy
 import logging
-import timeit
+import time
 
 import numpy as np
 
@@ -137,9 +137,9 @@ class SCF:
             except NameError:
                 self.log.exception(f'No minimizer found for "{imin}"')
                 raise
-            start = timeit.default_timer()
+            start = time.perf_counter()
             Elist = eval(imin)(self, self.min[imin], **kwargs)  # Call minimizer
-            end = timeit.default_timer()
+            end = time.perf_counter()
             minimizer_log[imin] = {}  # Create an entry for the current minimizer
             minimizer_log[imin]['time'] = end - start  # Save time in dictionary
             minimizer_log[imin]['iter'] = len(Elist)  # Save iterations in dictionary

@@ -79,8 +79,8 @@ def test_11():
 
 
 if __name__ == '__main__':
-    import timeit
-    start = timeit.default_timer()
+    import time
+    start = time.perf_counter()
     test_01()
     test_02()
     test_03()
@@ -92,5 +92,5 @@ if __name__ == '__main__':
     test_09()
     test_10()
     test_11()
-    end = timeit.default_timer()
+    end = time.perf_counter()
     print(f'Test for examples execution passed in {end - start:.3f} s.')

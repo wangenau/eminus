@@ -92,8 +92,8 @@ def test_TT():
 
 
 if __name__ == '__main__':
-    import timeit
-    start = timeit.default_timer()
+    import time
+    start = time.perf_counter()
     run_operator(test_LLinv)
     run_operator(test_LinvL)
     run_operator(test_IJ)
@@ -101,5 +101,5 @@ if __name__ == '__main__':
     run_operator(test_IdagJdag)
     run_operator(test_JdagIdag)
     run_operator(test_TT)
-    end = timeit.default_timer()
+    end = time.perf_counter()
     print(f'Test for operator identities passed in {end - start:.3f} s.')

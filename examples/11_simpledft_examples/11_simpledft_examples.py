@@ -1,14 +1,14 @@
-from timeit import default_timer
+import time
 
 from eminus import Atoms, SCF
 
 
 def calculate(atoms):
-    start = default_timer()
+    start = time.perf_counter()
     etot = SCF(atoms, xc='lda,chachiyo', pot='coulomb', guess='pseudo', etol=1e-6,
                min={'sd': 1001}).run(betat=1e-5)
     print('Etot({}) = {:.6f} Eh'.format(atoms.atom, etot))
-    print(' {:.6f} seconds'.format(default_timer() - start))
+    print(' {:.6f} seconds'.format(time.perf_counter() - start))
 
 
 H = Atoms(['H'], [[0, 0, 0]], 16, 16, [1], [60, 60, 60], f=[1],

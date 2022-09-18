@@ -63,12 +63,12 @@ def test_Ne():
 
 
 if __name__ == '__main__':
-    import timeit
-    start = timeit.default_timer()
+    import time
+    start = time.perf_counter()
     test_H2()
     test_He()
     test_LiH()
     test_CH4()
     test_Ne()
-    end = timeit.default_timer()
+    end = time.perf_counter()
     print(f'Test for unpolarized calculations passed in {end - start:.3f} s.')
