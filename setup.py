@@ -42,7 +42,7 @@ setup(
     ],
     license='APACHE2.0',
     install_requires=[
-        'numpy>=1.19.5',
+        'numpy>=1.17',
         'scipy>=1.4'
     ],
     keywords=['ESP'],

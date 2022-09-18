@@ -151,7 +151,7 @@ def pseudo_uniform(size, seed=1234):
     Return:
         ndarray: Array with (pseudo) random numbers.
     '''
-    W = np.zeros(size, dtype=np.complex64)
+    W = np.zeros(size, dtype=complex)
     mult = 16807
     mod = (2**31) - 1
     x = (seed * mult + 1) % mod

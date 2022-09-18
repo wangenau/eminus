@@ -26,12 +26,12 @@ def calc_polarized(system):
     ecut = 10
     s = 30
     xc = 'lda,vwn'
-    guess = 'gaussian'
+    guess = 'random'
     etol = 1e-6
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
-    E = USCF(atoms, xc=xc, guess=guess, etol=etol).run()
+    E = USCF(atoms, xc=xc, guess=guess, etol=etol, min={'sd': 15, 'pccg': 25}).run()
 
     try:
         assert_allclose(E, E_ref[system], atol=etol)

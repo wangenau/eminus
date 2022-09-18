@@ -4,7 +4,7 @@
 Reference: Comput. Phys. Commun. 128, 1.
 '''
 import numpy as np
-from numpy.random import default_rng
+from numpy.random import Generator, SFC64
 from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
@@ -251,7 +251,7 @@ def guess_random(scf, complex=True):
     atoms = scf.atoms
 
     seed = 42
-    rng = default_rng(seed)
+    rng = Generator(SFC64(seed))
     if complex:
         W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate)) + \
             1j * rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
