@@ -43,7 +43,7 @@ pytest-3.6:
   before_script:
     - apt-get update -y
     - apt-get install -y libgomp1 --no-install-recommends
-    - pip install numpy==1.17.0 scipy==1.4.0
+    - pip install numpy==1.19.5 scipy==1.4.0
     - pip install -e .
 
 # Build documentation
