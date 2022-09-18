@@ -4,7 +4,7 @@
 Reference: Comput. Phys. Commun. 128, 1.
 '''
 import numpy as np
-from numpy.random import randn, seed
+from numpy.random import default_rng
 from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
@@ -236,7 +236,7 @@ def get_epsilon(scf, W, n=None):
     return epsilon
 
 
-def guess_random(scf, complex=True, reproduce=True):
+def guess_random(scf, complex=True):
     '''Generate random initial-guess coefficients as starting values.
 
     Args:
@@ -244,23 +244,23 @@ def guess_random(scf, complex=True, reproduce=True):
 
     Keyword Args:
         complex (bool): Use complex numbers for the random guess.
-        reproduce (bool): Use a set seed for reproducible random numbers.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
-    if reproduce:
-        seed(42)
+
+    seed = 42
+    rng = default_rng(seed)
     if complex:
-        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate) + \
-            1j * randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
+        W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate)) + \
+            1j * rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
     else:
-        W = randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
+        W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
     return orth(atoms, W)
 
 
-def guess_gaussian(scf, complex=True, reproduce=True):
+def guess_gaussian(scf, complex=True):
     '''Generate initial-guess coefficients using normalized Gaussians as starting values.
 
     Args:
@@ -268,14 +268,13 @@ def guess_gaussian(scf, complex=True, reproduce=True):
 
     Keyword Args:
         complex (bool): Use complex numbers for the random guess.
-        reproduce (bool): Use a set seed for reproducible random numbers.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
     # Start with randomized wave functions
-    W = guess_random(scf, complex=complex, reproduce=reproduce)
+    W = guess_random(scf, complex=complex)
 
     sigma = 0.5
     normal = (2 * np.pi * sigma**2)**(3 / 2)
@@ -301,5 +300,5 @@ def guess_pseudo(scf, seed=1234):
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
-    W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=1234)
+    W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=seed)
     return orth(atoms, W)

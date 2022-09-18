@@ -193,10 +193,10 @@ class SCF:
         '''Initialize wave functions.'''
         if self.guess in ('gauss', 'gaussian'):
             # Start with gaussians at atom positions
-            self.W = guess_gaussian(self, complex=True, reproduce=True)
+            self.W = guess_gaussian(self, complex=True)
         elif self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
-            self.W = guess_random(self, complex=True, reproduce=True)
+            self.W = guess_random(self, complex=True)
         elif self.guess in ('pseudo'):
             # Start with pseudo-random numbers, mostly to compare with SimpleDFT
             self.W = guess_pseudo(self, seed=1234)

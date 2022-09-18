@@ -11,16 +11,16 @@ The reference data can be created with the Julia package [PWDFT.jl](https://gith
 # Pkg.add(PackageSpec(url="https://github.com/f-fathurrahman/PWDFT.jl"))
 using PWDFT
 
-systems = ["H", "H2", "He", "Li", "LiH", "CH4", "Ne"]
-psp_path = "../../eminus/pade/"
-psps = [
-    [joinpath(psp_path, "H-q1")],
-    [joinpath(psp_path, "H-q1")],
-    [joinpath(psp_path, "He-q2")],
-    [joinpath(psp_path, "Li-q1")],
-    [joinpath(psp_path, "Li-q1"), joinpath(psp_path, "H-q1")],
-    [joinpath(psp_path, "C-q4"), joinpath(psp_path, "H-q1")],
-    [joinpath(psp_path, "Ne-q8")]
+const systems = ["H", "H2", "He", "Li", "LiH", "CH4", "Ne"]
+const psp_path = joinpath(dirname(pathof(PWDFT)), "..", "pseudopotentials", "pade_gth")
+const psps = [
+    [joinpath(psp_path, "H-q1.gth")],
+    [joinpath(psp_path, "H-q1.gth")],
+    [joinpath(psp_path, "He-q2.gth")],
+    [joinpath(psp_path, "Li-q1.gth")],
+    [joinpath(psp_path, "Li-q1.gth"), joinpath(psp_path, "H-q1.gth")],
+    [joinpath(psp_path, "C-q4.gth"), joinpath(psp_path, "H-q1.gth")],
+    [joinpath(psp_path, "Ne-q8.gth")]
 ]
 
 println("E_ref = {")

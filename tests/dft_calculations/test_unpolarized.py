@@ -24,8 +24,8 @@ def calc_unpolarized(system):
     a = 10
     ecut = 10
     s = 30
-    xc = 'LDA,VWN'
-    guess = 'random'
+    xc = 'lda,vwn'
+    guess = 'gaussian'
     etol = 1e-6
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))

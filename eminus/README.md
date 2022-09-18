@@ -20,6 +20,6 @@ Main source code directory.
 | scf.py         | SCF class definition |
 | units.py       | Constants and unit conversion functions |
 | tools.py       | Tools to calculate physical properties |
-| utils.py       | Linear algebra calculation utilities |
+| utils.py       | Linear algebra and random utilities |
 | version.py     | Package versions file |
 | xc.py          | Exchange-correlation functionals |
