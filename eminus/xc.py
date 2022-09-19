@@ -26,7 +26,8 @@ def get_xc(xc, n_spin, Nspin):
 
     # Only use non-zero values of the density
     n = np.sum(n_spin, axis=0)
-    n_nz = n[np.nonzero(n)]
+    nz_mask = np.nonzero(n)
+    n_nz = n[nz_mask]
 
     # Only import libxc interface if necessary
     if 'libxc' in xc:
@@ -34,7 +35,7 @@ def get_xc(xc, n_spin, Nspin):
     # Zeta is not needed in LibXC
     else:
         # Zeta is only needed for non-zero values of the density
-        zeta_nz = get_zeta(n_spin)[np.nonzero(n)]
+        zeta_nz = get_zeta(n_spin[:, nz_mask])
 
     # Handle exchange part
     if 'libxc' in exch:
@@ -53,10 +54,10 @@ def get_xc(xc, n_spin, Nspin):
 
         # Map the non-zero values back to the right dimension
         ex = np.zeros_like(n)
-        ex[np.nonzero(n)] = ex_nz
+        ex[nz_mask] = ex_nz
         vx = np.zeros_like(n_spin)
         for spin in range(Nspin):
-            vx[spin, np.nonzero(n)] = vx_nz[spin]
+            vx[spin, nz_mask] = vx_nz[spin]
 
     # Handle correlation part
     if 'libxc' in corr:
@@ -75,10 +76,10 @@ def get_xc(xc, n_spin, Nspin):
 
         # Map the non-zero values back to the right dimension
         ec = np.zeros_like(n)
-        ec[np.nonzero(n)] = ec_nz
+        ec[nz_mask] = ec_nz
         vc = np.zeros_like(n_spin)
         for spin in range(Nspin):
-            vc[spin, np.nonzero(n)] = vc_nz[spin]
+            vc[spin, nz_mask] = vc_nz[spin]
 
     return ex + ec, vx + vc
 
