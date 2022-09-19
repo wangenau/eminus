@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 '''Linear algebra calculation utilities.'''
+import functools
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -131,6 +133,7 @@ def handle_spin_gracefully(func):
     Returns:
         Callable: Decorator.
     '''
+    @functools.wraps(func)
     def decorator(object, W, *args, **kwargs):
         if W.ndim == 3:
             # If one is brave enough one could add multiprocessing over spin states case right here
