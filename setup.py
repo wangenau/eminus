@@ -21,7 +21,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
-    url='https://esp42.gitlab.io/sage/eminus',
+    url='https://wangenau.gitlab.io/eminus',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -70,8 +70,8 @@ setup(
     },
     python_requires='>=3.6',
     project_urls={
-        'Bug Tracker': 'https://gitlab.com/esp42/sage/eminus/-/issues',
-        'Changelog': 'https://esp42.gitlab.io/sage/eminus/changelog.html',
-        'Source': 'https://gitlab.com/esp42/sage/eminus'
+        'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',
+        'Changelog': 'https://wangenau.gitlab.io/eminus/changelog.html',
+        'Source': 'https://gitlab.com/wangenau/eminus'
     }
 )
