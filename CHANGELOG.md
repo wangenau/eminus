@@ -3,12 +3,12 @@ Changelog
 
 dev
 ---
-
 - New features
-    - Support for spin-polarized systems!
+    - Support for spin-polarized calculations!
     - Rewritten GTH parser to use the CP2K file format
     - This adds support for the elements Ac to Lr
     - Built-in Chachiyo correlation functional
+    - New pseudo-random starting guess for comparisons with SimpleDFT
 - Updated docs
     - Improved displaying of examples in documentation
     - Convert notebooks to HTML pages
@@ -18,7 +18,9 @@ dev
     - Minimal versions for dependencies
     - GUI option for viewer and better examples
     - Rename Ns to Nstate to avoid confusion with Nspin
-    - Set charge directly in atom when calculating single atoms
+    - Adapt to newer NumPy RNG generators (use SFC64)
+    - Option to set charge directly in atom when calculating single atoms
+    - Adapt print precision from convergence tolerance
     - CI tests for the minimal Python version
     - Some code style improvements (e.g. using pathlib over os.path)
     - Misc performance improvements (e.g. in Ylm_real and get_Eewald)
