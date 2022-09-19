@@ -140,7 +140,7 @@ def handle_spin_gracefully(func):
 
 
 def pseudo_uniform(size, seed=1234):
-    '''Lehmer random number generator.
+    '''Lehmer random number generator, following MINSTD.
 
     Reference: Commun. ACM. 12, 85.
 
@@ -154,7 +154,7 @@ def pseudo_uniform(size, seed=1234):
         ndarray: Array with (pseudo) random numbers.
     '''
     W = np.zeros(size, dtype=complex)
-    mult = 16807
+    mult = 48271
     mod = (2**31) - 1
     x = (seed * mult + 1) % mod
     for i in range(size[0]):
