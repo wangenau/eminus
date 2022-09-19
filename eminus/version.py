@@ -3,7 +3,7 @@
 import os
 import sys
 
-__version__ = '2.0.0'
+__version__ = '2.1.0'
 dependencies = ('numpy', 'scipy')
 addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
 dev = ('pytest', 'flake8', 'sphinx', 'furo')

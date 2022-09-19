@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.1.0 - Sep 19, 2022
+---------------------
 - New features
     - Support for spin-polarized calculations!
     - Rewritten GTH parser to use the CP2K file format
@@ -10,15 +10,16 @@ dev
     - Built-in Chachiyo correlation functional
     - New pseudo-random starting guess for comparisons with SimpleDFT
 - Updated docs
-    - Improved displaying of examples in documentation
+    - Improved displaying of examples in the documentation
     - Convert notebooks to HTML pages
     - New overview image
     - Minify pages
-- Misc
+- Miscellaneous
     - Minimal versions for dependencies
     - GUI option for viewer and better examples
     - Rename Ns to Nstate to avoid confusion with Nspin
     - Adapt to newer NumPy RNG generators (use SFC64)
+    - Update default numerical parameters
     - Option to set charge directly in atom when calculating single atoms
     - Adapt print precision from convergence tolerance
     - CI tests for the minimal Python version
@@ -26,7 +27,7 @@ dev
     - Misc performance improvements (e.g. in Ylm_real and get_Eewald)
     - Fix some bugs (e.g. the LibXC interface for spin-polarized systems)
 
-v2.0.0 - May 20, 2020
+v2.0.0 - May 20, 2022
 ---------------------
 - Performance improved by 10-30%
 - New features
@@ -34,11 +35,11 @@ v2.0.0 - May 20, 2020
    - Domains
    - LibXC interface
    - Examples
-   - cg minimizer
+   - CG minimizer
    - Simplify and optimize operators
 - Updated docs
    - New theme with dark mode
-   - Add examples, changelog and license pages
+   - Add examples, changelog, and license pages
    - Add dev information
    - Enable compression
 - Coding style
@@ -48,7 +49,7 @@ v2.0.0 - May 20, 2020
    - Use loggers
    - Unify coding style
    - Remove legacy code
-- Misc
+- Miscellaneous
    - Improved setup.py
    - More tests
    - Improve readability
