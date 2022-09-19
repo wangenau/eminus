@@ -73,7 +73,7 @@ class SCF:
         # Set min here, better not use mutable data types in signatures
         if self.min is None:
             # For systems with bad convergence throw in some sd steps
-            self.min = {'sd': 10, 'pccg': 250}
+            self.min = {'sd': 25, 'pccg': 250}
 
         # Initialize logger
         self.log = create_logger(self)

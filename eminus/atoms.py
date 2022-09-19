@@ -33,7 +33,7 @@ class Atoms:
         ecut (float | None): Cut-off energy.
 
             None will disable the G-Vector truncation (needs a separate s).
-            Default: 20 Hartree (ca. 544 eV).
+            Default: 30 Hartree (ca. 816 eV).
         Z (int | list | tuple | ndarray | None): Valence charge per atom.
 
             The charges should not differ for same species. None will use valence charges from GTH
@@ -80,7 +80,7 @@ class Atoms:
 
             Default: 'info'
     '''
-    def __init__(self, atom, X, a=20, ecut=20, Z=None, s=None, center=False, Nspin=2, f=None,
+    def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=2, f=None,
                  Nstate=None, verbose='info'):
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
