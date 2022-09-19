@@ -150,6 +150,8 @@ def wannier_cost(atoms, psirs):
 def wannier_center(atoms, psirs):
     '''Calculate Wannier centers, i.e., the expectation values of r.
 
+    Reference: J. Chem. Phys. 137, 224114.
+
     Args:
         atoms: Atoms object.
         psirs (ndarray): Set of orbitals in real-space.
@@ -169,6 +171,8 @@ def wannier_center(atoms, psirs):
 
 def second_moment(atoms, psirs):
     '''Calculate the second moments, i.e., the expectation values of r^2.
+
+    Reference: J. Chem. Phys. 137, 224114.
 
     Args:
         atoms: Atoms object.

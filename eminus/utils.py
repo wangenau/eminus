@@ -140,7 +140,9 @@ def handle_spin_gracefully(func):
 
 
 def pseudo_uniform(size, seed=1234):
-    '''Pseudo uniform random number generator.
+    '''Lehmer random number generator.
+
+    Reference: Commun. ACM. 12, 85.
 
     Args:
         size (tuple): Dimension of the array to create.

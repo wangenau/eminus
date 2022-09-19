@@ -19,8 +19,6 @@ These operators can act on six different options, namely
 6. the active reciprocal space (1d)
 
 The active space is the truncated reciprocal space by restricting it with a sphere given by ecut.
-
-Reference: Comput. Phys. Commun. 128, 1.
 '''
 import os
 
@@ -40,6 +38,7 @@ def O(atoms, W):
     '''Overlap operator.
 
     This operator acts on the options 3, 4, 5, and 6.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -56,6 +55,7 @@ def L(atoms, W):
     '''Laplacian operator.
 
     This operator acts on the options 3 and 5.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -77,6 +77,7 @@ def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
     This operator acts on the options 3 and 4.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -105,6 +106,7 @@ def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -142,6 +144,7 @@ def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -173,6 +176,7 @@ def Idag(atoms, W, full=False):
     '''Conjugated backwards transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -194,6 +198,7 @@ def Jdag(atoms, W):
     '''Conjugated forward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -212,6 +217,7 @@ def K(atoms, W):
     '''Preconditioning operator.
 
     This operator acts on the options 3 and 5.
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.

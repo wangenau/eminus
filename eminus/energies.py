@@ -122,6 +122,8 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
 def get_Eloc(scf, n):
     '''Calculate the local energy contribution.
 
+    Reference: Comput. Phys. Commun. 128, 1.
+
     Args:
         scf: SCF object.
         n (ndarray): Real-space electronic density.

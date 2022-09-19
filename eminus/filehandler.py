@@ -335,6 +335,8 @@ def create_pdb(atom, X, a=None):
 def read_gth(atom, charge=None, psp_path=None):
     '''Read GTH files for a given atom.
 
+    Reference: Phys. Rev. B 54, 1703.
+
     Args:
         atom (str): Atom name.
 

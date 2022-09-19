@@ -9,6 +9,8 @@ from .logger import log
 def KSO(scf, write_cubes=False, **kwargs):
     '''Generate Kohn-Sham orbitals and optionally save them as cube files.
 
+    Reference: Phys. Rev. 140, A1133.
+
     Args:
         scf: SCF object.
 
