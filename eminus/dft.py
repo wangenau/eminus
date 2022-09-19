@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-'''Main DFT functions based on the DFT++ formulation.
-
-Reference: Comput. Phys. Commun. 128, 1.
-'''
+'''Main DFT functions based on the DFT++ formulation.'''
 import numpy as np
 from numpy.random import Generator, SFC64
 from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
@@ -14,6 +11,8 @@ from .xc import get_xc
 
 def solve_poisson(atoms, n):
     '''Solve the Poisson equation.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -28,6 +27,8 @@ def solve_poisson(atoms, n):
 
 def get_n_total(atoms, Y):
     '''Calculate the total electronic density.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -46,6 +47,8 @@ def get_n_total(atoms, Y):
 
 def get_n_spin(atoms, Y, n=None):
     '''Calculate the electronic density per spin channel.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         atoms: Atoms object.
@@ -89,6 +92,8 @@ def get_n_single(atoms, Y):
 def orth(atoms, W):
     '''Orthogonalize coefficient matrix W.
 
+    Reference: Comput. Phys. Commun. 128, 1.
+
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
@@ -102,6 +107,8 @@ def orth(atoms, W):
 
 def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     '''Calculate the energy gradient with respect to W.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.
@@ -134,6 +141,8 @@ def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
 
 def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     '''Left-hand side of the eigenvalue equation.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.
@@ -177,6 +186,8 @@ def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
 def Q(inp, U):
     '''Operator needed to calculate gradients with non-constant occupations.
 
+    Reference: Comput. Phys. Commun. 128, 1.
+
     Args:
         inp (ndarray): Coefficients input array.
         U (ndarray): Overlap of wave functions.
@@ -193,6 +204,8 @@ def Q(inp, U):
 
 def get_psi(scf, W, n=None):
     '''Calculate eigenstates from H.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.
@@ -216,6 +229,8 @@ def get_psi(scf, W, n=None):
 
 def get_epsilon(scf, W, n=None):
     '''Calculate eigenvalues from H.
+
+    Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.

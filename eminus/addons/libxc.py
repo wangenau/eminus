@@ -14,7 +14,6 @@ def libxc_functional(xc, n_spin, Nspin):
     '''Handle LibXC exchange-correlation functionals.
 
     Only LDA functionals should be used.
-
     Reference: SoftwareX 7, 1.
 
     Args:

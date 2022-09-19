@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-'''Utilities to use Goedecker, Teter, and Hutter (GTH) pseudopotentials.
-
-Reference: Phys. Rev. B 54, 1703.
-'''
+'''Utilities to use Goedecker, Teter, and Hutter (GTH) pseudopotentials.'''
 import numpy as np
 
 from .logger import log
