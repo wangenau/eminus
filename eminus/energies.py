@@ -83,7 +83,7 @@ def get_Ecoul(atoms, n, phi=None):
         atoms: Atoms object.
         n (ndarray): Real-space electronic density.
 
-    Kwargs:
+    Keyword Args:
         phi (ndarray): Hartree ﬁeld.
 
     Returns:

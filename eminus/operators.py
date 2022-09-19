@@ -19,6 +19,9 @@ These operators can act on six different options, namely
 6. the active reciprocal space (1d)
 
 The active space is the truncated reciprocal space by restricting it with a sphere given by ecut.
+
+Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
+spin individually.
 '''
 import os
 
