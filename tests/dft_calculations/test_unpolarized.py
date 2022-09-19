@@ -27,10 +27,11 @@ def calc_unpolarized(system):
     xc = 'lda,vwn'
     guess = 'random'
     etol = 1e-6
+    min = {'sd': 15, 'pccg': 25}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
-    E = RSCF(atoms, xc=xc, guess=guess, etol=etol).run()
+    E = RSCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
 
     try:
         assert_allclose(E, E_ref[system], atol=etol)
