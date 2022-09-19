@@ -14,14 +14,14 @@ def calculate(atoms):
 H = Atoms(['H'], [[0, 0, 0]], 16, 16, [1], [60, 60, 60], f=[1],
           Nspin=1, verbose='warning')
 calculate(H)
-# # `Output:  Etot(['H']) = -0.438413 Eh`
+# # `Output:  Etot(['H']) = -0.438418 Eh`
 
 He = Atoms(['He'], [[0, 0, 0]], 16, 16, [2], [60, 60, 60], f=[2],
            Nspin=1, verbose='warning')
 calculate(He)
-# # `Output:  Etot(['He']) = -2.632034 Eh`
+# # `Output:  Etot(['He']) = -2.632035 Eh`
 
 H2 = Atoms(['H', 'H'], [[0, 0, 0], [1.4, 0, 0]], 16, 16, [1, 1], [60, 60, 60], f=[2],
            Nspin=1, verbose='warning')
 calculate(H2)
-# # `Output:  Etot(['H', 'H']) = -1.113968 Eh`
+# # `Output:  Etot(['H', 'H']) = -1.113969 Eh`
