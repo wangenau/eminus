@@ -268,7 +268,48 @@ def load(filename):
         return pickle.load(fh)
 
 
-def create_pdb(atom, X, a=None):
+def write_pdb(object, filename, fods=None, elec_symbols=None):
+    '''Generate pdb files from atoms objects.
+
+    See `~eminus.filehandler.create_pdb_str` for more information about the pdb file format.
+
+    Args:
+        object: Atoms or SCF object.
+        filename (str): xyz output file path/name.
+
+    Keyword Args:
+        fods (list): FOD coordinates to write.
+        elec_symbols (list): Identifier for up and down FODs.
+    '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
+    if not filename.endswith('.pdb'):
+        filename = f'{filename}.pdb'
+
+    if elec_symbols is None:
+        elec_symbols = ['X', 'He']
+        if 'He' in atoms.atom and atoms.Nspin == 2:
+            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                        'polarized case.')
+
+    atom = atoms.atom
+    X = atoms.X
+    if fods is not None:
+        atom += [elec_symbols[0]] * len(fods[0]) + [elec_symbols[1]] * len(fods[1])
+        if fods[0].shape[0] != 0:
+            X = np.vstack((X, fods[0]))
+        if fods[1].shape[0] != 0:
+            X = np.vstack((X, fods[1]))
+
+    with open(filename, 'w') as fp:
+        fp.write(create_pdb_str(atom, X, a=atoms.a))
+    return
+
+
+def create_pdb_str(atom, X, a=None):
     '''Convert atom symbols and positions to the pdb format.
 
     File format definitions:
@@ -306,9 +347,10 @@ def create_pdb(atom, X, a=None):
         pdb += ' '
         pdb += 'P 1'.ljust(11)          # 56-66 Space group
         # pdb += '1'.rjust(4)           # 67-70 Z value
+        pdb += '\n'
 
     # Create molecule data
-    pdb += '\nMODEL 1'
+    pdb += 'MODEL 1'
     for ia in range(len(atom)):
         pdb += '\nATOM  '                   # 1-6 "ATOM"
         pdb += f'{ia + 1}'.rjust(5)         # 7-11 Atom serial number

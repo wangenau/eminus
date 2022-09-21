@@ -10,7 +10,7 @@ except ImportError:
           '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from .fods import split_fods
-from ..filehandler import create_pdb, read_cube, read_xyz
+from ..filehandler import create_pdb_str, read_cube, read_xyz
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
@@ -42,18 +42,18 @@ def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
         # Atoms
         atom, X = read_xyz(filename)
         atom, X, X_fod = split_fods(atom, X, elec_symbols)
-        view.add_component(TextStructure(create_pdb(atom, X)))
+        view.add_component(TextStructure(create_pdb_str(atom, X)))
         view[0].clear()
         view[0].add_ball_and_stick()
         # Spin up FODs
         if len(X_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb([elec_symbols[0]] * len(X_fod[0]),
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(X_fod[0]),
                                X_fod[0])))
             view[1].clear()
             view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
         # Spin down FODs
         if len(X_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb([elec_symbols[1]] * len(X_fod[1]),
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(X_fod[1]),
                                X_fod[1])))
             view[2].clear()
             view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
@@ -63,7 +63,7 @@ def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
         # Atoms and cell
         atom, X, _, a, _ = read_cube(filename)
         atom, X, X_fod = split_fods(atom, X, elec_symbols)
-        view.add_component(TextStructure(create_pdb(atom, X, a)))
+        view.add_component(TextStructure(create_pdb_str(atom, X, a)))
         view[0].clear()
         view[0].add_ball_and_stick()
         view.add_unitcell()
@@ -89,13 +89,13 @@ def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
                             side='front')
         # Spin up FODs
         if len(X_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb([elec_symbols[0]] * len(X_fod[0]),
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(X_fod[0]),
                                X_fod[0])))
             view[3].clear()
             view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
         # Spin down FODs
         if len(X_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb([elec_symbols[1]] * len(X_fod[1]),
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(X_fod[1]),
                                X_fod[1])))
             view[4].clear()
             view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
