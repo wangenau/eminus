@@ -4,11 +4,13 @@
 For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 '''
+import datetime
+
 import eminus
 
 project = 'eminus'
 author = 'Wanja Timm Schulze'
-copyright = '2021-2022, Wanja Timm Schulze'
+copyright = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
 version = eminus.__version__
 release = eminus.__version__.rpartition('.')[0]
 
