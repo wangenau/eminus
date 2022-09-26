@@ -8,8 +8,8 @@ import numpy as np
 
 from .dft import guess_gaussian, guess_pseudo, guess_random
 from .energies import Energy, get_Eewald, get_Esic
-from .filehandler import read_gth
 from .gth import init_gth_loc, init_gth_nonloc
+from .io import read_gth
 from .logger import create_logger, get_level
 from .minimizer import cg, lm, pccg, pclm, sd  # noqa: F401
 from .potentials import init_pot

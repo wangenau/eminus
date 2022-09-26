@@ -1,6 +1,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+	- Rename filehandler to io
+
 v2.1.0 - Sep 19, 2022
 ---------------------
 - New features

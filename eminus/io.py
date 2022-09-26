@@ -271,7 +271,7 @@ def load(filename):
 def write_pdb(object, filename, fods=None, elec_symbols=None):
     '''Generate pdb files from atoms objects.
 
-    See `~eminus.filehandler.create_pdb_str` for more information about the pdb file format.
+    See `~eminus.io.create_pdb_str` for more information about the pdb file format.
 
     Args:
         object: Atoms or SCF object.

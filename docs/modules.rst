@@ -14,8 +14,8 @@ Modules
    eminus.dft
    eminus.domains
    eminus.energies
-   eminus.filehandler
    eminus.gth
+   eminus.io
    eminus.localizer
    eminus.logger
    eminus.minimizer

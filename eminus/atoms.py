@@ -6,7 +6,7 @@ import numpy as np
 from scipy.fft import next_fast_len
 from scipy.linalg import det, eig, inv, norm
 
-from .filehandler import read_gth
+from .io import read_gth
 from .logger import create_logger, get_level, log
 from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor

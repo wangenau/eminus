@@ -9,8 +9,8 @@ Main source code directory.
 | dft.py         | DFT routines |
 | domains.py     | Domain generation |
 | energies.py    | Energy object and calculation |
-| filehandler.py | Input/output functions |
 | gth.py         | GTH pseudopotential functions |
+| io.py          | Input/output functions |
 | localizer.py   | Localization routines |
 | logger.py      | Logging configuration |
 | minimizer.py   | Minimization algorithms |

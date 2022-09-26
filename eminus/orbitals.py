@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Workflow functions that combine functions to generate orbitals.'''
 from .dft import get_psi
-from .filehandler import write_cube
+from .io import write_cube
 from .localizer import get_FLO, get_FO
 from .logger import log
 
