@@ -44,8 +44,8 @@ def FO(scf, write_cubes=False, fods=None):
     Returns:
         ndarray: Real-space Fermi orbitals.
     '''
-    # Lazy import addons
-    from .addons.fods import get_fods, remove_core_fods
+    # Lazy import extras
+    from .extras.fods import get_fods, remove_core_fods
     atoms = scf.atoms
 
     # Calculate eigenfunctions
@@ -76,8 +76,8 @@ def FLO(scf, write_cubes=False, fods=None):
     Returns:
         ndarray: Real-space Fermi-Löwdin orbitals.
     '''
-    # Lazy import addons
-    from .addons.fods import get_fods, remove_core_fods
+    # Lazy import extras
+    from .extras.fods import get_fods, remove_core_fods
     atoms = scf.atoms
 
     # Calculate eigenfunctions

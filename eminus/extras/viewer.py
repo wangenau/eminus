@@ -2,15 +2,10 @@
 '''Viewer functions for Jupyter notebooks.'''
 import numpy as np
 from scipy.linalg import norm
-try:
-    from nglview import NGLWidget, TextStructure
-    from vispy import scene
-except ImportError:
-    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
-          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from .fods import split_fods
 from ..io import create_pdb_str, read_cube, read_xyz
+from ..logger import log
 
 
 # Adapted from https://github.com/MolSSI/QCFractal/issues/374
@@ -30,6 +25,13 @@ def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
     Returns:
         NGLWidget: Viewable object.
     '''
+    try:
+        from nglview import NGLWidget, TextStructure
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+
     if elec_symbols is None:
         elec_symbols = ['X', 'He']
 
@@ -114,6 +116,13 @@ def view_grid(coords, extra=None):
     Returns:
         SceneCanvas: Viewable object.
     '''
+    try:
+        from vispy import scene
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+
     # Set up view
     canvas = scene.SceneCanvas(keys='interactive', show=True, size=(400, 400))
     view = canvas.central_widget.add_view()

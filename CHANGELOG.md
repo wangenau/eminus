@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - Miscellaneous
+	- Rework the addons/extras functionality inclusion
 	- Rename filehandler to io
 
 v2.1.0 - Sep 19, 2022

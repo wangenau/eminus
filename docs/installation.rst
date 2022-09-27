@@ -23,16 +23,18 @@ Alternatively, you can create an installation by downloading the source code
    cd eminus
    pip install .
 
-To also install all optional dependencies to use built-in addons, use either
+To also install all optional dependencies to use built-in extras, use either
 
 .. code-block:: console
 
-   pip install eminus[addons]
+   pip install eminus[all]
 
 or for an installation after downloading the source code, use
 
 .. code-block:: console
 
-   pip install .[addons]
+   pip install .[all]
+
+To install only selected extras, follow the instructions given in :mod:`~eminus.extras`.
 
 All packages have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.

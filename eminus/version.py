@@ -5,7 +5,7 @@ import sys
 
 __version__ = '2.1.0'
 dependencies = ('numpy', 'scipy')
-addons = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
+extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
 dev = ('pytest', 'flake8', 'sphinx', 'furo')
 
 
@@ -14,7 +14,7 @@ def info():
     print('--- Version infos ---')
     print(f'python      : {sys.version.split()[0]}')
     print(f'eminus      : {__version__}')
-    for pkg in dependencies + addons + dev:
+    for pkg in dependencies + extras + dev:
         try:
             exec(f'import {pkg}')
             try:
@@ -25,8 +25,8 @@ def info():
         except ModuleNotFoundError:
             if pkg in dependencies:
                 print(f'{pkg.ljust(12)}: Dependency not installed')
-            elif pkg in addons:
-                print(f'{pkg.ljust(12)}: Addon not installed')
+            elif pkg in extras:
+                print(f'{pkg.ljust(12)}: Extra not installed')
 
     print('\n--- Performance infos ---')
     try:

@@ -31,7 +31,7 @@ def get_xc(xc, n_spin, Nspin):
 
     # Only import libxc interface if necessary
     if 'libxc' in xc:
-        from .addons.libxc import libxc_functional
+        from .extras.libxc import libxc_functional
     # Zeta is not needed in LibXC
     else:
         # Zeta is only needed for non-zero values of the density

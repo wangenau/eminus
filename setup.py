@@ -13,6 +13,31 @@ with open('eminus/version.py', 'r') as fh:
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
+extras = {
+    'fods': [
+        'pyflosic2>=2.0.0rc0'  # PyCOM FOD guesser
+    ],
+    'libxc': [
+        'pylibxc2>=6'  # More exchange-correlation functionals
+    ],
+    'viewer': [
+        'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
+        'nglview>=2.6.5',      # Molecule and isosurface viewer
+        'vispy>=0.8'           # Grid visualization
+    ]
+}
+extras['all'] = [dep for values in extras.values() for dep in values]
+extras['dev'] = [
+    'flake8>=3.7',               # Style guide checker
+    'flake8-docstrings>=1.4',    # Docstring style guide extension
+    'flake8-import-order>=0.9',  # Import statement style guide extension
+    'furo>=2022.02.14.1',        # Documentation theme
+    'notebook',                  # Run and convert notebooks to HTML
+    'pytest>=2.8',               # Test utilities
+    'sphinx>=4'                  # Documentation builder
+]
+
+
 setup(
     name='eminus',
     version=version['__version__'],
@@ -50,24 +75,7 @@ setup(
         'eminus.pade': ['*-q*']
     },
     zip_safe=False,
-    extras_require={
-        'addons': [
-            'jupyter_rfb>=0.1.1',   # Run VisPy in notebooks
-            'nglview>=2.6.5',       # Molecule and isosurface viewer
-            'pyflosic2>=2.0.0rc0',  # PyCOM FOD guesser
-            'pylibxc2>=6',          # More exchange-correlation functionals
-            'vispy>=0.8'            # Grid visualization
-        ],
-        'dev': [
-            'flake8>=3.7',               # Style guide checker
-            'flake8-docstrings>=1.4',    # Docstring style guide extension
-            'flake8-import-order>=0.9',  # Import statement style guide extension
-            'furo>=2022.02.14.1',        # Documentation theme
-            'notebook',                  # Run and convert notebooks to HTML
-            'pytest>=2.8',               # Test utilities
-            'sphinx>=4'                  # Documentation builder
-        ]
-    },
+    extras_require=extras,
     python_requires='>=3.6',
     project_urls={
         'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',

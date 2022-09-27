@@ -6,4 +6,4 @@ Visualization
 
 .. code-block:: console
 
-   jupyter notebook 08_visualizer_addon.ipynb
+   jupyter notebook 08_visualizer_extra.ipynb

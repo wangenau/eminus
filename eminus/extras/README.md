@@ -1,6 +1,6 @@
-# addons
+# extras
 
-Addon directory that contains functions that need additional dependencies to work.
+Extras directory that contains functions that need additional dependencies to work.
 
 | File        | Description |
 | :---------: | :---------: |

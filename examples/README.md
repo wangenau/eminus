@@ -10,8 +10,8 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 04_dft_calculations         | Advanced DFT calculations |
 | 05_input_output             | In-/Output functionalities |
 | 06_advanced_functionalities | Advanced functionalities and workflows |
-| 07_fod_addon                | FOD and FLO generation |
-| 08_visualizer_addon         | Visualization features |
+| 07_fod_extra                | FOD and FLO generation |
+| 08_visualizer_extra         | Visualization features |
 | 09_sic_calculations         | Calculate SIC energies |
 | 10_domain_generation        | Generate domains and use them |
 

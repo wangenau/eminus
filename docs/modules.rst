@@ -28,8 +28,8 @@ Modules
    eminus.utils
    eminus.version
    eminus.xc
-   eminus.addons
-   eminus.addons.fods
-   eminus.addons.libxc
-   eminus.addons.viewer
+   eminus.extras
+   eminus.extras.fods
+   eminus.extras.libxc
+   eminus.extras.viewer
    eminus.pade

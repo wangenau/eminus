@@ -3,11 +3,7 @@
 
 For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
 '''
-try:
-    from pylibxc import LibXCFunctional
-except ImportError:
-    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
-          '       install the package with addons, e.g., with "pip install eminus[addons]"')
+from ..logger import log
 
 
 def libxc_functional(xc, n_spin, Nspin):
@@ -24,6 +20,13 @@ def libxc_functional(xc, n_spin, Nspin):
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
+    try:
+        from pylibxc import LibXCFunctional
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[libxc]".\n\n')
+        raise
+
     # LibXC functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(xc), Nspin)

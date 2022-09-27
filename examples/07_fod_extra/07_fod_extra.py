@@ -1,5 +1,5 @@
 from eminus import Atoms, read_xyz, SCF, write_cube, write_xyz
-from eminus.addons import get_fods, remove_core_fods
+from eminus.extras import get_fods, remove_core_fods
 from eminus.dft import get_psi
 from eminus.localizer import get_FLO
 

@@ -4,15 +4,6 @@ import pathlib
 
 import numpy as np
 from scipy.linalg import norm
-try:
-    from pyflosic2.atoms.atoms import Atoms
-    from pyflosic2.guess.pycom import pycom
-    from pyflosic2.parameters.flosic_parameters import parameters
-    from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
-    from pyscf.scf import UKS, RKS
-except ImportError:
-    print('ERROR: Necessary addon dependencies not found. To use this module,\n'
-          '       install the package with addons, e.g., with "pip install eminus[addons]"')
 
 from ..data import symbol2number
 from ..logger import log
@@ -36,6 +27,17 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     Returns:
         ndarray: FOD positions.
     '''
+    try:
+        from pyflosic2.atoms.atoms import Atoms
+        from pyflosic2.guess.pycom import pycom
+        from pyflosic2.parameters.flosic_parameters import parameters
+        from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
+        from pyscf.scf import UKS, RKS
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[fods]".\n\n')
+        raise
+
     try:
         atoms = object.atoms
     except AttributeError:
