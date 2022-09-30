@@ -94,13 +94,13 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
         # Print information about the file and program, and the file creation time.
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(atoms.Natoms):
-            fp.write(f'{atoms.atom[ia]}  {X[ia, 0]:.5f}  {X[ia, 1]:.5f}  {X[ia, 2]:.5f}\n')
+            fp.write(f'{atoms.atom[ia]}  {X[ia, 0]: .5f}  {X[ia, 1]: .5f}  {X[ia, 2]: .5f}\n')
         # Add FOD coordinates if desired. The atom symbol will default to X (no atom type).
         if fods is not None:
             for ie in fods[0]:
-                fp.write(f'{elec_symbols[0]}  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+                fp.write(f'{elec_symbols[0]}  {ie[0]: .5f}  {ie[1]: .5f}  {ie[2]: .5f}\n')
             for ie in fods[1]:
-                fp.write(f'{elec_symbols[1]}  {ie[0]:.5f}  {ie[1]:.5f}  {ie[2]:.5f}\n')
+                fp.write(f'{elec_symbols[1]}  {ie[0]: .5f}  {ie[1]: .5f}  {ie[2]: .5f}\n')
     return
 
 
