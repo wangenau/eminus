@@ -4,18 +4,11 @@ stages:
   - test
   - deploy
 
-before_script:
-  - apt-get update -y
-  # libgomp1 is not included in slim python images but needed for numpy
-  - apt-get install -y libgomp1 --no-install-recommends
-  # Disable warnings about running pip as root user
-  - pip config set global.root-user-action ignore
-  - pip install -e .
-
 # Lint test python files
 lint:
   stage: test
   script:
+    - pip install -e .
     - pip install flake8 flake8-docstrings flake8-import-order
     - flake8
   only:
@@ -27,6 +20,7 @@ lint:
 .pytest:
   stage: test
   script:
+    - pip install -e .
     - pip install pytest
     - pytest tests/dft_calculations --tb=short
   only:
@@ -39,10 +33,7 @@ test-3.6:
   extends: .pytest
   image: python:3.6-slim
   before_script:
-    - apt-get update -y
-    - apt-get install -y libgomp1 --no-install-recommends
     - pip install numpy==1.17.0 scipy==1.4.0
-    - pip install -e .
 test-3.10:
     extends: .pytest
 
@@ -66,6 +57,7 @@ test-windows:
   tags:
     - windows
   before_script:
+    # https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/-/issues/13
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install python --no-progress -y
     - refreshenv
