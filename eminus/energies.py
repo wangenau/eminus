@@ -92,7 +92,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = solve_poisson(atoms, n)
     # Ecoul = -(J(n))dag O(phi)
-    return np.real(0.5 * n.conj().T @ atoms.Jdag(atoms.O(phi)))
+    return np.real(0.5 * n.T @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
@@ -116,7 +116,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     if exc is None:
         exc = get_xc(scf.xc, n_spin, Nspin)[0]
     # Exc = (J(n))dag O(J(exc))
-    return np.real(n.conj().T @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return np.real(n.T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
 def get_Eloc(scf, n):

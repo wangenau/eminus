@@ -326,7 +326,7 @@ class Atoms:
         self.G2c = G2[active]
 
         # Calculate the structure factor per atom
-        self.Sf = np.exp(1j * G @ self.X.conj().T).T
+        self.Sf = np.exp(1j * G @ self.X.T).T
         return
 
     def __repr__(self):
