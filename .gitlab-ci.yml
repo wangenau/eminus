@@ -23,18 +23,18 @@ lint:
       - "*.py"
       - "**/*.py"
 
+# Test code functionality for the oldest and newest supported python version
 .pytest:
   stage: test
   script:
-    - python -m pip install pytest
-    - python -m pytest tests/dft_calculations --tb=short
+    - pip install pytest
+    - pytest tests/dft_calculations --tb=short
   only:
     changes:
       - eminus/*.py
       - eminus/**/*.py
       - tests/*.py
       - tests/**/*.py
-# Test code functionality for the oldest supported python version
 test-3.6:
   extends: .pytest
   image: python:3.6-slim
@@ -43,22 +43,32 @@ test-3.6:
     - apt-get install -y libgomp1 --no-install-recommends
     - pip install numpy==1.17.0 scipy==1.4.0
     - pip install -e .
-# Test code functionality for the newest python version
 test-3.10:
     extends: .pytest
-# Test code functionality under windows, only for version changes
+
+# Test code functionality under macos and windows
+.platform-test:
+  stage: test
+  script:
+    - python -m pip install -e .
+    - python -m pip install pytest
+    - python -m pytest tests/dft_calculations --tb=short
+  only:
+    changes:
+      - eminus/version.py
+test-macos:
+  extends: .platform-test
+  image: sickcodes/docker-osx:latest
+  before_script:
+    - python -m ensurepip
 test-windows:
-  extends: .pytest
+  extends: .platform-test
   tags:
     - windows
   before_script:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    - choco install python --version=3.10 --no-progress -y
+    - choco install python --no-progress -y
     - refreshenv
-    - python -m pip install -e .
-  only:
-    changes:
-      - eminus/version.py
 
 # Build documentation
 pages:
