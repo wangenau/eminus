@@ -65,8 +65,8 @@ def init_gth_nonloc(scf):
         tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
     '''
     atoms = scf.atoms
-    prj2beta = np.empty((3, atoms.Natoms, 4, 7), dtype=int)
-    prj2beta[:] = -1  # Set to an invalid index
+    prj2beta = np.zeros((3, atoms.Natoms, 4, 7), dtype=int)
+    prj2beta += -1  # Set to an invalid index
 
     NbetaNL = 0
     for ia in range(atoms.Natoms):

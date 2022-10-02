@@ -49,7 +49,7 @@ def get_xc(xc, n_spin, Nspin):
             f_exch = 'mock_xc'
             log.warning('Use a mock functional for the exchange part.')
         if Nspin == 2:
-            f_exch = f'{f_exch}_spin'
+            f_exch += '_spin'
         ex_nz, vx_nz = eval(f_exch)(n_nz, zeta=zeta_nz)
 
         # Map the non-zero values back to the right dimension
@@ -71,7 +71,7 @@ def get_xc(xc, n_spin, Nspin):
             f_corr = 'mock_xc'
             log.warning('Use a mock functional for the correlation part.')
         if Nspin == 2:
-            f_corr = f'{f_corr}_spin'
+            f_corr += '_spin'
         ec_nz, vc_nz = eval(f_corr)(n_nz, zeta=zeta_nz)
 
         # Map the non-zero values back to the right dimension

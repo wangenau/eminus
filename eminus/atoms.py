@@ -333,8 +333,8 @@ class Atoms:
         '''Print the parameters stored in the Atoms object.'''
         out = 'Atom\tCharge\tPosition'
         for i in range(self.Natoms):
-            out = f'{out}\n{self.atom[i]}\t{self.Z[i]}\t' \
-                  f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
+            out += f'\n{self.atom[i]}\t{self.Z[i]}\t' \
+                   f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
         return out
 
     @property
