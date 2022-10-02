@@ -12,8 +12,8 @@ before_script:
   - pip config set global.root-user-action ignore
   - pip install -e .
 
-# Lint check python files
-flake8:
+# Lint test python files
+lint:
   stage: test
   script:
     - pip install flake8 flake8-docstrings flake8-import-order
@@ -23,21 +23,19 @@ flake8:
       - "*.py"
       - "**/*.py"
 
-# Test code functionality for the oldest and newest supported python version
 .pytest:
   stage: test
   script:
-    - pip install pytest
-    - pytest tests/dft_calculations --tb=short
+    - python -m pip install pytest
+    - python -m pytest tests/dft_calculations --tb=short
   only:
     changes:
       - eminus/*.py
       - eminus/**/*.py
       - tests/*.py
       - tests/**/*.py
-pytest-3.10:
-  extends: .pytest
-pytest-3.6:
+# Test code functionality for the oldest supported python version
+test-3.6:
   extends: .pytest
   image: python:3.6-slim
   before_script:
@@ -45,6 +43,22 @@ pytest-3.6:
     - apt-get install -y libgomp1 --no-install-recommends
     - pip install numpy==1.17.0 scipy==1.4.0
     - pip install -e .
+# Test code functionality for the newest python version
+test-3.10:
+    extends: .pytest
+# Test code functionality under windows, only for version changes
+test-windows:
+  extends: .pytest
+  tags:
+    - windows
+  before_script:
+    - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+    - choco install python --version=3.10 --no-progress -y
+    - refreshenv
+    - python -m pip install -e .
+  only:
+    changes:
+      - eminus/version.py
 
 # Build documentation
 pages:
