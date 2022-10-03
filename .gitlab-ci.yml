@@ -2,9 +2,30 @@ image: python:3.10-slim
 
 stages:
   - test
+  - test-pedantic
   - deploy
 
-# Lint test python files
+.pytest:
+  stage: test
+  script:
+    - python3 -m pip install -e .
+    - python3 -m pip install pytest
+    - python3 -m pytest tests/dft_calculations --tb=short
+  only:
+    changes:
+      - eminus/*.py
+      - eminus/**/*.py
+      - tests/*.py
+      - tests/**/*.py
+
+.pytest-pedantic:
+  extends: .pytest
+  stage: test-pedantic
+  only:
+    changes:
+      - eminus/version.py
+
+########## Lint python files ##########
 lint:
   stage: test
   script:
@@ -16,44 +37,40 @@ lint:
       - "*.py"
       - "**/*.py"
 
-# Test code functionality for the oldest and newest supported python version
-.pytest:
-  stage: test
-  script:
-    - pip install -e .
-    - pip install pytest
-    - pytest tests/dft_calculations --tb=short
-  only:
-    changes:
-      - eminus/*.py
-      - eminus/**/*.py
-      - tests/*.py
-      - tests/**/*.py
-test-3.6:
+########## Test code functionality for the current and minimal supported versions ##########
+pytest:
+    extends: .pytest
+
+pytest:minimal:
   extends: .pytest
   image: python:3.6-slim
   before_script:
     - pip install numpy==1.17.0 scipy==1.4.0
-test-3.10:
-    extends: .pytest
 
-# Test code functionality under macos and windows
-.platform-test:
-  stage: test
-  script:
-    - python -m pip install -e .
-    - python -m pip install pytest
-    - python -m pytest tests/dft_calculations --tb=short
-  only:
-    changes:
-      - eminus/version.py
-test-macos:
-  extends: .platform-test
+########## Test code functionality for all python versions between current and minimal ##########
+python:
+  extends: .pytest-pedantic
+  image: python:$PYTHON_VERSIONS-slim
+  parallel:
+    matrix:
+      - PYTHON_VERSIONS: ['3.7', '3.8', '3.9']
+
+########## Test code functionality under linux, macos, and windows ##########
+platform:linux:
+  extends: .pytest-pedantic
+  image: ubuntu:latest
+  before_script:
+    - apt-get update -y
+    - apt-get install python3 python3-pip --no-install-recommends -y
+
+platform:macos:
+  extends: .pytest-pedantic
   image: sickcodes/docker-osx:latest
   before_script:
-    - python -m ensurepip
-test-windows:
-  extends: .platform-test
+    - python3 -m ensurepip
+
+platform:windows:
+  extends: .pytest-pedantic
   tags:
     - windows
   before_script:
@@ -61,11 +78,13 @@ test-windows:
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install python --no-progress -y
     - refreshenv
+    - Set-Alias -Name python3 -Value python
 
-# Build documentation
+########## Build documentation ##########
 pages:
   stage: deploy
   script:
+    - pip install -e .
     # Build sphinx documentation
     - pip install sphinx furo
     - sphinx-build -b html ./docs ./public
