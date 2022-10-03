@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - Miscellaneous
+	- Test different platforms and more Python versions
 	- Rework the addons/extras functionality inclusion
 	- Rename filehandler to io
 
