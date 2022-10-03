@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Package version number and version info function.'''
 import os
+import platform
 import sys
 
 __version__ = '2.1.0'
@@ -11,9 +12,12 @@ dev = ('pytest', 'flake8', 'sphinx', 'furo')
 
 def info():
     '''Print version numbers and availability of packages.'''
-    print('--- Version infos ---')
-    print(f'python      : {sys.version.split()[0]}')
-    print(f'eminus      : {__version__}')
+    print('--- Platform infos ---'
+          f'\nPlatform    : {platform.system()} {platform.machine()}'
+          f'\nRelease     : {platform.release()} {platform.version()}'
+          '\n\n--- Version infos ---'
+          f'\npython      : {sys.version.split()[0]}'
+          f'\neminus      : {__version__}')
     for pkg in dependencies + extras + dev:
         try:
             exec(f'import {pkg}')
