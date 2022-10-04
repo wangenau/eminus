@@ -22,8 +22,8 @@ stages:
   extends: .pytest
   stage: test-pedantic
   only:
-    changes:
-      - eminus/version.py
+    refs:
+      - tags
 
 ########## Lint python files ##########
 lint:
