@@ -15,10 +15,10 @@ with open('README.md', 'r') as fh:
 
 extras = {
     'fods': [
-        'pyflosic2>=2.0.0rc0'  # PyCOM FOD guesser
+        'pyflosic2>=2.0.0rc0'  # PyCOM FOD guessing method
     ],
     'libxc': [
-        'pylibxc2>=6'  # More exchange-correlation functionals
+        'pylibxc2>=5'  # More exchange-correlation functionals
     ],
     'viewer': [
         'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
