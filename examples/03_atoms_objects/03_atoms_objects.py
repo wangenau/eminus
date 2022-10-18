@@ -51,10 +51,11 @@ print(f'New Atoms object:\n{atoms}\n')
 # # To display the calculated cell volume
 print(f'Cell volume = {atoms.Omega} a0^3')
 
-# # If you edit properties of an existing object dependent properties can be updated
-# # Edit the cell size, update the object, and display the new cell volume
+# # If you edit properties of an existing object dependent properties can be updated by rebuilding the `Atoms` object
+# # The `atoms.build` function is used to generate cell parameters for an SCF calculation, but an SCF object will call the function if necessary
+# # Edit the cell size, rebuild the object, and display the new cell volume
 atoms.a = 3
-atoms.update()
+atoms.build()
 print(f'New cell volume = {atoms.Omega} a0^3')
 
 # # More information are always available in the respective docstring

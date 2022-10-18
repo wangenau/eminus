@@ -3,7 +3,7 @@ from eminus.energies import get_Esic
 from eminus.orbitals import FLO, KSO
 
 # # Start with a DFT calculation for neon
-atoms = Atoms('Ne', [0, 0, 0], ecut=10, Nspin=1)
+atoms = Atoms('Ne', [0, 0, 0], ecut=10, Nspin=1).build()
 scf = SCF(atoms)
 scf.run()
 

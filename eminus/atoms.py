@@ -93,16 +93,11 @@ class Atoms:
         self.f = f            # Occupation numbers
         self.Nstate = Nstate  # Number of states
 
-        # Parameters that will be built out of the inputs
-        self.Natoms = None  # Number of atoms
-        self.R = None       # Cell
-        self.Omega = None   # Cell volume
-        self.r = None       # Sample points in cell
-        self.G = None       # G-vectors
-        self.G2 = None      # Squared magnitudes of G-vectors
-        self.active = None  # Mask for active G-vectors
-        self.G2c = None     # Truncated squared magnitudes of G-vectors
-        self.Sf = None      # Structure factor
+        # Set up parameters that should not be cleared
+        self.Natoms = None     # Number of atoms
+        self.R = None          # Cell
+        self.Omega = None      # Cell volume
+        self.clear()
 
         # Initialize logger and update
         self.log = create_logger(self)
@@ -110,20 +105,38 @@ class Atoms:
             self.verbose = log.verbose
         else:
             self.verbose = verbose
-        self.update()
+        self.initialize()
 
-    def update(self):
-        '''Validate inputs, update them and build all necessary parameters.'''
+    def clear(self):
+        '''Initialize and clear parameters that will be built out of the inputs.'''
+        self.r = None          # Sample points in cell
+        self.G = None          # G-vectors
+        self.G2 = None         # Squared magnitudes of G-vectors
+        self.active = None     # Mask for active G-vectors
+        self.G2c = None        # Truncated squared magnitudes of G-vectors
+        self.Sf = None         # Structure factor
+        self.is_built = False  # Flag to determine if the object was built or not
+        return self
+
+    def initialize(self):
+        '''Validate inputs and update them if necessary.'''
         self._set_atom()
         self._set_charge()
         self._set_cell_size()
         self._set_positions()
         self._set_sampling()
         self._set_states(self.Nspin)
+        return self
+
+    def build(self):
+        '''Build all necessary parameters.'''
         M, N = self._get_index_matrices()
         self._set_cell(M)
         self._set_G(N)
-        return
+        self.is_built = True
+        return self
+
+    kernel = build
 
     def _set_atom(self):
         '''Validate the atom input and calculate the number of atoms.'''

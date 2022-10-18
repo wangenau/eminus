@@ -104,14 +104,16 @@ class SCF:
         self.phi = None     # Hartree field
         self.exc = None     # Exchange-correlation energy density
         self.vxc = None     # Exchange-correlation potential
-        return
+        return self
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        if not self.atoms.is_built:
+            self.atoms.build()
         self._set_potential()
         self._init_W()
         self.print_precision = int(abs(np.log10(self.etol))) + 1
-        return
+        return self
 
     def run(self, **kwargs):
         '''Run the self-consistent field (SCF) calculation.'''
@@ -176,6 +178,8 @@ class SCF:
             self.log.info(f'Total energy: {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
 
+    kernel = run
+
     def _set_potential(self):
         '''Build the potential.'''
         atoms = self.atoms
@@ -231,10 +235,9 @@ class RSCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        super().initialize()
         self.atoms._set_states(Nspin=1)
-        self._set_potential()
-        self._init_W()
-        return
+        return self
 
 
 class USCF(SCF):
@@ -243,7 +246,6 @@ class USCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        super().initialize()
         self.atoms._set_states(Nspin=2)
-        self._set_potential()
-        self._init_W()
-        return
+        return self
