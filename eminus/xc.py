@@ -29,13 +29,12 @@ def get_xc(xc, n_spin, Nspin):
     nz_mask = np.nonzero(n)
     n_nz = n[nz_mask]
 
+    # Zeta is only needed for non-zero values of the density
+    zeta_nz = get_zeta(n_spin[:, nz_mask])
+
     # Only import libxc interface if necessary
     if 'libxc' in xc:
         from .extras.libxc import libxc_functional
-    # Zeta is not needed in LibXC
-    else:
-        # Zeta is only needed for non-zero values of the density
-        zeta_nz = get_zeta(n_spin[:, nz_mask])
 
     # Handle exchange part
     if 'libxc' in exch:
