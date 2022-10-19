@@ -18,7 +18,7 @@ extras = {
         'pyflosic2>=2.0.0rc0'  # PyCOM FOD guessing method
     ],
     'libxc': [
-        'pylibxc2>=5'  # More exchange-correlation functionals
+        'pyscf>=1.5.1'  # LibXC interface via PySCF
     ],
     'viewer': [
         'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
