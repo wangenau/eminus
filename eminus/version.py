@@ -6,8 +6,8 @@ import sys
 
 __version__ = '2.1.0'
 dependencies = ('numpy', 'scipy')
-extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pylibxc', 'pyflosic2')
-dev = ('pytest', 'flake8', 'sphinx', 'furo')
+extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyscf', 'pyflosic2')
+dev = ('pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
 
 
 def info():
@@ -24,7 +24,7 @@ def info():
             try:
                 print(f'{pkg.ljust(12)}: {eval(pkg).__version__}')
             except AttributeError:
-                # PyLibXC does not use the standard version identifier
+                # pylibxc does not use the standard version identifier
                 print(f'{pkg.ljust(12)}: {eval(pkg).version.__version__}')
         except ModuleNotFoundError:
             if pkg in dependencies:
