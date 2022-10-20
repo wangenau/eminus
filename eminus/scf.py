@@ -13,6 +13,7 @@ from .io import read_gth
 from .logger import create_logger, get_level
 from .minimizer import cg, lm, pccg, pclm, sd  # noqa: F401
 from .potentials import init_pot
+from .version import info
 
 
 class SCF:
@@ -117,6 +118,8 @@ class SCF:
 
     def run(self, **kwargs):
         '''Run the self-consistent field (SCF) calculation.'''
+        if self.log.level <= logging.DEBUG:
+            info()
         self.log.debug(f'--- System information ---\n{self.atoms}\n'
                        f'Spin handling: {"un" if self.atoms.Nspin == 1 else ""}polarized\n'
                        f'Number of states: {self.atoms.Nstate}\n'
