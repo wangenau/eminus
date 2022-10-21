@@ -14,6 +14,7 @@ from .logger import create_logger, get_level
 from .minimizer import cg, lm, pccg, pclm, sd  # noqa: F401
 from .potentials import init_pot
 from .version import info
+from .xc import XC_MAP
 
 
 class SCF:
@@ -132,6 +133,16 @@ class SCF:
 
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
+
+        exch, corr = self.xc.split(',')
+        try:
+            XC_MAP[exch]
+        except KeyError:
+            self.log.warning('Use a mock functional for the exchange part.')
+        try:
+            XC_MAP[corr]
+        except KeyError:
+            self.log.warning('Use a mock functional for the correlation part.')
 
         # Start minimization procedures
         Etots = []

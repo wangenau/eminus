@@ -5,6 +5,14 @@ import numpy as np
 from .logger import log
 
 
+XC_MAP = {
+    'lda': 'lda_slater_x',
+    'chachiyo': 'lda_chachiyo_c',
+    'pw': 'lda_pw_c',
+    'vwn': 'lda_vwn_c'
+}
+
+
 def get_xc(xc, n_spin, Nspin):
     '''Handle and get exchange-correlation functionals.
 
@@ -16,12 +24,6 @@ def get_xc(xc, n_spin, Nspin):
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
-    xc_map = {
-        'lda': 'lda_slater_x',
-        'chachiyo': 'lda_chachiyo_c',
-        'pw': 'lda_pw_c',
-        'vwn': 'lda_vwn_c'
-    }
     exch, corr = xc.split(',')
 
     # Only use non-zero values of the density
@@ -43,13 +45,12 @@ def get_xc(xc, n_spin, Nspin):
     else:
         # If the desired functional is not implemented use a mock functional
         try:
-            f_exch = xc_map[exch]
+            f_exch = XC_MAP[exch]
+            if Nspin == 2:
+                f_exch += '_spin'
         except KeyError:
             f_exch = 'mock_xc'
-            log.warning('Use a mock functional for the exchange part.')
-        if Nspin == 2:
-            f_exch += '_spin'
-        ex_nz, vx_nz = eval(f_exch)(n_nz, zeta=zeta_nz)
+        ex_nz, vx_nz = eval(f_exch)(n_nz, zeta=zeta_nz, Nspin=Nspin)
 
         # Map the non-zero values back to the right dimension
         ex = np.zeros_like(n)
@@ -65,13 +66,12 @@ def get_xc(xc, n_spin, Nspin):
     else:
         # If the desired functional is not implemented use a mock functional
         try:
-            f_corr = xc_map[corr]
+            f_corr = XC_MAP[corr]
+            if Nspin == 2:
+                f_corr += '_spin'
         except KeyError:
             f_corr = 'mock_xc'
-            log.warning('Use a mock functional for the correlation part.')
-        if Nspin == 2:
-            f_corr += '_spin'
-        ec_nz, vc_nz = eval(f_corr)(n_nz, zeta=zeta_nz)
+        ec_nz, vc_nz = eval(f_corr)(n_nz, zeta=zeta_nz, Nspin=Nspin)
 
         # Map the non-zero values back to the right dimension
         ec = np.zeros_like(n)
@@ -98,7 +98,7 @@ def get_zeta(n_spin):
     return (n_spin[0] - n_spin[1]) / (n_spin[0] + n_spin[1])
 
 
-def mock_xc(n, **kwargs):
+def mock_xc(n, Nspin=1, **kwargs):
     '''Mock exchange-correlation functional with no effect (spin-paired).
 
     Args:
@@ -108,20 +108,7 @@ def mock_xc(n, **kwargs):
         tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
     '''
     zeros = np.zeros_like(n)
-    return zeros, np.array([zeros])
-
-
-def mock_xc_spin(n, **kwargs):
-    '''Mock exchange-correlation functional with no effect (spin-polarized).
-
-    Args:
-        n (ndarray): Real-space electronic density.
-
-    Returns:
-        tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
-    '''
-    zeros = np.zeros_like(n)
-    return zeros, np.array([zeros, zeros])
+    return zeros, np.array([zeros] * Nspin)
 
 
 def lda_slater_x(n, alpha=2 / 3, **kwargs):
@@ -149,7 +136,7 @@ def lda_slater_x(n, alpha=2 / 3, **kwargs):
     return ex, np.array([vx])
 
 
-def lda_slater_x_spin(n, zeta, alpha=2 / 3):
+def lda_slater_x_spin(n, zeta, alpha=2 / 3, **kwargs):
     '''Slater exchange functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 1 in LibXC.
