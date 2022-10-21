@@ -8,7 +8,7 @@ electronvolt = eV = 27.211386245988
 # Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)
 kcalmol = 627.5094740631
 # a0 in Å (https://en.wikipedia.org/wiki/Bohr_radius)
-angstrom = A = 0.529177210903
+Angstrom = A = 0.529177210903
 # e * a0 in D (https://en.wikipedia.org/wiki/Hartree_atomic_units)
 Debye = D = 2.541746473
 
@@ -118,7 +118,7 @@ def ang2bohr(r):
     Returns:
         float | ndarray: Length in Bohr.
     '''
-    return r / angstrom
+    return r / Angstrom
 
 
 def bohr2ang(r):
@@ -130,7 +130,7 @@ def bohr2ang(r):
     Returns:
         float | ndarray: Length in Angstrom.
     '''
-    return r * angstrom
+    return r * Angstrom
 
 
 def ebohr2d(p):

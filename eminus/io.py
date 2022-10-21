@@ -8,7 +8,7 @@ import time
 
 import numpy as np
 
-from .data import number2symbol, symbol2number
+from .data import NUMBER2SYMBOL, SYMBOL2NUMBER
 from .logger import log
 from .units import ang2bohr, bohr2ang
 from .version import __version__
@@ -145,7 +145,7 @@ def read_cube(filename):
             # If the first value is not a (positive) integer, we have reached the field data
             if not line_split[0].isdigit():
                 break
-            atom.append(number2symbol[int(line_split[0])])
+            atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(line_split[1])
             X.append(np.float_(line_split[2:5]))
 
@@ -213,14 +213,14 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
                  f'{atoms.s[2]}  0.0  0.0  {atoms.a[2] / atoms.s[2]:.6f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(atoms.Natoms):
-            fp.write(f'{symbol2number[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
+            fp.write(f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
                      f'{atoms.X[ia, 0]: .6f}  {atoms.X[ia, 1]: .6f}  {atoms.X[ia, 2]: .6f}\n')
         if fods is not None:
             for ie in fods[0]:
-                fp.write(f'{symbol2number[elec_symbols[0]]}  0.000  '
+                fp.write(f'{SYMBOL2NUMBER[elec_symbols[0]]}  0.000  '
                          f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
             for ie in fods[1]:
-                fp.write(f'{symbol2number[elec_symbols[1]]}  0.000  '
+                fp.write(f'{SYMBOL2NUMBER[elec_symbols[1]]}  0.000  '
                          f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]

@@ -2,7 +2,7 @@
 '''Atomic data collections.'''
 
 # Map atom symbols and atom numbers
-symbol2number = {
+SYMBOL2NUMBER = {
     'X': 0,
     'H': 1,
     'He': 2,
@@ -110,4 +110,4 @@ symbol2number = {
 }
 
 # Map atom numbers and atom symbols
-number2symbol = {value: key for key, value in symbol2number.items()}
+NUMBER2SYMBOL = {value: key for key, value in SYMBOL2NUMBER.items()}

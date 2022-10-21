@@ -2,9 +2,6 @@
 '''Parametrizations of exchange-correlation functionals.'''
 import numpy as np
 
-from .logger import log
-
-
 XC_MAP = {
     'lda': 'lda_slater_x',
     'chachiyo': 'lda_chachiyo_c',

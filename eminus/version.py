@@ -5,13 +5,14 @@ import platform
 import sys
 
 __version__ = '2.1.0'
-dependencies = ('numpy', 'scipy')
-extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyscf', 'pyflosic2')
-dev = ('pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
 
 
 def info():
     '''Print version numbers and availability of packages.'''
+    dependencies = ('numpy', 'scipy')
+    extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyscf', 'pyflosic2')
+    dev = ('pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
+
     print('--- Platform infos ---'
           f'\nPlatform    : {platform.system()} {platform.machine()}'
           f'\nRelease     : {platform.release()} {platform.version()}'
