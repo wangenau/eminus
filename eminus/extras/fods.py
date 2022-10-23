@@ -5,7 +5,7 @@ import pathlib
 import numpy as np
 from scipy.linalg import norm
 
-from ..data import symbol2number
+from ..data import SYMBOL2NUMBER
 from ..logger import log
 from ..units import ang2bohr, bohr2ang
 
@@ -157,7 +157,7 @@ def remove_core_fods(object, fods):
 
     for spin in range(atoms.Nspin):
         for ia in range(atoms.Natoms):
-            n_core = symbol2number[atoms.atom[ia]] - atoms.Z[ia]
+            n_core = SYMBOL2NUMBER[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state
             # Since only core states are removed in pseudopotentials this value is divisible by 2
             # +1 to account for uneven amount of core FODs (e.g., for hydrogen)
