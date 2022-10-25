@@ -1,12 +1,23 @@
 Changelog
 =========
 
-dev
----
-- Miscellaneous
-	- Test different platforms and more Python versions
+v2.1.1 - Oct 24, 2022
+---------------------
+- New features
+	- Use the PySCF LibXC interface if pylibxc is not installed
 	- Rework the addons/extras functionality inclusion
+	- Dependencies can now be installed individually
+	- Rework the Atoms object initialization
+- Miscellaneous
+	- Test different platforms and more Python versions in CI
+	- Add kernel aliases to Atoms and SCF methods
+	- Allow mixing LibXC and internal functionals
+	- Add platform version in the info function
+	- Improved logging in some places
+	- Improve file writer formatting
+	- Rename addons to extras
 	- Rename filehandler to io
+	- Update PyPI identifiers (e.g. to display Python 3.11 support)
 
 v2.1.0 - Sep 19, 2022
 ---------------------
