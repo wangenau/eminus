@@ -21,9 +21,7 @@ stages:
 .pytest-pedantic:
   extends: .pytest
   stage: test-pedantic
-  only:
-    refs:
-      - tags
+  when: manual
 
 ########## Lint python files ##########
 lint:
