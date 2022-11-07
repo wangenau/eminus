@@ -1,4 +1,4 @@
-image: python:3.10-slim
+image: python:3.11-slim
 
 stages:
   - test
@@ -51,7 +51,7 @@ python:
   image: python:$PYTHON_VERSIONS-slim
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.7', '3.8', '3.9', '3.11']
+      - PYTHON_VERSIONS: ['3.7', '3.8', '3.9', '3.10']
 
 ########## Test code functionality under linux, macos, and windows ##########
 platform:linux:
