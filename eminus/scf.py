@@ -136,11 +136,13 @@ class SCF:
 
         exch, corr = self.xc.split(',')
         try:
-            XC_MAP[exch]
+            if 'libxc' not in exch:
+                XC_MAP[exch]
         except KeyError:
             self.log.warning('Use a mock functional for the exchange part.')
         try:
-            XC_MAP[corr]
+            if 'libxc' not in corr:
+                XC_MAP[corr]
         except KeyError:
             self.log.warning('Use a mock functional for the correlation part.')
 
