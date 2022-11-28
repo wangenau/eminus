@@ -63,6 +63,9 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
     Keyword Args:
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
+
+    Returns:
+        None.
     '''
     try:
         atoms = object.atoms
@@ -167,6 +170,9 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
     Keyword Args:
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
+
+    Returns:
+        None.
     '''
     # Atomic units are assumed, so there is no need for conversion.
     try:
@@ -280,6 +286,9 @@ def write_pdb(object, filename, fods=None, elec_symbols=None):
     Keyword Args:
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
+
+    Returns:
+        None.
     '''
     try:
         atoms = object.atoms

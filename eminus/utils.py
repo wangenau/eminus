@@ -153,7 +153,7 @@ def pseudo_uniform(size, seed=1234):
     Keyword Args:
         seed (int): Seed to initialize the random number generator.
 
-    Return:
+    Returns:
         ndarray: Array with (pseudo) random numbers.
     '''
     W = np.zeros(size, dtype=complex)

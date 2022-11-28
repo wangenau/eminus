@@ -17,10 +17,7 @@ ignore =
     D107,
     # D300: Use double quotes for docstrings
     # Use triple single quotes for docstrings
-    D300,
-    # D417: A bug results in false positives
-    # TODO: Remove if pydocstyle ever gets updated
-    D417
+    D300
 
 # D100, D103: Ignore missing docstrings in public modules or functions
 # E501, W505: Ignore line length warnings
