@@ -14,6 +14,28 @@ from .units import ang2bohr, bohr2ang
 from .version import __version__
 
 
+def read(*args, **kwargs):
+    '''Unified file reader function.'''
+    if args[0].endswith('.xyz'):
+        return read_xyz(*args, **kwargs)
+    elif args[0].endswith('.cube'):
+        return read_cube(*args, **kwargs)
+    else:
+        log.error('No viable file ending found.')
+
+
+def write(*args, **kwargs):
+    '''Unified file writer function.'''
+    if args[1].endswith('.xyz'):
+        return write_xyz(*args, **kwargs)
+    elif args[1].endswith('.cube'):
+        return write_cube(*args, **kwargs)
+    elif args[1].endswith('.pdb'):
+        return write_pdb(*args, **kwargs)
+    else:
+        log.error('No viable file ending found.')
+
+
 def read_xyz(filename):
     '''Load atom species and positions from xyz files.
 
@@ -156,7 +178,7 @@ def read_cube(filename):
     return atom, X, Z, a, s
 
 
-def write_cube(object, field, filename, fods=None, elec_symbols=None):
+def write_cube(object, filename, field, fods=None, elec_symbols=None):
     '''Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
@@ -164,8 +186,8 @@ def write_cube(object, field, filename, fods=None, elec_symbols=None):
 
     Args:
         object: Atoms or SCF object.
-        field (ndarray): Real-space field data.
         filename (str): xyz output file path/name.
+        field (ndarray): Real-space field data.
 
     Keyword Args:
         fods (list): FOD coordinates to write.

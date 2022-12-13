@@ -9,6 +9,14 @@ from ..logger import log
 from ..units import bohr2ang
 
 
+def view(*args, **kwargs):
+    '''Unified display function.'''
+    if isinstance(args[0], str):
+        return view_file(*args, **kwargs)
+    else:
+        return view_atoms(*args, **kwargs)
+
+
 def view_atoms(object, extra=None, unit='bohr'):
     '''Display atoms and 3D-coordinates, e.g., FODs or grid points.
 

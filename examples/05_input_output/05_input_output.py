@@ -18,7 +18,7 @@ scf = SCF(atoms)
 scf.run()
 
 # # Write the total density to a cube file, e.g., to visualize it
-write_cube(scf, scf.n, 'CH4_density')
+write_cube(scf, 'CH4_density', scf.n)
 
 # # Please note that xyz files will use Angstrom as length units
 # # Cube files have no standard, but atomic units will be assumed

@@ -25,7 +25,7 @@ def KSO(scf, write_cubes=False, **kwargs):
     # Calculate eigenfunctions and transform to real-space
     KSO = atoms.I(get_psi(scf, scf.W))
     if write_cubes:
-        cube_writer(atoms, KSO, 'KSO')
+        cube_writer(atoms, 'KSO', KSO)
     return KSO
 
 
@@ -57,7 +57,7 @@ def FO(scf, write_cubes=False, fods=None):
     # The FO functions needs orbitals in reciprocal space as input
     FO = get_FO(atoms, KSO, fods)
     if write_cubes:
-        cube_writer(atoms, FO, 'FO')
+        cube_writer(atoms, 'FO', FO)
     return FO
 
 
@@ -89,17 +89,17 @@ def FLO(scf, write_cubes=False, fods=None):
     # The FLO functions needs orbitals in reciprocal space as input
     FLO = get_FLO(atoms, KSO, fods)
     if write_cubes:
-        cube_writer(atoms, FLO, 'FLO')
+        cube_writer(atoms, 'FLO', FLO)
     return FLO
 
 
-def cube_writer(atoms, orbitals, type):
+def cube_writer(atoms, type, orbitals):
     '''Simple cube file writer function.
 
     Args:
         atoms: Atoms object.
-        orbitals (ndarray): Real-space orbitals.
         type (str): Orbital type for the cube file names.
+        orbitals (ndarray): Real-space orbitals.
     '''
     # Create the system name
     name = ''
@@ -116,5 +116,5 @@ def cube_writer(atoms, orbitals, type):
                     n_spin = f'_spin_{spin}'
                 filename = f'{name}_{type}_{i}{n_spin}.cube'
                 log.info(f'Write {filename}...')
-                write_cube(atoms, orbitals[spin, :, i], filename)
+                write_cube(atoms, filename, orbitals[spin, :, i])
     return

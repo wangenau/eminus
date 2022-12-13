@@ -49,4 +49,4 @@ print(f'Neon position = {atoms.X[0]} a0')
 print('\nWrite cube files:')
 for i in range(atoms.Nstate):
     print(f'{i + 1} of {atoms.Nstate}')
-    write_cube(atoms, psi[0, :, i], f'Ne_{i + 1}.cube')
+    write_cube(atoms, f'Ne_{i + 1}.cube', psi[0, :, i])
