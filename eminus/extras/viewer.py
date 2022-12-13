@@ -1,14 +1,97 @@
 #!/usr/bin/env python3
 '''Viewer functions for Jupyter notebooks.'''
 import numpy as np
-from scipy.linalg import norm
 
 from .fods import split_fods
+from ..data import COVALENT_RADII, CPK_COLORS
 from ..io import create_pdb_str, read_cube, read_xyz
 from ..logger import log
+from ..units import bohr2ang
 
 
-def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
+def view_atoms(object, extra=None, unit='bohr'):
+    '''Display atoms and 3D-coordinates, e.g., FODs or grid points.
+
+    Args:
+        object: Atoms or SCF object.
+
+    Keyword Args:
+        extra (ndarray | list ): Extra coordinates or FODs to display.
+        unit (str): Units to display, can be either 'Bohr' (default) or 'Ang' (case insensitive).
+
+    Returns:
+        None.
+    '''
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
+    # Handle units
+    unit_str = 'Bohr'
+    X = atoms.X
+    a = atoms.a
+    if 'ang' in unit.lower():
+        unit_str = 'Angström'
+        X = bohr2ang(atoms.X)
+        a = bohr2ang(atoms.a)
+        if isinstance(extra, list):
+            extra = [bohr2ang(i) for i in extra]
+        else:
+            extra = bohr2ang(extra)
+
+    fig = go.Figure()
+    # Add species one by one to be able to have them named and be selectable in the legend
+    for ia in set(sorted(atoms.atom)):
+        mask = np.where(np.asarray(atoms.atom) == ia)[0]
+        atom_data = go.Scatter3d(x=X[mask, 0], y=X[mask, 1], z=X[mask, 2],
+                                 name=ia,
+                                 mode='markers',
+                                 marker=dict(size=np.sqrt(50 * COVALENT_RADII[ia]),
+                                             color=CPK_COLORS[ia],
+                                             line={'color': 'black', 'width': 2}))
+        fig.add_trace(atom_data)
+    if extra is not None:
+        # If a list has been provided with the length of two it has to be FODs
+        if isinstance(extra, list) and len(extra) == 2:
+            if extra[0].size != 0:
+                extra_data = go.Scatter3d(x=extra[0][:, 0], y=extra[0][:, 1], z=extra[0][:, 2],
+                                          name='up-FOD',
+                                          mode='markers',
+                                          marker=dict(size=3, color='red'), )
+                fig.add_trace(extra_data)
+            if extra[1].size != 0:
+                extra_data = go.Scatter3d(x=extra[1][:, 0], y=extra[1][:, 1], z=extra[1][:, 2],
+                                          name='down-FOD',
+                                          mode='markers',
+                                          marker=dict(size=3, color='green'))
+                fig.add_trace(extra_data)
+        # Treat them as normal coordinates otherwise
+        else:
+            extra_data = go.Scatter3d(x=extra[:, 0], y=extra[:, 1], z=extra[:, 2],
+                                      name='Coordinate',
+                                      mode='markers',
+                                      marker=dict(size=1, color='red'))
+            fig.add_trace(extra_data)
+
+    fig.update_layout(scene={'xaxis': {'range': [0, a[0]]},
+                             'yaxis': {'range': [0, a[1]]},
+                             'zaxis': {'range': [0, a[2]]}})
+    fig.update_layout(scene={'xaxis_title': f'x [{unit_str}]',
+                             'yaxis_title': f'y [{unit_str}]',
+                             'zaxis_title': f'z [{unit_str}]'})
+    fig.update_layout(scene_aspectmode='cube')
+    fig.show()
+    return
+
+
+def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
     '''Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -101,43 +184,3 @@ def view_mol(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
             view[4].clear()
             view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
     return view.display(gui=gui)
-
-
-def view_grid(coords, extra=None):
-    '''Display 3D-coordinates, e.g., grid points.
-
-    Args:
-        coords (ndarray): Grid points.
-
-    Keyword Args:
-        extra (ndarray): Extra coordinates to display.
-
-    Returns:
-        SceneCanvas: Viewable object.
-    '''
-    try:
-        from vispy import scene
-    except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
-        raise
-
-    # Set up view
-    canvas = scene.SceneCanvas(keys='interactive', show=True, size=(400, 400))
-    view = canvas.central_widget.add_view()
-    view.size = (400, 400)
-    view.camera = 'arcball'
-    view.camera.center = (np.mean(coords[:, 0]), np.mean(coords[:, 1]), np.mean(coords[:, 2]))
-    view.camera.distance = np.max(norm(coords, axis=1)) * 2
-
-    # Add data
-    grid = scene.visuals.Markers()
-    grid.set_data(coords, face_color='lightgreen', edge_width=0, size=2)
-    view.add(grid)
-    if extra is not None:
-        grid_extra = scene.visuals.Markers()
-        grid_extra.set_data(extra, face_color='red', edge_width=0, size=8)
-        view.add(grid_extra)
-
-    canvas.app.run()
-    return canvas

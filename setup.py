@@ -21,9 +21,8 @@ extras = {
         'pyscf>=1.5.1'  # LibXC interface via PySCF
     ],
     'viewer': [
-        'jupyter_rfb>=0.1.1',  # Run VisPy in notebooks
-        'nglview>=2.6.5',      # Molecule and isosurface viewer
-        'vispy>=0.8'           # Grid visualization
+        'nglview>=2.6.5',  # Molecule and isosurface viewer
+        'plotly>=4'        # Grid visualization
     ]
 }
 extras['all'] = [dep for values in extras.values() for dep in values]

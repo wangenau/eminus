@@ -10,7 +10,7 @@ __version__ = '2.1.1'
 def info():
     '''Print version numbers and availability of packages.'''
     dependencies = ('numpy', 'scipy')
-    extras = ('vispy', 'nglview', 'notebook', 'jupyter_rfb', 'pyscf', 'pyflosic2')
+    extras = ('plotly', 'nglview', 'notebook', 'pyscf', 'pyflosic2')
     dev = ('pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
 
     print('--- Platform infos ---'
