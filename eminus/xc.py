@@ -10,13 +10,16 @@ XC_MAP = {
 }
 
 
-def get_xc(xc, n_spin, Nspin):
+def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     '''Handle and get exchange-correlation functionals.
 
     Args:
         xc (str): Exchange and correlation identifier, separated by a comma.
         n_spin (ndarray): Real-space electronic densities per spin channel.
         Nspin (int): Number of spin states.
+
+    Keyword Args:
+        dens_threshold (float): Do not treat densities smaller than the threshold.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
@@ -25,7 +28,7 @@ def get_xc(xc, n_spin, Nspin):
 
     # Only use non-zero values of the density
     n = np.sum(n_spin, axis=0)
-    nz_mask = np.nonzero(n)
+    nz_mask = np.where(n > dens_threshold)
     n_nz = n[nz_mask]
 
     # Zeta is only needed for non-zero values of the density
