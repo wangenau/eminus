@@ -45,11 +45,12 @@ To install only selected extras, follow the instructions given in :mod:`~eminus.
 Docker image
 ============
 
-To use a containerized version of the code a Docker container is available with all extras installed.
+To use a containerized version of the code, a `Docker container <https://hub.docker.com/r/wangenau/eminus>`_ has been created with all extras installed.
 The following command starts the container and a Jupyter notebook server
 
 .. code-block:: console
 
-    docker run -it -p 8888:8888 eminus/eminus:latest
+    docker run -it -p 8888:8888 wangenau/eminus:version
 
 Opening the displayed URL in a browser will open the Jupyter environment.
+Make sure to replace :code:`version` with the version you want to use.
