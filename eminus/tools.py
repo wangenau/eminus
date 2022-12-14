@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Various tools to check physical properties.'''
 import numpy as np
+from scipy.optimize import minimize_scalar
 
 from .dft import get_epsilon
 from .logger import log
@@ -228,3 +229,27 @@ def check_orthonorm(object, func):
     norm_bool = check_norm(atoms, func)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')
     return ortho_bool * norm_bool
+
+
+def get_isovalue(n, percent=85):
+    '''Find an isovalue that contains a specified percentage of the electronic density n.
+
+    Args:
+        n (float): Real-space electronic density.
+
+    Keyword Args:
+        percent (float): Amount of density that should be contained.
+
+    Returns:
+        float: Isovalue that contains the specified percentage of the density.
+    '''
+    def deviation(isovalue):
+        n_mask = np.sum(n[n > isovalue])
+        return abs(percent - (n_mask / n_ref) * 100)
+
+    # Integrated density
+    n_ref = np.sum(n)
+    # Finding the isovalue is an optimization problem, minimizing the deviation above
+    # The problem is bound by zero (no density) and the maximum value in n
+    res = minimize_scalar(deviation, bounds=(0, np.max(n)), method='bounded')
+    return res.x
