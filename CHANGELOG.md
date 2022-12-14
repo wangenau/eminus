@@ -1,6 +1,24 @@
 Changelog
 =========
 
+dev
+---
+- New features
+	- Added a Dockerfile and container
+	- Rewrite the grid view function as an atoms viewer
+	- Use plotly over VisPy
+	- Option to plot densities from SCF objects
+- Updated docs
+	- Add Docker instructions under Installation section
+	- Update examples to use the new atoms viewer
+- Miscellaneous
+	- Unified read, write, and view functions
+	- Add an optional density threshold for functionals
+	- Add covalent radii and CPK colors to data
+	- Add changelog to the PyPI description
+	- Fix flake8 configuration file
+	- Fix LibXC functional warnings
+
 v2.1.1 - Oct 24, 2022
 ---------------------
 - New features
