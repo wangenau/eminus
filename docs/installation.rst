@@ -9,6 +9,11 @@ Installation
 * `NumPy <https://numpy.org>`_
 * `SciPy <https://scipy.org>`_
 
+All packages used have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.
+
+Installation with pip
+=====================
+
 The `package <https://pypi.org/project/eminus>`_ and all necessary dependencies can be installed with
 
 .. code-block:: console
@@ -37,4 +42,14 @@ or for an installation after downloading the source code, use
 
 To install only selected extras, follow the instructions given in :mod:`~eminus.extras`.
 
-All packages have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.
+Docker image
+============
+
+To use a containerized version of the code a Docker container is available with all extras installed.
+The following command starts the container and a Jupyter notebook server
+
+.. code-block:: console
+
+    docker run -it -p 8888:8888 eminus/eminus:latest
+
+Opening the displayed URL in a browser will open the Jupyter environment.
