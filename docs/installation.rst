@@ -54,3 +54,15 @@ The following command starts the container and a Jupyter notebook server
 
 Opening the displayed URL in a browser will open the Jupyter environment.
 Make sure to replace :code:`version` with the version you want to use.
+
+You can also pass command line arguments to the container, e.g., to start a Python environment
+
+.. code-block:: console
+
+    docker run -it  wangenau/eminus:version python
+
+or to start a normal terminal inside the container
+
+.. code-block:: console
+
+    docker run -it  wangenau/eminus:version bash

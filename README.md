@@ -11,7 +11,7 @@ The goal is to create a simple code that is easy to read and easy to extend whil
 
 ## Documentation
 
-To learn more about the implementation, take a look inside the [documentation](https://wangenau.gitlab.io/eminus).
+To learn more about the implementation and usage of eminus, take a look inside the [documentation](https://wangenau.gitlab.io/eminus).
 
 ## Installation
 
@@ -20,6 +20,8 @@ The package and all necessary dependencies can be installed using pip
 ```terminal
 pip install eminus
 ```
+
+More information about the installation process can be found [here](https://wangenau.gitlab.io/eminus/installation.html).
 
 ## License
 
