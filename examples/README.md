@@ -14,6 +14,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 08_visualizer_extra         | Visualization features |
 | 09_sic_calculations         | Calculate SIC energies |
 | 10_domain_generation        | Generate domains and use them |
+| 11_simpledft_examples       | Comparison to SimpleDFT codes |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
