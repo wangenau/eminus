@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.1.2 - Dec 15, 2022
+---------------------
 - New features
 	- Added a Dockerfile and -container
 	- Rewrite the grid view function as an atoms viewer
