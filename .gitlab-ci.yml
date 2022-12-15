@@ -104,5 +104,6 @@ pages:
     changes:
       - docs/*
       - docs/**/*
+      - eminus/version.py
     refs:
       - main
