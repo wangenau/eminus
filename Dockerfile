@@ -1,28 +1,49 @@
-FROM python:3.10-slim
+# Build everything using multi-stage builds
+FROM python:3.10-slim as build
 
-# Install necessary build dependencies and cleanup afterwards
-# git is needed to clone repos
-# libglfw3 is needed for pyflosic2
-# gfortran and python3-dev are needed to compile fodmc (installed with pyflosic2)
+# Create a working directory and python environment
+WORKDIR /usr/app/
+RUN python -m venv /usr/app/venv/
+ENV PATH="/usr/app/venv/bin:$PATH"
+
+# Install Git to clone repositories, and clean up afterwards
 RUN apt-get update -y \
-    && apt-get install gfortran git libglfw3 python3-dev -y --no-install-recommends \
+    && apt-get install -y git --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install jupyter with a pinned ipywidgets version
-# (see https://github.com/nglviewer/nglview/pull/1033)
-# Somehow numpy has to be installed before installing pyflosic2
-RUN pip install notebook ipywidgets==7.* numpy --no-cache-dir
+# Install Jupyter with a pinned IPyWidgets version (https://github.com/nglviewer/nglview/pull/1033)
+# Only ASE is required to run PyFLOSIC2
+RUN pip install notebook ipywidgets==7.* ase --no-cache-dir
 
-# Fix to install pyflosic2 with a new pyscf version
+# Fix to install PyFLOSIC2 with a new PySCF version
+# Install without dependencies since only the PyCOM method will be used
 RUN git clone https://gitlab.com/opensic/pyflosic2.git \
     && sed -i "s/pyscf==1.7.6.post1/pyscf/g" pyflosic2/setup.py \
-    && pip install pyflosic2/ --no-cache-dir \
-    && rm -rf pyflosic2
+    && pip install pyflosic2/ --no-cache-dir --no-deps\
+    && rm -rf pyflosic2/
 
-# Install eminus with all extras available
+# Install eminus with all extras available (PyFLOSIC2 is already installed for the fods extra)
+# Use an editable installation so users can make changes on the fly
 RUN git clone https://gitlab.com/wangenau/eminus.git \
-    && pip install -e eminus/[all] --no-cache-dir
+    && pip install -e eminus/[libxc,viewer,dev] --no-cache-dir
 
-# Run jupyter
-CMD ["sh", "-c", "jupyter notebook /eminus --no-browser --allow-root --ip 0.0.0.0 --port 8888"]
+
+# Set up the application stage
+FROM python:3.10-slim
+LABEL maintainer="wangenau"
+
+# Ensure that no root rights are being used, copy the environment and eminus source
+RUN addgroup --system eminus \
+    && adduser --system --group eminus \
+    && mkdir /usr/app/ \
+    && chown eminus:eminus /usr/app/
+WORKDIR /usr/app/
+COPY --chown=eminus:eminus --from=build /usr/app/venv/ ./venv/
+COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
+ENV PATH="/usr/app/venv/bin:$PATH"
+
+# Set user, expose port, and run Jupyter
+USER eminus
+EXPOSE 8888
+CMD ["sh", "-c", "jupyter notebook eminus/ --no-browser --ip 0.0.0.0 --port 8888"]

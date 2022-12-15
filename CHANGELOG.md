@@ -4,7 +4,7 @@ Changelog
 dev
 ---
 - New features
-	- Added a Dockerfile and container
+	- Added a Dockerfile and -container
 	- Rewrite the grid view function as an atoms viewer
 	- Use plotly over VisPy
 	- Option to plot densities from SCF objects
