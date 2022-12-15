@@ -60,9 +60,3 @@ You can also pass command line arguments to the container, e.g., to start a Pyth
 .. code-block:: console
 
     docker run -it  wangenau/eminus:version python
-
-or to start a normal terminal inside the container
-
-.. code-block:: console
-
-    docker run -it  wangenau/eminus:version bash
