@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test functionality of examples.'''
+'''Test functionality of example scripts.'''
 import inspect
 import os
 import pathlib
@@ -62,16 +62,8 @@ def test_07():
                    'CH4_fods.xyz'])
 
 
-def test_08():
-    pass
-
-
 def test_09():
     execute_example('09_sic_calculations')
-
-
-def test_10():
-    pass
 
 
 def test_11():
@@ -93,10 +85,8 @@ if __name__ == '__main__':
     test_05()
     test_06()
     test_07()
-    test_08()
     test_09()
-    test_10()
     test_11()
     test_12()
     end = time.perf_counter()
-    print(f'Test for examples execution passed in {end - start:.3f} s.')
+    print(f'Tests for example scripts execution passed in {end - start:.3f} s.')

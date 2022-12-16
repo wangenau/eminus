@@ -102,4 +102,4 @@ if __name__ == '__main__':
     run_operator(test_JdagIdag)
     run_operator(test_TT)
     end = time.perf_counter()
-    print(f'Test for operator identities passed in {end - start:.3f} s.')
+    print(f'Tests for operator identities passed in {end - start:.3f} s.')

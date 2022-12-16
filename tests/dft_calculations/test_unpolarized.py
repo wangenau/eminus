@@ -72,4 +72,4 @@ if __name__ == '__main__':
     test_CH4()
     test_Ne()
     end = time.perf_counter()
-    print(f'Test for unpolarized calculations passed in {end - start:.3f} s.')
+    print(f'Tests for unpolarized calculations passed in {end - start:.3f} s.')
