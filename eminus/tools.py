@@ -232,7 +232,7 @@ def check_orthonorm(object, func):
 
 
 def get_isovalue(n, percent=85):
-    '''Find an isovalue that contains a specified percentage of the electronic density n.
+    '''Find an isovalue that contains a specified percentage of the electronic density.
 
     Args:
         n (float): Real-space electronic density.

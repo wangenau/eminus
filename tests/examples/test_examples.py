@@ -78,6 +78,11 @@ def test_11():
     execute_example('11_simpledft_examples')
 
 
+def test_12():
+    execute_example('12_germanium_solid')
+    clean_example(['Ge_solid_density.cube'])
+
+
 if __name__ == '__main__':
     import time
     start = time.perf_counter()
@@ -92,5 +97,6 @@ if __name__ == '__main__':
     test_09()
     test_10()
     test_11()
+    test_12()
     end = time.perf_counter()
     print(f'Test for examples execution passed in {end - start:.3f} s.')
