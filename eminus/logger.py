@@ -12,11 +12,8 @@ class CustomLogger(logging.Logger):
     Args:
         name (str): Logger name.
     '''
-    @property
-    def logger(self):
-        '''Return logger on demand.'''
-        component = f'{type(self).__module__}.{type(self).__name__}'
-        return logging.getLogger(component)
+    def __init__(self, name):
+        super().__init__(name)
 
     @property
     def verbose(self):
