@@ -7,7 +7,6 @@ from ..data import COVALENT_RADII, CPK_COLORS
 from ..io import create_pdb_str, read_cube, read_xyz
 from ..logger import log
 from ..tools import get_isovalue
-from ..units import bohr2ang
 
 
 def view(*args, **kwargs):
@@ -18,7 +17,7 @@ def view(*args, **kwargs):
         return view_atoms(*args, **kwargs)
 
 
-def view_atoms(object, extra=None, unit='bohr', plot_n=False, percent=85, surfaces=20):
+def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
     '''Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
 
     Args:
@@ -26,7 +25,6 @@ def view_atoms(object, extra=None, unit='bohr', plot_n=False, percent=85, surfac
 
     Keyword Args:
         extra (ndarray | list ): Extra coordinates or FODs to display.
-        unit (str): Units to display, can be either 'Bohr' (default) or 'Ang' (case insensitive).
         plot_n (bool): Weather to plot the electronic density (only for executed scf objects).
         percent (float): Amount of density that should be contained.
         surfaces (int): Number of surfaces to display in density plots (reduce for performance).
@@ -45,27 +43,12 @@ def view_atoms(object, extra=None, unit='bohr', plot_n=False, percent=85, surfac
     except AttributeError:
         atoms = object
 
-    # Handle units
-    if 'ang' in unit.lower():
-        unit_str = 'Å'
-        X = bohr2ang(atoms.X)
-        a = bohr2ang(atoms.a)
-        # FODs are saved in a list
-        if isinstance(extra, list):
-            extra = [bohr2ang(i) for i in extra]
-        else:
-            extra = bohr2ang(extra)
-    else:
-        unit_str = 'a<sub>0</sub>'
-        X = atoms.X
-        a = atoms.a
-
     fig = go.Figure()
     # Add species one by one to be able to have them named and be selectable in the legend
     # Note: The size scaling is mostly arbitray and has no meaning
     for ia in sorted(set(atoms.atom)):
         mask = np.where(np.asarray(atoms.atom) == ia)[0]
-        atom_data = go.Scatter3d(x=X[mask, 0], y=X[mask, 1], z=X[mask, 2],
+        atom_data = go.Scatter3d(x=atoms.X[mask, 0], y=atoms.X[mask, 1], z=atoms.X[mask, 2],
                                  name=ia,
                                  mode='markers',
                                  marker=dict(size=2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
@@ -98,11 +81,7 @@ def view_atoms(object, extra=None, unit='bohr', plot_n=False, percent=85, surfac
     # A density can be plotted for an scf object
     if plot_n:
         try:
-            if 'ang' in unit.lower():
-                r = bohr2ang(atoms.r)
-            else:
-                r = atoms.r
-            den_data = go.Volume(x=r[:, 0], y=r[:, 1], z=r[:, 2], value=object.n,
+            den_data = go.Volume(x=atoms.r[:, 0], y=atoms.r[:, 1], z=atoms.r[:, 2], value=object.n,
                                  name='Density',
                                  colorbar_title=f'Density ({percent}%)',
                                  colorscale='Inferno',
@@ -118,9 +97,9 @@ def view_atoms(object, extra=None, unit='bohr', plot_n=False, percent=85, surfac
             log.warning('Density plots are only possible for executed SCF objects.')
 
     # Theming
-    fig.update_layout(scene={'xaxis': {'range': [0, a[0]], 'title': f'x [{unit_str}]'},
-                             'yaxis': {'range': [0, a[1]], 'title': f'y [{unit_str}]'},
-                             'zaxis': {'range': [0, a[2]], 'title': f'z [{unit_str}]'},
+    fig.update_layout(scene={'xaxis': {'range': [0, atoms.a[0]], 'title': 'x [a<sub>0</sub>]'},
+                             'yaxis': {'range': [0, atoms.a[1]], 'title': 'y [a<sub>0</sub>]'},
+                             'zaxis': {'range': [0, atoms.a[2]], 'title': 'z [a<sub>0</sub>]'},
                              'aspectmode': 'cube'},
                       legend={'itemsizing': 'constant', 'title': 'Selection'},
                       hoverlabel_bgcolor='black',
