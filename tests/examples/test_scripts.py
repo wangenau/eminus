@@ -30,6 +30,7 @@ def test_01():
     execute_example('01_installation_test')
 
 
+@pytest.mark.slow
 def test_02():
     execute_example('02_minimal_example')
 
@@ -47,11 +48,13 @@ def test_05():
     clean_example(['CH4.pkl', 'CH4_density.cube'])
 
 
+@pytest.mark.slow
 def test_06():
     execute_example('06_advanced_functionalities')
     clean_example(['Ne_1.cube', 'Ne_2.cube', 'Ne_3.cube', 'Ne_4.cube'])
 
 
+@pytest.mark.slow
 @pytest.mark.extras
 def test_07():
     execute_example('07_fod_extra')
@@ -59,15 +62,18 @@ def test_07():
                    'CH4_fods.xyz'])
 
 
+@pytest.mark.slow
 @pytest.mark.extras
 def test_09():
     execute_example('09_sic_calculations')
 
 
+@pytest.mark.slow
 def test_11():
     execute_example('11_simpledft_examples')
 
 
+@pytest.mark.slow
 def test_12():
     execute_example('12_germanium_solid')
     clean_example(['Ge_solid_density.cube'])
