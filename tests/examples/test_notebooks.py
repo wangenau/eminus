@@ -4,8 +4,6 @@ import inspect
 import os
 import pathlib
 
-from nbconvert.preprocessors import ExecutePreprocessor
-from nbformat import read
 import pytest
 
 
@@ -13,6 +11,9 @@ import pytest
 @pytest.mark.parametrize('name', ['08_visualizer_extra', '10_domain_generation'])
 def test_notebooks(name):
     '''Test the execution of a given Jupyter notebook.'''
+    from nbconvert.preprocessors import ExecutePreprocessor
+    from nbformat import read
+
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
