@@ -9,6 +9,7 @@ from nbformat import read
 import pytest
 
 
+@pytest.mark.extras
 @pytest.mark.parametrize('name', ['08_visualizer_extra', '10_domain_generation'])
 def test_notebooks(name):
     '''Test the execution of a given Jupyter notebook.'''

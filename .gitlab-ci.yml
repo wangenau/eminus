@@ -10,7 +10,7 @@ stages:
   script:
     - python3 -m pip install -e .
     - python3 -m pip install pytest
-    - python3 -m pytest tests/dft_calculations --tb=short
+    - python3 -m pytest tests/ --exclude=examples/ --tb=short
   only:
     changes:
       - eminus/*.py

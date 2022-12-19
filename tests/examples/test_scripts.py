@@ -5,6 +5,8 @@ import os
 import pathlib
 import runpy
 
+import pytest
+
 
 def execute_example(name):
     '''Test the execution of a given Python script.'''
@@ -50,12 +52,14 @@ def test_06():
     clean_example(['Ne_1.cube', 'Ne_2.cube', 'Ne_3.cube', 'Ne_4.cube'])
 
 
+@pytest.mark.extras
 def test_07():
     execute_example('07_fod_extra')
     clean_example(['CH4_FLO_1.cube', 'CH4_FLO_2.cube', 'CH4_FLO_3.cube', 'CH4_FLO_4.cube',
                    'CH4_fods.xyz'])
 
 
+@pytest.mark.extras
 def test_09():
     execute_example('09_sic_calculations')
 
