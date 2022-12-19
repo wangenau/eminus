@@ -4,6 +4,7 @@ import inspect
 import pathlib
 
 from numpy.testing import assert_allclose
+import pytest
 
 from eminus import Atoms, read_xyz, USCF
 
@@ -19,7 +20,8 @@ E_ref = {
 }
 
 
-def calc_polarized(system):
+@pytest.mark.parametrize('system', E_ref.keys())
+def test_polarized(system):
     '''Compare total energies for a test system with a reference value (spin-polarized).'''
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     a = 10
@@ -33,54 +35,10 @@ def calc_polarized(system):
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
-
-    try:
-        assert_allclose(E, E_ref[system], atol=etol)
-    except AssertionError as err:
-        print(f'Test for {system} failed.')
-        raise SystemExit(err) from None
-    else:
-        print(f'Test for {system} passed.')
+    assert_allclose(E, E_ref[system], atol=etol)
     return
 
 
-def test_H():
-    calc_polarized('H')
-
-
-def test_H2():
-    calc_polarized('H2')
-
-
-def test_He():
-    calc_polarized('He')
-
-
-def test_Li():
-    calc_polarized('Li')
-
-
-def test_LiH():
-    calc_polarized('LiH')
-
-
-def test_CH4():
-    calc_polarized('CH4')
-
-
-def test_Ne():
-    calc_polarized('Ne')
-
-
 if __name__ == '__main__':
-    import time
-    start = time.perf_counter()
-    test_H()
-    test_H2()
-    test_He()
-    test_Li()
-    test_LiH()
-    test_CH4()
-    test_Ne()
-    end = time.perf_counter()
-    print(f'Tests for polarized calculations passed in {end - start:.3f} s.')
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    pytest.main(file_path)

@@ -18,18 +18,6 @@ W_tests = {
 }
 
 
-def run_operator(test):
-    '''Run a given operator test.'''
-    try:
-        test()
-    except Exception as err:
-        print(f'Test for {test.__name__} failed.')
-        raise SystemExit(err) from None
-    else:
-        print(f'Test for {test.__name__} passed.')
-    return
-
-
 def test_LinvL():
     for i in ['full', 'full_spin']:
         out = atoms.Linv(atoms.L(W_tests[i]))
@@ -92,14 +80,8 @@ def test_TT():
 
 
 if __name__ == '__main__':
-    import time
-    start = time.perf_counter()
-    run_operator(test_LLinv)
-    run_operator(test_LinvL)
-    run_operator(test_IJ)
-    run_operator(test_JI)
-    run_operator(test_IdagJdag)
-    run_operator(test_JdagIdag)
-    run_operator(test_TT)
-    end = time.perf_counter()
-    print(f'Tests for operator identities passed in {end - start:.3f} s.')
+    import inspect
+    import pathlib
+    import pytest
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    pytest.main(file_path)

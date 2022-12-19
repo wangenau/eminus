@@ -11,13 +11,7 @@ def execute_example(name):
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
-    try:
-        runpy.run_path(f'{name}.py')
-    except Exception as err:
-        print(f'Test for {name} failed.')
-        raise SystemExit(err) from None
-    else:
-        print(f'Test for {name} passed.')
+    runpy.run_path(f'{name}.py')
     return
 
 
@@ -76,17 +70,6 @@ def test_12():
 
 
 if __name__ == '__main__':
-    import time
-    start = time.perf_counter()
-    test_01()
-    test_02()
-    test_03()
-    test_04()
-    test_05()
-    test_06()
-    test_07()
-    test_09()
-    test_11()
-    test_12()
-    end = time.perf_counter()
-    print(f'Tests for example scripts execution passed in {end - start:.3f} s.')
+    import pytest
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    pytest.main(file_path)
