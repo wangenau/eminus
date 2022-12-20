@@ -31,7 +31,7 @@ class Energy:
         '''Print the energies stored in the Energy object.'''
         out = ''
         for ie in self.__slots__:
-            energy = eval('self.' + ie)
+            energy = getattr(self, ie)
             if energy != 0:
                 out += f'{ie.ljust(8)}: {energy:+.9f} Eh\n'
         return f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'

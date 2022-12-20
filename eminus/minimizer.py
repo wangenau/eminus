@@ -376,3 +376,12 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         if condition(scf, costs, linmin, cg):
             break
     return costs
+
+
+IMPLEMENTED = {
+    'cg': cg,
+    'lm': lm,
+    'pccg': pccg,
+    'pclm': pclm,
+    'sd': sd
+}

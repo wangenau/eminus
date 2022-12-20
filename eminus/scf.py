@@ -11,7 +11,7 @@ from .energies import Energy, get_Eewald, get_Esic
 from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
 from .logger import create_logger, get_level
-from .minimizer import cg, lm, pccg, pclm, sd  # noqa: F401
+from .minimizer import IMPLEMENTED
 from .potentials import init_pot
 from .version import info
 from .xc import XC_MAP
@@ -151,12 +151,12 @@ class SCF:
         minimizer_log = {}
         for imin in self.min:
             try:
-                self.log.info(f'Start {eval(imin).__name__}...')
-            except NameError:
+                self.log.info(f'Start {IMPLEMENTED[imin].__name__}...')
+            except KeyError:
                 self.log.exception(f'No minimizer found for "{imin}"')
                 raise
             start = time.perf_counter()
-            Elist = eval(imin)(self, self.min[imin], **kwargs)  # Call minimizer
+            Elist = IMPLEMENTED[imin](self, self.min[imin], **kwargs)  # Call minimizer
             end = time.perf_counter()
             minimizer_log[imin] = {}  # Create an entry for the current minimizer
             minimizer_log[imin]['time'] = end - start  # Save time in dictionary

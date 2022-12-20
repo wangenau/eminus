@@ -87,8 +87,15 @@ def init_pot(scf):
         ndarray: Potential in reciprocal space.
     '''
     try:
-        pot = eval(scf.pot)(scf.atoms)
-    except NameError:
+        pot = IMPLEMENTED[scf.pot](scf.atoms)
+    except KeyError:
         log.exception(f'No potential found for "{scf.pot}"')
         raise
     return pot
+
+
+IMPLEMENTED = {
+    'harmonic': harmonic,
+    'coulomb': coulomb,
+    'ge': ge
+}

@@ -2,13 +2,6 @@
 '''Parametrizations of exchange-correlation functionals.'''
 import numpy as np
 
-XC_MAP = {
-    'lda': 'lda_slater_x',
-    'chachiyo': 'lda_chachiyo_c',
-    'pw': 'lda_pw_c',
-    'vwn': 'lda_vwn_c'
-}
-
 
 def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     '''Handle and get exchange-correlation functionals.
@@ -50,7 +43,7 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
                 f_exch += '_spin'
         except KeyError:
             f_exch = 'mock_xc'
-        ex_nz, vx_nz = eval(f_exch)(n_nz, zeta=zeta_nz, Nspin=Nspin)
+        ex_nz, vx_nz = IMPLEMENTED[f_exch](n_nz, zeta=zeta_nz, Nspin=Nspin)
 
         # Map the non-zero values back to the right dimension
         ex = np.zeros_like(n)
@@ -71,7 +64,7 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
                 f_corr += '_spin'
         except KeyError:
             f_corr = 'mock_xc'
-        ec_nz, vc_nz = eval(f_corr)(n_nz, zeta=zeta_nz, Nspin=Nspin)
+        ec_nz, vc_nz = IMPLEMENTED[f_corr](n_nz, zeta=zeta_nz, Nspin=Nspin)
 
         # Map the non-zero values back to the right dimension
         ec = np.zeros_like(n)
@@ -452,3 +445,24 @@ def lda_vwn_c_spin(n, zeta, **kwargs):
     vcup = dec1 + (1 - zeta) * dec2
     vcdw = dec1 - (1 + zeta) * dec2
     return ec, np.array([vcup, vcdw])
+
+
+IMPLEMENTED = {
+    'mock_xc': mock_xc,
+    'lda_slater_x': lda_slater_x,
+    'lda_slater_x_spin': lda_slater_x_spin,
+    'lda_chachiyo_c': lda_chachiyo_c,
+    'lda_chachiyo_c_spin': lda_chachiyo_c_spin,
+    'lda_pw_c': lda_pw_c,
+    'lda_pw_c_spin': lda_pw_c_spin,
+    'lda_vwn_c': lda_vwn_c,
+    'lda_vwn_c_spin': lda_vwn_c_spin
+}
+
+
+XC_MAP = {
+    'lda': 'lda_slater_x',
+    'chachiyo': 'lda_chachiyo_c',
+    'pw': 'lda_pw_c',
+    'vwn': 'lda_vwn_c'
+}
