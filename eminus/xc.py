@@ -461,8 +461,20 @@ IMPLEMENTED = {
 
 
 XC_MAP = {
+    # lda_slater_x
+    '1': 'lda_slater_x',
     'lda': 'lda_slater_x',
+    's': 'lda_slater_x',
+    'slater': 'lda_slater_x',
+    # lda_chachiyo_c
+    '287': 'lda_chachiyo_c',
     'chachiyo': 'lda_chachiyo_c',
+    # lda_pw_c
+    '12': 'lda_pw_c',
     'pw': 'lda_pw_c',
-    'vwn': 'lda_vwn_c'
+    'pw92': 'lda_pw_c',
+    # lda_vwn_c
+    '7': 'lda_vwn_c',
+    'vwn': 'lda_vwn_c',
+    'vwn5': 'lda_vwn_c'
 }
