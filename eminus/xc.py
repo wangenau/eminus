@@ -312,16 +312,17 @@ def lda_pw_c_spin(n, zeta, **kwargs):
     ecU, vcU = pw_fit(0)  # Unpolarized
     ecP, vcP = pw_fit(1)  # Polarized
     ac, dac = pw_fit(2)   # Spin stiffness
+    ac, dac = -ac, -dac   # The PW spin interpolation parametrizes -ac instead of ac
 
     fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
-    ec = ecU - ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
+    ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
 
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
-    vcup = vcU - dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 + \
-        (-ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+    vcup = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 + \
+        (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
          (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 - zeta)
-    vcdw = vcU - dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
-        (-ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+    vcdw = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4 - \
+        (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
          (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)) * (1 + zeta)
     return ec, np.array([vcup, vcdw])
 
