@@ -6,7 +6,6 @@ from numpy.testing import assert_allclose, assert_equal
 import pytest
 
 from eminus import Atoms
-from eminus.extras import get_fods, remove_core_fods, split_fods
 
 rng = default_rng()
 
@@ -19,17 +18,18 @@ rng = default_rng()
                                                       ('pc-0', 'fb', ['He', 'Ne'])])
 def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
     '''Test FOD generator.'''
+    from eminus.extras import get_fods
     atoms = Atoms('He', [0, 0, 0], Nspin=Nspin)
     fods = get_fods(atoms, basis=basis, loc=loc, elec_symbols=elec_symbols)
     # For He all FODs are core FODs and therefore should be close to the atom
     assert_allclose(atoms.X, fods[0], atol=1e-6)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('Nspin', [1, 2])
 @pytest.mark.parametrize('elec_symbols', (['X', 'He'], ['He', 'Ne']))
 def test_split_fods(Nspin, elec_symbols):
     '''Test splitting FODs from atoms.'''
+    from eminus.extras import split_fods
     X = rng.standard_normal((5, 3))
     atom = ['H'] * len(X)
     fods = rng.standard_normal((10, 3))
@@ -52,10 +52,10 @@ def test_split_fods(Nspin, elec_symbols):
     assert_equal(fods, fods_split)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_remove_core_fods(Nspin):
     '''Test core FOD removal function.'''
+    from eminus.extras import remove_core_fods
     atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin)
     core = atoms.X
     valence = rng.standard_normal((10, 3))
