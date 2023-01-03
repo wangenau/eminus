@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 '''Test operator identities.'''
 import numpy as np
-from numpy.random import randn
+from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
 from eminus import Atoms
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms('Ne', [0, 0, 0], ecut=1).build()
+rng = default_rng()
 W_tests = {
-    'full': randn(len(atoms.G2), atoms.Nstate),
-    'active': randn(len(atoms.G2c), atoms.Nstate),
-    'full_single': randn(len(atoms.G2)),
-    'active_single': randn(len(atoms.G2c)),
-    'full_spin': randn(atoms.Nspin, len(atoms.G2), atoms.Nstate),
-    'active_spin': randn(atoms.Nspin, len(atoms.G2c), atoms.Nstate)
+    'full': rng.standard_normal((len(atoms.G2), atoms.Nstate)),
+    'active': rng.standard_normal((len(atoms.G2c), atoms.Nstate)),
+    'full_single': rng.standard_normal((len(atoms.G2))),
+    'active_single': rng.standard_normal((len(atoms.G2c))),
+    'full_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2), atoms.Nstate)),
+    'active_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
 }
 
 
@@ -72,7 +73,7 @@ def test_JdagIdag():
 
 
 def test_TT():
-    dr = randn(3)
+    dr = rng.standard_normal(3)
     for i in ['active', 'active_single', 'active_spin']:
         out = atoms.T(atoms.T(W_tests[i], dr), -dr)
         test = W_tests[i]

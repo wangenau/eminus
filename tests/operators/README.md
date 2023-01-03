@@ -1,3 +1,0 @@
-# operators
-
-Test operator identities.
