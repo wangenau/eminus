@@ -31,7 +31,7 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
         from pyflosic2.atoms.atoms import Atoms
         from pyflosic2.guess.pycom import pycom
         from pyflosic2.parameters.flosic_parameters import parameters
-        from pyscf.gto import M  # PySCF is a dependency of PyFLOSIC2
+        from pyscf.gto import Mole  # PySCF is a dependency of PyFLOSIC2
         from pyscf.scf import UKS, RKS
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
@@ -62,7 +62,8 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
         spin = np.sum(atoms.Z) % 2
 
     # Do the PySCF DFT calculation
-    mol = M(atom=atom_pyscf, basis=basis, spin=spin)
+    # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
+    mol = Mole(atom=atom_pyscf, basis=basis, spin=spin).build(parse_arg=False)
     if atoms.Nspin == 2:
         mf = UKS(mol=mol)
     else:
