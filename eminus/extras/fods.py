@@ -59,7 +59,7 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     if atoms.Nspin == 2:
         spin = int(np.sum(atoms.f[0] - atoms.f[1]))
     else:
-        spin = np.sum(atoms.Z) % 2
+        spin = int(np.sum(atoms.Z) % 2)
 
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
