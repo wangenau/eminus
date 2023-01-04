@@ -170,7 +170,7 @@ def J(atoms, W, full=True):
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:
-        F = F[atoms.active]
+        F = F[atoms.active[0]]
     return F / n
 
 
