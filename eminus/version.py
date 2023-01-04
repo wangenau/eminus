@@ -10,10 +10,15 @@ __version__ = '2.1.2'
 
 def info():
     '''Print version numbers and availability of packages.'''
+    logo = (' ___ _____ _ ___ _ _ ___ \n'
+            '| -_|     | |   | | |_ -|\n'
+            '|___|_|_|_|_|_|_|___|___|\n')
+
     dependencies = ('numpy', 'scipy')
     extras = ('plotly', 'nglview', 'notebook', 'pyscf', 'pyflosic2')
     dev = ('pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
 
+    print(logo)
     print('--- Platform infos ---'
           f'\nPlatform    : {platform.system()} {platform.machine()}'
           f'\nRelease     : {platform.release()} {platform.version()}'
