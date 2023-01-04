@@ -71,22 +71,13 @@ def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
     mf.verbose = 0
     mf.kernel()
 
-    # Add some FODs to the positions, otherwise the method will not work
-    extra_up = np.zeros((len(np.nonzero(atoms.f[0])[0]), 3))
-    atom_pyflosic = atoms.atom + [elec_symbols[0]] * len(extra_up)
-    X_pyflosic = np.vstack((X, extra_up))
-    if atoms.Nspin == 2:
-        extra_dn = np.zeros((len(np.nonzero(atoms.f[1])[0]), 3))
-        atom_pyflosic += [elec_symbols[1]] * len(extra_dn)
-        X_pyflosic = np.vstack((X_pyflosic, extra_dn))
-
     # Do the PyCOM FOD generation
-    atoms_pyflosic = Atoms(atom_pyflosic, X_pyflosic, elec_symbols=elec_symbols, spin=spin)
+    atoms_pyflosic = Atoms(atoms.atom, X, elec_symbols=elec_symbols, spin=spin)
     if atoms.Nspin == 2:
         p = parameters(mode='unrestricted')
     else:
         p = parameters(mode='restricted')
-    p.init_atoms(atoms_pyflosic)
+    p.nuclei = atoms_pyflosic
     p.basis = basis
     p.pycom_loc = loc
     pc = pycom(mf=mf, p=p)
