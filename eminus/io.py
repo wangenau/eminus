@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 '''Import and export functionalities.'''
+import base64
 import inspect
+import json
 import pathlib
-import pickle
 import textwrap
 import time
 
@@ -16,7 +17,9 @@ from .version import __version__
 
 def read(*args, **kwargs):
     '''Unified file reader function.'''
-    if args[0].endswith('.xyz'):
+    if args[0].endswith('.json'):
+        return read_json(*args, **kwargs)
+    elif args[0].endswith('.xyz'):
         return read_xyz(*args, **kwargs)
     elif args[0].endswith('.cube'):
         return read_cube(*args, **kwargs)
@@ -26,7 +29,9 @@ def read(*args, **kwargs):
 
 def write(*args, **kwargs):
     '''Unified file writer function.'''
-    if args[1].endswith('.xyz'):
+    if args[1].endswith('.json'):
+        return write_json(*args, **kwargs)
+    elif args[1].endswith('.xyz'):
         return write_xyz(*args, **kwargs)
     elif args[1].endswith('.cube'):
         return write_cube(*args, **kwargs)
@@ -186,7 +191,7 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
 
     Args:
         object: Atoms or SCF object.
-        filename (str): xyz output file path/name.
+        filename (str): cube output file path/name.
         field (ndarray): Real-space field data.
 
     Keyword Args:
@@ -261,39 +266,90 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
     return
 
 
-def save(object, filename):
-    '''Save objects in a pickle file.
-
-    This function is for personal use only. Never load a file you haven't saved yourself!
+def write_json(object, filename):
+    '''Save objects in a JSON file.
 
     Args:
         object: Class object.
-        filename (str): xyz input file path/name.
+        filename (str): json output file path/name.
     '''
-    if not filename.endswith(('.pickle', '.pkl')):
-        filename += '.pickle'
+    import eminus
 
-    with open(filename, 'wb') as fp:
-        pickle.dump(object, fp, pickle.HIGHEST_PROTOCOL)
+    class CustomEncoder(json.JSONEncoder):
+        '''Custom JSON encoder class to serialize eminus classes.'''
+        def default(self, obj):
+            # ndarrays are not json serializable, encode them as base64 to save them
+            if isinstance(obj, np.ndarray):
+                data = base64.b64encode(obj.copy(order='C')).decode('utf-8')
+                return dict(__ndarray__=data, dtype=str(obj.dtype), shape=obj.shape)
+
+            # If obj is a Atoms or SCF class dump them as a dictionary
+            if isinstance(obj, eminus.Atoms) or isinstance(obj, eminus.SCF):
+                # Only dumping the dict would result in a string, so do one dump and one load
+                data = json.dumps(obj.__dict__, cls=CustomEncoder)
+                return dict(json.loads(data))
+            # __slots__ classes have no __dict__, so use getattr
+            if isinstance(obj, eminus.energies.Energy):
+                data = json.dumps({s: getattr(obj, s) for s in obj.__slots__})
+                return dict(json.loads(data))
+            # The logger class is not serializable, just ignore it
+            if isinstance(obj, eminus.logger.CustomLogger):
+                return None
+            return json.JSONEncoder.default(self, obj)
+
+    if not filename.endswith('.json'):
+        filename += '.json'
+
+    with open(filename, 'w') as fp:
+        json.dump(object, fp, cls=CustomEncoder)
     return
 
 
-def load(filename):
-    '''Load objects from a pickle file.
-
-    This function is for personal use only. Never load a file you haven't saved yourself!
+def read_json(filename):
+    '''Load objects from a JSON file.
 
     Args:
-        filename (str): xyz input file path/name.
+        filename (str): json input file path/name.
 
     Returns:
         Class object.
     '''
-    if not filename.endswith(('.pickle', '.pkl')):
-        filename += '.pickle'
+    import eminus
 
-    with open(filename, 'rb') as fh:
-        return pickle.load(fh)
+    def custom_object_hook(dct):
+        '''Custom JSON object hook to create eminus classes after deserialization.'''
+        # ndarrays are base64 encoded, decode and recreate
+        if isinstance(dct, dict) and '__ndarray__' in dct:
+            data = base64.b64decode(dct['__ndarray__'])
+            return np.frombuffer(data, dct['dtype']).reshape(dct['shape'])
+
+        # Create a simple eminus objects and set all attributes afterwards
+        # Explicitly call objects with verbosity since the logger is created at instantiation
+        if isinstance(dct, dict) and 'atom' in dct:
+            atoms = eminus.Atoms(dct['atom'], dct['X'], verbose=dct['_verbose'])
+            for attr in dct:
+                setattr(atoms, attr, dct[attr])
+            # The tuple type is not preserved when serializing, manually cast the only important one
+            if isinstance(atoms.active, list):
+                atoms.active = tuple(atoms.active)
+            return atoms
+        if isinstance(dct, dict) and 'atoms' in dct:
+            scf = eminus.SCF(dct['atoms'], verbose=dct['_verbose'])
+            for attr in dct:
+                setattr(scf, attr, dct[attr])
+            return scf
+        if isinstance(dct, dict) and 'Ekin' in dct:
+            energies = eminus.energies.Energy()
+            for attr in dct:
+                setattr(energies, attr, dct[attr])
+            return energies
+        return dct
+
+    if not filename.endswith('.json'):
+        filename += '.json'
+
+    with open(filename, 'r') as fh:
+        return json.load(fh, object_hook=custom_object_hook)
 
 
 def write_pdb(object, filename, fods=None, elec_symbols=None):
@@ -303,7 +359,7 @@ def write_pdb(object, filename, fods=None, elec_symbols=None):
 
     Args:
         object: Atoms or SCF object.
-        filename (str): xyz output file path/name.
+        filename (str): pdb output file path/name.
 
     Keyword Args:
         fods (list): FOD coordinates to write.

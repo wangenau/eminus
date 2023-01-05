@@ -1,4 +1,4 @@
-from eminus import Atoms, load, read_cube, read_xyz, save, SCF, write_cube
+from eminus import Atoms, read, read_cube, read_xyz, SCF, write, write_cube
 from eminus.units import bohr2ang
 
 # # Some file standards are supported to be read from
@@ -26,6 +26,7 @@ write_cube(scf, 'CH4_density', scf.n)
 print(f'\nMethane coordinates in Bohr:\n{X}')
 print(f'\nMethane coordinates in Angstrom:\n{bohr2ang(X)}')
 
-# # You can also save the `Atoms` or `SCF` object directly to load it later
-save(atoms, 'CH4.pkl')
-atoms = load('CH4.pkl')
+# # You can also save the `Atoms` or `SCF` object directly to load them later
+# # `read` and `write` are unified functions that determine the corresponding function using the file ending
+write(atoms, 'CH4.json')
+atoms = read('CH4.json')

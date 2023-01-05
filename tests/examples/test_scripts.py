@@ -43,10 +43,9 @@ def test_04():
     execute_example('04_dft_calculations')
 
 
-@pytest.mark.skip
 def test_05():
     execute_example('05_input_output')
-    clean_example(['CH4.pkl', 'CH4_density.cube'])
+    clean_example(['CH4.json', 'CH4_density.cube'])
 
 
 @pytest.mark.slow
