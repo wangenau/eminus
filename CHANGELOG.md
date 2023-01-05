@@ -16,6 +16,8 @@ dev
    - Removed the usage of eval, exec, and pickle
    - Simplify PyCOM interface
 
+----
+
 v2.1.2 - Dec 15, 2022
 ---------------------
 - New features

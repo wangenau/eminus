@@ -11,7 +11,7 @@ with open('eminus/version.py', 'r') as fh:
     exec(fh.read(), version)
 
 with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
-    long_description = readme.read() + '\n\n' + changelog.read()
+    long_description = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
 
 extras = {
     'fods': [
