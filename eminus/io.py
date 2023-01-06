@@ -281,7 +281,7 @@ def write_json(object, filename):
             # ndarrays are not json serializable, encode them as base64 to save them
             if isinstance(obj, np.ndarray):
                 data = base64.b64encode(obj.copy(order='C')).decode('utf-8')
-                return dict(__ndarray__=data, dtype=str(obj.dtype), shape=obj.shape)
+                return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is a Atoms or SCF class dump them as a dictionary
             if isinstance(obj, eminus.Atoms) or isinstance(obj, eminus.SCF):
@@ -290,7 +290,7 @@ def write_json(object, filename):
                 return dict(json.loads(data))
             # __slots__ classes have no __dict__, so use getattr
             if isinstance(obj, eminus.energies.Energy):
-                data = json.dumps({s: getattr(obj, s) for s in obj.__slots__})
+                data = json.dumps({slot: getattr(obj, slot) for slot in obj.__slots__})
                 return dict(json.loads(data))
             # The logger class is not serializable, just ignore it
             if isinstance(obj, eminus.logger.CustomLogger):
