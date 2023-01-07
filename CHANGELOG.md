@@ -7,6 +7,7 @@ dev
    - Rewritten save and load functions to use JSON
    - Add a bunch of tests
    - Add a small ASCII logo in the info function
+   - Update logo typography
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
@@ -15,8 +16,6 @@ dev
    - More secure coding practices
    - Removed the usage of eval, exec, and pickle
    - Simplify PyCOM interface
-
-----
 
 v2.1.2 - Dec 15, 2022
 ---------------------
@@ -80,6 +79,8 @@ v2.1.0 - Sep 19, 2022
     - Misc performance improvements (e.g. in Ylm_real and get_Eewald)
     - Fix some bugs (e.g. the Libxc interface for spin-polarized systems)
 
+----
+
 v2.0.0 - May 20, 2022
 ---------------------
 - Performance improved by 10-30%
@@ -107,6 +108,8 @@ v2.0.0 - May 20, 2022
    - More tests
    - Improve readability
    - Fix various bugs
+
+----
 
 v1.0.1 - Nov 23, 2021
 ---------------------
