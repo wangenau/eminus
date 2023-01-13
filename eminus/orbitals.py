@@ -23,10 +23,10 @@ def KSO(scf, write_cubes=False, **kwargs):
     atoms = scf.atoms
 
     # Calculate eigenfunctions and transform to real-space
-    KSO = atoms.I(get_psi(scf, scf.W))
+    kso = atoms.I(get_psi(scf, scf.W))
     if write_cubes:
-        cube_writer(atoms, 'KSO', KSO)
-    return KSO
+        cube_writer(atoms, 'KSO', kso)
+    return kso
 
 
 def FO(scf, write_cubes=False, fods=None):
@@ -49,16 +49,16 @@ def FO(scf, write_cubes=False, fods=None):
     atoms = scf.atoms
 
     # Calculate eigenfunctions
-    KSO = get_psi(scf, scf.W)
+    kso = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
 
     # The FO functions needs orbitals in reciprocal space as input
-    FO = get_FO(atoms, KSO, fods)
+    fo = get_FO(atoms, kso, fods)
     if write_cubes:
-        cube_writer(atoms, 'FO', FO)
-    return FO
+        cube_writer(atoms, 'FO', fo)
+    return fo
 
 
 def FLO(scf, write_cubes=False, fods=None):
@@ -81,16 +81,16 @@ def FLO(scf, write_cubes=False, fods=None):
     atoms = scf.atoms
 
     # Calculate eigenfunctions
-    KSO = get_psi(scf, scf.W)
+    kso = get_psi(scf, scf.W)
     if fods is None:
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
 
     # The FLO functions needs orbitals in reciprocal space as input
-    FLO = get_FLO(atoms, KSO, fods)
+    flo = get_FLO(atoms, kso, fods)
     if write_cubes:
-        cube_writer(atoms, 'FLO', FLO)
-    return FLO
+        cube_writer(atoms, 'FLO', flo)
+    return flo
 
 
 def cube_writer(atoms, type, orbitals):

@@ -63,7 +63,7 @@ def get_FO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi orbitals.
     '''
-    FO = np.zeros((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
+    fo = np.zeros((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
@@ -72,8 +72,8 @@ def get_FO(atoms, psi, fods):
         R = get_R(atoms, psi[spin], fods[spin])
         for i in range(len(R)):
             for j in range(atoms.Nstate):
-                FO[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
-    return FO
+                fo[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
+    return fo
 
 
 def get_S(atoms, psirs):
@@ -111,18 +111,18 @@ def get_FLO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi-Löwdin orbitals.
     '''
-    FO = get_FO(atoms, psi, fods)
-    FLO = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
+    fo = get_FO(atoms, psi, fods)
+    flo = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
     for spin in range(atoms.Nspin):
         # Calculate the overlap matrix for FOs
-        S = get_S(atoms, FO[spin])
+        S = get_S(atoms, fo[spin])
         # Calculate eigenvalues and eigenvectors
         Q, T = eig(S)
         # Löwdins symmetric orthonormalization method
         Q12 = np.diag(1 / np.sqrt(Q))
-        FLO[spin] = FO[spin] @ (T @ Q12 @ T.T)
-    return FLO
+        flo[spin] = fo[spin] @ (T @ Q12 @ T.T)
+    return flo
 
 
 @handle_spin_gracefully
