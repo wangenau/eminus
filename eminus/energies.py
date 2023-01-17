@@ -180,7 +180,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     Keyword Args:
         gcut (float): G-vector cut-off.
-        gamma (float): Error tolerance
+        gamma (float): Error tolerance.
 
     Returns:
         float: Ewald energy in Hartree.
