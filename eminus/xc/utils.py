@@ -4,6 +4,7 @@ import numpy as np
 
 from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
 from .lda_c_pw import lda_c_pw, lda_c_pw_spin
+from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
 from ..logger import log
@@ -87,7 +88,7 @@ def parse_functionals(xc):
     # Parse functionals
     functionals = []
     for f in xc.split(','):
-        if 'libxc' in f:
+        if 'libxc' in f or f in IMPLEMENTED.keys():
             f_xc = f
         elif f == '':
             f_xc = 'mock_xc'
@@ -138,34 +139,41 @@ IMPLEMENTED = {
     'mock_xc': mock_xc,
     'lda_x': lda_x,
     'lda_x_spin': lda_x_spin,
-    'lda_c_chachiyo': lda_c_chachiyo,
-    'lda_c_chachiyo_spin': lda_c_chachiyo_spin,
     'lda_c_pw': lda_c_pw,
     'lda_c_pw_spin': lda_c_pw_spin,
+    'lda_c_pw_mod': lda_c_pw_mod,
+    'lda_c_pw_mod_spin': lda_c_pw_mod_spin,
     'lda_c_vwn': lda_c_vwn,
-    'lda_c_vwn_spin': lda_c_vwn_spin
+    'lda_c_vwn_spin': lda_c_vwn_spin,
+    'lda_c_chachiyo': lda_c_chachiyo,
+    'lda_c_chachiyo_spin': lda_c_chachiyo_spin
 }
 
 
 XC_MAP = {
     # lda_x
     '1': 'lda_x',
-    'lda': 'lda_x',
     's': 'lda_x',
+    'lda': 'lda_x',
     'slater': 'lda_x',
-    # lda_c_chachiyo
-    '287': 'lda_c_chachiyo',
-    'chachiyo': 'lda_c_chachiyo',
     # lda_c_pw
     '12': 'lda_c_pw',
     'pw': 'lda_c_pw',
     'pw92': 'lda_c_pw',
+    # lda_c_pw_mod
+    '13': 'lda_c_pw_mod',
+    'pw_mod': 'lda_c_pw_mod',
+    'pw92_mod': 'lda_c_pw_mod',
     # lda_c_vwn
     '7': 'lda_c_vwn',
     'vwn': 'lda_c_vwn',
-    'vwn5': 'lda_c_vwn'
+    'vwn5': 'lda_c_vwn',
+    # lda_c_chachiyo
+    '287': 'lda_c_chachiyo',
+    'chachiyo': 'lda_c_chachiyo'
 }
 
 ALIAS = {
+    'spw92': 'slater,pw_mod',
     'svwn': 'slater,vwn'
 }

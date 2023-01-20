@@ -41,6 +41,7 @@ def test_libxc_functional_vxc(xc, Nspin):
 
 
 @pytest.mark.parametrize('xc,ref', [('svwn', ['lda_x', 'lda_c_vwn']),
+                                    ('lda_x', ['lda_x', 'mock_xc']),
                                     ('s,pw', ['lda_x', 'lda_c_pw']),
                                     ('s', ['lda_x', 'mock_xc']),
                                     ('s,', ['lda_x', 'mock_xc']),
