@@ -28,6 +28,13 @@ Modules
    eminus.utils
    eminus.version
    eminus.xc
+   eminus.xc.lda_c_chachiyo
+   eminus.xc.lda_c_chachiyo_mod
+   eminus.xc.lda_c_pw
+   eminus.xc.lda_c_pw_mod
+   eminus.xc.lda_c_vwn
+   eminus.xc.lda_x
+   eminus.xc.utils
    eminus.extras
    eminus.extras.fods
    eminus.extras.libxc
