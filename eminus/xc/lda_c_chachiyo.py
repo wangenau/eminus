@@ -30,7 +30,23 @@ def lda_c_chachiyo(n, **kwargs):
     return ec, np.array([vc])
 
 
-def lda_c_chachiyo_spin(n, zeta, **kwargs):
+def chachiyo_scaling(zeta):
+    '''Weighting factor between the paramagnetic and the ferromagnetic case.
+
+    Reference: J. Chem. Phys. 145, 021101.
+
+    Args:
+        zeta (ndarray): Relative spin polarization.
+
+    Returns:
+        tuple[ndarray, ndarray]: Weighting factor and its derivative.
+    '''
+    fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**(1 / 3) - 1))
+    dfdzeta = (2 * (1 - zeta)**(1 / 3) - 2 * (1 + zeta)**(1 / 3)) / (3 - 3 * 2**(1 / 3))
+    return fzeta, dfdzeta
+
+
+def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in LibXC.
@@ -39,6 +55,9 @@ def lda_c_chachiyo_spin(n, zeta, **kwargs):
     Args:
         n (ndarray): Real-space electronic density.
         zeta (ndarray): Relative spin polarization.
+
+    Keyword Args:
+        weight_function (Callable): Functional function.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
@@ -52,8 +71,7 @@ def lda_c_chachiyo_spin(n, zeta, **kwargs):
     b0 = 20.4562557
     b1 = 27.4203609
 
-    fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**third - 1))
-    dfdzeta = (2 * (1 - zeta)**third - 2 * (1 + zeta)**third) / (3 - 3 * 2**third)
+    fzeta, dfdzeta = weight_function(zeta)
 
     ec0 = a0 * np.log(1 + b0 / rs + b0 / rs**2)
     ec1 = a1 * np.log(1 + b1 / rs + b1 / rs**2)

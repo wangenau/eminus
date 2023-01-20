@@ -5,6 +5,9 @@ dev
 ---
 - New features
    - Rewritten save and load functions to use JSON
+   - Rewritten xc handling
+   - Modularize each functional
+   - Add modified functional variants
    - Add a bunch of tests
    - Add a small ASCII logo in the info function
    - Update logo typography

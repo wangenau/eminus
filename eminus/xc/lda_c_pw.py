@@ -14,6 +14,8 @@ def lda_c_pw(n, a=0.031091, **kwargs):
 
     Args:
         n (ndarray): Real-space electronic density.
+
+    Keyword Args:
         a (float): Functional parameter.
 
     Returns:
@@ -51,6 +53,8 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, **kwa
     Args:
         n (ndarray): Real-space electronic density.
         zeta (ndarray): Relative spin polarization.
+
+    Keyword Args:
         a (tuple): Functional parameters.
         fz0 (float): Functional parameter.
 

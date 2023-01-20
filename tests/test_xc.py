@@ -17,7 +17,7 @@ n_tests = {
 
 
 @pytest.mark.extras
-@pytest.mark.parametrize('xc', ['1', '7', '12', '287'])
+@pytest.mark.parametrize('xc', ['1', '7', '12', '13', '287', '307'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare internal functional energy densities to LibXC.'''
@@ -29,7 +29,7 @@ def test_libxc_functional_exc(xc, Nspin):
 
 
 @pytest.mark.extras
-@pytest.mark.parametrize('xc', ['1', '7', '12', '287'])
+@pytest.mark.parametrize('xc', ['1', '7', '12', '13', '287', '307'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare internal functional poetntials to LibXC.'''

@@ -3,6 +3,7 @@
 import numpy as np
 
 from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
+from .lda_c_chachiyo_mod import lda_c_chachiyo_mod, lda_c_chachiyo_mod_spin
 from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
@@ -146,9 +147,10 @@ IMPLEMENTED = {
     'lda_c_vwn': lda_c_vwn,
     'lda_c_vwn_spin': lda_c_vwn_spin,
     'lda_c_chachiyo': lda_c_chachiyo,
-    'lda_c_chachiyo_spin': lda_c_chachiyo_spin
+    'lda_c_chachiyo_spin': lda_c_chachiyo_spin,
+    'lda_c_chachiyo_mod': lda_c_chachiyo_mod,
+    'lda_c_chachiyo_mod_spin': lda_c_chachiyo_mod_spin
 }
-
 
 XC_MAP = {
     # lda_x
@@ -156,6 +158,10 @@ XC_MAP = {
     's': 'lda_x',
     'lda': 'lda_x',
     'slater': 'lda_x',
+    # lda_c_vwn
+    '7': 'lda_c_vwn',
+    'vwn': 'lda_c_vwn',
+    'vwn5': 'lda_c_vwn',
     # lda_c_pw
     '12': 'lda_c_pw',
     'pw': 'lda_c_pw',
@@ -164,13 +170,12 @@ XC_MAP = {
     '13': 'lda_c_pw_mod',
     'pw_mod': 'lda_c_pw_mod',
     'pw92_mod': 'lda_c_pw_mod',
-    # lda_c_vwn
-    '7': 'lda_c_vwn',
-    'vwn': 'lda_c_vwn',
-    'vwn5': 'lda_c_vwn',
     # lda_c_chachiyo
     '287': 'lda_c_chachiyo',
-    'chachiyo': 'lda_c_chachiyo'
+    'chachiyo': 'lda_c_chachiyo',
+    # lda_c_chachiyo_mod
+    '307': 'lda_c_chachiyo_mod',
+    'chachiyo_mod': 'lda_c_chachiyo_mod'
 }
 
 ALIAS = {
