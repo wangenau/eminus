@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test exchange-correlation functionals.'''
+'''Test tools functions.'''
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest

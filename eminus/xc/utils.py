@@ -6,13 +6,14 @@ from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
 from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
+from ..logger import log
 
 
 def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     '''Handle and get exchange-correlation functionals.
 
     Args:
-        xc (str): Exchange and correlation identifier, separated by a comma.
+        xc (list): Exchange and correlation identifier.
         n_spin (ndarray): Real-space electronic densities per spin channel.
         Nspin (int): Number of spin states.
 
@@ -22,34 +23,27 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
-    exch, corr = xc.split(',')
+    f_exch, f_corr = xc
 
     # Only use non-zero values of the density
     n = np.sum(n_spin, axis=0)
     nz_mask = np.where(n > dens_threshold)
     n_nz = n[nz_mask]
-
     # Zeta is only needed for non-zero values of the density
     zeta_nz = get_zeta(n_spin[:, nz_mask])
 
     # Only import libxc interface if necessary
-    if 'libxc' in xc:
-        from .extras.libxc import libxc_functional
+    if 'libxc' in str(xc):
+        from ..extras.libxc import libxc_functional
 
     # Handle exchange part
-    if 'libxc' in exch:
-        exch = exch.split(':')[1]
-        ex, vx = libxc_functional(exch, n_spin, Nspin)
+    if 'libxc' in f_exch:
+        f_exch = f_exch.split(':')[1]
+        ex, vx = libxc_functional(f_exch, n_spin, Nspin)
     else:
-        # If the desired functional is not implemented use a mock functional
-        try:
-            f_exch = XC_MAP[exch]
-            if Nspin == 2:
-                f_exch += '_spin'
-        except KeyError:
-            f_exch = 'mock_xc'
+        if Nspin == 2 and f_exch != 'mock_xc':
+            f_exch += '_spin'
         ex_nz, vx_nz = IMPLEMENTED[f_exch](n_nz, zeta=zeta_nz, Nspin=Nspin)
-
         # Map the non-zero values back to the right dimension
         ex = np.zeros_like(n)
         ex[nz_mask] = ex_nz
@@ -58,19 +52,13 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
             vx[spin, nz_mask] = vx_nz[spin]
 
     # Handle correlation part
-    if 'libxc' in corr:
-        corr = corr.split(':')[1]
-        ec, vc = libxc_functional(corr, n_spin, Nspin)
+    if 'libxc' in f_corr:
+        f_corr = f_corr.split(':')[1]
+        ec, vc = libxc_functional(f_corr, n_spin, Nspin)
     else:
-        # If the desired functional is not implemented use a mock functional
-        try:
-            f_corr = XC_MAP[corr]
-            if Nspin == 2:
-                f_corr += '_spin'
-        except KeyError:
-            f_corr = 'mock_xc'
+        if Nspin == 2 and f_corr != 'mock_xc':
+            f_corr += '_spin'
         ec_nz, vc_nz = IMPLEMENTED[f_corr](n_nz, zeta=zeta_nz, Nspin=Nspin)
-
         # Map the non-zero values back to the right dimension
         ec = np.zeros_like(n)
         ec[nz_mask] = ec_nz
@@ -79,6 +67,42 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
             vc[spin, nz_mask] = vc_nz[spin]
 
     return ex + ec, vx + vc
+
+
+def parse_functionals(xc):
+    '''Parse exchange-correlation functional strings to the internal format.
+
+    Args:
+        xc (str): Exchange and correlation identifier, separated by a comma.
+
+    Returns:
+        list: Exchange and correlation string.
+    '''
+    # Check for combined aliases
+    try:
+        xc = ALIAS[xc]
+    except KeyError:
+        pass
+
+    # Parse functionals
+    functionals = []
+    for f in xc.split(','):
+        if 'libxc' in f:
+            f_xc = f
+        elif f == '':
+            f_xc = 'mock_xc'
+        else:
+            try:
+                f_xc = XC_MAP[f]
+            except KeyError:
+                log.exception(f'No functional found for "{f}"')
+                raise
+        functionals.append(f_xc)
+
+    # If only one or no functional has been parsed append with mock functionals
+    for i in range(2 - len(functionals)):
+        functionals.append('mock_xc')
+    return functionals
 
 
 def get_zeta(n_spin):
@@ -101,6 +125,7 @@ def mock_xc(n, Nspin=1, **kwargs):
 
     Args:
         n (ndarray): Real-space electronic density.
+        Nspin (int): Number of spin states.
 
     Returns:
         tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
@@ -139,4 +164,8 @@ XC_MAP = {
     '7': 'lda_c_vwn',
     'vwn': 'lda_c_vwn',
     'vwn5': 'lda_c_vwn'
+}
+
+ALIAS = {
+    'svwn': 'slater,vwn'
 }

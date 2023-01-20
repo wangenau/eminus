@@ -14,7 +14,7 @@ from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED
 from .potentials import init_pot
 from .version import info
-from .xc import XC_MAP
+from .xc import parse_functionals
 
 
 class SCF:
@@ -110,6 +110,7 @@ class SCF:
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        self.xc = parse_functionals(self.xc)
         if not self.atoms.is_built:
             self.atoms.build()
         self._set_potential()
@@ -134,17 +135,8 @@ class SCF:
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
 
-        exch, corr = self.xc.split(',')
-        try:
-            if 'libxc' not in exch:
-                XC_MAP[exch]
-        except KeyError:
-            self.log.warning('Use a mock functional for the exchange part.')
-        try:
-            if 'libxc' not in corr:
-                XC_MAP[corr]
-        except KeyError:
-            self.log.warning('Use a mock functional for the correlation part.')
+        if 'mock_xc' in self.xc:
+            self.log.warning('Usage of mock functional detected.')
 
         # Start minimization procedures
         Etots = []
@@ -251,8 +243,8 @@ class RSCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
-        super().initialize()
         self.atoms._set_states(Nspin=1)
+        super().initialize()
         return self
 
 
@@ -262,6 +254,6 @@ class USCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
-        super().initialize()
         self.atoms._set_states(Nspin=2)
+        super().initialize()
         return self
