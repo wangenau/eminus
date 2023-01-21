@@ -5,7 +5,7 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus.xc import get_xc, parse_functionals
+from eminus.xc import get_xc
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
@@ -25,7 +25,7 @@ def test_libxc_functional_exc(xc, Nspin):
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     e_out, _ = libxc_functional(xc, n_spin, Nspin)
-    e_test, _ = get_xc(parse_functionals(xc), n_spin, Nspin)
+    e_test, _ = get_xc(xc, n_spin, Nspin)
     assert_allclose(e_out, e_test)
 
 
@@ -38,7 +38,7 @@ def test_libxc_functional_vxc(xc, Nspin):
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     _, v_out = libxc_functional(xc, n_spin, Nspin)
-    _, v_test = get_xc(parse_functionals(xc), n_spin, Nspin)
+    _, v_test = get_xc(xc, n_spin, Nspin)
     assert_allclose(v_out, v_test)
 
 
@@ -50,7 +50,7 @@ def test_pyscf_functional_exc(xc, Nspin):
     from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     e_out, _ = pyscf_functional(xc, n_spin, Nspin)
-    e_test, _ = get_xc(parse_functionals(xc), n_spin, Nspin)
+    e_test, _ = get_xc(xc, n_spin, Nspin)
     assert_allclose(e_out, e_test)
 
 
@@ -62,7 +62,7 @@ def test_pyscf_functional_vxc(xc, Nspin):
     from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     _, v_out = pyscf_functional(xc, n_spin, Nspin)
-    _, v_test = get_xc(parse_functionals(xc), n_spin, Nspin)
+    _, v_test = get_xc(xc, n_spin, Nspin)
     assert_allclose(v_out, v_test)
 
 

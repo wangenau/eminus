@@ -15,7 +15,7 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     '''Handle and get exchange-correlation functionals.
 
     Args:
-        xc (list): Exchange and correlation identifier.
+        xc (list | str): Exchange and correlation identifier.
         n_spin (ndarray): Real-space electronic densities per spin channel.
         Nspin (int): Number of spin states.
 
@@ -25,6 +25,8 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
+    if isinstance(xc, str):
+        xc = parse_functionals(xc)
     f_exch, f_corr = xc
 
     # Only use non-zero values of the density
