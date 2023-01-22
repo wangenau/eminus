@@ -9,7 +9,7 @@ from ..units import bohr2ang
 def write_pdb(object, filename, fods=None, elec_symbols=None):
     '''Generate pdb files from atoms objects.
 
-    See `~eminus.io.create_pdb_str` for more information about the pdb file format.
+    See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
 
     Args:
         object: Atoms or SCF object.

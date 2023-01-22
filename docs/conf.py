@@ -62,7 +62,7 @@ def dunder_skip(app, what, name, obj, would_skip, options):
 
 
 def setup(app):
-    '''Customized build process.'''
+    '''Customize build process.'''
     import pathlib
     import sys
     sys.path.append(str(pathlib.Path(__file__).parent.resolve()))

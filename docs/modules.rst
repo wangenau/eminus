@@ -15,7 +15,6 @@ Modules
    eminus.domains
    eminus.energies
    eminus.gth
-   eminus.io
    eminus.localizer
    eminus.logger
    eminus.minimizer
@@ -27,6 +26,12 @@ Modules
    eminus.units
    eminus.utils
    eminus.version
+   eminus.io
+   eminus.io.cube
+   eminus.io.gth
+   eminus.io.json
+   eminus.io.pdb
+   eminus.io.xyz
    eminus.xc
    eminus.xc.lda_c_chachiyo
    eminus.xc.lda_c_chachiyo_mod
