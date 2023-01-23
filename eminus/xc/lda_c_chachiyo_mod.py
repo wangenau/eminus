@@ -33,7 +33,6 @@ def chachiyo_mod_scaling(zeta):
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     '''
     gzeta = ((1 + zeta)**(2 / 3) + (1 - zeta)**(2 / 3)) / 2
-
     fzeta = 2 * (1 - gzeta**3)
     dfdzeta = -2 * gzeta**2 * (1 / (1 + zeta)**(1 / 3) - 1 / (1 - zeta)**(1 / 3))
     return fzeta, dfdzeta

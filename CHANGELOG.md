@@ -5,12 +5,16 @@ dev
 ---
 - New features
    - Rewritten save and load functions to use JSON
-   - Rewritten xc handling
+   - Rewritten xc parser
    - Modularize each functional
+   - Improve performance for PW and Chachiyo functionals
    - Add modified functional variants
+   - Modularize io module
    - Add a bunch of tests
    - Add a small ASCII logo in the info function
    - Update logo typography
+- Updated docs
+   - Use objnames instead of fullnames in the modules section
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
