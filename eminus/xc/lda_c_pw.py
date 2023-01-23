@@ -105,10 +105,10 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, **kwa
     ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
 
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
-    pre1 = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4
-    pre2 = ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3)
-    pre3 = (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3)
+    factor1 = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4
+    factor2 = (ac / fz0 * (dfz * (1 - zeta4) - 4 * fz * zeta3) +
+               (ecP - ecU) * (dfz * zeta4 + 4 * fz * zeta3))
 
-    vcup = pre1 + (pre2 + pre3) * (1 - zeta)
-    vcdw = pre1 - (pre2 + pre3) * (1 + zeta)
+    vcup = factor1 + factor2 * (1 - zeta)
+    vcdw = factor1 - factor2 * (1 + zeta)
     return ec, np.array([vcup, vcdw])

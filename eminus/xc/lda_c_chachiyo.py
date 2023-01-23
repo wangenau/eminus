@@ -79,9 +79,9 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     ec1 = a1 * np.log(1 + b1 / rs + b1 / rs2)
     ec = ec0 + (ec1 - ec0) * fzeta
 
-    postfactor = (-1 / rs2 - 2 / rs**3)
-    dec0drs = a0 / (1 + b0 / rs + b0 / rs2) * b0 * postfactor
-    dec1drs = a1 / (1 + b1 / rs + b1 / rs2) * b1 * postfactor
+    factor = (-1 / rs2 - 2 / rs**3)
+    dec0drs = a0 / (1 + b0 / rs + b0 / rs2) * b0 * factor
+    dec1drs = a1 / (1 + b1 / rs + b1 / rs2) * b1 * factor
     prefactor = ec - rs / 3 * (dec0drs + (dec1drs - dec0drs) * fzeta)
 
     vcup = prefactor + (ec1 - ec0) * dfdzeta * (1 - zeta)
