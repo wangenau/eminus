@@ -4,17 +4,17 @@ Changelog
 dev
 ---
 - New features
-   - Rewritten save and load functions to use JSON
    - Rewritten xc parser
    - Modularize each functional
    - Greatly improve functional performance
    - Add modified functional variants
    - Modularize io module
+   - Rewritten save and load functions to use JSON
    - Add a bunch of tests
    - Add a small ASCII logo in the info function
    - Update logo typography
 - Updated docs
-   - Use objnames instead of fullnames in the modules section
+   - Remove the package name from the module headings
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
