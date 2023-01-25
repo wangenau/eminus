@@ -1,4 +1,4 @@
-{{ objname | escape | underline}}
+{{ fullname | remove_package_name | escape | underline}}
 
 .. automodule:: {{ fullname }}
 

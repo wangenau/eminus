@@ -1,8 +1,8 @@
-{{ objname | escape | underline}}
+{{ fullname | remove_package_name | escape | underline}}
 
 .. currentmodule:: {{ module }}
 
-.. autoclass:: {{ objname }}
+.. autoclass:: {{ fullname }}
 
    {% block methods %}
    {% if methods %}
