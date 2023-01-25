@@ -33,7 +33,7 @@ extras['dev'] = [
     'furo>=2022.02.14.1',        # Documentation theme
     'notebook',                  # Run and convert notebooks to HTML
     'pytest>=2.8',               # Test utilities
-    'sphinx>=4'                  # Documentation builder
+    'sphinx>=5'                  # Documentation builder
 ]
 
 

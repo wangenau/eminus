@@ -79,7 +79,7 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0, exc_only=False):
 def get_exc(*args, **kwargs):
     '''Get the exchange-correlation energy density.
 
-    This is a function for convenience to interface :func:`~eminus.xc.utils.get_xc`.
+    This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     '''
     exc, _ = get_xc(*args, **kwargs, exc_only=True)
     return exc
@@ -88,7 +88,7 @@ def get_exc(*args, **kwargs):
 def get_vxc(*args, **kwargs):
     '''Get the exchange-correlation potential.
 
-    This is a function for convenience to interface :func:`~eminus.xc.utils.get_xc`.
+    This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     '''
     _, vxc = get_xc(*args, **kwargs)
     return vxc
