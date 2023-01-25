@@ -21,13 +21,12 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
-    third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**third
-    rs = pi34 / n**third
-    rs2 = rs**2
-
     a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     b = 20.4562557
+
+    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    rs = pi34 / n**(1 / 3)
+    rs2 = rs**2
 
     ec = a * np.log(1 + b / rs + b / rs2)
     if exc_only:
@@ -37,7 +36,7 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
     return ec, np.array([vc])
 
 
-def chachiyo_scaling(zeta):
+def chachiyo_scaling(zeta, exc_only=False):
     '''Weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: J. Chem. Phys. 145, 021101.
@@ -45,10 +44,16 @@ def chachiyo_scaling(zeta):
     Args:
         zeta (ndarray): Relative spin polarization.
 
+    Keyword Args:
+        exc_only (bool): Only calculate the exchange-correlation energy density.
+
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     '''
     fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**(1 / 3) - 1))
+    if exc_only:
+        return fzeta, None
+
     dfdzeta = (2 * (1 - zeta)**(1 / 3) - 2 * (1 + zeta)**(1 / 3)) / (3 - 3 * 2**(1 / 3))
     return fzeta, dfdzeta
 
@@ -70,17 +75,16 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
-    third = 1 / 3
-    pi34 = (3 / (4 * np.pi))**third
-    rs = pi34 / n**third
-    rs2 = rs**2
-
     a0 = -0.01554535   # (np.log(2) - 1) / (2 * np.pi**2)
     a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
     b0 = 20.4562557
     b1 = 27.4203609
 
-    fzeta, dfdzeta = weight_function(zeta)
+    pi34 = (3 / (4 * np.pi))**(1 / 3)
+    rs = pi34 / n**(1 / 3)
+    rs2 = rs**2
+
+    fzeta, dfdzeta = weight_function(zeta, exc_only=exc_only)
 
     ec0 = a0 * np.log(1 + b0 / rs + b0 / rs2)
     ec1 = a1 * np.log(1 + b1 / rs + b1 / rs2)
