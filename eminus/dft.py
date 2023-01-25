@@ -6,7 +6,7 @@ from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
 from .utils import diagprod, handle_spin_gracefully, pseudo_uniform
-from .xc import get_xc
+from .xc import get_vxc
 
 
 def solve_poisson(atoms, n):
@@ -169,7 +169,7 @@ def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
         phi = solve_poisson(atoms, n)
     if vxc is None:
         n_spin = get_n_spin(atoms, Y, n)
-        vxc = get_xc(scf.xc, n_spin, atoms.Nspin)[1]
+        vxc = get_vxc(scf.xc, n_spin, atoms.Nspin)
 
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n)))

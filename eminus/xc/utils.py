@@ -11,7 +11,7 @@ from .lda_x import lda_x, lda_x_spin
 from ..logger import log
 
 
-def get_xc(xc, n_spin, Nspin, dens_threshold=0):
+def get_xc(xc, n_spin, Nspin, dens_threshold=0, exc_only=False):
     '''Handle and get exchange-correlation functionals.
 
     Args:
@@ -21,6 +21,7 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
 
     Keyword Args:
         dens_threshold (float): Do not treat densities smaller than the threshold.
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
@@ -47,13 +48,14 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     else:
         if Nspin == 2 and f_exch != 'mock_xc':
             f_exch += '_spin'
-        ex_nz, vx_nz = IMPLEMENTED[f_exch](n_nz, zeta=zeta_nz, Nspin=Nspin)
+        ex_nz, vx_nz = IMPLEMENTED[f_exch](n_nz, zeta=zeta_nz, Nspin=Nspin, exc_only=exc_only)
         # Map the non-zero values back to the right dimension
         ex = np.zeros_like(n)
         ex[nz_mask] = ex_nz
         vx = np.zeros_like(n_spin)
-        for spin in range(Nspin):
-            vx[spin, nz_mask] = vx_nz[spin]
+        if not exc_only:
+            for spin in range(Nspin):
+                vx[spin, nz_mask] = vx_nz[spin]
 
     # Handle correlation part
     if 'libxc' in f_corr:
@@ -62,15 +64,28 @@ def get_xc(xc, n_spin, Nspin, dens_threshold=0):
     else:
         if Nspin == 2 and f_corr != 'mock_xc':
             f_corr += '_spin'
-        ec_nz, vc_nz = IMPLEMENTED[f_corr](n_nz, zeta=zeta_nz, Nspin=Nspin)
+        ec_nz, vc_nz = IMPLEMENTED[f_corr](n_nz, zeta=zeta_nz, Nspin=Nspin, exc_only=exc_only)
         # Map the non-zero values back to the right dimension
         ec = np.zeros_like(n)
         ec[nz_mask] = ec_nz
         vc = np.zeros_like(n_spin)
-        for spin in range(Nspin):
-            vc[spin, nz_mask] = vc_nz[spin]
+        if not exc_only:
+            for spin in range(Nspin):
+                vc[spin, nz_mask] = vc_nz[spin]
 
     return ex + ec, vx + vc
+
+
+def get_exc(*args, **kwargs):
+    '''Get the exchange-correlation energy density.'''
+    exc, _ = get_xc(*args, **kwargs, exc_only=True)
+    return exc
+
+
+def get_vxc(*args, **kwargs):
+    '''Get the exchange-correlation potential.'''
+    _, vxc = get_xc(*args, **kwargs)
+    return vxc
 
 
 def parse_functionals(xc):

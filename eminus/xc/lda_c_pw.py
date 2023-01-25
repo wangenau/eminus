@@ -6,7 +6,7 @@ Reference: Phys. Rev. B 45, 13244.
 import numpy as np
 
 
-def lda_c_pw(n, a=0.031091, **kwargs):
+def lda_c_pw(n, a=0.031091, exc_only=False, **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
@@ -17,6 +17,7 @@ def lda_c_pw(n, a=0.031091, **kwargs):
 
     Keyword Args:
         a (float): Functional parameter.
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
@@ -38,13 +39,16 @@ def lda_c_pw(n, a=0.031091, **kwargs):
     om = 2 * a * (b1 * rs12 + b2 * rs + b3 * rs32 + b4 * rs2)
     olog = np.log(1 + 1 / om)
     ec = -2 * a * (1 + a1 * rs) * olog
+    if exc_only:
+        return ec, None
 
     dom = 2 * a * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)
     vc = -2 * a * (1 + 2 / 3 * a1 * rs) * olog - 2 / 3 * a * (1 + a1 * rs) * dom / (om * (om + 1))
     return ec, np.array([vc])
 
 
-def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, **kwargs):
+def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, exc_only=False,
+                  **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
@@ -57,6 +61,7 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, **kwa
     Keyword Args:
         a (tuple): Functional parameters.
         fz0 (float): Functional parameter.
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
@@ -103,6 +108,8 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, **kwa
 
     fz = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
     ec = ecU + ac * fz * (1 - zeta4) / fz0 + (ecP - ecU) * fz * zeta4
+    if exc_only:
+        return ec, None
 
     dfz = ((1 + zeta)**third - (1 - zeta)**third) * 4 / (3 * (2**(4 / 3) - 2))
     factor1 = vcU + dac * fz * (1 - zeta4) / fz0 + (vcP - vcU) * fz * zeta4

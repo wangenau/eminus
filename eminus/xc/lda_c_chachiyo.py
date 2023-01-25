@@ -6,7 +6,7 @@ Reference: J. Chem. Phys. 145, 021101.
 import numpy as np
 
 
-def lda_c_chachiyo(n, **kwargs):
+def lda_c_chachiyo(n, exc_only=False, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in LibXC.
@@ -14,6 +14,9 @@ def lda_c_chachiyo(n, **kwargs):
 
     Args:
         n (ndarray): Real-space electronic density.
+
+    Keyword Args:
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
@@ -27,6 +30,9 @@ def lda_c_chachiyo(n, **kwargs):
     b = 20.4562557
 
     ec = a * np.log(1 + b / rs + b / rs2)
+    if exc_only:
+        return ec, None
+
     vc = ec + a * b * (2 + rs) / (3 * (b + b * rs + rs2))
     return ec, np.array([vc])
 
@@ -47,7 +53,7 @@ def chachiyo_scaling(zeta):
     return fzeta, dfdzeta
 
 
-def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
+def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=False, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in LibXC.
@@ -59,6 +65,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
 
     Keyword Args:
         weight_function (Callable): Functional function.
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
@@ -78,6 +85,8 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     ec0 = a0 * np.log(1 + b0 / rs + b0 / rs2)
     ec1 = a1 * np.log(1 + b1 / rs + b1 / rs2)
     ec = ec0 + (ec1 - ec0) * fzeta
+    if exc_only:
+        return ec, None
 
     factor = (-1 / rs2 - 2 / rs**3)
     dec0drs = a0 / (1 + b0 / rs + b0 / rs2) * b0 * factor

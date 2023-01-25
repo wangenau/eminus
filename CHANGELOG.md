@@ -7,7 +7,7 @@ dev
    - Rewritten save and load functions to use JSON
    - Rewritten xc parser
    - Modularize each functional
-   - Improve performance for PW and Chachiyo functionals
+   - Greatly improve functional performance
    - Add modified functional variants
    - Modularize io module
    - Add a bunch of tests

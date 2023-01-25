@@ -5,7 +5,7 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_n_single, solve_poisson
-from .xc import get_xc
+from .xc import get_exc
 
 
 class Energy:
@@ -114,7 +114,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        exc = get_xc(scf.xc, n_spin, Nspin)[0]
+        exc = get_exc(scf.xc, n_spin, Nspin)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n.T @ atoms.Jdag(atoms.O(atoms.J(exc))))
 

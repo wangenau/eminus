@@ -18,7 +18,7 @@ def lda_c_chachiyo_mod(n, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
-    return lda_c_chachiyo(n)
+    return lda_c_chachiyo(n, **kwargs)
 
 
 def chachiyo_mod_scaling(zeta):
@@ -51,4 +51,4 @@ def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
-    return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_mod_scaling)
+    return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_mod_scaling, **kwargs)

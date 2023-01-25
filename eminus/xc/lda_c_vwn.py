@@ -6,7 +6,7 @@ Reference: Phys. Rev. B 22, 3812.
 import numpy as np
 
 
-def lda_c_vwn(n, **kwargs):
+def lda_c_vwn(n, exc_only=False, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_VWN and ID 7 in LibXC.
@@ -14,6 +14,9 @@ def lda_c_vwn(n, **kwargs):
 
     Args:
         n (ndarray): Real-space electronic density.
+
+    Keyword Args:
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
@@ -36,6 +39,8 @@ def lda_c_vwn(n, **kwargs):
     qx = np.arctan(q / (2 * rs12 + b))
 
     ec = a * (np.log(rs / fx) + f1 * qx - f2 * (np.log((rs12 - x0)**2 / fx) + f3 * qx))
+    if exc_only:
+        return ec, None
 
     tx = 2 * rs12 + b
     tt = tx * tx + q * q
@@ -44,7 +49,7 @@ def lda_c_vwn(n, **kwargs):
     return ec, np.array([vc])
 
 
-def lda_c_vwn_spin(n, zeta, **kwargs):
+def lda_c_vwn_spin(n, zeta, exc_only=False, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_VWN and ID 7 in LibXC.
@@ -53,6 +58,9 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     Args:
         n (ndarray): Real-space electronic density.
         zeta (ndarray): Relative spin polarization.
+
+    Keyword Args:
+        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
@@ -117,6 +125,8 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     De = ecF - ecP - ac  # e_c[F] - e_c[P] - alpha_c/(ddf/ddz(z=0))
     fzz4 = fz * zeta4
     ec = ecP + ac * fz + De * fzz4
+    if exc_only:
+        return ec, None
 
     dac *= iddfz0
     dec1 = vcP + dac * fz + (vcF - vcP - dac) * fzz4  # e_c-(r_s/3)*(de_c/dr_s)
