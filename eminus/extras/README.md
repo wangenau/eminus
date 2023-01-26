@@ -5,5 +5,5 @@ Extras directory that contains functions that need additional dependencies to wo
 | File        | Description |
 | :---------: | :---------: |
 | fods.py     | FOD generation |
-| libxc.py    | Use LibXC functionals |
+| libxc.py    | Use Libxc functionals |
 | viewer.py   | Notebook display functions |

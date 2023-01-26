@@ -9,7 +9,7 @@ import numpy as np
 def lda_c_vwn(n, exc_only=False, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
-    Corresponds to the functional with the label LDA_C_VWN and ID 7 in LibXC.
+    Corresponds to the functional with the label LDA_C_VWN and ID 7 in Libxc.
     Reference: Phys. Rev. B 22, 3812.
 
     Args:
@@ -51,7 +51,7 @@ def lda_c_vwn(n, exc_only=False, **kwargs):
 def lda_c_vwn_spin(n, zeta, exc_only=False, **kwargs):
     '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 
-    Corresponds to the functional with the label LDA_C_VWN and ID 7 in LibXC.
+    Corresponds to the functional with the label LDA_C_VWN and ID 7 in Libxc.
     Reference: Phys. Rev. B 22, 3812.
 
     Args:

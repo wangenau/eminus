@@ -9,7 +9,7 @@ import numpy as np
 def lda_x(n, exc_only=False, **kwargs):
     '''Slater exchange functional (spin-paired).
 
-    Corresponds to the functional with the label LDA_X and ID 1 in LibXC.
+    Corresponds to the functional with the label LDA_X and ID 1 in Libxc.
     Reference: Phys. Rev. 81, 385.
 
     Args:
@@ -36,7 +36,7 @@ def lda_x(n, exc_only=False, **kwargs):
 def lda_x_spin(n, zeta, exc_only=False, **kwargs):
     '''Slater exchange functional (spin-polarized).
 
-    Corresponds to the functional with the label LDA_X and ID 1 in LibXC.
+    Corresponds to the functional with the label LDA_X and ID 1 in Libxc.
     Reference: Phys. Rev. 81, 385.
 
     Args:

@@ -9,7 +9,7 @@ import numpy as np
 def lda_c_pw(n, a=0.031091, exc_only=False, **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-paired).
 
-    Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
+    Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
@@ -50,7 +50,7 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, exc_o
                   **kwargs):
     '''Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
-    Corresponds to the functional with the label LDA_C_PW and ID 12 in LibXC.
+    Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
     Reference: Phys. Rev. B 45, 13244.
 
     Args:

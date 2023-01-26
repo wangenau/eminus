@@ -9,7 +9,7 @@ from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
 def lda_c_chachiyo_mod(n, **kwargs):
     '''Modified Chachiyo parametrization of the correlation functional (spin-paired).
 
-    Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in LibXC.
+    Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in Libxc.
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
@@ -47,7 +47,7 @@ def chachiyo_mod_scaling(zeta, exc_only=False):
 def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
     '''Modified Chachiyo parametrization of the correlation functional (spin-polarized).
 
-    Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in LibXC.
+    Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in Libxc.
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:

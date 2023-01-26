@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-'''Interface to use LibXC functionals.
+'''Interface to use Libxc functionals.
 
 For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
 
-One can install pylibxc by compiling LibXC according to:
+One can install pylibxc by compiling Libxc according to:
 https://tddft.org/programs/libxc/installation/#python-library
 
-Alternatively, one can use the PySCF LibXC interface with::
+Alternatively, one can use the PySCF Libxc interface with::
 
     pip install eminus[libxc]
 '''
@@ -16,7 +16,7 @@ from ..logger import log
 
 
 def libxc_functional(xc, n_spin, Nspin):
-    '''Handle LibXC exchange-correlation functionals via pylibxc.
+    '''Handle Libxc exchange-correlation functionals via pylibxc.
 
     Only LDA functionals should be used.
     Reference: SoftwareX 7, 1.
@@ -34,13 +34,13 @@ def libxc_functional(xc, n_spin, Nspin):
     except ImportError:
         return pyscf_functional(xc, n_spin, Nspin)
 
-    # LibXC functionals have one integer and one string identifier
+    # Libxc functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(xc), Nspin)
     except ValueError:
         func = LibXCFunctional(xc, Nspin)
 
-    # LibXC expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
+    # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
     out = func.compute({'rho': n_spin.T.ravel()})
     # zk is a column vector, flatten it to a 1d row vector
     exc = out['zk'].ravel()
@@ -50,7 +50,7 @@ def libxc_functional(xc, n_spin, Nspin):
 
 
 def pyscf_functional(xc, n_spin, Nspin):
-    '''Handle LibXC exchange-correlation functionals via PySCF.
+    '''Handle Libxc exchange-correlation functionals via PySCF.
 
     Only LDA functionals should be used.
     Reference: WIREs Comput. Mol. Sci. 8, e1340.

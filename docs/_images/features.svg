@@ -24,13 +24,13 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      height="909.20801px"
-     inkscape:zoom="0.463156"
-     inkscape:cx="586.19559"
-     inkscape:cy="501.99069"
+     inkscape:zoom="0.926312"
+     inkscape:cx="589.974"
+     inkscape:cy="489.57587"
      inkscape:window-width="1846"
      inkscape:window-height="1016"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="2634"
+     inkscape:window-y="186"
      inkscape:window-maximized="1"
      inkscape:current-layer="g340" />
   <defs
@@ -1534,16 +1534,16 @@
        text-anchor="middle"
        font-size="17px"
        id="g66-7"
-       transform="translate(85.439321,185.47803)">
+       transform="translate(85.439333,185.47803)">
       <text
-         x="319.5"
-         y="117"
+         x="319.49133"
+         y="116.96533"
          id="text64-0"
          style="font-size:17.3333px"><tspan
            sodipodi:role="line"
            id="tspan6147"
-           x="319.5"
-           y="117">LibXC</tspan></text>
+           x="319.49133"
+           y="116.96533">Libxc</tspan></text>
     </g>
     <g
        fill="#000000"

@@ -26,7 +26,7 @@ class SCF:
     Keyword Args:
         xc (str): Comma-separated exchange-correlation functional description (case insensitive).
 
-            Adding 'libxc:' before a functional will try to use the LibXC interface.
+            Adding 'libxc:' before a functional will try to use the Libxc interface.
 
             Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
             Default: 'lda,vwn'

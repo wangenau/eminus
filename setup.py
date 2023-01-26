@@ -18,7 +18,7 @@ extras = {
         'pyflosic2>=2.0.0rc0'  # PyCOM FOD guessing method
     ],
     'libxc': [
-        'pyscf>=1.5.1'  # LibXC interface via PySCF
+        'pyscf>=1.5.1'  # Libxc interface via PySCF
     ],
     'viewer': [
         'nglview>=2.6.5',  # Molecule and isosurface viewer
