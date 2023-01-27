@@ -22,7 +22,7 @@ dev
    - Add a germanium solid example
    - More secure coding practices
    - Removed the usage of eval, exec, and pickle
-   - Simplify PyCOM interface
+   - Add a pyproject.toml
 
 v2.1.2 - Dec 15, 2022
 ---------------------
