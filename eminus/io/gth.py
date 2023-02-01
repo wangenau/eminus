@@ -34,8 +34,8 @@ def read_gth(atom, charge=None, psp_path=None):
         try:
             f_psp = pathlib.Path(files[0])
         except IndexError:
-            log.exception(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
-            raise
+            log.warning(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
+            return mock_gth()
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". '
                      f'Continue with "{f_psp.name}".')
@@ -78,6 +78,23 @@ def read_gth(atom, charge=None, psp_path=None):
             psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
-        log.exception(f'There is no GTH pseudopotential for "{f_psp.name}"')
-        raise
+        log.warning(f'There is no GTH pseudopotential for "{f_psp.name}"')
+        return mock_gth()
+    return psp
+
+
+def mock_gth():
+    '''Create a mock dictionary with all-zeros, for atom species with no pseudopotential file.
+
+    Returns:
+        dict: GTH parameters (all zero).
+    '''
+    psp = {}
+    psp['Zion'] = 0
+    psp['rloc'] = 0
+    psp['cloc'] = np.zeros(4)
+    psp['lmax'] = 0
+    psp['rp'] = np.zeros(4)
+    psp['Nproj_l'] = np.zeros(4, dtype=int)
+    psp['h'] = np.zeros((4, 3, 3))
     return psp
