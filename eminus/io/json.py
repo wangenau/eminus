@@ -29,6 +29,8 @@ def read_json(filename):
         if isinstance(dct, dict) and 'atom' in dct:
             atoms = eminus.Atoms(dct['atom'], dct['X'], verbose=dct['_verbose'])
             for attr in dct:
+                if attr == 'log':
+                    continue
                 setattr(atoms, attr, dct[attr])
             # The tuple type is not preserved when serializing, manually cast the only important one
             if isinstance(atoms.active, list):
@@ -37,6 +39,8 @@ def read_json(filename):
         if isinstance(dct, dict) and 'atoms' in dct:
             scf = eminus.SCF(dct['atoms'], verbose=dct['_verbose'])
             for attr in dct:
+                if attr == 'log':
+                    continue
                 setattr(scf, attr, dct[attr])
             return scf
         if isinstance(dct, dict) and 'Ekin' in dct:

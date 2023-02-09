@@ -14,6 +14,7 @@ dev
    - Add a small ASCII logo in the info function
    - Update logo typography
 - Updated docs
+   - Add a nomenclature page of commonly used variables
    - Remove the package name from the module headings
 - Miscellaneous
    - Rename save and load to write_json and read_json
