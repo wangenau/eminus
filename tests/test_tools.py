@@ -82,7 +82,7 @@ def test_get_isovalue():
 
 def test_pycom():
     '''Test PyCOM routine.'''
-    assert_allclose(pycom(atoms, psi), [[[10] * 3] * 2], atol=1e-2)
+    assert_allclose(pycom(atoms, psi)[0], [[10] * 3] * 2, atol=1e-2)
 
 
 if __name__ == '__main__':

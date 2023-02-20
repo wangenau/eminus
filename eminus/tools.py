@@ -5,7 +5,6 @@ from scipy.optimize import minimize_scalar
 
 from .dft import get_epsilon
 from .logger import log
-from .utils import handle_spin_gracefully
 
 
 def cutoff2gridspacing(E):
@@ -256,7 +255,6 @@ def get_isovalue(n, percent=85):
     return res.x
 
 
-@handle_spin_gracefully
 def pycom(object, psirs):
     '''Calculate the orbital center of masses, e.g., from localized orbitals.
 
@@ -272,8 +270,18 @@ def pycom(object, psirs):
     except AttributeError:
         atoms = object
 
-    Ncom = psirs.shape[1]
-    coms = np.empty((Ncom, 3))
-    for i in range(Ncom):
-        coms[i] = center_of_mass(atoms.r, np.real(psirs[:, i].conj() * psirs[:, i]))
+    coms = []
+    Ncom = psirs.shape[2]
+    for spin in range(atoms.Nspin):
+        coms_spin = np.empty((Ncom, 3))
+
+        # Square orbitals
+        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
+        for i in range(Ncom):
+            coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
+        coms.append(coms_spin)
+
+    # Have the same data structure as for fods
+    if atoms.Nspin == 1:
+        coms.append(np.array([]))
     return coms
