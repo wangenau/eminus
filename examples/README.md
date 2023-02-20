@@ -16,6 +16,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 10_domain_generation        | Generate domains and use them |
 | 11_simpledft_examples       | Comparison to SimpleDFT codes |
 | 12_germanium_solid          | Calculate a solid using periodicity |
+| 13_wannier_localization     | Wannier orbital localization |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
