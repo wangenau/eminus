@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Utilities to localize and analyze orbitals.'''
 import numpy as np
-from scipy.linalg import eig, norm
+from scipy.linalg import eig, expm, norm
 
 from .logger import log
 from .utils import handle_spin_gracefully
@@ -76,6 +76,7 @@ def get_FO(atoms, psi, fods):
     return fo
 
 
+@handle_spin_gracefully
 def get_S(atoms, psirs):
     '''Calculate overlap matrix between orbitals.
 
@@ -147,6 +148,7 @@ def wannier_cost(atoms, psirs):
     return costs
 
 
+@handle_spin_gracefully
 def wannier_center(atoms, psirs):
     '''Calculate Wannier centers, i.e., the expectation values of r.
 
@@ -169,6 +171,7 @@ def wannier_center(atoms, psirs):
     return centers
 
 
+@handle_spin_gracefully
 def second_moment(atoms, psirs):
     '''Calculate the second moments, i.e., the expectation values of r^2.
 
@@ -188,3 +191,129 @@ def second_moment(atoms, psirs):
     for i in range(atoms.Nstate):
         moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments
+
+
+@handle_spin_gracefully
+def wannier_supercell_matrices(atoms, psirs):
+    '''Calculate matrices to construct the supercell Wannier spread and gradient.
+
+    Reference: Phys. Rev. B 59, 9703.
+
+    Args:
+        atoms: Atoms object.
+        psirs (ndarray): Set of orbitals in real-space.
+
+    Returns:
+        tuple[ndarray, ndarray, ndarray]: Matrices X, Y, and Z.
+    '''
+    dV = atoms.Omega / np.prod(atoms.s)
+    # Similar to the expectation value of r, but accounting for periodicity
+    X = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0]))) @ psirs
+    Y = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1]))) @ psirs
+    Z = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2]))) @ psirs
+    return X * dV, Y * dV, Z * dV
+
+
+def wannier_supercell_cost(X, Y, Z):
+    '''Calculate the supercell Wannier cost.
+
+    This is an equivalent criterion to the spread criterion, but not the same. This cost function
+    will be maximized instead of the minimization of the spread.
+
+    Reference: Phys. Rev. B 59, 9703.
+
+    Args:
+        X (ndarray): Calculation specific matrix.
+        Y (ndarray): Calculation specific matrix.
+        Z (ndarray): Calculation specific matrix.
+
+    Returns:
+        float: Supercell Wannier cost.
+    '''
+    X2 = np.abs(np.diagonal(X))**2
+    Y2 = np.abs(np.diagonal(Y))**2
+    Z2 = np.abs(np.diagonal(Z))**2
+    return np.sum(X2 + Y2 + Z2)
+
+
+def wannier_supercell_grad(atoms, X, Y, Z):
+    '''Calculate the supercell Wannier gradient.
+
+    Reference: Phys. Rev. B 59, 9703.
+
+    Args:
+        atoms: Atoms object.
+        X (ndarray): Calculation specific matrix.
+        Y (ndarray): Calculation specific matrix.
+        Z (ndarray): Calculation specific matrix.
+
+    Returns:
+        ndarray: Supercell Wannier gradient.
+    '''
+    x = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
+    y = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
+    z = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
+    for n in range(atoms.Nstate):
+        for m in range(atoms.Nstate):
+            x[m, n] = X[n, m] * (X[n, n].conj() - X[m, m].conj()) \
+                - X[m, n].conj() * (X[m, m] - X[n, n])
+            y[m, n] = Y[n, m] * (Y[n, n].conj() - Y[m, m].conj()) \
+                - Y[m, n].conj() * (Y[m, m] - Y[n, n])
+            z[m, n] = Z[n, m] * (Z[n, n].conj() - Z[m, m].conj()) \
+                - Z[m, n].conj() * (Z[m, m] - Z[n, n])
+    return x + y + z
+
+
+@handle_spin_gracefully
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25):
+    '''Steepest descent supercell Wannier localization.
+
+    This function is rather sensitive to the starting point, thus it is a good idea to start from
+    already localized orbitals.
+
+    This optimizes the given orbitals under unitary constraint matrices, see
+    IEEE Trans. Signal Process. 56, 1134.
+
+    Reference: Phys. Rev. B 59, 9703.
+
+    Args:
+        atoms: Atoms object.
+        psirs (ndarray): Set of orbitals in real-space.
+
+    Keyword Args:
+        Nit (int): Number of iterations.
+        conv_tol (float): Convergence tolerance.
+        mu (float): Step size.
+
+    Returns:
+        ndarray: Localized orbitals.
+    '''
+    X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
+    U = np.eye(atoms.Nstate)  # The initial unitary transformation is the identity
+    costs = []
+
+    for i in range(Nit):
+        sign = 1
+        costs.append(wannier_supercell_cost(X, Y, Z))
+        if i > 0:
+            if abs(costs[-2] - costs[-1]) < conv_tol:
+                break
+            # If the cost function gets smaller, change the direction
+            if costs[-2] - costs[-1] < 0:
+                sign = -1
+
+        # Calculate unitary transformation
+        dOmega = wannier_supercell_grad(atoms, X, Y, Z)
+        A = sign * mu * dOmega
+        # dOmega is anti-hermitian, therefore calculate -A instead of A.conj().T
+        # expm(A) will be unitary
+        expA_pos, expA_neg = expm(A), expm(-A)
+        # Update total rotation
+        U = U @ expA_pos
+        # Update matrices
+        X = expA_neg @ X @ expA_pos
+        Y = expA_neg @ Y @ expA_pos
+        Z = expA_neg @ Z @ expA_pos
+
+    # Return the localized orbitals by rotating them
+    return psirs @ U
