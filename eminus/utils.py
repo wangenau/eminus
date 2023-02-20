@@ -136,7 +136,7 @@ def handle_spin_gracefully(func):
     @functools.wraps(func)
     def decorator(object, W, *args, **kwargs):
         if W.ndim == 3:
-            # If one is brave enough one could add multiprocessing over spin states case right here
+            # If one is brave enough one could add multiprocessing over spin states right here
             return np.asarray([func(object, Wspin, *args, **kwargs) for Wspin in W])
         return func(object, W, *args, **kwargs)
     return decorator

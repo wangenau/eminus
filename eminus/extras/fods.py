@@ -10,7 +10,7 @@ from ..logger import log
 from ..units import ang2bohr, bohr2ang
 
 
-def get_fods(object, basis='pc-0', loc='FB', clean=True, elec_symbols=None):
+def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
     '''Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
