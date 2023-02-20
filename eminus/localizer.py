@@ -290,18 +290,17 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25):
     '''
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     U = np.eye(atoms.Nstate)  # The initial unitary transformation is the identity
-    costs = []
+    costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
-        if i > 0:
-            if abs(costs[-2] - costs[-1]) < conv_tol:
-                log.info(f'Wannier localizer converged after {i} iterations.')
-                break
-            # If the cost function gets smaller, change the direction
-            if costs[-2] - costs[-1] < 0:
-                sign = -1
+        if abs(costs[-2] - costs[-1]) < conv_tol:
+            log.info(f'Wannier localizer converged after {i} iterations.')
+            break
+        # If the cost function gets smaller, change the direction
+        if costs[-2] - costs[-1] < 0:
+            sign = -1
 
         # Calculate unitary transformation
         dOmega = wannier_supercell_grad(atoms, X, Y, Z)
@@ -317,7 +316,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25):
         Z = expA_neg @ Z @ expA_pos
         log.debug(f'Iteration: {i} \tCost: {costs[-1]}')
 
-    if len(costs) > 1 and abs(costs[-2] - costs[-1]) < conv_tol:
+    if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
         log.warning('Wannier localizer not converged!')
     # Return the localized orbitals by rotating them
     return psirs @ U
