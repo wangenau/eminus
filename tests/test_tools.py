@@ -8,7 +8,7 @@ from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
                           cutoff2gridspacing, get_dipole, get_ip, get_isovalue, gridspacing2cutoff,
-                          inertia_tensor)
+                          inertia_tensor, pycom)
 
 
 atoms = Atoms('He2', [[0, 0, 0], [10, 0, 0]], s=15, Nspin=1, center=True).build()
@@ -78,6 +78,11 @@ def test_check_orthonorm(ref, func):
 def test_get_isovalue():
     '''Test isovalue calculation.'''
     assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
+
+
+def test_pycom():
+    '''Test PyCOM routine.'''
+    assert_allclose(pycom(atoms, psi), [[[10] * 3] * 2], atol=1e-2)
 
 
 if __name__ == '__main__':

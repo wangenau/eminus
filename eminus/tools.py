@@ -5,6 +5,7 @@ from scipy.optimize import minimize_scalar
 
 from .dft import get_epsilon
 from .logger import log
+from .utils import handle_spin_gracefully
 
 
 def cutoff2gridspacing(E):
@@ -253,3 +254,26 @@ def get_isovalue(n, percent=85):
     # The problem is bound by zero (no density) and the maximum value in n
     res = minimize_scalar(deviation, bounds=(0, np.max(n)), method='bounded')
     return res.x
+
+
+@handle_spin_gracefully
+def pycom(object, psirs):
+    '''Calculate the orbital center of masses, e.g., from localized orbitals.
+
+    Args:
+        object: Atoms or SCF object.
+        psirs (ndarray): Set of orbitals in real-space.
+
+    Returns:
+        bool: Center of masses.
+    '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
+    Ncom = psirs.shape[1]
+    coms = np.empty((Ncom, 3))
+    for i in range(Ncom):
+        coms[i] = center_of_mass(atoms.r, np.real(psirs[:, i].conj() * psirs[:, i]))
+    return coms
