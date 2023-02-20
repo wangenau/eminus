@@ -141,7 +141,7 @@ def remove_core_fods(object, fods):
         atoms = object
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
-    if atoms.Nspin == 1 and len(fods[0]) == np.sum(atoms.f[0]):
+    if atoms.Nspin == 1 and len(fods[0]) * 2 == np.sum(atoms.f[0]):
         return fods
     if atoms.Nspin == 2 and len(fods[0]) == np.sum(atoms.f[0]) \
             and len(fods[1]) == np.sum(atoms.f[1]):
