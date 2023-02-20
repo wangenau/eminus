@@ -2,7 +2,7 @@
 '''Workflow functions that combine functions to generate orbitals.'''
 from .dft import get_psi
 from .io import write_cube
-from .localizer import get_FLO, get_FO
+from .localizer import get_FLO, get_FO, get_wannier
 from .logger import log
 
 
@@ -91,6 +91,34 @@ def FLO(scf, write_cubes=False, fods=None):
     if write_cubes:
         cube_writer(atoms, 'FLO', flo)
     return flo
+
+
+def WO(scf, write_cubes=False, precondition=True):
+    '''Generate Wannier orbitals and optionally save them as cube files.
+
+    Reference: Phys. Rev. B 59, 9703.
+
+    Args:
+        scf: SCF object.
+
+    Keyword Args:
+        write_cubes (bool): Write orbitals to cube files.
+        precondition (bool): Precondition by calculating FLOs as the initial guess.
+
+    Returns:
+        ndarray: Real-space Wannier orbitals.
+    '''
+    atoms = scf.atoms
+
+    if precondition:
+        psi = FLO(scf)
+    else:
+        psi = atoms.I(get_psi(scf, scf.W))
+
+    wo = get_wannier(atoms, psi)
+    if write_cubes:
+        cube_writer(atoms, 'WO', wo)
+    return wo
 
 
 def cube_writer(atoms, type, orbitals):
