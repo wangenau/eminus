@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.2.0 - Feb 21, 2023
+---------------------
 - New features
    - Supercell Wannier localization
    - Rewritten xc parser
@@ -17,6 +17,7 @@ dev
 - Updated docs
    - Add a nomenclature page of commonly used variables
    - Remove the package name from the module headings
+   - Document members of classes
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
@@ -27,6 +28,8 @@ dev
    - Add a recenter method to the Atoms and SCF class
    - Use pc-1 over pc-0 in the PyCOM extra
    - Add a pyproject.toml
+
+----
 
 v2.1.2 - Dec 15, 2022
 ---------------------
