@@ -110,6 +110,7 @@ def WO(scf, write_cubes=False, precondition=True):
     '''
     atoms = scf.atoms
 
+    # Calculate eigenfunctions/initial guess orbitals and transform to real-space
     if precondition:
         psi = FLO(scf)
     else:

@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - New features
+   - Supercell Wannier localization
    - Rewritten xc parser
    - Modularize each functional
    - Greatly improve functional performance
@@ -23,6 +24,7 @@ dev
    - Add a germanium solid example
    - More secure coding practices
    - Removed the usage of eval, exec, and pickle
+   - Use pc-1 over pc-0 in the PyCOM extra
    - Add a pyproject.toml
 
 v2.1.2 - Dec 15, 2022

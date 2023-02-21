@@ -254,6 +254,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     x = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
     y = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
     z = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
+    # Just the indexed gradient from the paper, without fancy optimization
     for n in range(atoms.Nstate):
         for m in range(atoms.Nstate):
             x[m, n] = X[n, m] * (X[n, n].conj() - X[m, m].conj()) \
