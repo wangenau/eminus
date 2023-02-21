@@ -3,13 +3,13 @@
 Introduction
 ************
 
-.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b.svg
+.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
    :target: https://pypi.org/project/eminus
 
-.. image:: https://img.shields.io/badge/language-Python3-green.svg
+.. image:: https://img.shields.io/badge/language-Python3-green
    :target: https://www.python.org
 
-.. image:: https://img.shields.io/badge/license-APACHE2-lightgrey.svg
+.. image:: https://img.shields.io/badge/license-APACHE2-lightgrey
    :target: https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE
 
 .. image:: https://zenodo.org/badge/431079841.svg
