@@ -3,6 +3,9 @@
 Introduction
 ************
 
+.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b.svg
+   :target: https://pypi.org/project/eminus
+
 .. image:: https://img.shields.io/badge/language-Python3-green.svg
    :target: https://www.python.org
 

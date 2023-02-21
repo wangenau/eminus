@@ -1,6 +1,7 @@
 ![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/main/docs/logo/eminus_logo.png)
 
 # eminus
+[![pypi](https://img.shields.io/pypi/v/eminus?color=1a962b)](https://pypi.org/project/eminus)
 [![language](https://img.shields.io/badge/language-Python3-green)](https://www.python.org)
 [![license](https://img.shields.io/badge/license-APACHE2-lightgrey)](https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE)
 [![DOI](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
