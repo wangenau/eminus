@@ -7,6 +7,7 @@ from scipy.linalg import norm
 
 from ..data import SYMBOL2NUMBER
 from ..logger import log
+from ..tools import center_of_mass
 from ..units import ang2bohr, bohr2ang
 
 
@@ -159,3 +160,35 @@ def remove_core_fods(object, fods):
             # Remove core FODs with the smallest distance to the core
             fods[spin] = np.delete(fods[spin], idx[:n_core], axis=0)
     return fods
+
+
+def pycom(object, psirs):
+    '''Calculate the orbital center of masses, e.g., from localized orbitals.
+
+    Args:
+        object: Atoms or SCF object.
+        psirs (ndarray): Set of orbitals in real-space.
+
+    Returns:
+        bool: Center of masses.
+    '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
+    coms = []
+    Ncom = psirs.shape[2]
+    for spin in range(atoms.Nspin):
+        coms_spin = np.empty((Ncom, 3))
+
+        # Square orbitals
+        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
+        for i in range(Ncom):
+            coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
+        coms.append(coms_spin)
+
+    # Have the same data structure as for fods
+    if atoms.Nspin == 1:
+        coms.append(np.array([]))
+    return coms

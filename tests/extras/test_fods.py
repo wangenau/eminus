@@ -5,7 +5,8 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
 import pytest
 
-from eminus import Atoms
+from eminus import Atoms, SCF
+from eminus.dft import get_psi
 
 rng = default_rng()
 
@@ -63,6 +64,18 @@ def test_remove_core_fods(Nspin):
     fods = [np.vstack((core, valence))] * Nspin
     fods_valence = remove_core_fods(atoms, fods)
     assert_equal([valence] * Nspin, fods_valence)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_pycom(Nspin):
+    '''Test PyCOM routine.'''
+    from eminus.extras import pycom
+    atoms = Atoms('He2', [[0, 0, 0], [10, 0, 0]], s=10, Nspin=Nspin, center=True).build()
+    scf = SCF(atoms)
+    scf.run()
+    psi = atoms.I(get_psi(scf, scf.W))
+    for spin in range(Nspin):
+        assert_allclose(pycom(atoms, psi)[spin], [[10] * 3] * 2, atol=1e-1)
 
 
 if __name__ == '__main__':

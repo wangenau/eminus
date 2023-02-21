@@ -253,35 +253,3 @@ def get_isovalue(n, percent=85):
     # The problem is bound by zero (no density) and the maximum value in n
     res = minimize_scalar(deviation, bounds=(0, np.max(n)), method='bounded')
     return res.x
-
-
-def pycom(object, psirs):
-    '''Calculate the orbital center of masses, e.g., from localized orbitals.
-
-    Args:
-        object: Atoms or SCF object.
-        psirs (ndarray): Set of orbitals in real-space.
-
-    Returns:
-        bool: Center of masses.
-    '''
-    try:
-        atoms = object.atoms
-    except AttributeError:
-        atoms = object
-
-    coms = []
-    Ncom = psirs.shape[2]
-    for spin in range(atoms.Nspin):
-        coms_spin = np.empty((Ncom, 3))
-
-        # Square orbitals
-        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
-        for i in range(Ncom):
-            coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
-        coms.append(coms_spin)
-
-    # Have the same data structure as for fods
-    if atoms.Nspin == 1:
-        coms.append(np.array([]))
-    return coms
