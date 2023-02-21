@@ -2,6 +2,7 @@
 '''Utilities to localize and analyze orbitals.'''
 import numpy as np
 from scipy.linalg import eig, expm, norm
+from scipy.stats.unitary_group import rvs
 
 from .logger import log
 from .utils import handle_spin_gracefully
@@ -265,7 +266,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 
 @handle_spin_gracefully
-def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25):
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_init=False):
     '''Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from
@@ -284,12 +285,17 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25):
         Nit (int): Number of iterations.
         conv_tol (float): Convergence tolerance.
         mu (float): Step size.
+        random_init (bool): Weather to use a random unitary starting guess or the identity.
 
     Returns:
         ndarray: Localized orbitals.
     '''
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
-    U = np.eye(atoms.Nstate)  # The initial unitary transformation is the identity
+    # The initial unitary transformation is the identity or a random unitary matrix
+    if random_init and atoms.Nstate > 1:
+        U = rvs(atoms.Nstate)
+    else:
+        U = np.eye(atoms.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
     for i in range(Nit):
