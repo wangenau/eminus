@@ -79,9 +79,6 @@ setup(
         'scipy>=1.4'
     ],
     keywords=['ESP'],
-    package_data={
-        'eminus.pade': ['*-q*']
-    },
     zip_safe=False,
     extras_require=extras,
     python_requires='>=3.6',
