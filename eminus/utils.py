@@ -117,7 +117,7 @@ def Ylm_real(l, m, G):
 
 
 def handle_spin_gracefully(func):
-    '''Handle wave functions with a dimension for the spin by calculating each channel seperately.
+    '''Handle spin calculating the function for each channel seperately.
 
     This can only be applied if the only spin-dependent indexing is the wave function W.
 

@@ -7,7 +7,9 @@ from .logger import log
 
 
 def harmonic(atoms):
-    '''Harmonic potential. Can be used for quantum dot calculations.
+    '''Harmonic potential.
+
+    Can be used for quantum dot calculations.
 
     Args:
         atoms: Atoms object.

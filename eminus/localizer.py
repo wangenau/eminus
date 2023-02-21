@@ -27,7 +27,7 @@ def eval_psi(atoms, psi, r):
 
 
 def get_R(atoms, psi, fods):
-    '''Calculate transformation matrix to build Fermi orbitals from Kohn-Sham orbitals.
+    '''Calculate transformation matrix to build Fermi orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -52,7 +52,7 @@ def get_R(atoms, psi, fods):
 
 
 def get_FO(atoms, psi, fods):
-    '''Calculate Fermi orbitals from Kohn-Sham orbitals and a set of respective FODs.
+    '''Calculate Fermi orbitals from Kohn-Sham orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -131,7 +131,7 @@ def get_FLO(atoms, psi, fods):
 def wannier_cost(atoms, psirs):
     '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
-    This function does not account for periodcity, it may be a good idea to recenter the system.
+    This function does not account for periodcity, it may be a good idea to center the system.
 
     Reference: J. Chem. Phys. 137, 224114.
 
@@ -198,7 +198,7 @@ def second_moment(atoms, psirs):
 
 @handle_spin_gracefully
 def wannier_supercell_matrices(atoms, psirs):
-    '''Calculate matrices to construct the supercell Wannier spread and gradient.
+    '''Calculate matrices for the supercell Wannier localization.
 
     Reference: Phys. Rev. B 59, 9703.
 
@@ -269,7 +269,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 
 @handle_spin_gracefully
-def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_init=False):
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_guess=False):
     '''Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from
@@ -288,14 +288,14 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_init=Fal
         Nit (int): Number of iterations.
         conv_tol (float): Convergence tolerance.
         mu (float): Step size.
-        random_init (bool): Weather to use a random unitary starting guess or the identity.
+        random_guess (bool): Weather to use a random unitary starting guess or the identity.
 
     Returns:
         ndarray: Localized orbitals.
     '''
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
-    if random_init and atoms.Nstate > 1:
+    if random_guess and atoms.Nstate > 1:
         U = unitary_group.rvs(atoms.Nstate)
     else:
         U = np.eye(atoms.Nstate)

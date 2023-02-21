@@ -47,6 +47,7 @@ Atoms variables
 
 The input variables for the Atoms object are explained here: :class:`~eminus.atoms.Atoms`.
 
+
 Field variables
 ===============
 
@@ -104,6 +105,9 @@ Field variables
      - :code:`(Nspin, Number of sampling points, Nstate)`
    * - :code:`flo`
      - Real space Fermi-Löwdin orbitals
+     - :code:`(Nspin, Number of sampling points, Nstate)`
+   * - :code:`wo`
+     - Real space Wannier orbitals
      - :code:`(Nspin, Number of sampling points, Nstate)`
 
 

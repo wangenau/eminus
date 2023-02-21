@@ -84,7 +84,7 @@ def inertia_tensor(coords, masses=None):
 def get_dipole(scf, n=None):
     '''Calculate the electric dipole moment.
 
-    This function does not account for periodcity, it may be a good idea to recenter the system.
+    This function does not account for periodcity, it may be a good idea to center the system.
 
     Reference: J. Chem. Phys. 155, 224109.
 
@@ -97,9 +97,6 @@ def get_dipole(scf, n=None):
     Returns:
         ndarray: Electric dipole moment in e * Bohr.
     '''
-    # The dipole may be extremely large. This can be because of periodic boundary conditions,
-    # e.g., the density gets "smeared" to the edges if the atom sits at one edge.
-    # One fix can be to center the atom/molecule inside the box.
     atoms = scf.atoms
     if n is None:
         n = scf.n
