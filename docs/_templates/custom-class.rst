@@ -3,6 +3,7 @@
 .. currentmodule:: {{ module }}
 
 .. autoclass:: {{ fullname }}
+   :members:
 
    {% block methods %}
    {% if methods %}

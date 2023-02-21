@@ -268,8 +268,10 @@ class SCF:
 
 
 class RSCF(SCF):
-    '''SCF class for spin-paired systems. '''  # noqa: D210
-    __doc__ += SCF.__doc__
+    '''SCF class for spin-paired systems.
+
+    Inherited from :class:`eminus.scf.SCF`.
+    '''
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
@@ -279,8 +281,10 @@ class RSCF(SCF):
 
 
 class USCF(SCF):
-    '''SCF class for spin-polarized systems. '''  # noqa: D210
-    __doc__ += SCF.__doc__
+    '''SCF class for spin-polarized systems.
+
+    Inherited from :class:`eminus.scf.SCF`.
+    '''
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
