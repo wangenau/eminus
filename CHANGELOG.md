@@ -24,6 +24,7 @@ dev
    - Add a germanium solid example
    - More secure coding practices
    - Removed the usage of eval, exec, and pickle
+   - Add a recenter method to the Atoms and SCF class
    - Use pc-1 over pc-0 in the PyCOM extra
    - Add a pyproject.toml
 

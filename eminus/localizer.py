@@ -131,6 +131,8 @@ def get_FLO(atoms, psi, fods):
 def wannier_cost(atoms, psirs):
     '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
+    This function does not account for periodcity, it may be a good idea to recenter the system.
+
     Reference: J. Chem. Phys. 137, 224114.
 
     Args:

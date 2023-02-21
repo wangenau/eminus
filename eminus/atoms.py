@@ -138,6 +138,24 @@ class Atoms:
 
     kernel = build
 
+    def recenter(self, center=None):
+        '''Recenter the system inside the cell.
+
+        Keyword Args:
+            center (float | list | tuple | ndarray | None): Point to center the system around.
+        '''
+        com = center_of_mass(self.X)
+        if center is None:
+            self.X = self.X - (com - self.a / 2)
+        else:
+            center = np.asarray(center)
+            self.X = self.X - (com - center)
+
+        # Recalculate the structure factor since it depends on the atom positions
+        _, N = self._get_index_matrices()
+        self._set_G(N)
+        return self
+
     def _set_atom(self):
         '''Validate the atom input and calculate the number of atoms.'''
         # Quick option to set the charge for single atoms

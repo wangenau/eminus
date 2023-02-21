@@ -13,6 +13,7 @@ from .io import read_gth
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED
 from .potentials import init_pot
+from .tools import center_of_mass
 from .version import info
 from .xc import parse_functionals
 
@@ -187,6 +188,35 @@ class SCF:
         return self.energies.Etot
 
     kernel = run
+
+    def recenter(self, center=None):
+        '''Recenter the system inside the cell.
+
+        Keyword Args:
+            center (float | list | tuple | ndarray | None): Point to center the system around.
+        '''
+        # Run the recenter method of the atoms object
+        self.atoms.recenter(center=center)
+
+        com = center_of_mass(self.atoms.X)
+        if center is None:
+            dr = com - self.atoms.a / 2
+        else:
+            center = np.asarray(center)
+            dr = com - center
+
+        # Shift orbitals and density
+        self.W = self.atoms.T(self.W, dr=-dr)
+        # Transform the density to the reciprocal space, shift, and transform back
+        Jn = self.atoms.J(self.n)
+        TJn = self.atoms.T(Jn, dr=-dr)
+        self.n = self.atoms.I(TJn)
+
+        # Recalculate the pseudopotential since it depends on the structure factor
+        self._set_potential()
+        # Clear intermediate results to make sure no one uses the unshifted results
+        self.clear()
+        return self
 
     def _set_potential(self):
         '''Build the potential.'''

@@ -84,6 +84,8 @@ def inertia_tensor(coords, masses=None):
 def get_dipole(scf, n=None):
     '''Calculate the electric dipole moment.
 
+    This function does not account for periodcity, it may be a good idea to recenter the system.
+
     Reference: J. Chem. Phys. 155, 224109.
 
     Args:
