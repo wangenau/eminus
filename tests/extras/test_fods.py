@@ -7,6 +7,7 @@ import pytest
 
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
+from eminus.extras import pycom, remove_core_fods, split_fods
 
 rng = default_rng()
 
@@ -30,7 +31,6 @@ def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
 @pytest.mark.parametrize('elec_symbols', (['X', 'He'], ['He', 'Ne']))
 def test_split_fods(Nspin, elec_symbols):
     '''Test splitting FODs from atoms.'''
-    from eminus.extras import split_fods
     X = rng.standard_normal((5, 3))
     atom = ['H'] * len(X)
     fods = rng.standard_normal((10, 3))
@@ -56,7 +56,6 @@ def test_split_fods(Nspin, elec_symbols):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_remove_core_fods(Nspin):
     '''Test core FOD removal function.'''
-    from eminus.extras import remove_core_fods
     atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin)
     core = atoms.X
     valence = rng.standard_normal((10, 3))
@@ -69,7 +68,6 @@ def test_remove_core_fods(Nspin):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pycom(Nspin):
     '''Test PyCOM routine.'''
-    from eminus.extras import pycom
     atoms = Atoms('He2', [[0, 0, 0], [10, 0, 0]], s=10, Nspin=Nspin, center=True).build()
     scf = SCF(atoms)
     scf.run()
