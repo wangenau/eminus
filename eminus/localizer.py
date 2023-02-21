@@ -2,7 +2,7 @@
 '''Utilities to localize and analyze orbitals.'''
 import numpy as np
 from scipy.linalg import eig, expm, norm
-from scipy.stats.unitary_group import rvs
+from scipy.stats import unitary_group
 
 from .logger import log
 from .utils import handle_spin_gracefully
@@ -294,7 +294,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_init=Fal
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
     if random_init and atoms.Nstate > 1:
-        U = rvs(atoms.Nstate)
+        U = unitary_group.rvs(atoms.Nstate)
     else:
         U = np.eye(atoms.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
