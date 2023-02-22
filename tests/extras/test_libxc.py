@@ -21,7 +21,10 @@ n_tests = {
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
-    from pylibxc import LibXCFunctional  # noqa: F401
+    try:
+        from pylibxc import LibXCFunctional  # noqa: F401
+    except ImportError:
+        pytest.skip('pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     e_out, _ = libxc_functional(xc, n_spin, Nspin)
@@ -34,7 +37,10 @@ def test_libxc_functional_exc(xc, Nspin):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
-    from pylibxc import LibXCFunctional  # noqa: F401
+    try:
+        from pylibxc import LibXCFunctional  # noqa: F401
+    except ImportError:
+        pytest.skip('pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     _, v_out = libxc_functional(xc, n_spin, Nspin)
