@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v2.2.1 - Feb 22, 2023
+---------------------
+- Hotfix for the broken PyPI installation
+- Use MANIFEST.in over package_data
+- Skip tests if pylibxc is not installed
+
 v2.2.0 - Feb 21, 2023
 ---------------------
 - New features
