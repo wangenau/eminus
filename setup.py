@@ -45,7 +45,7 @@ setup(
     long_description_content_type='text/markdown',
     author='Wanja Timm Schulze',
     author_email='wangenau@protonmail.com',
-    url='https://wangenau.gitlab.io/eminus',
+    url='https://github.com/wangenau/eminus',
     packages=find_packages(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -85,6 +85,7 @@ setup(
     project_urls={
         'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',
         'Changelog': 'https://wangenau.gitlab.io/eminus/changelog.html',
-        'Source': 'https://gitlab.com/wangenau/eminus'
+        'Documentation': 'https://wangenau.gitlab.io/eminus',
+        'Source code': 'https://gitlab.com/wangenau/eminus'
     }
 )
