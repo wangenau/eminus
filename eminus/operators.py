@@ -118,7 +118,10 @@ def I(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    n = np.prod(atoms.s)
+    Nstate = atoms.Nstate
+    s = atoms.s
+    n = np.prod(s)
+
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.G2):
         Wfft = W
@@ -127,18 +130,18 @@ def I(atoms, W):
         if W.ndim == 1:
             Wfft = np.zeros(n, dtype=complex)
         else:
-            Wfft = np.zeros((n, atoms.Nstate), dtype=complex)
+            Wfft = np.zeros((n, Nstate), dtype=complex)
         Wfft[atoms.active] = W
 
     if W.ndim == 1:
-        Wfft = Wfft.reshape(atoms.s)
-        Finv = ifftn(Wfft, workers=THREADS).ravel()
+        Wfft = Wfft.reshape(s)
+        Finv = ifftn(Wfft, workers=THREADS, overwrite_x=True).ravel()
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
-        Wfft = Wfft.reshape(np.append(atoms.s, atoms.Nstate))
+        Wfft = Wfft.reshape(np.append(s, Nstate))
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = ifftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Nstate))
+        Finv = ifftn(Wfft, workers=THREADS, overwrite_x=True, axes=(0, 1, 2)).reshape((n, Nstate))
     return Finv * n
 
 
@@ -159,13 +162,16 @@ def J(atoms, W, full=True):
     Returns:
         ndarray: The operator applied on W.
     '''
+    Nstate = atoms.Nstate
+    s = atoms.s
     n = np.prod(atoms.s)
+
     if W.ndim == 1:
-        Wfft = W.reshape(atoms.s)
-        F = fftn(Wfft, workers=THREADS).ravel()
+        Wfft = W.reshape(s)
+        F = fftn(Wfft, workers=THREADS, overwrite_x=True).ravel()
     else:
-        Wfft = W.reshape(np.append(atoms.s, atoms.Nstate))
-        F = fftn(Wfft, workers=THREADS, axes=(0, 1, 2)).reshape((n, atoms.Nstate))
+        Wfft = W.reshape(np.append(s, Nstate))
+        F = fftn(Wfft, workers=THREADS, overwrite_x=True, axes=(0, 1, 2)).reshape((n, Nstate))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
