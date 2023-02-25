@@ -124,7 +124,7 @@ def I(atoms, W):
 
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.G2):
-        Wfft = W
+        Wfft = np.copy(W)
     else:
         # Fill with zeros if W is in the active space
         if W.ndim == 1:
