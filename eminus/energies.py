@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 '''Calculate different energy contributions.'''
+from dataclasses import dataclass
+
 import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
@@ -8,24 +10,21 @@ from .dft import get_n_single, solve_poisson
 from .xc import get_exc
 
 
+@dataclass(slots=True)
 class Energy:
     '''Energy class to save energy contributions in one place.'''
-    __slots__ = ['Ekin', 'Eloc', 'Enonloc', 'Ecoul', 'Exc', 'Eewald', 'Esic']
-
-    def __init__(self):
-        self.Ekin = 0     # Kinetic energy
-        self.Ecoul = 0    # Coulomb energy
-        self.Exc = 0      # Exchange-correlation energy
-        self.Eloc = 0     # Local energy
-        self.Enonloc = 0  # Non-local energy
-        self.Eewald = 0   # Ewald energy
-        self.Esic = 0     # Self-interaction correction energy
+    Ekin: float = 0     # Kinetic energy
+    Ecoul: float = 0    # Coulomb energy
+    Exc: float = 0      # Exchange-correlation energy
+    Eloc: float = 0     # Local energy
+    Enonloc: float = 0  # Non-local energy
+    Eewald: float = 0   # Ewald energy
+    Esic: float = 0     # Self-interaction correction energy
 
     @property
     def Etot(self):
         '''Total energy is the sum of all energy contributions.'''
-        return self.Ekin + self.Ecoul + self.Exc + self.Eloc + self.Enonloc + self.Eewald + \
-            self.Esic
+        return sum(getattr(self, ie) for ie in self.__slots__)
 
     def __repr__(self):
         '''Print the energies stored in the Energy object.'''
