@@ -94,12 +94,12 @@ def Linv(atoms, W):
     with np.errstate(divide='ignore', invalid='ignore'):
         if W.ndim == 1:
             # One could do some proper indexing with [1:] but indexing is slow
-            out = W / atoms.G2 / -atoms.Omega
+            out = W / (atoms.G2 * -atoms.Omega)
             out[0] = 0
         else:
             # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
             G2 = atoms.G2[:, None]
-            out = W / G2 / -atoms.Omega
+            out = W / (G2 * -atoms.Omega)
             out[0, :] = 0
     return out
 

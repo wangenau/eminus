@@ -7,9 +7,8 @@ dev
    - Make Energies a dataclass
 - Miscellaneous
    - Improved operator performance
-   - Drop Python3.6 support
-   - Raise SciPy minimum version from 1.4 to 1.6
-
+   - Drop Python 3.6 support
+   - Raise minimum version SciPy from 1.4 to 1.6
 
 v2.2.1 - Feb 22, 2023
 ---------------------
