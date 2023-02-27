@@ -269,7 +269,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 
 @handle_spin_gracefully
-def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_guess=False):
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False):
     '''Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from
@@ -305,7 +305,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_guess=Fa
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
         if abs(costs[-2] - costs[-1]) < conv_tol:
-            log.info(f'Wannier localizer converged after {i} iterations.')
+            atoms.log.info(f'Wannier localizer converged after {i} iterations.')
             break
         # If the cost function gets smaller, change the direction
         if costs[-2] - costs[-1] < 0:
@@ -323,9 +323,9 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-9, mu=0.25, random_guess=Fa
         X = expA_neg @ X @ expA_pos
         Y = expA_neg @ Y @ expA_pos
         Z = expA_neg @ Z @ expA_pos
-        log.debug(f'Iteration: {i} \tCost: {costs[-1]}')
+        atoms.log.debug(f'Iteration: {i} \tCost: {costs[-1]}')
 
     if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
-        log.warning('Wannier localizer not converged!')
+        atoms.log.warning('Wannier localizer not converged!')
     # Return the localized orbitals by rotating them
     return psirs @ U
