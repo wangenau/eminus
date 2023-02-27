@@ -41,9 +41,9 @@ pytest:
 
 pytest:minimal:
   extends: .pytest
-  image: python:3.6-slim
+  image: python:3.7-slim
   before_script:
-    - pip install numpy==1.17.0 scipy==1.4.0
+    - pip install numpy==1.17.0 scipy==1.6.0
 
 ########## Test code functionality for all python versions between current and minimal ##########
 python:
@@ -51,7 +51,7 @@ python:
   image: python:$PYTHON_VERSIONS-slim
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.7', '3.8', '3.9', '3.10']
+      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10']
 
 ########## Test code functionality under linux, macos, and windows ##########
 platform:linux:

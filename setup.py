@@ -61,7 +61,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -76,12 +75,12 @@ setup(
     license='APACHE2.0',
     install_requires=[
         'numpy>=1.17',
-        'scipy>=1.4'
+        'scipy>=1.6'
     ],
     keywords=['ESP'],
     zip_safe=False,
     extras_require=extras,
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     project_urls={
         'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',
         'Changelog': 'https://wangenau.gitlab.io/eminus/changelog.html',
