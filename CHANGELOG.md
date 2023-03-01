@@ -6,9 +6,10 @@ dev
 - Coding style
    - Make Energies a dataclass
 - Miscellaneous
-   - Improved operator performance
+   - Improve operator performance
    - Drop Python 3.6 support
    - Raise minimum version SciPy from 1.4 to 1.6
+   - Add repository statistics to the PyPI sidebar
 
 v2.2.1 - Feb 22, 2023
 ---------------------
@@ -33,13 +34,14 @@ v2.2.0 - Feb 21, 2023
    - Add a nomenclature page of commonly used variables
    - Remove the package name from the module headings
    - Document members of classes
+- Coding style
+   - More secure coding practices
+   - Remov the usage of eval, exec, and pickle
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
    - Align Chachiyo functional with Libxc
    - Add a germanium solid example
-   - More secure coding practices
-   - Removed the usage of eval, exec, and pickle
    - Add a recenter method to the Atoms and SCF class
    - Use pc-1 over pc-0 in the PyCOM extra
    - Add a pyproject.toml
@@ -57,7 +59,7 @@ v2.1.2 - Dec 15, 2022
 	- Add Docker instructions under Installation section
 	- Update examples to use the new atoms viewer
 - Miscellaneous
-	- Unified read, write, and view functions
+	- Unify read, write, and view functions
 	- Add an optional density threshold for functionals
 	- Add covalent radii and CPK colors to data
 	- Add changelog to the PyPI description
@@ -76,7 +78,7 @@ v2.1.1 - Oct 24, 2022
 	- Add kernel aliases to Atoms and SCF methods
 	- Allow mixing Libxc and internal functionals
 	- Add platform version in the info function
-	- Improved logging in some places
+	- Improve logging in some places
 	- Improve file writer formatting
 	- Rename addons to extras
 	- Rename filehandler to io
@@ -91,7 +93,7 @@ v2.1.0 - Sep 19, 2022
     - Built-in Chachiyo correlation functional
     - New pseudo-random starting guess for comparisons with SimpleDFT
 - Updated docs
-    - Improved displaying of examples in the documentation
+    - Improve displaying of examples in the documentation
     - Convert notebooks to HTML pages
     - New overview image
     - Minify pages
@@ -133,7 +135,7 @@ v2.0.0 - May 20, 2022
    - Unify coding style
    - Remove legacy code
 - Miscellaneous
-   - Improved setup.py
+   - Improve setup.py
    - More tests
    - Improve readability
    - Fix various bugs
