@@ -3,10 +3,12 @@ Changelog
 
 dev
 ---
+- New features
+   - Improve performance, i.e, in operators and dotprod
+   - Large systems are much faster
 - Coding style
    - Make Energies a dataclass
 - Miscellaneous
-   - Improve operator performance
    - Drop Python 3.6 support
    - Raise minimum version SciPy from 1.4 to 1.6
    - Add repository statistics to the PyPI sidebar

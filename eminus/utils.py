@@ -37,7 +37,10 @@ def dotprod(a, b):
         float: The expressions result
     '''
     eps = 1e-15  # 2.22e-16 is the range of float64 machine precision
-    res = np.real(np.trace(a.conj().T @ b))
+    # The dot product of complex vectors looks like the expression below, but this is slow
+    # res = np.real(np.trace(a.conj().T @ b))
+    # We can calculate the trace faster by taking the sum of the Hadamard product
+    res = np.real(np.sum(a.conj() * b))
     if abs(res) < eps:
         return eps
     return res
