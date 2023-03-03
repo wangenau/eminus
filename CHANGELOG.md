@@ -4,7 +4,7 @@ Changelog
 dev
 ---
 - New features
-   - Improve performance, i.e, in operators and dotprod
+   - Improve performance, i.e, in operators, dotprod, and density calculations
    - Large systems are much faster
 - Coding style
    - Make Energies a dataclass

@@ -69,7 +69,7 @@ def get_Ekin(atoms, Y):
     Ekin = 0
     for spin in range(atoms.Nspin):
         F = np.diag(atoms.f[spin])
-        Ekin += -0.5 * np.trace(F @ (Y[spin].conj().T @ atoms.L(Y[spin])))
+        Ekin += -0.5 * np.trace(F @ Y[spin].conj().T @ atoms.L(Y[spin]))
     return np.real(Ekin)
 
 
@@ -90,8 +90,8 @@ def get_Ecoul(atoms, n, phi=None):
     '''
     if phi is None:
         phi = solve_poisson(atoms, n)
-    # Ecoul = -(J(n))dag O(phi)
-    return np.real(0.5 * n.T @ atoms.Jdag(atoms.O(phi)))
+    # Ecoul = 0.5 (J(n))dag O(phi)
+    return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
@@ -115,7 +115,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin)
     # Exc = (J(n))dag O(J(exc))
-    return np.real(n.T @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
 def get_Eloc(scf, n):
