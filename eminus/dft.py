@@ -25,7 +25,7 @@ def solve_poisson(atoms, n):
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
-def get_n_total(atoms, Y):
+def get_n_total(atoms, Y, n_spin=None):
     '''Calculate the total electronic density.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -34,9 +34,16 @@ def get_n_total(atoms, Y):
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
+    Keyword Args:
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+
     Returns:
         ndarray: Electronic density.
     '''
+    # Return the total density in the spin-paired case
+    if n_spin is not None:
+        return np.sum(n_spin, axis=0)
+
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
     n = np.zeros(len(atoms.r))
@@ -58,7 +65,7 @@ def get_n_spin(atoms, Y, n=None):
         n (ndarray): Real-space electronic density.
 
     Returns:
-        ndarray: Electronic density per spin.
+        ndarray: Electronic densities per spin channel.
     '''
     # Return the total density in the spin-paired case
     if n is not None and atoms.Nspin == 1:
@@ -105,7 +112,7 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
+def get_grad(scf, spin, W, Y=None, n=None, n_spin=None, phi=None, vxc=None):
     '''Calculate the energy gradient with respect to W.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -118,6 +125,7 @@ def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     Keyword Args:
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
         n (ndarray): Real-space electronic density.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
         phi (ndarray): Hartree field.
         vxc (ndarray): Exchange-correlation potential.
 
@@ -126,7 +134,7 @@ def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     '''
     atoms = scf.atoms
     F = np.diag(atoms.f[spin])
-    HW = H(scf, spin, W, Y, n, phi, vxc)
+    HW = H(scf, spin, W, Y, n, n_spin, phi, vxc)
     WHW = W[spin].conj().T @ HW
     # U = Wdag O(W)
     U = W[spin].conj().T @ atoms.O(W[spin])
@@ -139,7 +147,7 @@ def get_grad(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
         atoms.O(W[spin]) @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
-def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
+def H(scf, spin, W, Y=None, n=None, n_spin=None, phi=None, vxc=None):
     '''Left-hand side of the eigenvalue equation.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -152,6 +160,7 @@ def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     Keyword Args:
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
         n (ndarray): Real-space electronic density.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
         phi (ndarray): Hartree field.
         vxc (ndarray): Exchange-correlation potential.
 
@@ -163,12 +172,13 @@ def H(scf, spin, W, Y=None, n=None, phi=None, vxc=None):
     # but one can also use already computed results to save time
     if Y is None:
         Y = orth(atoms, W)
+    if n_spin is None:
+        n_spin = get_n_spin(atoms, Y, n)
     if n is None:
-        n = get_n_total(atoms, Y)
+        n = get_n_total(atoms, Y, n_spin)
     if phi is None:
         phi = solve_poisson(atoms, n)
     if vxc is None:
-        n_spin = get_n_spin(atoms, Y, n)
         vxc = get_vxc(scf.xc, n_spin, atoms.Nspin)
 
     # We get the full potential in the functional definition (different to the DFT++ notation)

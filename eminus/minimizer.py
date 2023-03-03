@@ -24,8 +24,8 @@ def scf_step(scf):
     '''
     atoms = scf.atoms
     scf.Y = orth(atoms, scf.W)
-    scf.n = get_n_total(atoms, scf.Y)
-    scf.n_spin = get_n_spin(atoms, scf.Y, scf.n)
+    scf.n_spin = get_n_spin(atoms, scf.Y)
+    scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
     scf.phi = solve_poisson(atoms, scf.n)
     scf.exc, scf.vxc = get_xc(scf.xc, scf.n_spin, atoms.Nspin)
     return get_E(scf)
@@ -95,7 +95,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         if condition(scf, costs):
             break
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.n_spin, scf.phi, scf.vxc)
             scf.W[spin] = scf.W[spin] - betat * g
     return costs
 
@@ -143,7 +143,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.n_spin, scf.phi, scf.vxc)
             # Calculate linmin each spin seperately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = dotprod(g, d[spin]) / \
@@ -204,7 +204,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.n_spin, scf.phi, scf.vxc)
             # Calculate linmin each spin seperately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = dotprod(g, d[spin]) / \
@@ -270,7 +270,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.n_spin, scf.phi, scf.vxc)
             # Calculate linmin and cg for each spin seperately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = dotprod(g, d_old[spin]) / \
@@ -348,7 +348,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.phi, scf.vxc)
+            g = grad(scf, spin, scf.W, scf.Y, scf.n, scf.n_spin, scf.phi, scf.vxc)
             # Calculate linmin and cg for each spin seperately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = dotprod(g, d_old[spin]) / \
