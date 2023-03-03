@@ -8,21 +8,6 @@ from scipy.linalg import norm
 from .logger import log
 
 
-def diagprod(a, B):
-    '''Efficiently calculate the expression Diag(a) * B.
-
-    Args:
-        a (ndarray): Single vector.
-        B (ndarray): Matrix.
-
-    Returns:
-        ndarray: The expressions result.
-    '''
-    # Reshape a to a column vector
-    a_col = a[:, None]
-    return a_col * B
-
-
 def dotprod(a, b):
     '''Efficiently calculate the expression a * b.
 

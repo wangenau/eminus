@@ -5,7 +5,7 @@ from numpy.random import Generator, SFC64
 from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
 
 from .gth import calc_Vnonloc
-from .utils import diagprod, handle_spin_gracefully, pseudo_uniform
+from .utils import handle_spin_gracefully, pseudo_uniform
 from .xc import get_vxc
 
 
@@ -190,7 +190,8 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, phi=None, vxc=None):
     Veff = scf.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     Vnonloc_psi = calc_Vnonloc(scf, W[spin])
     # H = Vkin + Idag(diag(Veff))I + Vnonloc
-    return Vkin_psi + atoms.Idag(diagprod(Veff, atoms.I(W[spin]))) + Vnonloc_psi
+    # Diag(a) * B can be written as a * B if a is a column vector
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi
 
 
 def Q(inp, U):
