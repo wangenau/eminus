@@ -1,11 +1,11 @@
 Changelog
 =========
 
-dev
----
+v2.2.2 - Mar 03, 2023
+---------------------
 - New features
    - Improve performance, i.e, in operators, dotprod, and density calculations
-   - Large systems are much faster
+   - Large and/or spin-polarized systems are much faster!
 - Coding style
    - Make Energies a dataclass
 - Miscellaneous
