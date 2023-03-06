@@ -14,7 +14,7 @@ project = 'eminus'
 author = 'Wanja Timm Schulze'
 copyright = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
 version = eminus.__version__
-release = eminus.__version__.rpartition('.')[0]
+release = version
 
 extensions = [
     'sphinx.ext.autodoc',
