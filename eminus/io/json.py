@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''JSON file handling.'''
 import base64
+import copy
 import json
 
 import numpy as np
@@ -31,7 +32,7 @@ def read_json(filename):
             for attr in dct:
                 if attr == 'log':
                     continue
-                setattr(atoms, attr, dct[attr])
+                setattr(atoms, attr, copy.deepcopy(dct[attr]))
             # The tuple type is not preserved when serializing, manually cast the only important one
             if isinstance(atoms.active, list):
                 atoms.active = tuple(atoms.active)
@@ -41,7 +42,7 @@ def read_json(filename):
             for attr in dct:
                 if attr == 'log':
                     continue
-                setattr(scf, attr, dct[attr])
+                setattr(scf, attr, copy.deepcopy(dct[attr]))
             return scf
         if isinstance(dct, dict) and 'Ekin' in dct:
             energies = eminus.energies.Energy()
@@ -75,13 +76,10 @@ def write_json(object, filename):
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is a Atoms or SCF class dump them as a dictionary
-            if isinstance(obj, eminus.Atoms) or isinstance(obj, eminus.SCF):
+            if isinstance(obj, eminus.Atoms) or isinstance(obj, eminus.SCF) or \
+               isinstance(obj, eminus.energies.Energy):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
-                return dict(json.loads(data))
-            # __slots__ classes have no __dict__, so use getattr
-            if isinstance(obj, eminus.energies.Energy):
-                data = json.dumps({slot: getattr(obj, slot) for slot in obj.__slots__})
                 return dict(json.loads(data))
             # The logger class is not serializable, just ignore it
             if isinstance(obj, eminus.logger.CustomLogger):

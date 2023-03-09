@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 '''Calculate different energy contributions.'''
-from dataclasses import dataclass, fields
+import dataclasses
 
 import numpy as np
 from scipy.linalg import inv, norm
@@ -10,7 +10,7 @@ from .dft import get_n_single, solve_poisson
 from .xc import get_exc
 
 
-@dataclass
+@dataclasses.dataclass
 class Energy:
     '''Energy class to save energy contributions in one place.'''
     Ekin: float = 0     # Kinetic energy
@@ -24,12 +24,12 @@ class Energy:
     @property
     def Etot(self):
         '''Total energy is the sum of all energy contributions.'''
-        return sum(getattr(self, ie.name) for ie in fields(self))
+        return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
 
     def __repr__(self):
         '''Print the energies stored in the Energy object.'''
         out = ''
-        for ie in fields(self):
+        for ie in dataclasses.fields(self):
             energy = getattr(self, ie.name)
             if energy != 0:
                 out += f'{ie.name.ljust(8)}: {energy:+.9f} Eh\n'
