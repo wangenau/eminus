@@ -19,7 +19,6 @@ RUN pip install notebook ipywidgets==7.* --no-cache-dir
 # Install without dependencies since only the PyCOM method will be used
 # Only ASE is required to run PyFLOSIC2
 RUN git clone https://gitlab.com/opensic/pyflosic2.git \
-&& sed -i "s/pyscf==1.7.6.post1/pyscf/g" pyflosic2/setup.py \
 && pip install ase pyflosic2/ --no-cache-dir --no-deps \
 && rm -rf pyflosic2/
 
