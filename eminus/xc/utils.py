@@ -202,6 +202,7 @@ XC_MAP = {
 }
 
 ALIAS = {
-    'spw92': 'slater,pw_mod',
-    'svwn': 'slater,vwn'
+    'spw92': 'slater,pw92_mod',
+    'svwn': 'slater,vwn5',
+    'svwn5': 'slater,vwn5'
 }
