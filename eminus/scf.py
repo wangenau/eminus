@@ -123,7 +123,7 @@ class SCF:
         '''Run the self-consistent field (SCF) calculation.'''
         if self.log.level <= logging.DEBUG:
             info()
-        self.log.debug(f'--- System information ---\n{self.atoms}\n'
+        self.log.debug(f'\n--- System information ---\n{self.atoms}\n'
                        f'Spin handling: {"un" if self.atoms.Nspin == 1 else ""}polarized\n'
                        f'Number of states: {self.atoms.Nstate}\n'
                        f'Occupation per state:\n{self.atoms.f}\n'
