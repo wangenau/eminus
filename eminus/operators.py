@@ -89,7 +89,7 @@ def Linv(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    out = np.empty_like(W, dtype=complex)
+    out = np.empty_like(W, dtype=W.dtype)
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
         if W.ndim == 1:
@@ -126,9 +126,9 @@ def I(atoms, W):
     else:
         # Fill with zeros if W is in the active space
         if W.ndim == 1:
-            Wfft = np.zeros(n, dtype=complex)
+            Wfft = np.zeros(n, dtype=W.dtype)
         else:
-            Wfft = np.zeros((n, atoms.Nstate), dtype=complex)
+            Wfft = np.zeros((n, atoms.Nstate), dtype=W.dtype)
         Wfft[atoms.active] = W
 
     # `workers` sets the number of threads the FFT operates on
