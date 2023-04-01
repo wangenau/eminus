@@ -30,10 +30,7 @@ from scipy.fft import fftn, ifftn
 
 from .utils import handle_spin_gracefully
 
-try:
-    THREADS = int(os.environ['OMP_NUM_THREADS'])
-except KeyError:
-    THREADS = None
+THREADS = int(os.environ.get('OMP_NUM_THREADS', 1))
 
 
 # Spin handling is trivial for this operator
@@ -89,7 +86,6 @@ def Linv(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
-    out = np.empty_like(W, dtype=W.dtype)
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
         if W.ndim == 1:

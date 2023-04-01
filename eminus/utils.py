@@ -25,10 +25,10 @@ def dotprod(a, b):
     # The dot product of complex vectors looks like the expression below, but this is slow
     # res = np.real(np.trace(a.conj().T @ b))
     # We can calculate the trace faster by taking the sum of the Hadamard product
-    res = np.real(np.sum(a.conj() * b))
+    res = np.sum(a.conj() * b)
     if abs(res) < eps:
         return eps
-    return res
+    return np.real(res)
 
 
 def Ylm_real(l, m, G):
@@ -144,7 +144,7 @@ def pseudo_uniform(size, seed=1234):
     Returns:
         ndarray: Array with (pseudo) random numbers.
     '''
-    W = np.zeros(size, dtype=complex)
+    W = np.zeros(size)
     mult = 48271
     mod = (2**31) - 1
     x = (seed * mult + 1) % mod

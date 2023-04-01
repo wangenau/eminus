@@ -23,7 +23,7 @@ def lda_x(n, exc_only=False, **kwargs):
     '''
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     f = -3 / 4 * (3 / (2 * np.pi))**(2 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
 
     ex = f / rs
     if exc_only:

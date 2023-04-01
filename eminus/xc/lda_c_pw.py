@@ -29,7 +29,7 @@ def lda_c_pw(n, a=0.031091, exc_only=False, **kwargs):
     b4 = 0.49294
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
     rs12 = np.sqrt(rs)
     rs32 = rs * rs12
     rs2 = rs**2
@@ -66,7 +66,7 @@ def lda_c_pw_spin(n, zeta, a=(0.031091, 0.015545, 0.016887), fz0=1.709921, exc_o
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
     '''
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
     zeta3 = zeta**3
     zeta4 = zeta3 * zeta
 

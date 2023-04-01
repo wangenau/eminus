@@ -137,14 +137,14 @@ def get_grad(scf, spin, W, Y=None, n=None, n_spin=None, phi=None, vxc=None):
     HW = H(scf, spin, W, Y, n, n_spin, phi, vxc)
     WHW = W[spin].conj().T @ HW
     # U = Wdag O(W)
-    U = W[spin].conj().T @ atoms.O(W[spin])
+    OW = atoms.O(W[spin])
+    U = W[spin].conj().T @ OW
     invU = inv(U)
     U12 = sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return (HW - (atoms.O(W[spin]) @ invU) @ WHW) @ (U12 @ F @ U12) + \
-        atoms.O(W[spin]) @ (U12 @ Q(Ht @ F - F @ Ht, U))
+    return (HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
 def H(scf, spin, W, Y=None, n=None, n_spin=None, phi=None, vxc=None):

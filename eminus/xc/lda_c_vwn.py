@@ -27,7 +27,7 @@ def lda_c_vwn(n, exc_only=False, **kwargs):
     x0 = -0.10498
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
 
     q = np.sqrt(4 * c - b * b)
     f1 = 2 * b / q
@@ -65,7 +65,7 @@ def lda_c_vwn_spin(n, zeta, exc_only=False, **kwargs):
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
     '''
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
     zeta4 = zeta**4
 
     cfz = 2**(4 / 3) - 2

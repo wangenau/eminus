@@ -25,7 +25,7 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
     b = 20.4562557
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
     rs2 = rs**2
 
     ec = a * np.log(1 + b / rs + b / rs2)
@@ -81,7 +81,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     b1 = 27.4203609
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 / n**(1 / 3)
+    rs = pi34 * n**(-1 / 3)
     rs2 = rs**2
 
     fzeta, dfdzeta = weight_function(zeta, exc_only=exc_only)
