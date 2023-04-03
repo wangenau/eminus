@@ -239,7 +239,7 @@ class SCF:
         elif self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
             self.W = guess_random(self, complex=True)
-        elif self.guess in ('pseudo'):
+        elif self.guess in ('pseudo', 'pseudo_rand', 'pseudo_random'):
             # Start with pseudo-random numbers, mostly to compare with SimpleDFT
             self.W = guess_pseudo(self, seed=1234)
         else:

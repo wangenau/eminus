@@ -211,9 +211,9 @@ def wannier_supercell_matrices(atoms, psirs):
     '''
     dV = atoms.Omega / np.prod(atoms.s)
     # Similar to the expectation value of r, but accounting for periodicity
-    X = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0]))) @ psirs
-    Y = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1]))) @ psirs
-    Z = (psirs.conj().T * (np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2]))) @ psirs
+    X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0])) @ psirs
+    Y = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1])) @ psirs
+    Z = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2])) @ psirs
     return X * dV, Y * dV, Z * dV
 
 

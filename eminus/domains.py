@@ -33,16 +33,16 @@ def domain_cuboid(object, length, centers=None):
         centers = center_of_mass(atoms.X)
     # Handle each dimension seperately and add them together
     if centers.ndim == 1:
-        mask1 = (np.abs(centers[0] - atoms.r[:, 0]) < length[0])
-        mask2 = (np.abs(centers[1] - atoms.r[:, 1]) < length[1])
-        mask3 = (np.abs(centers[2] - atoms.r[:, 2]) < length[2])
+        mask1 = np.abs(centers[0] - atoms.r[:, 0]) < length[0]
+        mask2 = np.abs(centers[1] - atoms.r[:, 1]) < length[1]
+        mask3 = np.abs(centers[2] - atoms.r[:, 2]) < length[2]
         mask = mask1 & mask2 & mask3
     else:
         mask = np.zeros(len(atoms.r), dtype=bool)
         for center in centers:
-            mask1 = (np.abs(center[0] - atoms.r[:, 0]) < length[0])
-            mask2 = (np.abs(center[1] - atoms.r[:, 1]) < length[1])
-            mask3 = (np.abs(center[2] - atoms.r[:, 2]) < length[2])
+            mask1 = np.abs(center[0] - atoms.r[:, 0]) < length[0]
+            mask2 = np.abs(center[1] - atoms.r[:, 1]) < length[1]
+            mask3 = np.abs(center[2] - atoms.r[:, 2]) < length[2]
             mask = mask | (mask1 & mask2 & mask3)
     return mask
 
