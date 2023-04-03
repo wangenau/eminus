@@ -13,13 +13,13 @@ from .xc import get_exc
 @dataclasses.dataclass
 class Energy:
     '''Energy class to save energy contributions in one place.'''
-    Ekin: float = 0     # Kinetic energy
-    Ecoul: float = 0    # Coulomb energy
-    Exc: float = 0      # Exchange-correlation energy
-    Eloc: float = 0     # Local energy
-    Enonloc: float = 0  # Non-local energy
-    Eewald: float = 0   # Ewald energy
-    Esic: float = 0     # Self-interaction correction energy
+    Ekin: float = 0     #: Kinetic energy.
+    Ecoul: float = 0    #: Coulomb energy.
+    Exc: float = 0      #: Exchange-correlation energy.
+    Eloc: float = 0     #: Local energy.
+    Enonloc: float = 0  #: Non-local energy.
+    Eewald: float = 0   #: Ewald energy.
+    Esic: float = 0     #: Self-interaction correction energy.
 
     @property
     def Etot(self):
