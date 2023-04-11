@@ -29,7 +29,7 @@ print(f'\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n')
 psi = atoms.I(get_psi(scf, scf.W))
 
 # # Some functions are controlled with a global logging level that can be changed with
-eminus.log.verbose = 3
+eminus.config.verbose = 3
 
 # # Check orthonormality of Kohn-Sham orbitals
 print('Orthonormality of Kohn-Sham orbitals:')
@@ -50,3 +50,10 @@ print('\nWrite cube files:')
 for i in range(atoms.Nstate):
     print(f'{i + 1} of {atoms.Nstate}')
     write_cube(atoms, f'Ne_{i + 1}.cube', psi[0, :, i])
+
+# # Another useful setting is the number of threads
+print(f'\nThreads: {eminus.config.threads}\n')
+
+# # You can also set them and check the configuration afterwards
+eminus.config.threads = 2
+eminus.config.info()
