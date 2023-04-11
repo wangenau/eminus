@@ -80,6 +80,5 @@ def test_12():
 
 
 if __name__ == '__main__':
-    import pytest
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)
