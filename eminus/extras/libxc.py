@@ -31,10 +31,9 @@ def libxc_functional(xc, n_spin, Nspin):
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
     try:
-        if not config.use_pylibxc:
-            raise ValueError
+        assert config.use_pylibxc
         from pylibxc import LibXCFunctional
-    except (ImportError, ValueError):
+    except (ImportError, AssertionError):
         return pyscf_functional(xc, n_spin, Nspin)
 
     # Libxc functionals have one integer and one string identifier
