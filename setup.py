@@ -20,6 +20,9 @@ extras = {
     'libxc': [
         'pyscf>=1.5.1'  # Libxc interface via PySCF
     ],
+    'torch': [
+        'torch>=1.8'  # Faster FFT operators using Torch
+    ],
     'viewer': [
         'nglview>=2.6.5',  # Molecule and isosurface viewer
         'plotly>=4'        # Grid visualization

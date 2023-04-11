@@ -5,6 +5,7 @@ Main source code directory.
 | File           | Description |
 | :------------: | :---------: |
 | atoms.py       | Atoms class definition |
+| config.py      | Consolidated configuration module |
 | data.py        | Atom specific data |
 | dft.py         | DFT routines |
 | domains.py     | Domain generation |

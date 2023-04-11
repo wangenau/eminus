@@ -6,9 +6,9 @@ import numpy as np
 from scipy.fft import next_fast_len
 from scipy.linalg import det, eig, inv, norm
 
+from . import config, operators
 from .io import read_gth
 from .logger import create_logger, get_level, log
-from .operators import I, Idag, J, Jdag, K, L, Linv, O, T
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
@@ -133,6 +133,7 @@ class Atoms:
         M, N = self._get_index_matrices()
         self._set_cell(M)
         self._set_G(N)
+        self._set_operators()
         self.is_built = True
         return self
 
@@ -360,6 +361,21 @@ class Atoms:
         self.Sf = np.exp(1j * G @ self.X.T).T
         return
 
+    def _set_operators(self):
+        '''Set operators of an Atoms class instance at runtime.'''
+        for op in ('O', 'L', 'Linv', 'K', 'T'):
+            setattr(type(self), op, getattr(operators, op))
+        fft_operators = ('I', 'J', 'Idag', 'Jdag')
+        # Use the Torch operators if desired, or the default ones otherwise
+        if config.use_torch:
+            from .extras import torch
+            for op in fft_operators:
+                setattr(type(self), op, getattr(torch, op))
+        else:
+            for op in fft_operators:
+                setattr(type(self), op, getattr(operators, op))
+        return
+
     def __repr__(self):
         '''Print the parameters stored in the Atoms object.'''
         out = 'Atom\tCharge\tPosition'
@@ -375,43 +391,6 @@ class Atoms:
 
     @verbose.setter
     def verbose(self, level):
-        '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
         self.log.setLevel(self._verbose)
         return
-
-    def O(self, inp):
-        '''Overlap operator :func:`~eminus.operators.O`.'''
-        return O(self, inp)
-
-    def L(self, inp):
-        '''Laplacian operator :func:`~eminus.operators.L`.'''
-        return L(self, inp)
-
-    def Linv(self, inp):
-        '''Inverse Laplacian operator :func:`~eminus.operators.Linv`.'''
-        return Linv(self, inp)
-
-    def I(self, inp):
-        '''Transformation from reciprocal to real-space :func:`~eminus.operators.I`.'''
-        return I(self, inp)
-
-    def J(self, inp, full=True):
-        '''Transformation from real to reciprocal space :func:`~eminus.operators.J`.'''
-        return J(self, inp, full)
-
-    def Idag(self, inp, full=False):
-        '''Conj transformation from real to reciprocal space :func:`~eminus.operators.Idag`.'''
-        return Idag(self, inp, full)
-
-    def Jdag(self, inp):
-        '''Conj transformation from reciprocal to real-space :func:`~eminus.operators.Jdag`.'''
-        return Jdag(self, inp)
-
-    def K(self, inp):
-        '''Preconditioning operator :func:`~eminus.operators.K`.'''
-        return K(self, inp)
-
-    def T(self, inp, dr):
-        '''Translation operator :func:`~eminus.operators.T`.'''
-        return T(self, inp, dr)

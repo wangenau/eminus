@@ -7,6 +7,7 @@ Minimal usage example to do a DFT calculation for helium::
    atoms = Atoms('He', [0, 0, 0])
    SCF(atoms).run()
 '''
+from . import config
 from .atoms import Atoms
 from .dft import get_epsilon, get_psi
 from .io import (read, read_cube, read_json, read_xyz, write, write_cube, write_json, write_pdb,
@@ -15,6 +16,6 @@ from .logger import log
 from .scf import RSCF, SCF, USCF
 from .version import __version__, info
 
-__all__ = ['Atoms', 'get_epsilon', 'get_psi', 'info', 'log', 'read', 'read_cube', 'read_json',
-           'read_xyz', 'RSCF', 'SCF', 'USCF', 'write', 'write_cube', 'write_json', 'write_pdb',
-           'write_xyz', '__version__']
+__all__ = ['config', 'Atoms', 'get_epsilon', 'get_psi', 'info', 'log', 'read', 'read_cube',
+           'read_json', 'read_xyz', 'RSCF', 'SCF', 'USCF', 'write', 'write_cube', 'write_json',
+           'write_pdb', 'write_xyz', '__version__']

@@ -4,7 +4,7 @@
 These operators act on discretized wave functions, i.e., the arrays W.
 
 These W are column vectors. This has been chosen to let theory and code coincide, e.g.,
-W^dagger W becomes W.conj().T @ W.
+W^dagger W becomes :code:`W.conj().T @ W`.
 
 The downside is that the i-th state will be accessed with W[:, i] instead of W[i].
 Choosing the i-th state makes the array 1d.
@@ -23,14 +23,11 @@ The active space is the truncated reciprocal space by restricting it with a sphe
 Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
 spin individually.
 '''
-import os
-
 import numpy as np
 from scipy.fft import fftn, ifftn
 
+from . import config
 from .utils import handle_spin_gracefully
-
-THREADS = int(os.environ.get('OMP_NUM_THREADS', 1))
 
 
 # Spin handling is trivial for this operator
@@ -134,13 +131,13 @@ def I(atoms, W):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(atoms.s)
-        Finv = ifftn(Wfft, workers=THREADS, overwrite_x=True, norm='forward').ravel()
+        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
         Wfft = Wfft.reshape(np.append(atoms.s, atoms.Nstate))
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = ifftn(Wfft, workers=THREADS, overwrite_x=True, norm='forward',
+        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
                      axes=(0, 1, 2)).reshape((n, atoms.Nstate))
     return Finv
 
@@ -171,10 +168,10 @@ def J(atoms, W, full=True):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = W.reshape(atoms.s)
-        F = fftn(Wfft, workers=THREADS, overwrite_x=True, norm='forward').ravel()
+        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
     else:
         Wfft = W.reshape(np.append(atoms.s, atoms.Nstate))
-        F = fftn(Wfft, workers=THREADS, overwrite_x=True, norm='forward',
+        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
                  axes=(0, 1, 2)).reshape((n, atoms.Nstate))
 
     # There is no way to know if J has to transform to the full or the active space

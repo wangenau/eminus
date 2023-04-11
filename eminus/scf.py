@@ -261,7 +261,6 @@ class SCF:
 
     @verbose.setter
     def verbose(self, level):
-        '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
         self.log.setLevel(self._verbose)
         return

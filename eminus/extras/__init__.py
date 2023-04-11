@@ -9,6 +9,7 @@ Alternativle, you can only install selected extras using the respective name:
 
 * :mod:`~eminus.extras.fods`
 * :mod:`~eminus.extras.libxc`
+* :mod:`~eminus.extras.torch`
 * :mod:`~eminus.extras.viewer`
 '''
 from .fods import get_fods, pycom, remove_core_fods, split_fods

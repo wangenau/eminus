@@ -22,7 +22,6 @@ class CustomLogger(logging.Logger):
 
     @verbose.setter
     def verbose(self, level):
-        '''Verbosity setter to sync the logger with the property.'''
         self._verbose = get_level(level)
         self.setLevel(self._verbose)
 
@@ -98,7 +97,6 @@ def name(newname):
 # Create a base logger that can be used outside of classes
 logging.setLoggerClass(CustomLogger)
 log = logging.getLogger('eminus')
-log.verbose = 'WARNING'
 
 # Basic logger setup
 formatter = CustomFormatter()

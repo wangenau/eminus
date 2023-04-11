@@ -12,6 +12,7 @@ Alternatively, one can use the PySCF Libxc interface with::
 '''
 import numpy as np
 
+from .. import config
 from ..logger import log
 
 
@@ -30,8 +31,10 @@ def libxc_functional(xc, n_spin, Nspin):
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
     '''
     try:
+        if not config.use_pylibxc:
+            raise ValueError
         from pylibxc import LibXCFunctional
-    except ImportError:
+    except (ImportError, ValueError):
         return pyscf_functional(xc, n_spin, Nspin)
 
     # Libxc functionals have one integer and one string identifier

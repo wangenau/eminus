@@ -1,6 +1,14 @@
 Changelog
 =========
 
+dev
+---
+- New features
+   - Add Torch powered FFT operators as an extra
+      - Up to 20% faster calculations
+   - Consolidated configuration class
+      - Easier configuration and performance infos
+
 v2.2.2 - Mar 03, 2023
 ---------------------
 - New features

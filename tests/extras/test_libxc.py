@@ -5,6 +5,7 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
+from eminus import config
 from eminus.xc import get_exc, get_vxc
 
 # Create random mock densities
@@ -22,8 +23,8 @@ n_tests = {
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
     try:
-        from pylibxc import LibXCFunctional  # noqa: F401
-    except ImportError:
+        assert config.use_pylibxc
+    except AssertionError:
         pytest.skip('pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
@@ -38,8 +39,8 @@ def test_libxc_functional_exc(xc, Nspin):
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
     try:
-        from pylibxc import LibXCFunctional  # noqa: F401
-    except ImportError:
+        assert config.use_pylibxc
+    except AssertionError:
         pytest.skip('pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]

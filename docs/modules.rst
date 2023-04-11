@@ -10,6 +10,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.config
    eminus.data
    eminus.dft
    eminus.domains
@@ -43,5 +44,6 @@ Modules
    eminus.extras
    eminus.extras.fods
    eminus.extras.libxc
+   eminus.extras.torch
    eminus.extras.viewer
    eminus.pade
