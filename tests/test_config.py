@@ -42,7 +42,7 @@ def test_libxc():
 
 def test_threads():
     '''Check the threads setting.'''
-    assert isinstance(config.threads, int)
+    assert isinstance(config.threads, int) or config.threads is None
 
     threads = 2
     if config.use_torch:
@@ -50,10 +50,12 @@ def test_threads():
     else:
         os.environ['OMP_NUM_THREADS'] = str(threads)
     assert config.threads == threads
+    assert isinstance(config.threads, int)
 
     threads = 6
     config.threads = threads
     assert config.threads == threads
+    assert isinstance(config.threads, int)
 
 
 if __name__ == '__main__':
