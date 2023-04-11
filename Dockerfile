@@ -27,6 +27,9 @@ RUN git clone https://gitlab.com/opensic/pyflosic2.git \
 RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[libxc,viewer,dev] --no-cache-dir
 
+# Install Torch manually since we only want to compute on the CPU
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+
 # Set up the application stage
 FROM python:3.10-slim
 LABEL maintainer="wangenau"
@@ -43,7 +46,6 @@ COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
 # Set the working directory and set variables
 WORKDIR /usr/app/eminus/
 ENV PATH="/usr/app/venv/bin:$PATH"
-ENV JUPYTER_PLATFORM_DIRS=1
 
 # Set user, expose port, and run Jupyter
 USER eminus
