@@ -3,6 +3,8 @@
 
 For more details see :mod:`~eminus.operators`.
 
+For installation instructions see https://pytorch.org/get-started/locally/.
+
 This implementation is focused on speed, rather than readability since these operators need the
 most time in most calculations. Notable differences to the default operators are:
 
