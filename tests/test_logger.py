@@ -13,7 +13,7 @@ def test_singleton():
 
 def test_independence():
     '''Check that loggers do not influence each other.'''
-    log = logger.create_logger('tmp1')
+    log = logger.create_logger('tmp')
     assert log.verbose == logger.log.verbose
     log.verbose = 'critical'
     assert log.verbose != logger.log.verbose
@@ -24,11 +24,13 @@ def test_independence():
                                         (4, 'DEBUG'),
                                         (0, 'CRITICAL'),
                                         (9, 'DEBUG'),
-                                        (None, logger.log.verbose)])
+                                        (None, None)])
 def test_level(level, ref):
     '''Test logging levels.'''
-    log = logger.create_logger('tmp2')
+    log = logger.create_logger('tmp')
     log.verbose = level
+    if ref is None:
+        ref = logger.log.verbose
     assert log.verbose == ref
 
 

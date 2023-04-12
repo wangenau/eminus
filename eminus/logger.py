@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 '''Logger initialization and configuration.'''
-import copy
 import logging
 import sys
 
@@ -67,7 +66,7 @@ def create_logger(object):
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
     local_log = logging.getLogger(str(id(object)))
-    local_log.verbose = str(log.verbose)
+    local_log.verbose = log.verbose
     return local_log
 
 
@@ -85,7 +84,7 @@ def get_level(verbose):
         4: 'DEBUG'
     }
     if verbose is None:
-        return str(log.verbose)
+        return log.verbose
     if isinstance(verbose, int):
         level = log_levels.get(verbose, 'DEBUG')
     else:
