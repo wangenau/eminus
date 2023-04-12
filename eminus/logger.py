@@ -67,7 +67,7 @@ def create_logger(object):
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
     local_log = logging.getLogger(str(id(object)))
-    local_log.verbose = copy.copy(log.verbose)
+    local_log.verbose = str(log.verbose)
     return local_log
 
 
@@ -85,7 +85,7 @@ def get_level(verbose):
         4: 'DEBUG'
     }
     if verbose is None:
-        return log.verbose
+        return str(log.verbose)
     if isinstance(verbose, int):
         level = log_levels.get(verbose, 'DEBUG')
     else:
