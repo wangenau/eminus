@@ -46,7 +46,8 @@ def test_threads():
 
     threads = 2
     if config.use_torch:
-        os.environ['MKL_NUM_THREADS'] = str(threads)
+        import torch
+        torch.set_num_threads(threads)
     else:
         os.environ['OMP_NUM_THREADS'] = str(threads)
     assert config.threads == threads
