@@ -8,6 +8,7 @@ dev
       - Up to 20% faster calculations
    - Consolidated configuration class
       - Easier configuration and performance infos
+   - Nix developer shell support
 
 v2.2.2 - Mar 03, 2023
 ---------------------

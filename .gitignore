@@ -16,3 +16,6 @@ public/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Nix
+flake.lock
