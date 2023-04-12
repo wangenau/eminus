@@ -74,10 +74,10 @@ class ConfigClass():
         if self._threads is None:
             try:
                 if self.use_torch:
-                    # Torch needs MKL threads
-                    return int(os.environ['MKL_NUM_THREADS'])
+                    import torch
+                    return torch.get_num_threads()
                 else:
-                    # SciPy needs OMP threads
+                    # Read the OMP threads for the default operators
                     return int(os.environ['OMP_NUM_THREADS'])
             except KeyError:
                 return None
@@ -88,7 +88,8 @@ class ConfigClass():
         self._threads = value
         if isinstance(value, int):
             if self.use_torch:
-                os.environ['MKL_NUM_THREADS'] = str(value)
+                import torch
+                return torch.set_num_threads(value)
             else:
                 os.environ['OMP_NUM_THREADS'] = str(value)
         return
@@ -126,15 +127,11 @@ class ConfigClass():
             return
         # Check FFT threads
         if self.threads is None:
-            if self.use_torch:
-                var_name = 'MKL_NUM_THREADS'
-            else:
-                var_name = 'OMP_NUM_THREADS'
-            print(f'FFT threads : 1\n'
-                  f'INFO: No {var_name} environment variable was found.\nTo improve performance, '
-                  f'add "export {var_name}=n" to your ".bashrc".\nMake sure to replace "n", '
-                  'typically with the number of cores your CPU.\nTemporarily, you can set them in '
-                  'your Python environment with "eminus.config.threads=n".')
+            print('FFT threads : 1\n'
+                  'INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve '
+                  'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
+                  'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
+                  'set them in your Python environment with "eminus.config.threads=n".')
         else:
             print(f'FFT threads : {self.threads}')
         return
