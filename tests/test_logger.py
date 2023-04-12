@@ -35,6 +35,7 @@ def test_level(level, ref):
     tmp = Tmp()
     log = logger.create_logger(tmp)
     log.verbose = level
+    print(level, log.verbose, ref, logger.log.verbose)
     assert log.verbose == ref
 
 

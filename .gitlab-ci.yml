@@ -10,7 +10,7 @@ stages:
   script:
     - python3 -m pip install -e .
     - python3 -m pip install pytest
-    - python3 -m pytest tests/ -m "not (slow or extras)"
+    - python3 -m pytest tests/ -s -m "not (slow or extras)"
   only:
     changes:
       - eminus/*.py
