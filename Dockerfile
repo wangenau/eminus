@@ -1,5 +1,5 @@
 # Build everything using multi-stage builds
-FROM python:3.10-slim as build
+FROM python:3.11-slim as build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
@@ -31,7 +31,7 @@ RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[libxc,viewer,dev] --no-cache-dir
 
 # Set up the application stage
-FROM python:3.10-slim
+FROM python:3.11-slim
 LABEL maintainer="wangenau"
 
 # Ensure that no root rights are being used, copy the environment and eminus source
