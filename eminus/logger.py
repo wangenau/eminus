@@ -43,6 +43,20 @@ class CustomFormatter(logging.Formatter):
         return super().format(record)
 
 
+# The following code is not guarded by a function because it has to be run once the logger is called
+# to set up the basic logger configuration
+
+# Create a base logger that can be used outside of classes
+logging.setLoggerClass(CustomLogger)
+log = logging.getLogger('eminus')
+
+# Basic logger setup
+formatter = CustomFormatter()
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(formatter)
+logging.root.addHandler(handler)
+
+
 def create_logger(object):
     '''Create a logger unique to an object.
 
@@ -51,7 +65,9 @@ def create_logger(object):
     '''
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
-    return logging.getLogger(str(id(object)))
+    local_log = logging.getLogger(str(id(object)))
+    local_log.verbose = log.verbose
+    return local_log
 
 
 def get_level(verbose):
@@ -89,17 +105,3 @@ def name(newname):
         f.__name__ = newname
         return f
     return decorator
-
-
-# The following code is not guarded by a function because it has to be run once the logger is called
-# to set up the basic logger configuration
-
-# Create a base logger that can be used outside of classes
-logging.setLoggerClass(CustomLogger)
-log = logging.getLogger('eminus')
-
-# Basic logger setup
-formatter = CustomFormatter()
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(formatter)
-logging.root.addHandler(handler)

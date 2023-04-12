@@ -8,7 +8,7 @@ from scipy.linalg import det, eig, inv, norm
 
 from . import config, operators
 from .io import read_gth
-from .logger import create_logger, get_level, log
+from .logger import create_logger, get_level
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
@@ -101,9 +101,7 @@ class Atoms:
 
         # Initialize logger and update
         self.log = create_logger(self)
-        if verbose is None:
-            self.verbose = log.verbose
-        else:
+        if verbose is not None:
             self.verbose = verbose
         self.initialize()
 
