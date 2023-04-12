@@ -16,7 +16,7 @@ RUN apt-get update -y \
 RUN pip install notebook ipywidgets==7.* --no-cache-dir
 
 # Install Torch manually since we only want to compute on the CPU
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
 # Fix to install PyFLOSIC2 with a new PySCF version
 # Install without dependencies since only the PyCOM method will be used
