@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 '''Logger initialization and configuration.'''
+import copy
 import logging
 import sys
 
@@ -66,7 +67,7 @@ def create_logger(object):
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
     local_log = logging.getLogger(str(id(object)))
-    local_log.verbose = log.verbose
+    local_log.verbose = copy.copy(log.verbose)
     return local_log
 
 
