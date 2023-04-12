@@ -15,6 +15,9 @@ RUN apt-get update -y \
 # Install Jupyter with a pinned IPyWidgets version (https://github.com/nglviewer/nglview/pull/1033)
 RUN pip install notebook ipywidgets==7.* --no-cache-dir
 
+# Install Torch manually since we only want to compute on the CPU
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+
 # Fix to install PyFLOSIC2 with a new PySCF version
 # Install without dependencies since only the PyCOM method will be used
 # Only ASE is required to run PyFLOSIC2
@@ -26,9 +29,6 @@ RUN git clone https://gitlab.com/opensic/pyflosic2.git \
 # Use an editable installation so users can make changes on the fly
 RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[libxc,viewer,dev] --no-cache-dir
-
-# Install Torch manually since we only want to compute on the CPU
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 # Set up the application stage
 FROM python:3.10-slim
@@ -46,6 +46,7 @@ COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
 # Set the working directory and set variables
 WORKDIR /usr/app/eminus/
 ENV PATH="/usr/app/venv/bin:$PATH"
+ENV JUPYTER_PLATFORM_DIRS=1
 
 # Set user, expose port, and run Jupyter
 USER eminus
