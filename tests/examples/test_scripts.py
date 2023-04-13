@@ -26,37 +26,37 @@ def clean_example(trash):
     return
 
 
-def test_01():
+def test_01():  # noqa: D103
     execute_example('01_installation_test')
 
 
 @pytest.mark.slow
-def test_02():
+def test_02():  # noqa: D103
     execute_example('02_minimal_example')
 
 
-def test_03():
+def test_03():  # noqa: D103
     execute_example('03_atoms_objects')
 
 
-def test_04():
+def test_04():  # noqa: D103
     execute_example('04_dft_calculations')
 
 
-def test_05():
+def test_05():  # noqa: D103
     execute_example('05_input_output')
     clean_example(['CH4.json', 'CH4_density.cube'])
 
 
 @pytest.mark.slow
-def test_06():
+def test_06():  # noqa: D103
     execute_example('06_advanced_functionalities')
     clean_example(['Ne_1.cube', 'Ne_2.cube', 'Ne_3.cube', 'Ne_4.cube'])
 
 
 @pytest.mark.slow
 @pytest.mark.extras
-def test_07():
+def test_07():  # noqa: D103
     execute_example('07_fod_extra')
     clean_example(['CH4_FLO_1.cube', 'CH4_FLO_2.cube', 'CH4_FLO_3.cube', 'CH4_FLO_4.cube',
                    'CH4_fods.xyz'])
@@ -64,17 +64,17 @@ def test_07():
 
 @pytest.mark.slow
 @pytest.mark.extras
-def test_09():
+def test_09():  # noqa: D103
     execute_example('09_sic_calculations')
 
 
 @pytest.mark.slow
-def test_11():
+def test_11():  # noqa: D103
     execute_example('11_simpledft_examples')
 
 
 @pytest.mark.slow
-def test_12():
+def test_12():  # noqa: D103
     execute_example('12_germanium_solid')
     clean_example(['Ge_solid_density.cube'])
 
