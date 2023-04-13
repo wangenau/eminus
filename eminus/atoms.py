@@ -123,11 +123,11 @@ class Atoms:
         self._set_cell_size()
         self._set_positions()
         self._set_sampling()
-        self._set_states(self.Nspin)
         return self
 
     def build(self):
         '''Build all necessary parameters.'''
+        self._set_states(self.Nspin)
         M, N = self._get_index_matrices()
         self._set_cell(M)
         self._set_G(N)

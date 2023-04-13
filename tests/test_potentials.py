@@ -18,7 +18,7 @@ def test_harmonic():
     pot = 'harmonic'
     min = {'sd': 8, 'pccg': 51}
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, f=f, Nspin=1)
+    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, f=f)
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6, min=min).run()
     # We have to get close to the Etot reference value of 43.337 Eh (for different parameters)
     assert_allclose(E, 43.10344)
