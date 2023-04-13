@@ -14,6 +14,7 @@ def test_singleton():
 def test_independence():
     '''Check that loggers do not influence each other.'''
     log = logger.create_logger('tmp')
+    assert id(log) != id(logger.log)
     assert log.verbose == logger.log.verbose
     log.verbose = 'critical'
     assert log.verbose != logger.log.verbose
