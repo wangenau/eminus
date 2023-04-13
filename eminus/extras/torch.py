@@ -15,6 +15,8 @@ most time in most calculations. Notable differences to the default operators are
 
 In my tests the overhead to move the arrays to the GPU and back is not worth it, so it is disabled
 by default.
+
+Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 '''
 import numpy as np
 import torch
