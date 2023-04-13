@@ -303,20 +303,22 @@ class Atoms:
     def _get_index_matrices(self):
         '''Build index matrices M and N to build the real and reciprocal space samplings.
 
+        The matrices are using C ordering (the last index is the fastest).
+
         Returns:
             tuple[ndarray, ndarray]: Index matrices.
         '''
         # Build index matrix M
         ms = np.arange(np.prod(self.s))
-        m1 = ms % self.s[0]
-        m2 = np.floor(ms / self.s[0]) % self.s[1]
-        m3 = np.floor(ms / (self.s[0] * self.s[1])) % self.s[2]
+        m1 = np.floor(ms / (self.s[2] * self.s[1])) % self.s[0]
+        m2 = np.floor(ms / self.s[2]) % self.s[1]
+        m3 = ms % self.s[2]
         M = np.column_stack((m1, m2, m3))
 
         # Build index matrix N
-        n1 = m1 - (m1 > self.s[0] / 2) * self.s[0]
+        n1 = m3 - (m3 > self.s[2] / 2) * self.s[2]
         n2 = m2 - (m2 > self.s[1] / 2) * self.s[1]
-        n3 = m3 - (m3 > self.s[2] / 2) * self.s[2]
+        n3 = m1 - (m1 > self.s[0] / 2) * self.s[0]
         N = np.column_stack((n1, n2, n3))
         return M, N
 

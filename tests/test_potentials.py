@@ -13,7 +13,7 @@ def test_harmonic():
     X = (0, 0, 0)
     a = 6
     ecut = 10
-    s = 20
+    s = (20, 25, 30)
     f = (2, 2, 2, 2)
     pot = 'harmonic'
     min = {'sd': 8, 'pccg': 51}

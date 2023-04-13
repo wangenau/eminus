@@ -9,6 +9,10 @@ dev
    - Consolidated configuration class
       - Easier configuration and performance infos
    - Nix developer shell support
+- Miscellaneous
+   - More tests
+   - Fix for non-equal sampling per axis
+   - Update Docker image to Python 3.11
 
 v2.2.2 - Mar 03, 2023
 ---------------------
