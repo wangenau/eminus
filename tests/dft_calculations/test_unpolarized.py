@@ -32,10 +32,9 @@ def test_unpolarized(system):
     min = {'sd': 3, 'pccg': 18}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
+    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s)
     E = RSCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
     assert_allclose(E, E_ref[system], atol=etol)
-    return
 
 
 if __name__ == '__main__':

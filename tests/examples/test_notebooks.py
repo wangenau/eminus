@@ -13,7 +13,6 @@ def clean_example(trash):
         path = pathlib.Path(it)
         if path.exists():
             path.unlink()
-    return
 
 
 @pytest.mark.slow
@@ -38,7 +37,6 @@ def test_notebooks(name, trash):
         assert ep.preprocess(nb) is not None
 
     clean_example(trash)
-    return
 
 
 if __name__ == '__main__':

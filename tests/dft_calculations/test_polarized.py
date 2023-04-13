@@ -33,10 +33,9 @@ def test_polarized(system):
     min = {'sd': 15, 'pccg': 23}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, verbose='warning')
+    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s)
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
     assert_allclose(E, E_ref[system], atol=etol)
-    return
 
 
 if __name__ == '__main__':

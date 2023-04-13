@@ -14,7 +14,6 @@ def execute_example(name):
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
     runpy.run_path(f'{name}.py')
-    return
 
 
 def clean_example(trash):
@@ -23,7 +22,6 @@ def clean_example(trash):
         path = pathlib.Path(it)
         if path.exists():
             path.unlink()
-    return
 
 
 def test_01():  # noqa: D103

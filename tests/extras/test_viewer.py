@@ -20,7 +20,6 @@ def test_viewer(name):
         nb = read(fh, as_version=4)
         ep = ExecutePreprocessor(timeout=60, kernel_name='python3')
         assert ep.preprocess(nb) is not None
-    return
 
 
 if __name__ == '__main__':
