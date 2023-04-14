@@ -8,8 +8,8 @@ from eminus.minimizer import IMPLEMENTED
 
 E_ref = -1.960545545  # The reference value is the same for the polarized and unpolarized case
 tolerance = 1e-9
-atoms_unpol = Atoms('He', (0, 0, 0), s=10, ecut=10, Nspin=1)
-atoms_pol = Atoms('He', (0, 0, 0), s=10, ecut=10, Nspin=2)
+atoms_unpol = Atoms('He', (0, 0, 0), s=10, ecut=10, Nspin=1, verbose='debug')
+atoms_pol = Atoms('He', (0, 0, 0), s=10, ecut=10, Nspin=2, verbose='debug')
 # Restart the calculations from a previous result
 # This way we make sure we run into the same minima and we have no convergence problems
 scf_unpol = SCF(atoms_unpol, etol=tolerance)

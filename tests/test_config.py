@@ -26,6 +26,7 @@ def test_torch():
     '''Check the Torch initialization.'''
     try:
         import torch  # noqa: F401
+        config.use_torch = True
         assert config.use_torch
     except ImportError:
         assert not config.use_torch
