@@ -82,6 +82,26 @@ def test_JdagIdag(type):
     assert_allclose(out, test)
 
 
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_I(type):
+    '''Test that I and Idag operators are hermitian.'''
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.I(b)).conj()
+    test = b.conj().T @ atoms.Idag(a, True)
+    assert_allclose(out, test)
+
+
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_J(type):
+    '''Test that J and Jdag operators are hermitian.'''
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.J(b)).conj()
+    test = b.conj().T @ atoms.Jdag(a)
+    assert_allclose(out, test)
+
+
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_TT(type):
     '''Test translation operator identity.'''

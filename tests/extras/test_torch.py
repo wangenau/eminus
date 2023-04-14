@@ -60,6 +60,26 @@ def test_JdagIdag(type):
     assert_allclose(out, test)
 
 
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_I(type):
+    '''Test that I and Idag operators are hermitian.'''
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.I(b)).conj()
+    test = b.conj().T @ atoms.Idag(a, True)
+    assert_allclose(out, test)
+
+
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_J(type):
+    '''Test that J and Jdag operators are hermitian.'''
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.J(b)).conj()
+    test = b.conj().T @ atoms.Jdag(a)
+    assert_allclose(out, test)
+
+
 @pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ_gpu(type):
@@ -117,6 +137,36 @@ def test_JdagIdag_gpu(type):
         pytest.skip('GPU not available, skip tests')
     out = atoms.Jdag(atoms.Idag(W_tests[type], True))
     test = W_tests[type]
+    assert_allclose(out, test)
+
+
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_I_gpu(type):
+    '''Test that I and Idag GPU operators are hermitian.'''
+    try:
+        config.use_gpu = True
+        assert config.use_gpu
+    except AssertionError:
+        pytest.skip('GPU not available, skip tests')
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.I(b)).conj()
+    test = b.conj().T @ atoms.Idag(a, True)
+    assert_allclose(out, test)
+
+
+@pytest.mark.parametrize('type', ['full_single'])
+def test_hermitian_J_gpu(type):
+    '''Test that J and Jdag GPU operators are hermitian.'''
+    try:
+        config.use_gpu = True
+        assert config.use_gpu
+    except AssertionError:
+        pytest.skip('GPU not available, skip tests')
+    a = W_tests[type]
+    b = W_tests[type] + rng.standard_normal(1)
+    out = (a.conj().T @ atoms.J(b)).conj()
+    test = b.conj().T @ atoms.Jdag(a)
     assert_allclose(out, test)
 
 
