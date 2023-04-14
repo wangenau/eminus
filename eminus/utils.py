@@ -63,7 +63,7 @@ def Ylm_real(l, m, G):
     # phi=arctan(Gy/Gx)
     phi = np.arctan2(G[:, 1], G[:, 0])
     # If Gx=0: phi=pi/2*sign(Gy)
-    phi_idx = (eps > G[:, 0]) & (G[:, 0] > -eps)
+    phi_idx = (np.abs(G[:, 0]) < eps)
     phi[phi_idx] = np.pi / 2 * np.sign(G[phi_idx, 1])
 
     if l == 1:
