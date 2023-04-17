@@ -29,7 +29,7 @@ class ConfigClass():
             try:
                 import torch  # noqa: F401
                 return True
-            except ImportError:
+            except (ImportError, ModuleNotFoundError):
                 pass
         return False
 
@@ -59,7 +59,7 @@ class ConfigClass():
             try:
                 import pylibxc  # noqa: F401
                 return True
-            except ImportError:
+            except (ImportError, ModuleNotFoundError):
                 pass
         return False
 
@@ -114,7 +114,7 @@ class ConfigClass():
             try:
                 import pyscf  # noqa: F401
                 print('Libxc backend    : PySCF')
-            except ImportError:
+            except (ImportError, ModuleNotFoundError):
                 pass
         else:
             print('Libxc backend    : pylibxc')
