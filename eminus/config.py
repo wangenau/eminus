@@ -42,7 +42,7 @@ class ConfigClass():
     def use_gpu(self):
         '''Weather to use Torch on the GPU if available.'''
         # Only use GPU if Torch is available
-        if self._use_torch and self._use_gpu:
+        if self.use_torch and self._use_gpu:
             import torch
             return torch.cuda.is_available()
         return False
