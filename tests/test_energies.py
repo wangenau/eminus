@@ -49,6 +49,5 @@ def test_minimizer_pol(energy):
 if __name__ == '__main__':
     import inspect
     import pathlib
-    import pytest
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)
