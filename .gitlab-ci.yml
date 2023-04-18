@@ -37,7 +37,7 @@ lint:
 pytest:
     extends: .pytest
     after_script:
-      - coverage report
+      - coverage report --precision=2
       - coverage xml
     coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
     artifacts:
