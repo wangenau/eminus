@@ -52,7 +52,7 @@ def read_cube(filename):
             if not line_split[0].isdigit():
                 break
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
-            Z.append(line_split[1])
+            Z.append(float(line_split[1]))
             X.append(np.float_(line_split[2:5]))
 
     X = np.asarray(X)
