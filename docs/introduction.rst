@@ -12,6 +12,9 @@ Introduction
 .. image:: https://img.shields.io/badge/license-APACHE2-lightgrey
    :target: https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE
 
+.. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
+   :target: https://gitlab.com/wangenau/eminus/-/pipelines
+
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
 
