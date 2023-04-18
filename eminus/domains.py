@@ -31,6 +31,7 @@ def domain_cuboid(object, length, centers=None):
         length = length * np.ones(3)
     if centers is None:
         centers = center_of_mass(atoms.X)
+    centers = np.asanyarray(centers)
     # Handle each dimension seperately and add them together
     if centers.ndim == 1:
         mask1 = np.abs(centers[0] - atoms.r[:, 0]) < length[0]
@@ -83,6 +84,7 @@ def domain_sphere(object, radius, centers=None):
 
     if centers is None:
         centers = center_of_mass(atoms.X)
+    centers = np.asanyarray(centers)
     if centers.ndim == 1:
         mask = norm(centers - atoms.r, axis=1) < radius
     else:

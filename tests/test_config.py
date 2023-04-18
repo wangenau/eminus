@@ -60,6 +60,11 @@ def test_threads():
     assert isinstance(config.threads, int)
 
 
+def test_info():
+    '''Check that the config info function properly executes.'''
+    config.info()
+
+
 if __name__ == '__main__':
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)

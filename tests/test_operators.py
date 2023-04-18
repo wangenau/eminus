@@ -9,7 +9,7 @@ from eminus import Atoms, config
 config.use_torch = False
 
 # Create an Atoms object to build mock wave functions
-atoms = Atoms('Ne', [0, 0, 0], ecut=1).build()
+atoms = Atoms('Ne', (0, 0, 0), ecut=1).build()
 rng = default_rng()
 W_tests = {
     'full': rng.standard_normal((len(atoms.G2), atoms.Nstate)),

@@ -72,6 +72,16 @@ def test_parse_functionals(xc, ref):
     assert f_c == ref[1]
 
 
+@pytest.mark.extras
+def test_libxc_str():
+    '''Test that strings that start with libxc get properly parsed.'''
+    n_spin = n_tests[1]
+    e_out, v_out = get_xc('1,7', n_spin, 1)
+    e_test, v_test = get_xc('libxc:1,libxc:7', n_spin, 1)
+    assert_allclose(e_out, e_test)
+    assert_allclose(v_out, v_test)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

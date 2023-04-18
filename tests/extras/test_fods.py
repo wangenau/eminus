@@ -21,7 +21,7 @@ rng = default_rng()
 def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
     '''Test FOD generator.'''
     from eminus.extras import get_fods
-    atoms = Atoms('He', [0, 0, 0], Nspin=Nspin).build()
+    atoms = Atoms('He', (0, 0, 0), Nspin=Nspin).build()
     fods = get_fods(atoms, basis=basis, loc=loc, elec_symbols=elec_symbols)
     # For He all FODs are core FODs and therefore should be close to the atom
     assert_allclose(atoms.X, fods[0], atol=1e-6)
@@ -68,7 +68,7 @@ def test_remove_core_fods(Nspin):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pycom(Nspin):
     '''Test PyCOM routine.'''
-    atoms = Atoms('He2', [[0, 0, 0], [10, 0, 0]], s=10, Nspin=Nspin, center=True).build()
+    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
     scf = SCF(atoms)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
