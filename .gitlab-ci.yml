@@ -123,3 +123,7 @@ pages:
       - eminus/version.py
     refs:
       - main
+  rules:
+    - if: $PAGES
+      when: never
+    - when: always
