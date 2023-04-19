@@ -116,11 +116,10 @@ pages:
   artifacts:
     paths:
       - public
-  rules:
-    - if: $PAGES
-      when: never
-    - if: $CI_COMMIT_REF_NAME == "main"
-      changes:
-        - docs/*
-        - docs/**/*
-        - eminus/version.py
+  only:
+    changes:
+      - docs/*
+      - docs/**/*
+      - eminus/version.py
+    refs:
+      - main
