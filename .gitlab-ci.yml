@@ -8,8 +8,9 @@ stages:
 .pytest:
   stage: test
   script:
-    - python3 -m pip install -e .[dev,libxc]
-    - python3 -m coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
+    - python3 -m pip install -e .
+    - python3 -m pip install pytest
+    - python3 -m pytest tests/ -m "not extras" --ignore=tests/examples --ignore=tests/extras
   only:
     changes:
       - eminus/*.py
@@ -22,21 +23,25 @@ stages:
   stage: test-pedantic
   when: manual
 
-########## Lint python files ##########
+##### Lint Python files #####
 lint:
   stage: test
   script:
-    - pip install -e .[dev]
+    - pip install -e .
+    - pip install flake8 flake8-docstrings flake8-import-order
     - flake8
   only:
     changes:
       - "*.py"
       - "**/*.py"
 
-########## Test code functionality for the current and minimal supported versions ##########
-pytest:
+##### Test and create coverage reports #####
+coverage:
     extends: .pytest
-    after_script:
+    script:
+      - python3 -m pip install -e .
+      - python3 -m pip install coverage pyscf pytest pytest-cov
+      - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
       - coverage report --precision=2
       - coverage xml
     coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
@@ -46,13 +51,14 @@ pytest:
           coverage_format: cobertura
           path: coverage.xml
 
-pytest:minimal:
+##### Test the minimal supported versions #####
+minimal:
   extends: .pytest
   image: python:3.7-slim
   before_script:
     - pip install numpy==1.17.0 scipy==1.6.0
 
-########## Test code functionality for all python versions between current and minimal ##########
+##### Test code functionality for all Python versions between #####
 python:
   extends: .pytest-pedantic
   image: python:$PYTHON_VERSIONS-slim
@@ -60,7 +66,7 @@ python:
     matrix:
       - PYTHON_VERSIONS: ['3.8', '3.9', '3.10']
 
-########## Test code functionality under linux, macos, and windows ##########
+##### Test code functionality under Linux, macOS, and Windows #####
 platform:linux:
   extends: .pytest-pedantic
   image: ubuntu:latest
@@ -85,14 +91,16 @@ platform:windows:
     - refreshenv
     - Set-Alias -Name python3 -Value python
 
-########## Build documentation ##########
+##### Build documentation #####
 pages:
   stage: deploy
   script:
-    - pip install -e .[dev]
-    # Build sphinx documentation
+    - pip install -e .
+    # Build Sphinx documentation
+    - pip install sphinx furo
     - sphinx-build -b html ./docs ./public
-    # Convert notebooks to html
+    # Convert notebooks to HTML
+    - pip install notebook
     - find examples -name '*.ipynb' -exec jupyter nbconvert --to html {} --template classic \;
     - find examples -name '*.html' -exec mv {} public/_static \;
     # Minify all text files
