@@ -4,11 +4,12 @@
 For a full list of options see the documentation:
 https://setuptools.pypa.io/en/latest/references/keywords.html
 '''
+import re
+
 from setuptools import find_packages, setup
 
 with open('eminus/version.py', 'r') as fh:
-    version = {}
-    exec(fh.read(), version)
+    version = re.search(r"__version__ = '(.*?)'", fh.read()).group(1)
 
 with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
@@ -44,7 +45,7 @@ extras['dev'] = [
 
 setup(
     name='eminus',
-    version=version['__version__'],
+    version=version,
     description='A plane wave density functional theory code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
