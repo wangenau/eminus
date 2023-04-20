@@ -195,10 +195,12 @@ class SCF:
         Keyword Args:
             center (float | list | tuple | ndarray | None): Point to center the system around.
         '''
+        # Get the COM before centering the atoms
+        com = center_of_mass(self.atoms.X)
+
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
 
-        com = center_of_mass(self.atoms.X)
         if center is None:
             dr = com - self.atoms.a / 2
         else:
@@ -210,7 +212,7 @@ class SCF:
         # Transform the density to the reciprocal space, shift, and transform back
         Jn = self.atoms.J(self.n)
         TJn = self.atoms.T(Jn, dr=-dr)
-        self.n = self.atoms.I(TJn)
+        self.n = np.real(self.atoms.I(TJn))
 
         # Recalculate the pseudopotential since it depends on the structure factor
         self._set_potential()
