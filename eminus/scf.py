@@ -67,7 +67,7 @@ class SCF:
         self.atoms = copy.copy(atoms)  # Atoms object
         self.xc = xc.lower()           # Exchange-correlation functional
         self.pot = pot.lower()         # Used pseudopotential
-        self.guess = guess             # Initial wave functions guess
+        self.guess = guess.lower()     # Initial wave functions guess
         self.etol = etol               # Total energy convergence tolerance
         self.cgform = cgform           # Conjugate gradient form
         self.sic = sic                 # Calculate the sic energy
