@@ -259,7 +259,11 @@ def T(atoms, W, dr):
         ndarray: The operator applied on W.
     '''
     # Do the shift by multiplying a phase factor, given by the shift theorem
-    factor = np.exp(-1j * atoms.G[atoms.active] @ dr)
+    if len(W) == len(atoms.G2c):
+        G = atoms.G[atoms.active]
+    else:
+        G = atoms.G
+    factor = np.exp(-1j * G @ dr)
     # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if W.ndim == 2:
         factor = factor[:, None]
