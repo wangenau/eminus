@@ -15,7 +15,7 @@ if __name__ == '__main__':
     file = 'master.zip'
     # Download files
     url = f'https://github.com/cp2k/cp2k-data/archive/refs/heads/{file}'
-    urllib.request.urlretrieve(url, file)
+    urllib.request.urlretrieve(url, file)  # noqa: S310
     # Unpack files
     with zipfile.ZipFile(file, 'r') as fzip:
         fzip.extractall()
