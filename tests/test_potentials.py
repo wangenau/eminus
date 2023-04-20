@@ -28,16 +28,16 @@ def test_coulomb():
     '''Compare total energies for the ionic potential.'''
     atom = 'H'
     X = (0, 0, 0)
-    a = 10
+    a = (9, 10, 11)
     ecut = 10
     s = 20
     pot = 'coulomb'
-    min = {'sd': 3, 'pccg': 11}
+    min = {'sd': 5, 'pccg': 11}
 
     atoms = Atoms(atom, X, a=a, ecut=ecut, s=s)
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6, min=min).run()
     # In the limit we should come close to the NIST Etot value of -0.445671 Eh
-    assert_allclose(E, -0.438501)
+    assert_allclose(E, -0.43937078)
 
 
 def test_ge():
