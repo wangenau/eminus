@@ -29,6 +29,7 @@ def read_json(filename):
         # Explicitly call objects with verbosity since the logger is created at instantiation
         if isinstance(dct, dict) and 'atom' in dct:
             atoms = eminus.Atoms(dct['atom'], dct['X'], verbose=dct['_verbose'])
+            atoms._set_operators()
             for attr in dct:
                 if attr == 'log':
                     continue
