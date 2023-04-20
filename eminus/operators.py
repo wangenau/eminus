@@ -162,16 +162,14 @@ def J(atoms, W, full=True):
     n = np.prod(atoms.s)
 
     # `workers` sets the number of threads the FFT operates on
-    # `overwrite_x` allows writing in Wfft, but since we do not need Wfft later on, we can set this
-    # for a little bit of extra performance
     # Normally, we would have to divide by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = W.reshape(atoms.s)
-        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
+        F = fftn(Wfft, workers=config.threads, norm='forward').ravel()
     else:
         Wfft = W.reshape(np.append(atoms.s, atoms.Nstate))
-        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
+        F = fftn(Wfft, workers=config.threads, norm='forward',
                  axes=(0, 1, 2)).reshape((n, atoms.Nstate))
 
     # There is no way to know if J has to transform to the full or the active space
