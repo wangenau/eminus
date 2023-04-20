@@ -19,6 +19,20 @@ def test_norm():
         assert_allclose(abs(norm), 1, atol=1e-1)
 
 
+def test_mock():
+    '''Test that ghost atoms have no contribution.'''
+    # Reference calculation without ghost atom
+    atoms = Atoms('He', [(0, 0, 0)], s=10, Nspin=1)
+    E_ref = SCF(atoms).run()
+    # Calculation with ghost atom
+    atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)], s=10, Nspin=1)
+    scf = SCF(atoms)
+    E = scf.run()
+    assert_allclose(E, E_ref)
+    for key in scf.GTH['X'].keys():
+        assert_allclose(scf.GTH['X'][key], 0)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
