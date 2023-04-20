@@ -262,7 +262,7 @@ class SCF:
     @verbose.setter
     def verbose(self, level):
         self._verbose = get_level(level)
-        self.log.setLevel(self._verbose)
+        self.log.verbose = self._verbose
         return
 
 
