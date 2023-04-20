@@ -8,9 +8,7 @@ from eminus import Atoms, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, H
 
 atoms_unpol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=1)
-atoms_unpol.build()
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=2)
-atoms_pol.build()
 
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()

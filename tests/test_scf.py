@@ -12,6 +12,12 @@ from eminus.tools import center_of_mass
 atoms = Atoms('He', (0, 0, 0), s=10)
 
 
+def test_atoms():
+    '''Test that the Atoms object is independent.'''
+    scf = SCF(atoms)
+    assert id(scf.atoms) != id(atoms)
+
+
 def test_xc():
     '''Test that xc functionals are correctly parsed.'''
     scf = SCF(atoms, xc='LDA,VWN')
@@ -74,13 +80,13 @@ def test_recenter():
     scf = SCF(atoms)
     scf.run()
     scf.recenter()
-    W = scf.atoms.I(scf.W)
+    W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)
     # Check that the density is centered around the atom
-    assert_allclose(center_of_mass(scf.atoms.r, scf.n), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=1e-3)
     # Check that the orbitals are centered around the atom
-    assert_allclose(center_of_mass(scf.atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=1e-3)
-    assert_allclose(center_of_mass(scf.atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=1e-3)
 
 
 if __name__ == '__main__':

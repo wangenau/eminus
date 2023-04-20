@@ -64,7 +64,7 @@ class SCF:
     '''
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='gaussian', etol=1e-7, cgform=1,
                  sic=False, min=None, verbose=None):
-        self.atoms = copy.copy(atoms)  # Atoms object
+        self.atoms = atoms             # Atoms object
         self.xc = xc.lower()           # Exchange-correlation functional
         self.pot = pot.lower()         # Used pseudopotential
         self.guess = guess.lower()     # Initial wave functions guess
@@ -112,8 +112,12 @@ class SCF:
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
         self.xc = parse_functionals(self.xc)
+        # Build the atoms object if necessary and make a copy
+        # This way the atoms object in scf is independent but we ensure that both atoms are build
         if not self.atoms.is_built:
-            self.atoms.build()
+            self.atoms = copy.copy(self.atoms.build())
+        else:
+            self.atoms = copy.copy(self.atoms)
         self._set_potential()
         self._init_W()
         self.print_precision = int(abs(np.log10(self.etol))) + 1

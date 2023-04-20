@@ -11,7 +11,7 @@ from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthono
                           inertia_tensor)
 
 
-atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True).build()
+atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
 scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))

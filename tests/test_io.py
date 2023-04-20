@@ -8,7 +8,6 @@ import pytest
 from eminus import Atoms, read, SCF, write
 
 atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=1, ecut=1)
-atoms.build()
 scf = SCF(atoms)
 
 

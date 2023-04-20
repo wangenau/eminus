@@ -13,7 +13,7 @@ atoms_unpol = Atoms('CH4', ((0, 0, 0),
                             (1.186, 1.186, 1.186),
                             (1.186, -1.186, -1.186),
                             (-1.186, 1.186, -1.186),
-                            (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=1).build()
+                            (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=1)
 scf_unpol = SCF(atoms_unpol, min={'pccg': 15})
 scf_unpol.run()
 
@@ -21,7 +21,7 @@ atoms_pol = Atoms('CH4', ((0, 0, 0),
                           (1.186, 1.186, 1.186),
                           (1.186, -1.186, -1.186),
                           (-1.186, 1.186, -1.186),
-                          (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=2).build()
+                          (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=2)
 scf_pol = SCF(atoms_pol, min={'sd': 3, 'pccg': 15})
 scf_pol.run()
 
