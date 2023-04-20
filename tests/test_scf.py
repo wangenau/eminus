@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 '''Test the SCF class.'''
-import inspect
-import pathlib
-
 from numpy.testing import assert_allclose
 import pytest
 
@@ -90,5 +87,7 @@ def test_recenter():
 
 
 if __name__ == '__main__':
+    import inspect
+    import pathlib
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)

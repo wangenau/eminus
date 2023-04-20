@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 '''Test configuration class.'''
-import inspect
 import os
-import pathlib
 
 import pytest
 
@@ -66,5 +64,7 @@ def test_info():
 
 
 if __name__ == '__main__':
+    import inspect
+    import pathlib
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)
