@@ -8,7 +8,7 @@ from scipy.linalg import det, eig, inv, norm
 
 from . import config, operators
 from .io import read_gth
-from .logger import create_logger, get_level
+from .logger import create_logger, get_level, log
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
@@ -78,10 +78,10 @@ class Atoms:
             from 0.
             None will use the default global logger value 'WARNING'.
 
-            Default: 'info'
+            Default: None
     '''
     def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=2, f=None,
-                 Nstate=None, verbose='info'):
+                 Nstate=None, verbose=None):
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
         self.a = a            # Cell/Vacuum size
@@ -103,6 +103,8 @@ class Atoms:
         self.log = create_logger(self)
         if verbose is not None:
             self.verbose = verbose
+        else:
+            self.verbose = log.verbose
         self.initialize()
 
     def clear(self):
