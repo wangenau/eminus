@@ -201,7 +201,6 @@ class SCF:
         '''
         # Get the COM before centering the atoms
         com = center_of_mass(self.atoms.X)
-        print(com)
 
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
@@ -211,8 +210,6 @@ class SCF:
         else:
             center = np.asarray(center)
             dr = com - center
-
-        print(dr)
 
         # Shift orbitals and density
         self.W = self.atoms.T(self.W, dr=-dr)

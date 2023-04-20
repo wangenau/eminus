@@ -39,10 +39,7 @@ def test_guess():
     scf = SCF(atoms, guess='bogus')
 
 
-@pytest.mark.parametrize('etol, ref', [(1e-6, 7),
-                                       (2e-6, 6),
-                                       (9e-6, 6),
-                                       (1e-5, 6)])
+@pytest.mark.parametrize('etol, ref', [(1e-6, 7), (2e-6, 6), (9e-6, 6), (1e-5, 6)])
 def test_etol(etol, ref):
     '''Test print precision, depending of the convergence tolerance.'''
     scf = SCF(atoms, etol=etol)
@@ -77,22 +74,16 @@ def test_clear():
 
 def test_recenter():
     '''Test the recenter function.'''
-    print('### start debug ###')
-    print(center_of_mass(atoms.X))
-    scf = SCF(atoms, verbose='debug')
+    scf = SCF(atoms)
     scf.run()
-    print(center_of_mass(scf.atoms.X))
     scf.recenter()
-    W = scf.atoms.I(scf.W)
+    W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)
-    print(center_of_mass(scf.atoms.X))
-    print(center_of_mass(scf.atoms.r, W[0, :, 0].conj() * W[0, :, 0]))
-    print(center_of_mass(scf.atoms.r, W[1, :, 0].conj() * W[1, :, 0]))
     # Check that the density is centered around the atom
-    assert_allclose(center_of_mass(scf.atoms.r, scf.n), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=1e-3)
     # Check that the orbitals are centered around the atom
-    assert_allclose(center_of_mass(scf.atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=1e-3)
-    assert_allclose(center_of_mass(scf.atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=1e-3)
 
 
 if __name__ == '__main__':
