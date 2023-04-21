@@ -51,7 +51,7 @@ def test_ge():
     pot = 'ge'
     min = {'sd': 4, 'pccg': 23}
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, Nspin=1, f=f)
+    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, f=f)
     scf = RSCF(atoms, pot=pot, guess='random', etol=1e-6, min=min)
     scf.run()
     eps = get_epsilon(scf, scf.W)[0]
