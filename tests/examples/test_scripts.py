@@ -53,16 +53,16 @@ def test_06():  # noqa: D103
 
 
 @pytest.mark.slow
-@pytest.mark.extras
 def test_07():  # noqa: D103
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('07_fod_extra')
     clean_example(['CH4_FLO_1.cube', 'CH4_FLO_2.cube', 'CH4_FLO_3.cube', 'CH4_FLO_4.cube',
                    'CH4_fods.xyz'])
 
 
 @pytest.mark.slow
-@pytest.mark.extras
 def test_09():  # noqa: D103
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('09_sic_calculations')
 
 

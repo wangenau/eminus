@@ -11,7 +11,6 @@ from eminus.extras import remove_core_fods, split_fods
 rng = default_rng()
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('Nspin', [1, 2])
 @pytest.mark.parametrize('basis, loc, elec_symbols', [('pc-1', 'fb', ['X', 'He']),
                                                       ('pc-0', 'er', ['X', 'He']),
@@ -19,6 +18,7 @@ rng = default_rng()
                                                       ('pc-0', 'gpm', None)])
 def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
     '''Test FOD generator.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import get_fods
     atoms = Atoms('He', (0, 0, 0), Nspin=Nspin).build()
     fods = get_fods(atoms, basis=basis, loc=loc, elec_symbols=elec_symbols)

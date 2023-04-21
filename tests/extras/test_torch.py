@@ -20,20 +20,20 @@ W_tests = {
 }
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ(type):
     '''Test forward and backward operator identity.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.I(atoms.J(W_tests[type]))
     test = W_tests[type]
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_JI(type):
     '''Test forward and backward operator identity.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     if 'active' in type:
         out = atoms.J(atoms.I(W_tests[type]), False)
     else:
@@ -42,19 +42,19 @@ def test_JI(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_IdagJdag(type):
     '''Test daggered forward and backward operator identity.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.Idag(atoms.Jdag(W_tests[type]))
     test = W_tests[type]
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_JdagIdag(type):
     '''Test daggered forward and backward operator identity.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.Jdag(atoms.Idag(W_tests[type], True))
     test = W_tests[type]
     assert_allclose(out, test)
@@ -63,6 +63,7 @@ def test_JdagIdag(type):
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_I(type):
     '''Test that I and Idag operators are hermitian.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.I(b)).conj()
@@ -73,6 +74,7 @@ def test_hermitian_I(type):
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_J(type):
     '''Test that J and Jdag operators are hermitian.'''
+    pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.J(b)).conj()
@@ -80,7 +82,6 @@ def test_hermitian_J(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ_gpu(type):
     '''Test forward and backward GPU operator identity.'''
@@ -94,7 +95,6 @@ def test_IJ_gpu(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_JI_gpu(type):
@@ -112,7 +112,6 @@ def test_JI_gpu(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_IdagJdag_gpu(type):
     '''Test daggered forward and backward GPU operator identity.'''
@@ -126,7 +125,6 @@ def test_IdagJdag_gpu(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_JdagIdag_gpu(type):
     '''Test daggered forward and backward GPU operator identity.'''

@@ -7,10 +7,11 @@ import pathlib
 import pytest
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('name', ['test_view_atoms', 'test_view_file'])
 def test_viewer(name):
     '''Test the execution of a given Jupyter notebook.'''
+    pytest.importorskip('nglview', reason='nglview not installed, skip tests')
+    pytest.importorskip('plotly', reason='plotly not installed, skip tests')
     from nbconvert.preprocessors import ExecutePreprocessor
     from nbformat import read
 

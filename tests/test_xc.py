@@ -17,11 +17,11 @@ n_tests = {
 functionals = [xc for xc in XC_MAP if xc.isdigit()]
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', functionals)
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_exc(xc, Nspin):
     '''Compare internal functional energy densities to Libxc.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     e_out = get_exc(xc, n_spin, Nspin)
@@ -29,11 +29,11 @@ def test_get_exc(xc, Nspin):
     assert_allclose(e_out, e_test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', functionals)
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_vxc(xc, Nspin):
     '''Compare internal functional potentials to Libxc.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     v_out = get_vxc(xc, n_spin, Nspin)
@@ -72,9 +72,9 @@ def test_parse_functionals(xc, ref):
     assert f_c == ref[1]
 
 
-@pytest.mark.extras
 def test_libxc_str():
     '''Test that strings that start with libxc get properly parsed.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     n_spin = n_tests[1]
     e_out, v_out = get_xc('1,7', n_spin, 1)
     e_test, v_test = get_xc('libxc:1,libxc:7', n_spin, 1)

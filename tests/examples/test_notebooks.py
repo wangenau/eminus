@@ -16,7 +16,6 @@ def clean_example(trash):
 
 
 @pytest.mark.slow
-@pytest.mark.extras
 @pytest.mark.parametrize('name, trash', [('08_visualizer_extra', []),
                                          ('10_domain_generation', []),
                                          ('13_wannier_localization', ['CH4_WO_0.cube',
@@ -25,6 +24,8 @@ def clean_example(trash):
                                                                       'CH4_WO_3.cube'])])
 def test_notebooks(name, trash):
     '''Test the execution of a given Jupyter notebook.'''
+    pytest.importorskip('nglview', reason='nglview not installed, skip tests')
+    pytest.importorskip('plotly', reason='plotly not installed, skip tests')
     from nbconvert.preprocessors import ExecutePreprocessor
     from nbformat import read
 

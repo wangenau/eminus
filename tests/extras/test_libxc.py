@@ -5,7 +5,6 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import config
 from eminus.xc import get_exc, get_vxc
 
 # Create random mock densities
@@ -17,15 +16,11 @@ n_tests = {
 }
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', ['1', '7'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
-    try:
-        assert config.use_pylibxc
-    except AssertionError:
-        pytest.skip('pylibxc not installed, skip tests')
+    pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     e_out, _ = libxc_functional(xc, n_spin, Nspin)
@@ -33,15 +28,11 @@ def test_libxc_functional_exc(xc, Nspin):
     assert_allclose(e_out, e_test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', ['1', '7'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
-    try:
-        assert config.use_pylibxc
-    except AssertionError:
-        pytest.skip('pylibxc not installed, skip tests')
+    pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     _, v_out = libxc_functional(xc, n_spin, Nspin)
@@ -49,11 +40,11 @@ def test_libxc_functional_vxc(xc, Nspin):
     assert_allclose(v_out, v_test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', ['1', '7'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities as implemented in PySCF to internal functionals.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     e_out, _ = pyscf_functional(xc, n_spin, Nspin)
@@ -61,11 +52,11 @@ def test_pyscf_functional_exc(xc, Nspin):
     assert_allclose(e_out, e_test)
 
 
-@pytest.mark.extras
 @pytest.mark.parametrize('xc', ['1', '7'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials as implemented in PySCF to internal functionals.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     _, v_out = pyscf_functional(xc, n_spin, Nspin)
