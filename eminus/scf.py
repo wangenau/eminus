@@ -280,6 +280,7 @@ class RSCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        self.atoms = copy.copy(self.atoms)
         self.atoms._set_states(Nspin=1)
         super().initialize()
         return self
@@ -293,6 +294,7 @@ class USCF(SCF):
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
+        self.atoms = copy.copy(self.atoms)
         self.atoms._set_states(Nspin=2)
         super().initialize()
         return self
