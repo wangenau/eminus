@@ -83,7 +83,6 @@ setup(
         'numpy>=1.17',
         'scipy>=1.6'
     ],
-    keywords=['ESP'],
     zip_safe=False,
     extras_require=extras,
     python_requires='>=3.7',
