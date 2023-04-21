@@ -293,11 +293,11 @@ class Atoms:
         if self.Nstate is None:
             # If no occupations is given, assume 1 or 2
             if self.f is None:
-                f = 2 / self.Nspin
+                self.f = 2 / self.Nspin
             # Assume the number of states by dividing the total valence charge by an occupation of 2
             Ztot = np.sum(self.Z)
             self.Nstate = int(np.ceil(Ztot / 2))
-            self.f = f * np.ones((self.Nspin, self.Nstate))
+            self.f = self.f * np.ones((self.Nspin, self.Nstate))
             # Subtract the leftovers from the last spin state
             self.f[-1, -1] -= np.sum(self.Z) % 2
         return
