@@ -18,17 +18,10 @@ RUN pip install notebook ipywidgets==7.* --no-cache-dir
 # Install Torch manually since we only want to compute on the CPU
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
-# Fix to install PyFLOSIC2 with a new PySCF version
-# Install without dependencies since only the PyCOM method will be used
-# Only ASE is required to run PyFLOSIC2
-RUN git clone https://gitlab.com/opensic/pyflosic2.git \
-&& pip install ase pyflosic2/ --no-cache-dir --no-deps \
-&& rm -rf pyflosic2/
-
-# Install eminus with all extras available (PyFLOSIC2 is already installed for the fods extra)
+# Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
 RUN git clone https://gitlab.com/wangenau/eminus.git \
-&& pip install -e eminus/[libxc,viewer,dev] --no-cache-dir
+&& pip install -e eminus/[all,dev] --no-cache-dir
 
 # Set up the application stage
 FROM python:3.11-slim

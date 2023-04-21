@@ -5,19 +5,18 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
 import pytest
 
-from eminus import Atoms, SCF
-from eminus.dft import get_psi
-from eminus.extras import pycom, remove_core_fods, split_fods
+from eminus import Atoms
+from eminus.extras import remove_core_fods, split_fods
 
 rng = default_rng()
 
 
 @pytest.mark.extras
 @pytest.mark.parametrize('Nspin', [1, 2])
-@pytest.mark.parametrize('basis, loc, elec_symbols', [('pc-0', 'fb', ['X', 'He']),
-                                                      ('pc-1', 'fb', ['X', 'He']),
+@pytest.mark.parametrize('basis, loc, elec_symbols', [('pc-1', 'fb', ['X', 'He']),
                                                       ('pc-0', 'er', ['X', 'He']),
-                                                      ('pc-0', 'fb', ['He', 'Ne'])])
+                                                      ('pc-0', 'pm', ['He', 'Ne']),
+                                                      ('pc-0', 'gpm', None)])
 def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
     '''Test FOD generator.'''
     from eminus.extras import get_fods
@@ -63,17 +62,6 @@ def test_remove_core_fods(Nspin):
     fods = [np.vstack((core, valence))] * Nspin
     fods_valence = remove_core_fods(atoms, fods)
     assert_equal([valence] * Nspin, fods_valence)
-
-
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_pycom(Nspin):
-    '''Test PyCOM routine.'''
-    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
-    scf = SCF(atoms)
-    scf.run()
-    psi = atoms.I(get_psi(scf, scf.W))
-    for spin in range(Nspin):
-        assert_allclose(pycom(atoms, psi)[spin], [[10] * 3] * 2, atol=1e-1)
 
 
 if __name__ == '__main__':

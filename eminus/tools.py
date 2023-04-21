@@ -53,6 +53,34 @@ def center_of_mass(coords, masses=None):
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
 
 
+def orbital_center(object, psirs):
+    '''Calculate the orbital center of masses, e.g., from localized orbitals.
+
+    Args:
+        object: Atoms or SCF object.
+        psirs (ndarray): Set of orbitals in real-space.
+
+    Returns:
+        bool: Center of masses.
+    '''
+    try:
+        atoms = object.atoms
+    except AttributeError:
+        atoms = object
+
+    coms = [np.array([])] * 2
+    Ncom = psirs.shape[2]
+    for s in range(atoms.Nspin):
+        coms_spin = np.empty((Ncom, 3))
+
+        # Square orbitals
+        psi2 = np.real(psirs[s, :, :].conj() * psirs[s, :, :])
+        for i in range(Ncom):
+            coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
+        coms[s] = coms_spin
+    return coms
+
+
 def inertia_tensor(coords, masses=None):
     '''Calculate the inertia tensor for a set of coordinates and masses.
 

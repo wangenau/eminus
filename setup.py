@@ -15,9 +15,6 @@ with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
 
 extras = {
-    'fods': [
-        'pyflosic2>=2.0.0rc0'  # PyCOM FOD guessing method
-    ],
     'libxc': [
         'pyscf>=1.5.1'  # Libxc interface via PySCF
     ],
@@ -29,6 +26,7 @@ extras = {
         'plotly>=4'        # Grid visualization
     ]
 }
+extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
 extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
     'coverage>=3.6',             # Generate coverage reports
@@ -41,7 +39,6 @@ extras['dev'] = [
     'pytest-cov>=0.6',           # Collect test coverage data
     'sphinx>=5'                  # Documentation builder
 ]
-
 
 setup(
     name='eminus',

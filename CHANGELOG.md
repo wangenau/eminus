@@ -12,6 +12,7 @@ dev
    - Add a complete test suite
    - Add coverage reports
 - Miscellaneous
+   - Rewritten FODs guess function
    - Fix a plethora of small bugs
    - Update Docker image to Python 3.11
 

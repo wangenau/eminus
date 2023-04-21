@@ -13,7 +13,7 @@ logo = (' ___ _____ _ ___ _ _ ___ \n'
 def info():
     '''Print version numbers and availability of packages.'''
     dependencies = ('numpy', 'scipy')
-    extras = ('torch', 'pyscf', 'pyflosic2', 'plotly', 'nglview')
+    extras = ('torch', 'pyscf', 'plotly', 'nglview')
     dev = ('notebook', 'pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
 
     print(logo)

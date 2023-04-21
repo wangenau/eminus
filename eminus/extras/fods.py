@@ -1,14 +1,62 @@
 #!/usr/bin/env python3
 '''Fermi-orbital descriptor generation.'''
-import pathlib
-
 import numpy as np
 from scipy.linalg import norm
 
 from ..data import SYMBOL2NUMBER
 from ..logger import log
-from ..tools import center_of_mass
-from ..units import ang2bohr, bohr2ang
+from ..units import bohr2ang
+
+
+def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
+    '''Generate localized orbitals with an additional simple stability analysis as in PyFLOSIC2.
+
+    Reference: J. Chem. Phys. 153, 084104.
+
+    Args:
+        mf: PySCF SCF object.
+        Nspin (int): Number of spin states.
+        loc (str): Localization method (case insensitive).
+
+    Keyword Args:
+        Nit (int): Number of tries to get a solution with positive eigenvalues.
+        seed (int): Seed to initialize the random number generator.
+
+    Returns:
+        list: Localized occupied orbital coefficients per spin channel.
+    '''
+    rng = np.random.default_rng(seed=seed)
+    from pyscf.lo import boys, edmiston, pipek
+    loc_dict = {'ER': edmiston.EdmistonRuedenberg,
+                'FB': boys.Boys,
+                'GPM': pipek.PipekMezey,
+                'PM': pipek.PipekMezey}
+
+    loc_orb = []
+    # Localize each spin channel separately
+    for s in range(Nspin):
+        # Initialize the localizer object
+        if Nspin == 2:
+            localizer = loc_dict[loc](mf.mol, mf.mo_coeff[s][:, mf.mo_occ[s] > 0])
+        else:
+            localizer = loc_dict[loc](mf.mol, mf.mo_coeff[:, mf.mo_occ > 0])
+
+        # Set the population method in generalized PM to Becke charges
+        if loc == 'GPM':
+            localizer.pop_method = 'becke'
+
+        for _ in range(Nit):
+            tmp_orb = localizer.kernel()
+            # Calculate the eigenvalues of the Hessian
+            _, _, h_diag = localizer.gen_g_hop(u=np.eye(len(tmp_orb[0])))
+            # If there are no eigenvalues or all of them are positive break the loop
+            if len(h_diag) == 0 or np.min(h_diag) > 0:
+                break
+            # If not continue with randomly 'displaced' orbitals
+            noise = rng.normal(scale=5e-4, size=tmp_orb.shape)
+            localizer.mo_coeff = tmp_orb + noise
+        loc_orb.append(tmp_orb)
+    return loc_orb
 
 
 def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
@@ -29,10 +77,7 @@ def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
         ndarray: FOD positions.
     '''
     try:
-        from pyflosic2.atoms.atoms import Atoms
-        from pyflosic2.guess.pycom import pycom
-        from pyflosic2.parameters.flosic_parameters import parameters
-        from pyscf.gto import Mole  # PySCF is a dependency of PyFLOSIC2
+        from pyscf.gto import Mole
         from pyscf.scf import UKS, RKS
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
@@ -65,33 +110,23 @@ def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
     mol = Mole(atom=atom_pyscf, basis=basis, spin=spin).build(parse_arg=False)
-    if atoms.Nspin == 2:
-        mf = UKS(mol=mol)
-    else:
+    if atoms.Nspin == 1:
         mf = RKS(mol=mol)
+    else:
+        mf = UKS(mol=mol)
     mf.verbose = 0
     mf.kernel()
 
-    # Do the PyCOM FOD generation
-    atoms_pyflosic = Atoms(atoms.atom, X, elec_symbols=elec_symbols, spin=spin)
-    if atoms.Nspin == 2:
-        p = parameters(mode='unrestricted')
-    else:
-        p = parameters(mode='restricted')
-    p.nuclei = atoms_pyflosic
-    p.basis = basis
-    p.pycom_loc = loc
-    pc = pycom(mf=mf, p=p)
-    pc.get_guess()
-
-    fod1 = ang2bohr(pc.p.fod1.positions)
-    fod2 = ang2bohr(pc.p.fod2.positions)
-    fods = [np.asarray(fod1), np.asarray(fod2)]
-
-    if clean:
-        pathlib.Path(p.log_name).unlink()
-        pathlib.Path(f'{loc}_GUESS_COM.xyz').unlink()
-    return fods
+    # Get the localized orbital coefficients
+    loc_orb = get_localized_orbitals(mf, atoms.Nspin, loc)
+    # Calculate the COMs
+    loc_com = [np.array([])] * 2
+    ao = mf._numint.eval_ao(mf.mol, mf.grids.coords)
+    for s in range(atoms.Nspin):
+        phi = ao @ loc_orb[s]
+        dens = phi.conj() * phi * mf.grids.weights[:, None]
+        loc_com[s] = dens.T @ mf.grids.coords
+    return loc_com
 
 
 def split_fods(atom, X, elec_symbols=None):
@@ -148,47 +183,15 @@ def remove_core_fods(object, fods):
             and len(fods[1]) == np.sum(atoms.f[1]):
         return fods
 
-    for spin in range(atoms.Nspin):
+    for s in range(atoms.Nspin):
         for ia in range(atoms.Natoms):
             n_core = SYMBOL2NUMBER[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state
             # Since only core states are removed in pseudopotentials this value is divisible by 2
             # +1 to account for uneven amount of core FODs (e.g., for hydrogen)
             n_core = (n_core + 1) // 2
-            dist = norm(fods[spin] - atoms.X[ia], axis=1)
+            dist = norm(fods[s] - atoms.X[ia], axis=1)
             idx = np.argsort(dist)
             # Remove core FODs with the smallest distance to the core
-            fods[spin] = np.delete(fods[spin], idx[:n_core], axis=0)
+            fods[s] = np.delete(fods[s], idx[:n_core], axis=0)
     return fods
-
-
-def pycom(object, psirs):
-    '''Calculate the orbital center of masses, e.g., from localized orbitals.
-
-    Args:
-        object: Atoms or SCF object.
-        psirs (ndarray): Set of orbitals in real-space.
-
-    Returns:
-        bool: Center of masses.
-    '''
-    try:
-        atoms = object.atoms
-    except AttributeError:
-        atoms = object
-
-    coms = []
-    Ncom = psirs.shape[2]
-    for spin in range(atoms.Nspin):
-        coms_spin = np.empty((Ncom, 3))
-
-        # Square orbitals
-        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
-        for i in range(Ncom):
-            coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
-        coms.append(coms_spin)
-
-    # Have the same data structure as for fods
-    if atoms.Nspin == 1:
-        coms.append(np.array([]))
-    return coms

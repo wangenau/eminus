@@ -8,7 +8,7 @@ from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
                           cutoff2gridspacing, get_dipole, get_ip, get_isovalue, gridspacing2cutoff,
-                          inertia_tensor)
+                          inertia_tensor, orbital_center)
 
 
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
@@ -30,6 +30,17 @@ def test_center_of_mass(coords, masses, ref):
     '''Test the center of mass calculation.'''
     out = center_of_mass(coords, masses)
     assert_allclose(out, ref)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_pycom(Nspin):
+    '''Test PyCOM routine.'''
+    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
+    scf = SCF(atoms)
+    scf.run()
+    psi = atoms.I(get_psi(scf, scf.W))
+    for spin in range(Nspin):
+        assert_allclose(orbital_center(atoms, psi)[spin], [[10] * 3] * 2, atol=1e-1)
 
 
 @pytest.mark.parametrize('coords', [np.array([[1, 0, 0]]),
