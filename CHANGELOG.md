@@ -6,12 +6,13 @@ dev
 - New features
    - Add Torch powered FFT operators as an extra
       - Up to 20% faster calculations
-   - Consolidated configuration class
-      - Easier configuration and performance infos
+   - Add a consolidated configuration class
+      - Easier configuration and more performance infos
    - Nix developer shell support
+   - Add a complete test suite
+   - Add coverage reports
 - Miscellaneous
-   - More tests
-   - Fix for non-equal sampling per axis
+   - Fix a plethora of small bugs
    - Update Docker image to Python 3.11
 
 v2.2.2 - Mar 03, 2023
