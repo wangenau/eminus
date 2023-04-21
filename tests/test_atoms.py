@@ -41,7 +41,8 @@ def test_coordinates(X, center, ref):
 @pytest.mark.parametrize('atom, Z, ref', [('H', None, [1]),
                                           ('Li', None, [1]),
                                           ('Li-q3', None, [3]),
-                                          ('He2', 2, [2, 2])])
+                                          ('He2', 2, [2, 2]),
+                                          ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2])])
 def test_charge(atom, Z, ref):
     '''Test setting of charges.'''
     atoms = Atoms(atom, (0, 0, 0), Z=Z)
