@@ -218,14 +218,14 @@ class Atoms:
 
         # Center system such that the geometric inertia tensor will be diagonal
         # Rotate before shifting!
-        if self.center or self.center == 'rotate':
+        if self.center is True or self.center == 'rotate':
             X = self.X
             I = inertia_tensor(self.X)
             _, eigvecs = eig(I)
             self.X = (inv(eigvecs) @ self.X.T).T
 
         # Shift system such that its geometric center of mass is in the center of the cell
-        if self.center or self.center == 'shift':
+        if self.center is True or self.center == 'shift':
             X = self.X
             com = center_of_mass(X)
             self.X = X - (com - self.a / 2)
