@@ -19,7 +19,6 @@ by default.
 Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 '''
 import numpy as np
-import torch
 
 from .. import config
 
@@ -34,6 +33,7 @@ def I(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 
@@ -83,6 +83,7 @@ def J(atoms, W, full=True):
     Returns:
         ndarray: The operator applied on W.
     '''
+    import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 
@@ -121,6 +122,7 @@ def Idag(atoms, W, full=False):
     Returns:
         ndarray: The operator applied on W.
     '''
+    import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 
@@ -156,6 +158,7 @@ def Jdag(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     '''
+    import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 

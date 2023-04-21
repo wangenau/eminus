@@ -9,7 +9,9 @@ from ..units import bohr2ang
 
 
 def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
-    '''Generate localized orbitals with an additional simple stability analysis as in PyFLOSIC2.
+    '''Generate localized orbitals with an additional simple stability analysis.
+
+    Same as implemented in PyFLOSIC2.
 
     Reference: J. Chem. Phys. 153, 084104.
 
