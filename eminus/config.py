@@ -17,7 +17,7 @@ class ConfigClass():
         self.use_gpu = False      # Disable GPU by default, since it was slower in my tests
         self.use_pylibxc = True   # Use Libxc over PySCF if available
         self.threads = None       # Read threads from environment variables by default
-        self.verbose = 'WARNING'  # Only display warnings and worse by default
+        self.verbose = 'INFO'     # Only display warnings and worse by default
         return
 
     @property
