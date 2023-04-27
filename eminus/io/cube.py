@@ -113,7 +113,7 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
         if fods is None:
             fp.write(f'{atoms.Natoms}  ')
         else:
-            fp.write(f'{atoms.Natoms + len(fods[0]) + len(fods[1])}  ')
+            fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}  ')
         fp.write('0.0  0.0  0.0\n')
         # Number of points per axis (int), and vector defining the axis (float)
         # We only have a cuboidal box, so each vector only has one non-zero component
@@ -125,12 +125,10 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
             fp.write(f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
                      f'{atoms.X[ia, 0]: .6f}  {atoms.X[ia, 1]: .6f}  {atoms.X[ia, 2]: .6f}\n')
         if fods is not None:
-            for ie in fods[0]:
-                fp.write(f'{SYMBOL2NUMBER[elec_symbols[0]]}  0.000  '
-                         f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
-            for ie in fods[1]:
-                fp.write(f'{SYMBOL2NUMBER[elec_symbols[1]]}  0.000  '
-                         f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
+            for s in range(len(fods)):
+                for ie in fods[s]:
+                    fp.write(f'{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  '
+                             f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
         for i in range(atoms.s[0] * atoms.s[1]):

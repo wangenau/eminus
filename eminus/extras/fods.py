@@ -122,12 +122,12 @@ def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
     # Get the localized orbital coefficients
     loc_orb = get_localized_orbitals(mf, atoms.Nspin, loc)
     # Calculate the COMs
-    loc_com = [np.array([])] * 2
+    loc_com = []
     ao = mf._numint.eval_ao(mf.mol, mf.grids.coords)
     for s in range(atoms.Nspin):
         phi = ao @ loc_orb[s]
         dens = phi.conj() * phi * mf.grids.weights[:, None]
-        loc_com[s] = dens.T @ mf.grids.coords
+        loc_com.append(dens.T @ mf.grids.coords)
     return loc_com
 
 
@@ -154,7 +154,7 @@ def split_fods(atom, X, elec_symbols=None):
         if atom[ia] in elec_symbols:
             if atom[ia] in elec_symbols[0]:
                 X_fod_up.append(X[ia])
-            if atom[ia] in elec_symbols[1]:
+            if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
                 X_fod_dn.append(X[ia])
             X = np.delete(X, ia, axis=0)
             del atom[ia]
@@ -168,7 +168,7 @@ def remove_core_fods(object, fods):
 
     Args:
         object: Atoms or SCF object.
-        fods (ndarray): FOD positions.
+        fods (list): FOD positions.
 
     Returns:
         ndarray: Valence FOD positions.

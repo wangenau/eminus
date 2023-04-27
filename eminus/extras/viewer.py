@@ -57,14 +57,14 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
         fig.add_trace(atom_data)
     if extra is not None:
         # If a list has been provided with the length of two it has to be FODs
-        if isinstance(extra, list) and len(extra) == 2:
-            if extra[0].size != 0:
+        if isinstance(extra, list):
+            if len(extra[0]) != 0:
                 extra_data = go.Scatter3d(x=extra[0][:, 0], y=extra[0][:, 1], z=extra[0][:, 2],
                                           name='up-FOD',
                                           mode='markers',
                                           marker=dict(size=np.pi, color='red'))
                 fig.add_trace(extra_data)
-            if extra[1].size != 0:
+            if len(extra) > 1 and len(extra[1]) != 0:
                 extra_data = go.Scatter3d(x=extra[1][:, 0], y=extra[1][:, 1], z=extra[1][:, 2],
                                           name='down-FOD',
                                           mode='markers',

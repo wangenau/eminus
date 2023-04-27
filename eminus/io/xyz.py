@@ -87,7 +87,7 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
         if fods is None:
             fp.write(f'{atoms.Natoms}\n')
         else:
-            fp.write(f'{atoms.Natoms + len(fods[0]) + len(fods[1])}\n')
+            fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}\n')
         # The second line can contains a comment.
         # Print information about the file and program, and the file creation time.
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
@@ -95,8 +95,7 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
             fp.write(f'{atoms.atom[ia]:<2s}  {X[ia, 0]: .6f}  {X[ia, 1]: .6f}  {X[ia, 2]: .6f}\n')
         # Add FOD coordinates if desired. The atom symbol will default to X (no atom type).
         if fods is not None:
-            for ie in fods[0]:
-                fp.write(f'{elec_symbols[0]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
-            for ie in fods[1]:
-                fp.write(f'{elec_symbols[1]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
+            for s in range(len(fods)):
+                for ie in fods[s]:
+                    fp.write(f'{elec_symbols[s]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
     return

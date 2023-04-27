@@ -39,10 +39,11 @@ def write_pdb(object, filename, fods=None, elec_symbols=None):
     atom = atoms.atom
     X = atoms.X
     if fods is not None:
-        atom += [elec_symbols[0]] * len(fods[0]) + [elec_symbols[1]] * len(fods[1])
-        if fods[0].shape[0] != 0:
+        if len(fods[0]) != 0:
+            atom = atom + [elec_symbols[0]] * len(fods[0])
             X = np.vstack((X, fods[0]))
-        if fods[1].shape[0] != 0:
+        if len(fods) > 1 and len(fods[1]) != 0:
+            atom = atom + [elec_symbols[1]] * len(fods[1])
             X = np.vstack((X, fods[1]))
 
     with open(filename, 'w') as fp:

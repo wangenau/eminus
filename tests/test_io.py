@@ -11,25 +11,33 @@ atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=1, ecut=1)
 scf = SCF(atoms)
 
 
-def test_xyz():
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_xyz(Nspin):
     '''Test XYZ file output and input.'''
     filename = 'test.xyz'
-    fods = [atoms.X, atoms.X]
+    fods = [atoms.X] * Nspin
     write(atoms, filename, fods=fods)
     atom, X = read(filename)
     os.remove(filename)
-    assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
+    if Nspin == 1:
+        assert atoms.atom + ['X'] * len(atoms.X) == atom
+    else:
+        assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
     assert_allclose(atoms.X, X[:len(atoms.X)], atol=1e-6)
 
 
-def test_cube():
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_cube(Nspin):
     '''Test CUBE file output and input.'''
     filename = 'test.cube'
-    fods = [atoms.X, atoms.X]
+    fods = [atoms.X] * Nspin
     write(atoms, filename, scf.W[0, 0], fods=fods)
     atom, X, Z, a, s = read(filename)
     os.remove(filename)
-    assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
+    if Nspin == 1:
+        assert atoms.atom + ['X'] * len(atoms.X) == atom
+    else:
+        assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
     assert_allclose(atoms.X, X[:len(atoms.X)], atol=1e-6)
     assert_allclose(atoms.Z, Z[:len(atoms.Z)])
     assert_allclose(atoms.a, a)
@@ -53,10 +61,11 @@ def test_json(object):
             assert getattr(object, attr) == getattr(test, attr)
 
 
-def test_pdb():
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_pdb(Nspin):
     '''Just test the PDB output execution, since we have no read function for it.'''
     filename = 'test.pdb'
-    fods = [atoms.X, atoms.X]
+    fods = [atoms.X] * Nspin
     write(atoms, filename, fods=fods)
     os.remove(filename)
 

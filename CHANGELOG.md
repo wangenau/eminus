@@ -13,6 +13,7 @@ dev
    - Add coverage reports
 - Miscellaneous
    - Rewritten FODs guess function
+   - Simplify the FOD interface in io and viewer functions
    - Fix a plethora of small bugs
    - Update Docker image to Python 3.11
 

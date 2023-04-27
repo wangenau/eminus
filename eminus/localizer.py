@@ -34,7 +34,7 @@ def get_R(atoms, psi, fods):
     Args:
         atoms: Atoms object.
         psi (ndarray): Set of orbitals in reciprocal space.
-        fods (ndarray): Fermi-orbital descriptors.
+        fods (list): Fermi-orbital descriptors.
 
     Returns:
         ndarray: Transformation matrix R.
@@ -59,7 +59,7 @@ def get_FO(atoms, psi, fods):
     Args:
         atoms: Atoms object.
         psi (ndarray): Set of orbitals in reciprocal space.
-        fods (ndarray): Fermi-orbital descriptors.
+        fods (list): Fermi-orbital descriptors.
 
     Returns:
         ndarray: Real-space Fermi orbitals.
@@ -108,7 +108,7 @@ def get_FLO(atoms, psi, fods):
     Args:
         atoms: Atoms object.
         psi (ndarray): Set of orbitals in reciprocal space.
-        fods (ndarray): Fermi-orbital descriptors.
+        fods (list): Fermi-orbital descriptors.
 
     Returns:
         ndarray: Real-space Fermi-Löwdin orbitals.
