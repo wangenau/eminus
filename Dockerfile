@@ -12,9 +12,6 @@ RUN apt-get update -y \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
-# Install Jupyter with a pinned IPyWidgets version (https://github.com/nglviewer/nglview/pull/1033)
-RUN pip install notebook ipywidgets==7.* --no-cache-dir
-
 # Install Torch manually since we only want to compute on the CPU
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
