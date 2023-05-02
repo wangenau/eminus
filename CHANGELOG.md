@@ -1,21 +1,23 @@
 Changelog
 =========
 
-dev
----
+v2.3.0 - May 02, 2023
+---------------------
 - New features
    - Add Torch powered FFT operators as an extra
       - Up to 20% faster calculations
    - Add a consolidated configuration class
       - Easier configuration and more performance infos
-   - Nix developer shell support
    - Add a complete test suite
-   - Add coverage reports
+      - Add CI/CD coverage reports
+   - Nix developer shell support
 - Miscellaneous
    - Rewritten FODs guess function
-   - Simplify the FOD interface in io and viewer functions
+   - Simplify the FOD interface in io and viewer
    - Fix a plethora of small bugs
    - Update Docker image to Python 3.11
+
+----
 
 v2.2.2 - Mar 03, 2023
 ---------------------
