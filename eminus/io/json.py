@@ -77,8 +77,7 @@ def write_json(object, filename):
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is a Atoms or SCF class dump them as a dictionary
-            if isinstance(obj, eminus.Atoms) or isinstance(obj, eminus.SCF) or \
-               isinstance(obj, eminus.energies.Energy):
+            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy)):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
                 return dict(json.loads(data))

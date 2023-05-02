@@ -89,12 +89,12 @@ def mock_gth():
     Returns:
         dict: GTH parameters (all zero).
     '''
-    psp = {}
-    psp['Zion'] = 0
-    psp['rloc'] = 0
-    psp['cloc'] = np.zeros(4)
-    psp['lmax'] = 0
-    psp['rp'] = np.zeros(4)
-    psp['Nproj_l'] = np.zeros(4, dtype=int)
-    psp['h'] = np.zeros((4, 3, 3))
-    return psp
+    return {
+        'Zion': 0,
+        'rloc': 0,
+        'cloc': np.zeros(4),
+        'lmax': 0,
+        'rp': np.zeros(4),
+        'Nproj_l': np.zeros(4, dtype=int),
+        'h': np.zeros((4, 3, 3))
+    }

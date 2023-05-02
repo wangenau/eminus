@@ -112,7 +112,7 @@ def parse_functionals(xc):
     # Parse functionals
     functionals = []
     for f in xc.split(','):
-        if 'libxc' in f or f in IMPLEMENTED.keys():
+        if 'libxc' in f or f in IMPLEMENTED:
             f_xc = f
         elif f == '':
             f_xc = 'mock_xc'
