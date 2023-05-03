@@ -1,6 +1,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Merge configuration files in tox.ini
+
 v2.3.0 - May 02, 2023
 ---------------------
 - New features
