@@ -42,6 +42,29 @@ Testing
    pip install pytest
    pytest
 
+Coverage
+--------
+
+| To check that all functions have a test case a coverage report can be created.
+| To install the necessary pytest extensions, use
+
+.. code-block:: console
+
+   pip install coverage pytest pytest-cov
+
+| To create a webpage that gives a clear overview of covered and uncovered code lines, use
+
+.. code-block:: console
+
+   coverage run -m pytest --cov-report html --cov=eminus
+
+| To only create the total coverage percentage value for all files, use
+
+.. code-block:: console
+
+   coverage run -m pytest
+   coverage report
+
 Linting
 -------
 
