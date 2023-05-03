@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Test utility functions.'''
 import numpy as np
+from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 from scipy.special import sph_harm
@@ -13,7 +14,8 @@ def test_Ylm(l):
     '''Test the spherical harmonics.'''
     # Generate random G
     # Somehow I can only get the correct results from scipy when using positive G
-    G = np.abs(np.random.randn(1000, 3))
+    rng = default_rng()
+    G = np.abs(rng.random((1000, 3)))
 
     # Calculate the spherical coordinates theta and phi
     tmp = np.sqrt(G[:, 0]**2 + G[:, 1]**2) / G[:, 2]

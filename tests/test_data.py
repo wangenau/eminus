@@ -19,7 +19,7 @@ def test_data():
 def test_gth_data():
     '''Check that every atom has at least one pseudopotential file.'''
     psp_path = pathlib.Path(inspect.getfile(eminus.pade)).parent
-    for atom in SYMBOL2NUMBER.keys():
+    for atom in SYMBOL2NUMBER:
         if atom == 'X':
             continue
         f_psp = sorted(psp_path.glob(f'{atom}-q*'))

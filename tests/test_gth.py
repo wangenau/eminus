@@ -29,7 +29,7 @@ def test_mock():
     scf = SCF(atoms)
     E = scf.run()
     assert_allclose(E, E_ref)
-    for key in scf.GTH['X'].keys():
+    for key in scf.GTH['X']:
         assert_allclose(scf.GTH['X'][key], 0)
 
 

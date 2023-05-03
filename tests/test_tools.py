@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 '''Test tools functions.'''
 import numpy as np
+from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
@@ -19,7 +20,8 @@ psi = atoms.I(get_psi(scf, scf.W))
 
 def test_cutoff_and_gridspacing():
     '''Test the cutoff and grid spacing conversion.'''
-    test = np.abs(np.random.randn(100))
+    rng = default_rng()
+    test = np.abs(rng.random(100))
     out = cutoff2gridspacing(gridspacing2cutoff(test))
     assert_allclose(out, test)
 
