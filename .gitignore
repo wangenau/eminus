@@ -8,9 +8,11 @@ dist/
 *.egg-info/
 
 # Unit test / Coverage reports
-coverage.xml
+.cache
 .coverage
 .coverage.*
+coverage.xml
+htmlcov/
 .pytest_cache/
 
 # Sphinx documentation

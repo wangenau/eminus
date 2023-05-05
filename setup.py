@@ -16,28 +16,28 @@ with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
 
 extras = {
     'libxc': [
-        'pyscf>=1.5.1'  # Libxc interface via PySCF
+        'pyscf>=1.7.3'  # Libxc interface via PySCF
     ],
     'torch': [
         'torch>=1.8'  # Faster FFT operators using Torch
     ],
     'viewer': [
         'nglview>=2.6.5',  # Molecule and isosurface viewer
-        'plotly>=4'        # Grid visualization
+        'plotly>=4.5'      # Grid visualization
     ]
 }
 extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
 extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
-    'coverage>=3.6',             # Generate coverage reports
+    'coverage>=4.4',             # Generate coverage reports
     'flake8>=3.7',               # Style guide checker
     'flake8-docstrings>=1.4',    # Docstring style guide extension
     'flake8-import-order>=0.9',  # Import statement style guide extension
     'furo>=2022.02.14.1',        # Documentation theme
     'notebook',                  # Run and convert notebooks to HTML
-    'pytest>=2.8',               # Test utilities
-    'pytest-cov>=0.6',           # Collect test coverage data
-    'sphinx>=5'                  # Documentation builder
+    'pytest>=5.4',               # Test utilities
+    'pytest-cov>=2.6.1',         # Collect test coverage data
+    'sphinx>=4'                  # Documentation builder
 ]
 
 setup(
