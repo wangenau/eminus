@@ -31,7 +31,8 @@ def read_xyz(filename):
 
         # The second line can contain a comment, print it if available
         comment = lines[1].strip()
-        log.info(f'XYZ file comment: "{comment}"')
+        if comment:
+            log.info(f'XYZ file comment: "{comment}"')
 
         atom = []
         X = []

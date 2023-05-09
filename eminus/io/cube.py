@@ -31,7 +31,8 @@ def read_cube(filename):
 
         # The first and second line can contain comments, print them if available
         comment = f'{lines[0].strip()}\n{lines[1].strip()}'
-        log.info(f'XYZ file comment: "{comment}"')
+        if comment:
+            log.info(f'XYZ file comment: "{comment}"')
 
         # Line 4 to 6 contain the sampling per axis, and the cell basis vectors with length a/s
         # A cuboidal cell is assumed, so only use the diagonal entries
