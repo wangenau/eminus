@@ -39,7 +39,7 @@ def I(atoms, W):
 
     if W.ndim < 3:
         if len(W) == len(atoms.G2):
-            Wfft = W
+            Wfft = np.copy(W)
         else:
             if W.ndim == 1:
                 Wfft = np.zeros(n, dtype=W.dtype)
@@ -87,7 +87,7 @@ def J(atoms, W, full=True):
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 
-    Wfft = torch.from_numpy(W)
+    Wfft = torch.from_numpy(np.copy(W))
     if config.use_gpu:
         Wfft = Wfft.cuda()
 
@@ -126,7 +126,7 @@ def Idag(atoms, W, full=False):
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
 
-    Wfft = torch.from_numpy(W)
+    Wfft = torch.from_numpy(np.copy(W))
     if config.use_gpu:
         Wfft = Wfft.cuda()
 
@@ -164,7 +164,7 @@ def Jdag(atoms, W):
 
     if W.ndim < 3:
         if len(W) == len(atoms.G2):
-            Wfft = W
+            Wfft = np.copy(W)
         else:
             if W.ndim == 1:
                 Wfft = np.zeros(n, dtype=W.dtype)
