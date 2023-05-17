@@ -51,10 +51,10 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, exc_only=False, dn_spin=None,
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
     '''
+    # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     zeta = zeta[0]  # Getting the non-zero values from zeta adds an extra dimension, remove it here
     n_up = zeta * n + n   # 2 * n_up
     n_dw = -zeta * n + n  # 2 * n_down
-
     ex_up, vx_up, vsigma_up = pbe_x_base(n_up, mu, exc_only, 2 * dn_spin[0], **kwargs)
     ex_dw, vx_dw, vsigma_dw = pbe_x_base(n_dw, mu, exc_only, 2 * dn_spin[1], **kwargs)
 

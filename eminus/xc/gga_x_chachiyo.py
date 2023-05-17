@@ -62,6 +62,7 @@ def gga_x_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
     '''
+    # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     n_up = zeta * n + n   # 2 * n_up
     n_dw = -zeta * n + n  # 2 * n_down
     ex_up, vx_up, vsigma_up = gga_x_chachiyo(n_up, exc_only, np.array([2 * dn_spin[0]]), **kwargs)
