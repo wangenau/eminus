@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-'''GTH pseudopotential files.
+'''PBE GTH pseudopotential files.
 
-Reference: Phys. Rev. B 54, 1703.
+Reference: Theor. Chem. Acc. 114, 145.
 '''
 
 if __name__ == '__main__':
@@ -20,8 +20,8 @@ if __name__ == '__main__':
     with zipfile.ZipFile(file, 'r') as fzip:
         fzip.extractall()
     # Move files
-    pade_path = psp_path.joinpath('cp2k-data-master/potentials/Goedecker/cp2k/pade')
-    for f in pade_path.iterdir():
+    gth_path = psp_path.joinpath('cp2k-data-master/potentials/Goedecker/cp2k/pbe')
+    for f in gth_path.iterdir():
         shutil.move(f, psp_path.joinpath(f.name))
     # Cleanup
     psp_path.joinpath(file).unlink()

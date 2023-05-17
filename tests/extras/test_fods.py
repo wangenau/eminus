@@ -55,7 +55,7 @@ def test_split_fods(Nspin, elec_symbols):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_remove_core_fods(Nspin):
     '''Test core FOD removal function.'''
-    atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin).build()
+    atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin, Z=1).build()
     core = atoms.X
     valence = rng.standard_normal((10, 3))
 

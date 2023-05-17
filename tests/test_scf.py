@@ -69,7 +69,7 @@ def test_clear():
     scf = SCF(atoms, min={'sd': 1})
     scf.run()
     scf.clear()
-    assert [x for x in (scf.Y, scf.n_spin, scf.phi, scf.exc, scf.vxc) if x is None]
+    assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc) if x is None]
 
 
 def test_recenter():

@@ -18,7 +18,7 @@ def lda_c_pw_mod(n, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
     '''
-    return lda_c_pw(n, a=0.0310907, **kwargs)
+    return lda_c_pw(n, A=0.0310907, **kwargs)
 
 
 def lda_c_pw_mod_spin(n, zeta, **kwargs):
@@ -34,5 +34,5 @@ def lda_c_pw_mod_spin(n, zeta, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
     '''
-    return lda_c_pw_spin(n, zeta, a=(0.0310907, 0.01554535, 0.0168869),
-                         fz0=1.709920934161365617563962776245, **kwargs)
+    return lda_c_pw_spin(n, zeta, A=(0.0310907, 0.01554535, 0.0168869),
+                         fzeta0=1.709920934161365617563962776245, **kwargs)

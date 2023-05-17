@@ -34,7 +34,7 @@ class Atoms:
 
             None will disable the G-Vector truncation (needs a separate s).
             Default: 30 Hartree (ca. 816 eV).
-        Z (int | list | tuple | ndarray | dict | None): Valence charge per atom.
+        Z (int | list | tuple | ndarray | dict | str | None): Valence charge per atom.
 
             The charges should not differ for same species. None will use valence charges from GTH
             files. The same charge for every atom will be assumed for single integers.
@@ -194,10 +194,14 @@ class Atoms:
             self.Z = np.asarray(self.Z)
 
         # If no charge is given, use the ionic charge from the GTH files
-        if self.Z is None:
+        if self.Z is None or isinstance(self.Z, str):
+            if isinstance(self.Z, str):
+                xc = self.Z.lower()
+            else:
+                xc = 'pbe'
             Z = []
             for ia in range(self.Natoms):
-                gth_dict = read_gth(self.atom[ia])
+                gth_dict = read_gth(self.atom[ia], xc=xc)
                 Z.append(gth_dict['Zion'])
             self.Z = np.asarray(Z)
         return

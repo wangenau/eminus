@@ -15,7 +15,7 @@ from .minimizer import IMPLEMENTED
 from .potentials import init_pot
 from .tools import center_of_mass
 from .version import info
-from .xc import parse_functionals
+from .xc import parse_functionals, parse_psp
 
 
 class SCF:
@@ -97,21 +97,28 @@ class SCF:
         self.NbetaNL = 0          # Number of projector functions for the non-local gth potential
         self.prj2beta = None      # Index matrix to map to the correct projector function
         self.betaNL = None        # Atomic-centered projector functions
+        self.psp = None           # Type of GTH pseudopotential that will be used
         self.print_precision = 6  # Precision of the energy in the minimizer logger
         self.initialize()
 
     def clear(self):
         '''Initialize and clear intermediate results.'''
-        self.Y = None       # Orthogonal wave functions
-        self.n_spin = None  # Electronic densities per spin
-        self.phi = None     # Hartree field
-        self.exc = None     # Exchange-correlation energy density
-        self.vxc = None     # Exchange-correlation potential
+        self.Y = None        # Orthogonal wave functions
+        self.n_spin = None   # Electronic densities per spin
+        self.dn_spin = None  # Gradient of electronic densities per spin
+        self.phi = None      # Hartree field
+        self.exc = None      # Exchange-correlation energy density
+        self.vxc = None      # Exchange-correlation potential
+        self.vsigma = None   # n times d exc/d |dn|^2
+        self.precomputed = {'Y': self.Y, 'n': self.n, 'n_spin': self.n_spin,
+                            'dn_spin': self.dn_spin, 'phi': self.phi, 'vxc': self.vxc,
+                            'vsigma': self.vsigma}
         return self
 
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
         self.xc = parse_functionals(self.xc)
+        self.psp = parse_psp(self.xc)
         # Build the atoms object if necessary and make a copy
         # This way the atoms object in scf is independent but we ensure that both atoms are build
         if not self.atoms.is_built:
@@ -229,7 +236,7 @@ class SCF:
         atoms = self.atoms
         if self.pot == 'gth':
             for ia in range(atoms.Natoms):
-                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia])
+                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], xc=self.psp)
             # Set up the local and non-local part
             self.Vloc = init_gth_loc(self)
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
@@ -254,8 +261,10 @@ class SCF:
 
     def __repr__(self):
         '''Print the parameters stored in the SCF object.'''
+        # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return f'XC functionals: {self.xc}\n' \
                f'Potential: {self.pot}\n' \
+               f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
                f'Convergence tolerance: {self.etol}\n' \
                f'Non-local contribution: {self.NbetaNL > 0}'
@@ -277,7 +286,6 @@ class RSCF(SCF):
 
     Inherited from :class:`eminus.scf.SCF`.
     '''
-
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
         self.atoms = copy.copy(self.atoms)
@@ -291,7 +299,6 @@ class USCF(SCF):
 
     Inherited from :class:`eminus.scf.SCF`.
     '''
-
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
         self.atoms = copy.copy(self.atoms)

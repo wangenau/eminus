@@ -70,14 +70,14 @@ def orbital_center(object, psirs):
 
     coms = [np.array([])] * 2
     Ncom = psirs.shape[2]
-    for s in range(atoms.Nspin):
+    for spin in range(atoms.Nspin):
         coms_spin = np.empty((Ncom, 3))
 
         # Square orbitals
-        psi2 = np.real(psirs[s, :, :].conj() * psirs[s, :, :])
+        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
         for i in range(Ncom):
             coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
-        coms[s] = coms_spin
+        coms[spin] = coms_spin
     return coms
 
 

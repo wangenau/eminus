@@ -7,7 +7,7 @@ from numpy.testing import assert_equal
 import pytest
 
 from eminus.data import COVALENT_RADII, CPK_COLORS, SYMBOL2NUMBER
-import eminus.pade
+from eminus.psp import pade, pbe
 
 
 def test_data():
@@ -16,9 +16,19 @@ def test_data():
     assert_equal(SYMBOL2NUMBER.keys(), CPK_COLORS.keys())
 
 
-def test_gth_data():
-    '''Check that every atom has at least one pseudopotential file.'''
-    psp_path = pathlib.Path(inspect.getfile(eminus.pade)).parent
+def test_pade_data():
+    '''Check that every atom has at least one PADE pseudopotential file.'''
+    psp_path = pathlib.Path(inspect.getfile(pade)).parent
+    for atom in SYMBOL2NUMBER:
+        if atom == 'X':
+            continue
+        f_psp = sorted(psp_path.glob(f'{atom}-q*'))
+        assert len(f_psp) > 0
+
+
+def test_pbe_data():
+    '''Check that every atom has at least one PBE pseudopotential file.'''
+    psp_path = pathlib.Path(inspect.getfile(pbe)).parent
     for atom in SYMBOL2NUMBER:
         if atom == 'X':
             continue

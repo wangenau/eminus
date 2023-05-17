@@ -18,10 +18,11 @@ def lda_c_chachiyo_mod(n, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
+    # Same as lda_c_chachiyo
     return lda_c_chachiyo(n, **kwargs)
 
 
-def chachiyo_mod_scaling(zeta, exc_only=False):
+def chachiyo_scaling_mod(zeta, exc_only=False):
     '''Modified weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: Comput. Theor. Chem. 1172, 112669.
@@ -57,4 +58,4 @@ def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
-    return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_mod_scaling, **kwargs)
+    return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling_mod, **kwargs)

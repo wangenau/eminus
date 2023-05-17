@@ -21,16 +21,15 @@ def lda_x(n, exc_only=False, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Exchange energy density and potential.
     '''
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
     f = -3 / 4 * (3 / (2 * np.pi))**(2 / 3)
-    rs = pi34 * n**(-1 / 3)
+    rs = (3 / (4 * np.pi * n))**(1 / 3)
 
     ex = f / rs
     if exc_only:
-        return ex, None
+        return ex, None, None
 
     vx = 4 / 3 * ex
-    return ex, np.array([vx])
+    return ex, np.array([vx]), None
 
 
 def lda_x_spin(n, zeta, exc_only=False, **kwargs):
@@ -58,8 +57,8 @@ def lda_x_spin(n, zeta, exc_only=False, **kwargs):
     exdw = f * rho13m
     ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
     if exc_only:
-        return ex, None
+        return ex, None, None
 
-    vxup = 4 / 3 * f * rho13p
-    vxdw = 4 / 3 * f * rho13m
-    return ex, np.array([vxup, vxdw])
+    vxup = 4 / 3 * exup
+    vxdw = 4 / 3 * exdw
+    return ex, np.array([vxup, vxdw]), None

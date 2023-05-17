@@ -34,6 +34,12 @@ Modules
    eminus.io.pdb
    eminus.io.xyz
    eminus.xc
+   eminus.xc.gga_c_chachiyo
+   eminus.xc.gga_c_pbe
+   eminus.xc.gga_c_pbe_sol
+   eminus.xc.gga_x_chachiyo
+   eminus.xc.gga_x_pbe
+   eminus.xc.gga_x_pbe_sol
    eminus.xc.lda_c_chachiyo
    eminus.xc.lda_c_chachiyo_mod
    eminus.xc.lda_c_pw
@@ -46,4 +52,6 @@ Modules
    eminus.extras.libxc
    eminus.extras.torch
    eminus.extras.viewer
-   eminus.pade
+   eminus.psp
+   eminus.psp.pade
+   eminus.psp.pbe

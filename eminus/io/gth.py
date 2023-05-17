@@ -8,7 +8,7 @@ import numpy as np
 from ..logger import log
 
 
-def read_gth(atom, charge=None, psp_path=None):
+def read_gth(atom, charge=None, xc='pade', psp_path=None):
     '''Read GTH files for a given atom.
 
     Reference: Phys. Rev. B 54, 1703.
@@ -18,14 +18,15 @@ def read_gth(atom, charge=None, psp_path=None):
 
     Keyword Args:
         charge (int): Valence charge.
-        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/pade/.
+        xc (str): Weather to use the pade or the pbe pseudopotential files.
+        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/.
 
     Returns:
         dict: GTH parameters.
     '''
     if psp_path is None:
         file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
-        psp_path = file_path.parent.joinpath('pade')
+        psp_path = file_path.parent.joinpath(f'psp/{xc}')
 
     if charge is not None:
         f_psp = psp_path.joinpath(f'{atom}-q{charge}')

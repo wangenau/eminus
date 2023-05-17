@@ -39,7 +39,8 @@ def test_coordinates(X, center, ref):
 
 
 @pytest.mark.parametrize('atom, Z, ref', [('H', None, [1]),
-                                          ('Li', None, [1]),
+                                          ('Li', 'pade', [1]),
+                                          ('Li', 'pbe', [3]),
                                           ('Li-q3', None, [3]),
                                           ('He2', 2, [2, 2]),
                                           ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2])])

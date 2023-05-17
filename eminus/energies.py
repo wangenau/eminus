@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_n_single, solve_poisson
+from .dft import get_grad_n_spin, get_n_single, solve_poisson
 from .xc import get_exc
 
 
@@ -94,7 +94,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
+def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -106,6 +106,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
         n_spin (ndarray): Real-space electronic densities per spin channel.
+        dn_spin (ndarray): Real-space gradient of densities per spin channel.
         Nspin (int): Number of spin states.
 
     Returns:
@@ -113,7 +114,9 @@ def get_Exc(scf, n, exc=None, n_spin=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        exc = get_exc(scf.xc, n_spin, Nspin)
+        if dn_spin is None and scf.psp == 'pbe':
+            dn_spin = get_grad_n_spin(atoms, n_spin)
+        exc = get_exc(scf.xc, n_spin, Nspin, dn_spin)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
