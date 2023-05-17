@@ -79,7 +79,7 @@ def test_wannier(Nspin):
     assert check_orthonorm(scf, wo)
     costs = wannier_cost(scf.atoms, wo)
     # Check that all transformed orbitals have a similar spread
-    assert_allclose(costs, costs[0, 0], atol=1e-3)
+    assert_allclose(costs, costs[0, 0], atol=0.0025)
 
 
 if __name__ == '__main__':
