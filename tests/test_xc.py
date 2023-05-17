@@ -93,7 +93,7 @@ def test_exc_only(xc, Nspin):
                                     (',', ['mock_xc', 'mock_xc']),
                                     ('libxc:1,l:7', ['libxc:1', 'l:7']),
                                     ('libxc:1,', ['libxc:1', 'mock_xc']),
-                                    (',libxc:7', ['mock_xc', 'libxc:7']),
+                                    (',:7', ['mock_xc', ':7']),
                                     ('s,l:7', ['lda_x', 'l:7'])])
 def test_parse_functionals(xc, ref):
     '''Test the xc string parsing.'''

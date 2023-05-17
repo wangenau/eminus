@@ -16,9 +16,9 @@ SCF(atoms, min=min_dict).run()
 # # Exchange-correlation functional description (case insensitive), separated by a comma
 xc = 'lda,pw'
 
-# # The Libxc interface can be used by adding `'libxc:'` before a functional
+# # The Libxc interface can be used by adding `libxc:` before a functional (you can also neglect the `libxc` part)
 # # Names and numbers can be used, and mixed with the internal functionals as well
-# xc = 'libxc:LDA_X,libxc:LDA_C_PW'
+# xc = 'libxc:LDA_X,:LDA_C_PW'
 # xc = 'libxc:1,pw'
 
 # # Type of pseudopotential (case insensitive)
