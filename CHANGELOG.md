@@ -6,13 +6,12 @@ dev
 - New features
    - Add GGA functionals!
       - Add internal PBE, PBEsol, and Chachiyo functionals
-      - Option to use all GGAs from Libxc with pylibxc or PySCF
-      - Add PBE GTH files
+      - Option to use all GGAs from Libxc using pylibxc or PySCF
 - Miscellaneous
-   - Option to select the atom charges depending on the GTH files
    - Rewrite functionals for better readability
+   - Fix Torch operators in some edge cases
    - Merge configuration files in tox.ini
-   - Simplify some signatures in minimizer
+   - Update minimum versions of dependencies
 
 v2.3.0 - May 02, 2023
 ---------------------
