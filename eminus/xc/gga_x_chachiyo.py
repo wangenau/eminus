@@ -32,7 +32,7 @@ def gga_x_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     x1 = x + 1
     logx1 = np.log(x1)
     div = 3 * x + np.pi**2
-    tmpgex = (3 * x**2 + np.pi**2 * logx1)
+    tmpgex = 3 * x**2 + np.pi**2 * logx1
     gex = tmpgex / (div * logx1)
     if exc_only:
         return ex * gex, None, None
