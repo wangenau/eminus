@@ -97,10 +97,11 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None):
     if dn_spin is None:
         # For LDAs we only need the spin densities that are already in the needed shape
         exc, vxc, _, _ = eval_xc(xc, n_spin, spin=Nspin - 1)
-        # The first entry of vxc is vrho as a column array
+        # The first entry of vxc is vrho as a 1d array for Nspin=1 and as a column array for Nspin=2
         return exc, np.atleast_2d(vxc[0].T), None
     else:
         # For GGAs we have to append the density gradients
+        # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
         if Nspin == 1:
             # For spin-paired systems we have to remove the spin indexing, i.e., the outermost shape
             rho = np.vstack((n_spin[0], dn_spin[0].T))
