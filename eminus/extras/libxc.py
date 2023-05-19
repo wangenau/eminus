@@ -38,7 +38,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None):
         assert config.use_pylibxc
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
-        return pyscf_functional(xc, n_spin, Nspin)
+        return pyscf_functional(xc, n_spin, Nspin, dn_spin)
 
     # Libxc functionals have one integer and one string identifier
     try:
