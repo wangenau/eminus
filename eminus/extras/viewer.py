@@ -51,9 +51,9 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
         atom_data = go.Scatter3d(x=atoms.X[mask, 0], y=atoms.X[mask, 1], z=atoms.X[mask, 2],
                                  name=ia,
                                  mode='markers',
-                                 marker=dict(size=2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
-                                             color=CPK_COLORS[ia],
-                                             line={'color': 'black', 'width': 2}))
+                                 marker={'size': 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
+                                         'color': CPK_COLORS[ia],
+                                         'line': {'color': 'black', 'width': 2}})
         fig.add_trace(atom_data)
     if extra is not None:
         # If a list has been provided with the length of two it has to be FODs
@@ -62,20 +62,20 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
                 extra_data = go.Scatter3d(x=extra[0][:, 0], y=extra[0][:, 1], z=extra[0][:, 2],
                                           name='up-FOD',
                                           mode='markers',
-                                          marker=dict(size=np.pi, color='red'))
+                                          marker={'size': np.pi, 'color': 'red'})
                 fig.add_trace(extra_data)
             if len(extra) > 1 and len(extra[1]) != 0:
                 extra_data = go.Scatter3d(x=extra[1][:, 0], y=extra[1][:, 1], z=extra[1][:, 2],
                                           name='down-FOD',
                                           mode='markers',
-                                          marker=dict(size=np.pi, color='green'))
+                                          marker={'size': np.pi, 'color': 'green'})
                 fig.add_trace(extra_data)
         # Treat extra as normal coordinates otherwise
         else:
             extra_data = go.Scatter3d(x=extra[:, 0], y=extra[:, 1], z=extra[:, 2],
                                       name='Coordinates',
                                       mode='markers',
-                                      marker=dict(size=1, color='red'))
+                                      marker={'size': 1, 'color': 'red'})
             fig.add_trace(extra_data)
 
     # A density can be plotted for an scf object

@@ -61,7 +61,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     return loc_orb
 
 
-def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
+def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
     '''Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
@@ -72,7 +72,6 @@ def get_fods(object, basis='pc-1', loc='FB', clean=True, elec_symbols=None):
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
         loc (str): Localization method (case insensitive).
-        clean (bool): Remove log files.
         elec_symbols (list): Identifier for up and down FODs.
 
     Returns:

@@ -110,7 +110,7 @@ def test_parse_functionals(xc, ref):
                                     (['libxc:gga_x_pbe', 'l:gga_c_pbe'], 'pbe'),
                                     (['libxc:1', 'gga_c_pbe'], 'pbe'),
                                     (['libxc:gga_x_pbe', 'lda_c_vwn'], 'pbe'),
-                                    (['gga_x_pbe', 'libxc:7'], 'pbe'),])
+                                    (['gga_x_pbe', 'libxc:7'], 'pbe')])
 def test_parse_psp(xc, ref):
     '''Test the pseudopotential parsing.'''
     if ':' in ''.join(xc):
