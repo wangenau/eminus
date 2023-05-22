@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 '''Various tools to check physical properties.'''
 import numpy as np
+from numpy.linalg import norm
 from scipy.optimize import minimize_scalar
 
-from .dft import get_epsilon
+from .dft import get_epsilon, get_grad_n_spin
 from .logger import log
 
 
@@ -280,3 +281,47 @@ def get_isovalue(n, percent=85):
     # The problem is bound by zero (no density) and the maximum value in n
     res = minimize_scalar(deviation, bounds=(0, np.max(n)), method='bounded')
     return res.x
+
+
+def get_tautf(scf):
+    '''Calculate the Thomas-Fermi kinetic energy densities per spin.
+
+    Reference: Adv. Math. 23, 22.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        ndarray: Real space Thomas-Fermi kinetic energy density.
+    '''
+    atoms = scf.atoms
+    tautf = 3 / 10 * (6 * np.pi)**(2 / 3) * scf.n_spin**(5 / 3)
+
+    log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
+    log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    return tautf
+
+
+def get_tauw(scf):
+    '''Calculate the von Weizsäcker kinetic energy densities per spin.
+
+    Reference: Z. Phys. 96, 431.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        ndarray: Real space von Weizsäcker kinetic energy density.
+    '''
+    atoms = scf.atoms
+    if scf.dn_spin is None:
+        dn_spin = get_grad_n_spin(atoms, scf.n_spin)
+    else:
+        dn_spin = scf.dn_spin
+    dn2 = norm(dn_spin, axis=2)**2
+    tauw = dn2 / (8 * scf.n_spin)
+
+    # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
+    log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
+    log.debug(f'Integrated tauw:  {np.sum(tauw) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    return tauw

@@ -8,6 +8,7 @@ dev
       - Add internal PBE, PBEsol, and Chachiyo functionals
       - Option to use all GGAs from Libxc using pylibxc or PySCF
 - Miscellaneous
+   - Add Thomas-Fermi and von Weizsäcker kinetic energy density functions
    - Rewrite functionals for better readability
    - Fix Torch operators in some edge cases
    - Merge configuration files in tox.ini
