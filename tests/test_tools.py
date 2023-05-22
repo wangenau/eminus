@@ -8,8 +8,8 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, gridspacing2cutoff,
-                          inertia_tensor, orbital_center)
+                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_tautf, get_tauw,
+                          gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
@@ -91,6 +91,30 @@ def test_check_orthonorm(ref, func):
 def test_get_isovalue():
     '''Test isovalue calculation.'''
     assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_get_tautf(Nspin):
+    '''Test Thomas-Fermi kinetic energy density.'''
+    atoms = Atoms('He', (0, 0, 0), s=10, Nspin=Nspin)
+    scf = SCF(atoms)
+    scf.run()
+    tautf = get_tautf(scf)
+    T = np.sum(tautf) * atoms.Omega / np.prod(atoms.s)
+    # TF KED is not exact, but similar for simple systems
+    assert_allclose(T, scf.energies.Ekin, atol=0.2)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_get_tauw(Nspin):
+    '''Test von Weizsäcker kinetic energy density.'''
+    atoms = Atoms('He', (0, 0, 0), ecut=1, Nspin=Nspin, center=True)
+    scf = SCF(atoms)
+    scf.run()
+    tauw = get_tauw(scf)
+    T = np.sum(tauw) * atoms.Omega / np.prod(atoms.s)
+    # vW KED is exact for one- and two-electron systems
+    assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
 
 if __name__ == '__main__':

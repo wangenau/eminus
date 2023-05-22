@@ -286,7 +286,7 @@ def get_isovalue(n, percent=85):
 def get_tautf(scf):
     '''Calculate the Thomas-Fermi kinetic energy densities per spin.
 
-    Reference: Adv. Math. 23, 22.
+    Reference: Phys. Lett. B 63, 395.
 
     Args:
         scf: SCF object.
@@ -295,7 +295,7 @@ def get_tautf(scf):
         ndarray: Real space Thomas-Fermi kinetic energy density.
     '''
     atoms = scf.atoms
-    tautf = 3 / 10 * (6 * np.pi)**(2 / 3) * scf.n_spin**(5 / 3)
+    tautf = 3 / 10 * (atoms.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
 
     log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
     log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
