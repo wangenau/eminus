@@ -48,7 +48,7 @@ def I(atoms, W):
             Wfft[atoms.active] = W
     else:
         if W.shape[1] == len(atoms.G2):
-            Wfft = W
+            Wfft = np.copy(W)
         else:
             Wfft = np.zeros((atoms.Nspin, n, atoms.Nstate), dtype=W.dtype)
             Wfft[:, atoms.active[0]] = W
@@ -173,7 +173,7 @@ def Jdag(atoms, W):
             Wfft[atoms.active] = W
     else:
         if W.shape[1] == len(atoms.G2):
-            Wfft = W
+            Wfft = np.copy(W)
         else:
             Wfft = np.zeros((atoms.Nspin, n, atoms.Nstate), dtype=W.dtype)
             Wfft[:, atoms.active[0]] = W
