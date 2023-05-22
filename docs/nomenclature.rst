@@ -64,6 +64,9 @@ Field variables
    * - :code:`n_spin`
      - Real space spin densities
      - :code:`(Nspin, Number of sampling points)`
+   * - :code:`dn_spin`
+     - Real space gradients per axis of spin densities
+     - :code:`(Nspin, Number of sampling points, 3)`
    * - :code:`n_single`
      - Real space single-particle density
      - :code:`(Number of sampling points)`
@@ -89,8 +92,11 @@ Field variables
      - Real space exchange-correlation energy density
      - :code:`(Number of sampling points)`
    * - :code:`vxc`
-     - Real space exchange-correlation potential
+     - Real space exchange-correlation potential (dexc/dn)
      - :code:`(Nspin, Number of sampling points)`
+   * - :code:`vsigma`
+     - Real space gradient correction (n dexc/d|dn|^2)
+     - :code:`(1 or 3, Number of sampling points)`
    * - :code:`Vloc`
      - Reciprocal space local pseudopotential contribution
      - :code:`(Number of active G-vectors)`
