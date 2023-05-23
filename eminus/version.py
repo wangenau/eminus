@@ -4,7 +4,7 @@ import importlib
 import platform
 import sys
 
-__version__ = '2.3.0'
+__version__ = '2.4.0'
 logo = (' ___ _____ _ ___ _ _ ___ \n'
         '| -_|     | |   | | |_ -|\n'
         '|___|_|_|_|_|_|_|___|___|\n')

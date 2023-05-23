@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.4.0 - May 23, 2023
+---------------------
 - New features
    - Add GGA functionals!
       - Add internal PBE, PBEsol, and Chachiyo functionals
@@ -13,6 +13,8 @@ dev
    - Fix Torch operators in some edge cases
    - Merge configuration files in tox.ini
    - Update minimum versions of dependencies
+
+----
 
 v2.3.0 - May 02, 2023
 ---------------------
