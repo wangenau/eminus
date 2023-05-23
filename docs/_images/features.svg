@@ -4,8 +4,8 @@
 <svg
    version="1.1"
    width="927.76001"
-   height="909.20801"
-   viewBox="-0.5 -0.5 927.76 909.20801"
+   height="1040"
+   viewBox="-0.5 -0.5 927.76 1040"
    content="&lt;mxfile host=&quot;app.diagrams.net&quot; modified=&quot;2022-05-27T15:14:59.984Z&quot; agent=&quot;5.0 (X11)&quot; etag=&quot;INjbMttoXDNkS5cGdwdF&quot; version=&quot;18.1.3&quot; type=&quot;device&quot;&gt;&lt;diagram name=&quot;Page-1&quot; id=&quot;97916047-d0de-89f5-080d-49f4d83e522f&quot;&gt;7ZxtU6M6FMc/TV/q8FCeXiq26lxdne3uuve+C0mguQLphLBWP/0NBWx7485s6Eh4ETuj5SSQJvmZc84/lJkbF9trBjbre4pwPnMstJ25VzPHceaeLf40ltfWYrth1FoyRlBn2xtW5A13Rquz1gTh6qgipzTnZHNshLQsMeRHNsAYfTmultL8uNUNyLBkWEGQ99Zzb29/IoivO7vtR/uCG0yyddd46ARtQQLgc8ZoXXYtlrTEbUkB+st0vazWANGXA5O7mLkxo5S374ptjPNmZPsxa89b/qb0vSsMl/xPTti+es9v2ZevznXF02JZAYT4mdf1/BfI6240LkFFqu4j89d+jHZ9xM2l7Jl7mZI8j2lO2a7QDZwIQ1HxsuKMPuO+ZDcYwth3vDkzYwAR8Yn/VyelJV91rdnd8UED1u6nr9cCZAfd8RIUJG/Yi2mRUsYB6CvSmjUf62rNuUDJ8dwL8UsMUPOrqVCdZ5RmOQYbUp1DWuwKYLWrukzby4q3Rxfuxgszjre/nQn7fX7Ffw2mBeZMXMnaHnP/enz4sifPsTrb+gA6v7OBDvfs/cL7WRdvuolXgSCSIFjFSzUE/CBJPWgQGIhAoJuB/sIHDCzrEnJCS5ArLgdpGuE5MCwMYyHSjoItLwccME7KbOescaXIA0a+7yHDwzAeHE87EMEHQGC8wRVvwj5cwaZnSkhEIUpDs0T8KRKiP1PzF6HExB1pYl+rICUpyBtoXIeB4hOhmHuTg0IOJGNa/ltngONd9tdOmqHiE6nwg6lREcih5d2VGKz4x9MX1cAySYLQoDDQa2iPLAM5smxJeHwyIIzoKfSD4HwQPSQ/Y0PBiJ5BPwWuRME1qKuKAMXAMU2jMPINCAOXA/0ZZjCXSPgKStSMiOFgtPhgAhzI2xGPOdillS/gF1bUnQCGATb+YbDIoJ0GWWP4RjlozsMlZtmr4uoQJD50DA4DcZjrjxdkeeGBJYQrb1CAMAh9bEgYJkjPtS8MoawoPDK6EX0kqj4CoyiARl0aioL2NSGUJYX44d44hhHzSE+7whjKcsJqwzBAhoMROZjAYiALCj9IVYN80HYURBCabeuhriFwtdMgiwp/rR4UGZhHMJobBobmDPpDRVlRWN4ZCEb1C/oh8GUIDANjSswTYEC+iekiz89wjqGYUREaWDGtc1okilx4iYU8w8VAB+HqjxJkkfGRctEdoi4roTCBkWFhWMA4ARRkffH6241ZD0b0E/oh6JPYk0VmlKAkNOnjUBL054+RLC3eUxEu1LmqyGxQOClImAAKssB4zQgyGIyZR04AA1lfvKXlu7hobfrAUY0Lozuf5Cn07z9EstJ4RTbCVwhbIdoQQ2WIGFNt0L4TEX0gOxLluMFHECKzOT0woQy1a06RrDv+/PsfNQYijAA2CeXQ2HECEMjCY/z9cmEoGNEhTIACWWZc3Sp+3wE4zctAMMwd+Nrvbo5kfXFJtmK2my9RlxXhije0wqB5GR4Gugb9QNh9a4eJAy0AKdUfwLOIF4aEgYGi9nTBtuR8YdHd4t489oozktSNyGDyyDFXCP3Kgm3JKcRqs8aMQFWV6WIRBwvzbZjBicQEFokPMok6oQQZFMbNJiaAgpxO3Fa0PTIojLcnMQEUbDmGvAGsoCWBiumEuXXhFBT037pg2/KO9fLu4UxZaDCJ5Un+4TMTS3G4f2Tsruzgqbzu4j8=&lt;/diagram&gt;&lt;/mxfile&gt;"
    id="svg342"
    sodipodi:docname="features.svg"
@@ -23,14 +23,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     height="909.20801px"
-     inkscape:zoom="0.926312"
-     inkscape:cx="589.974"
-     inkscape:cy="489.57587"
+     height="1040px"
+     inkscape:zoom="0.6550015"
+     inkscape:cx="278.62532"
+     inkscape:cy="446.56386"
      inkscape:window-width="1846"
      inkscape:window-height="1016"
      inkscape:window-x="2634"
-     inkscape:window-y="186"
+     inkscape:window-y="214"
      inkscape:window-maximized="1"
      inkscape:current-layer="g340" />
   <defs
@@ -299,7 +299,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-9-0-6-7-7"
-       transform="matrix(2.081721,0,0,2.081721,316.29155,-1177.305)"
+       transform="matrix(2.081721,0,0,2.081721,316.29155,-1112.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -312,7 +312,7 @@
     </g>
     <g
        id="layer1-6-1-3-8-1-4-2-3"
-       transform="matrix(2.081721,0,0,2.081721,315.29155,-1179.305)"
+       transform="matrix(2.081721,0,0,2.081721,315.29155,-1114.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -325,7 +325,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6"
-       transform="matrix(2.081721,0,0,2.081721,106.29155,-1177.305)"
+       transform="matrix(2.081721,0,0,2.081721,106.29155,-1112.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -338,7 +338,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4"
-       transform="matrix(2.081721,0,0,2.081721,105.29155,-1179.305)"
+       transform="matrix(2.081721,0,0,2.081721,105.29155,-1114.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -351,7 +351,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2"
-       transform="matrix(2.081721,0,0,2.081721,-103.70847,-1177.305)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70847,-1112.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -364,7 +364,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9"
-       transform="matrix(2.081721,0,0,2.081721,-104.70847,-1179.305)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70847,-1114.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -377,7 +377,7 @@
     </g>
     <g
        id="layer1-3-5-6-3-22-3-5-7-8"
-       transform="matrix(2.081721,0,0,2.081721,-313.70845,-1177.305)"
+       transform="matrix(2.081721,0,0,2.081721,-313.70845,-1112.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -390,7 +390,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6"
-       transform="matrix(0.44994092,0,0,0.41637122,191.55391,208.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,191.55391,273.68461)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -403,7 +403,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-2"
-       transform="matrix(0.44994092,0,0,0.41637122,396.09389,208.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,396.09389,273.68461)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -416,7 +416,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-4"
-       transform="matrix(0.44994092,0,0,0.41637122,608.05231,208.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,608.05231,273.68461)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -429,7 +429,7 @@
     </g>
     <g
        id="layer1-6-1-5-7-5-8-5-9"
-       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-1179.2942)"
+       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-1114.2942)"
        style="fill:#a8786e;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#a8786e;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -442,7 +442,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-9-0-6-7-7-8"
-       transform="matrix(2.081721,0,0,2.081721,316.29156,-1112.305)"
+       transform="matrix(2.081721,0,0,2.081721,316.29156,-1047.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -455,7 +455,7 @@
     </g>
     <g
        id="layer1-6-1-3-8-1-4-2-3-1"
-       transform="matrix(2.081721,0,0,2.081721,315.29156,-1114.305)"
+       transform="matrix(2.081721,0,0,2.081721,315.29156,-1049.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -468,7 +468,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9"
-       transform="matrix(2.081721,0,0,2.081721,106.29156,-1112.305)"
+       transform="matrix(2.081721,0,0,2.081721,106.29156,-1047.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -481,7 +481,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8"
-       transform="matrix(2.081721,0,0,2.081721,105.29156,-1114.305)"
+       transform="matrix(2.081721,0,0,2.081721,105.29156,-1049.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -494,7 +494,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2-3"
-       transform="matrix(2.081721,0,0,2.081721,-103.70846,-1112.305)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70846,-1047.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -507,7 +507,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-2-4"
-       transform="matrix(0.44994092,0,0,0.41637122,399.83732,273.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,399.83732,338.68461)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -520,7 +520,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-2-4-1"
-       transform="matrix(0.44994092,0,0,0.41637122,610.36212,273.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,610.36212,338.68461)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -533,7 +533,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9-4"
-       transform="matrix(2.081721,0,0,2.081721,-104.70846,-1114.305)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70846,-1049.305)"
        style="fill:#c49c94;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c49c94;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -546,7 +546,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9-5"
-       transform="matrix(2.081721,0,0,2.081721,106.29157,-1047.305)"
+       transform="matrix(2.081721,0,0,2.081721,106.29157,-982.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -559,7 +559,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8-1"
-       transform="matrix(2.081721,0,0,2.081721,105.29157,-1049.305)"
+       transform="matrix(2.081721,0,0,2.081721,105.29157,-984.305)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -572,7 +572,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2-3-9"
-       transform="matrix(2.081721,0,0,2.081721,-103.70845,-1047.305)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70845,-982.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -585,7 +585,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9-4-3"
-       transform="matrix(2.081721,0,0,2.081721,-104.70845,-1049.305)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70845,-984.305)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -598,7 +598,7 @@
     </g>
     <g
        id="layer1-3-5-6-3-22-3-5-7-8-7-3"
-       transform="matrix(2.081721,0,0,2.081721,-313.70845,-1047.305)"
+       transform="matrix(2.081721,0,0,2.081721,-313.70845,-982.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -611,7 +611,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7"
-       transform="matrix(0.44994092,0,0,0.41637122,186.83415,338.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,186.83415,403.68461)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -624,7 +624,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-8"
-       transform="matrix(0.44994092,0,0,0.41637122,399.9942,338.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,399.9942,403.68461)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -637,7 +637,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-84"
-       transform="matrix(0.44994092,0,0,0.41637122,608.09069,338.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,608.09069,403.68461)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -650,7 +650,7 @@
     </g>
     <g
        id="layer1-6-1-5-7-5-8-5-9-1-9"
-       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-1049.2942)"
+       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-984.2942)"
        style="fill:#ed97ca;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ed97ca;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -663,7 +663,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-9-0-6-7-7-8-9-3"
-       transform="matrix(2.081721,0,0,2.081721,316.29157,-982.305)"
+       transform="matrix(2.081721,0,0,2.081721,316.29157,-917.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -676,7 +676,7 @@
     </g>
     <g
        id="layer1-6-1-3-8-1-4-2-3-1-1-8"
-       transform="matrix(2.081721,0,0,2.081721,315.29157,-984.305)"
+       transform="matrix(2.081721,0,0,2.081721,315.29157,-919.305)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -689,7 +689,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9-5-4"
-       transform="matrix(2.081721,0,0,2.081721,106.29157,-982.305)"
+       transform="matrix(2.081721,0,0,2.081721,106.29157,-917.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -702,7 +702,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8-1-8"
-       transform="matrix(2.081721,0,0,2.081721,105.29157,-984.305)"
+       transform="matrix(2.081721,0,0,2.081721,105.29157,-919.305)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -715,7 +715,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2-3-9-7"
-       transform="matrix(2.081721,0,0,2.081721,-103.70845,-982.305)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70845,-917.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -728,7 +728,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9-4-3-3"
-       transform="matrix(2.081721,0,0,2.081721,-104.70845,-984.305)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70845,-919.305)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -741,7 +741,7 @@
     </g>
     <g
        id="layer1-3-5-6-3-22-3-5-7-8-7-3-0"
-       transform="matrix(2.081721,0,0,2.081721,-313.70845,-982.305)"
+       transform="matrix(2.081721,0,0,2.081721,-313.70845,-917.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -754,7 +754,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0"
-       transform="matrix(0.44994092,0,0,0.41637122,191.54723,403.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,191.54723,468.68461)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -767,7 +767,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-1"
-       transform="matrix(0.44994092,0,0,0.41637122,399.36167,403.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,399.36167,468.68461)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -780,7 +780,7 @@
     </g>
     <g
        id="layer1-6-1-5-7-5-8-5-9-1-9-5"
-       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-984.2942)"
+       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-919.2942)"
        style="fill:#a2a2a2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#a2a2a2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -793,7 +793,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9-5-4-2"
-       transform="matrix(2.081721,0,0,2.081721,106.29157,-917.30503)"
+       transform="matrix(2.081721,0,0,2.081721,106.29157,-788.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -806,7 +806,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8-1-8-7"
-       transform="matrix(2.081721,0,0,2.081721,105.29157,-919.30503)"
+       transform="matrix(2.081721,0,0,2.081721,105.29157,-790.305)"
        style="fill:#dbdb8d;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dbdb8d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -819,7 +819,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2-3-9-7-8"
-       transform="matrix(2.081721,0,0,2.081721,-103.70845,-917.30503)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70845,-788.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -832,7 +832,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9-4-3-3-8"
-       transform="matrix(2.081721,0,0,2.081721,-104.70845,-919.30503)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70845,-790.305)"
        style="fill:#dbdb8d;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dbdb8d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -845,7 +845,7 @@
     </g>
     <g
        id="layer1-3-5-6-3-22-3-5-7-8-7-3-0-6"
-       transform="matrix(2.081721,0,0,2.081721,-313.70845,-917.30503)"
+       transform="matrix(2.081721,0,0,2.081721,-313.70845,-788.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -858,7 +858,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-7"
-       transform="matrix(0.44994092,0,0,0.41637122,190.64601,468.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,190.64601,597.68464)"
        style="fill:#dbdb8d;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dbdb8d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -871,7 +871,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-7-3"
-       transform="matrix(0.44994092,0,0,0.41637122,396.17871,468.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,396.17871,597.68464)"
        style="fill:#dbdb8d;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#dbdb8d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -884,7 +884,7 @@
     </g>
     <g
        id="layer1-6-1-5-7-5-8-5-9-1-9-5-2"
-       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-919.29423)"
+       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-790.2942)"
        style="fill:#cdcc5d;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#cdcc5d;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -897,7 +897,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-9-0-6-7-7-8-9-3-5-5"
-       transform="matrix(2.081721,0,0,2.081721,316.29157,-852.30504)"
+       transform="matrix(2.081721,0,0,2.081721,316.29157,-723.30501)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -910,7 +910,7 @@
     </g>
     <g
        id="layer1-6-1-3-8-1-4-2-3-1-1-8-6-0"
-       transform="matrix(2.081721,0,0,2.081721,315.29157,-854.30504)"
+       transform="matrix(2.081721,0,0,2.081721,315.29157,-725.30501)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -923,7 +923,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9-5-4-2-0"
-       transform="matrix(2.081721,0,0,2.081721,106.29155,-852.30504)"
+       transform="matrix(2.081721,0,0,2.081721,106.29155,-723.30501)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -936,7 +936,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8-1-8-7-6"
-       transform="matrix(2.081721,0,0,2.081721,105.29155,-854.30504)"
+       transform="matrix(2.081721,0,0,2.081721,105.29155,-725.30501)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -949,7 +949,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-5-9-4-2-3-9-7-8-8"
-       transform="matrix(2.081721,0,0,2.081721,-103.70846,-852.30504)"
+       transform="matrix(2.081721,0,0,2.081721,-103.70846,-723.30501)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -962,7 +962,7 @@
     </g>
     <g
        id="layer1-6-1-3-5-6-9-9-4-3-3-8-8"
-       transform="matrix(2.081721,0,0,2.081721,-104.70846,-854.30504)"
+       transform="matrix(2.081721,0,0,2.081721,-104.70846,-725.30501)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -975,7 +975,7 @@
     </g>
     <g
        id="layer1-3-5-6-3-22-3-5-7-8-7-3-0-6-2"
-       transform="matrix(2.081721,0,0,2.081721,-313.70845,-852.30504)"
+       transform="matrix(2.081721,0,0,2.081721,-313.70845,-723.30501)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -988,7 +988,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-7-2"
-       transform="matrix(0.44994092,0,0,0.41637122,193.09017,533.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,193.09017,662.68464)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1001,7 +1001,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-7-2-4"
-       transform="matrix(0.44994092,0,0,0.41637122,392.32877,533.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,392.32877,662.68464)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1014,7 +1014,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-7-2-43"
-       transform="matrix(0.44994092,0,0,0.41637122,614.13058,533.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,614.13058,662.68464)"
        style="fill:#9edae5;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#9edae5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1027,7 +1027,7 @@
     </g>
     <g
        id="layer1-6-1-5-7-5-8-5-9-1-9-5-2-6"
-       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-854.29425)"
+       transform="matrix(2.0817209,0,0,2.0817079,-314.70846,-725.29422)"
        style="fill:#6dccda;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#6dccda;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1502,50 +1502,6 @@
          style="font-size:17.3333px">LDA,VWN</text>
     </g>
     <g
-       id="layer1-3-5-6-0-3"
-       transform="matrix(2.0817209,0,0,2.081721,-103.70862,-1437.305)"
-       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
-      <g
-         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="text4411-6-3-2-9-5">
-        <path
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
-           id="path4426-7-5-6-3-6" />
-      </g>
-    </g>
-    <g
-       id="layer1-6-1-6-29"
-       transform="matrix(2.0817209,0,0,2.081721,-104.70862,-1439.305)"
-       style="fill:#ffbb78;fill-opacity:1">
-      <g
-         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         id="text4411-2-8-0-1">
-        <path
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
-           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
-           id="path4426-9-7-6-2" />
-      </g>
-    </g>
-    <g
-       fill="#000000"
-       font-family="Comfortaa"
-       font-weight="bold"
-       text-anchor="middle"
-       font-size="17px"
-       id="g66-7"
-       transform="translate(85.439333,185.47803)">
-      <text
-         x="319.49133"
-         y="116.96533"
-         id="text64-0"
-         style="font-size:17.3333px"><tspan
-           sodipodi:role="line"
-           id="tspan6147"
-           x="319.49133"
-           y="116.96533">Libxc</tspan></text>
-    </g>
-    <g
        fill="#000000"
        font-family="Comfortaa"
        font-weight="bold"
@@ -1636,7 +1592,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g114"
-       transform="translate(85.630172,43.398048)">
+       transform="translate(85.630172,108.39805)">
       <text
          x="319.5"
          y="517"
@@ -1664,7 +1620,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g130"
-       transform="translate(95.109488,44.543929)">
+       transform="translate(95.109488,109.54393)">
       <text
          x="99.5"
          y="517"
@@ -1678,12 +1634,12 @@
        text-anchor="middle"
        font-size="17px"
        id="g138"
-       transform="translate(66.072191,30.478048)">
+       transform="translate(66.072191,95.478051)">
       <text
-         x="759.5"
+         x="758.86731"
          y="597"
          id="text136"
-         style="font-size:17.3333px">COM</text>
+         style="font-size:17.3333px">KED</text>
     </g>
     <g
        fill="#000000"
@@ -1692,7 +1648,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g146"
-       transform="translate(66.046187,43.528048)">
+       transform="translate(66.046187,108.52805)">
       <text
          x="759.5"
          y="517"
@@ -1706,7 +1662,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g154"
-       transform="translate(96.389482,1.9865661)">
+       transform="translate(96.389482,66.986569)">
       <text
          x="99.5"
          y="757"
@@ -1726,6 +1682,46 @@
          y="437"
          id="text160"
          style="font-size:17.3333px">KSO</text>
+    </g>
+    <g
+       id="layer1-3-5-6-2-5-9-4-9"
+       transform="matrix(2.081721,0,0,2.081721,-103.70864,-1177.305)"
+       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="text4411-6-3-2-0-47-2-9-1">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-7-5-6-2-6-6-0-2" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-1-3-5-6-9-7"
+       transform="matrix(2.081721,0,0,2.081721,-104.70864,-1179.305)"
+       style="fill:#c5b0d5;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c5b0d5;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-8-7-6-4-1-09">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#c5b0d5;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-59-9-9-7-3" />
+      </g>
+    </g>
+    <g
+       fill="#000000"
+       font-family="Comfortaa"
+       font-weight="bold"
+       text-anchor="middle"
+       font-size="17px"
+       id="g162-6"
+       transform="translate(85.811987,125.44336)">
+      <text
+         x="319.5"
+         y="437"
+         id="text160-0"
+         style="font-size:17.3333px">Wannier</text>
     </g>
     <g
        fill="#000000"
@@ -1762,7 +1758,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g210"
-       transform="translate(75.543542,0.47801809)">
+       transform="translate(75.543542,65.478021)">
       <text
          x="539.5"
          y="757"
@@ -1776,7 +1772,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g218"
-       transform="translate(85.231521,0.43468409)">
+       transform="translate(85.231521,65.434687)">
       <text
          x="319.5"
          y="757"
@@ -1784,17 +1780,43 @@
          style="font-size:17.3333px">Molecules</text>
     </g>
     <g
+       id="layer1-3-5-6-2-5-9-4-2-3-9-7-3"
+       transform="matrix(2.081721,0,0,2.081721,-103.70864,-852.305)"
+       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="text4411-6-3-2-0-47-2-9-9-0-7-6-6">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-7-5-6-2-6-6-0-3-4-5-4-7" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-1-3-5-6-9-9-4-3-3-5"
+       transform="matrix(2.081721,0,0,2.081721,-104.70864,-854.305)"
+       style="fill:#c7c7c7;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-8-7-6-4-1-0-4-8-0-3">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-59-9-9-7-8-4-8-3-5" />
+      </g>
+    </g>
+    <g
        fill="#000000"
        font-family="Comfortaa"
        font-weight="bold"
        text-anchor="middle"
        font-size="17px"
-       id="g226"
-       transform="translate(65.543542,0.47801809)">
+       id="g218-6"
+       transform="translate(85.543332,130.47803)">
       <text
-         x="759.5"
+         x="319.5"
          y="757"
-         id="text224"
+         id="text216-2"
          style="font-size:17.3333px">Grids</text>
     </g>
     <g
@@ -1803,8 +1825,22 @@
        font-weight="bold"
        text-anchor="middle"
        font-size="17px"
+       id="g226"
+       transform="translate(65.543542,65.478021)">
+      <text
+         x="759.5"
+         y="757"
+         id="text224"
+         style="font-size:17.3333px">Densities</text>
+    </g>
+    <g
+       fill="#000000"
+       font-family="Comfortaa"
+       font-weight="bold"
+       text-anchor="middle"
+       font-size="17px"
        id="g234"
-       transform="translate(74.980203,28.450048)">
+       transform="translate(74.980203,93.450051)">
       <text
          x="539.5"
          y="597"
@@ -1818,7 +1854,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g242"
-       transform="translate(75.196852,43.450038)">
+       transform="translate(75.196852,108.45004)">
       <text
          x="539.5"
          y="517"
@@ -1832,7 +1868,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g250"
-       transform="translate(95.781485,-13.002767)">
+       transform="translate(95.781485,115.99727)">
       <text
          x="99.5"
          y="837"
@@ -1846,7 +1882,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g258"
-       transform="translate(85.803516,-14.521982)">
+       transform="translate(85.803516,114.47805)">
       <text
          x="319.5"
          y="837"
@@ -1860,7 +1896,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g266"
-       transform="translate(75.595539,-14.573982)">
+       transform="translate(75.595539,114.42605)">
       <text
          x="539.5"
          y="837"
@@ -1874,7 +1910,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g274"
-       transform="translate(95.824144,17.039929)">
+       transform="translate(95.824144,82.039932)">
       <text
          x="99.5"
          y="677"
@@ -1888,7 +1924,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g282"
-       transform="translate(85.439525,13.398048)">
+       transform="translate(85.439525,78.398051)">
       <text
          x="319.5"
          y="677"
@@ -1902,7 +1938,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g290"
-       transform="translate(95.109486,-28.002787)">
+       transform="translate(95.109486,100.99725)">
       <text
          x="99.5"
          y="917"
@@ -1916,7 +1952,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g298"
-       transform="translate(85.231514,28.398038)">
+       transform="translate(85.231514,93.398041)">
       <text
          x="319.5"
          y="597"
@@ -1930,7 +1966,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g306"
-       transform="translate(85.352845,-31.471992)">
+       transform="translate(85.352845,97.528044)">
       <text
          x="319.5"
          y="917"
@@ -1944,7 +1980,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g314"
-       transform="translate(75.301189,-29.652159)">
+       transform="translate(75.301189,99.347877)">
       <text
          x="539.5"
          y="917"
@@ -1957,7 +1993,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g322"
-       transform="translate(65.2402,-29.565326)">
+       transform="translate(65.2402,99.43471)">
       <text
          x="759.5"
          y="917"
@@ -1971,7 +2007,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g338"
-       transform="translate(75.985535,15.478048)">
+       transform="translate(75.985535,80.478051)">
       <text
          x="539.5"
          y="677"
@@ -1980,7 +2016,7 @@
     </g>
     <g
        id="layer1-3-5-6-2-6-3-4-1-6-9-5-3"
-       transform="matrix(2.081721,0,0,2.081721,316.29136,-1047.305)"
+       transform="matrix(2.081721,0,0,2.081721,316.29136,-982.305)"
        style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -1993,7 +2029,7 @@
     </g>
     <g
        id="layer1-6-1-3-9-6-0-1-4-8-1-0"
-       transform="matrix(2.081721,0,0,2.081721,315.29136,-1049.305)"
+       transform="matrix(2.081721,0,0,2.081721,315.29136,-984.305)"
        style="fill:#f7b6c2;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#f7b6c2;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -2011,7 +2047,7 @@
        text-anchor="middle"
        font-size="17px"
        id="g338-0"
-       transform="translate(285.75999,13.484714)">
+       transform="translate(285.75999,78.484717)">
       <text
          x="539.5"
          y="677"
@@ -2020,7 +2056,7 @@
     </g>
     <g
        id="layer1-6-3-5-6-2-9-0-6-7-0-74"
-       transform="matrix(0.44994092,0,0,0.41637122,607.46985,403.68461)"
+       transform="matrix(0.44994092,0,0,0.41637122,607.46985,468.68461)"
        style="fill:#c7c7c7;fill-opacity:1">
       <g
          style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -2030,6 +2066,152 @@
            d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
            id="path4426-9-7-5-91-0-6-2-8-2-3-5" />
       </g>
+    </g>
+    <g
+       id="layer1-3-5-6-0-5-6"
+       transform="matrix(2.081721,0,0,2.081721,316.29136,-1437.305)"
+       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="text4411-6-3-2-9-9-2">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-7-5-6-3-2-6" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-1-6-28-1"
+       transform="matrix(2.081721,0,0,2.081721,315.29136,-1439.305)"
+       style="fill:#ffbb78;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-8-0-9-8">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-6-73-7" />
+      </g>
+    </g>
+    <g
+       id="layer1-3-5-6-0-9-9"
+       transform="matrix(2.081721,0,0,2.081721,106.29136,-1437.305)"
+       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="text4411-6-3-2-9-2-2">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-7-5-6-3-0-0" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-1-6-2-2"
+       transform="matrix(2.081721,0,0,2.081721,105.29136,-1439.305)"
+       style="fill:#ffbb78;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-8-0-3-3">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-6-7-7" />
+      </g>
+    </g>
+    <g
+       id="layer1-3-5-6-0-59"
+       transform="matrix(2.0817209,0,0,2.081721,-103.70862,-1437.305)"
+       style="opacity:0.25;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="text4411-6-3-2-9-22">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.00013;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-7-5-6-3-8" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-1-6-9"
+       transform="matrix(2.0817209,0,0,2.081721,-104.70862,-1439.305)"
+       style="fill:#ffbb78;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-8-0-7">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-6-3" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-3-5-8-6"
+       transform="matrix(0.44994092,0,0,0.41637122,400.64827,-51.315316)"
+       style="fill:#ffbb78;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-6-3-4-1">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-5-5-2" />
+      </g>
+    </g>
+    <g
+       id="layer1-6-3-5-8-0-9"
+       transform="matrix(0.44994092,0,0,0.41637122,615.13179,-51.315316)"
+       style="fill:#ffbb78;fill-opacity:1">
+      <g
+         style="font-style:normal;font-weight:normal;font-size:50px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="text4411-2-6-3-4-3-3">
+        <path
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Comfortaa;-inkscape-font-specification:Comfortaa;fill:#ffbb78;fill-opacity:1;stroke:none;stroke-opacity:1"
+           d="m 208.94659,845.46044 q -4.95359,0 -8.55644,-3.44348 -3.45279,-3.6074 -3.45279,-8.5613 0,-4.95933 3.45279,-8.40894 3.60285,-3.60331 8.55644,-3.60331 h 72.0555 q 4.95391,0 8.40672,3.60331 3.60291,3.44961 3.60291,8.40894 0,4.9539 -3.60291,8.5613 -3.45281,3.44348 -8.40672,3.44348 z"
+           id="path4426-9-7-5-5-6-1" />
+      </g>
+    </g>
+    <g
+       fill="#000000"
+       font-family="Comfortaa"
+       font-weight="bold"
+       text-anchor="middle"
+       font-size="17px"
+       id="g66-9"
+       transform="translate(85.595322,184.06536)">
+      <text
+         x="319.5"
+         y="117"
+         id="text64-4"
+         style="font-size:17.3333px">GGA,PBE</text>
+    </g>
+    <g
+       fill="#000000"
+       font-family="Comfortaa"
+       font-weight="bold"
+       text-anchor="middle"
+       font-size="17px"
+       id="g74-7"
+       transform="translate(75.742666,183.4847)">
+      <text
+         x="539.5"
+         y="117"
+         id="text72-8"
+         style="font-size:17.3333px">GGA,Chachiyo</text>
+    </g>
+    <g
+       fill="#000000"
+       font-family="Comfortaa"
+       font-weight="bold"
+       text-anchor="middle"
+       font-size="17px"
+       id="g82-4"
+       transform="translate(65.43067,185.44336)">
+      <text
+         x="759.5"
+         y="117"
+         id="text80-5"
+         style="font-size:17.3333px">Libxc</text>
     </g>
   </g>
 </svg>
