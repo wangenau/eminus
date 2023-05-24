@@ -36,9 +36,137 @@ The corresponding Python code (implying that the operators have been implemented
 Feature overview
 ================
 
-.. figure:: _images/features.svg
-   :align: center
-   :figwidth: 100%
+..
+   Hex color codes:
+   729ece   aec7e8
+   ff9e4a   ffbb78
+   67bf5c   98df8a
+   ed665d   ff9896
+   ad8bc9   c5b0d5
+   a8786e   c49c94
+   ed97ca   f7b6c2
+   a2a2a2   c7c7c7
+   cdcc5d   dbdb8d
+   6dccda   9edae5
+
+.. raw:: html
+
+   <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
+   <style>
+   .colored-heading{
+      display:table;
+      color:black;
+      text-align:center;
+      padding:0.5em 0;
+      margin-bottom:0.5em;
+      width:12.5em;
+      border-radius:2.5em;
+      font-family:'Comfortaa';
+      font-weight:bold;
+      font-size:0.9em;
+   }
+   .colored-ul{
+      list-style:none;
+      padding:0;
+      margin:0 0 0.5em;
+   }
+   .colored-li{
+      display:inline-block;
+      margin-right:0.125em;
+      margin-bottom:0.5em;
+      color:black;
+      text-align:center;
+      padding:0.5em 0;
+      width:13em;
+      border-radius:2.5em;
+      font-family:'Comfortaa';
+      font-size:0.9em;
+   }
+   </style>
+   <div class="colored-heading" style="background:#729ece;">Main</div>
+
+* Plane wave DFT code
+* Minimal dependencies
+* Modular extension system
+* Well-documented Python3 code following pep8
+* Well-tested with automated tests and coverage above 95%
+* Many supported platforms: Linux, macOS, Windows, Nix, Docker, ...
+
+.. raw:: html
+
+   <div class="colored-heading" style="background:#ff9e4a;">Functionals</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#ffbb78;">LDA,VWN</li>
+      <li class="colored-li" style="background:#ffbb78;">LDA,PW</li>
+      <li class="colored-li" style="background:#ffbb78;">LDA,Chachiyo</li>
+      <li class="colored-li" style="background:#ffbb78;">GGA,PBE</li>
+      <li class="colored-li" style="background:#ffbb78;">GGA,PBEsol</li>
+      <li class="colored-li" style="background:#ffbb78;">GGA,Chachiyo</li>
+      <li class="colored-li" style="background:#ffbb78;">Libxc</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#67bf5c;">Potentials</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#98df8a;">All-electron Coulomb</li>
+      <li class="colored-li" style="background:#98df8a;">GTH</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#ed665d;">SCF</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#ff9896;">Steepest descent</li>
+      <li class="colored-li" style="background:#ff9896;">Line minimization</li>
+      <li class="colored-li" style="background:#ff9896;">Conjugate gradient</li>
+      <li class="colored-li" style="background:#ff9896;">Customizable schemes</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#ad8bc9;">Orbitals</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#c5b0d5;">Kohn-Sham</li>
+      <li class="colored-li" style="background:#c5b0d5;">Fermi</li>
+      <li class="colored-li" style="background:#c5b0d5;">Fermi-Löwdin</li>
+      <li class="colored-li" style="background:#c5b0d5;">Wannier</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#a8786e;">Properties</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#c49c94;">Energy contributions</li>
+      <li class="colored-li" style="background:#c49c94;">Dipole moments</li>
+      <li class="colored-li" style="background:#c49c94;">Ionization potentials</li>
+      <li class="colored-li" style="background:#c49c94;">Orbital spreads</li>
+      <li class="colored-li" style="background:#c49c94;">Centers of mass</li>
+      <li class="colored-li" style="background:#c49c94;">Kinetic energy densities</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#ed97ca;">SIC</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#f7b6c2;">Fixed density SIC</li>
+      <li class="colored-li" style="background:#f7b6c2;">FLO-SIC</li>
+      <li class="colored-li" style="background:#f7b6c2;">PyCOM</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#a2a2a2;">Visualization</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#c7c7c7;">Molecules</li>
+      <li class="colored-li" style="background:#c7c7c7;">Orbitals</li>
+      <li class="colored-li" style="background:#c7c7c7;">Densities</li>
+      <li class="colored-li" style="background:#c7c7c7;">Grids</li>
+      <li class="colored-li" style="background:#c7c7c7;">Files</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#cdcc5d;">Files</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#dbdb8d;">XYZ</li>
+      <li class="colored-li" style="background:#dbdb8d;">CUBE</li>
+      <li class="colored-li" style="background:#dbdb8d;">PDB</li>
+      <li class="colored-li" style="background:#dbdb8d;">JSON</li>
+   </ul>
+
+   <div class="colored-heading" style="background:#6dccda;">Domains</div>
+   <ul class="colored-ul">
+      <li class="colored-li" style="background:#9edae5;">Spherical</li>
+      <li class="colored-li" style="background:#9edae5;">Cuboidal</li>
+      <li class="colored-li" style="background:#9edae5;">Isovalue</li>
+   </ul>
 
 How to cite
 ===========
