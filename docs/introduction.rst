@@ -63,14 +63,14 @@ Feature overview
       border-radius:2.5em;
       font-family:'Comfortaa';
       font-weight:bold;
-      font-size:0.9em;
+      font-size:0.85em;
    }
    .colored-ul{
       list-style:none;
       padding:0;
       margin:0 0 0.5em;
    }
-   .colored-li{
+   .colored-ul > li{
       display:inline-block;
       margin-right:0.125em;
       margin-bottom:0.5em;
@@ -80,7 +80,7 @@ Feature overview
       width:13em;
       border-radius:2.5em;
       font-family:'Comfortaa';
-      font-size:0.9em;
+      font-size:0.85em;
    }
    </style>
    <div class="colored-heading" style="background:#729ece;">Main</div>
@@ -96,76 +96,76 @@ Feature overview
 
    <div class="colored-heading" style="background:#ff9e4a;">Functionals</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#ffbb78;">LDA,VWN</li>
-      <li class="colored-li" style="background:#ffbb78;">LDA,PW</li>
-      <li class="colored-li" style="background:#ffbb78;">LDA,Chachiyo</li>
-      <li class="colored-li" style="background:#ffbb78;">GGA,PBE</li>
-      <li class="colored-li" style="background:#ffbb78;">GGA,PBEsol</li>
-      <li class="colored-li" style="background:#ffbb78;">GGA,Chachiyo</li>
-      <li class="colored-li" style="background:#ffbb78;">Libxc</li>
+      <li style="background:#ffbb78;">LDA,VWN</li>
+      <li style="background:#ffbb78;">LDA,PW</li>
+      <li style="background:#ffbb78;">LDA,Chachiyo</li>
+      <li style="background:#ffbb78;">GGA,PBE</li>
+      <li style="background:#ffbb78;">GGA,PBEsol</li>
+      <li style="background:#ffbb78;">GGA,Chachiyo</li>
+      <li style="background:#ffbb78;">Libxc</li>
    </ul>
 
    <div class="colored-heading" style="background:#67bf5c;">Potentials</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#98df8a;">All-electron Coulomb</li>
-      <li class="colored-li" style="background:#98df8a;">GTH</li>
+      <li style="background:#98df8a;">All-electron Coulomb</li>
+      <li style="background:#98df8a;">GTH</li>
    </ul>
 
    <div class="colored-heading" style="background:#ed665d;">SCF</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#ff9896;">Steepest descent</li>
-      <li class="colored-li" style="background:#ff9896;">Line minimization</li>
-      <li class="colored-li" style="background:#ff9896;">Conjugate gradient</li>
-      <li class="colored-li" style="background:#ff9896;">Customizable schemes</li>
+      <li style="background:#ff9896;">Steepest descent</li>
+      <li style="background:#ff9896;">Line minimization</li>
+      <li style="background:#ff9896;">Conjugate gradient</li>
+      <li style="background:#ff9896;">Customizable schemes</li>
    </ul>
 
    <div class="colored-heading" style="background:#ad8bc9;">Orbitals</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#c5b0d5;">Kohn-Sham</li>
-      <li class="colored-li" style="background:#c5b0d5;">Fermi</li>
-      <li class="colored-li" style="background:#c5b0d5;">Fermi-Löwdin</li>
-      <li class="colored-li" style="background:#c5b0d5;">Wannier</li>
+      <li style="background:#c5b0d5;">Kohn-Sham</li>
+      <li style="background:#c5b0d5;">Fermi</li>
+      <li style="background:#c5b0d5;">Fermi-Löwdin</li>
+      <li style="background:#c5b0d5;">Wannier</li>
    </ul>
 
    <div class="colored-heading" style="background:#a8786e;">Properties</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#c49c94;">Energy contributions</li>
-      <li class="colored-li" style="background:#c49c94;">Dipole moments</li>
-      <li class="colored-li" style="background:#c49c94;">Ionization potentials</li>
-      <li class="colored-li" style="background:#c49c94;">Orbital spreads</li>
-      <li class="colored-li" style="background:#c49c94;">Centers of mass</li>
-      <li class="colored-li" style="background:#c49c94;">Kinetic energy densities</li>
+      <li style="background:#c49c94;">Energy contributions</li>
+      <li style="background:#c49c94;">Dipole moments</li>
+      <li style="background:#c49c94;">Ionization potentials</li>
+      <li style="background:#c49c94;">Orbital spreads</li>
+      <li style="background:#c49c94;">Centers of mass</li>
+      <li style="background:#c49c94;">Kinetic energy densities</li>
    </ul>
 
    <div class="colored-heading" style="background:#ed97ca;">SIC</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#f7b6c2;">Fixed density SIC</li>
-      <li class="colored-li" style="background:#f7b6c2;">FLO-SIC</li>
-      <li class="colored-li" style="background:#f7b6c2;">PyCOM</li>
+      <li style="background:#f7b6c2;">Fixed density SIC</li>
+      <li style="background:#f7b6c2;">FLO-SIC</li>
+      <li style="background:#f7b6c2;">PyCOM</li>
    </ul>
 
    <div class="colored-heading" style="background:#a2a2a2;">Visualization</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#c7c7c7;">Molecules</li>
-      <li class="colored-li" style="background:#c7c7c7;">Orbitals</li>
-      <li class="colored-li" style="background:#c7c7c7;">Densities</li>
-      <li class="colored-li" style="background:#c7c7c7;">Grids</li>
-      <li class="colored-li" style="background:#c7c7c7;">Files</li>
+      <li style="background:#c7c7c7;">Molecules</li>
+      <li style="background:#c7c7c7;">Orbitals</li>
+      <li style="background:#c7c7c7;">Densities</li>
+      <li style="background:#c7c7c7;">Grids</li>
+      <li style="background:#c7c7c7;">Files</li>
    </ul>
 
    <div class="colored-heading" style="background:#cdcc5d;">Files</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#dbdb8d;">XYZ</li>
-      <li class="colored-li" style="background:#dbdb8d;">CUBE</li>
-      <li class="colored-li" style="background:#dbdb8d;">PDB</li>
-      <li class="colored-li" style="background:#dbdb8d;">JSON</li>
+      <li style="background:#dbdb8d;">XYZ</li>
+      <li style="background:#dbdb8d;">CUBE</li>
+      <li style="background:#dbdb8d;">PDB</li>
+      <li style="background:#dbdb8d;">JSON</li>
    </ul>
 
    <div class="colored-heading" style="background:#6dccda;">Domains</div>
    <ul class="colored-ul">
-      <li class="colored-li" style="background:#9edae5;">Spherical</li>
-      <li class="colored-li" style="background:#9edae5;">Cuboidal</li>
-      <li class="colored-li" style="background:#9edae5;">Isovalue</li>
+      <li style="background:#9edae5;">Spherical</li>
+      <li style="background:#9edae5;">Cuboidal</li>
+      <li style="background:#9edae5;">Isovalue</li>
    </ul>
 
 How to cite
