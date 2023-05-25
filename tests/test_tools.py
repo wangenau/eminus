@@ -8,7 +8,7 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_elf, get_tau,
+                          cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue, get_tau,
                           get_tautf, get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
