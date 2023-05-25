@@ -8,8 +8,8 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_tau, get_tautf,
-                          get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
+                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_elf, get_tau,
+                          get_tautf, get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
@@ -137,6 +137,18 @@ def test_get_tau(Nspin):
     T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # This integrated KED should be the same as the calculated kinetic energy
     assert_allclose(T, scf.energies.Ekin)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_get_elf(Nspin):
+    '''Test electron licalization function.'''
+    if Nspin == 1:
+        scf = scf_unpol
+    else:
+        scf = scf_pol
+    elf = get_elf(scf)
+    # Check the bounds for the ELF
+    assert ((0 < elf) & (elf < 1)).any()
 
 
 if __name__ == '__main__':

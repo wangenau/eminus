@@ -295,6 +295,7 @@ def get_tautf(scf):
         ndarray: Real space Thomas-Fermi kinetic energy density.
     '''
     atoms = scf.atoms
+    # Use the definition with a division by two
     tautf = 3 / 10 * (atoms.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
 
     log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
@@ -319,6 +320,7 @@ def get_tauw(scf):
     else:
         dn_spin = scf.dn_spin
     dn2 = norm(dn_spin, axis=2)**2
+    # Use the definition with a division by two
     tauw = dn2 / (8 * scf.n_spin)
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
@@ -343,9 +345,28 @@ def get_tau(scf):
     tau = np.zeros((atoms.Nspin, len(atoms.r)), dtype=complex)
     for i in range(atoms.Nstate):
         dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
+        # Use the definition with a division by two
         tau += 0.5 * atoms.f[:, i][:, None] * np.sum(dYrs.conj() * dYrs, axis=2)
 
     # The calculated and integrated kinetic energy should be the same
     log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
     log.debug(f'Integrated tau:  {np.sum(tau) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
     return np.real(tau)
+
+
+def get_elf(scf):
+    '''Calculate the electron localization function.
+
+    Reference: J. Chem. Phys. 92, 5397.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        ndarray: Real space electron localization function.
+    '''
+    D = get_tau(scf) - get_tauw(scf)
+    D0 = get_tautf(scf)
+    X = D / D0
+    elf = 1 / (1 + X**2)
+    return elf

@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - Miscellaneous
+   - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
    - Update the introduction page in documentation
 
