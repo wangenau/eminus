@@ -53,6 +53,13 @@ coverage:
   only:
     refs:
       - main
+    # Fix: Run coverage even if only the lint or pages job run to prevent an unknown status badge
+    # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
+    changes:
+      - "*.py"
+      - "**/*.py"
+      - docs/*
+      - docs/**/*
 
 ##### Test the minimal supported versions #####
 minimal:
