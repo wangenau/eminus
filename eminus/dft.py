@@ -95,22 +95,27 @@ def get_n_single(atoms, Y):
     return n
 
 
-def get_grad_n_spin(atoms, n_spin):
-    '''Calculate the gradient of densities per spin channel.
+def get_grad_field(atoms, field, real=True):
+    '''Calculate the gradient of fields on the grid per spin channel.
 
     Args:
         atoms: Atoms object.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
+        field (ndarray): Real-space field per spin channel.
+
+    Keyword Args:
+        real (bool): Make the gradient a real array (the gradient of n_spin is real).
 
     Returns:
-        ndarray: Gradients of densities per spin channel.
+        ndarray: Gradients of field per spin channel.
     '''
-    dn_spin = np.empty((atoms.Nspin, len(atoms.r), 3))
+    dfield = np.empty((atoms.Nspin, len(atoms.r), 3), dtype=complex)
     for spin in range(atoms.Nspin):
-        Gn = 1j * atoms.G * atoms.J(n_spin[spin])[:, None]
+        dfieldG = 1j * atoms.G * atoms.J(field[spin])[:, None]
         for i in range(3):
-            dn_spin[spin, :, i] = np.real(atoms.I(Gn[:, i]))
-    return dn_spin
+            dfield[spin, :, i] = atoms.I(dfieldG[:, i])
+    if real:
+        return np.real(dfield)
+    return dfield
 
 
 @handle_spin_gracefully
@@ -188,7 +193,7 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
     if n_spin is None:
         n_spin = get_n_spin(atoms, Y, n)
     if dn_spin is None and scf.psp == 'pbe':
-        dn_spin = get_grad_n_spin(atoms, n_spin)
+        dn_spin = get_grad_field(atoms, n_spin)
     if n is None:
         n = get_n_total(atoms, Y, n_spin)
     if phi is None:

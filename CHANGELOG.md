@@ -1,6 +1,12 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Add a positive-definite kinetic energy density function
+   - Update the introduction page in documentation
+
 v2.4.0 - May 23, 2023
 ---------------------
 - New features

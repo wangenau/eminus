@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import minimize_scalar
 
-from .dft import get_epsilon, get_grad_n_spin
+from .dft import get_epsilon, get_grad_field
 from .logger import log
 
 
@@ -75,7 +75,7 @@ def orbital_center(object, psirs):
         coms_spin = np.empty((Ncom, 3))
 
         # Square orbitals
-        psi2 = np.real(psirs[spin, :, :].conj() * psirs[spin, :, :])
+        psi2 = np.real(psirs[spin].conj() * psirs[spin])
         for i in range(Ncom):
             coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
         coms[spin] = coms_spin
@@ -315,13 +315,37 @@ def get_tauw(scf):
     '''
     atoms = scf.atoms
     if scf.dn_spin is None:
-        dn_spin = get_grad_n_spin(atoms, scf.n_spin)
+        dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
     dn2 = norm(dn_spin, axis=2)**2
     tauw = dn2 / (8 * scf.n_spin)
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
-    log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tauw:  {np.sum(tauw) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
+    log.debug(f'Integrated tauw: {np.sum(tauw) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
     return tauw
+
+
+def get_tau(scf):
+    '''Calculate the positive-definite kinetic energy densities per spin.
+
+    Reference: J. Chem. Phys. 109, 2092.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        ndarray: Real space positive-definite kinetic energy density.
+    '''
+    atoms = scf.atoms
+    Yrs = atoms.I(scf.Y)
+    tau = np.zeros((atoms.Nspin, len(atoms.r)), dtype=complex)
+    for i in range(atoms.Nstate):
+        dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
+        tau += 0.5 * atoms.f[:, i][:, None] * np.sum(dYrs.conj() * dYrs, axis=2)
+
+    # The calculated and integrated kinetic energy should be the same
+    log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
+    log.debug(f'Integrated tau:  {np.sum(tau) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    return np.real(tau)

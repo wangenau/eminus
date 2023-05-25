@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from .dft import get_grad, get_grad_n_spin, get_n_spin, get_n_total, orth, solve_poisson
+from .dft import get_grad, get_grad_field, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E
 from .logger import name
 from .utils import dotprod
@@ -27,7 +27,7 @@ def scf_step(scf):
     scf.n_spin = get_n_spin(atoms, scf.Y)
     scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
     if scf.psp == 'pbe':
-        scf.dn_spin = get_grad_n_spin(atoms, scf.n_spin)
+        scf.dn_spin = get_grad_field(atoms, scf.n_spin)
     scf.phi = solve_poisson(atoms, scf.n)
     scf.exc, scf.vxc, scf.vsigma = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin)
     return get_E(scf)

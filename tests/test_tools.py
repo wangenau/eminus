@@ -8,14 +8,21 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_tautf, get_tauw,
-                          gridspacing2cutoff, inertia_tensor, orbital_center)
+                          cutoff2gridspacing, get_dipole, get_ip, get_isovalue, get_tau, get_tautf,
+                          get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
 scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))
+
+atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, Nspin=1)
+atoms_pol = Atoms('He', (0, 0, 0), ecut=1, Nspin=2)
+scf_unpol = SCF(atoms_unpol)
+scf_unpol.run()
+scf_pol = SCF(atoms_pol)
+scf_pol.run()
 
 
 def test_cutoff_and_gridspacing():
@@ -96,11 +103,12 @@ def test_get_isovalue():
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tautf(Nspin):
     '''Test Thomas-Fermi kinetic energy density.'''
-    atoms = Atoms('He', (0, 0, 0), s=10, Nspin=Nspin)
-    scf = SCF(atoms)
-    scf.run()
+    if Nspin == 1:
+        scf = scf_unpol
+    else:
+        scf = scf_pol
     tautf = get_tautf(scf)
-    T = np.sum(tautf) * atoms.Omega / np.prod(atoms.s)
+    T = np.sum(tautf) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # TF KED is not exact, but similar for simple systems
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
@@ -108,13 +116,27 @@ def test_get_tautf(Nspin):
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tauw(Nspin):
     '''Test von Weizsäcker kinetic energy density.'''
-    atoms = Atoms('He', (0, 0, 0), ecut=1, Nspin=Nspin, center=True)
-    scf = SCF(atoms)
-    scf.run()
+    if Nspin == 1:
+        scf = scf_unpol
+    else:
+        scf = scf_pol
     tauw = get_tauw(scf)
-    T = np.sum(tauw) * atoms.Omega / np.prod(atoms.s)
+    T = np.sum(tauw) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # vW KED is exact for one- and two-electron systems
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_get_tau(Nspin):
+    '''Test positive-definite kinetic energy density.'''
+    if Nspin == 1:
+        scf = scf_unpol
+    else:
+        scf = scf_pol
+    tau = get_tau(scf)
+    T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
+    # This integrated KED should be the same as the calculated kinetic energy
+    assert_allclose(T, scf.energies.Ekin)
 
 
 if __name__ == '__main__':

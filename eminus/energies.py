@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_grad_n_spin, get_n_single, solve_poisson
+from .dft import get_grad_field, get_n_single, solve_poisson
 from .xc import get_exc
 
 
@@ -115,7 +115,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
     atoms = scf.atoms
     if exc is None:
         if dn_spin is None and scf.psp == 'pbe':
-            dn_spin = get_grad_n_spin(atoms, n_spin)
+            dn_spin = get_grad_field(atoms, n_spin)
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
