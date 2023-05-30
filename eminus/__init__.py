@@ -4,7 +4,7 @@
 Minimal usage example to do a DFT calculation for helium::
 
    from eminus import Atoms, SCF
-   atoms = Atoms('He', [0, 0, 0])
+   atoms = Atoms('He', (0, 0, 0))
    SCF(atoms).run()
 '''
 from . import config

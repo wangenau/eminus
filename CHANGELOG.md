@@ -3,6 +3,9 @@ Changelog
 
 dev
 ---
+- New features
+   - Add a new auto minimizer
+      - It functions like the pccg minimizer but can fallback to sd steps
 - Miscellaneous
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function

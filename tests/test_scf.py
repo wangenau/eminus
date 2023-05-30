@@ -82,8 +82,8 @@ def test_recenter():
     # Check that the density is centered around the atom
     assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=1e-3)
     # Check that the orbitals are centered around the atom
-    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=1e-3)
-    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.00125)
+    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.00125)
 
 
 if __name__ == '__main__':

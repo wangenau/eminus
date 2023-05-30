@@ -10,7 +10,7 @@ from eminus import Atoms, RSCF
 from eminus.orbitals import FLO, FO, KSO, WO
 
 atoms = Atoms('He', (0, 0, 0), s=10, center=True).build()
-scf = RSCF(atoms, min={'pccg': 10})
+scf = RSCF(atoms)
 scf.run()
 dV = atoms.Omega / np.prod(atoms.s)
 

@@ -21,13 +21,13 @@ E_ref = {
 
 # Run the spin-unpaired calculation at first
 atoms_unpol = Atoms('Ne', (0, 0, 0), s=20, ecut=10, Nspin=1)
-scf_unpol = SCF(atoms_unpol, sic=True, min={'pccg': 40})
+scf_unpol = SCF(atoms_unpol, sic=True)
 scf_unpol.run()
 # Do the spin-paired calculation afterwards
 # Use the orbitals from the restricted calculation as an initial guess for the unrestricted case
 # This saves time and ensures we run into the same minimum
 atoms_pol = Atoms('Ne', (0, 0, 0), s=20, ecut=10, Nspin=2)
-scf_pol = SCF(atoms_pol, sic=True, min={'pccg': 40})
+scf_pol = SCF(atoms_pol, sic=True)
 scf_pol.W = np.array([scf_unpol.W[0] / 2, scf_unpol.W[0] / 2])
 scf_pol.run()
 
