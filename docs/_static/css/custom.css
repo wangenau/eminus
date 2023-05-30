@@ -1,0 +1,32 @@
+/* Introduction feature overview customization */
+.colored-heading {
+    display: table;
+    color: black;
+    text-align: center;
+    padding: 0.5em 0;
+    margin-bottom: 0.5em;
+    width: 12.5em;
+    border-radius: 2.5em;
+    font-family: 'Comfortaa';
+    font-weight: bold;
+    font-size: 0.85em;
+}
+
+.colored-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.5em;
+}
+
+.colored-ul > li {
+    display: inline-block;
+    margin-right: 0.125em;
+    margin-bottom: 0.5em;
+    color: black;
+    text-align: center;
+    padding: 0.5em 0;
+    width: 13em;
+    border-radius: 2.5em;
+    font-family: 'Comfortaa';
+    font-size: 0.85em;
+}
