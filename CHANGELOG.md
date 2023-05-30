@@ -6,10 +6,12 @@ dev
 - New features
    - Add a new auto minimizer
       - It functions like the pccg minimizer but can fallback to sd steps
+- Updated docs
+   - Update the introduction page in documentation
 - Miscellaneous
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
-   - Update the introduction page in documentation
+   - Do an unpaired calculation automatically if the system is unpaired
 
 v2.4.0 - May 23, 2023
 ---------------------

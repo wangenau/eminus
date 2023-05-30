@@ -6,7 +6,7 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.tools import center_of_mass
 
-atoms = Atoms('He', (0, 0, 0), s=10)
+atoms = Atoms('He', (0, 0, 0), s=10, Nspin=2)
 
 
 def test_atoms():

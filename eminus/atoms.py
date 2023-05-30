@@ -80,7 +80,7 @@ class Atoms:
 
             Default: None
     '''
-    def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=2, f=None,
+    def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=None, f=None,
                  Nstate=None, verbose=None):
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
