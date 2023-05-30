@@ -60,3 +60,14 @@ You can also pass command line arguments to the container, e.g., to start a Pyth
 .. code-block:: console
 
     docker run -it  wangenau/eminus:version python
+
+Nix usage
+=========
+
+To use the package under `Nix <https://nixos.org/>`_ one can easily create a development shell with all dependencies and (almost) all extras available. To do so, run the following commands on your Nix machine
+
+.. code-block:: console
+
+   git clone https://gitlab.com/wangenau/eminus.git
+   cd eminus
+   nix develop
