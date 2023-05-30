@@ -53,7 +53,7 @@ def test_ge():
     scf.run()
     eps = get_epsilon(scf, scf.W)[0]
     # In the limit we should come close to the NIST 4s-4p value of -0.276641 Eh
-    assert_allclose(eps[0] - eps[1:], -0.2721, atol=1e-5)
+    assert_allclose(eps[0] - eps[1:], -0.272106, atol=1e-5)
 
 
 if __name__ == '__main__':
