@@ -426,11 +426,13 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             scf.W[spin] = scf.W[spin] - betat * g[spin]
         c = cost(scf)
         print('sd\t', end='')
+        costs.append(c)
+        condition(scf, costs)
     else:
         print('pccg\t', end='')
-    costs.append(c)
-    if condition(scf, costs):
-        return costs
+        costs.append(c)
+        if condition(scf, costs):
+            return costs
 
     for _ in range(2, Nit):
         for spin in range(atoms.Nspin):
@@ -469,8 +471,8 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             print('sd\t', end='')
             costs.append(c)
             # Do not print cg and linmin if we chose the sd step
-            if condition(scf, costs):
-                break
+            # Also, we do not want to break after doing an sd step
+            condition(scf, costs)
         else:
             print('pccg\t', end='')
             costs.append(c)
