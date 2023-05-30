@@ -124,8 +124,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
-    beta = np.empty(atoms.Nspin)
-
+    beta = np.empty((atoms.Nspin, 1, 1))
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
 
@@ -135,10 +134,9 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         d[spin] = -g
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-    # Update wave functions after calculating the gradients for each spin
-    for spin in range(atoms.Nspin):
-        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+    # Update wave functions after calculating the gradients for each spin
+    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
@@ -153,9 +151,8 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             d[spin] = -g
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-        for spin in range(atoms.Nspin):
-            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin):
@@ -185,8 +182,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
 
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
-    beta = np.empty(atoms.Nspin)
-
+    beta = np.empty((atoms.Nspin, 1, 1))
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
 
@@ -196,10 +192,9 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         d[spin] = -atoms.K(g)
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-    # Update wave functions after calculating the gradients for each spin
-    for spin in range(atoms.Nspin):
-        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+    # Update wave functions after calculating the gradients for each spin
+    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
@@ -214,9 +209,8 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             d[spin] = -atoms.K(g)
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-        for spin in range(atoms.Nspin):
-            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin):
@@ -247,8 +241,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
     cg = np.empty(atoms.Nspin)
-    beta = np.empty(atoms.Nspin)
-
+    beta = np.empty((atoms.Nspin, 1, 1))
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
     d_old = np.empty_like(scf.W, dtype=complex)
@@ -262,10 +255,9 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
         d_old[spin] = d[spin]
         g_old[spin] = g
-    # Update wave functions after calculating the gradients for each spin
-    for spin in range(atoms.Nspin):
-        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+    # Update wave functions after calculating the gradients for each spin
+    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
@@ -292,9 +284,8 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
             d_old[spin] = d[spin]
             g_old[spin] = g
-        for spin in range(atoms.Nspin):
-            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin, cg):
@@ -325,8 +316,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
     cg = np.empty(atoms.Nspin)
-    beta = np.empty(atoms.Nspin)
-
+    beta = np.empty((atoms.Nspin, 1, 1))
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
     d_old = np.empty_like(scf.W, dtype=complex)
@@ -340,10 +330,9 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
         d_old[spin] = d[spin]
         g_old[spin] = g
-    # Update wave functions after calculating the gradients for each spin
-    for spin in range(atoms.Nspin):
-        scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+    # Update wave functions after calculating the gradients for each spin
+    scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
     condition(scf, costs)
@@ -370,9 +359,8 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
             d_old[spin] = d[spin]
             g_old[spin] = g
-        for spin in range(atoms.Nspin):
-            scf.W[spin] = scf.W[spin] + beta[spin] * d[spin]
 
+        scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
         if condition(scf, costs, linmin, cg):
