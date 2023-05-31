@@ -36,7 +36,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
         try:
             f_psp = pathlib.Path(files[0])
         except IndexError:
-            log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}"')
+            log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}".')
             return mock_gth()
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". '
@@ -80,7 +80,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
             psp['Nproj_l'] = Nproj_l  # Number of non-local projectors
             psp['h'] = h  # Projector coupling coefficients per AM channel
     except FileNotFoundError:
-        log.warning(f'There is no GTH pseudopotential for "{f_psp.name}"')
+        log.warning(f'There is no GTH pseudopotential for "{f_psp.name}".')
         return mock_gth()
     return psp
 

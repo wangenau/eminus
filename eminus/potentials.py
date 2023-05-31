@@ -91,7 +91,7 @@ def init_pot(scf):
     try:
         pot = IMPLEMENTED[scf.pot](scf.atoms)
     except KeyError:
-        log.exception(f'No potential found for "{scf.pot}"')
+        log.exception(f'No potential found for "{scf.pot}".')
         raise
     return pot
 

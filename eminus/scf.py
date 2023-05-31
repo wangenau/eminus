@@ -158,7 +158,7 @@ class SCF:
             try:
                 self.log.info(f'Start {IMPLEMENTED[imin].__name__}...')
             except KeyError:
-                self.log.exception(f'No minimizer found for "{imin}"')
+                self.log.exception(f'No minimizer found for "{imin}".')
                 raise
             start = time.perf_counter()
             Elist = IMPLEMENTED[imin](self, self.min[imin], **kwargs)  # Call minimizer
@@ -267,7 +267,7 @@ class SCF:
             # Start with pseudo-random numbers, mostly to compare with SimpleDFT
             self.W = guess_pseudo(self, seed=1234)
         else:
-            self.log.error(f'No guess found for "{self.guess}"')
+            self.log.error(f'No guess found for "{self.guess}".')
         return
 
     def __repr__(self):
