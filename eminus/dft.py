@@ -192,19 +192,19 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
         Y = orth(atoms, W)
     if n_spin is None:
         n_spin = get_n_spin(atoms, Y, n)
-    if dn_spin is None and scf.psp == 'pbe':
+    if dn_spin is None and 'gga' in scf.xc_type:
         dn_spin = get_grad_field(atoms, n_spin)
     if n is None:
         n = get_n_total(atoms, Y, n_spin)
     if phi is None:
         phi = solve_poisson(atoms, n)
-    if vxc is None or (vsigma is None and scf.psp == 'pbe'):
+    if vxc is None or (vsigma is None and 'gga' in scf.xc_type):
         vxc, vsigma = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin)
 
     gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a GGA functional is used
     # This calculate the representation in the reciprocal space
-    if scf.psp == 'pbe':
+    if 'gga' in scf.xc_type:
         gvxc = gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)

@@ -26,7 +26,7 @@ def scf_step(scf):
     scf.Y = orth(atoms, scf.W)
     scf.n_spin = get_n_spin(atoms, scf.Y)
     scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
-    if scf.psp == 'pbe':
+    if 'gga' in scf.xc_type:
         scf.dn_spin = get_grad_field(atoms, scf.n_spin)
     scf.phi = solve_poisson(atoms, scf.n)
     scf.exc, scf.vxc, scf.vsigma = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin)

@@ -5,7 +5,7 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus.xc import get_exc, get_vxc, get_xc, parse_functionals, parse_psp, XC_MAP
+from eminus.xc import get_exc, get_vxc, get_xc, parse_functionals, parse_xc_type, XC_MAP
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
@@ -102,20 +102,20 @@ def test_parse_functionals(xc, ref):
     assert f_c == ref[1]
 
 
-@pytest.mark.parametrize('xc,ref', [(['lda_x', 'lda_c_vwn'], 'pade'),
-                                    (['gga_x_pbe', 'gga_c_pbe'], 'pbe'),
-                                    (['lda_x', 'gga_c_pbe'], 'pbe'),
-                                    (['gga_x_pbe', 'lda_c_vwn'], 'pbe'),
-                                    (['l:1', 'l:7'], 'pade'),
-                                    (['libxc:gga_x_pbe', 'l:gga_c_pbe'], 'pbe'),
-                                    (['libxc:1', 'gga_c_pbe'], 'pbe'),
-                                    (['libxc:gga_x_pbe', 'lda_c_vwn'], 'pbe'),
-                                    (['gga_x_pbe', 'libxc:7'], 'pbe')])
-def test_parse_psp(xc, ref):
+@pytest.mark.parametrize('xc,ref', [(['lda_x', 'lda_c_vwn'], 'lda'),
+                                    (['gga_x_pbe', 'gga_c_pbe'], 'gga'),
+                                    (['lda_x', 'gga_c_pbe'], 'gga'),
+                                    (['gga_x_pbe', 'lda_c_vwn'], 'gga'),
+                                    (['l:1', 'l:7'], 'lda'),
+                                    (['libxc:gga_x_pbe', 'l:gga_c_pbe'], 'gga'),
+                                    (['libxc:1', 'gga_c_pbe'], 'gga'),
+                                    (['libxc:gga_x_pbe', 'lda_c_vwn'], 'gga'),
+                                    (['gga_x_pbe', 'libxc:7'], 'gga')])
+def test_parse_xc_type(xc, ref):
     '''Test the pseudopotential parsing.'''
     if ':' in ''.join(xc):
         pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    psp = parse_psp(xc)
+    psp = parse_xc_type(xc)
     assert psp == ref
 
 

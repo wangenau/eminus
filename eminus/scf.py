@@ -15,7 +15,7 @@ from .minimizer import IMPLEMENTED
 from .potentials import init_pot
 from .tools import center_of_mass
 from .version import info
-from .xc import parse_functionals, parse_psp
+from .xc import parse_functionals, parse_xc_type
 
 
 class SCF:
@@ -97,6 +97,7 @@ class SCF:
         self.NbetaNL = 0          # Number of projector functions for the non-local gth potential
         self.prj2beta = None      # Index matrix to map to the correct projector function
         self.betaNL = None        # Atomic-centered projector functions
+        self.xc_type = None       # Type of functional that will be used
         self.psp = None           # Type of GTH pseudopotential that will be used
         self.print_precision = 6  # Precision of the energy in the minimizer logger
         self.initialize()
@@ -118,7 +119,7 @@ class SCF:
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
         self.xc = parse_functionals(self.xc)
-        self.psp = parse_psp(self.xc)
+        self.xc_type = parse_xc_type(self.xc)
         # Build the atoms object if necessary and make a copy
         # This way the atoms object in scf is independent but we ensure that both atoms are build
         if not self.atoms.is_built:
@@ -234,6 +235,16 @@ class SCF:
     def _set_potential(self):
         '''Build the potential.'''
         atoms = self.atoms
+
+        # Use the custom psp files provided by the atoms object if possible
+        if isinstance(atoms.Z, str) and atoms.Z not in ('pade', 'pbe'):
+            self.psp = atoms.Z
+        else:
+            if 'gga' in self.xc_type:
+                self.psp = 'pbe'
+            else:
+                self.psp = 'pade'
+
         if self.pot == 'gth':
             for ia in range(atoms.Natoms):
                 self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=self.psp)

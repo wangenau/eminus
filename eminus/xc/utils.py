@@ -171,34 +171,35 @@ def parse_functionals(xc):
     return functionals
 
 
-def parse_psp(xc):
-    '''Parse functional strings to identify the corresponding pseudopotential.
+def parse_xc_type(xc):
+    '''Parse functional strings to identify the corresponding functional type.
 
     Args:
         xc (list): Exchange and correlation identifier, separated by a comma.
 
     Returns:
-        str: Pseudopotential type.
+        str: Functional type.
     '''
     xc_type = []
     for func in xc:
         if ':' in func:
-            from pyscf.dft.libxc import is_gga, is_hybrid_xc, is_meta_gga
-            if is_meta_gga(func.split(':')[-1]) or is_hybrid_xc(func.split(':')[-1]):
-                log.exception('meta-GGA and hybrid functionals are not implemented.')
-                raise
+            from pyscf.dft.libxc import is_gga, is_meta_gga
+            if is_meta_gga(func.split(':')[-1]):
+                xc_type.append('meta-gga')
             elif is_gga(func.split(':')[-1]):
-                xc_type.append('pbe')
+                xc_type.append('gga')
             else:
-                xc_type.append('pade')
+                xc_type.append('lda')
         elif 'gga' in func:
-            xc_type.append('pbe')
+            xc_type.append('gga')
         else:
-            xc_type.append('pade')
+            xc_type.append('lda')
     # When mixing functional types use the higher level of theory
     if xc_type[0] != xc_type[1]:
-        log.warning('Found mixing of LDA and GGA functionals.')
-        return 'pbe'
+        log.warning('Detected mixing of different functional types.')
+        if 'meta-gga' in xc_type:
+            return 'meta-gga'
+        return 'gga'
     return xc_type[0]
 
 

@@ -114,7 +114,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        if dn_spin is None and scf.psp == 'pbe':
+        if dn_spin is None and 'gga' in scf.xc_type:
             dn_spin = get_grad_field(atoms, n_spin)
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin)
     # Exc = (J(n))dag O(J(exc))
