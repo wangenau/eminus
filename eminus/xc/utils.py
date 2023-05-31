@@ -14,6 +14,7 @@ from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
+from .. import config
 from ..logger import log
 
 
@@ -161,7 +162,7 @@ def parse_functionals(xc):
                 f_ = f.replace('_', '')
                 f_xc = XC_MAP[f_]
             except KeyError:
-                log.exception(f'No functional found for "{f}"')
+                log.exception(f'No functional found for "{f}".')
                 raise
         functionals.append(f_xc)
 
@@ -183,13 +184,47 @@ def parse_xc_type(xc):
     xc_type = []
     for func in xc:
         if ':' in func:
-            from pyscf.dft.libxc import is_gga, is_meta_gga
-            if is_meta_gga(func.split(':')[-1]):
-                xc_type.append('meta-gga')
-            elif is_gga(func.split(':')[-1]):
-                xc_type.append('gga')
-            else:
+            xc_id = func.split(':')[-1]
+            # Try to parse the functional using pylibxc at first
+            try:
+                assert config.use_pylibxc
+                import pylibxc
+                if not xc_id.isdigit():
+                    xc_id = pylibxc.util.xc_functional_get_number(xc_id)
+
+                func = pylibxc.LibXCFunctional(int(xc_id), 1)
+                family = func.get_family()
+                need_lapl = func._needs_laplacian
+            # Otherwise parse it with PySCF
+            except (ImportError, AssertionError):
+                from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
+                if not xc_id.isdigit():
+                    xc_id = XC_CODES[xc_id.upper()]
+                need_lapl = needs_laplacian(int(xc_id))
+
+                if is_lda(xc_id):
+                    family = 1
+                elif is_gga(xc_id):
+                    family = 2
+                elif is_meta_gga(xc_id):
+                    family = 4
+                else:
+                    family = -1
+
+            if need_lapl:
+                log.exception('meta-GGAs that need a laplacian are not supported.')
+                raise
+
+            if family == 1:
                 xc_type.append('lda')
+            elif family == 2:
+                xc_type.append('gga')
+            elif family == 4:
+                xc_type.append('meta-gga')
+            else:
+                log.exception('Unsupported functional family.')
+                raise
+        # Fall back to internal xc functionals
         elif 'gga' in func:
             xc_type.append('gga')
         else:
