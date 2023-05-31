@@ -8,7 +8,7 @@ import numpy as np
 from ..logger import log
 
 
-def read_gth(atom, charge=None, xc='pade', psp_path=None):
+def read_gth(atom, charge=None, psp_path='pade'):
     '''Read GTH files for a given atom.
 
     Reference: Phys. Rev. B 54, 1703.
@@ -18,24 +18,25 @@ def read_gth(atom, charge=None, xc='pade', psp_path=None):
 
     Keyword Args:
         charge (int): Valence charge.
-        xc (str): Weather to use the pade or the pbe pseudopotential files.
-        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/.
+        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/pade.
 
     Returns:
         dict: GTH parameters.
     '''
-    if psp_path is None:
+    if psp_path in ('pade', 'pbe'):
         file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
-        psp_path = file_path.parent.joinpath(f'psp/{xc}')
+        file_path = file_path.parent.joinpath(f'psp/{psp_path}')
+    else:
+        file_path = pathlib.Path(psp_path)
 
     if charge is not None:
-        f_psp = psp_path.joinpath(f'{atom}-q{charge}')
+        f_psp = file_path.joinpath(f'{atom}-q{charge}')
     else:
-        files = sorted(psp_path.glob(f'{atom}-q*'))
+        files = sorted(file_path.glob(f'{atom}-q*'))
         try:
             f_psp = pathlib.Path(files[0])
         except IndexError:
-            log.warning(f'There is no GTH pseudopotential in {psp_path} for "{atom}"')
+            log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}"')
             return mock_gth()
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". '

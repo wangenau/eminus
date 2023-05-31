@@ -196,12 +196,15 @@ class Atoms:
         # If no charge is given, use the ionic charge from the GTH files
         if self.Z is None or isinstance(self.Z, str):
             if isinstance(self.Z, str):
-                xc = self.Z.lower()
+                if self.Z.lower() in ('pade', 'pbe'):
+                    psp_path = self.Z.lower()
+                else:
+                    psp_path = self.Z
             else:
-                xc = 'pbe'
+                psp_path = 'pbe'
             Z = []
             for ia in range(self.Natoms):
-                gth_dict = read_gth(self.atom[ia], xc=xc)
+                gth_dict = read_gth(self.atom[ia], psp_path=psp_path)
                 Z.append(gth_dict['Zion'])
             self.Z = np.asarray(Z)
         return

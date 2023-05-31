@@ -236,7 +236,7 @@ class SCF:
         atoms = self.atoms
         if self.pot == 'gth':
             for ia in range(atoms.Natoms):
-                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], xc=self.psp)
+                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=self.psp)
             # Set up the local and non-local part
             self.Vloc = init_gth_loc(self)
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
