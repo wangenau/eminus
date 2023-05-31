@@ -201,13 +201,14 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
     if vxc is None or (vsigma is None and scf.psp == 'pbe'):
         vxc, vsigma = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin)
 
+    gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a GGA functional is used
     # This calculate the representation in the reciprocal space
     if scf.psp == 'pbe':
-        vgxc = gradient_correction(atoms, spin, dn_spin, vsigma)
+        gvxc = gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
-    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc[spin]) - vgxc))
+    Vxc = atoms.Jdag(atoms.O(gvxc))
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[spin])
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
