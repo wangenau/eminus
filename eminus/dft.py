@@ -201,12 +201,13 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
     if vxc is None or (vsigma is None and scf.psp == 'pbe'):
         vxc, vsigma = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin)
 
-    # We get the full potential in the functional definition (different to the DFT++ notation)
-    # Applay the gradient correction to the potential if a GGA functional is used
+    # Calculate the gradient correction to the potential if a GGA functional is used
+    # This calculate the representation in the reciprocal space
     if scf.psp == 'pbe':
-        vxc = gradient_correction(atoms, dn_spin, vxc, vsigma)
-    # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n)))
-    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc[spin])))
+        vgxc = gradient_correction(atoms, spin, dn_spin, vsigma)
+    # We get the full potential in the functional definition (different to the DFT++ notation)
+    # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
+    Vxc = atoms.Jdag(atoms.O(atoms.J(vxc[spin]) - vgxc))
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[spin])
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
@@ -217,19 +218,19 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
     return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi
 
 
-def gradient_correction(atoms, dn_spin, vxc, vsigma):
+def gradient_correction(atoms, spin, dn_spin, vsigma):
     '''Calculate the gradient corrected exchange-correlation potential.
 
     Reference: Chem. Phys. Lett. 199, 557.
 
     Args:
         atoms: Atoms object.
+        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        vxc (ndarray): Exchange-correlation potential.
         vsigma (ndarray): Contracted gradient potential derivative.
 
     Returns:
-        ndarray: Gradient corrected potential.
+        ndarray: Gradient corrected potential in reciprocal space.
     '''
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
     h = np.zeros_like(dn_spin)
@@ -244,16 +245,11 @@ def gradient_correction(atoms, dn_spin, vxc, vsigma):
         h[1] = 2 * vsigma[2][:, None] * dn_spin[1] + vsigma[1][:, None] * dn_spin[0]
 
     # Calculate Nabla dot h
-    divh = np.zeros_like(vxc)
-    for spin in range(atoms.Nspin):
-        Gh = np.empty((len(atoms.G2), 3), dtype=complex)
-        for i in range(3):
-            Gh[:, i] = atoms.J(h[spin, :, i])
-        Gdivh = 1j * np.sum(atoms.G * Gh, axis=1)
-        divh[spin] = np.real(atoms.I(Gdivh))
-
-    # Subtract the gradient correction
-    return vxc - divh
+    # Normally we would calculate the correction for each spin, but we only need one at a time in H
+    Gh = np.empty((len(atoms.G2), 3), dtype=complex)
+    for i in range(3):
+        Gh[:, i] = atoms.J(h[spin, :, i])
+    return 1j * np.sum(atoms.G * Gh, axis=1)
 
 
 def Q(inp, U):
