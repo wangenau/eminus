@@ -4,13 +4,19 @@ Changelog
 dev
 ---
 - New features
+   - Add meta-GGA functionals!
+      - Use all meta-GGAs that don't need a laplacian from Libxc using pylibxc or PySCF
    - Add a new auto minimizer
       - It functions like the pccg minimizer but can fallback to sd steps
 - Updated docs
-   - Update the introduction page in documentation
+   - Update the introduction page in the documentation
 - Miscellaneous
+   - Improved GGA performance
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
+   - Option to set a path to a directory containing GTH pseudopotential files
+   - The SCF class now contains the xc_type variable
+   - Support functional parsing using pylibxc
    - Do an unpaired calculation automatically if the system is unpaired
 
 v2.4.0 - May 23, 2023
