@@ -5,6 +5,7 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
+from eminus import config
 from eminus.xc import get_xc, parse_functionals, parse_xc_type
 
 
@@ -50,6 +51,7 @@ def test_parse_xc_type(xc, ref):
 def test_parse_xc_type_pyscf(xc, ref):
     '''Test the pseudopotential parsing using PySCF.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    config.use_pylibxc = False
     psp = parse_xc_type(xc)
     assert psp == ref
 
@@ -65,6 +67,7 @@ def test_parse_xc_type_pyscf(xc, ref):
 def test_parse_xc_type_pylibxc(xc, ref):
     '''Test the pseudopotential parsing using pylibxc.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
+    config.use_pylibxc = True
     psp = parse_xc_type(xc)
     assert psp == ref
 
