@@ -59,7 +59,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only
     # Handle exchange part
     if ':' in f_exch:
         f_exch = f_exch.split(':')[-1]
-        ex, vx, vsigmax, vtaux = libxc_functional(f_exch, n_spin, Nspin, dn_spin, tau)
+        ex, vx, vsigmax, vtaux = libxc_functional(f_exch, n_spin, Nspin, dn_spin, tau, exc_only)
     else:
         if Nspin == 2 and f_exch != 'mock_xc':
             f_exch += '_spin'
@@ -85,7 +85,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only
     # Handle correlation part
     if ':' in f_corr:
         f_corr = f_corr.split(':')[-1]
-        ec, vc, vsigmac, vtauc = libxc_functional(f_corr, n_spin, Nspin, dn_spin, tau)
+        ec, vc, vsigmac, vtauc = libxc_functional(f_corr, n_spin, Nspin, dn_spin, tau, exc_only)
     else:
         if Nspin == 2 and f_corr != 'mock_xc':
             f_corr += '_spin'

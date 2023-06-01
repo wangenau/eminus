@@ -21,6 +21,7 @@ n_tests = {
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
     n_spin = n_tests[Nspin]
@@ -37,6 +38,7 @@ def test_libxc_functional_exc(xc, Nspin):
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
     n_spin = n_tests[Nspin]
@@ -59,6 +61,27 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
     _, _, vsigma_out, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
+
+
+@pytest.mark.parametrize('xc', ['1', '7', '101', '130', '202', '231'])
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_libxc_exc_only(xc, Nspin):
+    '''Test the function to only get the exc part using pylibxc.'''
+    pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    from eminus.extras import libxc_functional
+    from pyscf.dft.libxc import is_gga, is_meta_gga
+    n_spin = n_tests[Nspin]
+    dn_spin = None
+    tau = None
+    if is_gga(xc) or is_meta_gga(xc):
+        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    if is_meta_gga(xc):
+        tau = n_spin
+    e_out, vxc_out, vsigma_out, vtau_out = libxc_functional(xc, n_spin, Nspin, dn_spin, tau, True)
+    assert vxc_out is None
+    assert vsigma_out is None
+    assert vtau_out is None
 
 
 @pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
@@ -106,7 +129,27 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
     assert_allclose(vsigma_out, vsigma_test)
 
 
-@pytest.mark.parametrize('xc', ['202', '231', '263', '267'])
+@pytest.mark.parametrize('xc', ['1', '7', '101', '130', '202', '231'])
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_pyscf_exc_only(xc, Nspin):
+    '''Test the function to only get the exc part using PySCF.'''
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    from eminus.extras.libxc import pyscf_functional
+    from pyscf.dft.libxc import is_gga, is_meta_gga
+    n_spin = n_tests[Nspin]
+    dn_spin = None
+    tau = None
+    if is_gga(xc) or is_meta_gga(xc):
+        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    if is_meta_gga(xc):
+        tau = n_spin
+    e_out, vxc_out, vsigma_out, vtau_out = pyscf_functional(xc, n_spin, Nspin, dn_spin, tau, True)
+    assert vxc_out is None
+    assert vsigma_out is None
+    assert vtau_out is None
+
+
+@pytest.mark.parametrize('xc', ['202', '231'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_mgga(xc, Nspin):
     '''Test the execution of meta-GGAs using PySCF.'''

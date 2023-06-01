@@ -76,10 +76,11 @@ def test_exc_only(xc, Nspin):
     if is_gga(xc):
         dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
     e_out, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin=dn_spin)
-    e_test, v_test, vsigma_test, _ = get_xc(xc, n_spin, Nspin, exc_only=True, dn_spin=dn_spin)
+    e_test, v_test, vsigma_test, vtau_test = get_xc(xc, n_spin, Nspin, exc_only=True, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
     assert v_test is None
     assert vsigma_test is None
+    assert vtau_test is None
 
 
 if __name__ == '__main__':
