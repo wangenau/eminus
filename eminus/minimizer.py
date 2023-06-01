@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from .dft import get_grad, get_grad_field, get_n_spin, get_n_total, orth, solve_poisson
+from .dft import get_grad, get_grad_field, get_n_spin, get_n_total, get_tau, orth, solve_poisson
 from .energies import get_E
 from .logger import name
 from .utils import dotprod
@@ -28,8 +28,11 @@ def scf_step(scf):
     scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
     if 'gga' in scf.xc_type:
         scf.dn_spin = get_grad_field(atoms, scf.n_spin)
+    if scf.xc_type == 'meta-gga':
+        scf.tau = get_tau(atoms, scf.Y)
     scf.phi = solve_poisson(atoms, scf.n)
-    scf.exc, scf.vxc, scf.vsigma = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin)
+    scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin,
+                                                    scf.tau)
     return get_E(scf)
 
 

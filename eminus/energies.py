@@ -7,6 +7,7 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_grad_field, get_n_single, solve_poisson
+from .tools import get_tau
 from .xc import get_exc
 
 
@@ -47,7 +48,7 @@ def get_E(scf):
     '''
     scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
     scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
-    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, scf.atoms.Nspin)
+    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, Nspin=scf.atoms.Nspin)
     scf.energies.Eloc = get_Eloc(scf, scf.n)
     scf.energies.Enonloc = get_Enonloc(scf, scf.Y)
     return scf.energies.Etot
@@ -94,7 +95,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
+def get_Exc(scf, n, exc=None, n_spin=None, Y=None, Nspin=2):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -106,7 +107,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
         n_spin (ndarray): Real-space electronic densities per spin channel.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
         Nspin (int): Number of spin states.
 
     Returns:
@@ -114,9 +115,15 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        if dn_spin is None and 'gga' in scf.xc_type:
+        if 'gga' in scf.xc_type:
             dn_spin = get_grad_field(atoms, n_spin)
-        exc = get_exc(scf.xc, n_spin, Nspin, dn_spin)
+        else:
+            dn_spin = None
+        if scf.xc_type == 'meta-gga':
+            tau = get_tau(atoms, Y)
+        else:
+            tau = None
+        exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
@@ -291,7 +298,7 @@ def get_Esic(scf, Y, n_single=None):
 
                 coul = get_Ecoul(atoms, ni[0])
                 # The exchange part for a SIC correction has to be spin-polarized
-                xc = get_Exc(scf, ni[0], n_spin=ni, Nspin=2)
+                xc = get_Exc(scf, ni[0], n_spin=ni, Y=Y, Nspin=2)
                 # SIC energy is scaled by the occupation number
                 Esic += (coul + xc) * atoms.f[spin, i]
     scf.energies.Esic = Esic

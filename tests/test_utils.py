@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose
 import pytest
 from scipy.special import sph_harm
 
-from eminus.utils import pseudo_uniform, Ylm_real
+from eminus.utils import add_maybe_none, pseudo_uniform, Ylm_real
 
 
 @pytest.mark.parametrize('l', [0, 1, 2, 3])
@@ -44,6 +44,16 @@ def test_pseudo_uniform(seed, ref):
     '''Test the reproduciblity of the pseudo random number generator.'''
     out = pseudo_uniform((1, 1, 3), seed=seed)
     assert_allclose(out, ref)
+
+
+@pytest.mark.parametrize('a, b, ref', [(1, 2, 3),
+                                       (1, None, 1),
+                                       (None, 2, 2),
+                                       (None, None, None)])
+def test_add_maybe_none(a, b, ref):
+    '''Test the function to add two variables that can be None.'''
+    out = add_maybe_none(a, b)
+    assert out == ref
 
 
 if __name__ == '__main__':

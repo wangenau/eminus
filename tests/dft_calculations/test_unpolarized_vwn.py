@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test total energies for a small set of spin-paired systems.'''
+'''Test total energies using VWN for a small set of spin-paired systems.'''
 import inspect
 import pathlib
 

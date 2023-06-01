@@ -107,13 +107,15 @@ class SCF:
         self.Y = None        # Orthogonal wave functions
         self.n_spin = None   # Electronic densities per spin
         self.dn_spin = None  # Gradient of electronic densities per spin
+        self.tau = None      # Kinetic energy densities per spin
         self.phi = None      # Hartree field
         self.exc = None      # Exchange-correlation energy density
         self.vxc = None      # Exchange-correlation potential
         self.vsigma = None   # n times d exc/d |dn|^2
-        self.precomputed = {'Y': self.Y, 'n': self.n, 'n_spin': self.n_spin,
+        self.vtau = None     # d exc/d tau
+        self.precomputed = {'Y': self.Y, 'n': self.n, 'n_spin': self.n_spin, 'tau': self.tau,
                             'dn_spin': self.dn_spin, 'phi': self.phi, 'vxc': self.vxc,
-                            'vsigma': self.vsigma}
+                            'vsigma': self.vsigma, 'vtau': self.vtau}
         return self
 
     def initialize(self):

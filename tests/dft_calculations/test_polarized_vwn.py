@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test total energies for a small set of spin-polarized and -unpolarized systems.'''
+'''Test total energies using VWN for a small set of spin-polarized and -unpolarized systems.'''
 import inspect
 import pathlib
 

@@ -8,8 +8,8 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue, get_tau,
-                          get_tautf, get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
+                          cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue, get_tautf,
+                          get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
 min = {'sd': 25, 'pccg': 25}
@@ -125,19 +125,6 @@ def test_get_tauw(Nspin):
     T = np.sum(tauw) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # vW KED is exact for one- and two-electron systems
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
-
-
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_tau(Nspin):
-    '''Test positive-definite kinetic energy density.'''
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
-        scf = scf_pol
-    tau = get_tau(scf)
-    T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
-    # This integrated KED should be the same as the calculated kinetic energy
-    assert_allclose(T, scf.energies.Ekin)
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])

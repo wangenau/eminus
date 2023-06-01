@@ -16,9 +16,10 @@ from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
 from .. import config
 from ..logger import log
+from ..utils import add_maybe_none
 
 
-def get_xc(xc, n_spin, Nspin, dn_spin=None, dens_threshold=0, exc_only=False):
+def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only=False):
     '''Handle and get exchange-correlation functionals.
 
     Args:
@@ -28,6 +29,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, dens_threshold=0, exc_only=False):
 
     Keyword Args:
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        tau (ndarray): Real-space kinetic energy densities per spin channel.
         dens_threshold (float): Do not treat densities smaller than the threshold.
         exc_only (bool): Only calculate the exchange-correlation energy density.
 
@@ -57,7 +59,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, dens_threshold=0, exc_only=False):
     # Handle exchange part
     if ':' in f_exch:
         f_exch = f_exch.split(':')[-1]
-        ex, vx, vsigmax = libxc_functional(f_exch, n_spin, Nspin, dn_spin)
+        ex, vx, vsigmax, vtaux = libxc_functional(f_exch, n_spin, Nspin, dn_spin, tau)
     else:
         if Nspin == 2 and f_exch != 'mock_xc':
             f_exch += '_spin'
@@ -77,11 +79,13 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, dens_threshold=0, exc_only=False):
                     vsigmax[i, nz_mask] = vsigmax_nz[i]
             else:
                 vsigmax = None
+        # There are no internal meta-GGAs
+        vtaux = None
 
     # Handle correlation part
     if ':' in f_corr:
         f_corr = f_corr.split(':')[-1]
-        ec, vc, vsigmac = libxc_functional(f_corr, n_spin, Nspin, dn_spin)
+        ec, vc, vsigmac, vtauc = libxc_functional(f_corr, n_spin, Nspin, dn_spin, tau)
     else:
         if Nspin == 2 and f_corr != 'mock_xc':
             f_corr += '_spin'
@@ -101,17 +105,12 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, dens_threshold=0, exc_only=False):
                     vsigmac[i, nz_mask] = vsigmac_nz[i]
             else:
                 vsigmac = None
+        # There are no internal meta-GGAs
+        vtauc = None
 
     if exc_only:
-        return ex + ec, None, None
-    # We can not add Nones or None and array together, so do this ugly case check
-    if vsigmax is None and vsigmac is None:
-        return ex + ec, vx + vc, None
-    if vsigmax is None:
-        return ex + ec, vx + vc, vsigmac
-    if vsigmac is None:
-        return ex + ec, vx + vc, vsigmax
-    return ex + ec, vx + vc, vsigmax + vsigmac
+        return ex + ec, None, None, None
+    return ex + ec, vx + vc, add_maybe_none(vsigmax, vsigmac), add_maybe_none(vtaux, vtauc)
 
 
 def get_exc(*args, **kwargs):
@@ -119,7 +118,7 @@ def get_exc(*args, **kwargs):
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     '''
-    exc, _, _ = get_xc(*args, **kwargs, exc_only=True)
+    exc, _, _, _ = get_xc(*args, **kwargs, exc_only=True)
     return exc
 
 
@@ -128,8 +127,8 @@ def get_vxc(*args, **kwargs):
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     '''
-    _, vxc, vsigma = get_xc(*args, **kwargs)
-    return vxc, vsigma
+    _, vxc, vsigma, vtau = get_xc(*args, **kwargs)
+    return vxc, vsigma, vtau
 
 
 def parse_functionals(xc):

@@ -59,3 +59,22 @@ for i = 1:size(systems, 1)
 end
 println("}")
 ```
+
+and for the SCAN calculations
+
+```terminal
+using PWDFT
+
+const systems = ["CH4"]
+const psp_path = joinpath(dirname(pathof(PWDFT)), "..", "pseudopotentials", "pbe_gth")
+const psps = [[joinpath(psp_path, "C-q4.gth"), joinpath(psp_path, "H-q1.gth")]]
+
+println("E_ref = {")
+for i = 1:size(systems, 1)
+    atoms = Atoms(xyz_file=systems[i]*".xyz", LatVecs=gen_lattice_sc(10.0))
+    Ham = Hamiltonian(atoms, psps[i], 10.0, Nspin=1, xcfunc="SCAN")
+    KS_solve_Emin_PCG!(Ham, startingrhoe=:random, verbose=false, etot_conv_thr=1e-6)
+    println("    '$(systems[i])': $(round.(sum(Ham.energies); digits=6)),")
+end
+println("}")
+```

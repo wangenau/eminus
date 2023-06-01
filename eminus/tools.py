@@ -4,7 +4,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import minimize_scalar
 
-from .dft import get_epsilon, get_grad_field
+from .dft import get_epsilon, get_grad_field, get_tau
 from .logger import log
 
 
@@ -329,31 +329,6 @@ def get_tauw(scf):
     return tauw
 
 
-def get_tau(scf):
-    '''Calculate the positive-definite kinetic energy densities per spin.
-
-    Reference: J. Chem. Phys. 109, 2092.
-
-    Args:
-        scf: SCF object.
-
-    Returns:
-        ndarray: Real space positive-definite kinetic energy density.
-    '''
-    atoms = scf.atoms
-    Yrs = atoms.I(scf.Y)
-    tau = np.zeros((atoms.Nspin, len(atoms.r)), dtype=complex)
-    for i in range(atoms.Nstate):
-        dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
-        # Use the definition with a division by two
-        tau += 0.5 * atoms.f[:, i][:, None] * np.sum(dYrs.conj() * dYrs, axis=2)
-
-    # The calculated and integrated kinetic energy should be the same
-    log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tau:  {np.sum(tau) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
-    return np.real(tau)
-
-
 def get_elf(scf):
     '''Calculate the electron localization function.
 
@@ -365,7 +340,7 @@ def get_elf(scf):
     Returns:
         ndarray: Real space electron localization function.
     '''
-    D = get_tau(scf) - get_tauw(scf)
+    D = get_tau(scf.atoms, scf.Y) - get_tauw(scf)
     D0 = get_tautf(scf)
     X = D / D0
     elf = 1 / (1 + X**2)

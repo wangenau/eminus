@@ -118,6 +118,27 @@ def get_grad_field(atoms, field, real=True):
     return dfield
 
 
+def get_tau(atoms, Y):
+    '''Calculate the positive-definite kinetic energy densities per spin.
+
+    Reference: J. Chem. Phys. 109, 2092.
+
+    Args:
+        atoms: Atoms object.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Returns:
+        ndarray: Real space positive-definite kinetic energy density.
+    '''
+    Yrs = atoms.I(Y)
+    tau = np.zeros((atoms.Nspin, len(atoms.r)), dtype=complex)
+    for i in range(atoms.Nstate):
+        dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
+        # Use the definition with a division by two
+        tau += 0.5 * atoms.f[:, i][:, None] * np.sum(dYrs.conj() * dYrs, axis=2)
+    return np.real(tau)
+
+
 @handle_spin_gracefully
 def orth(atoms, W):
     '''Orthogonalize coefficient matrix W.
@@ -163,7 +184,8 @@ def get_grad(scf, spin, W, *args, **kwargs):
     return (HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
-def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=None, vsigma=None):
+def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, tau=None, phi=None, vxc=None,
+      vsigma=None, vtau=None):
     '''Left-hand side of the eigenvalue equation.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -177,10 +199,12 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
         n (ndarray): Real-space electronic density.
         n_spin (ndarray): Real-space electronic densities per spin channel.
+        tau (ndarray): Real-space kinetic energy densities per spin channel.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         phi (ndarray): Hartree field.
         vxc (ndarray): Exchange-correlation potential.
         vsigma (ndarray): Contracted gradient potential derivative.
+        vtau (ndarray): Kinetic energy gradient potential derivative.
 
     Returns:
         ndarray: Hamiltonian applied on W.
@@ -194,33 +218,37 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, phi=None, vxc=Non
         n_spin = get_n_spin(atoms, Y, n)
     if dn_spin is None and 'gga' in scf.xc_type:
         dn_spin = get_grad_field(atoms, n_spin)
+    if tau is None and scf.xc_type == 'meta-gga':
+        tau = get_tau(atoms, Y)
     if n is None:
         n = get_n_total(atoms, Y, n_spin)
     if phi is None:
         phi = solve_poisson(atoms, n)
-    if vxc is None or (vsigma is None and 'gga' in scf.xc_type):
-        vxc, vsigma = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin)
+    if vxc is None or (vsigma is None and 'gga' in scf.xc_type) or \
+                      (vtau is None and scf.xc_type == 'meta-gga'):
+        vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin, tau)
 
-    gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a GGA functional is used
     # This calculate the representation in the reciprocal space
+    Gvxc = atoms.J(vxc[spin])
     if 'gga' in scf.xc_type:
-        gvxc = gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
+        Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
-    Vxc = atoms.Jdag(atoms.O(gvxc))
+    Vxc = atoms.Jdag(atoms.O(Gvxc))
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[spin])
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
     Veff = scf.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
     Vnonloc_psi = calc_Vnonloc(scf, W[spin])
-    # H = Vkin + Idag(diag(Veff))I + Vnonloc
+    Vtau_psi = calc_Vtau(scf, spin, W, vtau)
+    # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi + Vtau_psi
 
 
 def gradient_correction(atoms, spin, dn_spin, vsigma):
-    '''Calculate the gradient corrected exchange-correlation potential.
+    '''Calculate the gradient correction for the exchange-correlation potential.
 
     Reference: Chem. Phys. Lett. 199, 557.
 
@@ -231,7 +259,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
         vsigma (ndarray): Contracted gradient potential derivative.
 
     Returns:
-        ndarray: Gradient corrected potential in reciprocal space.
+        ndarray: Gradient correction in reciprocal space.
     '''
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
     h = np.zeros_like(dn_spin)
@@ -251,6 +279,36 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     for i in range(3):
         Gh[:, i] = atoms.J(h[spin, :, i])
     return 1j * np.sum(atoms.G * Gh, axis=1)
+
+
+def calc_Vtau(scf, spin, W, vtau):
+    '''Calculate the tau-dependent potential contribution for meta-GGAs.
+
+    Reference: J. Chem. Phys. 145, 204114.
+
+    Args:
+        scf: SCF object.
+        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        vtau (ndarray): Kinetic energy density potential derivative.
+
+    Returns:
+        ndarray: Tau-dependent potential contribution in reciprocal space.
+    '''
+    atoms = scf.atoms
+
+    Vpsi = np.zeros((len(atoms.G2c), atoms.Nstate), dtype=complex)
+    if scf.xc_type == 'meta-gga':  # Only calculate the contribution for meta-GGAs
+        GVpsi = np.empty((len(atoms.G2c), 3), dtype=complex)
+        Gc = atoms.G[atoms.active]
+        Wrs = atoms.I(W)
+
+        for i in range(atoms.Nstate):
+            dWrs = get_grad_field(atoms, Wrs[..., i], real=False)
+            for r in range(3):
+                GVpsi[:, r] = atoms.J(vtau[spin] * dWrs[spin, :, r], full=False)
+            Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
+    return Vpsi * atoms.Omega
 
 
 def Q(inp, U):

@@ -154,3 +154,22 @@ def pseudo_uniform(size, seed=1234):
                 x = (x * mult + 1) % mod
                 W[i, j, k] = x / mod
     return W
+
+
+def add_maybe_none(a, b):
+    '''Add a and b together, when one or both can potentially be None.
+
+    Args:
+        a (ndarray): Array.
+        b (ndarray): Array.
+
+    Returns:
+        ndarray: Sum of a and b.
+    '''
+    if a is None and b is None:
+        return None
+    if a is None:
+        return b
+    if b is None:
+        return a
+    return a + b

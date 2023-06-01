@@ -17,7 +17,7 @@ from .. import config
 from ..logger import log
 
 
-def libxc_functional(xc, n_spin, Nspin, dn_spin=None):
+def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     '''Handle Libxc exchange-correlation functionals via pylibxc.
 
     Only LDA and GGA functionals can be used.
@@ -30,15 +30,16 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None):
 
     Keyword Args:
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        tau (ndarray): Real-space kinetic energy densities per spin channel.
 
     Returns:
-        tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
+        tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
     '''
     try:
         assert config.use_pylibxc
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
-        return pyscf_functional(xc, n_spin, Nspin, dn_spin)
+        return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau)
 
     # Libxc functionals have one integer and one string identifier
     try:
@@ -57,18 +58,25 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None):
             # For the spin-polairzed case the gradients of spin-up and -down are mixed together
             dn2 = np.vstack((norm(dn_spin[0], axis=1)**2, np.sum(dn_spin[0] * dn_spin[1], axis=1),
                             norm(dn_spin[1], axis=1)**2))
-        out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()})
+        if tau is None:
+            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()})
+        else:
+            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel(),
+                                'tau': tau.T.ravel()})
     # zk is a column vector, flatten it to a 1d row vector
     exc = out['zk'].ravel()
     # vrho (and vsigma) is exactly transposed from what we need
     vxc = out['vrho'].T
     if dn_spin is not None:
-        vsigma = out['vsigma'].T
-        return exc, vxc, np.atleast_2d(vsigma)
-    return exc, vxc, None
+        vsigma = np.atleast_2d(out['vsigma'].T)
+        if tau is not None:
+            vtau = out['vtau'].T
+            return exc, vxc, vsigma, vtau
+        return exc, vxc, vsigma, None
+    return exc, vxc, None, None
 
 
-def pyscf_functional(xc, n_spin, Nspin, dn_spin=None):
+def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     '''Handle Libxc exchange-correlation functionals via PySCF.
 
     Only LDA and GGA functionals can be used.
@@ -81,9 +89,10 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None):
 
     Keyword Args:
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        tau (ndarray): Real-space kinetic energy densities per spin channel.
 
     Returns:
-        tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
+        tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
     '''
     try:
         from pyscf.dft.libxc import eval_xc
@@ -92,23 +101,38 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None):
                       'install them with "pip install eminus[libxc]".\n\n')
         raise
 
-    # The function also returns fxc and kxc (higher derivatives) that are not needed at this point
-    # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     if dn_spin is None:
         # For LDAs we only need the spin densities that are already in the needed shape
-        exc, vxc, _, _ = eval_xc(xc, n_spin, spin=Nspin - 1)
-        # The first entry of vxc is vrho as a 1d array for Nspin=1 and as a column array for Nspin=2
-        return exc, np.atleast_2d(vxc[0].T), None
+        rho = n_spin
     else:
-        # For GGAs we have to append the density gradients
-        # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
-        if Nspin == 1:
-            # For spin-paired systems we have to remove the spin indexing, i.e., the outermost shape
-            rho = np.vstack((n_spin[0], dn_spin[0].T))
+        if tau is None:
+            # For GGAs we have to append the density gradients
+            # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
+            if Nspin == 1:
+                # For spin-paired systems we have to remove the spin indexing (the outermost shape)
+                rho = np.vstack((n_spin[0], dn_spin[0].T))
+            else:
+                rho = np.array([np.vstack((n_spin[0], dn_spin[0].T)),
+                                np.vstack((n_spin[1], dn_spin[1].T))])
         else:
-            rho = np.array([np.vstack((n_spin[0], dn_spin[0].T)),
-                            np.vstack((n_spin[1], dn_spin[1].T))])
-        exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
-        # The second entry of the second entry is vsigma
-        # vsigma can be a 1d or 2d array depending on the spin, reshape it as needed
-        return exc, np.atleast_2d(vxc[0].T), np.atleast_2d(vxc[1].T)
+            # For meta-GGAs we have to append the kinetic energy densities as well
+            # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n,lapl,tau)
+            # We do not support meta-GGAs with a dependency of the laplacian so set it to zero
+            lapl = np.zeros(len(n_spin[0]))
+            if Nspin == 1:
+                rho = np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
+            else:
+                rho = np.array([np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
+                                np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1]))])
+
+    # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
+    exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
+    # The first entry of vxc is vrho
+    # The second entry of the second entry is vsigma
+    # The fourth entry of the second entry is vtau (the third would be vlapl)
+    # These arrays are 1d for Nspin=1 and a 2d column array for Nspin=2, reshape them as needed
+    if dn_spin is not None:
+        if tau is not None:
+            return exc, np.atleast_2d(vxc[0].T), np.atleast_2d(vxc[1].T), np.atleast_2d(vxc[3].T)
+        return exc, np.atleast_2d(vxc[0].T), np.atleast_2d(vxc[1].T), None
+    return exc, np.atleast_2d(vxc[0].T), None, None
