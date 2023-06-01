@@ -11,8 +11,8 @@ from .energies import Energy, get_Eewald, get_Esic
 from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
 from .logger import create_logger, get_level
-from .minimizer import IMPLEMENTED
-from .potentials import init_pot
+from .minimizer import IMPLEMENTED as all_minimizer
+from .potentials import init_pot, IMPLEMENTED as all_potentials
 from .tools import center_of_mass
 from .version import info
 from .xc import parse_functionals, parse_xc_type
@@ -66,7 +66,7 @@ class SCF:
                  sic=False, min=None, verbose=None):
         self.atoms = atoms             # Atoms object
         self.xc = xc.lower()           # Exchange-correlation functional
-        self.pot = pot.lower()         # Used pseudopotential
+        self.pot = pot                 # Used pseudopotential
         self.guess = guess.lower()     # Initial wave functions guess
         self.etol = etol               # Total energy convergence tolerance
         self.cgform = cgform           # Conjugate gradient form
@@ -158,12 +158,12 @@ class SCF:
         minimizer_log = {}
         for imin in self.min:
             try:
-                self.log.info(f'Start {IMPLEMENTED[imin].__name__}...')
+                self.log.info(f'Start {all_minimizer[imin].__name__}...')
             except KeyError:
                 self.log.exception(f'No minimizer found for "{imin}".')
                 raise
             start = time.perf_counter()
-            Elist = IMPLEMENTED[imin](self, self.min[imin], **kwargs)  # Call minimizer
+            Elist = all_minimizer[imin](self, self.min[imin], **kwargs)  # Call minimizer
             end = time.perf_counter()
             minimizer_log[imin] = {}  # Create an entry for the current minimizer
             minimizer_log[imin]['time'] = end - start  # Save time in dictionary
@@ -238,10 +238,12 @@ class SCF:
         '''Build the potential.'''
         atoms = self.atoms
 
-        # Use the custom psp files provided by the atoms object if possible
-        if isinstance(atoms.Z, str) and atoms.Z not in ('pade', 'pbe'):
-            self.psp = atoms.Z
+        # If pot is no supported potential it can be a path to a directory containing GTH files
+        if self.pot.lower() != 'gth' and self.pot.lower() not in all_potentials:
+            self.psp = self.pot
+            self.pot = 'gth'
         else:
+            self.pot = self.pot.lower()
             if 'gga' in self.xc_type:
                 self.psp = 'pbe'
             else:

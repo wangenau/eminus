@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 '''Test GTH functions.'''
+import inspect
+import pathlib
+
 import numpy as np
 from numpy.testing import assert_allclose
 
@@ -33,9 +36,16 @@ def test_mock():
         assert_allclose(scf.GTH['X'][key], 0)
 
 
+def test_custom_files():
+    '''Test the option to use custom GTH files in Atoms and SCF.'''
+    file_path = str(pathlib.Path(inspect.getfile(inspect.currentframe())).parent)
+    atoms = Atoms('B', (0, 0, 0)).build()
+    assert atoms.Z[0] == 3
+    scf = SCF(atoms, pot=file_path)
+    assert scf.GTH['B']['rloc'] == 0.42188166
+
+
 if __name__ == '__main__':
-    import inspect
-    import pathlib
     import pytest
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
     pytest.main(file_path)
