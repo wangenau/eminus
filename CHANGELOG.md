@@ -17,6 +17,7 @@ dev
    - Option to set a path to a directory containing GTH pseudopotential files
    - The SCF class now contains the xc_type variable
    - Support functional parsing using pylibxc
+   - Option to pass exc_only to libxc extra
    - Do an unpaired calculation automatically if the system is unpaired
 
 v2.4.0 - May 23, 2023
