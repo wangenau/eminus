@@ -11,6 +11,7 @@ dev
 - Updated docs
    - Update the introduction page in the documentation
 - Miscellaneous
+   - Performance fix using precomputed values correctly
    - Improved GGA performance
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function

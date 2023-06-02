@@ -33,6 +33,10 @@ def scf_step(scf):
     scf.phi = solve_poisson(atoms, scf.n)
     scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin,
                                                     scf.tau)
+
+    scf.precomputed = {'Y': scf.Y, 'n': scf.n, 'n_spin': scf.n_spin, 'dn_spin': scf.dn_spin,
+                       'tau': scf.tau, 'phi': scf.phi, 'vxc': scf.vxc, 'vsigma': scf.vsigma,
+                       'vtau': scf.vtau}
     return get_E(scf)
 
 
