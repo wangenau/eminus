@@ -10,6 +10,7 @@ Main source code directory.
 | dft.py         | DFT routines |
 | domains.py     | Domain generation |
 | energies.py    | Energy object and calculation |
+| gga.py         | Functions needed for GGAs and meta-GGAs |
 | gth.py         | GTH pseudopotential functions |
 | localizer.py   | Localization routines |
 | logger.py      | Logging configuration |

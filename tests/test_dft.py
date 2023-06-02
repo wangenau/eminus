@@ -5,7 +5,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, SCF
-from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, get_tau, H
+from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, H
 
 atoms_unpol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=1)
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=2)
@@ -91,19 +91,6 @@ def test_n_single(Nspin):
     for s in range(Nspin):
         n_int = np.sum(n[s], axis=0) * dV
         assert_allclose(n_int, scf.atoms.f[s])
-
-
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_tau(Nspin):
-    '''Test positive-definite kinetic energy density.'''
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
-        scf = scf_pol
-    tau = get_tau(scf.atoms, scf.Y)
-    T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
-    # This integrated KED should be the same as the calculated kinetic energy
-    assert_allclose(T, scf.energies.Ekin)
 
 
 if __name__ == '__main__':

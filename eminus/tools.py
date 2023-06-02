@@ -4,7 +4,8 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import minimize_scalar
 
-from .dft import get_epsilon, get_grad_field, get_tau
+from .dft import get_epsilon
+from .gga import get_grad_field, get_tau
 from .logger import log
 
 
