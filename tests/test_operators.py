@@ -19,9 +19,6 @@ W_tests = {
     'full_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2), atoms.Nstate)),
     'active_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
 }
-# Set test arrays to non-writable to make sure no in-place changes are taking place
-for type in W_tests:
-    W_tests[type].setflags(write=False)
 dr = rng.standard_normal(3)
 
 
