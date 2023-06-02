@@ -113,7 +113,7 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_grad(scf, spin, W, *args, **kwargs):
+def get_grad(scf, spin, W, **kwargs):
     '''Calculate the energy gradient with respect to W.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -128,7 +128,7 @@ def get_grad(scf, spin, W, *args, **kwargs):
     '''
     atoms = scf.atoms
     F = np.diag(atoms.f[spin])
-    HW = H(scf, spin, W, *args, **kwargs)
+    HW = H(scf, spin, W, **kwargs)
     WHW = W[spin].conj().T @ HW
     # U = Wdag O(W)
     OW = atoms.O(W[spin])

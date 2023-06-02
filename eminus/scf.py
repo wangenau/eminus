@@ -113,9 +113,9 @@ class SCF:
         self.vxc = None      # Exchange-correlation potential
         self.vsigma = None   # n times d exc/d |dn|^2
         self.vtau = None     # d exc/d tau
-        self.precomputed = {'Y': self.Y, 'n': self.n, 'n_spin': self.n_spin, 'tau': self.tau,
-                            'dn_spin': self.dn_spin, 'phi': self.phi, 'vxc': self.vxc,
-                            'vsigma': self.vsigma, 'vtau': self.vtau}
+        self.precomputed = {'Y': self.Y, 'n': self.n, 'n_spin': self.n_spin,
+                            'dn_spin': self.dn_spin, 'tau': self.tau, 'phi': self.phi,
+                            'vxc': self.vxc, 'vsigma': self.vsigma, 'vtau': self.vtau}
         return self
 
     def initialize(self):
