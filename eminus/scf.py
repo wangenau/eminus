@@ -104,16 +104,17 @@ class SCF:
 
     def clear(self):
         '''Initialize and clear intermediate results.'''
-        self.Y = None          # Orthogonal wave functions
-        self.n_spin = None     # Electronic densities per spin
-        self.dn_spin = None    # Gradient of electronic densities per spin
-        self.tau = None        # Kinetic energy densities per spin
-        self.phi = None        # Hartree field
-        self.exc = None        # Exchange-correlation energy density
-        self.vxc = None        # Exchange-correlation potential
-        self.vsigma = None     # n times d exc/d |dn|^2
-        self.vtau = None       # d exc/d tau
-        self.precomputed = {}  # Dictionary of precomputed values not to be saved
+        self.Y = None              # Orthogonal wave functions
+        self.n_spin = None         # Electronic densities per spin
+        self.dn_spin = None        # Gradient of electronic densities per spin
+        self.tau = None            # Kinetic energy densities per spin
+        self.phi = None            # Hartree field
+        self.exc = None            # Exchange-correlation energy density
+        self.vxc = None            # Exchange-correlation potential
+        self.vsigma = None         # n times d exc/d |dn|^2
+        self.vtau = None           # d exc/d tau
+        self.precomputed = {}      # Dictionary of precomputed values not to be saved
+        self.is_converged = False  # Flag to determine if the object was converged or not
         return self
 
     def initialize(self):
@@ -172,6 +173,7 @@ class SCF:
                 break
         if len(Etots) > 1 and abs(Etots[-2] - Etots[-1]) < self.etol:
             self.log.info(f'SCF converged after {len(Etots)} iterations.')
+            self.is_converged = True
         else:
             self.log.warning('SCF not converged!')
 

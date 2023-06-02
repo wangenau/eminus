@@ -69,6 +69,7 @@ def test_clear():
     scf = SCF(atoms, min={'sd': 1})
     scf.run()
     scf.clear()
+    assert not scf.is_converged
     assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc) if x is None]
 
 
@@ -76,6 +77,7 @@ def test_recenter():
     '''Test the recenter function.'''
     scf = SCF(atoms)
     scf.run()
+    assert scf.is_converged
     scf.recenter()
     W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)

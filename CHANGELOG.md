@@ -16,7 +16,7 @@ dev
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
    - Option to set a path to a directory containing GTH pseudopotential files
-   - The SCF class now contains the xc_type variable
+   - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
    - Option to pass exc_only to libxc extra
    - Do an unpaired calculation automatically if the system is unpaired
