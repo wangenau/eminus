@@ -15,6 +15,7 @@ Modules
    eminus.dft
    eminus.domains
    eminus.energies
+   eminus.gga
    eminus.gth
    eminus.localizer
    eminus.logger
