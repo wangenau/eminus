@@ -15,8 +15,8 @@ E_ref = {
     'Eloc': -58.537341024,
     'Enonloc': 8.152487157,
     'Eewald': -4.539675967,
-    'Esic': -0.392074710,
-    'Etot': -29.680621097
+    'Esic': -0.397817332,
+    'Etot': -29.686363700
 }
 
 # Run the spin-unpaired calculation at first

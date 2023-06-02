@@ -16,7 +16,7 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('guess', ('gauss', 'rand', 'pseudo'))
+@pytest.mark.parametrize('guess', ('rand', 'pseudo'))
 @pytest.mark.parametrize('Nspin', (1, 2))
 def test_wavefunction(guess, Nspin):
     '''Test the orthonormalization of wave functions.'''

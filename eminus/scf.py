@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 
-from .dft import guess_gaussian, guess_pseudo, guess_random
+from .dft import guess_pseudo, guess_random
 from .energies import Energy, get_Eewald, get_Esic
 from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
@@ -37,8 +37,8 @@ class SCF:
             Default: 'gth'
         guess (str): Initial guess method for the basis functions (case insensitive).
 
-            Example: 'Gauss'; 'gaussian'; 'random'; 'rand',
-            Default: 'gaussian'
+            Example: 'random'; 'rand'; 'pseudo'
+            Default: 'random'
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
@@ -62,7 +62,7 @@ class SCF:
 
             Default: 'info'
     '''
-    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='gaussian', etol=1e-7, cgform=1,
+    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, cgform=1,
                  sic=False, min=None, verbose=None):
         self.atoms = atoms             # Atoms object
         self.xc = xc.lower()           # Exchange-correlation functional
@@ -261,10 +261,7 @@ class SCF:
 
     def _init_W(self):
         '''Initialize wave functions.'''
-        if self.guess in ('gauss', 'gaussian'):
-            # Start with gaussians at atom positions
-            self.W = guess_gaussian(self, complex=True)
-        elif self.guess in ('rand', 'random'):
+        if self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
             self.W = guess_random(self, complex=True)
         elif self.guess in ('pseudo', 'pseudo_rand', 'pseudo_random'):

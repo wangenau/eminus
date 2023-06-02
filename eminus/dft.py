@@ -2,7 +2,7 @@
 '''Main DFT functions based on the DFT++ formulation.'''
 import numpy as np
 from numpy.random import Generator, SFC64
-from scipy.linalg import eig, eigh, eigvalsh, inv, norm, sqrtm
+from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
 
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
@@ -223,7 +223,7 @@ def Q(inp, U):
     return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
 
 
-def get_psi(scf, W, n=None):
+def get_psi(scf, W):
     '''Calculate eigenstates from H.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -232,9 +232,6 @@ def get_psi(scf, W, n=None):
         scf: SCF object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
     Returns:
         ndarray: Eigenstates in reciprocal space.
     '''
@@ -242,7 +239,7 @@ def get_psi(scf, W, n=None):
     Y = orth(atoms, W)
     psi = np.empty_like(Y)
     for spin in range(atoms.Nspin):
-        mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
+        mu = Y[spin].conj().T @ H(scf, spin, Y)
         _, D = eigh(mu)
         psi[spin] = Y[spin] @ D
     return psi
@@ -294,33 +291,6 @@ def guess_random(scf, complex=True):
     else:
         W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
     return orth(atoms, W)
-
-
-def guess_gaussian(scf, complex=True):
-    '''Generate initial-guess coefficients using normalized Gaussians as starting values.
-
-    Args:
-        scf: SCF object.
-
-    Keyword Args:
-        complex (bool): Use complex numbers for the random guess.
-
-    Returns:
-        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
-    '''
-    atoms = scf.atoms
-    # Start with randomized wave functions
-    W = guess_random(scf, complex=complex)
-
-    sigma = 0.5
-    normal = (2 * np.pi * sigma**2)**(3 / 2)
-    # Calculate a density from normalized Gauss functions
-    n = np.zeros(len(atoms.r)) + 1e-15  # Add a small epsilon to prevent divisions by zero in exc
-    for ia in range(atoms.Natoms):
-        r = norm(atoms.r - atoms.X[ia], axis=1)
-        n += atoms.Z[ia] * np.exp(-r**2 / (2 * sigma**2)) / normal
-    # Calculate the eigenfunctions
-    return get_psi(scf, W, n)
 
 
 def guess_pseudo(scf, seed=1234):
