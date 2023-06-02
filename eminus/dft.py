@@ -110,9 +110,9 @@ def get_grad_field(atoms, field, real=True):
     '''
     dfield = np.empty((atoms.Nspin, len(atoms.r), 3), dtype=complex)
     for spin in range(atoms.Nspin):
-        dfieldG = 1j * atoms.G * atoms.J(field[spin])[:, None]
+        fieldG = atoms.J(field[spin])
         for i in range(3):
-            dfield[spin, :, i] = atoms.I(dfieldG[:, i])
+            dfield[spin, :, i] = atoms.I(1j * atoms.G[:, i] * fieldG)
     if real:
         return np.real(dfield)
     return dfield
@@ -135,7 +135,7 @@ def get_tau(atoms, Y):
     for i in range(atoms.Nstate):
         dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
         # Use the definition with a division by two
-        tau += 0.5 * atoms.f[:, i][:, None] * np.sum(dYrs.conj() * dYrs, axis=2)
+        tau += 0.5 * atoms.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     return np.real(tau)
 
 
@@ -265,13 +265,13 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     h = np.zeros_like(dn_spin)
     if atoms.Nspin == 1:
         # In the unpolarized case we have no spin mixing and only one spin density
-        h[0] = 2 * vsigma[0][:, None] * dn_spin[0]
+        h[0] = 2 * vsigma[0, :, None] * dn_spin[0]
     else:
         # In the polarized case we would get for spin up (and similar for spin down)
         # Vxc_u = vxc_u - Nabla dot (2 vsigma_uu * dn_u + vsigma_ud * dn_d)
         # h is the expression in the brackets
-        h[0] = 2 * vsigma[0][:, None] * dn_spin[0] + vsigma[1][:, None] * dn_spin[1]
-        h[1] = 2 * vsigma[2][:, None] * dn_spin[1] + vsigma[1][:, None] * dn_spin[0]
+        h[0] = 2 * vsigma[0, :, None] * dn_spin[0] + vsigma[1, :, None] * dn_spin[1]
+        h[1] = 2 * vsigma[2, :, None] * dn_spin[1] + vsigma[1, :, None] * dn_spin[0]
 
     # Calculate Nabla dot h
     # Normally we would calculate the correction for each spin, but we only need one at a time in H

@@ -123,7 +123,7 @@ def calc_Vnonloc(scf, W):
                         for jprj in range(psp['Nproj_l'][l]):
                             jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.betaNL[:, ibeta][:, None]
+                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.betaNL[:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 
