@@ -141,8 +141,7 @@ def get_grad(scf, spin, W, **kwargs):
     return (HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U))
 
 
-def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, tau=None, phi=None, vxc=None,
-      vsigma=None, vtau=None):
+def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     '''Left-hand side of the eigenvalue equation.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -153,10 +152,6 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, tau=None, phi=Non
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        n (ndarray): Real-space electronic density.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        tau (ndarray): Real-space kinetic energy densities per spin channel.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         phi (ndarray): Hartree field.
         vxc (ndarray): Exchange-correlation potential.
@@ -167,27 +162,15 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, tau=None, phi=Non
         ndarray: Hamiltonian applied on W.
     '''
     atoms = scf.atoms
-    # One can calculate everything from W,
-    # but one can also use already computed results to save time
-    if Y is None:
-        Y = orth(atoms, W)
-    if n_spin is None:
-        n_spin = get_n_spin(atoms, Y, n)
-    if dn_spin is None and 'gga' in scf.xc_type:
-        dn_spin = get_grad_field(atoms, n_spin)
-    if tau is None and scf.xc_type == 'meta-gga':
-        tau = get_tau(atoms, Y)
-    if n is None:
-        n = get_n_total(atoms, Y, n_spin)
-    if phi is None:
-        phi = solve_poisson(atoms, n)
-    if vxc is None or (vsigma is None and 'gga' in scf.xc_type) or \
-                      (vtau is None and scf.xc_type == 'meta-gga'):
-        vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin, tau)
 
-    # Calculate the gradient correction to the potential if a GGA functional is used
+    # If dn_spin is None all other keyword arguments are None by design
+    # In that case precompute values from the SCF class
+    if dn_spin is None:
+        dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
+
     # This calculate the representation in the reciprocal space
     Gvxc = atoms.J(vxc[spin])
+    # Calculate the gradient correction to the potential if a GGA functional is used
     if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # We get the full potential in the functional definition (different to the DFT++ notation)
@@ -202,6 +185,33 @@ def H(scf, spin, W, Y=None, n=None, n_spin=None, dn_spin=None, tau=None, phi=Non
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
     return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi + Vtau_psi
+
+
+def H_precompute(scf, W):
+    '''Create precomputed values as intermediate results.
+
+    Args:
+        scf: SCF object.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        tuple[ndarray, ndarray, ndarray, ndarray, ndarray]: dn_spin, phi, vxc, vsigma, and vtau
+    '''
+    atoms = scf.atoms
+    Y = orth(atoms, W)
+    n_spin = get_n_spin(atoms, Y)
+    n = get_n_total(atoms, Y, n_spin)
+    if 'gga' in scf.xc_type:
+        dn_spin = get_grad_field(atoms, n_spin)
+    else:
+        dn_spin = None
+    if scf.xc_type == 'meta-gga':
+        tau = get_tau(atoms, Y)
+    else:
+        tau = None
+    phi = solve_poisson(atoms, n)
+    vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin, tau)
+    return dn_spin, phi, vxc, vsigma, vtau
 
 
 def Q(inp, U):
@@ -245,7 +255,7 @@ def get_psi(scf, W):
     return psi
 
 
-def get_epsilon(scf, W, n=None):
+def get_epsilon(scf, W):
     '''Calculate eigenvalues from H.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -254,9 +264,6 @@ def get_epsilon(scf, W, n=None):
         scf: SCF object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
     Returns:
         ndarray: Eigenvalues.
     '''
@@ -264,7 +271,7 @@ def get_epsilon(scf, W, n=None):
     Y = orth(atoms, W)
     epsilon = np.empty((atoms.Nspin, atoms.Nstate))
     for spin in range(atoms.Nspin):
-        mu = Y[spin].conj().T @ H(scf, spin, W=Y, n=n)
+        mu = Y[spin].conj().T @ H(scf, spin, Y)
         epsilon[spin] = np.sort(eigvalsh(mu))
     return epsilon
 

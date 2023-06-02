@@ -15,6 +15,8 @@ def scf_step(scf):
     '''Perform one SCF step for a DFT calculation.
 
     Calculating intermediate results speeds up the energy and gradient calculation.
+    This function is similar to H_precompute but will set all variables and energies in the SCF
+    class and returns the total energy.
 
     Args:
         scf: SCF object.
@@ -34,8 +36,7 @@ def scf_step(scf):
     scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin,
                                                     scf.tau)
 
-    scf.precomputed = {'Y': scf.Y, 'n': scf.n, 'n_spin': scf.n_spin, 'dn_spin': scf.dn_spin,
-                       'tau': scf.tau, 'phi': scf.phi, 'vxc': scf.vxc, 'vsigma': scf.vsigma,
+    scf.precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc, 'vsigma': scf.vsigma,
                        'vtau': scf.vtau}
     return get_E(scf)
 
