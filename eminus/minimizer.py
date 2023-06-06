@@ -135,6 +135,7 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
         float: Conjugate scalar.
     '''
     atoms = scf.atoms
+
     if precondition:
         Kg, Kg_old = atoms.K(g), atoms.K(g_old)
     else:
@@ -142,9 +143,9 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
     if scf.cgform == 1:  # Fletcher-Reeves
         return dotprod(g, Kg) / dotprod(g_old, Kg_old)
     elif scf.cgform == 2:  # Polak-Ribiere
-        return dotprod(g - g_old, g) / dotprod(g_old, Kg_old)
+        return dotprod(g - g_old, Kg) / dotprod(g_old, Kg_old)
     elif scf.cgform == 3:  # Hestenes-Stiefel
-        return dotprod(g - g_old, g) / dotprod(g - g_old, d_old)
+        return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old)
     elif scf.cgform == 4:  # Dai-Yuan
         return dotprod(g, Kg) / dotprod(g - g_old, d_old)
 
