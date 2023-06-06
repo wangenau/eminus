@@ -21,7 +21,7 @@ def test_minimizer_unpol(minimizer):
     '''Check the spin-unpaired minimizer functions.'''
     scf_unpol.min = {minimizer: 100}
     if minimizer in ('cg', 'pccg', 'auto'):
-        for i in range(1, 4):
+        for i in range(1, 5):
             scf_unpol.cgform = i
             E = scf_unpol.run()
             assert_allclose(E, E_ref, atol=tolerance)

@@ -78,6 +78,76 @@ def check_energies(scf, Elist, linmin='', cg=''):
     return False
 
 
+def linmin_test(g, d):
+    '''Do the line minimization test.
+
+    Calculate the cosine of the angle between g and d.
+
+    Args:
+        g (ndarray): Current gradient.
+        d (ndarray): Previous search direction.
+
+    Returns:
+        float: Linmin angle.
+    '''
+    # cos = A B / |A| |B|
+    return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+
+
+def cg_test(atoms, g, g_old, precondition=True):
+    '''Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
+
+    Calculate the cosine of the angle between g and g_old.
+
+    Args:
+        atoms: Atoms object.
+        g (ndarray): Current gradient.
+        g_old (ndarray): Previous gradient.
+
+    Keyword Args:
+        precondition (bool): Weather to use a preconditioner.
+
+    Returns:
+        float: CG angle.
+    '''
+    # cos = A B / |A| |B|
+    if precondition:
+        Kg, Kg_old = atoms.K(g), atoms.K(g_old)
+    else:
+        Kg, Kg_old = g, g_old
+    return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
+
+
+def cg_method(scf, g, g_old, d_old, precondition=True):
+    '''Do different variants of the conjugate gradient method.
+
+    Args:
+        scf: SCF object.
+        g (ndarray): Current gradient.
+        g_old (ndarray): Previous gradient.
+        d_old (ndarray): Previous search direction.
+
+    Keyword Args:
+        precondition (bool): Weather to use a preconditioner.
+
+    Returns:
+        float: Conjugate scalar.
+    '''
+    atoms = scf.atoms
+    if precondition:
+        Kg, Kg_old = atoms.K(g), atoms.K(g_old)
+    else:
+        Kg, Kg_old = g, g_old
+    if scf.cgform == 1:  # Fletcher-Reeves
+        return dotprod(g, Kg) / dotprod(g_old, Kg_old)
+    elif scf.cgform == 2:  # Polak-Ribiere
+        return dotprod(g - g_old, g) / dotprod(g_old, Kg_old)
+    elif scf.cgform == 3:  # Hestenes-Stiefel
+        return dotprod(g - g_old, g) / dotprod(g - g_old, d_old)
+    elif scf.cgform == 4:  # Dai-Yuan
+        return dotprod(g, Kg) / dotprod(g - g_old, d_old)
+
+
 @name('steepest descent minimization')
 def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
     '''Steepest descent minimization algorithm.
@@ -153,8 +223,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             g = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin each spin separately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d[spin]) / \
-                    np.sqrt(dotprod(g, g) * dotprod(d[spin], d[spin]))
+                linmin[spin] = linmin_test(g, d[spin])
             d[spin] = -g
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -211,8 +280,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             g = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin each spin separately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d[spin]) / \
-                    np.sqrt(dotprod(g, g) * dotprod(d[spin], d[spin]))
+                linmin[spin] = linmin_test(g, d[spin])
             d[spin] = -atoms.K(g)
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -274,18 +342,9 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
             g = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d_old[spin]) / \
-                    np.sqrt(dotprod(g, g) * dotprod(d_old[spin], d_old[spin]))
-                cg[spin] = dotprod(g, g_old[spin]) / \
-                    np.sqrt(dotprod(g, g) * dotprod(g_old[spin], g_old[spin]))
-            if scf.cgform == 1:  # Fletcher-Reeves
-                beta[spin] = dotprod(g, g) / dotprod(g_old[spin], g_old[spin])
-            elif scf.cgform == 2:  # Polak-Ribiere
-                beta[spin] = dotprod(g - g_old[spin], g) / \
-                    dotprod(g_old[spin], g_old[spin])
-            elif scf.cgform == 3:  # Hestenes-Stiefel
-                beta[spin] = dotprod(g - g_old[spin], g) / \
-                    dotprod(g - g_old[spin], d_old[spin])
+                linmin[spin] = linmin_test(g, d[spin])
+                cg[spin] = cg_test(atoms, g, g_old[spin], precondition=False)
+            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition=False)
             d[spin] = -g + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -349,18 +408,9 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             g = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g, d_old[spin]) / \
-                    np.sqrt(dotprod(g, g) * dotprod(d_old[spin], d_old[spin]))
-                cg[spin] = dotprod(g, atoms.K(g_old[spin])) / \
-                    np.sqrt(dotprod(g, atoms.K(g)) * dotprod(g_old[spin], atoms.K(g_old[spin])))
-            if scf.cgform == 1:  # Fletcher-Reeves
-                beta[spin] = dotprod(g, atoms.K(g)) / dotprod(g_old[spin], atoms.K(g_old[spin]))
-            elif scf.cgform == 2:  # Polak-Ribiere
-                beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
-                    dotprod(g_old[spin], atoms.K(g_old[spin]))
-            elif scf.cgform == 3:  # Hestenes-Stiefel
-                beta[spin] = dotprod(g - g_old[spin], atoms.K(g)) / \
-                    dotprod(g - g_old[spin], d_old[spin])
+                linmin[spin] = linmin_test(g, d[spin])
+                cg[spin] = cg_test(atoms, g, g_old[spin])
+            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
@@ -444,20 +494,9 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             g[spin] = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
-                linmin[spin] = dotprod(g[spin], d_old[spin]) / \
-                    np.sqrt(dotprod(g[spin], g[spin]) * dotprod(d_old[spin], d_old[spin]))
-                cg[spin] = dotprod(g[spin], atoms.K(g_old[spin])) / \
-                    np.sqrt(dotprod(g[spin], atoms.K(g[spin])) *
-                            dotprod(g_old[spin], atoms.K(g_old[spin])))
-            if scf.cgform == 1:  # Fletcher-Reeves
-                beta[spin] = dotprod(g[spin], atoms.K(g[spin])) / \
-                    dotprod(g_old[spin], atoms.K(g_old[spin]))
-            elif scf.cgform == 2:  # Polak-Ribiere
-                beta[spin] = dotprod(g[spin] - g_old[spin], atoms.K(g[spin])) / \
-                    dotprod(g_old[spin], atoms.K(g_old[spin]))
-            elif scf.cgform == 3:  # Hestenes-Stiefel
-                beta[spin] = dotprod(g[spin] - g_old[spin], atoms.K(g[spin])) / \
-                    dotprod(g[spin] - g_old[spin], d_old[spin])
+                linmin[spin] = linmin_test(g, d[spin])
+                cg[spin] = cg_test(atoms, g, g_old[spin])
+            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
