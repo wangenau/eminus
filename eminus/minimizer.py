@@ -97,7 +97,8 @@ def linmin_test(g, d):
 def cg_test(atoms, g, g_old, precondition=True):
     '''Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
 
-    Calculate the cosine of the angle between g and g_old.
+    Calculate the cosine of the angle between g and g_old. For an angle of 90 deg the cosine goes to
+    zero.
 
     Args:
         atoms: Atoms object.
@@ -160,7 +161,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         cost (Callable): Function that will run every SCF step.
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
+        betat (float): Step size.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -179,6 +180,71 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     return costs
 
 
+@name('preconditioned line minimization')
+def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5,
+         precondition=True):
+    '''Preconditioned line minimization algorithm.
+
+    Args:
+        scf: SCF object.
+        Nit (int): Maximum number of SCF steps.
+
+    Keyword Args:
+        cost (Callable): Function that will run every SCF step.
+        grad (Callable): Function that calculates the respective gradient.
+        condition (Callable): Function to check and log the convergence condition.
+        betat (float): Step size.
+        precondition (bool): Weather to use a preconditioner.
+
+    Returns:
+        list: Total energies per SCF cycle.
+    '''
+    atoms = scf.atoms
+    costs = []
+
+    # Scalars that need to be saved for each spin
+    linmin = np.empty(atoms.Nspin)
+    beta = np.empty((atoms.Nspin, 1, 1))
+    # Gradients that need to be saved for each spin
+    d = np.empty_like(scf.W, dtype=complex)
+
+    # Do the first step without the linmin test
+    for spin in range(atoms.Nspin):
+        g = grad(scf, spin, scf.W)
+        if precondition:
+            d[spin] = -atoms.K(g)
+        else:
+            d[spin] = -g
+        gt = grad(scf, spin, scf.W + betat * d[spin])
+        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+
+    # Update wave functions after calculating the gradients for each spin
+    scf.W = scf.W + beta * d
+    c = cost(scf)
+    costs.append(c)
+    condition(scf, costs)
+
+    for _ in range(1, Nit):
+        for spin in range(atoms.Nspin):
+            g = grad(scf, spin, scf.W, **scf.precomputed)
+            # Calculate linmin each spin separately
+            if scf.log.level <= logging.DEBUG:
+                linmin[spin] = linmin_test(g, d[spin])
+            if precondition:
+                d[spin] = -atoms.K(g)
+            else:
+                d[spin] = -g
+            gt = grad(scf, spin, scf.W + betat * d[spin])
+            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+
+        scf.W = scf.W + beta * d
+        c = cost(scf)
+        costs.append(c)
+        if condition(scf, costs, linmin):
+            break
+    return costs
+
+
 @name('line minimization')
 def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
     '''Line minimization algorithm.
@@ -191,176 +257,17 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
         cost (Callable): Function that will run every SCF step.
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
+        betat (float): Step size.
 
     Returns:
         list: Total energies per SCF cycle.
     '''
-    atoms = scf.atoms
-    costs = []
-
-    # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
-    # Gradients that need to be saved for each spin
-    d = np.empty_like(scf.W, dtype=complex)
-
-    # Do the first step without the linmin test
-    for spin in range(atoms.Nspin):
-        g = grad(scf, spin, scf.W)
-        d[spin] = -g
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-
-    # Update wave functions after calculating the gradients for each spin
-    scf.W = scf.W + beta * d
-    c = cost(scf)
-    costs.append(c)
-    condition(scf, costs)
-
-    for _ in range(1, Nit):
-        for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
-            # Calculate linmin each spin separately
-            if scf.log.level <= logging.DEBUG:
-                linmin[spin] = linmin_test(g, d[spin])
-            d[spin] = -g
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-
-        scf.W = scf.W + beta * d
-        c = cost(scf)
-        costs.append(c)
-        if condition(scf, costs, linmin):
-            break
-    return costs
-
-
-@name('preconditioned line minimization')
-def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
-    '''Preconditioned line minimization algorithm.
-
-    Args:
-        scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
-
-    Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
-
-    Returns:
-        list: Total energies per SCF cycle.
-    '''
-    atoms = scf.atoms
-    costs = []
-
-    # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
-    # Gradients that need to be saved for each spin
-    d = np.empty_like(scf.W, dtype=complex)
-
-    # Do the first step without the linmin test
-    for spin in range(atoms.Nspin):
-        g = grad(scf, spin, scf.W)
-        d[spin] = -atoms.K(g)
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-
-    # Update wave functions after calculating the gradients for each spin
-    scf.W = scf.W + beta * d
-    c = cost(scf)
-    costs.append(c)
-    condition(scf, costs)
-
-    for _ in range(1, Nit):
-        for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
-            # Calculate linmin each spin separately
-            if scf.log.level <= logging.DEBUG:
-                linmin[spin] = linmin_test(g, d[spin])
-            d[spin] = -atoms.K(g)
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-
-        scf.W = scf.W + beta * d
-        c = cost(scf)
-        costs.append(c)
-        if condition(scf, costs, linmin):
-            break
-    return costs
-
-
-@name('conjugate-gradient minimization')
-def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
-    '''Conjugate-gradient minimization algorithm.
-
-    Args:
-        scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
-
-    Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
-
-    Returns:
-        list: Total energies per SCF cycle.
-    '''
-    atoms = scf.atoms
-    costs = []
-
-    # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    cg = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
-    # Gradients that need to be saved for each spin
-    d = np.empty_like(scf.W, dtype=complex)
-    d_old = np.empty_like(scf.W, dtype=complex)
-    g_old = np.empty_like(scf.W, dtype=complex)
-
-    # Do the first step without the linmin and cg test
-    for spin in range(atoms.Nspin):
-        g = grad(scf, spin, scf.W)
-        d[spin] = -g
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-        d_old[spin] = d[spin]
-        g_old[spin] = g
-
-    # Update wave functions after calculating the gradients for each spin
-    scf.W = scf.W + beta * d
-    c = cost(scf)
-    costs.append(c)
-    condition(scf, costs)
-
-    for _ in range(1, Nit):
-        for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
-            # Calculate linmin and cg for each spin separately
-            if scf.log.level <= logging.DEBUG:
-                linmin[spin] = linmin_test(g, d[spin])
-                cg[spin] = cg_test(atoms, g, g_old[spin], precondition=False)
-            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition=False)
-            d[spin] = -g + beta[spin] * d_old[spin]
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-            d_old[spin] = d[spin]
-            g_old[spin] = g
-
-        scf.W = scf.W + beta * d
-        c = cost(scf)
-        costs.append(c)
-        if condition(scf, costs, linmin, cg):
-            break
-    return costs
+    return pclm(scf, Nit, cost, grad, condition, betat, precondition=False)
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5,
+         precondition=True):
     '''Preconditioned conjugate-gradient minimization algorithm.
 
     Args:
@@ -371,7 +278,8 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         cost (Callable): Function that will run every SCF step.
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
+        betat (float): Step size.
+        precondition (bool): Weather to use a preconditioner.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -391,7 +299,10 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     # Do the first step without the linmin and cg test
     for spin in range(atoms.Nspin):
         g = grad(scf, spin, scf.W)
-        d[spin] = -atoms.K(g)
+        if precondition:
+            d[spin] = -atoms.K(g)
+        else:
+            d[spin] = -g
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
         d_old[spin] = d[spin]
@@ -411,7 +322,10 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
             beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
-            d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
+            if precondition:
+                d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
+            else:
+                d[spin] = -g + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
             d_old[spin] = d[spin]
@@ -423,6 +337,26 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         if condition(scf, costs, linmin, cg):
             break
     return costs
+
+
+@name('conjugate-gradient minimization')
+def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+    '''Conjugate-gradient minimization algorithm.
+
+    Args:
+        scf: SCF object.
+        Nit (int): Maximum number of SCF steps.
+
+    Keyword Args:
+        cost (Callable): Function that will run every SCF step.
+        grad (Callable): Function that calculates the respective gradient.
+        condition (Callable): Function to check and log the convergence condition.
+        betat (float): Step size.
+
+    Returns:
+        list: Total energies per SCF cycle.
+    '''
+    return pccg(scf, Nit, cost, grad, condition, betat, precondition=False)
 
 
 @name('auto minimization')
@@ -439,7 +373,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         cost (Callable): Function that will run every SCF step.
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
-        betat (float): SCF step size.
+        betat (float): Step size.
 
     Returns:
         list: Total energies per SCF cycle.
