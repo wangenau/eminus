@@ -206,7 +206,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
     beta = np.empty((atoms.Nspin, 1, 1))
-    # Gradients that need to be saved for each spin
+    # Search direction that needs to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
 
     for _ in range(Nit):
@@ -290,8 +290,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             d[spin] = -g
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-        d_old[spin] = d[spin]
-        g_old[spin] = g
+        g_old[spin], d_old[spin] = g, d[spin]
 
     # Update wave functions after calculating the gradients for each spin
     scf.W = scf.W + beta * d
@@ -306,15 +305,14 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
+            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition)
             if precondition:
                 d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
             else:
                 d[spin] = -g + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-            d_old[spin] = d[spin]
-            g_old[spin] = g
+            g_old[spin], d_old[spin] = g, d[spin]
 
         scf.W = scf.W + beta * d
         c = cost(scf)
@@ -388,8 +386,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         d[spin] = -atoms.K(g[spin])
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
-        d_old[spin] = d[spin]
-        g_old[spin] = g[spin]
+        g_old[spin], d_old[spin] = g[spin], d[spin]
 
     # Update wave functions after calculating the gradients for each spin, save the wave function
     W_old = np.copy(scf.W)
@@ -419,8 +416,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
-            d_old[spin] = d[spin]
-            g_old[spin] = g[spin]
+            g_old[spin], d_old[spin] = g[spin], d[spin]
 
         W_old = np.copy(scf.W)
         scf.W = scf.W + beta * d
