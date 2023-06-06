@@ -10,6 +10,8 @@ dev
       - It functions like the pccg minimizer but can fallback to sd steps
 - Updated docs
    - Update the introduction page in the documentation
+- Coding style
+   - Simplified H
 - Miscellaneous
    - Performance fix using precomputed values correctly
    - Improved GGA performance
@@ -20,6 +22,7 @@ dev
    - Support functional parsing using pylibxc
    - Option to pass exc_only to libxc extra
    - Do an unpaired calculation automatically if the system is unpaired
+   - Remove Gaussian initial guess
 
 v2.4.0 - May 23, 2023
 ---------------------

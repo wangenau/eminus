@@ -48,7 +48,7 @@ def test_etol(etol, ref):
 
 def test_sic():
     '''Test that the SIC routine runs.'''
-    scf = SCF(atoms, min={'sd': 1}, sic=True)
+    scf = SCF(atoms, xc='pbe', min={'sd': 1}, sic=True)
     scf.run()
     assert scf.energies.Esic != 0
 
