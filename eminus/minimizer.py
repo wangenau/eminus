@@ -209,27 +209,11 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
 
-    # Do the first step without the linmin test
-    for spin in range(atoms.Nspin):
-        g = grad(scf, spin, scf.W)
-        if precondition:
-            d[spin] = -atoms.K(g)
-        else:
-            d[spin] = -g
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-
-    # Update wave functions after calculating the gradients for each spin
-    scf.W = scf.W + beta * d
-    c = cost(scf)
-    costs.append(c)
-    condition(scf, costs)
-
-    for _ in range(1, Nit):
+    for _ in range(Nit):
         for spin in range(atoms.Nspin):
             g = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin each spin separately
-            if scf.log.level <= logging.DEBUG:
+            if scf.log.level <= logging.DEBUG and Nit > 0:
                 linmin[spin] = linmin_test(g, d[spin])
             if precondition:
                 d[spin] = -atoms.K(g)
@@ -297,7 +281,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     d_old = np.empty_like(scf.W, dtype=complex)
     g_old = np.empty_like(scf.W, dtype=complex)
 
-    # Do the first step without the linmin and cg test
+    # Do the first step without the linmin and cg tests, and without the cg_method
     for spin in range(atoms.Nspin):
         g = grad(scf, spin, scf.W)
         if precondition:
@@ -398,7 +382,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     print('Type\t', end='')
     condition(scf, costs)
 
-    # Do the first step without the linmin and cg test
+    # Do the first step without the linmin and cg tests, and without the cg_method
     for spin in range(atoms.Nspin):
         g[spin] = grad(scf, spin, scf.W, **scf.precomputed)
         d[spin] = -atoms.K(g[spin])
