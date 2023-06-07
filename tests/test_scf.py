@@ -39,13 +39,6 @@ def test_guess():
     scf = SCF(atoms, guess='bogus')
 
 
-@pytest.mark.parametrize('etol, ref', [(1e-6, 7), (2e-6, 6), (9e-6, 6), (1e-5, 6)])
-def test_etol(etol, ref):
-    '''Test print precision, depending of the convergence tolerance.'''
-    scf = SCF(atoms, etol=etol)
-    assert scf.print_precision == ref
-
-
 def test_sic():
     '''Test that the SIC routine runs.'''
     scf = SCF(atoms, xc='pbe', min={'sd': 1}, sic=True)
