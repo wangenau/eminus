@@ -448,7 +448,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin], norm_g[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
+            beta[spin], norm_g[spin] = cg_method(scf, g[spin], g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])

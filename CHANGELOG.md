@@ -19,6 +19,7 @@ dev
    - Option to converge the gradient norm
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
+   - Add a reduced density gradient function
    - Fancier looking output from the minimizer
    - Option to set a path to a directory containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
