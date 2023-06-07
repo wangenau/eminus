@@ -346,3 +346,30 @@ def get_elf(scf):
     X = D / D0
     elf = 1 / (1 + X**2)
     return elf
+
+
+def get_reduced_gradient(scf, eps=0):
+    '''Calculate the reduced density gradient s.
+
+    Reference: Phys. Rev. Lett. 78, 1396.
+
+    Args:
+        scf: SCF object.
+
+    Kwargs:
+        eps (float): Threshold of the density where s should be truncated.
+
+    Returns:
+        ndarray: Real space educed density gradient.
+    '''
+    atoms = scf.atoms
+    if scf.dn_spin is None:
+        dn_spin = get_grad_field(atoms, scf.n_spin)
+    else:
+        dn_spin = scf.dn_spin
+    norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
+
+    kf = (3 * np.pi**2 * scf.n)**(1 / 3)
+    s = norm_dn / (2 * kf * scf.n)
+    s[scf.n < eps] = 0
+    return s

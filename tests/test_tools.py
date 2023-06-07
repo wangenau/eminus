@@ -8,8 +8,9 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
-                          cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue, get_tautf,
-                          get_tauw, gridspacing2cutoff, inertia_tensor, orbital_center)
+                          cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue,
+                          get_reduced_gradient, get_tautf, get_tauw, gridspacing2cutoff,
+                          inertia_tensor, orbital_center)
 
 
 min = {'sd': 25, 'pccg': 25}
@@ -129,14 +130,25 @@ def test_get_tauw(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_elf(Nspin):
-    '''Test electron licalization function.'''
+    '''Test electron localization function.'''
     if Nspin == 1:
         scf = scf_unpol
     else:
         scf = scf_pol
     elf = get_elf(scf)
     # Check the bounds for the ELF
-    assert ((0 < elf) & (elf < 1)).any()
+    assert ((0 <= elf) & (elf <= 1)).all()
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_get_reduced_gradient(Nspin):
+    '''Test reduced density gradient.'''
+    if Nspin == 1:
+        scf = scf_unpol
+    else:
+        scf = scf_pol
+    s = get_reduced_gradient(scf, eps=1e-5)
+    assert ((0 <= s) & (s < 100)).all()
 
 
 if __name__ == '__main__':
