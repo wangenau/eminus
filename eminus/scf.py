@@ -42,6 +42,11 @@ class SCF:
         etol (float): Convergence tolerance of the total energy.
 
             Default: 1e-7
+        gradtol (float): Convergence tolerance of the gradient norm.
+
+            Disabled by default. This tolerance will only be used in conjugate gradient methods.
+
+            Default: None
         cgform (int): Conjugated-gradient form for the pccg minimization.
 
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
@@ -62,13 +67,14 @@ class SCF:
 
             Default: 'info'
     '''
-    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, cgform=1,
-                 sic=False, min=None, verbose=None):
+    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
+                 cgform=1, sic=False, min=None, verbose=None):
         self.atoms = atoms             # Atoms object
         self.xc = xc.lower()           # Exchange-correlation functional
         self.pot = pot                 # Used pseudopotential
         self.guess = guess.lower()     # Initial wave functions guess
         self.etol = etol               # Total energy convergence tolerance
+        self.gradtol = gradtol         # Gradient norm convergence tolerance
         self.cgform = cgform           # Conjugate gradient form
         self.sic = sic                 # Calculate the sic energy
         self.min = min                 # Minimization methods
@@ -92,29 +98,28 @@ class SCF:
         self.clear()
 
         # Parameters that will be built out of the inputs
-        self.GTH = {}             # Dictionary of GTH parameters per atom species
-        self.Vloc = None          # Local pseudopotential contribution
-        self.NbetaNL = 0          # Number of projector functions for the non-local gth potential
-        self.prj2beta = None      # Index matrix to map to the correct projector function
-        self.betaNL = None        # Atomic-centered projector functions
-        self.xc_type = None       # Type of functional that will be used
-        self.psp = None           # Type of GTH pseudopotential that will be used
-        self.print_precision = 6  # Precision of the energy in the minimizer logger
+        self.GTH = {}              # Dictionary of GTH parameters per atom species
+        self.Vloc = None           # Local pseudopotential contribution
+        self.NbetaNL = 0           # Number of projector functions for the non-local gth potential
+        self.prj2beta = None       # Index matrix to map to the correct projector function
+        self.betaNL = None         # Atomic-centered projector functions
+        self.xc_type = None        # Type of functional that will be used
+        self.psp = None            # Type of GTH pseudopotential that will be used
+        self.is_converged = False  # Flag to determine if the object was converged or not
         self.initialize()
 
     def clear(self):
         '''Initialize and clear intermediate results.'''
-        self.Y = None              # Orthogonal wave functions
-        self.n_spin = None         # Electronic densities per spin
-        self.dn_spin = None        # Gradient of electronic densities per spin
-        self.tau = None            # Kinetic energy densities per spin
-        self.phi = None            # Hartree field
-        self.exc = None            # Exchange-correlation energy density
-        self.vxc = None            # Exchange-correlation potential
-        self.vsigma = None         # n times d exc/d |dn|^2
-        self.vtau = None           # d exc/d tau
-        self.precomputed = {}      # Dictionary of precomputed values not to be saved
-        self.is_converged = False  # Flag to determine if the object was converged or not
+        self.Y = None          # Orthogonal wave functions
+        self.n_spin = None     # Electronic densities per spin
+        self.dn_spin = None    # Gradient of electronic densities per spin
+        self.tau = None        # Kinetic energy densities per spin
+        self.phi = None        # Hartree field
+        self.exc = None        # Exchange-correlation energy density
+        self.vxc = None        # Exchange-correlation potential
+        self.vsigma = None     # n times d exc/d |dn|^2
+        self.vtau = None       # d exc/d tau
+        self.precomputed = {}  # Dictionary of precomputed values not to be saved
         return self
 
     def initialize(self):
@@ -129,7 +134,6 @@ class SCF:
             self.atoms = copy.copy(self.atoms)
         self._set_potential()
         self._init_W()
-        self.print_precision = int(abs(np.log10(self.etol))) + 1
         return self
 
     def run(self, **kwargs):
@@ -169,11 +173,10 @@ class SCF:
             minimizer_log[imin]['iter'] = len(Elist)  # Save iterations in dictionary
             Etots += Elist  # Append energies from minimizer
             # Do not start other minimizations if one converged
-            if len(Etots) > 1 and abs(Etots[-2] - Etots[-1]) < self.etol:
+            if self.is_converged:
                 break
-        if len(Etots) > 1 and abs(Etots[-2] - Etots[-1]) < self.etol:
+        if self.is_converged:
             self.log.info(f'SCF converged after {len(Etots)} iterations.')
-            self.is_converged = True
         else:
             self.log.warning('SCF not converged!')
 

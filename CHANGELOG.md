@@ -12,16 +12,20 @@ dev
    - Update the introduction page in the documentation
 - Coding style
    - Simplified H
+   - Simplified minimizer
 - Miscellaneous
    - Performance fix using precomputed values correctly
    - Improved GGA performance
+   - Option to converge the gradient norm
    - Add an electron localization function (ELF) function
    - Add a positive-definite kinetic energy density function
+   - Fancier looking output from the minimizer
    - Option to set a path to a directory containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
    - Option to pass exc_only to libxc extra
    - Do an unpaired calculation automatically if the system is unpaired
+   - Added Dai-Yuan conjugate-gradient form
    - Remove Gaussian initial guess
 
 v2.4.0 - May 23, 2023

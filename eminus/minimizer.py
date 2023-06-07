@@ -40,7 +40,7 @@ def scf_step(scf):
     return get_E(scf)
 
 
-def check_energies(scf, Elist, linmin='', cg=''):
+def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
     '''Check the energies for every SCF cycle and handle the output.
 
     Args:
@@ -48,32 +48,69 @@ def check_energies(scf, Elist, linmin='', cg=''):
         Elist (list): Total energies per SCF step.
 
     Keyword Args:
-        linmin (float): Cosine between previous search direction and current gradient.
-        cg (float): Conjugate-gradient orthogonality.
+        linmin (ndarray): Cosine between previous search direction and current gradient.
+        cg (ndarray): Conjugate-gradient orthogonality.
+        norm_g (ndarray): Gradient norm.
 
     Returns:
         bool: Convergence condition.
     '''
     iteration = len(Elist)
 
+    # Print a column header at the beginning
+    # The ljust values just have been choosen such that the output looks decent
+    if iteration == 1:
+        header = 'Method'.ljust(8)
+        header += 'Iteration'.ljust(11)
+        header += 'Etot [Eh]'.ljust(13)
+        header += 'ΔEtot [Eh]'.ljust(13)
+        # Print the gradient norm for cg methods
+        if method not in ('sd', 'lm', 'pclm'):
+            header += '|Gradient|'.ljust(10 * scf.atoms.Nspin + 3)
+        # Print extra debugging information if available
+        if scf.log.level <= logging.DEBUG:
+            if method != 'sd':
+                header += 'linmin-test'.ljust(10 * scf.atoms.Nspin + 3)
+            if method not in ('sd', 'lm', 'pclm'):
+                header += 'cg-test'.ljust(10 * scf.atoms.Nspin + 3)
+            scf.log.debug(header)
+        else:
+            scf.log.info(header)
+
+    # Print the information for every cycle
+    # Context manager for printing norm_g, linmin, and cg
+    with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
+        info = method.ljust(8)
+        info += f'{iteration:7d}'.ljust(11)
+        info += f'{scf.energies.Etot:+.6f}'.ljust(13)
+        # In the first step we do not have all information yet
+        if iteration > 1:
+            info += f'{Elist[-2] - Elist[-1]:+.4e}'.ljust(13)
+            if norm_g is not None:
+                info += str(norm_g).ljust(10 * scf.atoms.Nspin + 3)
+            if scf.log.level <= logging.DEBUG:
+                if method != 'sd':
+                    info += str(linmin).ljust(10 * scf.atoms.Nspin + 3)
+                if method not in ('sd', 'lm', 'pclm'):
+                    info += str(cg).ljust(10 * scf.atoms.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
-        with np.printoptions(formatter={'float': '{:+0.3e}'.format}):
-            # Output handling
-            if not isinstance(linmin, str):
-                linmin = f' \tlinmin-test: {linmin}'
-            if not isinstance(cg, str):
-                cg = f' \tcg-test: {cg}'
-            scf.log.debug(f'Iteration: {iteration} \tEtot: '
-                          f'{scf.energies.Etot:+.{scf.print_precision}f}{linmin}{cg}')
+        scf.log.debug(info)
     else:
-        scf.log.info(f'Iteration: {iteration} \tEtot: {scf.energies.Etot:+.{scf.print_precision}f}')
+        scf.log.info(info)
 
     if iteration > 1:
         # Check for convergence
-        if abs(Elist[-2] - Elist[-1]) < scf.etol:
-            return True
-        # Check if the current energy is lower than any of the last three values
-        if np.any(np.asarray(Elist[-4:-1]) < Elist[-1]):
+        if scf.gradtol is None or norm_g is None:
+            if abs(Elist[-2] - Elist[-1]) < scf.etol:
+                scf.is_converged = True
+                return True
+        # If a gradient tolerance has been set we also check norm_g for convergence
+        else:
+            if abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
+                scf.is_converged = True
+                return True
+        # Check if the current energy is higher than the last two values
+        if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
             scf.log.warning('Total energy is not decreasing.')
     return False
 
@@ -111,11 +148,11 @@ def cg_test(atoms, g, g_old, precondition=True):
     Returns:
         float: CG angle.
     '''
-    # cos = A B / |A| |B|
     if precondition:
         Kg, Kg_old = atoms.K(g), atoms.K(g_old)
     else:
         Kg, Kg_old = g, g_old
+    # cos = A B / |A| |B|
     return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
@@ -132,7 +169,7 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
         precondition (bool): Weather to use a preconditioner.
 
     Returns:
-        float: Conjugate scalar.
+        tuple[float, float]: Conjugate scalar and gradient norm.
     '''
     atoms = scf.atoms
 
@@ -140,18 +177,20 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
         Kg, Kg_old = atoms.K(g), atoms.K(g_old)
     else:
         Kg, Kg_old = g, g_old
-    if scf.cgform == 1:  # Fletcher-Reeves
-        return dotprod(g, Kg) / dotprod(g_old, Kg_old)
+    norm_g = dotprod(g, Kg)
+
+    if scf.cgform == 1:    # Fletcher-Reeves
+        return norm_g / dotprod(g_old, Kg_old), norm_g
     elif scf.cgform == 2:  # Polak-Ribiere
-        return dotprod(g - g_old, Kg) / dotprod(g_old, Kg_old)
+        return dotprod(g - g_old, Kg) / dotprod(g_old, Kg_old), norm_g
     elif scf.cgform == 3:  # Hestenes-Stiefel
-        return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old)
+        return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old), norm_g
     elif scf.cgform == 4:  # Dai-Yuan
-        return dotprod(g, Kg) / dotprod(g - g_old, d_old)
+        return norm_g / dotprod(g - g_old, d_old), norm_g
 
 
 @name('steepest descent minimization')
-def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
     '''Steepest descent minimization algorithm.
 
     Args:
@@ -173,7 +212,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
     for _ in range(Nit):
         c = cost(scf)
         costs.append(c)
-        if condition(scf, costs):
+        if condition(scf, 'sd', costs):
             break
         for spin in range(atoms.Nspin):
             g = grad(scf, spin, scf.W, **scf.precomputed)
@@ -182,7 +221,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
 
 @name('preconditioned line minimization')
-def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5,
+def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
          precondition=True):
     '''Preconditioned line minimization algorithm.
 
@@ -202,6 +241,11 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     '''
     atoms = scf.atoms
     costs = []
+
+    if precondition:
+        method = 'pclm'
+    else:
+        method = 'lm'
 
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
@@ -225,13 +269,13 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
-        if condition(scf, costs, linmin):
+        if condition(scf, method, costs, linmin):
             break
     return costs
 
 
 @name('line minimization')
-def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
     '''Line minimization algorithm.
 
     Args:
@@ -251,7 +295,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5,
+def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
          precondition=True):
     '''Preconditioned conjugate-gradient minimization algorithm.
 
@@ -272,10 +316,16 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     atoms = scf.atoms
     costs = []
 
+    if precondition:
+        method = 'pccg'
+    else:
+        method = 'cg'
+
     # Scalars that need to be saved for each spin
     linmin = np.empty(atoms.Nspin)
     cg = np.empty(atoms.Nspin)
     beta = np.empty((atoms.Nspin, 1, 1))
+    norm_g = np.empty(atoms.Nspin)
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
     d_old = np.empty_like(scf.W, dtype=complex)
@@ -296,7 +346,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     scf.W = scf.W + beta * d
     c = cost(scf)
     costs.append(c)
-    condition(scf, costs)
+    condition(scf, method, costs)
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
@@ -305,7 +355,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition)
+            beta[spin], norm_g[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition)
             if precondition:
                 d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
             else:
@@ -317,13 +367,13 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
         scf.W = scf.W + beta * d
         c = cost(scf)
         costs.append(c)
-        if condition(scf, costs, linmin, cg):
+        if condition(scf, method, costs, linmin, cg, norm_g):
             break
     return costs
 
 
 @name('conjugate-gradient minimization')
-def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
     '''Conjugate-gradient minimization algorithm.
 
     Args:
@@ -343,7 +393,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3
 
 
 @name('auto minimization')
-def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat=3e-5):
+def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
     '''Automatic preconditioned conjugate-gradient minimization algorithm.
 
     This function chooses an sd step over the pccg step if the energy goes up.
@@ -368,17 +418,12 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     linmin = np.empty(atoms.Nspin)
     cg = np.empty(atoms.Nspin)
     beta = np.empty((atoms.Nspin, 1, 1))
+    norm_g = np.empty(atoms.Nspin)
     # Gradients that need to be saved for each spin
     g = np.empty_like(scf.W, dtype=complex)
     d = np.empty_like(scf.W, dtype=complex)
     d_old = np.empty_like(scf.W, dtype=complex)
     g_old = np.empty_like(scf.W, dtype=complex)
-
-    # Start with a cost calculation, also print the minimization type
-    c = cost(scf)
-    costs.append(c)
-    print('Type\t', end='')
-    condition(scf, costs)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for spin in range(atoms.Nspin):
@@ -392,17 +437,8 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
     W_old = np.copy(scf.W)
     scf.W = scf.W + beta * d
     c = cost(scf)
-    # If the energy does not go down, use the steepest descent step and recalculate the energy
-    if c > costs[-1]:
-        scf.W = W_old
-        for spin in range(atoms.Nspin):
-            scf.W[spin] = scf.W[spin] - betat * g[spin]
-        c = cost(scf)
-        print('sd\t', end='')
-    else:
-        print('pccg\t', end='')
     costs.append(c)
-    if condition(scf, costs):
+    if condition(scf, 'pccg', costs):
         return costs
 
     for _ in range(2, Nit):
@@ -412,7 +448,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
+            beta[spin], norm_g[spin] = cg_method(scf, g, g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
@@ -427,15 +463,13 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_energies, betat
             for spin in range(atoms.Nspin):
                 scf.W[spin] = scf.W[spin] - betat * g[spin]
             c = cost(scf)
-            print('sd\t', end='')
             costs.append(c)
-            # Do not print cg and linmin if we chose the sd step
-            if condition(scf, costs):
+            # Do not print cg and linmin if we do the sd step
+            if condition(scf, 'sd', costs, norm_g=norm_g):
                 break
         else:
-            print('pccg\t', end='')
             costs.append(c)
-            if condition(scf, costs, linmin, cg):
+            if condition(scf, 'pccg', costs, linmin, cg, norm_g):
                 break
     return costs
 
