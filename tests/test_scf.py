@@ -39,6 +39,13 @@ def test_guess():
     scf = SCF(atoms, guess='bogus')
 
 
+def test_gradtol():
+    '''Test the convergence depending of the gradient norm.'''
+    scf = SCF(atoms, etol=1, gradtol=1e-2)
+    scf.run()
+    assert scf.energies.Etot < -1
+
+
 def test_sic():
     '''Test that the SIC routine runs.'''
     scf = SCF(atoms, xc='pbe', min={'sd': 1}, sic=True)
