@@ -301,7 +301,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         U = np.eye(atoms.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
-    atoms.log.debug(f'{"Iteration".ljust(11)}{"Cost [a0^2]".ljust(13)}{"ΔCost [a0^2]".ljust(13)}')
+    atoms.log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"ΔCost [a0^2]":<13}')
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
@@ -325,8 +325,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         Y = expA_neg @ Y @ expA_pos
         Z = expA_neg @ Z @ expA_pos
 
-        atoms.log.debug(f'{i:7d}'.ljust(11) + f'{costs[-1]:+.6f}'.ljust(13) +
-                        f'{costs[-2] - costs[-1]:+.4e}'.ljust(13))
+        atoms.log.debug(f'{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}')
 
     if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
         atoms.log.warning('Wannier localizer not converged!')

@@ -33,7 +33,7 @@ class Energy:
         for ie in dataclasses.fields(self):
             energy = getattr(self, ie.name)
             if energy != 0:
-                out += f'{ie.name.ljust(8)}: {energy:+.9f} Eh\n'
+                out += f'{ie.name:<8}: {energy:+.9f} Eh\n'
         return f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
 
 

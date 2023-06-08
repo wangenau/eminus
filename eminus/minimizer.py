@@ -80,12 +80,10 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
     with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
-        info = method.ljust(8)
-        info += f'{iteration:7d}'.ljust(11)
-        info += f'{scf.energies.Etot:+.6f}'.ljust(13)
+        info = f'{method:<8}{iteration:>8}   {scf.energies.Etot:<+13,.6f}'
         # In the first step we do not have all information yet
         if iteration > 1:
-            info += f'{Elist[-2] - Elist[-1]:+.4e}'.ljust(13)
+            info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
                 info += str(norm_g).ljust(10 * scf.atoms.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
