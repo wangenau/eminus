@@ -28,6 +28,7 @@ dev
    - Do an unpaired calculation automatically if the system is unpaired
    - Added Dai-Yuan conjugate-gradient form
    - Remove Gaussian initial guess
+   - Fix GTH files not beeing installed when using the PyPI version
 
 v2.4.0 - May 23, 2023
 ---------------------
