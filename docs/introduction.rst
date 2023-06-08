@@ -65,12 +65,9 @@ Feature overview
 
    <div class="colored-heading" style="background:#ff9e4a">Functionals</div>
    <ul class="colored-ul">
-      <li style="background:#ffbb78">LDA,VWN</li>
-      <li style="background:#ffbb78">LDA,PW</li>
-      <li style="background:#ffbb78">LDA,Chachiyo</li>
-      <li style="background:#ffbb78">GGA,PBE</li>
-      <li style="background:#ffbb78">GGA,PBEsol</li>
-      <li style="background:#ffbb78">GGA,Chachiyo</li>
+      <li style="background:#ffbb78">LDA</li>
+      <li style="background:#ffbb78">GGA</li>
+      <li style="background:#ffbb78">meta-GGA</li>
       <li style="background:#ffbb78">Libxc</li>
    </ul>
 
@@ -103,7 +100,7 @@ Feature overview
       <li style="background:#c49c94">Ionization potentials</li>
       <li style="background:#c49c94">Orbital spreads</li>
       <li style="background:#c49c94">Centers of mass</li>
-      <li style="background:#c49c94">Kinetic energy densities</li>
+      <li style="background:#c49c94">Field properties</li>
    </ul>
 
    <div class="colored-heading" style="background:#ed97ca">SIC</div>
