@@ -370,6 +370,7 @@ def get_reduced_gradient(scf, eps=0):
     norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
 
     kf = (3 * np.pi**2 * scf.n)**(1 / 3)
-    s = norm_dn / (2 * kf * scf.n)
+    with np.errstate(divide='ignore', invalid='ignore'):
+        s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0
     return s
