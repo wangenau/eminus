@@ -8,29 +8,32 @@ dev
       - Use all meta-GGAs that don't need a laplacian from Libxc using pylibxc or PySCF
    - Add a new auto minimizer
       - It functions like the pccg minimizer but can fallback to sd steps
+   - Improved minimizer
+      - Add Dai-Yuan conjugate-gradient form
+      - Fancier-looking output from the minimizer
+      - Option to converge the gradient norm
 - Updated docs
    - Update the introduction page in the documentation
 - Coding style
-   - Simplified H
-   - Simplified minimizer
+   - Simplify H function
+   - Simplify minimizer module
 - Miscellaneous
    - Performance fix using precomputed values correctly
-   - Improved GGA performance
-   - Option to converge the gradient norm
+   - Improve GGA performance
+   - Do an unpaired calculation automatically if the system is unpaired
    - New functions for
       - Electron localization function (ELF)
       - Positive-definite kinetic energy density
       - Reduced density gradient
-   - Fancier-looking output from the minimizer
-   - Option to set a path to a directory containing GTH pseudopotential files
+   - Option to set a path to directories containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
    - Option to pass exc_only to libxc extra
-   - Do an unpaired calculation automatically if the system is unpaired
-   - Add Dai-Yuan conjugate-gradient form
    - Remove Gaussian initial guess
    - Fix GTH files not being installed when using the PyPI version
-   - Fix mapping of field entries with the respective position
+   - Fix mapping of field entries with the respective real-space coordinate
+
+----
 
 v2.4.0 - May 23, 2023
 ---------------------
