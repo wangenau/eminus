@@ -13,6 +13,7 @@ def gga_x_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
+
     Reference: Molecules 25, 3485.
 
     Args:
@@ -49,6 +50,7 @@ def gga_x_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
+
     Reference: Molecules 25, 3485.
 
     Args:

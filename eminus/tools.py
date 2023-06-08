@@ -86,6 +86,8 @@ def orbital_center(object, psirs):
 def inertia_tensor(coords, masses=None):
     '''Calculate the inertia tensor for a set of coordinates and masses.
 
+    Reference: https://en.wikipedia.org/wiki/Moment_of_inertia
+
     Args:
         coords (ndarray): Array of real-space coordinates.
 
@@ -262,6 +264,8 @@ def check_orthonorm(object, func):
 
 def get_isovalue(n, percent=85):
     '''Find an isovalue that contains a specified percentage of the electronic density.
+
+    Reference: J. Chem. Phys. 158, 164102.
 
     Args:
         n (float): Real-space electronic density.

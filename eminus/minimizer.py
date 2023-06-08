@@ -118,6 +118,8 @@ def linmin_test(g, d):
 
     Calculate the cosine of the angle between g and d.
 
+    Reference: https://trond.hjorteland.com/thesis/node26.html
+
     Args:
         g (ndarray): Current gradient.
         d (ndarray): Previous search direction.
@@ -134,6 +136,8 @@ def cg_test(atoms, g, g_old, precondition=True):
 
     Calculate the cosine of the angle between g and g_old. For an angle of 90 deg the cosine goes to
     zero.
+
+    Reference: https://www.math.uci.edu/~chenlong/CAMtips/CG.html
 
     Args:
         atoms: Atoms object.
@@ -156,6 +160,8 @@ def cg_test(atoms, g, g_old, precondition=True):
 
 def cg_method(scf, g, g_old, d_old, precondition=True):
     '''Do different variants of the conjugate gradient method.
+
+    Reference: https://indrag49.github.io/Numerical-Optimization/conjugate-gradient-methods-1.html
 
     Args:
         scf: SCF object.

@@ -10,6 +10,7 @@ def gga_x_pbe_sol(n, **kwargs):
     '''Perdew-Burke-Ernzerhof solid parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_PBE_SOL and ID 116 in Libxc.
+
     Reference: Phys. Rev. Lett. 102, 039902.
 
     Args:
@@ -25,6 +26,7 @@ def gga_x_pbe_sol_spin(n, zeta, **kwargs):
     '''Perdew-Burke-Ernzerhof solid parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_PBE_SOL and ID 116 in Libxc.
+
     Reference: Phys. Rev. Lett. 102, 039902.
 
     Args:

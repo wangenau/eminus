@@ -13,6 +13,7 @@ def gga_c_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
+
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
@@ -62,6 +63,7 @@ def gga_c_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
+
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:

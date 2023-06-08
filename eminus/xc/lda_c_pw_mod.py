@@ -10,6 +10,7 @@ def lda_c_pw_mod(n, **kwargs):
     '''Modified Perdew-Wang parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW_MOD and ID 13 in Libxc.
+
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
@@ -25,6 +26,7 @@ def lda_c_pw_mod_spin(n, zeta, **kwargs):
     '''Modified Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW_MOD and ID 13 in Libxc.
+
     Reference: Phys. Rev. B 45, 13244.
 
     Args:

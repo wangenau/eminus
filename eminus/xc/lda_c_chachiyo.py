@@ -10,6 +10,7 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
+
     Reference: J. Chem. Phys. 145, 021101.
 
     Args:
@@ -62,6 +63,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
+
     Reference: J. Chem. Phys. 145, 021101.
 
     Args:

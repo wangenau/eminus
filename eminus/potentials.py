@@ -26,6 +26,8 @@ def harmonic(atoms):
 def coulomb(atoms):
     '''All-electron Coulomb potential.
 
+    Reference: Bull. Lebedev Phys. Inst. 42, 329.
+
     Args:
         atoms: Atoms object.
 
@@ -48,6 +50,7 @@ def ge(atoms):
     '''Starkloff-Joannopoulos local pseudopotential for germanium.
 
     Fourier-transformed by Tomas Arias.
+
     Reference: Phys. Rev. B 16, 5212.
 
     Args:

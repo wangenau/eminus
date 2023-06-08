@@ -13,6 +13,7 @@ def gga_x_pbe(n, mu=0.2195149727645171, exc_only=False, dn_spin=None, **kwargs):
     '''Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
+
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
@@ -37,6 +38,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, exc_only=False, dn_spin=None,
     '''Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
+
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:

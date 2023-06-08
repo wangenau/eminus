@@ -13,6 +13,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
     '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
+
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
@@ -61,6 +62,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=No
     '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
+
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:

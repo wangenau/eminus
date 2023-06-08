@@ -11,6 +11,7 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
     '''Perdew-Wang parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
+
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
@@ -49,6 +50,7 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, ex
     '''Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
+
     Reference: Phys. Rev. B 45, 13244.
 
     Args:

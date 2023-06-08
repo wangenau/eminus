@@ -34,6 +34,8 @@ def dotprod(a, b):
 def Ylm_real(l, m, G):
     '''Calculate real spherical harmonics from cartesian coordinates.
 
+    Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics/
+
     Args:
         l (int): Angular momentum number.
         m (int): Magnetic quantum number.

@@ -35,6 +35,7 @@ def O(atoms, W):
     '''Overlap operator.
 
     This operator acts on the options 3, 4, 5, and 6.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -52,6 +53,7 @@ def L(atoms, W):
     '''Laplacian operator.
 
     This operator acts on the options 3 and 5.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -74,6 +76,7 @@ def Linv(atoms, W):
     '''Inverse Laplacian operator.
 
     This operator acts on the options 3 and 4.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -102,6 +105,7 @@ def I(atoms, W):
     '''Backwards transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -147,6 +151,7 @@ def J(atoms, W, full=True):
     '''Forward transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -187,6 +192,7 @@ def Idag(atoms, W, full=False):
     '''Conjugated backwards transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -209,6 +215,7 @@ def Jdag(atoms, W):
     '''Conjugated forward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -228,6 +235,7 @@ def K(atoms, W):
     '''Preconditioning operator.
 
     This operator acts on the options 3 and 5.
+
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
@@ -250,6 +258,8 @@ def T(atoms, W, dr):
     '''Translation operator.
 
     This operator acts on the options 5 and 6.
+
+    Reference: https://ccrma.stanford.edu/~jos/st/Shift_Theorem.html
 
     Args:
         atoms: Atoms object.
