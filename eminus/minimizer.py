@@ -439,7 +439,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     if condition(scf, 'pccg', costs):
         return costs
 
-    for _ in range(2, Nit):
+    for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
             g[spin] = grad(scf, spin, scf.W, **scf.precomputed)
             # Calculate linmin and cg for each spin separately

@@ -327,9 +327,9 @@ class Atoms:
         M = np.column_stack((m1, m2, m3))
 
         # Build index matrix N
-        n1 = m3 - (m3 > self.s[2] / 2) * self.s[2]
+        n1 = m1 - (m1 > self.s[0] / 2) * self.s[0]
         n2 = m2 - (m2 > self.s[1] / 2) * self.s[1]
-        n3 = m1 - (m1 > self.s[0] / 2) * self.s[0]
+        n3 = m3 - (m3 > self.s[2] / 2) * self.s[2]
         N = np.column_stack((n1, n2, n3))
         return M, N
 

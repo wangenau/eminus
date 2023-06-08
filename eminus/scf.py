@@ -49,7 +49,7 @@ class SCF:
             Default: None
         cgform (int): Conjugated-gradient form for the pccg minimization.
 
-            1 for Fletcher-Reeves, 2 for Polak-Ribiere, and 3 for Hestenes-Stiefel.
+            1 for Fletcher-Reeves, 2 for Polak-Ribiere, 3 for Hestenes-Stiefel, and 4 for Dai-Yuan
 
             Default: 1
         min (dict | None): Dictionary to set the order and number of steps per minimization method.

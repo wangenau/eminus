@@ -93,17 +93,8 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
             log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                         'polarized case.')
 
-    # Our field data has been created in a different order than needed for cube files
-    # (triple loop over z,y,x instead of x,y,z), so rearrange it with some index magic.
-    idx = []
-    for Nx in range(atoms.s[0]):
-        for Ny in range(atoms.s[1]):
-            for Nz in range(atoms.s[2]):
-                idx.append(Nx + Ny * atoms.s[0] + Nz * atoms.s[0] * atoms.s[1])
-    idx = np.asarray(idx)
-
     # Make sure we have real valued data in the correct order
-    field = np.real(field[idx])
+    field = np.real(field)
 
     with open(filename, 'w') as fp:
         # The first two lines have to be a comment.
