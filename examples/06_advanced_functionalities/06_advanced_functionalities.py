@@ -10,8 +10,9 @@ from eminus.units import ebohr2d, ha2kcalmol
 # # Start by with a simple DFT calculation for neon
 # # If one needs cell parameters from the `Atoms` object one can use the `atoms.build` function to generate them
 # # eminus also supports GGA functionals like the Chachiyo GGA
+# # A different cg-form can be used if the system is hard to converge
 atoms = Atoms('Ne', [0, 0, 0], ecut=10, center=True, Nspin=1)
-scf = SCF(atoms, xc='chachiyo')
+scf = SCF(atoms, xc='chachiyo', cgform=4)
 scf.run()
 
 # # Calculate the dipole moment

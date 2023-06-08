@@ -16,7 +16,7 @@ print(f'\nAll FODs:\n{fods_all}')
 fods = remove_core_fods(atoms, fods_all)
 print(f'\nCore FODs:\n{fods}')
 
-# # The quality from the FOD guess can vary, but you can use these for as a solid guess
+# # The quality from the FOD guess can vary, but you can use these for as a decent guess
 # import numpy as np
 # fods = [np.array([[10.71617803, 10.75510917, 10.73689087],
 #                   [10.82635834,  9.25127336,  9.25068483],
