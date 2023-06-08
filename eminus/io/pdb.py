@@ -79,38 +79,38 @@ def create_pdb_str(atom, X, a=None):
     pdb = ''
     # Create data for a cuboidal cell
     if a is not None:
-        pdb += 'CRYST1'                 # 1-6 "CRYST1"
-        pdb += f'{a[0]:9.3f}'.rjust(9)  # 7-15 a
-        pdb += f'{a[1]:9.3f}'.rjust(9)  # 16-24 b
-        pdb += f'{a[2]:9.3f}'.rjust(9)  # 25-33 c
-        pdb += f'{90:7.2f}'.rjust(7)    # 34-40 alpha
-        pdb += f'{90:7.2f}'.rjust(7)    # 41-47 beta
-        pdb += f'{90:7.2f}'.rjust(7)    # 48-54 gamma
+        pdb += 'CRYST1'          # 1-6 "CRYST1"
+        pdb += f'{a[0]:>9,.3f}'  # 7-15 a
+        pdb += f'{a[1]:>9,.3f}'  # 16-24 b
+        pdb += f'{a[2]:>9,.3f}'  # 25-33 c
+        pdb += f'{90:>7,.2f}'    # 34-40 alpha
+        pdb += f'{90:>7,.2f}'    # 41-47 beta
+        pdb += f'{90:>7,.2f}'    # 48-54 gamma
         pdb += ' '
-        pdb += 'P 1'.ljust(11)          # 56-66 Space group
-        # pdb += '1'.rjust(4)           # 67-70 Z value
+        pdb += 'P 1        '     # 56-66 Space group
+        # pdb += '   1'          # 67-70 Z value
         pdb += '\n'
 
     # Create molecule data
     pdb += 'MODEL 1'
     for ia in range(len(atom)):
-        pdb += '\nATOM  '                   # 1-6 "ATOM"
-        pdb += f'{ia + 1}'.rjust(5)         # 7-11 Atom serial number
+        pdb += '\nATOM  '            # 1-6 "ATOM"
+        pdb += f'{ia + 1:>5}'        # 7-11 Atom serial number
         pdb += ' '
-        pdb += f'{atom[ia]}'.rjust(4)       # 13-16 Atom name
-        pdb += ' '                          # 17 Alternate location indicator
-        pdb += 'MOL'                        # 18-20 Residue name
+        pdb += f'{atom[ia]:>4}'      # 13-16 Atom name
+        pdb += ' '                   # 17 Alternate location indicator
+        pdb += 'MOL'                 # 18-20 Residue name
         pdb += ' '
-        pdb += ' '                          # 22 Chain identifier
-        pdb += '1'.rjust(4)                 # 23-26 Residue sequence number
-        pdb += ' '                          # 27 Code for insertions of residues
+        pdb += ' '                   # 22 Chain identifier
+        pdb += '   1'                # 23-26 Residue sequence number
+        pdb += ' '                   # 27 Code for insertions of residues
         pdb += '   '
-        pdb += f'{X[ia, 0]:8.3f}'.rjust(8)  # 31-38 X orthogonal coordinate
-        pdb += f'{X[ia, 1]:8.3f}'.rjust(8)  # 39-46 Y orthogonal coordinate
-        pdb += f'{X[ia, 2]:8.3f}'.rjust(8)  # 47-54 Z orthogonal coordinate
-        pdb += f'{1:6.2f}'.rjust(6)         # 55-60 Occupancy
-        pdb += f'{0:6.2f}'.rjust(6)         # 61-66 Temperature factor
+        pdb += f'{X[ia, 0]:>8,.3f}'  # 31-38 X orthogonal coordinate
+        pdb += f'{X[ia, 1]:>8,.3f}'  # 39-46 Y orthogonal coordinate
+        pdb += f'{X[ia, 2]:>8,.3f}'  # 47-54 Z orthogonal coordinate
+        pdb += f'{1:>6,.2f}'         # 55-60 Occupancy
+        pdb += f'{0:>6,.2f}'         # 61-66 Temperature factor
         pdb += '          '
-        pdb += f'{atom[ia]}'.rjust(2)       # 77-78 Element symbol
-        # pdb += '  '                       # 79-80 Charge
+        pdb += f'{atom[ia]:>2}'      # 77-78 Element symbol
+        # pdb += '  '                # 79-80 Charge
     return f'{pdb}\nENDMDL'
