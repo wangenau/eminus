@@ -24,4 +24,4 @@ calculate(He)
 H2 = Atoms(['H', 'H'], [[0, 0, 0], [1.4, 0, 0]], 16, 16, [1, 1], [60, 60, 60],
            f=[2], Nspin=1, verbose='warning')
 calculate(H2)
-# # `Output:  Etot(['H', 'H']) = -1.113969 Eh`
+# # `Output:  Etot(['H', 'H']) = -1.113968 Eh`

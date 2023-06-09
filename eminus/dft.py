@@ -173,13 +173,12 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     # Calculate the gradient correction to the potential if a GGA functional is used
     if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
-    # We get the full potential in the functional definition (different to the DFT++ notation)
-    # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
-    Vxc = atoms.Jdag(atoms.O(Gvxc))
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[spin])
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
-    Veff = scf.Vloc + Vxc + atoms.Jdag(atoms.O(phi))
+    # We get the full potential in the functional definition (different to the DFT++ notation)
+    # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
+    Veff = scf.Vloc + atoms.Jdag(atoms.O(Gvxc + phi))
     Vnonloc_psi = calc_Vnonloc(scf, W[spin])
     Vtau_psi = calc_Vtau(scf, spin, W, vtau)
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
