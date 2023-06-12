@@ -95,7 +95,7 @@ def get_Ecoul(atoms, n, phi=None):
     return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
 
 
-def get_Exc(scf, n, exc=None, n_spin=None, Y=None, Nspin=2):
+def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     '''Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -107,7 +107,8 @@ def get_Exc(scf, n, exc=None, n_spin=None, Y=None, Nspin=2):
     Keyword Args:
         exc (ndarray): Exchange-correlation energy density.
         n_spin (ndarray): Real-space electronic densities per spin channel.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        tau (ndarray): Real-space kinetic energy densities per spin channel.
         Nspin (int): Number of spin states.
 
     Returns:
@@ -115,14 +116,6 @@ def get_Exc(scf, n, exc=None, n_spin=None, Y=None, Nspin=2):
     '''
     atoms = scf.atoms
     if exc is None:
-        if 'gga' in scf.xc_type:
-            dn_spin = get_grad_field(atoms, n_spin)
-        else:
-            dn_spin = None
-        if scf.xc_type == 'meta-gga':
-            tau = get_tau(atoms, Y)
-        else:
-            tau = None
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
@@ -285,6 +278,8 @@ def get_Esic(scf, Y, n_single=None):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:
         n_single = get_n_single(atoms, Y)
+    if scf.xc_type == 'meta-gga':
+        Yrs = atoms.I(Y)
 
     Esic = 0
     for i in range(atoms.Nstate):
@@ -292,13 +287,27 @@ def get_Esic(scf, Y, n_single=None):
             if atoms.f[spin, i] > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
-                ni = np.zeros((2, len(n_single[0])))
+                ni = np.zeros((2, len(atoms.r)))
                 # Normalize single-particle densities to 1
                 ni[0] = n_single[spin, :, i] / atoms.f[spin, i]
 
+                if 'gga' in scf.xc_type:
+                    dni = np.zeros((2, len(atoms.r), 3))
+                    dni[0] = get_grad_field(atoms, ni)[spin]
+                else:
+                    dni = None
+
+                # FIXME: There is a difference when calculating mGGA Esic restricted or unrestricted
+                if scf.xc_type == 'meta-gga':
+                    taui = np.zeros_like(ni)
+                    dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
+                    taui[0] = 0.5 * np.real(np.sum(dYrs.conj() * dYrs, axis=2))[0]
+                else:
+                    taui = None
+
                 coul = get_Ecoul(atoms, ni[0])
                 # The exchange part for a SIC correction has to be spin-polarized
-                xc = get_Exc(scf, ni[0], n_spin=ni, Y=Y, Nspin=2)
+                xc = get_Exc(scf, ni[0], n_spin=ni, dn_spin=dni, tau=taui, Nspin=2)
                 # SIC energy is scaled by the occupation number
                 Esic += (coul + xc) * atoms.f[spin, i]
     scf.energies.Esic = Esic
