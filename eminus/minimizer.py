@@ -63,7 +63,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
         header = 'Method'.ljust(8)
         header += 'Iteration'.ljust(11)
         header += 'Etot [Eh]'.ljust(13)
-        header += 'ΔEtot [Eh]'.ljust(13)
+        header += 'dEtot [Eh]'.ljust(13)
         # Print the gradient norm for cg methods
         if method not in ('sd', 'lm', 'pclm'):
             header += '|Gradient|'.ljust(10 * scf.atoms.Nspin + 3)

@@ -101,7 +101,7 @@ def get_S(atoms, psirs):
 
 
 def get_FLO(atoms, psi, fods):
-    '''Calculate Fermi-Löwdin orbitals by orthonormalizing Fermi orbitals.
+    '''Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -111,7 +111,7 @@ def get_FLO(atoms, psi, fods):
         fods (list): Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi-Löwdin orbitals.
+        ndarray: Real-space Fermi-Loewdin orbitals.
     '''
     fo = get_FO(atoms, psi, fods)
     flo = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
@@ -121,7 +121,7 @@ def get_FLO(atoms, psi, fods):
         S = get_S(atoms, fo[spin])
         # Calculate eigenvalues and eigenvectors
         Q, T = eig(S)
-        # Löwdins symmetric orthonormalization method
+        # Loewdins symmetric orthonormalization method
         Q12 = np.diag(1 / np.sqrt(Q))
         flo[spin] = fo[spin] @ (T @ Q12 @ T.T)
     return flo
@@ -301,7 +301,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         U = np.eye(atoms.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
-    atoms.log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"ΔCost [a0^2]":<13}')
+    atoms.log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"dCost [a0^2]":<13}')
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))

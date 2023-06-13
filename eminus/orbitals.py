@@ -62,7 +62,7 @@ def FO(scf, write_cubes=False, fods=None):
 
 
 def FLO(scf, write_cubes=False, fods=None):
-    '''Generate Fermi-Löwdin orbitals and optionally save them as cube files.
+    '''Generate Fermi-Loewdin orbitals and optionally save them as cube files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -74,7 +74,7 @@ def FLO(scf, write_cubes=False, fods=None):
         fods (list): Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi-Löwdin orbitals.
+        ndarray: Real-space Fermi-Loewdin orbitals.
     '''
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods

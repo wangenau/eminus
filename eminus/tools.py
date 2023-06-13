@@ -309,7 +309,7 @@ def get_tautf(scf):
 
 
 def get_tauw(scf):
-    '''Calculate the von Weizsäcker kinetic energy densities per spin.
+    '''Calculate the von Weizsaecker kinetic energy densities per spin.
 
     Reference: Z. Phys. 96, 431.
 
@@ -317,7 +317,7 @@ def get_tauw(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real space von Weizsäcker kinetic energy density.
+        ndarray: Real space von Weizsaecker kinetic energy density.
     '''
     atoms = scf.atoms
     if scf.dn_spin is None:

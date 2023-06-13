@@ -84,7 +84,7 @@ def get_Ecoul(atoms, n, phi=None):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        phi (ndarray): Hartree ﬁeld.
+        phi (ndarray): Hartree field.
 
     Returns:
         float: Coulomb energy in Hartree.
