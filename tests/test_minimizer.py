@@ -30,6 +30,7 @@ def test_minimizer_unpol(minimizer):
         assert_allclose(E, E_ref, atol=tolerance)
 
 
+@pytest.mark.filterwarnings('ignore::RuntimeWarning')  # Filter an occurring overflow warning
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_pol(minimizer):
     '''Check the spin-paired minimizer functions.'''
