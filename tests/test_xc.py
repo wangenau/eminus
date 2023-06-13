@@ -18,7 +18,7 @@ functionals = [xc for xc in XC_MAP if xc.isdigit()]
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_exc(xc, Nspin):
     '''Compare internal functional energy densities to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -27,14 +27,14 @@ def test_get_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+        dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
     e_out = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_vxc(xc, Nspin):
     '''Compare internal functional potentials to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -43,14 +43,14 @@ def test_get_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+        dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
     v_out, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, v_test, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_vsigmaxc(xc, Nspin):
     '''Compare internal functional vsigma to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -59,14 +59,14 @@ def test_get_vsigmaxc(xc, Nspin):
     if not is_gga(xc):
         return
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
     _, vsigma_out, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, _, vsigma_test, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_exc_only(xc, Nspin):
     '''Test the function to only get the exc part.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -74,7 +74,7 @@ def test_exc_only(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+        dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
     e_out, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test, v_test, vsigma_test, vtau_test = get_xc(xc, n_spin, Nspin, dn_spin, exc_only=True)
     assert_allclose(e_out, e_test)

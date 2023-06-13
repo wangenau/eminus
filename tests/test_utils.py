@@ -9,7 +9,7 @@ from scipy.special import sph_harm
 from eminus.utils import add_maybe_none, pseudo_uniform, Ylm_real
 
 
-@pytest.mark.parametrize('l', [0, 1, 2, 3])
+@pytest.mark.parametrize('l', (0, 1, 2, 3))
 def test_Ylm(l):
     '''Test the spherical harmonics.'''
     # Generate random G

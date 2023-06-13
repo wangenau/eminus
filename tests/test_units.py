@@ -6,7 +6,7 @@ from eminus.units import (ang2bohr, bohr2ang, d2ebohr, ebohr2d, ev2ha, ev2kcalmo
                           ha2kcalmol, ha2ry, kcalmol2ev, kcalmol2ha, ry2ha)
 
 
-@pytest.mark.parametrize('value', [-0.123, 0, 1.337])
+@pytest.mark.parametrize('value', (-0.123, 0, 1.337))
 def test_units(value):
     '''Check that the identities are satisfied.'''
     assert value == ha2ev(ev2ha(value))

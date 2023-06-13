@@ -43,7 +43,7 @@ def test_center_of_mass(coords, masses, ref):
     assert_allclose(out, ref)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pycom(Nspin):
     '''Test PyCOM routine.'''
     atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
@@ -102,7 +102,7 @@ def test_get_isovalue():
     assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_tautf(Nspin):
     '''Test Thomas-Fermi kinetic energy density.'''
     if Nspin == 1:
@@ -115,7 +115,7 @@ def test_get_tautf(Nspin):
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_tauw(Nspin):
     '''Test von Weizsäcker kinetic energy density.'''
     if Nspin == 1:
@@ -128,7 +128,7 @@ def test_get_tauw(Nspin):
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_elf(Nspin):
     '''Test electron localization function.'''
     if Nspin == 1:
@@ -140,7 +140,7 @@ def test_get_elf(Nspin):
     assert ((0 <= elf) & (elf <= 1)).all()
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_reduced_gradient(Nspin):
     '''Test reduced density gradient.'''
     if Nspin == 1:
