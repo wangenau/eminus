@@ -7,7 +7,7 @@ import pathlib
 import pytest
 
 
-@pytest.mark.parametrize('name', ['test_view_atoms', 'test_view_file'])
+@pytest.mark.parametrize('name', ('test_view_atoms', 'test_view_file'))
 def test_viewer(name):
     '''Test the execution of a given Jupyter notebook.'''
     pytest.importorskip('nglview', reason='nglview not installed, skip tests')

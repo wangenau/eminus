@@ -11,7 +11,7 @@ from eminus.extras import remove_core_fods, split_fods
 rng = default_rng()
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 @pytest.mark.parametrize('basis, loc, elec_symbols', [('pc-1', 'fb', ['X', 'He']),
                                                       ('pc-0', 'er', ['X', 'He']),
                                                       ('pc-0', 'pm', ['He', 'Ne']),
@@ -26,7 +26,7 @@ def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
     assert_allclose(atoms.X, fods[0], atol=1e-6)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 @pytest.mark.parametrize('elec_symbols', (['X', 'He'], ['He', 'Ne']))
 def test_split_fods(Nspin, elec_symbols):
     '''Test splitting FODs from atoms.'''
@@ -52,7 +52,7 @@ def test_split_fods(Nspin, elec_symbols):
     assert_equal(fods, fods_split)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_remove_core_fods(Nspin):
     '''Test core FOD removal function.'''
     atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin, Z=1).build()

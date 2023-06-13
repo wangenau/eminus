@@ -16,8 +16,8 @@ n_tests = {
 }
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
@@ -33,8 +33,8 @@ def test_libxc_functional_exc(xc, Nspin):
     assert_allclose(e_out, e_test)
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
@@ -50,8 +50,8 @@ def test_libxc_functional_vxc(xc, Nspin):
     assert_allclose(v_out, v_test)
 
 
-@pytest.mark.parametrize('xc', ['101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_libxc_functional_vsigmaxc(xc, Nspin):
     '''Compare Libxc functional vsigma to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
@@ -63,8 +63,8 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
     assert_allclose(vsigma_out, vsigma_test)
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130', '202', '231'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130', '202', '231'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_libxc_exc_only(xc, Nspin):
     '''Test the function to only get the exc part using pylibxc.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
@@ -84,8 +84,8 @@ def test_libxc_exc_only(xc, Nspin):
     assert vtau_out is None
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pyscf_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities as implemented in PySCF to internal functionals.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -100,8 +100,8 @@ def test_pyscf_functional_exc(xc, Nspin):
     assert_allclose(e_out, e_test)
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pyscf_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials as implemented in PySCF to internal functionals.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -116,8 +116,8 @@ def test_pyscf_functional_vxc(xc, Nspin):
     assert_allclose(v_out, v_test)
 
 
-@pytest.mark.parametrize('xc', ['101', '130'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('101', '130'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pyscf_functional_vsigmaxc(xc, Nspin):
     '''Compare Libxc functional vsigma as implemented in PySCF to internal functionals.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -129,8 +129,8 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
     assert_allclose(vsigma_out, vsigma_test)
 
 
-@pytest.mark.parametrize('xc', ['1', '7', '101', '130', '202', '231'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('1', '7', '101', '130', '202', '231'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pyscf_exc_only(xc, Nspin):
     '''Test the function to only get the exc part using PySCF.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -149,8 +149,8 @@ def test_pyscf_exc_only(xc, Nspin):
     assert vtau_out is None
 
 
-@pytest.mark.parametrize('xc', ['202', '231'])
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize('xc', ('202', '231'))
+@pytest.mark.parametrize('Nspin', (1, 2))
 def test_pyscf_mgga(xc, Nspin):
     '''Test the execution of meta-GGAs using PySCF.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
