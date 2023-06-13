@@ -32,6 +32,7 @@ dev
    - Remove Gaussian initial guess
    - Fix GTH files not being installed when using the PyPI version
    - Fix mapping of field entries with the respective real-space coordinate
+   - Fix GGA SIC evaluation
 
 ----
 
@@ -42,7 +43,7 @@ v2.4.0 - May 23, 2023
       - Add internal PBE, PBEsol, and Chachiyo functionals
       - Option to use all GGAs from Libxc using pylibxc or PySCF
 - Miscellaneous
-   - Add Thomas-Fermi and von Weizsäcker kinetic energy density functions
+   - Add Thomas-Fermi and von Weizsaecker kinetic energy density functions
    - Rewrite functionals for better readability
    - Fix Torch operators in some edge cases
    - Merge configuration files in tox.ini
