@@ -73,12 +73,13 @@ def test_clear():
     assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc) if x is None]
 
 
-def test_recenter():
+@pytest.mark.parametrize('center', (None, atoms.a / 2))
+def test_recenter(center):
     '''Test the recenter function.'''
     scf = SCF(atoms)
     scf.run()
     assert scf.is_converged
-    scf.recenter()
+    scf.recenter(center)
     W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)
     # Check that the density is centered around the atom
