@@ -7,6 +7,7 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_grad_field, get_n_single, solve_poisson
+from .gga import get_tau
 from .xc import get_exc
 
 
@@ -277,8 +278,6 @@ def get_Esic(scf, Y, n_single=None):
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:
         n_single = get_n_single(atoms, Y)
-    if scf.xc_type == 'meta-gga':
-        Yrs = atoms.I(Y)
 
     Esic = 0
     for i in range(atoms.Nstate):
@@ -290,17 +289,21 @@ def get_Esic(scf, Y, n_single=None):
                 # Normalize single-particle densities to 1
                 ni[0] = n_single[spin, :, i] / atoms.f[spin, i]
 
+                # Get the gradient of the single-particle density
                 if 'gga' in scf.xc_type:
                     dni = np.zeros((2, len(atoms.r), 3))
-                    dni[0] = get_grad_field(atoms, ni)[spin]
+                    dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
 
-                # FIXME: There is a difference when calculating mGGA Esic restricted or unrestricted
+                # Get the kinetic energy density of the corresponding orbital
                 if scf.xc_type == 'meta-gga':
+                    # Use only one orbital for the calculation
+                    Ytmp = np.zeros_like(Y)
+                    Ytmp[0, :, 0] = Y[spin, :, i]
                     taui = np.zeros_like(ni)
-                    dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
-                    taui[0] = 0.5 * np.real(np.sum(dYrs.conj() * dYrs, axis=2))[0]
+                    # We also have to normalize to one again
+                    taui[0] = get_tau(atoms, Y)[0] / atoms.f[spin, i]
                 else:
                     taui = None
 
