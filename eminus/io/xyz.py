@@ -77,7 +77,7 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
         fods = [bohr2ang(i) for i in fods]
 
     if elec_symbols is None:
-        elec_symbols = ['X', 'He']
+        elec_symbols = ('X', 'He')
         if 'He' in atoms.atom and atoms.Nspin == 2:
             log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                         'polarized case.')

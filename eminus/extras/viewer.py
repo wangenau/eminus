@@ -134,7 +134,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
         raise
 
     if elec_symbols is None:
-        elec_symbols = ['X', 'He']
+        elec_symbols = ('X', 'He')
 
     if isinstance(isovalue, str):
         isovalue = float(isovalue)

@@ -92,7 +92,7 @@ def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
     loc = loc.upper()
 
     if elec_symbols is None:
-        elec_symbols = ['X', 'He']
+        elec_symbols = ('X', 'He')
         if 'He' in atoms.atom and atoms.Nspin == 2:
             log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
                         'polarized case.')
@@ -144,7 +144,7 @@ def split_fods(atom, X, elec_symbols=None):
         tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
     '''
     if elec_symbols is None:
-        elec_symbols = ['X', 'He']
+        elec_symbols = ('X', 'He')
 
     X_fod_up = []
     X_fod_dn = []
