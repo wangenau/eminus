@@ -5,10 +5,9 @@ dev
 ---
 - New features
    - Add meta-GGA functionals!
-      - Use all meta-GGAs that don't need a laplacian from Libxc using pylibxc or PySCF
-   - Add a new auto minimizer
-      - It functions like the pccg minimizer but can fallback to sd steps
+      - Use all meta-GGAs that don't need a Laplacian from Libxc using pylibxc or PySCF
    - Improved minimizer
+      - Add new auto minimizer that functions like pccg but can fallback to sd steps
       - Add Dai-Yuan conjugate-gradient form
       - Fancier-looking output from the minimizer
       - Option to converge the gradient norm
@@ -106,7 +105,7 @@ v2.2.0 - Feb 21, 2023
    - Document members of classes
 - Coding style
    - More secure coding practices
-   - Remov the usage of eval, exec, and pickle
+   - Remove the usage of eval, exec, and pickle
 - Miscellaneous
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional

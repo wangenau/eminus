@@ -7,7 +7,7 @@ atoms = Atoms('Ne', [0, 0, 0], ecut=10, Nspin=1)
 scf = SCF(atoms, sic=True)
 scf.run()
 
-# # Generate Kohn-Sham and Fermi-Löwdin orbitals
+# # Generate Kohn-Sham and Fermi-Loewdin orbitals
 FLO = FLO(scf)
 
 # # Print the self-interaction energy from the `SCF` object

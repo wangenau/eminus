@@ -30,7 +30,7 @@ def test_fo():
 
 
 def test_flo():
-    '''Test the Fermi-Löwdin orbital function.'''
+    '''Test the Fermi-Loewdin orbital function.'''
     orb = FLO(scf, write_cubes=True, fods=[atoms.X])
     os.remove('He_FLO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)

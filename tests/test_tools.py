@@ -117,7 +117,7 @@ def test_get_tautf(Nspin):
 
 @pytest.mark.parametrize('Nspin', (1, 2))
 def test_get_tauw(Nspin):
-    '''Test von Weizsäcker kinetic energy density.'''
+    '''Test von Weizsaecker kinetic energy density.'''
     if Nspin == 1:
         scf = scf_unpol
     else:
