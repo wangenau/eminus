@@ -29,7 +29,7 @@ pygments_dark_style = 'native'
 language = 'en'
 
 html_theme = 'furo'
-html_favicon = 'logo/eminus_favicon.png'
+html_favicon = '_static/logo/eminus_favicon.png'
 html_theme_options = {
     'light_logo': 'logo/eminus_logo.png',
     'light_css_variables': {
