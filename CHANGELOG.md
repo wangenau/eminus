@@ -28,6 +28,7 @@ dev
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
    - Option to pass exc_only to libxc extra
+   - Allow using custom densities when using the atoms viewer
    - Remove Gaussian initial guess
    - Fix GTH files not being installed when using the PyPI version
    - Fix mapping of field entries with the respective real-space coordinate

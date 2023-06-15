@@ -81,22 +81,24 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
             fig.add_trace(extra_data)
 
     # A density can be plotted for an scf object
-    if plot_n:
-        try:
-            den_data = go.Volume(x=atoms.r[:, 0], y=atoms.r[:, 1], z=atoms.r[:, 2], value=object.n,
-                                 name='Density',
-                                 colorbar_title=f'Density ({percent}%)',
-                                 colorscale='Inferno',
-                                 isomin=get_isovalue(object.n, percent=percent),
-                                 isomax=np.max(object.n),
-                                 surface_count=surfaces,
-                                 opacity=0.1,
-                                 showlegend=True)
-            fig.add_trace(den_data)
-            # Move colorbar to the left
-            fig.data[-1].colorbar.x = -0.15
-        except (AttributeError, TypeError):
-            log.warning('Density plots are only possible for executed SCF objects.')
+    if isinstance(plot_n, np.ndarray) or plot_n:
+        # Plot a given array or use the density from an scf object
+        if isinstance(plot_n, np.ndarray):
+            density = plot_n
+        else:
+            density = object.n
+        den_data = go.Volume(x=atoms.r[:, 0], y=atoms.r[:, 1], z=atoms.r[:, 2], value=density,
+                             name='Density',
+                             colorbar_title=f'Density ({percent}%)',
+                             colorscale='Inferno',
+                             isomin=get_isovalue(density, percent=percent),
+                             isomax=np.max(density),
+                             surface_count=surfaces,
+                             opacity=0.1,
+                             showlegend=True)
+        fig.add_trace(den_data)
+        # Move colorbar to the left
+        fig.data[-1].colorbar.x = -0.15
 
     # Theming
     fig.update_layout(scene={'xaxis': {'range': [0, atoms.a[0]], 'title': 'x [a<sub>0</sub>]'},
