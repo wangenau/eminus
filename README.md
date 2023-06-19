@@ -1,4 +1,4 @@
-![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/main/docs/logo/eminus_logo.png)
+![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/main/docs/_static/logo/eminus_logo.png)
 
 # eminus
 [![pypi](https://img.shields.io/pypi/v/eminus?color=1a962b)](https://pypi.org/project/eminus)
