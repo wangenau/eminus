@@ -300,6 +300,9 @@ class RSCF(SCF):
     '''SCF class for spin-paired systems.
 
     Inherited from :class:`eminus.scf.SCF`.
+
+    In difference to the SCF class, this class will not build the original Atoms object, only the
+    one attributed to the class.
     '''
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
@@ -313,6 +316,9 @@ class USCF(SCF):
     '''SCF class for spin-polarized systems.
 
     Inherited from :class:`eminus.scf.SCF`.
+
+    In difference to the SCF class, this class will not build the original Atoms object, only the
+    one attributed to the class.
     '''
     def initialize(self):
         '''Validate inputs, update them and build all necessary parameters.'''
