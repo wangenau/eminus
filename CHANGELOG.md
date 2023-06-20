@@ -20,6 +20,7 @@ dev
    - Performance fix using precomputed values correctly
    - Improve GGA performance
    - Do an unpaired calculation automatically if the system is unpaired
+   - Use a symmetric initial guess by default, i.e., the same guess for both spin channels
    - New functions for
       - Electron localization function (ELF)
       - Positive-definite kinetic energy density

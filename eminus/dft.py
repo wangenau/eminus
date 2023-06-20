@@ -275,31 +275,32 @@ def get_epsilon(scf, W):
     return epsilon
 
 
-def guess_random(scf, complex=True):
+def guess_random(scf, seed=42, symmetric=True):
     '''Generate random initial-guess coefficients as starting values.
 
     Args:
         scf: SCF object.
 
     Keyword Args:
-        complex (bool): Use complex numbers for the random guess.
+        seed (int): Seed to initialize the random number generator.
+        symmetric (bool): Weather to use the same guess for both spin channels.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
-
-    seed = 42
     rng = Generator(SFC64(seed))
-    if complex:
+    if symmetric:
+        W = rng.standard_normal((len(atoms.G2c), atoms.Nstate)) + \
+            1j * rng.standard_normal((len(atoms.G2c), atoms.Nstate))
+        W = np.array([W] * atoms.Nspin)
+    else:
         W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate)) + \
             1j * rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
-    else:
-        W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
     return orth(atoms, W)
 
 
-def guess_pseudo(scf, seed=1234):
+def guess_pseudo(scf, seed=1234, symmetric=True):
     '''Generate initial-guess coefficients using pseudo-random starting values.
 
     Args:
@@ -307,10 +308,15 @@ def guess_pseudo(scf, seed=1234):
 
     Keyword Args:
         seed (int): Seed to initialize the random number generator.
+        symmetric (bool): Weather to use the same guess for both spin channels.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     '''
     atoms = scf.atoms
-    W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=seed)
+    if symmetric:
+        W = pseudo_uniform((1, len(atoms.G2c), atoms.Nstate), seed=seed)
+        W = np.array([W[0]] * atoms.Nspin)
+    else:
+        W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=seed)
     return orth(atoms, W)

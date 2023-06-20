@@ -22,7 +22,7 @@ s = 30
 xc = ':MGGA_X_SCAN,:MGGA_C_SCAN'
 guess = 'random'
 etol = 1e-6
-min = {'sd': 3, 'pccg': 16}
+min = {'sd': 3, 'pccg': 18}
 
 
 @pytest.mark.parametrize('system', E_ref.keys())

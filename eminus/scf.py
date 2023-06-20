@@ -37,7 +37,7 @@ class SCF:
             Default: 'gth'
         guess (str): Initial guess method for the basis functions (case insensitive).
 
-            Example: 'random'; 'rand'; 'pseudo'
+            Example: 'random'; 'rand'; 'pseudo',
             Default: 'random'
         etol (float): Convergence tolerance of the total energy.
 
@@ -52,13 +52,19 @@ class SCF:
             1 for Fletcher-Reeves, 2 for Polak-Ribiere, 3 for Hestenes-Stiefel, and 4 for Dai-Yuan
 
             Default: 1
+        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
+
+            Default: False
+        symmetric (bool): Weather to use the same initial guess for both spin channels.
+
+            Starting with different values can lead to different results for RKS and UKS
+            calculations even for spin-paired systems. This can be seen, e.g., in H2 dissociation.
+
+            Default: True
         min (dict | None): Dictionary to set the order and number of steps per minimization method.
 
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
             Default: None (will default to {'pccg': 250})
-        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
-
-            Default: False
         verbose (int | str): Level of output (case insensitive).
 
             Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
@@ -68,16 +74,17 @@ class SCF:
             Default: 'info'
     '''
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 cgform=1, sic=False, min=None, verbose=None):
-        self.atoms = atoms             # Atoms object
-        self.xc = xc.lower()           # Exchange-correlation functional
-        self.pot = pot                 # Used pseudopotential
-        self.guess = guess.lower()     # Initial wave functions guess
-        self.etol = etol               # Total energy convergence tolerance
-        self.gradtol = gradtol         # Gradient norm convergence tolerance
-        self.cgform = cgform           # Conjugate gradient form
-        self.sic = sic                 # Calculate the sic energy
-        self.min = min                 # Minimization methods
+                 cgform=1, sic=False, symmetric=True, min=None, verbose=None):
+        self.atoms = atoms          # Atoms object
+        self.xc = xc.lower()        # Exchange-correlation functional
+        self.pot = pot              # Used pseudopotential
+        self.guess = guess.lower()  # Initial wave functions guess
+        self.etol = etol            # Total energy convergence tolerance
+        self.gradtol = gradtol      # Gradient norm convergence tolerance
+        self.cgform = cgform        # Conjugate gradient form
+        self.sic = sic              # Calculate the sic energy
+        self.symmetric = symmetric  # Use the same initial guess for both spin channels
+        self.min = min              # Minimization methods
 
         # Set min here, better not use mutable data types in signatures
         if self.min is None:
@@ -266,10 +273,10 @@ class SCF:
         '''Initialize wave functions.'''
         if self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
-            self.W = guess_random(self, complex=True)
+            self.W = guess_random(self, symmetric=self.symmetric)
         elif self.guess in ('pseudo', 'pseudo_rand', 'pseudo_random'):
             # Start with pseudo-random numbers, mostly to compare with SimpleDFT
-            self.W = guess_pseudo(self, seed=1234)
+            self.W = guess_pseudo(self, symmetric=self.symmetric)
         else:
             self.log.error(f'No guess found for "{self.guess}".')
         return

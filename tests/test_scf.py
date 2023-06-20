@@ -53,6 +53,14 @@ def test_sic():
     assert scf.energies.Esic != 0
 
 
+def test_symmetric():
+    '''Test the symmetry option for H2 dissociation.'''
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), Nspin=2, ecut=1)
+    e_symm = SCF(atoms, symmetric=True).run()
+    e_unsymm = SCF(atoms, symmetric=False).run()
+    assert e_symm > e_unsymm
+
+
 def test_verbose():
     '''Test the verbosity level.'''
     scf = SCF(atoms)

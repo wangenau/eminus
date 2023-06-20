@@ -18,17 +18,17 @@ class Atoms:
     Args:
         atom (str | list | tuple): Atom symbols.
 
-            Examples: 'CH4'; ['C', 'H', 'H', 'H', 'H']; ('C', 'H', 'H', 'H', 'H')
+            Example: 'CH4'; ['C', 'H', 'H', 'H', 'H']; ('C', 'H', 'H', 'H', 'H')
         X (list | tuple | ndarray): Atom positions.
 
-            Examples: (0, 0, 0); array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
+            Example: (0, 0, 0); array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
 
     Keyword Args:
         a (float | list | tuple | ndarray): Cell size or vacuum size.
 
             A cuboidal box with the same side lengths will be created.
 
-            Examples: 10; [10, 10, 10]; (7, 8, 9),
+            Example: 10; [10, 10, 10]; (7, 8, 9),
             Default: 20 Bohr (ca. 10.5 Angstrom).
         ecut (float | None): Cut-off energy.
 
