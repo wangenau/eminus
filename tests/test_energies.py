@@ -63,7 +63,7 @@ def test_mgga_sic_pol():
     scf_pol.min = {'auto': 1}
     scf_pol.initialize()
     scf_pol.run()
-    assert_allclose(scf_pol.energies.Esic, -0.4339, atol=1e-4)
+    assert_allclose(scf_pol.energies.Esic, -0.4336, atol=1e-4)
 
 
 if __name__ == '__main__':

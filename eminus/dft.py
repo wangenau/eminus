@@ -275,7 +275,7 @@ def get_epsilon(scf, W):
     return epsilon
 
 
-def guess_random(scf, seed=42, symmetric=True):
+def guess_random(scf, seed=42, symmetric=False):
     '''Generate random initial-guess coefficients as starting values.
 
     Args:
@@ -300,7 +300,7 @@ def guess_random(scf, seed=42, symmetric=True):
     return orth(atoms, W)
 
 
-def guess_pseudo(scf, seed=1234, symmetric=True):
+def guess_pseudo(scf, seed=1234, symmetric=False):
     '''Generate initial-guess coefficients using pseudo-random starting values.
 
     Args:

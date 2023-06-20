@@ -57,10 +57,7 @@ class SCF:
             Default: False
         symmetric (bool): Weather to use the same initial guess for both spin channels.
 
-            Starting with different values can lead to different results for RKS and UKS
-            calculations even for spin-paired systems. This can be seen, e.g., in H2 dissociation.
-
-            Default: True
+            Default: False
         min (dict | None): Dictionary to set the order and number of steps per minimization method.
 
             Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
@@ -74,7 +71,7 @@ class SCF:
             Default: 'info'
     '''
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 cgform=1, sic=False, symmetric=True, min=None, verbose=None):
+                 cgform=1, sic=False, symmetric=False, min=None, verbose=None):
         self.atoms = atoms          # Atoms object
         self.xc = xc.lower()        # Exchange-correlation functional
         self.pot = pot              # Used pseudopotential
