@@ -288,6 +288,7 @@ class SCF:
                f'Potential: {self.pot}\n' \
                f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
+               f'Symmetric guess: {self.symmetric}\n' \
                f'Convergence tolerance: {self.etol}\n' \
                f'Non-local contribution: {self.NbetaNL > 0}'
 
