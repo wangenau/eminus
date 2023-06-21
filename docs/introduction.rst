@@ -3,6 +3,14 @@
 Introduction
 ************
 
+.. image:: https://gitlab.com/wangenau/eminus/-/raw/main/docs/_static/logo/eminus_logo.png
+   :class: only-light
+
+.. image:: https://gitlab.com/wangenau/eminus/-/raw/main/docs/_static/logo/eminus_logo_dark.png
+   :class: only-dark
+
+|
+
 .. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
    :target: https://pypi.org/project/eminus
 

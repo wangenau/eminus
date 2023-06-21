@@ -263,7 +263,7 @@ def check_orthonorm(object, func):
 
 
 def get_isovalue(n, percent=85):
-    '''Find an isovalue that contains a specified percentage of the electronic density.
+    '''Find an isovalue that contains a percentage of the electronic density.
 
     Reference: J. Chem. Phys. 158, 164102.
 
@@ -392,7 +392,7 @@ def get_spin_squared(scf):
         float: The DFT value for <S^2>.
     '''
     atoms = scf.atoms
-    # S^2 for a restricted calculation is always zero
+    # <S^2> for a restricted calculation is always zero
     if atoms.Nspin == 1:
         return 0
 
@@ -413,6 +413,6 @@ def get_multiplicity(scf):
         float: Multiplicity 2S+1.
     '''
     S2 = get_spin_squared(scf)
-    # S^2 = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(S^2+0.25)-0.5
+    # <S^2> = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(<S^2>+0.25)-0.5
     S = np.sqrt(S2 + 0.25) - 0.5
     return 2 * S + 1

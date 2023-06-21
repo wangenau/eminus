@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Functions to generate masks to restrict real-space fields to domains.'''
+'''Functions to restrict real-space fields to domains.'''
 import numpy as np
 from scipy.linalg import norm
 

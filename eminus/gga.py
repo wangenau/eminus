@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''DFT functions that are only needed for GGA and meta-GGA calculations.'''
+'''DFT functions that are only needed for (meta-)GGA calculations.'''
 import numpy as np
 
 

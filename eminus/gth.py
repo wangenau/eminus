@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Utilities to use Goedecker, Teter, and Hutter (GTH) pseudopotentials.'''
+'''Utilities to use Goedecker, Teter, and Hutter pseudopotentials.'''
 import numpy as np
 
 from .logger import log
