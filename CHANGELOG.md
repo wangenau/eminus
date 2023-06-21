@@ -25,7 +25,7 @@ dev
       - Electron localization function (ELF)
       - Positive-definite kinetic energy density
       - Reduced density gradient
-      - Expectation value of <S^2>
+      - Expectation value of S^2
    - Option to set a path to directories containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
