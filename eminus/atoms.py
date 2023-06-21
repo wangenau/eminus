@@ -389,9 +389,9 @@ class Atoms:
 
     def __repr__(self):
         '''Print the parameters stored in the Atoms object.'''
-        out = 'Atom\tCharge\tPosition'
+        out = 'Atom  Charge  Position'
         for i in range(self.Natoms):
-            out += f'\n{self.atom[i]}\t{self.Z[i]}\t' \
+            out += f'\n{self.atom[i]:>3}   {self.Z[i]:>5}   ' \
                    f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
         return out
 

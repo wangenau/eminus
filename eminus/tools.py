@@ -201,7 +201,7 @@ def check_ortho(object, func, eps=1e-9):
                 res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
-                log.debug(f'Function {i} and {j}:\n\tValue: {res:.7f}\n\tOrthogonal: {tmp_bool}')
+                log.debug(f'Function {i} and {j}:\nValue: {res:.7f}\nOrthogonal: {tmp_bool}')
     log.info(f'Orthogonal: {ortho_bool}')
     return ortho_bool
 
@@ -237,7 +237,7 @@ def check_norm(object, func, eps=1e-9):
             res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
-            log.debug(f'Function {i}:\n\tValue: {res:.7f}\n\tNormalized: {tmp_bool}')
+            log.debug(f'Function {i}:\nValue: {res:.7f}\nNormalized: {tmp_bool}')
     log.info(f'Normalized: {norm_bool}')
     return norm_bool
 

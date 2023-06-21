@@ -145,13 +145,13 @@ class SCF:
         if self.log.level <= logging.DEBUG:
             info()
         self.log.debug(f'\n--- System information ---\n{self.atoms}\n'
-                       f'Spin handling: {"un" if self.atoms.Nspin == 1 else ""}polarized\n'
+                       f'Spin handling: {"un" if self.atoms.Nspin == 2 else ""}restricted\n'
                        f'Number of states: {self.atoms.Nstate}\n'
                        f'Occupation per state:\n{self.atoms.f}\n'
-                       f'\n--- Cell information ---\nSide lengths: {self.atoms.a} Bohr\n'
+                       f'\n--- Cell information ---\nSide lengths: {self.atoms.a} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
-                       f'Cut-off energy: {self.atoms.ecut} Hartree\n'
-                       f'Compression: {len(self.atoms.G2) / len(self.atoms.G2c):.5f}\n'
+                       f'Cut-off energy: {self.atoms.ecut} Eh\n'
+                       f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
                        f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
 
         # Calculate Ewald energy that only depends on the system geometry
@@ -192,9 +192,9 @@ class SCF:
             t = minimizer_log[imin]['time']
             t_tot += t
             self.log.debug(f'Minimizer: {imin}'
-                           f'\nIterations:\t{N}'
-                           f'\nTime:\t\t{t:.5f} s'
-                           f'\nTime/Iteration:\t{t / N:.5f} s')
+                           f'\nIterations: {N}'
+                           f'\nTime: {t:.5f} s'
+                           f'\nTime/Iteration: {t / N:.5f} s')
         self.log.info(f'Total SCF time: {t_tot:.5f} s')
 
         # Calculate SIC energy if desired
@@ -291,7 +291,7 @@ class SCF:
                f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
                f'Symmetric guess: {self.symmetric}\n' \
-               f'Energy convergence tolerance: {self.etol}\n' \
+               f'Energy convergence tolerance: {self.etol} Eh\n' \
                f'Gradient convergence tolerance: {self.gradtol}\n' \
                f'Non-local contribution: {self.NbetaNL > 0}'
 
