@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 
-from .dft import guess_pseudo, guess_random
+from .dft import get_epsilon, guess_pseudo, guess_random
 from .energies import Energy, get_Eewald, get_Esic
 from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
@@ -206,7 +206,9 @@ class SCF:
             self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
         if self.log.level <= logging.DEBUG:
-            self.log.debug(f'\n--- Energy data ---\n{self.energies}')
+            self.log.debug('\n--- Energy data ---\n'
+                           f'Eigenenergies:\n{get_epsilon(self, self.W)}\n'
+                           f'\n{self.energies}')
         else:
             self.log.info(f'Etot = {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
@@ -289,7 +291,8 @@ class SCF:
                f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
                f'Symmetric guess: {self.symmetric}\n' \
-               f'Convergence tolerance: {self.etol}\n' \
+               f'Energy convergence tolerance: {self.etol}\n' \
+               f'Gradient convergence tolerance: {self.gradtol}\n' \
                f'Non-local contribution: {self.NbetaNL > 0}'
 
     @property
