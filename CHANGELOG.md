@@ -21,10 +21,11 @@ dev
    - Improve GGA performance
    - Do an unpaired calculation automatically if the system is unpaired
    - Option to use a symmetric initial guess, i.e., the same guess for both spin channels
-   - New functions for
+   - New functions for the
       - Electron localization function (ELF)
       - Positive-definite kinetic energy density
       - Reduced density gradient
+      - Expectation value of <S^2>
    - Option to set a path to directories containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc

@@ -5,12 +5,12 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, SCF
+from eminus import Atoms, RSCF, SCF
 from eminus.dft import get_psi
 from eminus.tools import (center_of_mass, check_norm, check_ortho, check_orthonorm,
                           cutoff2gridspacing, get_dipole, get_elf, get_ip, get_isovalue,
-                          get_reduced_gradient, get_tautf, get_tauw, gridspacing2cutoff,
-                          inertia_tensor, orbital_center)
+                          get_reduced_gradient, get_spin_squared, get_tautf, get_tauw,
+                          gridspacing2cutoff, inertia_tensor, orbital_center)
 
 
 min = {'sd': 25, 'pccg': 25}
@@ -149,6 +149,19 @@ def test_get_reduced_gradient(Nspin):
         scf = scf_pol
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((0 <= s) & (s < 100)).all()
+
+
+def test_get_spin_squared():
+    '''Test the calculation of <S^2>.'''
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), Nspin=2, ecut=1)
+    scf = RSCF(atoms)
+    assert get_spin_squared(scf) == 0
+    scf = SCF(atoms, symmetric=True)
+    scf.run()
+    assert get_spin_squared(scf) == 0
+    scf = SCF(atoms, symmetric=False)
+    scf.run()
+    assert_allclose(get_spin_squared(scf), 1, atol=1e-2)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,7 @@ from .io import read_gth
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as all_minimizer
 from .potentials import IMPLEMENTED as all_potentials, init_pot
-from .tools import center_of_mass
+from .tools import center_of_mass, get_spin_squared
 from .version import info
 from .xc import parse_functionals, parse_xc_type
 
@@ -201,11 +201,14 @@ class SCF:
         if self.sic:
             self.energies.Esic = get_Esic(self, self.Y)
 
+        # Print the S^2 expecation value for unrestricted calculations
+        if self.atoms.Nspin == 2:
+            self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
         if self.log.level <= logging.DEBUG:
             self.log.debug(f'\n--- Energy data ---\n{self.energies}')
         else:
-            self.log.info(f'Total energy: {self.energies.Etot:.9f} Eh')
+            self.log.info(f'Etot = {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
 
     kernel = run

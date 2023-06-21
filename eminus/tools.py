@@ -378,3 +378,26 @@ def get_reduced_gradient(scf, eps=0):
         s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0
     return s
+
+
+def get_spin_squared(scf):
+    '''Calculate the expectation value of the squared spin operator <S^2>.
+
+    Reference: Appl. Phys. Express 12, 115506.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        float: The DFT value for <S^2>.
+    '''
+    atoms = scf.atoms
+    # S^2 for a restricted calculation is always zero
+    if atoms.Nspin == 1:
+        return 0
+
+    rhoXr = scf.n_spin[0] - scf.n_spin[1]
+    rhoXr[rhoXr < 0] = 0
+    rhoX = np.sum(rhoXr) * atoms.Omega / np.prod(atoms.s)
+    SX = 0.5 * (np.sum(scf.n_spin[0]) - np.sum(scf.n_spin[1])) * atoms.Omega / np.prod(atoms.s)
+    return SX * (SX + 1) + rhoX
