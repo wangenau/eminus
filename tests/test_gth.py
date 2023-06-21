@@ -25,10 +25,10 @@ def test_norm():
 def test_mock():
     '''Test that ghost atoms have no contribution.'''
     # Reference calculation without ghost atom
-    atoms = Atoms('He', [(0, 0, 0)], s=10, Nspin=1)
+    atoms = Atoms('He', [(0, 0, 0)], s=10)
     E_ref = SCF(atoms).run()
     # Calculation with ghost atom
-    atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)], s=10, Nspin=1)
+    atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)], s=10)
     scf = SCF(atoms)
     E = scf.run()
     assert_allclose(E, E_ref)

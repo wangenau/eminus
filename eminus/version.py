@@ -18,24 +18,24 @@ def info():
 
     print(logo)
     print('--- Platform infos ---'
-          f'\nPlatform  : {platform.system()} {platform.machine()}'
-          f'\nRelease   : {platform.release()} {platform.version()}'
+          f'\nPlatform : {platform.system()} {platform.machine()}'
+          f'\nRelease  : {platform.release()} {platform.version()}'
           '\n\n--- Version infos ---'
-          f'\npython    : {sys.version.split()[0]}'
-          f'\neminus    : {__version__}')
+          f'\npython   : {sys.version.split()[0]}'
+          f'\neminus   : {__version__}')
     for pkg in dependencies + extras + dev:
         try:
             module = importlib.import_module(pkg)
             try:
-                print(f'{pkg:<10}: {module.__version__}')
+                print(f'{pkg:<9}: {module.__version__}')
             except AttributeError:
                 # pylibxc does not use the standard version identifier
-                print(f'{pkg:<10}: {module.version.__version__}')
+                print(f'{pkg:<9}: {module.version.__version__}')
         except ModuleNotFoundError:
             if pkg in dependencies:
-                print(f'{pkg:<10}: Dependency not installed')
+                print(f'{pkg:<9}: Dependency not installed')
             elif pkg in extras:
-                print(f'{pkg:<10}: Extra not installed')
+                print(f'{pkg:<9}: Extra not installed')
     return
 
 

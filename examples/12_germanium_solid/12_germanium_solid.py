@@ -20,7 +20,7 @@ X = a * np.array([
     [0.75, 0.25, 0.25],
     [0.75, 0.75, 0.25]
 ])
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Nspin=1)
+atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut)
 
 # # Use the pseudopotential from Tomas Arias (only local and only for germanium)
 # # The GTH pseudopotential will work as well and would include non-local effects
