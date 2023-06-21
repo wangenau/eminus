@@ -401,3 +401,18 @@ def get_spin_squared(scf):
     rhoX = np.sum(rhoXr) * atoms.Omega / np.prod(atoms.s)
     SX = 0.5 * (np.sum(scf.n_spin[0]) - np.sum(scf.n_spin[1])) * atoms.Omega / np.prod(atoms.s)
     return SX * (SX + 1) + rhoX
+
+
+def get_multiplicity(scf):
+    '''Calculate the multiplicity from <S^2>.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        float: Multiplicity 2S+1.
+    '''
+    S2 = get_spin_squared(scf)
+    # S^2 = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(S^2+0.25)-0.5
+    S = np.sqrt(S2 + 0.25) - 0.5
+    return 2 * S + 1
