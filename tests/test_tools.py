@@ -154,8 +154,8 @@ def test_get_reduced_gradient(Nspin):
 def test_get_spin_squared():
     '''Test the calculation of <S^2>.'''
     atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), Nspin=2, ecut=1)
-    scf = RSCF(atoms)
-    assert get_spin_squared(scf) == 0
+    rscf = RSCF(atoms)
+    assert get_spin_squared(rscf) == 0
     scf = SCF(atoms, symmetric=True)
     scf.run()
     assert get_spin_squared(scf) == 0

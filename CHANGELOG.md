@@ -11,6 +11,8 @@ dev
       - Add Dai-Yuan conjugate-gradient form
       - Fancier-looking output from the minimizer
       - Option to converge the gradient norm
+      - Print <S^2> after an unrestricted calculation
+      - Add eigenenergies to the debug output
 - Updated docs
    - Update the introduction page in the documentation
 - Coding style
