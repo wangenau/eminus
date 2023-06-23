@@ -277,6 +277,7 @@ def get_isovalue(n, percent=85):
         float: Isovalue that contains the specified percentage of the density.
     '''
     def deviation(isovalue):
+        '''Wrapper function for finding the isovalue by minimization.'''
         n_mask = np.sum(n[n > isovalue])
         return abs(percent - (n_mask / n_ref) * 100)
 

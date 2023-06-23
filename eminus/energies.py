@@ -191,14 +191,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     def get_index_vectors(s):
-        '''Create all index vectors of periodic images.
-
-        Args:
-            s (ndarray): Number of images per lattice vector.
-
-        Returns:
-            ndarray: Index matrix.
-        '''
+        '''Create index vectors of s periodic images.'''
         m1 = np.arange(-s[0], s[0] + 1)
         m2 = np.arange(-s[1], s[1] + 1)
         m3 = np.arange(-s[2], s[2] + 1)
