@@ -18,10 +18,10 @@ dev
 - Coding style
    - Simplify H function
    - Simplify minimizer module
+   - Reduce McCabe code complexity
    - Switch linter from flake8 to Ruff
-   - Reduced McCabe code complexity
 - Miscellaneous
-   - Performance fix using precomputed values correctly
+   - Performance fix by using precomputed values correctly
    - Improve GGA performance
    - Do an unpaired calculation automatically if the system is unpaired
    - Option to use a symmetric initial guess, i.e., the same guess for both spin channels
@@ -33,7 +33,6 @@ dev
    - Option to set a path to directories containing GTH pseudopotential files
    - The SCF class now contains the xc_type and is_converged variables
    - Support functional parsing using pylibxc
-   - Option to pass exc_only to libxc extra
    - Allow using custom densities when using the atoms viewer
    - Remove Gaussian initial guess
    - Remove exc_only keyword from functionals since it was basically unused
