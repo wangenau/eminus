@@ -17,7 +17,7 @@ from .. import config
 from ..logger import log
 
 
-def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
+def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     '''Handle Libxc exchange-correlation functionals via pylibxc.
 
     Only LDA and GGA functionals can be used.
@@ -32,7 +32,6 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
     Keyword Args:
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         tau (ndarray): Real-space kinetic energy densities per spin channel.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
@@ -41,7 +40,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
         assert config.use_pylibxc
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
-        return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau, exc_only)
+        return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau)
 
     # Libxc functionals have one integer and one string identifier
     try:
@@ -51,7 +50,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
 
     if dn_spin is None:
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
-        out = func.compute({'rho': n_spin.T.ravel()}, do_vxc=not exc_only)
+        out = func.compute({'rho': n_spin.T.ravel()})
     else:
         # The gradients have to be reshaped as well, but also squared
         if Nspin == 1:
@@ -61,15 +60,12 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
             dn2 = np.vstack((norm(dn_spin[0], axis=1)**2, np.sum(dn_spin[0] * dn_spin[1], axis=1),
                             norm(dn_spin[1], axis=1)**2))
         if tau is None:
-            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()},
-                               do_vxc=not exc_only)
+            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()})
         else:
             out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel(),
-                                'tau': tau.T.ravel()}, do_vxc=not exc_only)
+                                'tau': tau.T.ravel()})
     # zk is a column vector, flatten it to a 1d row vector
     exc = out['zk'].ravel()
-    if exc_only:
-        return exc, None, None, None
 
     # vrho (and vsigma) is exactly transposed from what we need
     vxc = out['vrho'].T
@@ -82,7 +78,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
     return exc, vxc, None, None
 
 
-def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
+def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     '''Handle Libxc exchange-correlation functionals via PySCF.
 
     Only LDA and GGA functionals can be used.
@@ -97,7 +93,6 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
     Keyword Args:
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         tau (ndarray): Real-space kinetic energy densities per spin channel.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
@@ -132,10 +127,6 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, exc_only=False):
             else:
                 rho = np.array([np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
                                 np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1]))])
-
-    if exc_only:
-        exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1, deriv=0)
-        return exc, None, None, None
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)

@@ -6,7 +6,7 @@ Reference: J. Chem. Phys. 145, 021101.
 import numpy as np
 
 
-def lda_c_chachiyo(n, exc_only=False, **kwargs):
+def lda_c_chachiyo(n, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
@@ -17,7 +17,6 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -31,14 +30,12 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
     ecinner = 1 + b / rs + b / rs2
 
     ec = a * np.log(ecinner)
-    if exc_only:
-        return ec, None, None
 
     vc = ec + a * b * (2 + rs) / (3 * (b + b * rs + rs2))
     return ec, np.array([vc]), None
 
 
-def chachiyo_scaling(zeta, exc_only=False):
+def chachiyo_scaling(zeta):
     '''Weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: J. Chem. Phys. 145, 021101.
@@ -46,21 +43,16 @@ def chachiyo_scaling(zeta, exc_only=False):
     Args:
         zeta (ndarray): Relative spin polarization.
 
-    Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
-
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     '''
     fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**(1 / 3) - 1))
-    if exc_only:
-        return fzeta, None
 
     dfdzeta = (2 * (1 - zeta)**(1 / 3) - 2 * (1 + zeta)**(1 / 3)) / (3 - 3 * 2**(1 / 3))
     return fzeta, dfdzeta
 
 
-def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=False, **kwargs):
+def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
@@ -73,7 +65,6 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
 
     Keyword Args:
         weight_function (Callable): Functional function.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -87,7 +78,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     rs = (3 / (4 * np.pi * n))**(1 / 3)
     rs2 = rs**2
 
-    fzeta, dfdzeta = weight_function(zeta, exc_only=exc_only)
+    fzeta, dfdzeta = weight_function(zeta)
 
     ec0inner = 1 + b0 / rs + b0 / rs2
     ec1inner = 1 + b1 / rs + b1 / rs2
@@ -95,8 +86,6 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     ec1 = a1 * np.log(ec1inner)
 
     ec = ec0 + (ec1 - ec0) * fzeta
-    if exc_only:
-        return ec, None, None
 
     factor = -1 / rs2 - 2 / rs**3
     dec0drs = a0 / ec0inner * b0 * factor

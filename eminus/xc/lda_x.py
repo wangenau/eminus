@@ -6,7 +6,7 @@ Reference: Phys. Rev. 81, 385.
 import numpy as np
 
 
-def lda_x(n, exc_only=False, **kwargs):
+def lda_x(n, **kwargs):
     '''Slater exchange functional (spin-paired).
 
     Corresponds to the functional with the label LDA_X and ID 1 in Libxc.
@@ -17,7 +17,6 @@ def lda_x(n, exc_only=False, **kwargs):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -27,14 +26,12 @@ def lda_x(n, exc_only=False, **kwargs):
     rs = (3 / (4 * np.pi * n))**(1 / 3)
 
     ex = f / rs
-    if exc_only:
-        return ex, None, None
 
     vx = 4 / 3 * ex
     return ex, np.array([vx]), None
 
 
-def lda_x_spin(n, zeta, exc_only=False, **kwargs):
+def lda_x_spin(n, zeta, **kwargs):
     '''Slater exchange functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_X and ID 1 in Libxc.
@@ -46,7 +43,6 @@ def lda_x_spin(n, zeta, exc_only=False, **kwargs):
         zeta (ndarray): Relative spin polarization.
 
     Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -60,8 +56,6 @@ def lda_x_spin(n, zeta, exc_only=False, **kwargs):
     exup = f * rho13p
     exdw = f * rho13m
     ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
-    if exc_only:
-        return ex, None, None
 
     vxup = 4 / 3 * exup
     vxdw = 4 / 3 * exdw

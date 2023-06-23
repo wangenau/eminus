@@ -9,7 +9,7 @@ from numpy.linalg import norm
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 
 
-def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwargs):
+def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
@@ -21,7 +21,6 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
 
     Keyword Args:
         beta (float): Functional parameter.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
@@ -33,7 +32,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 * n**(-1 / 3)
     norm_dn = norm(dn_spin[0], axis=1)
-    ec, vc, _ = lda_c_pw_mod(n, exc_only=exc_only, **kwargs)
+    ec, vc, _ = lda_c_pw_mod(n, **kwargs)
 
     kf = (9 / 4 * np.pi)**(1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)
@@ -48,8 +47,6 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
     div = (1 + At2) / divsum
     nolog = 1 + beta / gamma * t2 * div
     gec = gamma * np.log(nolog)
-    if exc_only:
-        return ec + gec, None, None
 
     factor = A2t4 * (2 + At2) / divsum**2
     dgec = beta * t2 / nolog * (-7 / 3 * div - factor * (A * expec * (vc - ec) / beta - 7 / 3))
@@ -59,7 +56,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
     return ec + gec, np.array([vc + gvc]), np.array([0.5 * vsigmac])
 
 
-def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwargs):
+def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
@@ -72,7 +69,6 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=No
 
     Keyword Args:
         beta (float): Functional parameter.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
@@ -84,9 +80,8 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=No
     pi34 = (3 / (4 * np.pi))**(1 / 3)
     rs = pi34 * n**(-1 / 3)
     norm_dn = norm(dn_spin[0] + dn_spin[1], axis=1)
-    ec, vc, _ = lda_c_pw_mod_spin(n, zeta, exc_only=exc_only, **kwargs)
-    if not exc_only:
-        vcup, vcdw = vc
+    ec, vc, _ = lda_c_pw_mod_spin(n, zeta, **kwargs)
+    vcup, vcdw = vc
 
     kf = (9 / 4 * np.pi)**(1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)
@@ -103,8 +98,6 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=No
     div = (1 + At2) / divsum
     nolog = 1 + beta / gamma * t2 * div
     gec = gamma * phi3 * np.log(nolog)
-    if exc_only:
-        return ec + gec, None, None
 
     # Handle divisions by zero
     with np.errstate(divide='ignore', invalid='ignore'):

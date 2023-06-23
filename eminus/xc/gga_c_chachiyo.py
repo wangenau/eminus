@@ -9,7 +9,7 @@ from numpy.linalg import norm
 from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
 
-def gga_c_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
+def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
@@ -20,7 +20,6 @@ def gga_c_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
@@ -45,8 +44,6 @@ def gga_c_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     t2 = t**2
     gec = 1 + t2
     expgec = gec**(h / ec)
-    if exc_only:
-        return ec * expgec, None, None
 
     # ### Start lda_c_chachiyo_mod ### #
     vc = ec + a * b * (2 + rs) / (3 * (b + b * rs + rs2))
@@ -60,7 +57,7 @@ def gga_c_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     return ec * expgec, np.array([gvc]), np.array([vsigmac])
 
 
-def gga_c_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
+def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     '''Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
@@ -72,7 +69,6 @@ def gga_c_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
         zeta (ndarray): Relative spin polarization.
 
     Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
@@ -90,7 +86,7 @@ def gga_c_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     rs = (3 / (4 * np.pi * n))**(1 / 3)
     rs2 = rs**2
 
-    fzeta, dfdzeta = weight_function(zeta, exc_only=exc_only)
+    fzeta, dfdzeta = weight_function(zeta)
 
     ec0inner = 1 + b0 / rs + b0 / rs2
     ec1inner = 1 + b1 / rs + b1 / rs2
@@ -105,8 +101,6 @@ def gga_c_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     t2 = t**2
     gec = 1 + t2
     expgec = gec**(h / ec)
-    if exc_only:
-        return ec * expgec, None, None
 
     # ### Start lda_c_chachiyo_spin_mod ### #
     factor = -1 / rs2 - 2 / rs**3

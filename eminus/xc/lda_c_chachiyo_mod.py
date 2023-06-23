@@ -26,7 +26,7 @@ def lda_c_chachiyo_mod(n, **kwargs):
     return lda_c_chachiyo(n, **kwargs)
 
 
-def chachiyo_scaling_mod(zeta, exc_only=False):
+def chachiyo_scaling_mod(zeta):
     '''Modified weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: Comput. Theor. Chem. 1172, 112669.
@@ -34,16 +34,11 @@ def chachiyo_scaling_mod(zeta, exc_only=False):
     Args:
         zeta (ndarray): Relative spin polarization.
 
-    Keyword Args:
-        exc_only (bool): Only calculate the exchange-correlation energy density.
-
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     '''
     gzeta = ((1 + zeta)**(2 / 3) + (1 - zeta)**(2 / 3)) / 2
     fzeta = 2 * (1 - gzeta**3)
-    if exc_only:
-        return fzeta, None
 
     dfdzeta = -2 * gzeta**2 * (1 / (1 + zeta)**(1 / 3) - 1 / (1 - zeta)**(1 / 3))
     return fzeta, dfdzeta

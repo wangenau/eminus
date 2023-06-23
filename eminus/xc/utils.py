@@ -19,7 +19,7 @@ from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
 
 
-def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only=False):
+def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     '''Handle and get exchange-correlation functionals.
 
     Args:
@@ -31,7 +31,6 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         tau (ndarray): Real-space kinetic energy densities per spin channel.
         dens_threshold (float): Do not treat densities smaller than the threshold.
-        exc_only (bool): Only calculate the exchange-correlation energy density.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
@@ -52,64 +51,37 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only
     else:
         dn_spin_nz = None
 
-    # Only import libxc interface if necessary
-    if ':' in str(xc):
-        from ..extras.libxc import libxc_functional
-
-    # Handle exchange part
-    if ':' in f_exch:
-        f_exch = f_exch.split(':')[-1]
-        ex, vx, vsigmax, vtaux = libxc_functional(f_exch, n_spin, Nspin, dn_spin, tau, exc_only)
-    else:
-        if Nspin == 2 and f_exch != 'mock_xc':
-            f_exch += '_spin'
-        ex_nz, vx_nz, vsigmax_nz = IMPLEMENTED[f_exch](n_nz, zeta=zeta_nz, Nspin=Nspin,
-                                                       exc_only=exc_only, dn_spin=dn_spin_nz)
-        # Map the non-zero values back to the right dimension
-        ex = np.zeros_like(n)
-        ex[nz_mask] = ex_nz
-        # Only map vx and vsigmax if necessary
-        if not exc_only:
-            vx = np.zeros_like(n_spin)
+    def handle_functional(fxc):
+        '''Calculate a given functional fxc, same for exchange and correlation.'''
+        # Calculate with the libxc extra...
+        if ':' in fxc:
+            from ..extras.libxc import libxc_functional
+            fxc = fxc.split(':')[-1]
+            exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau)
+        # ...or use an internal functional
+        else:
+            if Nspin == 2 and fxc != 'mock_xc':
+                fxc += '_spin'
+            exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz,
+                                                         Nspin=Nspin)
+            # Map the non-zero values back to the right dimension
+            exc = np.zeros_like(n)
+            exc[nz_mask] = exc_nz
+            vxc = np.zeros_like(n_spin)
             for s in range(Nspin):
-                vx[s, nz_mask] = vx_nz[s]
-            if vsigmax_nz is not None:
-                vsigmax = np.zeros((len(vsigmax_nz), len(ex)))
-                for i in range(len(vsigmax)):
-                    vsigmax[i, nz_mask] = vsigmax_nz[i]
+                vxc[s, nz_mask] = vxc_nz[s]
+            if vsigma_nz is not None:
+                vsigma = np.zeros((len(vsigma_nz), len(exc)))
+                for i in range(len(vsigma)):
+                    vsigma[i, nz_mask] = vsigma_nz[i]
             else:
-                vsigmax = None
-        # There are no internal meta-GGAs
-        vtaux = None
+                vsigma = None
+            # There are no internal meta-GGAs
+            vtau = None
+        return exc, vxc, vsigma, vtau
 
-    # Handle correlation part
-    if ':' in f_corr:
-        f_corr = f_corr.split(':')[-1]
-        ec, vc, vsigmac, vtauc = libxc_functional(f_corr, n_spin, Nspin, dn_spin, tau, exc_only)
-    else:
-        if Nspin == 2 and f_corr != 'mock_xc':
-            f_corr += '_spin'
-        ec_nz, vc_nz, vsigmac_nz = IMPLEMENTED[f_corr](n_nz, zeta=zeta_nz, Nspin=Nspin,
-                                                       exc_only=exc_only, dn_spin=dn_spin_nz)
-        # Map the non-zero values back to the right dimension
-        ec = np.zeros_like(n)
-        ec[nz_mask] = ec_nz
-        # Only map vc and vsigmac if necessary
-        if not exc_only:
-            vc = np.zeros_like(n_spin)
-            for s in range(Nspin):
-                vc[s, nz_mask] = vc_nz[s]
-            if vsigmac_nz is not None:
-                vsigmac = np.zeros((len(vsigmac_nz), len(ex)))
-                for i in range(len(vsigmac)):
-                    vsigmac[i, nz_mask] = vsigmac_nz[i]
-            else:
-                vsigmac = None
-        # There are no internal meta-GGAs
-        vtauc = None
-
-    if exc_only:
-        return ex + ec, None, None, None
+    ex, vx, vsigmax, vtaux = handle_functional(f_exch)  # Calculate the exchange part
+    ec, vc, vsigmac, vtauc = handle_functional(f_corr)  # Calculate the correlation part
     return ex + ec, vx + vc, add_maybe_none(vsigmax, vsigmac), add_maybe_none(vtaux, vtauc)
 
 
@@ -118,7 +90,7 @@ def get_exc(*args, **kwargs):
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     '''
-    exc, _, _, _ = get_xc(*args, **kwargs, exc_only=True)
+    exc, _, _, _ = get_xc(*args, **kwargs)
     return exc
 
 
@@ -252,6 +224,7 @@ def parse_xc_pyscf(xc_id):
     if needs_laplacian(int(xc_id)):
         log.exception('meta-GGAs that need a laplacian are not supported.')
         raise
+    # Use the same values as in parse_xc_libxc
     if is_lda(xc_id):
         return 1
     elif is_gga(xc_id):

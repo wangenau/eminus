@@ -36,6 +36,7 @@ dev
    - Option to pass exc_only to libxc extra
    - Allow using custom densities when using the atoms viewer
    - Remove Gaussian initial guess
+   - Remove exc_only keyword from functionals since it was basically unused
    - Fix GTH files not being installed when using the PyPI version
    - Fix mapping of field entries with the respective real-space coordinate
    - Fix GGA SIC evaluation
