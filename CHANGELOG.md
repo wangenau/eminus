@@ -19,6 +19,7 @@ dev
    - Simplify H function
    - Simplify minimizer module
    - Switch linter from flake8 to Ruff
+   - Reduced McCabe code complexity
 - Miscellaneous
    - Performance fix using precomputed values correctly
    - Improve GGA performance

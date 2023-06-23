@@ -186,33 +186,10 @@ def parse_xc_type(xc):
             xc_id = func.split(':')[-1]
             # Try to parse the functional using pylibxc at first
             try:
-                assert config.use_pylibxc
-                import pylibxc
-                if not xc_id.isdigit():
-                    xc_id = pylibxc.util.xc_functional_get_number(xc_id)
-
-                func = pylibxc.LibXCFunctional(int(xc_id), 1)
-                family = func.get_family()
-                need_lapl = func._needs_laplacian
+                family = parse_xc_libxc(xc_id)
             # Otherwise parse it with PySCF
             except (ImportError, AssertionError):
-                from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
-                if not xc_id.isdigit():
-                    xc_id = XC_CODES[xc_id.upper()]
-                need_lapl = needs_laplacian(int(xc_id))
-
-                if is_lda(xc_id):
-                    family = 1
-                elif is_gga(xc_id):
-                    family = 2
-                elif is_meta_gga(xc_id):
-                    family = 4
-                else:
-                    family = -1
-
-            if need_lapl:
-                log.exception('meta-GGAs that need a laplacian are not supported.')
-                raise
+                family = parse_xc_pyscf(xc_id)
 
             if family == 1:
                 xc_type.append('lda')
@@ -228,6 +205,7 @@ def parse_xc_type(xc):
             xc_type.append('gga')
         else:
             xc_type.append('lda')
+
     # When mixing functional types use the higher level of theory
     if xc_type[0] != xc_type[1]:
         log.warning('Detected mixing of different functional types.')
@@ -235,6 +213,52 @@ def parse_xc_type(xc):
             return 'meta-gga'
         return 'gga'
     return xc_type[0]
+
+
+def parse_xc_libxc(xc_id):
+    '''Parse functional type by its ID using pylibxc.
+
+    Args:
+        xc_id (int | string): Functional ID or identifier.
+
+    Returns:
+        str: Functional type.
+    '''
+    assert config.use_pylibxc
+    import pylibxc
+    if not xc_id.isdigit():
+        xc_id = pylibxc.util.xc_functional_get_number(xc_id)
+
+    func = pylibxc.LibXCFunctional(int(xc_id), 1)
+    if func._needs_laplacian:
+        log.exception('meta-GGAs that need a laplacian are not supported.')
+        raise
+    return func.get_family()
+
+
+def parse_xc_pyscf(xc_id):
+    '''Parse functional type by its ID using PySCF.
+
+    Args:
+        xc_id (int | string): Functional ID or identifier.
+
+    Returns:
+        str: Functional type.
+    '''
+    from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
+    if not xc_id.isdigit():
+        xc_id = XC_CODES[xc_id.upper()]
+
+    if needs_laplacian(int(xc_id)):
+        log.exception('meta-GGAs that need a laplacian are not supported.')
+        raise
+    if is_lda(xc_id):
+        return 1
+    elif is_gga(xc_id):
+        return 2
+    elif is_meta_gga(xc_id):
+        return 4
+    return -1
 
 
 def get_zeta(n_spin):

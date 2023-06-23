@@ -58,6 +58,39 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
     '''
     iteration = len(Elist)
 
+    # Print all the data
+    print_scf_step(scf, method, Elist, linmin, cg, norm_g)
+
+    if iteration > 1:
+        # Check for convergence
+        if scf.gradtol is None or norm_g is None:
+            if abs(Elist[-2] - Elist[-1]) < scf.etol:
+                scf.is_converged = True
+                return True
+        # If a gradient tolerance has been set we also check norm_g for convergence
+        else:
+            if abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
+                scf.is_converged = True
+                return True
+        # Check if the current energy is higher than the last two values
+        if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
+            scf.log.warning('Total energy is not decreasing.')
+    return False
+
+
+def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
+    '''Print the data of one SCF step and the header at the beginning.
+
+    Args:
+        scf: SCF object.
+        method (string): Minimization method.
+        Elist (list): Total energies per SCF step.
+        linmin (ndarray): Cosine between previous search direction and current gradient.
+        cg (ndarray): Conjugate-gradient orthogonality.
+        norm_g (ndarray): Gradient norm.
+    '''
+    iteration = len(Elist)
+
     # Print a column header at the beginning
     # The ljust values just have been choosen such that the output looks decent
     if iteration == 1:
@@ -96,22 +129,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
         scf.log.debug(info)
     else:
         scf.log.info(info)
-
-    if iteration > 1:
-        # Check for convergence
-        if scf.gradtol is None or norm_g is None:
-            if abs(Elist[-2] - Elist[-1]) < scf.etol:
-                scf.is_converged = True
-                return True
-        # If a gradient tolerance has been set we also check norm_g for convergence
-        else:
-            if abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
-                scf.is_converged = True
-                return True
-        # Check if the current energy is higher than the last two values
-        if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
-            scf.log.warning('Total energy is not decreasing.')
-    return False
+    return
 
 
 def linmin_test(g, d):
