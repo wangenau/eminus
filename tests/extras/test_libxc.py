@@ -22,8 +22,9 @@ def test_libxc_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -39,8 +40,9 @@ def test_libxc_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials to internal functionals.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -69,8 +71,9 @@ def test_libxc_exc_only(xc, Nspin):
     '''Test the function to only get the exc part using pylibxc.'''
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga, is_meta_gga
+
+    from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     tau = None
@@ -89,8 +92,9 @@ def test_libxc_exc_only(xc, Nspin):
 def test_pyscf_functional_exc(xc, Nspin):
     '''Compare Libxc functional energy densities as implemented in PySCF to internal functionals.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras.libxc import pyscf_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -105,8 +109,9 @@ def test_pyscf_functional_exc(xc, Nspin):
 def test_pyscf_functional_vxc(xc, Nspin):
     '''Compare Libxc functional potentials as implemented in PySCF to internal functionals.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras.libxc import pyscf_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -134,8 +139,9 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
 def test_pyscf_exc_only(xc, Nspin):
     '''Test the function to only get the exc part using PySCF.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras.libxc import pyscf_functional
     from pyscf.dft.libxc import is_gga, is_meta_gga
+
+    from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     tau = None

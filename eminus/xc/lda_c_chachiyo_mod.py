@@ -16,6 +16,9 @@ def lda_c_chachiyo_mod(n, **kwargs):
     Args:
         n (ndarray): Real-space electronic density.
 
+    Keyword Args:
+        **kwargs: Throwaway arguments.
+
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     '''
@@ -56,6 +59,9 @@ def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
     Args:
         n (ndarray): Real-space electronic density.
         zeta (ndarray): Relative spin polarization.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.

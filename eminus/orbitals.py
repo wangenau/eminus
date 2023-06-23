@@ -16,6 +16,7 @@ def KSO(scf, write_cubes=False, **kwargs):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to cube files.
+        **kwargs: Throwaway arguments.
 
     Returns:
         ndarray: Real-space Kohn-Sham orbitals.

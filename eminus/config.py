@@ -92,7 +92,7 @@ class ConfigClass():
                 return torch.set_num_threads(value)
             else:
                 os.environ['OMP_NUM_THREADS'] = str(value)
-        return
+        return None
 
     @property
     def verbose(self):

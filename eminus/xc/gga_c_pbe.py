@@ -23,6 +23,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, exc_only=False, dn_spin=None, **kwarg
         beta (float): Functional parameter.
         exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
@@ -73,6 +74,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, exc_only=False, dn_spin=No
         beta (float): Functional parameter.
         exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.

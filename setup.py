@@ -29,15 +29,13 @@ extras = {
 extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
 extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
-    'coverage>=4.4',             # Generate coverage reports
-    'flake8>=3.7',               # Style guide checker
-    'flake8-docstrings>=1.4',    # Docstring style guide extension
-    'flake8-import-order>=0.9',  # Import statement style guide extension
-    'furo>=2022.02.14.1',        # Documentation theme
-    'notebook',                  # Run and convert notebooks to HTML
-    'pytest>=5.4',               # Test utilities
-    'pytest-cov>=2.6.1',         # Collect test coverage data
-    'sphinx>=4'                  # Documentation builder
+    'coverage>=4.4',       # Generate coverage reports
+    'furo>=2022.02.14.1',  # Documentation theme
+    'notebook',            # Run and convert notebooks to HTML
+    'pytest>=5.4',         # Test utilities
+    'pytest-cov>=2.6.1',   # Collect test coverage data
+    'ruff>=0.0.263',       # Style guide checker
+    'sphinx>=4'            # Documentation builder
 ]
 
 setup(

@@ -103,7 +103,7 @@ def Ylm_real(l, m, G):
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
     log.error(f'No definition found for Ylm({l}, {m}).')
-    return
+    return None
 
 
 def handle_spin_gracefully(func):

@@ -1,3 +1,69 @@
 [build-system]
 requires = ["setuptools>=1.2"]
 build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 100
+target-version = "py37"
+respect-gitignore = true
+
+select = [
+    "F",    # Pyflakes
+    "E",    # pycodestyle
+    "W",    # pycodestyle
+    "C90",  # mccabe
+    "I",    # isort
+    "D",    # pydocstyle
+    "S",    # flake8-bandit
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "PIE",  # flake8-pie
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "NPY",  # NumPy-specific rules
+    "RUF"   # Ruff-specific rules
+]
+
+ignore = [
+    # E741, E743: Ambiguous variable and function names
+    # eminus uses, e.g., l (quantum number) as variables or O (overlap operator) as functions
+    "E741",
+    "E743",
+    # D107: Missing docstring in `__init__`
+    # Docstrings are present in the class definition instead of the init method
+    "D107",
+    # D300: Use triple double quotes `"""`
+    # We use triple single quotes for docstrings
+    "D300",
+    # S101: Use of `assert` detected
+    # This should not introduce a security issue for us
+    "S101",
+    # RUF005: Consider `(*t, v)` instead of concatenation
+    # This seems to be slower in the cases we use it
+    "RUF005",
+    # RET505: Unnecessary `else` after `return` statement
+    # Having an explicit else can improve the readability
+    "RET505",
+    # SIM108: Use ternary operator instead of `if`-`else`-block
+    # if-else blocks should be written down explicitly
+    "SIM108"
+]
+
+[tool.ruff.per-file-ignores]
+"examples/*" = [
+    # D100, D103: Missing docstring in public module or function
+    "D100",
+    "D103",
+    # E501: Line too long
+    "E501"
+]
+
+[tool.ruff.mccabe]
+max-complexity = 20
+
+[tool.ruff.isort]
+force-sort-within-sections = true
+order-by-type = false
+
+[tool.ruff.pydocstyle]
+convention = "google"

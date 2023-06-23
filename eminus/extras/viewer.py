@@ -2,11 +2,11 @@
 '''Viewer functions for Jupyter notebooks.'''
 import numpy as np
 
-from .fods import split_fods
 from ..data import COVALENT_RADII, CPK_COLORS
 from ..io import create_pdb_str, read_cube, read_xyz
 from ..logger import log
 from ..tools import get_isovalue
+from .fods import split_fods
 
 
 def view(*args, **kwargs):
@@ -124,6 +124,9 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
         isovalue (float): Isovalue for sizing orbitals.
         gui (bool): Turn on the NGLView GUI.
         elec_symbols (list): Identifier for up and down FODs.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         NGLWidget: Viewable object.

@@ -123,6 +123,9 @@ def get_grad(scf, spin, W, **kwargs):
         spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
+    Keyword Args:
+        **kwargs: See :func:`H`.
+
     Returns:
         ndarray: Gradient.
     '''

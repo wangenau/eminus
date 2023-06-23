@@ -92,8 +92,7 @@ def get_tau(atoms, Y):
     sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
     # Sum over all states
     # Use the definition with a division by two
-    tau = 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
-    return tau
+    return 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
 
 
 def calc_Vtau(scf, spin, W, vtau):

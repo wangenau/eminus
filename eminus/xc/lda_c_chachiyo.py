@@ -18,6 +18,7 @@ def lda_c_chachiyo(n, exc_only=False, **kwargs):
 
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
@@ -73,6 +74,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, exc_only=Fals
     Keyword Args:
         weight_function (Callable): Functional function.
         exc_only (bool): Only calculate the exchange-correlation energy density.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.

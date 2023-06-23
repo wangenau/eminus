@@ -22,8 +22,9 @@ functionals = [xc for xc in XC_MAP if xc.isdigit()]
 def test_get_exc(xc, Nspin):
     '''Compare internal functional energy densities to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -38,8 +39,9 @@ def test_get_exc(xc, Nspin):
 def test_get_vxc(xc, Nspin):
     '''Compare internal functional potentials to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -54,8 +56,9 @@ def test_get_vxc(xc, Nspin):
 def test_get_vsigmaxc(xc, Nspin):
     '''Compare internal functional vsigma to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    from eminus.extras import libxc_functional
     from pyscf.dft.libxc import is_gga
+
+    from eminus.extras import libxc_functional
     if not is_gga(xc):
         return
     n_spin = n_tests[Nspin]

@@ -68,13 +68,13 @@ Coverage
 Linting
 -------
 
-| This code is lint-checked with `flake8 <https://flake8.pycqa.org>`_, using a custom `configuration file <https://gitlab.com/wangenau/eminus/-/tree/main/.flake8>`_.
-| To install flake8 and do a lint check, use
+| This code is lint-checked with `Ruff <https://beta.ruff.rs>`_, using a custom `style configuration <https://gitlab.com/wangenau/eminus/-/tree/main/pyproject.toml>`_.
+| To install Ruff and do a lint check, use
 
 .. code-block:: console
 
-   pip install flake8 flake8-docstrings flake8-import-order
-   flake8
+   pip install ruff
+   ruff check .
 
 Documentation
 -------------

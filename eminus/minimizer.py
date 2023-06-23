@@ -6,7 +6,7 @@ import numpy as np
 
 from .dft import get_grad, get_grad_field, get_n_spin, get_n_total, get_tau, orth, solve_poisson
 from .energies import get_E
-from .logger import name
+from .logger import log, name
 from .utils import dotprod
 from .xc import get_xc
 
@@ -45,6 +45,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
 
     Args:
         scf: SCF object.
+        method (string): Minimization method.
         Elist (list): Total energies per SCF step.
 
     Keyword Args:
@@ -191,6 +192,8 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
         return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old), norm_g
     elif scf.cgform == 4:  # Dai-Yuan
         return norm_g / dotprod(g - g_old, d_old), norm_g
+    log.error(f'No cgform found for "{scf.cgform}".')
+    return None
 
 
 @name('steepest descent minimization')

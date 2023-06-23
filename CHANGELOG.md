@@ -18,6 +18,7 @@ dev
 - Coding style
    - Simplify H function
    - Simplify minimizer module
+   - Switch linter from flake8 to Ruff
 - Miscellaneous
    - Performance fix using precomputed values correctly
    - Improve GGA performance

@@ -2,6 +2,9 @@
 '''Utility functions for exchange-correlation functionals.'''
 import numpy as np
 
+from .. import config
+from ..logger import log
+from ..utils import add_maybe_none
 from .gga_c_chachiyo import gga_c_chachiyo, gga_c_chachiyo_spin
 from .gga_c_pbe import gga_c_pbe, gga_c_pbe_spin
 from .gga_c_pbe_sol import gga_c_pbe_sol, gga_c_pbe_sol_spin
@@ -14,9 +17,6 @@ from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
-from .. import config
-from ..logger import log
-from ..utils import add_maybe_none
 
 
 def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0, exc_only=False):
@@ -258,6 +258,9 @@ def mock_xc(n, Nspin=1, **kwargs):
     Args:
         n (ndarray): Real-space electronic density.
         Nspin (int): Number of spin states.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.

@@ -27,9 +27,8 @@ stages:
 lint:
   stage: test
   script:
-    - pip install -e .
-    - pip install flake8 flake8-docstrings flake8-import-order
-    - flake8
+    - pip install ruff
+    - ruff check .
   only:
     changes:
       - "*.py"

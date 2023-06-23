@@ -14,7 +14,7 @@ def info():
     '''Print version numbers and availability of packages.'''
     dependencies = ('numpy', 'scipy')
     extras = ('torch', 'pyscf', 'plotly', 'nglview')
-    dev = ('notebook', 'pylibxc', 'pytest', 'flake8', 'sphinx', 'furo')
+    dev = ('notebook', 'pylibxc', 'pytest', 'sphinx', 'furo')
 
     print(logo)
     print('--- Platform infos ---'

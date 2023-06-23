@@ -348,8 +348,7 @@ def get_elf(scf):
     D = get_tau(scf.atoms, scf.Y) - get_tauw(scf)
     D0 = get_tautf(scf)
     X = D / D0
-    elf = 1 / (1 + X**2)
-    return elf
+    return 1 / (1 + X**2)
 
 
 def get_reduced_gradient(scf, eps=0):

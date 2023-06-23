@@ -12,7 +12,8 @@ from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as all_minimizer
-from .potentials import IMPLEMENTED as all_potentials, init_pot
+from .potentials import IMPLEMENTED as all_potentials
+from .potentials import init_pot
 from .tools import center_of_mass, get_spin_squared
 from .version import info
 from .xc import parse_functionals, parse_xc_type

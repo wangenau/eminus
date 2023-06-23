@@ -8,7 +8,6 @@ from eminus import Atoms
 from eminus.domains import domain_cuboid, domain_sphere, truncate
 from eminus.tools import center_of_mass
 
-
 atoms = Atoms('CH4', ((0, 0, 0),
                       (1.186, 1.186, 1.186),
                       (1.186, -1.186, -1.186),

@@ -5,6 +5,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, config
+
 config.use_torch = True
 
 # Create an Atoms object to build mock wave functions

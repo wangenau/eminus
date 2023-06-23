@@ -22,6 +22,7 @@ def gga_x_chachiyo(n, exc_only=False, dn_spin=None, **kwargs):
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
@@ -60,6 +61,7 @@ def gga_x_chachiyo_spin(n, zeta, exc_only=False, dn_spin=None, **kwargs):
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.

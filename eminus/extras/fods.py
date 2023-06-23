@@ -79,7 +79,7 @@ def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
     '''
     try:
         from pyscf.gto import Mole
-        from pyscf.scf import UKS, RKS
+        from pyscf.scf import RKS, UKS
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[fods]".\n\n')

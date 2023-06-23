@@ -18,6 +18,7 @@ def lda_x(n, exc_only=False, **kwargs):
 
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange energy density and potential.
@@ -46,6 +47,7 @@ def lda_x_spin(n, zeta, exc_only=False, **kwargs):
 
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: Exchange energy density and potential.

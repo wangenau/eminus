@@ -24,12 +24,10 @@
           plotly
           ### dev ###
           coverage
-          flake8
-          flake8-docstrings
-          flake8-import-order
           furo
           pytest
           pytest-cov
+          ruff
           sphinx
         ]);
 

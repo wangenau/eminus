@@ -2,8 +2,20 @@
 '''Test units conversion.'''
 import pytest
 
-from eminus.units import (ang2bohr, bohr2ang, d2ebohr, ebohr2d, ev2ha, ev2kcalmol, ha2ev,
-                          ha2kcalmol, ha2ry, kcalmol2ev, kcalmol2ha, ry2ha)
+from eminus.units import (
+    ang2bohr,
+    bohr2ang,
+    d2ebohr,
+    ebohr2d,
+    ev2ha,
+    ev2kcalmol,
+    ha2ev,
+    ha2kcalmol,
+    ha2ry,
+    kcalmol2ev,
+    kcalmol2ha,
+    ry2ha,
+)
 
 
 @pytest.mark.parametrize('value', (-0.123, 0, 1.337))

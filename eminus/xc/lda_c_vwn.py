@@ -22,6 +22,7 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, exc_only=False,
         b (float): Functional parameter.
         c (float): Functional parameter.
         x0 (float): Functional parameter.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
@@ -59,6 +60,7 @@ def lda_c_vwn_spin(n, zeta, exc_only=False, **kwargs):
 
     Keyword Args:
         exc_only (bool): Only calculate the exchange-correlation energy density.
+        **kwargs: Throwaway arguments.
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.

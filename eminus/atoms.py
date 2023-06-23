@@ -362,7 +362,7 @@ class Atoms:
 
         # Calculate the G2 restriction
         if self.ecut is not None:
-            active = np.nonzero(G2 <= 2 * self.ecut)
+            active = np.nonzero(2 * self.ecut >= G2)
         else:
             active = np.nonzero(G2 >= 0)  # Trivial condition to produce the right shape
         self.active = active
