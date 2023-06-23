@@ -96,13 +96,14 @@ def init_gth_nonloc(scf):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
-def calc_Vnonloc(scf, W):
+def calc_Vnonloc(scf, spin, W):
     '''Calculate the non-local pseudopotential, applied on the basis functions W.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
         scf: SCF object.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
@@ -110,9 +111,9 @@ def calc_Vnonloc(scf, W):
     '''
     atoms = scf.atoms
 
-    Vpsi = np.zeros_like(W, dtype=complex)
+    Vpsi = np.zeros_like(W[spin], dtype=complex)
     if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        betaNL_psi = (W.conj().T @ scf.betaNL).conj()
+        betaNL_psi = (W[spin].conj().T @ scf.betaNL).conj()
 
         for ia in range(atoms.Natoms):
             psp = scf.GTH[atoms.atom[ia]]

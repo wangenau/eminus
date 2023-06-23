@@ -120,7 +120,7 @@ def get_grad(scf, spin, W, **kwargs):
 
     Args:
         scf: SCF object.
-        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -151,7 +151,7 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
 
     Args:
         scf: SCF object.
-        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -182,7 +182,7 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
     Veff = scf.Vloc + atoms.Jdag(atoms.O(Gvxc + phi))
-    Vnonloc_psi = calc_Vnonloc(scf, W[spin])
+    Vnonloc_psi = calc_Vnonloc(scf, spin, W)
     Vtau_psi = calc_Vtau(scf, spin, W, vtau)
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
@@ -199,6 +199,8 @@ def H_precompute(scf, W):
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray, ndarray]: dn_spin, phi, vxc, vsigma, and vtau
     '''
+    # We are calculating everything here over both spin channels
+    # In theory we would be fine/faster by only calculating the currently used spin channel
     atoms = scf.atoms
     Y = orth(atoms, W)
     n_spin = get_n_spin(atoms, Y)

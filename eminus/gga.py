@@ -33,7 +33,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
     Args:
         atoms: Atoms object.
-        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
         dn_spin (ndarray): Real-space gradient of densities per spin channel.
         vsigma (ndarray): Contracted gradient potential derivative.
 
@@ -102,7 +102,7 @@ def calc_Vtau(scf, spin, W, vtau):
 
     Args:
         scf: SCF object.
-        spin (int): Spin variable to track weather to calculate the gradient for spin up or down.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
         vtau (ndarray): Kinetic energy density potential derivative.
 
