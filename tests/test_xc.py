@@ -18,7 +18,7 @@ functionals = [xc for xc in XC_MAP if xc.isdigit()]
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_exc(xc, Nspin):
     '''Compare internal functional energy densities to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -35,7 +35,7 @@ def test_get_exc(xc, Nspin):
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_vxc(xc, Nspin):
     '''Compare internal functional potentials to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
@@ -52,7 +52,7 @@ def test_get_vxc(xc, Nspin):
 
 
 @pytest.mark.parametrize('xc', functionals)
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_vsigmaxc(xc, Nspin):
     '''Compare internal functional vsigma to Libxc.'''
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')

@@ -28,7 +28,7 @@ def test_01():  # noqa: D103
     execute_example('01_installation_test')
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_02():  # noqa: D103
     execute_example('02_minimal_example')
 
@@ -46,13 +46,13 @@ def test_05():  # noqa: D103
     clean_example(['CH4.json', 'CH4_density.cube'])
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_06():  # noqa: D103
     execute_example('06_advanced_functionalities')
     clean_example(['Ne_1.cube', 'Ne_2.cube', 'Ne_3.cube', 'Ne_4.cube'])
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_07():  # noqa: D103
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('07_fod_extra')
@@ -60,18 +60,18 @@ def test_07():  # noqa: D103
                    'CH4_fods.xyz'])
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_09():  # noqa: D103
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('09_sic_calculations')
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_11():  # noqa: D103
     execute_example('11_simpledft_examples')
 
 
-@pytest.mark.slow
+@pytest.mark.slow()
 def test_12():  # noqa: D103
     execute_example('12_germanium_solid')
     clean_example(['Ge_solid_density.cube'])

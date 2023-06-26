@@ -15,13 +15,13 @@ def clean_example(trash):
             path.unlink()
 
 
-@pytest.mark.slow
-@pytest.mark.parametrize('name, trash', [('08_visualizer_extra', []),
-                                         ('10_domain_generation', []),
-                                         ('13_wannier_localization', ['CH4_WO_0.cube',
-                                                                      'CH4_WO_1.cube',
-                                                                      'CH4_WO_2.cube',
-                                                                      'CH4_WO_3.cube'])])
+@pytest.mark.slow()
+@pytest.mark.parametrize(('name', 'trash'), [('08_visualizer_extra', []),
+                                             ('10_domain_generation', []),
+                                             ('13_wannier_localization', ['CH4_WO_0.cube',
+                                                                          'CH4_WO_1.cube',
+                                                                          'CH4_WO_2.cube',
+                                                                          'CH4_WO_3.cube'])])
 def test_notebooks(name, trash):
     '''Test the execution of a given Jupyter notebook.'''
     pytest.importorskip('nglview', reason='nglview not installed, skip tests')

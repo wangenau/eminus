@@ -11,7 +11,7 @@ atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=1, ecut=1)
 scf = SCF(atoms)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_xyz(Nspin):
     '''Test XYZ file output and input.'''
     filename = 'test.xyz'
@@ -26,7 +26,7 @@ def test_xyz(Nspin):
     assert_allclose(atoms.X, X[:len(atoms.X)], atol=1e-6)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_cube(Nspin):
     '''Test CUBE file output and input.'''
     filename = 'test.cube'
@@ -61,7 +61,7 @@ def test_json(object):
             assert getattr(object, attr) == getattr(test, attr)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_pdb(Nspin):
     '''Just test the PDB output execution, since we have no read function for it.'''
     filename = 'test.pdb'

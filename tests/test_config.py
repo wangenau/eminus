@@ -13,7 +13,7 @@ def test_singleton():
     assert id(config) == id(eminus.config)
 
 
-@pytest.mark.parametrize('level', ('debug', 0, 9))
+@pytest.mark.parametrize('level', ['debug', 0, 9])
 def test_logger(level):
     '''Check that the logger gets properly updated.'''
     config.verbose = level

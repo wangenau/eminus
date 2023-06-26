@@ -16,8 +16,8 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('guess', ('rand', 'pseudo'))
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('guess', ['rand', 'pseudo'])
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_wavefunction(guess, Nspin):
     '''Test the orthonormalization of wave functions.'''
     if Nspin == 1:
@@ -34,7 +34,7 @@ def test_wavefunction(guess, Nspin):
         assert_allclose(np.diag(ovlp), np.ones(scf.atoms.Nstate))
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_H(Nspin):
     '''Test the Hamiltonian.'''
     if Nspin == 1:
@@ -49,7 +49,7 @@ def test_H(Nspin):
         assert_allclose(WHW, np.diag(np.diag(WHW)), atol=1e-12)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_total(Nspin):
     '''Test the total density.'''
     if Nspin == 1:
@@ -63,7 +63,7 @@ def test_n_total(Nspin):
     assert_allclose(n_int, np.sum(scf.atoms.f))
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_spin(Nspin):
     '''Test the spin densities.'''
     if Nspin == 1:
@@ -78,7 +78,7 @@ def test_n_spin(Nspin):
         assert_allclose(n_int, np.sum(scf.atoms.f[s]))
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_single(Nspin):
     '''Test the single orbital densities.'''
     if Nspin == 1:

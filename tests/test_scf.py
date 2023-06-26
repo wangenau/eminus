@@ -81,7 +81,7 @@ def test_clear():
     assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc) if x is None]
 
 
-@pytest.mark.parametrize('center', (None, atoms.a / 2))
+@pytest.mark.parametrize('center', [None, atoms.a / 2])
 def test_recenter(center):
     '''Test the recenter function.'''
     scf = SCF(atoms)

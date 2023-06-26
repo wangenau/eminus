@@ -20,12 +20,12 @@ def test_independence():
     assert log.verbose != logger.log.verbose
 
 
-@pytest.mark.parametrize('level, ref', [('DEBUG', 'DEBUG'),
-                                        ('debug', 'DEBUG'),
-                                        (4, 'DEBUG'),
-                                        (0, 'CRITICAL'),
-                                        (9, 'DEBUG'),
-                                        (None, None)])
+@pytest.mark.parametrize(('level', 'ref'), [('DEBUG', 'DEBUG'),
+                                            ('debug', 'DEBUG'),
+                                            (4, 'DEBUG'),
+                                            (0, 'CRITICAL'),
+                                            (9, 'DEBUG'),
+                                            (None, None)])
 def test_level(level, ref):
     '''Test logging levels.'''
     log = logger.create_logger('tmp')

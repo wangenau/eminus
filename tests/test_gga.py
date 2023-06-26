@@ -16,7 +16,7 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_grad_field(Nspin):
     '''Test the gradient field calculations.'''
     if Nspin == 1:
@@ -29,7 +29,7 @@ def test_get_grad_field(Nspin):
     assert np.sum(dn_mock) == 0
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tau(Nspin):
     '''Test positive-definite kinetic energy density.'''
     if Nspin == 1:

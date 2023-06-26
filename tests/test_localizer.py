@@ -32,7 +32,7 @@ fods = np.array([[9.16, 9.16, 10.89],
                  [9.16, 10.73, 9.16]])
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_spread(Nspin):
     '''Test the spread calculation.'''
     if Nspin == 1:
@@ -49,7 +49,7 @@ def test_spread(Nspin):
     assert_allclose(costs[:, 1:], 5, atol=0.25)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_flo(Nspin):
     '''Test the generation of FLOs.'''
     if Nspin == 1:
@@ -65,7 +65,7 @@ def test_flo(Nspin):
     assert_allclose(costs, costs[0, 0], atol=0.05)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_wannier(Nspin):
     '''Test the generation of Wannier functions.'''
     if Nspin == 1:

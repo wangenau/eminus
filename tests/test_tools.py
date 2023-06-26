@@ -49,15 +49,16 @@ def test_cutoff_and_gridspacing():
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('coords, masses, ref', [(np.eye(3), None, [1 / 3] * 3),
-                                                 (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])])
+@pytest.mark.parametrize(('coords', 'masses', 'ref'), [
+    (np.eye(3), None, [1 / 3] * 3),
+    (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])])
 def test_center_of_mass(coords, masses, ref):
     '''Test the center of mass calculation.'''
     out = center_of_mass(coords, masses)
     assert_allclose(out, ref)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_pycom(Nspin):
     '''Test PyCOM routine.'''
     atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
@@ -90,22 +91,22 @@ def test_get_ip():
     assert_allclose(get_ip(scf), 0.43364823)
 
 
-@pytest.mark.parametrize('ref, func', [(True, psi),
-                                       (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
+                                           (False, np.ones_like(psi))])
 def test_check_ortho(ref, func):
     '''Test orthogonality check.'''
     assert check_ortho(atoms, func) == ref
 
 
-@pytest.mark.parametrize('ref, func', [(True, psi),
-                                       (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
+                                           (False, np.ones_like(psi))])
 def test_check_norm(ref, func):
     '''Test normalization check.'''
     assert check_norm(atoms, func) == ref
 
 
-@pytest.mark.parametrize('ref, func', [(True, psi),
-                                       (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
+                                           (False, np.ones_like(psi))])
 def test_check_orthonorm(ref, func):
     '''Test orthonormalization check.'''
     assert check_orthonorm(atoms, func) == ref
@@ -116,7 +117,7 @@ def test_get_isovalue():
     assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tautf(Nspin):
     '''Test Thomas-Fermi kinetic energy density.'''
     if Nspin == 1:
@@ -129,7 +130,7 @@ def test_get_tautf(Nspin):
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tauw(Nspin):
     '''Test von Weizsaecker kinetic energy density.'''
     if Nspin == 1:
@@ -142,7 +143,7 @@ def test_get_tauw(Nspin):
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_elf(Nspin):
     '''Test electron localization function.'''
     if Nspin == 1:
@@ -154,7 +155,7 @@ def test_get_elf(Nspin):
     assert ((elf >= 0) & (elf <= 1)).all()
 
 
-@pytest.mark.parametrize('Nspin', (1, 2))
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_reduced_gradient(Nspin):
     '''Test reduced density gradient.'''
     if Nspin == 1:
