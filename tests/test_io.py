@@ -70,6 +70,19 @@ def test_pdb(Nspin):
     os.remove(filename)
 
 
+@pytest.mark.parametrize('filending', ['pdb', 'xyz'])
+def test_trajectory(filending):
+    '''Test the trajectory keyword that append geometries to a file.'''
+    filename = f'test.{filending}'
+    write(atoms, filename, trajectory=False)
+    old_size = os.stat(filename).st_size
+    write(atoms, filename, trajectory=True)
+    new_size = os.stat(filename).st_size
+    os.remove(filename)
+    # The trajectory file has to be larger than the original one
+    assert old_size < new_size
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

@@ -6,7 +6,7 @@ from ..logger import log
 from ..units import bohr2ang
 
 
-def write_pdb(object, filename, fods=None, elec_symbols=None):
+def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
     '''Generate pdb files from atoms objects.
 
     See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
@@ -18,6 +18,7 @@ def write_pdb(object, filename, fods=None, elec_symbols=None):
     Keyword Args:
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
+        trajectory (bool): Allow appending to a file to create trajectories.
 
     Returns:
         None.
@@ -46,7 +47,13 @@ def write_pdb(object, filename, fods=None, elec_symbols=None):
             atom = atom + [elec_symbols[1]] * len(fods[1])
             X = np.vstack((X, fods[1]))
 
-    with open(filename, 'w') as fp:
+    # Append to a file when using the trajectory keyword
+    if trajectory:
+        mode = 'a'
+    else:
+        mode = 'w'
+
+    with open(filename, mode) as fp:
         fp.write(create_pdb_str(atom, X, a=atoms.a))
     return
 

@@ -47,7 +47,7 @@ def read_xyz(filename):
     return atom, X
 
 
-def write_xyz(object, filename, fods=None, elec_symbols=None):
+def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
     '''Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
@@ -59,6 +59,7 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
     Keyword Args:
         fods (list): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
+        trajectory (bool): Allow appending to a file to create trajectories.
 
     Returns:
         None.
@@ -82,7 +83,13 @@ def write_xyz(object, filename, fods=None, elec_symbols=None):
             log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                         'polarized case.')
 
-    with open(filename, 'w') as fp:
+    # Append to a file when using the trajectory keyword
+    if trajectory:
+        mode = 'a'
+    else:
+        mode = 'w'
+
+    with open(filename, mode) as fp:
         # The first line contains the number of atoms.
         # If we add FOD coordinates, add them to the count.
         if fods is None:
