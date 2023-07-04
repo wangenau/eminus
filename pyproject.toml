@@ -8,23 +8,24 @@ target-version = "py37"
 respect-gitignore = true
 
 select = [
-    "F",    # Pyflakes
-    "E",    # pycodestyle
-    "W",    # pycodestyle
-    "C90",  # mccabe
-    "I",    # isort
-    "D",    # pydocstyle
-    "S",    # flake8-bandit
-    "B",    # flake8-bugbear
-    "C4",   # flake8-comprehensions
-    "PIE",  # flake8-pie
-    "PT",   # flake8-pytest-style
-    "RSE",  # flake8-raise
-    "RET",  # flake8-return
-    "SIM",  # flake8-simplify
-    "PL",   # Pylint
-    "NPY",  # NumPy-specific rules
-    "RUF"   # Ruff-specific rules
+    "F",     # Pyflakes
+    "E",     # pycodestyle
+    "W",     # pycodestyle
+    "C90",   # mccabe
+    "I",     # isort
+    "D",     # pydocstyle
+    "S",     # flake8-bandit
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "PIE",   # flake8-pie
+    "PT",    # flake8-pytest-style
+    "RSE",   # flake8-raise
+    "RET",   # flake8-return
+    "SIM",   # flake8-simplify
+    "PL",    # Pylint
+    "NPY",   # NumPy-specific rules
+    "PERF",  # Perflint
+    "RUF"    # Ruff-specific rules
 ]
 
 ignore = [
@@ -49,6 +50,9 @@ ignore = [
     "SIM108",
     # Ignore all Pylint Refactor rules
     "PLR",
+    # PERF203: `try`-`except` within a loop incurs performance overhead
+    # This is only used in places where no significant overhead can occur
+    "PERF203",
     # RUF005: Consider `(*t, v)` instead of concatenation
     # This seems to be slower in the cases we use it
     "RUF005"

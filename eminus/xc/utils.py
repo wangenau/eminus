@@ -138,8 +138,7 @@ def parse_functionals(xc):
         functionals.append(f_xc)
 
     # If only one or no functional has been parsed append with mock functionals
-    for _ in range(2 - len(functionals)):
-        functionals.append('mock_xc')
+    functionals.extend('mock_xc' for _ in range(2 - len(functionals)))
     return functionals
 
 
