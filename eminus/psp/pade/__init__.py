@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''PADE GTH pseudopotential files.
+"""PADE GTH pseudopotential files.
 
 Reference: Phys. Rev. B 54, 1703.
-'''
+"""
 
 if __name__ == '__main__':
     import inspect

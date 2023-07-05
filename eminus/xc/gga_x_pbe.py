@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''Perdew-Burke-Ernzerhof GGA exchange.
+"""Perdew-Burke-Ernzerhof GGA exchange.
 
 Reference: Phys. Rev. Lett. 78, 1396.
-'''
+"""
 import numpy as np
 from numpy.linalg import norm
 
@@ -10,7 +10,7 @@ from .lda_x import lda_x, lda_x_spin
 
 
 def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
-    '''Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
+    """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
 
@@ -26,14 +26,14 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
-    '''
+    """
     ex, vx, _ = lda_x(n, **kwargs)
     gex, gvx, vsigmax = pbe_x_base(n, mu, dn_spin[0], **kwargs)
     return ex + gex / n, np.array([vx + gvx]), np.array([0.5 * vsigmax])
 
 
 def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
-    '''Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
+    """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
 
@@ -50,7 +50,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
-    '''
+    """
     # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     zeta = zeta[0]  # Getting the non-zero values from zeta adds an extra dimension, remove it here
     n_up = zeta * n + n   # 2 * n_up
@@ -65,7 +65,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
 
 def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
-    '''Base PBE exchange functional to be used in the spin-paired and -polarized case.
+    """Base PBE exchange functional to be used in the spin-paired and -polarized case.
 
     Reference: Phys. Rev. Lett. 78, 1396.
 
@@ -79,7 +79,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
-    '''
+    """
     kappa = 0.804
 
     norm_dn = norm(dn, axis=1)

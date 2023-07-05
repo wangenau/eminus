@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''SCF class definition.'''
+"""SCF class definition."""
 import copy
 import logging
 import time
@@ -20,7 +20,7 @@ from .xc import parse_functionals, parse_xc_type
 
 
 class SCF:
-    '''Perform direct minimizations.
+    """Perform direct minimizations.
 
     Args:
         atoms: Atoms object.
@@ -70,7 +70,7 @@ class SCF:
             from 0.
 
             Default: 'info'
-    '''
+    """
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
                  cgform=1, sic=False, symmetric=False, min=None, verbose=None):
         self.atoms = atoms          # Atoms object
@@ -114,7 +114,7 @@ class SCF:
         self.initialize()
 
     def clear(self):
-        '''Initialize and clear intermediate results.'''
+        """Initialize and clear intermediate results."""
         self.Y = None          # Orthogonal wave functions
         self.n_spin = None     # Electronic densities per spin
         self.dn_spin = None    # Gradient of electronic densities per spin
@@ -128,7 +128,7 @@ class SCF:
         return self
 
     def initialize(self):
-        '''Validate inputs, update them and build all necessary parameters.'''
+        """Validate inputs, update them and build all necessary parameters."""
         self.xc = parse_functionals(self.xc)
         self.xc_type = parse_xc_type(self.xc)
         # Build the atoms object if necessary and make a copy
@@ -142,7 +142,7 @@ class SCF:
         return self
 
     def run(self, **kwargs):
-        '''Run the self-consistent field (SCF) calculation.'''
+        """Run the self-consistent field (SCF) calculation."""
         if self.log.level <= logging.DEBUG:
             info()
         self.log.debug(f'\n--- System information ---\n{self.atoms}\n'
@@ -217,11 +217,11 @@ class SCF:
     kernel = run
 
     def recenter(self, center=None):
-        '''Recenter the system inside the cell.
+        """Recenter the system inside the cell.
 
         Keyword Args:
             center (float | list | tuple | ndarray | None): Point to center the system around.
-        '''
+        """
         # Get the COM before centering the atoms
         com = center_of_mass(self.atoms.X)
 
@@ -248,7 +248,7 @@ class SCF:
         return self
 
     def _set_potential(self):
-        '''Build the potential.'''
+        """Build the potential."""
         atoms = self.atoms
 
         # If pot is no supported potential it can be a path to a directory containing GTH files
@@ -273,7 +273,7 @@ class SCF:
         return
 
     def _init_W(self):
-        '''Initialize wave functions.'''
+        """Initialize wave functions."""
         if self.guess in ('rand', 'random'):
             # Start with randomized, complex basis functions with a random seed
             self.W = guess_random(self, symmetric=self.symmetric)
@@ -285,7 +285,7 @@ class SCF:
         return
 
     def __repr__(self):
-        '''Print the parameters stored in the SCF object.'''
+        """Print the parameters stored in the SCF object."""
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return f'XC functionals: {self.xc}\n' \
                f'Potential: {self.pot}\n' \
@@ -298,7 +298,7 @@ class SCF:
 
     @property
     def verbose(self):
-        '''Verbosity level.'''
+        """Verbosity level."""
         return self._verbose
 
     @verbose.setter
@@ -309,15 +309,15 @@ class SCF:
 
 
 class RSCF(SCF):
-    '''SCF class for spin-paired systems.
+    """SCF class for spin-paired systems.
 
     Inherited from :class:`eminus.scf.SCF`.
 
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class.
-    '''
+    """
     def initialize(self):
-        '''Validate inputs, update them and build all necessary parameters.'''
+        """Validate inputs, update them and build all necessary parameters."""
         self.atoms = copy.copy(self.atoms)
         self.atoms._set_states(Nspin=1)
         super().initialize()
@@ -325,15 +325,15 @@ class RSCF(SCF):
 
 
 class USCF(SCF):
-    '''SCF class for spin-polarized systems.
+    """SCF class for spin-polarized systems.
 
     Inherited from :class:`eminus.scf.SCF`.
 
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class.
-    '''
+    """
     def initialize(self):
-        '''Validate inputs, update them and build all necessary parameters.'''
+        """Validate inputs, update them and build all necessary parameters."""
         self.atoms = copy.copy(self.atoms)
         self.atoms._set_states(Nspin=2)
         super().initialize()

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''PDB file handling.'''
+"""PDB file handling."""
 import numpy as np
 
 from ..logger import log
@@ -7,7 +7,7 @@ from ..units import bohr2ang
 
 
 def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
-    '''Generate pdb files from atoms objects.
+    """Generate pdb files from atoms objects.
 
     See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
 
@@ -22,7 +22,7 @@ def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
 
     Returns:
         None.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:
@@ -59,7 +59,7 @@ def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
 
 
 def create_pdb_str(atom, X, a=None):
-    '''Convert atom symbols and positions to the pdb format.
+    """Convert atom symbols and positions to the pdb format.
 
     File format definitions:
         CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
@@ -75,7 +75,7 @@ def create_pdb_str(atom, X, a=None):
 
     Returns:
         str: pdb file format.
-    '''
+    """
     # Convert Bohr to Angstrom
     X = bohr2ang(X)
     if a is not None:

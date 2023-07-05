@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Calculate different energy contributions.'''
+"""Calculate different energy contributions."""
 import dataclasses
 
 import numpy as np
@@ -13,7 +13,7 @@ from .xc import get_exc
 
 @dataclasses.dataclass
 class Energy:
-    '''Energy class to save energy contributions in one place.'''
+    """Energy class to save energy contributions in one place."""
     Ekin: float = 0     #: Kinetic energy.
     Ecoul: float = 0    #: Coulomb energy.
     Exc: float = 0      #: Exchange-correlation energy.
@@ -24,11 +24,11 @@ class Energy:
 
     @property
     def Etot(self):
-        '''Total energy is the sum of all energy contributions.'''
+        """Total energy is the sum of all energy contributions."""
         return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
 
     def __repr__(self):
-        '''Print the energies stored in the Energy object.'''
+        """Print the energies stored in the Energy object."""
         out = ''
         for ie in dataclasses.fields(self):
             energy = getattr(self, ie.name)
@@ -38,14 +38,14 @@ class Energy:
 
 
 def get_E(scf):
-    '''Calculate energy contributions and update energies needed in one SCF step.
+    """Calculate energy contributions and update energies needed in one SCF step.
 
     Args:
         scf: SCF object.
 
     Returns:
         float: Total energy.
-    '''
+    """
     scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
     scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
     scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, Nspin=scf.atoms.Nspin)
@@ -55,7 +55,7 @@ def get_E(scf):
 
 
 def get_Ekin(atoms, Y):
-    '''Calculate the kinetic energy.
+    """Calculate the kinetic energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -65,7 +65,7 @@ def get_Ekin(atoms, Y):
 
     Returns:
         float: Kinetic energy in Hartree.
-    '''
+    """
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
     for spin in range(atoms.Nspin):
@@ -75,7 +75,7 @@ def get_Ekin(atoms, Y):
 
 
 def get_Ecoul(atoms, n, phi=None):
-    '''Calculate the Coulomb energy.
+    """Calculate the Coulomb energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -88,7 +88,7 @@ def get_Ecoul(atoms, n, phi=None):
 
     Returns:
         float: Coulomb energy in Hartree.
-    '''
+    """
     if phi is None:
         phi = solve_poisson(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
@@ -96,7 +96,7 @@ def get_Ecoul(atoms, n, phi=None):
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
-    '''Calculate the exchange-correlation energy.
+    """Calculate the exchange-correlation energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -113,7 +113,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
 
     Returns:
         float: Exchange-correlation energy in Hartree.
-    '''
+    """
     atoms = scf.atoms
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau)
@@ -122,7 +122,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
 
 
 def get_Eloc(scf, n):
-    '''Calculate the local energy contribution.
+    """Calculate the local energy contribution.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -132,13 +132,13 @@ def get_Eloc(scf, n):
 
     Returns:
         float: Local energy contribution in Hartree.
-    '''
+    """
     return np.real(scf.Vloc.conj().T @ n)
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 def get_Enonloc(scf, Y):
-    '''Calculate the non-local GTH energy contribution.
+    """Calculate the non-local GTH energy contribution.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -148,7 +148,7 @@ def get_Enonloc(scf, Y):
 
     Returns:
         float: Non-local GTH energy contribution in Hartree.
-    '''
+    """
     atoms = scf.atoms
 
     Enonloc = 0
@@ -173,7 +173,7 @@ def get_Enonloc(scf, Y):
 
 
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
-    '''Calculate the Ewald energy.
+    """Calculate the Ewald energy.
 
     Reference: J. Chem. Theory Comput. 10, 381.
 
@@ -186,12 +186,12 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     Returns:
         float: Ewald energy in Hartree.
-    '''
+    """
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     def get_index_vectors(s):
-        '''Create index vectors of s periodic images.'''
+        """Create index vectors of s periodic images."""
         m1 = np.arange(-s[0], s[0] + 1)
         m2 = np.arange(-s[1], s[1] + 1)
         m3 = np.arange(-s[2], s[2] + 1)
@@ -253,7 +253,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
 
 def get_Esic(scf, Y, n_single=None):
-    '''Calculate the Perdew-Zunger self-interaction energy.
+    """Calculate the Perdew-Zunger self-interaction energy.
 
     Reference: Phys. Rev. B 23, 5048.
 
@@ -266,7 +266,7 @@ def get_Esic(scf, Y, n_single=None):
 
     Returns:
         float: PZ self-interaction energy.
-    '''
+    """
     atoms = scf.atoms
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:

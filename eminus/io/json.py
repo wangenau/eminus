@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''JSON file handling.'''
+"""JSON file handling."""
 import base64
 import copy
 import json
@@ -8,18 +8,18 @@ import numpy as np
 
 
 def read_json(filename):
-    '''Load objects from a JSON file.
+    """Load objects from a JSON file.
 
     Args:
         filename (str): json input file path/name.
 
     Returns:
         Class object.
-    '''
+    """
     import eminus
 
     def custom_object_hook(dct):
-        '''Custom JSON object hook to create eminus classes after deserialization.'''
+        """Custom JSON object hook to create eminus classes after deserialization."""
         # ndarrays are base64 encoded, decode and recreate
         if isinstance(dct, dict) and '__ndarray__' in dct:
             data = base64.b64decode(dct['__ndarray__'])
@@ -60,16 +60,16 @@ def read_json(filename):
 
 
 def write_json(object, filename):
-    '''Save objects in a JSON file.
+    """Save objects in a JSON file.
 
     Args:
         object: Class object.
         filename (str): json output file path/name.
-    '''
+    """
     import eminus
 
     class CustomEncoder(json.JSONEncoder):
-        '''Custom JSON encoder class to serialize eminus classes.'''
+        """Custom JSON encoder class to serialize eminus classes."""
         def default(self, obj):
             # ndarrays are not json serializable, encode them as base64 to save them
             if isinstance(obj, np.ndarray):

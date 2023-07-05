@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Basis set dependent operators for a plane wave basis.
+"""Basis set dependent operators for a plane wave basis.
 
 These operators act on discretized wave functions, i.e., the arrays W.
 
@@ -22,7 +22,7 @@ The active space is the truncated reciprocal space by restricting it with a sphe
 
 Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
 spin individually.
-'''
+"""
 import numpy as np
 from scipy.fft import fftn, ifftn
 
@@ -32,7 +32,7 @@ from .utils import handle_spin_gracefully
 
 # Spin handling is trivial for this operator
 def O(atoms, W):
-    '''Overlap operator.
+    """Overlap operator.
 
     This operator acts on the options 3, 4, 5, and 6.
 
@@ -44,13 +44,13 @@ def O(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     return atoms.Omega * W
 
 
 @handle_spin_gracefully
 def L(atoms, W):
-    '''Laplacian operator.
+    """Laplacian operator.
 
     This operator acts on the options 3 and 5.
 
@@ -62,7 +62,7 @@ def L(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -73,7 +73,7 @@ def L(atoms, W):
 
 @handle_spin_gracefully
 def Linv(atoms, W):
-    '''Inverse Laplacian operator.
+    """Inverse Laplacian operator.
 
     This operator acts on the options 3 and 4.
 
@@ -85,7 +85,7 @@ def Linv(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
         if W.ndim == 1:
@@ -102,7 +102,7 @@ def Linv(atoms, W):
 
 @handle_spin_gracefully
 def I(atoms, W):
-    '''Backwards transformation from reciprocal space to real-space.
+    """Backwards transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
 
@@ -114,7 +114,7 @@ def I(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     n = np.prod(atoms.s)
 
     # If W is in the full space do nothing with W
@@ -148,7 +148,7 @@ def I(atoms, W):
 
 @handle_spin_gracefully
 def J(atoms, W, full=True):
-    '''Forward transformation from real-space to reciprocal space.
+    """Forward transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
 
@@ -163,7 +163,7 @@ def J(atoms, W, full=True):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     n = np.prod(atoms.s)
     Wfft = np.copy(W)
 
@@ -189,7 +189,7 @@ def J(atoms, W, full=True):
 
 @handle_spin_gracefully
 def Idag(atoms, W, full=False):
-    '''Conjugated backwards transformation from real-space to reciprocal space.
+    """Conjugated backwards transformation from real-space to reciprocal space.
 
     This operator acts on the options 1 and 2.
 
@@ -204,7 +204,7 @@ def Idag(atoms, W, full=False):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     n = np.prod(atoms.s)
     F = J(atoms, W, full)
     return F * n
@@ -212,7 +212,7 @@ def Idag(atoms, W, full=False):
 
 @handle_spin_gracefully
 def Jdag(atoms, W):
-    '''Conjugated forward transformation from reciprocal space to real-space.
+    """Conjugated forward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
 
@@ -224,7 +224,7 @@ def Jdag(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     n = np.prod(atoms.s)
     Finv = I(atoms, W)
     return Finv / n
@@ -232,7 +232,7 @@ def Jdag(atoms, W):
 
 @handle_spin_gracefully
 def K(atoms, W):
-    '''Preconditioning operator.
+    """Preconditioning operator.
 
     This operator acts on the options 3 and 5.
 
@@ -244,7 +244,7 @@ def K(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.G2c):
         G2 = atoms.G2c[:, None]
@@ -255,7 +255,7 @@ def K(atoms, W):
 
 @handle_spin_gracefully
 def T(atoms, W, dr):
-    '''Translation operator.
+    """Translation operator.
 
     This operator acts on the options 5 and 6.
 
@@ -268,7 +268,7 @@ def T(atoms, W, dr):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     # Do the shift by multiplying a phase factor, given by the shift theorem
     if len(W) == len(atoms.G2c):
         G = atoms.G[atoms.active]

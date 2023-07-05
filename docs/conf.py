@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-'''Sphinx documentation builder configuration file.
+"""Sphinx documentation builder configuration file.
 
 For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
-'''
+"""
 import datetime
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
@@ -58,14 +58,14 @@ napoleon_use_rtype = False
 
 
 def dunder_skip(app, what, name, obj, would_skip, options):
-    '''Exclude all dunder methods.'''
+    """Exclude all dunder methods."""
     if name.startswith('_'):
         return True
     return would_skip
 
 
 def setup(app):
-    '''Customize build process.'''
+    """Customize build process."""
     import pathlib
     import sys
     sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
@@ -78,7 +78,7 @@ def setup(app):
 
 
 def remove_package_name(fullname):
-    '''Remove the package name from a given fullname.'''
+    """Remove the package name from a given fullname."""
     parts = fullname.split('.')
     if len(parts) > 1:
         return '.'.join(parts[1:])
@@ -87,7 +87,7 @@ def remove_package_name(fullname):
 
 
 def patched_init(self, app):
-    '''Patch the AutosummaryRenderer init function to add the remove_package_name function.'''
+    """Patch the AutosummaryRenderer init function to add the remove_package_name function."""
     AutosummaryRenderer.__old_init__(self, app)
     self.env.filters['remove_package_name'] = remove_package_name
     return

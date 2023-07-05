@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''Perdew-Burke-Ernzerhof GGA correlation.
+"""Perdew-Burke-Ernzerhof GGA correlation.
 
 Reference: Phys. Rev. Lett. 78, 1396.
-'''
+"""
 import numpy as np
 from numpy.linalg import norm
 
@@ -10,7 +10,7 @@ from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 
 
 def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
-    '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
+    """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
 
@@ -26,7 +26,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
-    '''
+    """
     gamma = (1 - np.log(2)) / np.pi**2
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)
@@ -57,7 +57,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
 
 def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
-    '''Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
+    """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
 
@@ -74,7 +74,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
-    '''
+    """
     gamma = (1 - np.log(2)) / np.pi**2
 
     pi34 = (3 / (4 * np.pi))**(1 / 3)

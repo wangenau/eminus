@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test configuration class.'''
+"""Test configuration class."""
 import os
 
 import pytest
@@ -9,19 +9,19 @@ from eminus import config
 
 
 def test_singleton():
-    '''Check that config is truly a singleton.'''
+    """Check that config is truly a singleton."""
     assert id(config) == id(eminus.config)
 
 
 @pytest.mark.parametrize('level', ['debug', 0, 9])
 def test_logger(level):
-    '''Check that the logger gets properly updated.'''
+    """Check that the logger gets properly updated."""
     config.verbose = level
     assert config.verbose == eminus.log.verbose
 
 
 def test_torch():
-    '''Check the Torch initialization.'''
+    """Check the Torch initialization."""
     try:
         import torch  # noqa: F401
         config.use_torch = True
@@ -31,7 +31,7 @@ def test_torch():
 
 
 def test_libxc():
-    '''Check the Libxc initialization.'''
+    """Check the Libxc initialization."""
     try:
         import pylibxc  # noqa: F401
         assert config.use_pylibxc
@@ -40,7 +40,7 @@ def test_libxc():
 
 
 def test_threads():
-    '''Check the threads setting.'''
+    """Check the threads setting."""
     assert isinstance(config.threads, int) or config.threads is None
 
     threads = 2
@@ -59,7 +59,7 @@ def test_threads():
 
 
 def test_info():
-    '''Check that the config info function properly executes.'''
+    """Check that the config info function properly executes."""
     config.info()
 
 

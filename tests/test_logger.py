@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test logging class.'''
+"""Test logging class."""
 import pytest
 
 import eminus
@@ -7,12 +7,12 @@ from eminus import logger
 
 
 def test_singleton():
-    '''Check that log is truly a singleton.'''
+    """Check that log is truly a singleton."""
     assert id(logger.log) == id(eminus.log)
 
 
 def test_independence():
-    '''Check that loggers do not influence each other.'''
+    """Check that loggers do not influence each other."""
     log = logger.create_logger('tmp')
     assert id(log) != id(logger.log)
     assert log.verbose == logger.log.verbose
@@ -27,7 +27,7 @@ def test_independence():
                                             (9, 'DEBUG'),
                                             (None, None)])
 def test_level(level, ref):
-    '''Test logging levels.'''
+    """Test logging levels."""
     log = logger.create_logger('tmp')
     log.verbose = level
     if ref is None:
@@ -36,7 +36,7 @@ def test_level(level, ref):
 
 
 def test_name():
-    '''Test the name changing decorator.'''
+    """Test the name changing decorator."""
     name = 'newname'
 
     @logger.name(name)

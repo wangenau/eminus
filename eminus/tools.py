@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Various tools to check physical properties.'''
+"""Various tools to check physical properties."""
 import numpy as np
 from numpy.linalg import norm
 from scipy.optimize import minimize_scalar
@@ -10,7 +10,7 @@ from .logger import log
 
 
 def cutoff2gridspacing(E):
-    '''Convert plane wave energy cut-off to a real-space grid spacing.
+    """Convert plane wave energy cut-off to a real-space grid spacing.
 
     Reference: Phys. Rev. B 54, 14362.
 
@@ -19,12 +19,12 @@ def cutoff2gridspacing(E):
 
     Returns:
         float: Grid spacing in Bohr.
-    '''
+    """
     return np.pi / np.sqrt(2 * E)
 
 
 def gridspacing2cutoff(h):
-    '''Convert real-space grid spacing to plane wave energy cut-off.
+    """Convert real-space grid spacing to plane wave energy cut-off.
 
     Reference: Phys. Rev. B 54, 14362.
 
@@ -33,12 +33,12 @@ def gridspacing2cutoff(h):
 
     Returns:
         float: Cut-off in Hartree.
-    '''
+    """
     return 0.5 * (np.pi / h)**2
 
 
 def center_of_mass(coords, masses=None):
-    '''Calculate the center of mass for a set of coordinates and masses.
+    """Calculate the center of mass for a set of coordinates and masses.
 
     Args:
         coords (ndarray): Array of real-space coordinates.
@@ -48,7 +48,7 @@ def center_of_mass(coords, masses=None):
 
     Returns:
         ndarray: Center of mass.
-    '''
+    """
     if masses is None:
         masses = np.ones(len(coords))
 
@@ -56,7 +56,7 @@ def center_of_mass(coords, masses=None):
 
 
 def orbital_center(object, psirs):
-    '''Calculate the orbital center of masses, e.g., from localized orbitals.
+    """Calculate the orbital center of masses, e.g., from localized orbitals.
 
     Args:
         object: Atoms or SCF object.
@@ -64,7 +64,7 @@ def orbital_center(object, psirs):
 
     Returns:
         bool: Center of masses.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:
@@ -84,7 +84,7 @@ def orbital_center(object, psirs):
 
 
 def inertia_tensor(coords, masses=None):
-    '''Calculate the inertia tensor for a set of coordinates and masses.
+    """Calculate the inertia tensor for a set of coordinates and masses.
 
     Reference: https://en.wikipedia.org/wiki/Moment_of_inertia
 
@@ -96,7 +96,7 @@ def inertia_tensor(coords, masses=None):
 
     Returns:
         ndarray: Inertia tensor.
-    '''
+    """
     if masses is None:
         masses = np.ones(len(coords))
 
@@ -114,7 +114,7 @@ def inertia_tensor(coords, masses=None):
 
 
 def get_dipole(scf, n=None):
-    '''Calculate the electric dipole moment.
+    """Calculate the electric dipole moment.
 
     This function does not account for periodcity, it may be a good idea to center the system.
 
@@ -128,7 +128,7 @@ def get_dipole(scf, n=None):
 
     Returns:
         ndarray: Electric dipole moment in e * Bohr.
-    '''
+    """
     atoms = scf.atoms
     if n is None:
         n = scf.n
@@ -148,7 +148,7 @@ def get_dipole(scf, n=None):
 
 
 def get_ip(scf):
-    '''Calculate the ionization potential by calculating the negative HOMO energy.
+    """Calculate the ionization potential by calculating the negative HOMO energy.
 
     Reference: Physica 1, 104.
 
@@ -157,7 +157,7 @@ def get_ip(scf):
 
     Returns:
         float: Ionization potential in Hartree.
-    '''
+    """
     epsilon = get_epsilon(scf, scf.W)
     # Add up spin states
     epsilon = np.sum(epsilon, axis=0)
@@ -165,7 +165,7 @@ def get_ip(scf):
 
 
 def check_ortho(object, func, eps=1e-9):
-    '''Check the orthogonality condition for a set of functions.
+    """Check the orthogonality condition for a set of functions.
 
     Args:
         object: Atoms or SCF object.
@@ -176,7 +176,7 @@ def check_ortho(object, func, eps=1e-9):
 
     Returns:
         bool: Orthogonality status for the set of functions.
-    '''
+    """
     func = np.atleast_3d(func)
     try:
         atoms = object.atoms
@@ -207,7 +207,7 @@ def check_ortho(object, func, eps=1e-9):
 
 
 def check_norm(object, func, eps=1e-9):
-    '''Check the normalization condition for a set of functions.
+    """Check the normalization condition for a set of functions.
 
     Args:
         object: Atoms or SCF object.
@@ -218,7 +218,7 @@ def check_norm(object, func, eps=1e-9):
 
     Returns:
         bool: Normalization status for the set of functions.
-    '''
+    """
     func = np.atleast_3d(func)
     try:
         atoms = object.atoms
@@ -243,7 +243,7 @@ def check_norm(object, func, eps=1e-9):
 
 
 def check_orthonorm(object, func):
-    '''Check the orthonormality conditions for a set of functions.
+    """Check the orthonormality conditions for a set of functions.
 
     Args:
         object: Atoms or SCF object.
@@ -251,7 +251,7 @@ def check_orthonorm(object, func):
 
     Returns:
         bool: Orthonormality status for the set of functions.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:
@@ -263,7 +263,7 @@ def check_orthonorm(object, func):
 
 
 def get_isovalue(n, percent=85):
-    '''Find an isovalue that contains a percentage of the electronic density.
+    """Find an isovalue that contains a percentage of the electronic density.
 
     Reference: J. Chem. Phys. 158, 164102.
 
@@ -275,9 +275,9 @@ def get_isovalue(n, percent=85):
 
     Returns:
         float: Isovalue that contains the specified percentage of the density.
-    '''
+    """
     def deviation(isovalue):
-        '''Wrapper function for finding the isovalue by minimization.'''
+        """Wrapper function for finding the isovalue by minimization."""
         n_mask = np.sum(n[n > isovalue])
         return abs(percent - (n_mask / n_ref) * 100)
 
@@ -290,7 +290,7 @@ def get_isovalue(n, percent=85):
 
 
 def get_tautf(scf):
-    '''Calculate the Thomas-Fermi kinetic energy densities per spin.
+    """Calculate the Thomas-Fermi kinetic energy densities per spin.
 
     Reference: Phys. Lett. B 63, 395.
 
@@ -299,7 +299,7 @@ def get_tautf(scf):
 
     Returns:
         ndarray: Real space Thomas-Fermi kinetic energy density.
-    '''
+    """
     atoms = scf.atoms
     # Use the definition with a division by two
     tautf = 3 / 10 * (atoms.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
@@ -310,7 +310,7 @@ def get_tautf(scf):
 
 
 def get_tauw(scf):
-    '''Calculate the von Weizsaecker kinetic energy densities per spin.
+    """Calculate the von Weizsaecker kinetic energy densities per spin.
 
     Reference: Z. Phys. 96, 431.
 
@@ -319,7 +319,7 @@ def get_tauw(scf):
 
     Returns:
         ndarray: Real space von Weizsaecker kinetic energy density.
-    '''
+    """
     atoms = scf.atoms
     if scf.dn_spin is None:
         dn_spin = get_grad_field(atoms, scf.n_spin)
@@ -336,7 +336,7 @@ def get_tauw(scf):
 
 
 def get_elf(scf):
-    '''Calculate the electron localization function.
+    """Calculate the electron localization function.
 
     Reference: J. Chem. Phys. 92, 5397.
 
@@ -345,7 +345,7 @@ def get_elf(scf):
 
     Returns:
         ndarray: Real space electron localization function.
-    '''
+    """
     D = get_tau(scf.atoms, scf.Y) - get_tauw(scf)
     D0 = get_tautf(scf)
     X = D / D0
@@ -353,7 +353,7 @@ def get_elf(scf):
 
 
 def get_reduced_gradient(scf, eps=0):
-    '''Calculate the reduced density gradient s.
+    """Calculate the reduced density gradient s.
 
     Reference: Phys. Rev. Lett. 78, 1396.
 
@@ -365,7 +365,7 @@ def get_reduced_gradient(scf, eps=0):
 
     Returns:
         ndarray: Real space educed density gradient.
-    '''
+    """
     atoms = scf.atoms
     if scf.dn_spin is None:
         dn_spin = get_grad_field(atoms, scf.n_spin)
@@ -381,7 +381,7 @@ def get_reduced_gradient(scf, eps=0):
 
 
 def get_spin_squared(scf):
-    '''Calculate the expectation value of the squared spin operator <S^2>.
+    """Calculate the expectation value of the squared spin operator <S^2>.
 
     Reference: Appl. Phys. Express 12, 115506.
 
@@ -390,7 +390,7 @@ def get_spin_squared(scf):
 
     Returns:
         float: The DFT value for <S^2>.
-    '''
+    """
     atoms = scf.atoms
     # <S^2> for a restricted calculation is always zero
     if atoms.Nspin == 1:
@@ -404,14 +404,14 @@ def get_spin_squared(scf):
 
 
 def get_multiplicity(scf):
-    '''Calculate the multiplicity from <S^2>.
+    """Calculate the multiplicity from <S^2>.
 
     Args:
         scf: SCF object.
 
     Returns:
         float: Multiplicity 2S+1.
-    '''
+    """
     S2 = get_spin_squared(scf)
     # <S^2> = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(<S^2>+0.25)-0.5
     S = np.sqrt(S2 + 0.25) - 0.5

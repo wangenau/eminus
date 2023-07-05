@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test exchange-correlation functional utilities.'''
+"""Test exchange-correlation functional utilities."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -24,7 +24,7 @@ from eminus.xc import get_xc, parse_functionals, parse_xc_type
                                          ('s,l:7', ['lda_x', 'l:7']),
                                          (':MGGA_X_TPSS,l:231', [':MGGA_X_TPSS', 'l:231'])])
 def test_parse_functionals(xc, ref):
-    '''Test the xc string parsing.'''
+    """Test the xc string parsing."""
     f_x, f_c = parse_functionals(xc)
     assert f_x == ref[0]
     assert f_c == ref[1]
@@ -35,7 +35,7 @@ def test_parse_functionals(xc, ref):
                                          (['lda_x', 'gga_c_pbe'], 'gga'),
                                          (['gga_x_pbe', 'lda_c_vwn'], 'gga')])
 def test_parse_xc_type(xc, ref):
-    '''Test the pseudopotential parsing.'''
+    """Test the pseudopotential parsing."""
     psp = parse_xc_type(xc)
     assert psp == ref
 
@@ -49,7 +49,7 @@ def test_parse_xc_type(xc, ref):
                                          ([':263', 'gga_x_pbe'], 'meta-gga'),
                                          ([':263', 'l:7'], 'meta-gga')])
 def test_parse_xc_type_pyscf(xc, ref):
-    '''Test the pseudopotential parsing using PySCF.'''
+    """Test the pseudopotential parsing using PySCF."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     config.use_pylibxc = False
     psp = parse_xc_type(xc)
@@ -65,7 +65,7 @@ def test_parse_xc_type_pyscf(xc, ref):
                                          ([':263', 'gga_x_pbe'], 'meta-gga'),
                                          ([':263', 'l:7'], 'meta-gga')])
 def test_parse_xc_type_pylibxc(xc, ref):
-    '''Test the pseudopotential parsing using pylibxc.'''
+    """Test the pseudopotential parsing using pylibxc."""
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     config.use_pylibxc = True
     psp = parse_xc_type(xc)
@@ -73,7 +73,7 @@ def test_parse_xc_type_pylibxc(xc, ref):
 
 
 def test_libxc_str():
-    '''Test that strings that start with libxc get properly parsed.'''
+    """Test that strings that start with libxc get properly parsed."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     # Create a random mock densities
     rng = default_rng()

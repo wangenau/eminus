@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test input and output functionalities.'''
+"""Test input and output functionalities."""
 import os
 
 from numpy.testing import assert_allclose
@@ -13,7 +13,7 @@ scf = SCF(atoms)
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_xyz(Nspin):
-    '''Test XYZ file output and input.'''
+    """Test XYZ file output and input."""
     filename = 'test.xyz'
     fods = [atoms.X] * Nspin
     write(atoms, filename, fods=fods)
@@ -28,7 +28,7 @@ def test_xyz(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_cube(Nspin):
-    '''Test CUBE file output and input.'''
+    """Test CUBE file output and input."""
     filename = 'test.cube'
     fods = [atoms.X] * Nspin
     write(atoms, filename, scf.W[0, 0], fods=fods)
@@ -46,7 +46,7 @@ def test_cube(Nspin):
 
 @pytest.mark.parametrize('object', [atoms, scf, scf.energies])
 def test_json(object):
-    '''Test JSON file output and input.'''
+    """Test JSON file output and input."""
     filename = 'test.json'
     write(object, filename)
     test = read(filename)
@@ -63,7 +63,7 @@ def test_json(object):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pdb(Nspin):
-    '''Just test the PDB output execution, since we have no read function for it.'''
+    """Just test the PDB output execution, since we have no read function for it."""
     filename = 'test.pdb'
     fods = [atoms.X] * Nspin
     write(atoms, filename, fods=fods)
@@ -72,7 +72,7 @@ def test_pdb(Nspin):
 
 @pytest.mark.parametrize('filending', ['pdb', 'xyz'])
 def test_trajectory(filending):
-    '''Test the trajectory keyword that append geometries to a file.'''
+    """Test the trajectory keyword that append geometries to a file."""
     filename = f'test.{filending}'
     write(atoms, filename, trajectory=False)
     old_size = os.stat(filename).st_size

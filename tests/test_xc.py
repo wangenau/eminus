@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test exchange-correlation functionals.'''
+"""Test exchange-correlation functionals."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -20,7 +20,7 @@ functionals = [xc for xc in XC_MAP if xc.isdigit()]
 @pytest.mark.parametrize('xc', functionals)
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_exc(xc, Nspin):
-    '''Compare internal functional energy densities to Libxc.'''
+    """Compare internal functional energy densities to Libxc."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
 
@@ -37,7 +37,7 @@ def test_get_exc(xc, Nspin):
 @pytest.mark.parametrize('xc', functionals)
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_vxc(xc, Nspin):
-    '''Compare internal functional potentials to Libxc.'''
+    """Compare internal functional potentials to Libxc."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
 
@@ -54,7 +54,7 @@ def test_get_vxc(xc, Nspin):
 @pytest.mark.parametrize('xc', functionals)
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_vsigmaxc(xc, Nspin):
-    '''Compare internal functional vsigma to Libxc.'''
+    """Compare internal functional vsigma to Libxc."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
 

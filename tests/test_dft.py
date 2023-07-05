@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test DFT functions.'''
+"""Test DFT functions."""
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -19,7 +19,7 @@ scf_pol.run()
 @pytest.mark.parametrize('guess', ['rand', 'pseudo'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_wavefunction(guess, Nspin):
-    '''Test the orthonormalization of wave functions.'''
+    """Test the orthonormalization of wave functions."""
     if Nspin == 1:
         scf = SCF(atoms_unpol, guess=guess)
     else:
@@ -36,7 +36,7 @@ def test_wavefunction(guess, Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_H(Nspin):
-    '''Test the Hamiltonian.'''
+    """Test the Hamiltonian."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -51,7 +51,7 @@ def test_H(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_total(Nspin):
-    '''Test the total density.'''
+    """Test the total density."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -65,7 +65,7 @@ def test_n_total(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_spin(Nspin):
-    '''Test the spin densities.'''
+    """Test the spin densities."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -80,7 +80,7 @@ def test_n_spin(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_n_single(Nspin):
-    '''Test the single orbital densities.'''
+    """Test the single orbital densities."""
     if Nspin == 1:
         scf = scf_unpol
     else:

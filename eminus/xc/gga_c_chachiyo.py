@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''Chachiyo GGA correlation.
+"""Chachiyo GGA correlation.
 
 Reference: Comput. Theor. Chem. 1172, 112669.
-'''
+"""
 import numpy as np
 from numpy.linalg import norm
 
@@ -10,7 +10,7 @@ from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
 
 def gga_c_chachiyo(n, dn_spin=None, **kwargs):
-    '''Chachiyo parametrization of the correlation functional (spin-paired).
+    """Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
 
@@ -25,7 +25,7 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo correlation energy density, potential and vsigma.
-    '''
+    """
     h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
 
     # ### Start lda_c_chachiyo_mod ### #
@@ -58,7 +58,7 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
 
 
 def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
-    '''Chachiyo parametrization of the correlation functional (spin-polarized).
+    """Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
 
@@ -74,7 +74,7 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo correlation energy density, potential and vsigma.
-    '''
+    """
     h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
 
     # ### Start lda_c_chachiyo_spin_mod ### #

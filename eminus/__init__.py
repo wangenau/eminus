@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-'''eminus - A plane wave density functional theory code.
+"""eminus - A plane wave density functional theory code.
 
 Minimal usage example to do a DFT calculation for helium::
 
    from eminus import Atoms, SCF
    atoms = Atoms('He', (0, 0, 0))
    SCF(atoms).run()
-'''
+"""
 from . import config
 from .atoms import Atoms
 from .dft import get_epsilon, get_psi

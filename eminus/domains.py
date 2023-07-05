@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Functions to restrict real-space fields to domains.'''
+"""Functions to restrict real-space fields to domains."""
 import numpy as np
 from scipy.linalg import norm
 
@@ -7,7 +7,7 @@ from .tools import center_of_mass
 
 
 def domain_cuboid(object, length, centers=None):
-    '''Generate a mask for a cuboidal real-space domain.
+    """Generate a mask for a cuboidal real-space domain.
 
     Args:
         object: Atoms or SCF object.
@@ -21,7 +21,7 @@ def domain_cuboid(object, length, centers=None):
 
     Returns:
         ndarray: Boolean mask.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:
@@ -49,7 +49,7 @@ def domain_cuboid(object, length, centers=None):
 
 
 def domain_isovalue(field, isovalue):
-    '''Generate a mask for an isovalue real-space domain.
+    """Generate a mask for an isovalue real-space domain.
 
     Args:
         field (ndarray): Real-space field data.
@@ -57,12 +57,12 @@ def domain_isovalue(field, isovalue):
 
     Returns:
         ndarray: Boolean mask.
-    '''
+    """
     return np.abs(field) > isovalue
 
 
 def domain_sphere(object, radius, centers=None):
-    '''Generate a mask for a spherical real-space domain.
+    """Generate a mask for a spherical real-space domain.
 
     Args:
         object: Atoms or SCF object.
@@ -76,7 +76,7 @@ def domain_sphere(object, radius, centers=None):
 
     Returns:
         ndarray: Boolean mask.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:
@@ -96,7 +96,7 @@ def domain_sphere(object, radius, centers=None):
 
 
 def truncate(field, mask):
-    '''Truncate field data for a given mask.
+    """Truncate field data for a given mask.
 
     This will not return a smaller array but set all truncated values to zero.
 
@@ -106,7 +106,7 @@ def truncate(field, mask):
 
     Returns:
         ndarray: Boolean mask.
-    '''
+    """
     field_trunc = np.copy(field)
     field_trunc[~mask] = 0
     return field_trunc

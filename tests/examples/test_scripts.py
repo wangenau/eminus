@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test functionality of example scripts.'''
+"""Test functionality of example scripts."""
 import inspect
 import os
 import pathlib
@@ -9,7 +9,7 @@ import pytest
 
 
 def execute_example(name):
-    '''Test the execution of a given Python script.'''
+    """Test the execution of a given Python script."""
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
@@ -17,7 +17,7 @@ def execute_example(name):
 
 
 def clean_example(trash):
-    '''Clean the example folder after running the script.'''
+    """Clean the example folder after running the script."""
     for it in trash:
         path = pathlib.Path(it)
         if path.exists():

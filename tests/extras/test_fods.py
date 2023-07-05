@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test fods identities.'''
+"""Test fods identities."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
@@ -17,7 +17,7 @@ rng = default_rng()
                                                             ('pc-0', 'pm', ['He', 'Ne']),
                                                             ('pc-0', 'gpm', None)])
 def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
-    '''Test FOD generator.'''
+    """Test FOD generator."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import get_fods
     atoms = Atoms('He', (0, 0, 0), Nspin=Nspin).build()
@@ -29,7 +29,7 @@ def test_get_fods_unpol(Nspin, basis, loc, elec_symbols):
 @pytest.mark.parametrize('Nspin', [1, 2])
 @pytest.mark.parametrize('elec_symbols', [('X', 'He'), ('He', 'Ne')])
 def test_split_fods(Nspin, elec_symbols):
-    '''Test splitting FODs from atoms.'''
+    """Test splitting FODs from atoms."""
     X = rng.standard_normal((5, 3))
     atom = ['H'] * len(X)
     fods = rng.standard_normal((10, 3))
@@ -54,7 +54,7 @@ def test_split_fods(Nspin, elec_symbols):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_remove_core_fods(Nspin):
-    '''Test core FOD removal function.'''
+    """Test core FOD removal function."""
     atoms = Atoms('Li5', rng.standard_normal((5, 3)), Nspin=Nspin, Z=1).build()
     core = atoms.X
     valence = rng.standard_normal((10, 3))

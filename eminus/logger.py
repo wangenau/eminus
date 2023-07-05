@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
-'''Logger initialization and configuration.'''
+"""Logger initialization and configuration."""
 import logging
 import sys
 
 
 class CustomLogger(logging.Logger):
-    '''Custom logger for the usage outside of classes.
+    """Custom logger for the usage outside of classes.
 
     This is just a basic logger, but with an added verbose property.
 
     Args:
         name (str): Logger name.
-    '''
+    """
     def __init__(self, name):
         super().__init__(name)
 
     @property
     def verbose(self):
-        '''Verbosity level.'''
+        """Verbosity level."""
         return self._verbose
 
     @verbose.setter
@@ -27,13 +27,13 @@ class CustomLogger(logging.Logger):
 
 
 class CustomFormatter(logging.Formatter):
-    '''Custom logger formatter.'''
+    """Custom logger formatter."""
     def format(self, record):
-        '''Use different formatting for different logging levels.
+        """Use different formatting for different logging levels.
 
         Args:
             record: LogRecord object.
-        '''
+        """
         if record.levelno >= logging.WARNING:
             # Print the level name for errors and warning
             self._style._fmt = '%(levelname)s: %(msg)s'
@@ -58,11 +58,11 @@ logging.root.addHandler(handler)
 
 
 def create_logger(object):
-    '''Create a logger unique to an object.
+    """Create a logger unique to an object.
 
     Args:
         object: Instance of a class.
-    '''
+    """
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
     local_log = logging.getLogger(str(id(object)))
@@ -71,11 +71,11 @@ def create_logger(object):
 
 
 def get_level(verbose):
-    '''Validate logging levels.
+    """Validate logging levels.
 
     Args:
         verbose (int | str): Level of output (case insensitive).
-    '''
+    """
     log_levels = {
         0: 'CRITICAL',
         1: 'ERROR',
@@ -93,14 +93,14 @@ def get_level(verbose):
 
 
 def name(newname):
-    '''Add a name to functions without evaluating them for better logging.
+    """Add a name to functions without evaluating them for better logging.
 
     Args:
         newname (str): Function name.
 
     Returns:
         Callable: Decorator.
-    '''
+    """
     def decorator(f):
         f.__name__ = newname
         return f

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Utilities to localize and analyze orbitals.'''
+"""Utilities to localize and analyze orbitals."""
 import numpy as np
 from scipy.linalg import eig, expm, norm
 from scipy.stats import unitary_group
@@ -9,7 +9,7 @@ from .utils import handle_spin_gracefully
 
 
 def eval_psi(atoms, psi, r):
-    '''Evaluate orbitals at given coordinate points.
+    """Evaluate orbitals at given coordinate points.
 
     Args:
         atoms: Atoms object.
@@ -18,7 +18,7 @@ def eval_psi(atoms, psi, r):
 
     Returns:
         ndarray: Values of psi at points r.
-    '''
+    """
     # Shift the evaluation point to (0,0,0), because we always have a lattice point there
     psi_T = atoms.T(psi, -r)
     psi_Trs = atoms.I(psi_T)
@@ -27,7 +27,7 @@ def eval_psi(atoms, psi, r):
 
 
 def get_R(atoms, psi, fods):
-    '''Calculate transformation matrix to build Fermi orbitals.
+    """Calculate transformation matrix to build Fermi orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -38,7 +38,7 @@ def get_R(atoms, psi, fods):
 
     Returns:
         ndarray: Transformation matrix R.
-    '''
+    """
     # We only calculate occupied orbitals, so a zero matrix is enough
     R = np.empty((len(fods), len(fods)), dtype=complex)
 
@@ -52,7 +52,7 @@ def get_R(atoms, psi, fods):
 
 
 def get_FO(atoms, psi, fods):
-    '''Calculate Fermi orbitals from Kohn-Sham orbitals.
+    """Calculate Fermi orbitals from Kohn-Sham orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -63,7 +63,7 @@ def get_FO(atoms, psi, fods):
 
     Returns:
         ndarray: Real-space Fermi orbitals.
-    '''
+    """
     fo = np.zeros((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
     # Transform psi to real-space
@@ -79,7 +79,7 @@ def get_FO(atoms, psi, fods):
 
 @handle_spin_gracefully
 def get_S(atoms, psirs):
-    '''Calculate overlap matrix between orbitals.
+    """Calculate overlap matrix between orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -89,7 +89,7 @@ def get_S(atoms, psirs):
 
     Returns:
         ndarray: Overlap matrix S.
-    '''
+    """
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.Nstate, atoms.Nstate), dtype=complex)
 
@@ -101,7 +101,7 @@ def get_S(atoms, psirs):
 
 
 def get_FLO(atoms, psi, fods):
-    '''Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
+    """Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -112,7 +112,7 @@ def get_FLO(atoms, psi, fods):
 
     Returns:
         ndarray: Real-space Fermi-Loewdin orbitals.
-    '''
+    """
     fo = get_FO(atoms, psi, fods)
     flo = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
 
@@ -129,7 +129,7 @@ def get_FLO(atoms, psi, fods):
 
 @handle_spin_gracefully
 def wannier_cost(atoms, psirs):
-    '''Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
+    """Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
     This function does not account for periodcity, it may be a good idea to center the system.
 
@@ -141,7 +141,7 @@ def wannier_cost(atoms, psirs):
 
     Returns:
         ndarray: Variance per orbital.
-    '''
+    """
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
@@ -153,7 +153,7 @@ def wannier_cost(atoms, psirs):
 
 @handle_spin_gracefully
 def wannier_center(atoms, psirs):
-    '''Calculate Wannier centers, i.e., the expectation values of r.
+    """Calculate Wannier centers, i.e., the expectation values of r.
 
     Reference: J. Chem. Phys. 137, 224114.
 
@@ -163,7 +163,7 @@ def wannier_center(atoms, psirs):
 
     Returns:
         ndarray: Wannier centers per orbital.
-    '''
+    """
     dV = atoms.Omega / np.prod(atoms.s)
 
     centers = np.empty((atoms.Nstate, 3))
@@ -176,7 +176,7 @@ def wannier_center(atoms, psirs):
 
 @handle_spin_gracefully
 def second_moment(atoms, psirs):
-    '''Calculate the second moments, i.e., the expectation values of r^2.
+    """Calculate the second moments, i.e., the expectation values of r^2.
 
     Reference: J. Chem. Phys. 137, 224114.
 
@@ -186,7 +186,7 @@ def second_moment(atoms, psirs):
 
     Returns:
         ndarray: Second moments per orbital.
-    '''
+    """
     dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2
 
@@ -198,7 +198,7 @@ def second_moment(atoms, psirs):
 
 @handle_spin_gracefully
 def wannier_supercell_matrices(atoms, psirs):
-    '''Calculate matrices for the supercell Wannier localization.
+    """Calculate matrices for the supercell Wannier localization.
 
     Reference: Phys. Rev. B 59, 9703.
 
@@ -208,7 +208,7 @@ def wannier_supercell_matrices(atoms, psirs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Matrices X, Y, and Z.
-    '''
+    """
     dV = atoms.Omega / np.prod(atoms.s)
     # Similar to the expectation value of r, but accounting for periodicity
     X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0])) @ psirs
@@ -218,7 +218,7 @@ def wannier_supercell_matrices(atoms, psirs):
 
 
 def wannier_supercell_cost(X, Y, Z):
-    '''Calculate the supercell Wannier cost.
+    """Calculate the supercell Wannier cost.
 
     This is an equivalent criterion to the spread criterion, but not the same. This cost function
     will be maximized instead of the minimization of the spread.
@@ -232,7 +232,7 @@ def wannier_supercell_cost(X, Y, Z):
 
     Returns:
         float: Supercell Wannier cost.
-    '''
+    """
     X2 = np.abs(np.diagonal(X))**2
     Y2 = np.abs(np.diagonal(Y))**2
     Z2 = np.abs(np.diagonal(Z))**2
@@ -240,7 +240,7 @@ def wannier_supercell_cost(X, Y, Z):
 
 
 def wannier_supercell_grad(atoms, X, Y, Z):
-    '''Calculate the supercell Wannier gradient.
+    """Calculate the supercell Wannier gradient.
 
     Reference: Phys. Rev. B 59, 9703.
 
@@ -252,7 +252,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
     Returns:
         ndarray: Supercell Wannier gradient.
-    '''
+    """
     x = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
     y = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
     z = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
@@ -270,7 +270,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 @handle_spin_gracefully
 def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False):
-    '''Steepest descent supercell Wannier localization.
+    """Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from
     already localized orbitals.
@@ -292,7 +292,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
 
     Returns:
         ndarray: Localized orbitals.
-    '''
+    """
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
     if random_guess and atoms.Nstate > 1:

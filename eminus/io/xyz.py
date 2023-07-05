@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''XYZ file handling.'''
+"""XYZ file handling."""
 import time
 
 import numpy as np
@@ -10,7 +10,7 @@ from ..version import __version__
 
 
 def read_xyz(filename):
-    '''Load atom species and positions from xyz files.
+    """Load atom species and positions from xyz files.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
@@ -19,7 +19,7 @@ def read_xyz(filename):
 
     Returns:
         tuple[list, ndarray]: Atom species and positions.
-    '''
+    """
     if not filename.endswith('.xyz'):
         filename += '.xyz'
 
@@ -48,7 +48,7 @@ def read_xyz(filename):
 
 
 def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
-    '''Generate xyz files from atoms objects.
+    """Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
@@ -63,7 +63,7 @@ def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
 
     Returns:
         None.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:

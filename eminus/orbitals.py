@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Workflow functions that combine functions to generate orbitals.'''
+"""Workflow functions that combine functions to generate orbitals."""
 from .dft import get_psi
 from .io import write_cube
 from .localizer import get_FLO, get_FO, get_wannier
@@ -7,7 +7,7 @@ from .logger import log
 
 
 def KSO(scf, write_cubes=False, **kwargs):
-    '''Generate Kohn-Sham orbitals and optionally save them as cube files.
+    """Generate Kohn-Sham orbitals and optionally save them as cube files.
 
     Reference: Phys. Rev. 140, A1133.
 
@@ -20,7 +20,7 @@ def KSO(scf, write_cubes=False, **kwargs):
 
     Returns:
         ndarray: Real-space Kohn-Sham orbitals.
-    '''
+    """
     atoms = scf.atoms
 
     # Calculate eigenfunctions and transform to real-space
@@ -31,7 +31,7 @@ def KSO(scf, write_cubes=False, **kwargs):
 
 
 def FO(scf, write_cubes=False, fods=None):
-    '''Generate Fermi orbitals and optionally save them as cube files.
+    """Generate Fermi orbitals and optionally save them as cube files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -44,7 +44,7 @@ def FO(scf, write_cubes=False, fods=None):
 
     Returns:
         ndarray: Real-space Fermi orbitals.
-    '''
+    """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
     atoms = scf.atoms
@@ -63,7 +63,7 @@ def FO(scf, write_cubes=False, fods=None):
 
 
 def FLO(scf, write_cubes=False, fods=None):
-    '''Generate Fermi-Loewdin orbitals and optionally save them as cube files.
+    """Generate Fermi-Loewdin orbitals and optionally save them as cube files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -76,7 +76,7 @@ def FLO(scf, write_cubes=False, fods=None):
 
     Returns:
         ndarray: Real-space Fermi-Loewdin orbitals.
-    '''
+    """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
     atoms = scf.atoms
@@ -95,7 +95,7 @@ def FLO(scf, write_cubes=False, fods=None):
 
 
 def WO(scf, write_cubes=False, precondition=True):
-    '''Generate Wannier orbitals and optionally save them as cube files.
+    """Generate Wannier orbitals and optionally save them as cube files.
 
     Reference: Phys. Rev. B 59, 9703.
 
@@ -108,7 +108,7 @@ def WO(scf, write_cubes=False, precondition=True):
 
     Returns:
         ndarray: Real-space Wannier orbitals.
-    '''
+    """
     atoms = scf.atoms
 
     # Calculate eigenfunctions/initial guess orbitals and transform to real-space
@@ -124,13 +124,13 @@ def WO(scf, write_cubes=False, precondition=True):
 
 
 def cube_writer(atoms, type, orbitals):
-    '''Simple cube file writer function.
+    """Simple cube file writer function.
 
     Args:
         atoms: Atoms object.
         type (str): Orbital type for the cube file names.
         orbitals (ndarray): Real-space orbitals.
-    '''
+    """
     # Create the system name
     name = ''
     for ia in sorted(set(atoms.atom)):

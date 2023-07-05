@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''PBE GTH pseudopotential files.
+"""PBE GTH pseudopotential files.
 
 Reference: Theor. Chem. Acc. 114, 145.
-'''
+"""
 
 if __name__ == '__main__':
     import inspect

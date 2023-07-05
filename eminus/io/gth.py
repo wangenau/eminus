@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''GTH file handling.'''
+"""GTH file handling."""
 import inspect
 import pathlib
 
@@ -9,7 +9,7 @@ from ..logger import log
 
 
 def read_gth(atom, charge=None, psp_path='pade'):
-    '''Read GTH files for a given atom.
+    """Read GTH files for a given atom.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -22,7 +22,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
 
     Returns:
         dict: GTH parameters.
-    '''
+    """
     if psp_path in ('pade', 'pbe'):
         file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
         file_path = file_path.parent.joinpath(f'psp/{psp_path}')
@@ -86,11 +86,11 @@ def read_gth(atom, charge=None, psp_path='pade'):
 
 
 def mock_gth():
-    '''Create a mock dictionary with all-zeros, for atom species with no pseudopotential file.
+    """Create a mock dictionary with all-zeros, for atom species with no pseudopotential file.
 
     Returns:
         dict: GTH parameters (all zero).
-    '''
+    """
     return {
         'Zion': 0,
         'rloc': 0,

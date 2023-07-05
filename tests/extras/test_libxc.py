@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test libxc extra.'''
+"""Test libxc extra."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -19,7 +19,7 @@ n_tests = {
 @pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_exc(xc, Nspin):
-    '''Compare Libxc functional energy densities to internal functionals.'''
+    """Compare Libxc functional energy densities to internal functionals."""
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
@@ -37,7 +37,7 @@ def test_libxc_functional_exc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_vxc(xc, Nspin):
-    '''Compare Libxc functional potentials to internal functionals.'''
+    """Compare Libxc functional potentials to internal functionals."""
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
@@ -55,7 +55,7 @@ def test_libxc_functional_vxc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_libxc_functional_vsigmaxc(xc, Nspin):
-    '''Compare Libxc functional vsigma to internal functionals.'''
+    """Compare Libxc functional vsigma to internal functionals."""
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     from eminus.extras import libxc_functional
     n_spin = n_tests[Nspin]
@@ -68,7 +68,7 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_functional_exc(xc, Nspin):
-    '''Compare Libxc functional energy densities as implemented in PySCF to internal functionals.'''
+    """Compare Libxc functional energy densities as implemented in PySCF to internal functionals."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
 
@@ -85,7 +85,7 @@ def test_pyscf_functional_exc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['1', '7', '101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_functional_vxc(xc, Nspin):
-    '''Compare Libxc functional potentials as implemented in PySCF to internal functionals.'''
+    """Compare Libxc functional potentials as implemented in PySCF to internal functionals."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from pyscf.dft.libxc import is_gga
 
@@ -102,7 +102,7 @@ def test_pyscf_functional_vxc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['101', '130'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_functional_vsigmaxc(xc, Nspin):
-    '''Compare Libxc functional vsigma as implemented in PySCF to internal functionals.'''
+    """Compare Libxc functional vsigma as implemented in PySCF to internal functionals."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras.libxc import pyscf_functional
     n_spin = n_tests[Nspin]
@@ -115,7 +115,7 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
 @pytest.mark.parametrize('xc', ['202', '231'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pyscf_mgga(xc, Nspin):
-    '''Test the execution of meta-GGAs using PySCF.'''
+    """Test the execution of meta-GGAs using PySCF."""
     pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras.libxc import libxc_functional, pyscf_functional

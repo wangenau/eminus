@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-'''Vosko-Wilk-Nusair LDA correlation.
+"""Vosko-Wilk-Nusair LDA correlation.
 
 Reference: Phys. Rev. B 22, 3812.
-'''
+"""
 import numpy as np
 
 
 def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
-    '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
+    """Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_VWN and ID 7 in Libxc.
 
@@ -25,7 +25,7 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
-    '''
+    """
     rs = (3 / (4 * np.pi * n))**(1 / 3)
 
     x = np.sqrt(rs)
@@ -45,7 +45,7 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
 
 
 def lda_c_vwn_spin(n, zeta, **kwargs):
-    '''Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
+    """Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_VWN and ID 7 in Libxc.
 
@@ -60,7 +60,7 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
-    '''
+    """
     A = (0.0310907, 0.01554535, -1 / (6 * np.pi**2))
     b = (3.72744, 7.06042, 1.13107)
     c = (12.9352, 18.0578, 13.0045)

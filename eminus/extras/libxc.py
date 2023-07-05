@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Interface to use Libxc functionals.
+"""Interface to use Libxc functionals.
 
 For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
 
@@ -9,7 +9,7 @@ https://tddft.org/programs/libxc/installation/#python-library
 Alternatively, one can use the PySCF Libxc interface with::
 
     pip install eminus[libxc]
-'''
+"""
 import numpy as np
 from scipy.linalg import norm
 
@@ -18,7 +18,7 @@ from ..logger import log
 
 
 def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
-    '''Handle Libxc exchange-correlation functionals via pylibxc.
+    """Handle Libxc exchange-correlation functionals via pylibxc.
 
     Only LDA and GGA functionals can be used.
 
@@ -35,7 +35,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
-    '''
+    """
     try:
         assert config.use_pylibxc
         from pylibxc import LibXCFunctional
@@ -79,7 +79,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
 
 
 def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
-    '''Handle Libxc exchange-correlation functionals via PySCF.
+    """Handle Libxc exchange-correlation functionals via PySCF.
 
     Only LDA and GGA functionals can be used.
 
@@ -96,7 +96,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
-    '''
+    """
     try:
         from pyscf.dft.libxc import eval_xc
     except ImportError:

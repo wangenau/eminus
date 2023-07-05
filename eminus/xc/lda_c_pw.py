@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-'''Perdew-Wang LDA correlation.
+"""Perdew-Wang LDA correlation.
 
 Reference: Phys. Rev. B 45, 13244.
-'''
+"""
 import numpy as np
 
 
 def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.49294, **kwargs):
-    '''Perdew-Wang parametrization of the correlation functional (spin-paired).
+    """Perdew-Wang parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
 
@@ -27,7 +27,7 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
 
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
-    '''
+    """
     rs = (3 / (4 * np.pi * n))**(1 / 3)
     rs12 = np.sqrt(rs)
     rs32 = rs * rs12
@@ -43,7 +43,7 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
 
 
 def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **kwargs):
-    '''Perdew-Wang parametrization of the correlation functional (spin-polarized).
+    """Perdew-Wang parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_PW and ID 12 in Libxc.
 
@@ -60,7 +60,7 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **
 
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
-    '''
+    """
     a1 = (0.2137, 0.20548, 0.11125)
     b1 = (7.5957, 14.1189, 10.357)
     b2 = (3.5876, 6.1977, 3.6231)

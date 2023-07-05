@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test GTH functions.'''
+"""Test GTH functions."""
 import inspect
 import pathlib
 
@@ -10,7 +10,7 @@ from eminus import Atoms, SCF
 
 
 def test_norm():
-    '''Test the norm of the GTH projector functions.'''
+    """Test the norm of the GTH projector functions."""
     # Actinium is the perfect test case since it tests all cases in eval_proj_G with the minimum
     # number of electrons (q-11)
     # The norm depends on the cut-off energy but will converge to 1
@@ -23,7 +23,7 @@ def test_norm():
 
 
 def test_mock():
-    '''Test that ghost atoms have no contribution.'''
+    """Test that ghost atoms have no contribution."""
     # Reference calculation without ghost atom
     atoms = Atoms('He', [(0, 0, 0)], s=10)
     E_ref = SCF(atoms).run()
@@ -37,7 +37,7 @@ def test_mock():
 
 
 def test_custom_files():
-    '''Test the option to use custom GTH files in Atoms and SCF.'''
+    """Test the option to use custom GTH files in Atoms and SCF."""
     file_path = str(pathlib.Path(inspect.getfile(inspect.currentframe())).parent)
     atoms = Atoms('B', (0, 0, 0)).build()
     assert atoms.Z[0] == 3

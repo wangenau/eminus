@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Implementation of different exchange-correlation functionals.'''
+"""Implementation of different exchange-correlation functionals."""
 from .utils import (
     ALIAS,
     get_exc,

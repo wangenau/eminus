@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Linear algebra calculation utilities.'''
+"""Linear algebra calculation utilities."""
 import functools
 
 import numpy as np
@@ -9,7 +9,7 @@ from .logger import log
 
 
 def dotprod(a, b):
-    '''Efficiently calculate the expression a * b.
+    """Efficiently calculate the expression a * b.
 
     Add an extra check to make sure the result is never zero since this function is used as a
     denominator in minimizers.
@@ -20,7 +20,7 @@ def dotprod(a, b):
 
     Returns:
         float: The expressions result
-    '''
+    """
     eps = 1e-15  # 2.22e-16 is the range of float64 machine precision
     # The dot product of complex vectors looks like the expression below, but this is slow
     # res = np.real(np.trace(a.conj().T @ b))
@@ -32,7 +32,7 @@ def dotprod(a, b):
 
 
 def Ylm_real(l, m, G):  # noqa: C901
-    '''Calculate real spherical harmonics from cartesian coordinates.
+    """Calculate real spherical harmonics from cartesian coordinates.
 
     Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics/
 
@@ -43,7 +43,7 @@ def Ylm_real(l, m, G):  # noqa: C901
 
     Returns:
         ndarray: Real spherical harmonics.
-    '''
+    """
     eps = 1e-9
     # Account for single vectors
     G = np.atleast_2d(G)
@@ -107,7 +107,7 @@ def Ylm_real(l, m, G):  # noqa: C901
 
 
 def handle_spin_gracefully(func):
-    '''Handle spin calculating the function for each channel seperately.
+    """Handle spin calculating the function for each channel seperately.
 
     This can only be applied if the only spin-dependent indexing is the wave function W.
 
@@ -122,7 +122,7 @@ def handle_spin_gracefully(func):
 
     Returns:
         Callable: Decorator.
-    '''
+    """
     @functools.wraps(func)
     def decorator(object, W, *args, **kwargs):
         if W.ndim == 3:
@@ -133,7 +133,7 @@ def handle_spin_gracefully(func):
 
 
 def pseudo_uniform(size, seed=1234):
-    '''Lehmer random number generator, following MINSTD.
+    """Lehmer random number generator, following MINSTD.
 
     Reference: Commun. ACM. 12, 85.
 
@@ -145,7 +145,7 @@ def pseudo_uniform(size, seed=1234):
 
     Returns:
         ndarray: Array with (pseudo) random numbers.
-    '''
+    """
     W = np.zeros(size, dtype=complex)
     mult = 48271
     mod = (2**31) - 1
@@ -159,7 +159,7 @@ def pseudo_uniform(size, seed=1234):
 
 
 def add_maybe_none(a, b):
-    '''Add a and b together, when one or both can potentially be None.
+    """Add a and b together, when one or both can potentially be None.
 
     Args:
         a (ndarray): Array.
@@ -167,7 +167,7 @@ def add_maybe_none(a, b):
 
     Returns:
         ndarray: Sum of a and b.
-    '''
+    """
     if a is None and b is None:
         return None
     if a is None:

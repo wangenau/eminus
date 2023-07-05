@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test different minimization functions.'''
+"""Test different minimization functions."""
 from numpy.testing import assert_allclose
 import pytest
 
@@ -18,7 +18,7 @@ scf_pol = SCF(atoms_pol, etol=tolerance)
 
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_unpol(minimizer):
-    '''Check the spin-unpaired minimizer functions.'''
+    """Check the spin-unpaired minimizer functions."""
     scf_unpol.min = {minimizer: 100}
     if minimizer in ('cg', 'pccg', 'auto'):
         for i in range(1, 5):
@@ -33,7 +33,7 @@ def test_minimizer_unpol(minimizer):
 @pytest.mark.filterwarnings('ignore::RuntimeWarning')  # Filter an occurring overflow warning
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_pol(minimizer):
-    '''Check the spin-paired minimizer functions.'''
+    """Check the spin-paired minimizer functions."""
     scf_pol.min = {minimizer: 100}
     if minimizer in ('cg', 'pccg', 'auto'):
         for i in range(1, 4):

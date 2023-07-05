@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''File input and output functionalities.'''
+"""File input and output functionalities."""
 from ..logger import log
 from .cube import read_cube, write_cube
 from .gth import read_gth
@@ -12,7 +12,7 @@ __all__ = ['create_pdb_str', 'read', 'read_cube', 'read_gth', 'read_json', 'read
 
 
 def read(*args, **kwargs):
-    '''Unified file reader function.'''
+    """Unified file reader function."""
     if args[0].endswith('.json'):
         return read_json(*args, **kwargs)
     elif args[0].endswith('.xyz'):
@@ -25,7 +25,7 @@ def read(*args, **kwargs):
 
 
 def write(*args, **kwargs):
-    '''Unified file writer function.'''
+    """Unified file writer function."""
     if args[1].endswith('.json'):
         return write_json(*args, **kwargs)
     elif args[1].endswith('.xyz'):

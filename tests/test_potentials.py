@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test energies for the implemented toy potentials.'''
+"""Test energies for the implemented toy potentials."""
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF
@@ -8,7 +8,7 @@ from eminus.units import ang2bohr
 
 
 def test_harmonic():
-    '''Compare total energies for the harmonic potential.'''
+    """Compare total energies for the harmonic potential."""
     atom = 'H'
     X = (0, 0, 0)
     a = 6
@@ -24,7 +24,7 @@ def test_harmonic():
 
 
 def test_coulomb():
-    '''Compare total energies for the ionic potential.'''
+    """Compare total energies for the ionic potential."""
     atom = 'H'
     X = (0, 0, 0)
     a = (9, 10, 11)
@@ -39,7 +39,7 @@ def test_coulomb():
 
 
 def test_ge():
-    '''Compare eigenstate energies for the germanium potential.'''
+    """Compare eigenstate energies for the germanium potential."""
     atom = 'Ge'
     X = (0, 0, 0)
     a = ang2bohr(5.66)

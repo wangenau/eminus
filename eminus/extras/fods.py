@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Fermi-orbital descriptor generation.'''
+"""Fermi-orbital descriptor generation."""
 import numpy as np
 from scipy.linalg import norm
 
@@ -9,7 +9,7 @@ from ..units import bohr2ang
 
 
 def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
-    '''Generate localized orbitals with an additional simple stability analysis.
+    """Generate localized orbitals with an additional simple stability analysis.
 
     Same as implemented in PyFLOSIC2.
 
@@ -26,7 +26,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
 
     Returns:
         list: Localized occupied orbital coefficients per spin channel.
-    '''
+    """
     rng = np.random.default_rng(seed=seed)
     from pyscf.lo import boys, edmiston, pipek
     loc_dict = {'ER': edmiston.EdmistonRuedenberg,
@@ -62,7 +62,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
 
 
 def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
-    '''Generate FOD positions using the PyCOM method.
+    """Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
 
@@ -76,7 +76,7 @@ def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
 
     Returns:
         ndarray: FOD positions.
-    '''
+    """
     try:
         from pyscf.gto import Mole
         from pyscf.scf import RKS, UKS
@@ -131,7 +131,7 @@ def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
 
 
 def split_fods(atom, X, elec_symbols=None):
-    '''Split atom and FOD coordinates.
+    """Split atom and FOD coordinates.
 
     Args:
         atom (list): Atom symbols.
@@ -142,7 +142,7 @@ def split_fods(atom, X, elec_symbols=None):
 
     Returns:
         tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
-    '''
+    """
     if elec_symbols is None:
         elec_symbols = ('X', 'He')
 
@@ -163,7 +163,7 @@ def split_fods(atom, X, elec_symbols=None):
 
 
 def remove_core_fods(object, fods):
-    '''Remove core FODs from a set of FOD coordinates.
+    """Remove core FODs from a set of FOD coordinates.
 
     Args:
         object: Atoms or SCF object.
@@ -171,7 +171,7 @@ def remove_core_fods(object, fods):
 
     Returns:
         ndarray: Valence FOD positions.
-    '''
+    """
     try:
         atoms = object.atoms
     except AttributeError:

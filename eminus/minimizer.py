@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Minimization algorithms.'''
+"""Minimization algorithms."""
 import logging
 
 import numpy as np
@@ -12,7 +12,7 @@ from .xc import get_xc
 
 
 def scf_step(scf):
-    '''Perform one SCF step for a DFT calculation.
+    """Perform one SCF step for a DFT calculation.
 
     Calculating intermediate results speeds up the energy and gradient calculation.
     This function is similar to H_precompute but will set all variables and energies in the SCF
@@ -23,7 +23,7 @@ def scf_step(scf):
 
     Returns:
         float: Total energy.
-    '''
+    """
     atoms = scf.atoms
     scf.Y = orth(atoms, scf.W)
     scf.n_spin = get_n_spin(atoms, scf.Y)
@@ -41,7 +41,7 @@ def scf_step(scf):
 
 
 def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
-    '''Check the energies for every SCF cycle and handle the output.
+    """Check the energies for every SCF cycle and handle the output.
 
     Args:
         scf: SCF object.
@@ -55,7 +55,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
 
     Returns:
         bool: Convergence condition.
-    '''
+    """
     iteration = len(Elist)
 
     # Print all the data
@@ -79,7 +79,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
 
 
 def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
-    '''Print the data of one SCF step and the header at the beginning.
+    """Print the data of one SCF step and the header at the beginning.
 
     Args:
         scf: SCF object.
@@ -88,7 +88,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         linmin (ndarray): Cosine between previous search direction and current gradient.
         cg (ndarray): Conjugate-gradient orthogonality.
         norm_g (ndarray): Gradient norm.
-    '''
+    """
     iteration = len(Elist)
 
     # Print a column header at the beginning
@@ -133,7 +133,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
 
 
 def linmin_test(g, d):
-    '''Do the line minimization test.
+    """Do the line minimization test.
 
     Calculate the cosine of the angle between g and d.
 
@@ -145,13 +145,13 @@ def linmin_test(g, d):
 
     Returns:
         float: Linmin angle.
-    '''
+    """
     # cos = A B / |A| |B|
     return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
 
 
 def cg_test(atoms, g, g_old, precondition=True):
-    '''Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
+    """Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
 
     Calculate the cosine of the angle between g and g_old. For an angle of 90 deg the cosine goes to
     zero.
@@ -168,7 +168,7 @@ def cg_test(atoms, g, g_old, precondition=True):
 
     Returns:
         float: CG angle.
-    '''
+    """
     if precondition:
         Kg, Kg_old = atoms.K(g), atoms.K(g_old)
     else:
@@ -178,7 +178,7 @@ def cg_test(atoms, g, g_old, precondition=True):
 
 
 def cg_method(scf, g, g_old, d_old, precondition=True):
-    '''Do different variants of the conjugate gradient method.
+    """Do different variants of the conjugate gradient method.
 
     Reference: https://indrag49.github.io/Numerical-Optimization/conjugate-gradient-methods-1.html
 
@@ -193,7 +193,7 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
 
     Returns:
         tuple[float, float]: Conjugate scalar and gradient norm.
-    '''
+    """
     atoms = scf.atoms
 
     if precondition:
@@ -216,7 +216,7 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
 
 @name('steepest descent minimization')
 def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
-    '''Steepest descent minimization algorithm.
+    """Steepest descent minimization algorithm.
 
     Args:
         scf: SCF object.
@@ -230,7 +230,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     atoms = scf.atoms
     costs = []
 
@@ -248,7 +248,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 @name('preconditioned line minimization')
 def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
          precondition=True):
-    '''Preconditioned line minimization algorithm.
+    """Preconditioned line minimization algorithm.
 
     Args:
         scf: SCF object.
@@ -263,7 +263,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     atoms = scf.atoms
     costs = []
 
@@ -301,7 +301,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
 @name('line minimization')
 def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
-    '''Line minimization algorithm.
+    """Line minimization algorithm.
 
     Args:
         scf: SCF object.
@@ -315,14 +315,14 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     return pclm(scf, Nit, cost, grad, condition, betat, precondition=False)
 
 
 @name('preconditioned conjugate-gradient minimization')
 def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
          precondition=True):
-    '''Preconditioned conjugate-gradient minimization algorithm.
+    """Preconditioned conjugate-gradient minimization algorithm.
 
     Args:
         scf: SCF object.
@@ -337,7 +337,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     atoms = scf.atoms
     costs = []
 
@@ -399,7 +399,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
 @name('conjugate-gradient minimization')
 def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
-    '''Conjugate-gradient minimization algorithm.
+    """Conjugate-gradient minimization algorithm.
 
     Args:
         scf: SCF object.
@@ -413,13 +413,13 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     return pccg(scf, Nit, cost, grad, condition, betat, precondition=False)
 
 
 @name('auto minimization')
 def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
-    '''Automatic preconditioned conjugate-gradient minimization algorithm.
+    """Automatic preconditioned conjugate-gradient minimization algorithm.
 
     This function chooses an sd step over the pccg step if the energy goes up.
 
@@ -435,7 +435,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     Returns:
         list: Total energies per SCF cycle.
-    '''
+    """
     atoms = scf.atoms
     costs = []
 

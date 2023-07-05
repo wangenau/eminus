@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''CUBE file handling.'''
+"""CUBE file handling."""
 import textwrap
 import time
 
@@ -11,7 +11,7 @@ from ..version import __version__
 
 
 def read_cube(filename):
-    '''Load atom and cell data from cube files.
+    """Load atom and cell data from cube files.
 
     There is no standard for cube files. The following format has been used.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
@@ -21,7 +21,7 @@ def read_cube(filename):
 
     Returns:
         tuple[list, ndarray, float, ndarray, int]: Species, positions, charges, cell size, sampling.
-    '''
+    """
     if not filename.endswith('.cube'):
         filename += '.cube'
 
@@ -61,7 +61,7 @@ def read_cube(filename):
 
 
 def write_cube(object, filename, field, fods=None, elec_symbols=None):
-    '''Generate cube files from given field data.
+    """Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
@@ -77,7 +77,7 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
 
     Returns:
         None.
-    '''
+    """
     # Atomic units are assumed, so there is no need for conversion.
     try:
         atoms = object.atoms

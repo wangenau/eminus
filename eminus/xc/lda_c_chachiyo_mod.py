@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-'''Modified Chachiyo LDA correlation.
+"""Modified Chachiyo LDA correlation.
 
 Reference: Comput. Theor. Chem. 1172, 112669.
-'''
+"""
 from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
 
 
 def lda_c_chachiyo_mod(n, **kwargs):
-    '''Modified Chachiyo parametrization of the correlation functional (spin-paired).
+    """Modified Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in Libxc.
 
@@ -21,13 +21,13 @@ def lda_c_chachiyo_mod(n, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
-    '''
+    """
     # Same as lda_c_chachiyo
     return lda_c_chachiyo(n, **kwargs)
 
 
 def chachiyo_scaling_mod(zeta):
-    '''Modified weighting factor between the paramagnetic and the ferromagnetic case.
+    """Modified weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: Comput. Theor. Chem. 1172, 112669.
 
@@ -36,7 +36,7 @@ def chachiyo_scaling_mod(zeta):
 
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
-    '''
+    """
     gzeta = ((1 + zeta)**(2 / 3) + (1 - zeta)**(2 / 3)) / 2
     fzeta = 2 * (1 - gzeta**3)
 
@@ -45,7 +45,7 @@ def chachiyo_scaling_mod(zeta):
 
 
 def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
-    '''Modified Chachiyo parametrization of the correlation functional (spin-polarized).
+    """Modified Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO_MOD and ID 307 in Libxc.
 
@@ -60,5 +60,5 @@ def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
-    '''
+    """
     return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling_mod, **kwargs)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test torch extra.'''
+"""Test torch extra."""
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
@@ -23,7 +23,7 @@ W_tests = {
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ(type):
-    '''Test forward and backward operator identity.'''
+    """Test forward and backward operator identity."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.I(atoms.J(W_tests[type]))
     test = W_tests[type]
@@ -33,7 +33,7 @@ def test_IJ(type):
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_JI(type):
-    '''Test forward and backward operator identity.'''
+    """Test forward and backward operator identity."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     if 'active' in type:
         out = atoms.J(atoms.I(W_tests[type]), False)
@@ -45,7 +45,7 @@ def test_JI(type):
 
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_IdagJdag(type):
-    '''Test daggered forward and backward operator identity.'''
+    """Test daggered forward and backward operator identity."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.Idag(atoms.Jdag(W_tests[type]))
     test = W_tests[type]
@@ -54,7 +54,7 @@ def test_IdagJdag(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_JdagIdag(type):
-    '''Test daggered forward and backward operator identity.'''
+    """Test daggered forward and backward operator identity."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     out = atoms.Jdag(atoms.Idag(W_tests[type], True))
     test = W_tests[type]
@@ -63,7 +63,7 @@ def test_JdagIdag(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_I(type):
-    '''Test that I and Idag operators are hermitian.'''
+    """Test that I and Idag operators are hermitian."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
@@ -74,7 +74,7 @@ def test_hermitian_I(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_J(type):
-    '''Test that J and Jdag operators are hermitian.'''
+    """Test that J and Jdag operators are hermitian."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
@@ -85,7 +85,7 @@ def test_hermitian_J(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ_gpu(type):
-    '''Test forward and backward GPU operator identity.'''
+    """Test forward and backward GPU operator identity."""
     try:
         config.use_gpu = True
         assert config.use_gpu
@@ -99,7 +99,7 @@ def test_IJ_gpu(type):
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_JI_gpu(type):
-    '''Test forward and backward GPU operator identity.'''
+    """Test forward and backward GPU operator identity."""
     try:
         config.use_gpu = True
         assert config.use_gpu
@@ -115,7 +115,7 @@ def test_JI_gpu(type):
 
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_IdagJdag_gpu(type):
-    '''Test daggered forward and backward GPU operator identity.'''
+    """Test daggered forward and backward GPU operator identity."""
     try:
         config.use_gpu = True
         assert config.use_gpu
@@ -128,7 +128,7 @@ def test_IdagJdag_gpu(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_JdagIdag_gpu(type):
-    '''Test daggered forward and backward GPU operator identity.'''
+    """Test daggered forward and backward GPU operator identity."""
     try:
         config.use_gpu = True
         assert config.use_gpu
@@ -141,7 +141,7 @@ def test_JdagIdag_gpu(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_I_gpu(type):
-    '''Test that I and Idag GPU operators are hermitian.'''
+    """Test that I and Idag GPU operators are hermitian."""
     try:
         config.use_gpu = True
         assert config.use_gpu
@@ -156,7 +156,7 @@ def test_hermitian_I_gpu(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_J_gpu(type):
-    '''Test that J and Jdag GPU operators are hermitian.'''
+    """Test that J and Jdag GPU operators are hermitian."""
     try:
         config.use_gpu = True
         assert config.use_gpu

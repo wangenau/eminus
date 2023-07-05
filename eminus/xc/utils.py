@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Utility functions for exchange-correlation functionals.'''
+"""Utility functions for exchange-correlation functionals."""
 import numpy as np
 
 from .. import config
@@ -20,7 +20,7 @@ from .lda_x import lda_x, lda_x_spin
 
 
 def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
-    '''Handle and get exchange-correlation functionals.
+    """Handle and get exchange-correlation functionals.
 
     Args:
         xc (list | str): Exchange and correlation identifier.
@@ -34,7 +34,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
 
     Returns:
         tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
-    '''
+    """
     if isinstance(xc, str):
         xc = parse_functionals(xc)
     f_exch, f_corr = xc
@@ -52,7 +52,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
         dn_spin_nz = None
 
     def handle_functional(fxc):
-        '''Calculate a given functional fxc, same for exchange and correlation.'''
+        """Calculate a given functional fxc, same for exchange and correlation."""
         # Calculate with the libxc extra...
         if ':' in fxc:
             from ..extras.libxc import libxc_functional
@@ -86,32 +86,32 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
 
 
 def get_exc(*args, **kwargs):
-    '''Get the exchange-correlation energy density.
+    """Get the exchange-correlation energy density.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
-    '''
+    """
     exc, _, _, _ = get_xc(*args, **kwargs)
     return exc
 
 
 def get_vxc(*args, **kwargs):
-    '''Get the exchange-correlation potential.
+    """Get the exchange-correlation potential.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
-    '''
+    """
     _, vxc, vsigma, vtau = get_xc(*args, **kwargs)
     return vxc, vsigma, vtau
 
 
 def parse_functionals(xc):
-    '''Parse exchange-correlation functional strings to the internal format.
+    """Parse exchange-correlation functional strings to the internal format.
 
     Args:
         xc (str): Exchange and correlation identifier, separated by a comma.
 
     Returns:
         list: Exchange and correlation string.
-    '''
+    """
     # Check for combined aliases
     try:
         # Remove underscores when looking up in the dictionary
@@ -143,14 +143,14 @@ def parse_functionals(xc):
 
 
 def parse_xc_type(xc):
-    '''Parse functional strings to identify the corresponding functional type.
+    """Parse functional strings to identify the corresponding functional type.
 
     Args:
         xc (list): Exchange and correlation identifier, separated by a comma.
 
     Returns:
         str: Functional type.
-    '''
+    """
     xc_type = []
     for func in xc:
         if ':' in func:
@@ -187,14 +187,14 @@ def parse_xc_type(xc):
 
 
 def parse_xc_libxc(xc_id):
-    '''Parse functional type by its ID using pylibxc.
+    """Parse functional type by its ID using pylibxc.
 
     Args:
         xc_id (int | string): Functional ID or identifier.
 
     Returns:
         str: Functional type.
-    '''
+    """
     assert config.use_pylibxc
     import pylibxc
     if not xc_id.isdigit():
@@ -208,14 +208,14 @@ def parse_xc_libxc(xc_id):
 
 
 def parse_xc_pyscf(xc_id):
-    '''Parse functional type by its ID using PySCF.
+    """Parse functional type by its ID using PySCF.
 
     Args:
         xc_id (int | string): Functional ID or identifier.
 
     Returns:
         str: Functional type.
-    '''
+    """
     from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
     if not xc_id.isdigit():
         xc_id = XC_CODES[xc_id.upper()]
@@ -234,14 +234,14 @@ def parse_xc_pyscf(xc_id):
 
 
 def get_zeta(n_spin):
-    '''Calculate the relative spin polarization.
+    """Calculate the relative spin polarization.
 
     Args:
         n_spin (ndarray): Real-space electronic densities per spin channel.
 
     Returns:
         ndarray: Relative spin polarization.
-    '''
+    """
     # If only one spin is given return an array of ones as if the density only is in one channel
     if len(n_spin) == 1:
         return np.ones_like(n_spin[0])
@@ -249,7 +249,7 @@ def get_zeta(n_spin):
 
 
 def mock_xc(n, Nspin=1, **kwargs):
-    '''Mock exchange-correlation functional with no effect (spin-paired).
+    """Mock exchange-correlation functional with no effect (spin-paired).
 
     Args:
         n (ndarray): Real-space electronic density.
@@ -260,7 +260,7 @@ def mock_xc(n, Nspin=1, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
-    '''
+    """
     zeros = np.zeros_like(n)
     return zeros, np.array([zeros] * Nspin), None
 

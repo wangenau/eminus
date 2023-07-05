@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test localization functions.'''
+"""Test localization functions."""
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -34,7 +34,7 @@ fods = np.array([[9.16, 9.16, 10.89],
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_spread(Nspin):
-    '''Test the spread calculation.'''
+    """Test the spread calculation."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -51,7 +51,7 @@ def test_spread(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_flo(Nspin):
-    '''Test the generation of FLOs.'''
+    """Test the generation of FLOs."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -67,7 +67,7 @@ def test_flo(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_wannier(Nspin):
-    '''Test the generation of Wannier functions.'''
+    """Test the generation of Wannier functions."""
     if Nspin == 1:
         scf = scf_unpol
     else:

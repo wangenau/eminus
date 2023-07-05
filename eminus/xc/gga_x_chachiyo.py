@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-'''Chachiyo GGA exchange.
+"""Chachiyo GGA exchange.
 
 Reference: Molecules 25, 3485.
-'''
+"""
 import numpy as np
 from numpy.linalg import norm
 
@@ -10,7 +10,7 @@ from .lda_x import lda_x
 
 
 def gga_x_chachiyo(n, dn_spin=None, **kwargs):
-    '''Chachiyo parametrization of the exchange functional (spin-paired).
+    """Chachiyo parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
 
@@ -25,7 +25,7 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
-    '''
+    """
     norm_dn = norm(dn_spin[0], axis=1)
     ex, vx, _ = lda_x(n, **kwargs)
 
@@ -45,7 +45,7 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
 
 
 def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
-    '''Chachiyo parametrization of the exchange functional (spin-polarized).
+    """Chachiyo parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
 
@@ -61,7 +61,7 @@ def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
-    '''
+    """
     # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     n_up = zeta * n + n   # 2 * n_up
     n_dw = -zeta * n + n  # 2 * n_down

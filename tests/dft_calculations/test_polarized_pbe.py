@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test total energies using PBE for a small set of spin-polarized and -unpolarized systems.'''
+"""Test total energies using PBE for a small set of spin-polarized and -unpolarized systems."""
 import inspect
 import pathlib
 
@@ -22,7 +22,7 @@ E_ref = {
 
 @pytest.mark.parametrize('system', E_ref.keys())
 def test_polarized(system):
-    '''Compare total energies for a test system with a reference value (spin-polarized).'''
+    """Compare total energies for a test system with a reference value (spin-polarized)."""
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     a = 10
     ecut = 10

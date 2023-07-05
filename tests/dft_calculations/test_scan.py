@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test total energies using SCAN for a small set of spin-paired systems.'''
+"""Test total energies using SCAN for a small set of spin-paired systems."""
 import inspect
 import pathlib
 
@@ -27,7 +27,7 @@ min = {'sd': 3, 'pccg': 16}
 
 @pytest.mark.parametrize('system', E_ref.keys())
 def test_polarized(system):
-    '''Compare total energies for a test system with a reference value (spin-polarized).'''
+    """Compare total energies for a test system with a reference value (spin-polarized)."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, Z='pbe', s=s)
@@ -37,7 +37,7 @@ def test_polarized(system):
 
 @pytest.mark.parametrize('system', E_ref.keys())
 def test_unpolarized(system):
-    '''Compare total energies for a test system with a reference value (spin-paired).'''
+    """Compare total energies for a test system with a reference value (spin-paired)."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, Z='pbe', s=s)

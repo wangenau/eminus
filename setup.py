@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-'''Setup file to make eminus installable.
+"""Setup file to make eminus installable.
 
 For a full list of options see the documentation:
 https://setuptools.pypa.io/en/latest/references/keywords.html
-'''
+"""
 import re
 
 from setuptools import find_packages, setup

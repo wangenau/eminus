@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-'''DFT functions that are only needed for (meta-)GGA calculations.'''
+"""DFT functions that are only needed for (meta-)GGA calculations."""
 import numpy as np
 
 
 def get_grad_field(atoms, field, real=True):
-    '''Calculate the gradient of fields on the grid per spin channel.
+    """Calculate the gradient of fields on the grid per spin channel.
 
     Args:
         atoms: Atoms object.
@@ -15,7 +15,7 @@ def get_grad_field(atoms, field, real=True):
 
     Returns:
         ndarray: Gradients of field per spin channel.
-    '''
+    """
     dfield = np.empty((atoms.Nspin, len(atoms.r), 3), dtype=complex)
     for spin in range(atoms.Nspin):
         fieldG = atoms.J(field[spin])
@@ -27,7 +27,7 @@ def get_grad_field(atoms, field, real=True):
 
 
 def gradient_correction(atoms, spin, dn_spin, vsigma):
-    '''Calculate the gradient correction for the exchange-correlation potential.
+    """Calculate the gradient correction for the exchange-correlation potential.
 
     Reference: Chem. Phys. Lett. 199, 557.
 
@@ -39,7 +39,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
     Returns:
         ndarray: Gradient correction in reciprocal space.
-    '''
+    """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
     h = np.zeros_like(dn_spin)
     if atoms.Nspin == 1:
@@ -61,7 +61,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
 
 def get_tau(atoms, Y):
-    '''Calculate the positive-definite kinetic energy densities per spin.
+    """Calculate the positive-definite kinetic energy densities per spin.
 
     Reference: J. Chem. Phys. 109, 2092.
 
@@ -71,7 +71,7 @@ def get_tau(atoms, Y):
 
     Returns:
         ndarray: Real space positive-definite kinetic energy density.
-    '''
+    """
     # The "intuitive" way is the one commented out below
     # Sadly, this implementation is really slow for various reasons so use the faster one below
 
@@ -96,7 +96,7 @@ def get_tau(atoms, Y):
 
 
 def calc_Vtau(scf, spin, W, vtau):
-    '''Calculate the tau-dependent potential contribution for meta-GGAs.
+    """Calculate the tau-dependent potential contribution for meta-GGAs.
 
     Reference: J. Chem. Phys. 145, 204114.
 
@@ -108,7 +108,7 @@ def calc_Vtau(scf, spin, W, vtau):
 
     Returns:
         ndarray: Tau-dependent potential contribution in reciprocal space.
-    '''
+    """
     atoms = scf.atoms
 
     Vpsi = np.zeros((len(atoms.G2c), atoms.Nstate), dtype=complex)

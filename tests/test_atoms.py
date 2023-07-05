@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test the Atoms class.'''
+"""Test the Atoms class."""
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
@@ -17,7 +17,7 @@ inp = ('He', (0, 0, 0))
                                                    ('CH4', ['C', 'H', 'H', 'H', 'H'], 5),
                                                    ('HeX', ['He', 'X'], 2)])
 def test_atom(atom, ref, Nref):
-    '''Test initialization of the atom variable.'''
+    """Test initialization of the atom variable."""
     atoms = Atoms(atom, (0, 0, 0))
     assert atoms.atom == ref
     assert atoms.Natoms == Nref
@@ -31,7 +31,7 @@ def test_atom(atom, ref, Nref):
     ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
     ([[0] * 3, [1] * 3], True, [[10, 10 + np.sqrt(3) / 2, 10], [10, 10 - np.sqrt(3) / 2, 10]])])
 def test_coordinates(X, center, ref):
-    '''Test the setting of the atom coordinates.'''
+    """Test the setting of the atom coordinates."""
     atoms = Atoms('H', X=X, center=center)
     assert_allclose(np.abs(atoms.X), ref, atol=1e-15)
 
@@ -43,7 +43,7 @@ def test_coordinates(X, center, ref):
                                                 ('He2', 2, [2, 2]),
                                                 ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2])])
 def test_charge(atom, Z, ref):
-    '''Test setting of charges.'''
+    """Test setting of charges."""
     atoms = Atoms(atom, (0, 0, 0), Z=Z)
     assert_equal(atoms.Z, ref)
 
@@ -52,14 +52,14 @@ def test_charge(atom, Z, ref):
                                         ([2, 3, 4], [2, 3, 4]),
                                         (None, 99)])
 def test_sampling(s, ref):
-    '''Test the initialization of sampling.'''
+    """Test the initialization of sampling."""
     atoms = Atoms(*inp, s=s)
     assert_allclose(atoms.s, ref)
 
 
 @pytest.mark.parametrize('size', [3, (5, 10, 15)])
 def test_cell(size):
-    '''Test the setting of the cell sampling.'''
+    """Test the setting of the cell sampling."""
     atoms = Atoms(*inp, a=size).build()
     assert_allclose(np.diag(atoms.R), size)
     assert_allclose(atoms.Omega, np.prod(atoms.a))
@@ -69,7 +69,7 @@ def test_cell(size):
 
 
 def test_G():
-    '''Test the setting of G-vectors.'''
+    """Test the setting of G-vectors."""
     atoms = Atoms(*inp, s=2).build()
     assert_allclose(atoms.G[0], 0)
     assert len(atoms.G) == np.prod(atoms.s)
@@ -84,7 +84,7 @@ def test_G():
                                                     ('H', 2, 2),
                                                     ('He', 1, 1)])
 def test_spin(atom, Nspin, ref):
-    '''Test the spin option.'''
+    """Test the spin option."""
     atoms = Atoms(atom=atom, X=(0, 0, 0), Nspin=Nspin, s=1).build()
     assert atoms.Nspin == ref
 
@@ -99,14 +99,14 @@ def test_spin(atom, Nspin, ref):
     (2, 1, 1, [[2]], 1),
     (1, 1, 2, [[1], [1]], 1)])
 def test_occupations(f, Nstate, Nspin, fref, Nref):
-    '''Test the occupation and state options.'''
+    """Test the occupation and state options."""
     atoms = Atoms(*inp, Nspin=Nspin, Nstate=Nstate, f=f, s=1).build()
     assert_equal(atoms.f, fref)
     assert atoms.Nstate == Nref
 
 
 def test_verbose():
-    '''Test the verbosity level.'''
+    """Test the verbosity level."""
     log.verbose = 'DEBUG'
     atoms = Atoms(*inp)
     assert atoms.verbose == log.verbose
@@ -119,14 +119,14 @@ def test_verbose():
 
 
 def test_operators():
-    '''Test that operators are properly set and callable.'''
+    """Test that operators are properly set and callable."""
     atoms = Atoms(*inp).build()
     for op in ('O', 'L', 'Linv', 'I', 'J', 'Idag', 'Jdag', 'K', 'T'):
         assert callable(getattr(atoms, op))
 
 
 def test_clear():
-    '''Test the clear function.'''
+    """Test the clear function."""
     atoms = Atoms(*inp).build()
     assert atoms.is_built
     atoms.clear()
@@ -135,7 +135,7 @@ def test_clear():
 
 
 def test_recenter():
-    '''Test the recenter function.'''
+    """Test the recenter function."""
     atoms = Atoms(*inp, s=2).build()
     Sf_old = atoms.Sf
     center = (1, 1, 1)

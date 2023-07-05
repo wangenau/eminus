@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test functionality of example notebooks.'''
+"""Test functionality of example notebooks."""
 import inspect
 import os
 import pathlib
@@ -8,7 +8,7 @@ import pytest
 
 
 def clean_example(trash):
-    '''Clean the example folder after running the script.'''
+    """Clean the example folder after running the script."""
     for it in trash:
         path = pathlib.Path(it)
         if path.exists():
@@ -23,7 +23,7 @@ def clean_example(trash):
                                                                           'CH4_WO_2.cube',
                                                                           'CH4_WO_3.cube'])])
 def test_notebooks(name, trash):
-    '''Test the execution of a given Jupyter notebook.'''
+    """Test the execution of a given Jupyter notebook."""
     pytest.importorskip('nglview', reason='nglview not installed, skip tests')
     pytest.importorskip('plotly', reason='plotly not installed, skip tests')
     from nbconvert.preprocessors import ExecutePreprocessor

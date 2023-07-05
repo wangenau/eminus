@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test operator identities.'''
+"""Test operator identities."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -25,7 +25,7 @@ dr = rng.standard_normal(3)
 
 @pytest.mark.parametrize('type', ['full', 'full_spin'])
 def test_LinvL(type):
-    '''Test Laplacian operator identity.'''
+    """Test Laplacian operator identity."""
     out = atoms.Linv(atoms.L(W_tests[type]))
     test = np.copy(W_tests[type])
     if test.ndim == 3:
@@ -37,7 +37,7 @@ def test_LinvL(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_spin'])
 def test_LLinv(type):
-    '''Test Laplacian operator identity.'''
+    """Test Laplacian operator identity."""
     out = atoms.L(atoms.Linv(W_tests[type]))
     test = np.copy(W_tests[type])
     if test.ndim == 3:
@@ -49,7 +49,7 @@ def test_LLinv(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_IJ(type):
-    '''Test forward and backward operator identity.'''
+    """Test forward and backward operator identity."""
     out = atoms.I(atoms.J(W_tests[type]))
     test = W_tests[type]
     assert_allclose(out, test)
@@ -58,7 +58,7 @@ def test_IJ(type):
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_JI(type):
-    '''Test forward and backward operator identity.'''
+    """Test forward and backward operator identity."""
     if 'active' in type:
         out = atoms.J(atoms.I(W_tests[type]), False)
     else:
@@ -69,7 +69,7 @@ def test_JI(type):
 
 @pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
 def test_IdagJdag(type):
-    '''Test daggered forward and backward operator identity.'''
+    """Test daggered forward and backward operator identity."""
     out = atoms.Idag(atoms.Jdag(W_tests[type]))
     test = W_tests[type]
     assert_allclose(out, test)
@@ -77,7 +77,7 @@ def test_IdagJdag(type):
 
 @pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
 def test_JdagIdag(type):
-    '''Test daggered forward and backward operator identity.'''
+    """Test daggered forward and backward operator identity."""
     out = atoms.Jdag(atoms.Idag(W_tests[type], True))
     test = W_tests[type]
     assert_allclose(out, test)
@@ -85,7 +85,7 @@ def test_JdagIdag(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_I(type):
-    '''Test that I and Idag operators are hermitian.'''
+    """Test that I and Idag operators are hermitian."""
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.I(b)).conj()
@@ -95,7 +95,7 @@ def test_hermitian_I(type):
 
 @pytest.mark.parametrize('type', ['full_single'])
 def test_hermitian_J(type):
-    '''Test that J and Jdag operators are hermitian.'''
+    """Test that J and Jdag operators are hermitian."""
     a = W_tests[type]
     b = W_tests[type] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.J(b)).conj()
@@ -106,7 +106,7 @@ def test_hermitian_J(type):
 @pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
                                   'active_spin'])
 def test_TT(type):
-    '''Test translation operator identity.'''
+    """Test translation operator identity."""
     out = atoms.T(atoms.T(W_tests[type], dr), -dr)
     test = W_tests[type]
     assert_allclose(out, test)

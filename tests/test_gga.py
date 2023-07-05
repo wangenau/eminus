@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test GGA functions.'''
+"""Test GGA functions."""
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -18,7 +18,7 @@ scf_pol.run()
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_grad_field(Nspin):
-    '''Test the gradient field calculations.'''
+    """Test the gradient field calculations."""
     if Nspin == 1:
         scf = scf_unpol
     else:
@@ -31,7 +31,7 @@ def test_get_grad_field(Nspin):
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tau(Nspin):
-    '''Test positive-definite kinetic energy density.'''
+    """Test positive-definite kinetic energy density."""
     if Nspin == 1:
         scf = scf_unpol
     else:

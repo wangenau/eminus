@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Consolidated configuration module.'''
+"""Consolidated configuration module."""
 import os
 import sys
 
@@ -7,11 +7,11 @@ from .logger import log
 
 
 class ConfigClass():
-    '''Configuration class holding user specifiable variables.
+    """Configuration class holding user specifiable variables.
 
     An instance of this class will be set as the same name as this module. This will effectively
     make this module a singleton data class.
-    '''
+    """
     def __init__(self):
         self.use_torch = True     # Use the faster Torch FFTs if available
         self.use_gpu = False      # Disable GPU by default, since it was slower in my tests
@@ -22,7 +22,7 @@ class ConfigClass():
 
     @property
     def use_torch(self):
-        '''Weather to use Torch or SciPy if Torch is installed.'''
+        """Weather to use Torch or SciPy if Torch is installed."""
         # Add the logic in the getter method so it does not run on initialization since importing
         # Torch is rather slow
         if self._use_torch:
@@ -40,7 +40,7 @@ class ConfigClass():
 
     @property
     def use_gpu(self):
-        '''Weather to use Torch on the GPU if available.'''
+        """Weather to use Torch on the GPU if available."""
         # Only use GPU if Torch is available
         if self.use_torch and self._use_gpu:
             import torch
@@ -54,7 +54,7 @@ class ConfigClass():
 
     @property
     def use_pylibxc(self):
-        '''Weather to use pylibxc or PySCF for functionals if both are installed.'''
+        """Weather to use pylibxc or PySCF for functionals if both are installed."""
         if self._use_pylibxc:
             try:
                 import pylibxc  # noqa: F401
@@ -70,7 +70,7 @@ class ConfigClass():
 
     @property
     def threads(self):
-        '''Number of threads used in FFT calculations.'''
+        """Number of threads used in FFT calculations."""
         if self._threads is None:
             try:
                 if self.use_torch:
@@ -96,7 +96,7 @@ class ConfigClass():
 
     @property
     def verbose(self):
-        '''Logger verbosity level.'''
+        """Logger verbosity level."""
         return log.verbose
 
     @verbose.setter
@@ -106,7 +106,7 @@ class ConfigClass():
         return
 
     def info(self):
-        '''Print configuration and performance information.'''
+        """Print configuration and performance information."""
         print('--- Configuration infos ---')
         print(f'Global verbosity : {self.verbose}')
         # Only print if PySCF or pylibxc is installed

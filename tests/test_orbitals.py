@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test orbital functions.'''
+"""Test orbital functions."""
 import os
 
 import numpy as np
@@ -16,28 +16,28 @@ dV = atoms.Omega / np.prod(atoms.s)
 
 
 def test_kso():
-    '''Test the Kohn-Sham orbital function.'''
+    """Test the Kohn-Sham orbital function."""
     orb = KSO(scf, write_cubes=True)
     os.remove('He_KSO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_fo():
-    '''Test the Fermi orbital function.'''
+    """Test the Fermi orbital function."""
     orb = FO(scf, write_cubes=True, fods=[atoms.X])
     os.remove('He_FO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_flo():
-    '''Test the Fermi-Loewdin orbital function.'''
+    """Test the Fermi-Loewdin orbital function."""
     orb = FLO(scf, write_cubes=True, fods=[atoms.X])
     os.remove('He_FLO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_wo():
-    '''Test the Wannier orbital function.'''
+    """Test the Wannier orbital function."""
     orb = WO(scf, write_cubes=True, precondition=False)
     os.remove('He_WO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)

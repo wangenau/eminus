@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test different energy contributions.'''
+"""Test different energy contributions."""
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -34,20 +34,20 @@ scf_pol.run()
 
 @pytest.mark.parametrize('energy', E_ref.keys())
 def test_energies_unpol(energy):
-    '''Check the spin-unpaired energy contributions.'''
+    """Check the spin-unpaired energy contributions."""
     E = getattr(scf_unpol.energies, energy)
     assert_allclose(E, E_ref[energy], atol=1e-4)
 
 
 @pytest.mark.parametrize('energy', E_ref.keys())
 def test_energies_pol(energy):
-    '''Check the spin-paired energy contributions.'''
+    """Check the spin-paired energy contributions."""
     E = getattr(scf_pol.energies, energy)
     assert_allclose(E, E_ref[energy], atol=1e-4)
 
 
 def test_mgga_sic_unpol():
-    '''Check the spin-unpaired SIC energy for meta-GGAs.'''
+    """Check the spin-unpaired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_unpol.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_unpol.min = {'auto': 1}
@@ -57,7 +57,7 @@ def test_mgga_sic_unpol():
 
 
 def test_mgga_sic_pol():
-    '''Check the spin-paired SIC energy for meta-GGAs.'''
+    """Check the spin-paired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_pol.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_pol.min = {'auto': 1}

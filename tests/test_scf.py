@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test the SCF class.'''
+"""Test the SCF class."""
 from numpy.testing import assert_allclose
 import pytest
 
@@ -10,13 +10,13 @@ atoms = Atoms('He', (0, 0, 0), s=10, Nspin=2)
 
 
 def test_atoms():
-    '''Test that the Atoms object is independent.'''
+    """Test that the Atoms object is independent."""
     scf = SCF(atoms)
     assert id(scf.atoms) != id(atoms)
 
 
 def test_xc():
-    '''Test that xc functionals are correctly parsed.'''
+    """Test that xc functionals are correctly parsed."""
     scf = SCF(atoms, xc='LDA,VWN')
     assert scf.xc == ['lda_x', 'lda_c_vwn']
     scf = SCF(atoms, xc=',')
@@ -24,7 +24,7 @@ def test_xc():
 
 
 def test_pot():
-    '''Test that potentials are correctly parsed and initialized.'''
+    """Test that potentials are correctly parsed and initialized."""
     scf = SCF(atoms, pot='GTH')
     assert not [x for x in (scf.Vloc, scf.NbetaNL, scf.prj2beta, scf.betaNL) if x is None]
     scf = SCF(atoms, pot='GE')
@@ -33,28 +33,28 @@ def test_pot():
 
 
 def test_guess():
-    '''Test initialization of the guess method.'''
+    """Test initialization of the guess method."""
     scf = SCF(atoms, guess='RAND')
     assert scf.guess == 'rand'
     scf = SCF(atoms, guess='bogus')
 
 
 def test_gradtol():
-    '''Test the convergence depending of the gradient norm.'''
+    """Test the convergence depending of the gradient norm."""
     scf = SCF(atoms, etol=1, gradtol=1e-2)
     scf.run()
     assert scf.energies.Etot < -1
 
 
 def test_sic():
-    '''Test that the SIC routine runs.'''
+    """Test that the SIC routine runs."""
     scf = SCF(atoms, xc='pbe', min={'sd': 1}, sic=True)
     scf.run()
     assert scf.energies.Esic != 0
 
 
 def test_symmetric():
-    '''Test the symmetry option for H2 dissociation.'''
+    """Test the symmetry option for H2 dissociation."""
     atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), Nspin=2, ecut=1)
     e_symm = SCF(atoms, symmetric=True).run()
     e_unsymm = SCF(atoms, symmetric=False).run()
@@ -62,7 +62,7 @@ def test_symmetric():
 
 
 def test_verbose():
-    '''Test the verbosity level.'''
+    """Test the verbosity level."""
     scf = SCF(atoms)
     assert scf.verbose == atoms.verbose
     assert scf.log.verbose == atoms.log.verbose
@@ -73,7 +73,7 @@ def test_verbose():
 
 
 def test_clear():
-    '''Test the clear function.'''
+    """Test the clear function."""
     scf = SCF(atoms, min={'sd': 1})
     scf.run()
     scf.clear()
@@ -83,7 +83,7 @@ def test_clear():
 
 @pytest.mark.parametrize('center', [None, atoms.a / 2])
 def test_recenter(center):
-    '''Test the recenter function.'''
+    """Test the recenter function."""
     scf = SCF(atoms)
     scf.run()
     assert scf.is_converged

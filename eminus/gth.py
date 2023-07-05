@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Utilities to use Goedecker, Teter, and Hutter pseudopotentials.'''
+"""Utilities to use Goedecker, Teter, and Hutter pseudopotentials."""
 import numpy as np
 
 from .logger import log
@@ -7,7 +7,7 @@ from .utils import Ylm_real
 
 
 def init_gth_loc(scf):
-    '''Initialize parameters to calculate local contributions of GTH pseudopotentials.
+    """Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -16,7 +16,7 @@ def init_gth_loc(scf):
 
     Returns:
         ndarray: Local GTH potential contribution.
-    '''
+    """
     atoms = scf.atoms
     species = set(atoms.atom)
     omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
@@ -54,7 +54,7 @@ def init_gth_loc(scf):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(scf):
-    '''Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
+    """Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -63,7 +63,7 @@ def init_gth_nonloc(scf):
 
     Returns:
         tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
-    '''
+    """
     atoms = scf.atoms
     prj2beta = np.zeros((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta += -1  # Set to an invalid index
@@ -97,7 +97,7 @@ def init_gth_nonloc(scf):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(scf, spin, W):
-    '''Calculate the non-local pseudopotential, applied on the basis functions W.
+    """Calculate the non-local pseudopotential, applied on the basis functions W.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -108,7 +108,7 @@ def calc_Vnonloc(scf, spin, W):
 
     Returns:
         ndarray: Non-local GTH potential contribution.
-    '''
+    """
     atoms = scf.atoms
 
     Vpsi = np.zeros_like(W[spin], dtype=complex)
@@ -131,7 +131,7 @@ def calc_Vnonloc(scf, spin, W):
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 def eval_proj_G(psp, l, iprj, Gm, Omega):
-    '''Evaluate GTH projector functions in G-space.
+    """Evaluate GTH projector functions in G-space.
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -144,7 +144,7 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
 
     Returns:
         ndarray: GTH projector.
-    '''
+    """
     rrl = psp['rp'][l]
     Gr2 = (Gm * rrl)**2
 

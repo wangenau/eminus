@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Viewer functions for Jupyter notebooks.'''
+"""Viewer functions for Jupyter notebooks."""
 import numpy as np
 
 from ..data import COVALENT_RADII, CPK_COLORS
@@ -10,7 +10,7 @@ from .fods import split_fods
 
 
 def view(*args, **kwargs):
-    '''Unified display function.'''
+    """Unified display function."""
     if isinstance(args[0], str):
         return view_file(*args, **kwargs)
     else:
@@ -18,7 +18,7 @@ def view(*args, **kwargs):
 
 
 def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
-    '''Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
+    """Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python/
 
@@ -33,7 +33,7 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
 
     Returns:
         None.
-    '''
+    """
     try:
         import plotly.graph_objects as go
     except ImportError:
@@ -113,7 +113,7 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
-    '''Display molecules and orbitals.
+    """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
 
@@ -130,7 +130,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
 
     Returns:
         NGLWidget: Viewable object.
-    '''
+    """
     try:
         from nglview import NGLWidget, TextStructure
     except ImportError:

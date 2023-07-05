@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-'''Custom examples pages generation utilities.'''
+"""Custom examples pages generation utilities."""
 import pathlib
 import re
 import shutil
 
 
 def generate(*args):
-    '''Automatically generate examples page from examples folder.'''
+    """Automatically generate examples page from examples folder."""
     # Copy template file and create examples folder
     pathlib.Path('docs/_examples').mkdir(exist_ok=True)
     shutil.copy2('docs/_templates/custom-examples.rst', 'docs/_examples/examples.rst')
@@ -38,7 +38,7 @@ def generate(*args):
 
 
 def parse(script):
-    '''Parse Python scripts to display them as rst files.'''
+    """Parse Python scripts to display them as rst files."""
     # Start with a horizontal line
     rst = '\n----\n'
     last_block_was_code = False
@@ -62,6 +62,6 @@ def parse(script):
 
 
 def clean(*args):
-    '''Remove generated examples after build.'''
+    """Remove generated examples after build."""
     shutil.rmtree('docs/_examples')
     return

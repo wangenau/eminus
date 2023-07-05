@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test utility functions.'''
+"""Test utility functions."""
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -11,7 +11,7 @@ from eminus.utils import add_maybe_none, pseudo_uniform, Ylm_real
 
 @pytest.mark.parametrize('l', [0, 1, 2, 3])
 def test_Ylm(l):
-    '''Test the spherical harmonics.'''
+    """Test the spherical harmonics."""
     # Generate random G
     # Somehow I can only get the correct results from scipy when using positive G
     rng = default_rng()
@@ -42,7 +42,7 @@ def test_Ylm(l):
     (1234, np.array([[[0.93006472, 0.15416989, 0.93472344]]])),
     (42, np.array([[[0.57138534, 0.34186435, 0.13408117]]]))])
 def test_pseudo_uniform(seed, ref):
-    '''Test the reproduciblity of the pseudo random number generator.'''
+    """Test the reproduciblity of the pseudo random number generator."""
     out = pseudo_uniform((1, 1, 3), seed=seed)
     assert_allclose(out, ref)
 
@@ -52,7 +52,7 @@ def test_pseudo_uniform(seed, ref):
                                              (None, 2, 2),
                                              (None, None, None)])
 def test_add_maybe_none(a, b, ref):
-    '''Test the function to add two variables that can be None.'''
+    """Test the function to add two variables that can be None."""
     out = add_maybe_none(a, b)
     assert out == ref
 

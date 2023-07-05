@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-'''Chachiyo LDA correlation.
+"""Chachiyo LDA correlation.
 
 Reference: J. Chem. Phys. 145, 021101.
-'''
+"""
 import numpy as np
 
 
 def lda_c_chachiyo(n, **kwargs):
-    '''Chachiyo parametrization of the correlation functional (spin-paired).
+    """Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
 
@@ -21,7 +21,7 @@ def lda_c_chachiyo(n, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
-    '''
+    """
     a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     b = 20.4562557
 
@@ -36,7 +36,7 @@ def lda_c_chachiyo(n, **kwargs):
 
 
 def chachiyo_scaling(zeta):
-    '''Weighting factor between the paramagnetic and the ferromagnetic case.
+    """Weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: J. Chem. Phys. 145, 021101.
 
@@ -45,7 +45,7 @@ def chachiyo_scaling(zeta):
 
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
-    '''
+    """
     fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**(1 / 3) - 1))
 
     dfdzeta = (2 * (1 - zeta)**(1 / 3) - 2 * (1 + zeta)**(1 / 3)) / (3 - 3 * 2**(1 / 3))
@@ -53,7 +53,7 @@ def chachiyo_scaling(zeta):
 
 
 def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
-    '''Chachiyo parametrization of the correlation functional (spin-polarized).
+    """Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label LDA_C_CHACHIYO and ID 287 in Libxc.
 
@@ -69,7 +69,7 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
 
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
-    '''
+    """
     a0 = -0.01554535   # (np.log(2) - 1) / (2 * np.pi**2)
     a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
     b0 = 20.4562557

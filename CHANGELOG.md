@@ -20,6 +20,7 @@ dev
    - Simplify minimizer module
    - Reduce McCabe code complexity
    - Switch linter from flake8 to Ruff
+   - Comply with different linting rules, e.g., use triple-quotes in docstrings
 - Miscellaneous
    - Performance fix by using precomputed values correctly
    - Improve GGA performance

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Atoms class definition.'''
+"""Atoms class definition."""
 import re
 
 import numpy as np
@@ -13,7 +13,7 @@ from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
 
 
 class Atoms:
-    '''Atoms object that holds all system and cell parameters.
+    """Atoms object that holds all system and cell parameters.
 
     Args:
         atom (str | list | tuple): Atom symbols.
@@ -79,7 +79,7 @@ class Atoms:
             None will use the default global logger value 'WARNING'.
 
             Default: None
-    '''
+    """
     def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=None, f=None,
                  Nstate=None, verbose=None):
         self.atom = atom      # Atom symbols
@@ -108,7 +108,7 @@ class Atoms:
         self.initialize()
 
     def clear(self):
-        '''Initialize and clear parameters that will be built out of the inputs.'''
+        """Initialize and clear parameters that will be built out of the inputs."""
         self.r = None          # Sample points in cell
         self.G = None          # G-vectors
         self.G2 = None         # Squared magnitudes of G-vectors
@@ -119,7 +119,7 @@ class Atoms:
         return self
 
     def initialize(self):
-        '''Validate inputs and update them if necessary.'''
+        """Validate inputs and update them if necessary."""
         self._set_atom()
         self._set_charge()
         self._set_cell_size()
@@ -128,7 +128,7 @@ class Atoms:
         return self
 
     def build(self):
-        '''Build all necessary parameters.'''
+        """Build all necessary parameters."""
         self._set_states(self.Nspin)
         M, N = self._get_index_matrices()
         self._set_cell(M)
@@ -140,11 +140,11 @@ class Atoms:
     kernel = build
 
     def recenter(self, center=None):
-        '''Recenter the system inside the cell.
+        """Recenter the system inside the cell.
 
         Keyword Args:
             center (float | list | tuple | ndarray | None): Point to center the system around.
-        '''
+        """
         com = center_of_mass(self.X)
         if center is None:
             self.X = self.X - (com - self.a / 2)
@@ -158,7 +158,7 @@ class Atoms:
         return self
 
     def _set_atom(self):
-        '''Validate the atom input and calculate the number of atoms.'''
+        """Validate the atom input and calculate the number of atoms."""
         # Quick option to set the charge for single atoms
         if isinstance(self.atom, str) and '-q' in self.atom:
             atom, Z = self.atom.split('-q')
@@ -184,7 +184,7 @@ class Atoms:
         return
 
     def _set_charge(self):
-        '''Validate the Z input and calculate charges if necessary.'''
+        """Validate the Z input and calculate charges if necessary."""
         # If only one charge is given, assume it is the charge for every atom
         if isinstance(self.Z, (int, np.integer)):
             self.Z = [self.Z] * self.Natoms
@@ -210,7 +210,7 @@ class Atoms:
         return
 
     def _set_cell_size(self):
-        '''Validate the a input.'''
+        """Validate the a input."""
         # Do this early on, since it is needed in many functions
         if isinstance(self.a, (int, np.integer, float, np.floating)):
             self.a = self.a * np.ones(3)
@@ -219,7 +219,7 @@ class Atoms:
         return
 
     def _set_positions(self):
-        '''Validate the X and center input and center the system if desired.'''
+        """Validate the X and center input and center the system if desired."""
         # We need atom positions as an two-dimensional array
         self.X = np.atleast_2d(self.X)
         if isinstance(self.center, str):
@@ -241,7 +241,7 @@ class Atoms:
         return
 
     def _set_sampling(self):
-        '''Validate the s input and calculate it if necessary.'''
+        """Validate the s input and calculate it if necessary."""
         # Make sampling dependent of ecut if no sampling is given
         if self.s is None:
             try:
@@ -263,11 +263,11 @@ class Atoms:
         return
 
     def _set_states(self, Nspin):
-        '''Validate the f and Nstate input and calculate the states if necessary.
+        """Validate the f and Nstate input and calculate the states if necessary.
 
         Args:
             Nspin (int | None): Number of spin states.
-        '''
+        """
         # Use a spin-paired calculation for an even number of electrons
         if Nspin is None:
             if np.sum(self.Z) % 2 == 0:
@@ -312,13 +312,13 @@ class Atoms:
         return
 
     def _get_index_matrices(self):
-        '''Build index matrices M and N to build the real and reciprocal space samplings.
+        """Build index matrices M and N to build the real and reciprocal space samplings.
 
         The matrices are using C ordering (the last index is the fastest).
 
         Returns:
             tuple[ndarray, ndarray]: Index matrices.
-        '''
+        """
         # Build index matrix M
         ms = np.arange(np.prod(self.s))
         m1 = np.floor(ms / (self.s[2] * self.s[1])) % self.s[0]
@@ -334,11 +334,11 @@ class Atoms:
         return M, N
 
     def _set_cell(self, M):
-        '''Build cell and create the respective sampling.
+        """Build cell and create the respective sampling.
 
         Args:
             M (ndarray): Index matrix.
-        '''
+        """
         # Build a cuboidal cell and calculate its volume
         R = self.a * np.eye(3)
         self.R = R
@@ -348,11 +348,11 @@ class Atoms:
         return
 
     def _set_G(self, N):
-        '''Build G-vectors, build squared magnitudes G2, and generate the active space.
+        """Build G-vectors, build squared magnitudes G2, and generate the active space.
 
         Args:
             N (ndarray): Index matrix.
-        '''
+        """
         # Build G-vectors
         G = 2 * np.pi * N @ inv(self.R)
         self.G = G
@@ -373,7 +373,7 @@ class Atoms:
         return
 
     def _set_operators(self):
-        '''Set operators of an Atoms class instance at runtime.'''
+        """Set operators of an Atoms class instance at runtime."""
         for op in ('O', 'L', 'Linv', 'K', 'T'):
             setattr(type(self), op, getattr(operators, op))
         fft_operators = ('I', 'J', 'Idag', 'Jdag')
@@ -388,7 +388,7 @@ class Atoms:
         return
 
     def __repr__(self):
-        '''Print the parameters stored in the Atoms object.'''
+        """Print the parameters stored in the Atoms object."""
         out = 'Atom  Charge  Position'
         for i in range(self.Natoms):
             out += f'\n{self.atom[i]:>3}   {self.Z[i]:>5}   ' \
@@ -397,7 +397,7 @@ class Atoms:
 
     @property
     def verbose(self):
-        '''Verbosity level.'''
+        """Verbosity level."""
         return self._verbose
 
     @verbose.setter

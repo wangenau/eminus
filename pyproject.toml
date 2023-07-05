@@ -36,9 +36,6 @@ ignore = [
     # D107: Missing docstring in `__init__`
     # Docstrings are present in the class definition instead of the init method
     "D107",
-    # D300: Use triple double quotes `"""`
-    # We use triple single quotes for docstrings
-    "D300",
     # S101: Use of `assert` detected
     # This should not introduce a security issue for us
     "S101",

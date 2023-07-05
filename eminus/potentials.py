@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Collection of miscellaneous potentials.'''
+"""Collection of miscellaneous potentials."""
 import numpy as np
 from scipy.linalg import norm
 
@@ -7,7 +7,7 @@ from .logger import log
 
 
 def harmonic(atoms):
-    '''Harmonic potential.
+    """Harmonic potential.
 
     Can be used for quantum dot calculations.
 
@@ -16,7 +16,7 @@ def harmonic(atoms):
 
     Returns:
         ndarray: Harmonic potential in reciprocal space.
-    '''
+    """
     freq = 2
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
@@ -24,7 +24,7 @@ def harmonic(atoms):
 
 
 def coulomb(atoms):
-    '''All-electron Coulomb potential.
+    """All-electron Coulomb potential.
 
     Reference: Bull. Lebedev Phys. Inst. 42, 329.
 
@@ -33,7 +33,7 @@ def coulomb(atoms):
 
     Returns:
         ndarray: Coulomb potential in reciprocal space.
-    '''
+    """
     Z = atoms.Z[0]  # Potential should only be used for same species
 
     # Ignore the division by zero for the first elements
@@ -47,7 +47,7 @@ def coulomb(atoms):
 
 
 def ge(atoms):
-    '''Starkloff-Joannopoulos local pseudopotential for germanium.
+    """Starkloff-Joannopoulos local pseudopotential for germanium.
 
     Fourier-transformed by Tomas Arias.
 
@@ -58,7 +58,7 @@ def ge(atoms):
 
     Returns:
         ndarray: Germanium pseudopotential in reciprocal space.
-    '''
+    """
     Z = 4  # Potential should only be used for germanium
     lamda = 18.5
     rc = 1.052
@@ -83,14 +83,14 @@ def ge(atoms):
 
 
 def init_pot(scf):
-    '''Handle and initialize potentials.
+    """Handle and initialize potentials.
 
     Args:
         scf: SCF object.
 
     Returns:
         ndarray: Potential in reciprocal space.
-    '''
+    """
     try:
         pot = IMPLEMENTED[scf.pot](scf.atoms)
     except KeyError:

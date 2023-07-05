@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Implementation of operators using Torch FFT functions.
+"""Implementation of operators using Torch FFT functions.
 
 For more details see :mod:`~eminus.operators`.
 
@@ -17,14 +17,14 @@ In my tests the overhead to move the arrays to the GPU and back is not worth it,
 by default.
 
 Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
-'''
+"""
 import numpy as np
 
 from .. import config
 
 
 def I(atoms, W):
-    '''Backwards transformation from reciprocal space to real-space.
+    """Backwards transformation from reciprocal space to real-space.
 
     Args:
         atoms: Atoms object.
@@ -32,7 +32,7 @@ def I(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
@@ -71,7 +71,7 @@ def I(atoms, W):
 
 
 def J(atoms, W, full=True):
-    '''Forward transformation from real-space to reciprocal space.
+    """Forward transformation from real-space to reciprocal space.
 
     Args:
         atoms: Atoms object.
@@ -82,7 +82,7 @@ def J(atoms, W, full=True):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
@@ -110,7 +110,7 @@ def J(atoms, W, full=True):
 
 
 def Idag(atoms, W, full=False):
-    '''Conjugated backwards transformation from real-space to reciprocal space.
+    """Conjugated backwards transformation from real-space to reciprocal space.
 
     Args:
         atoms: Atoms object.
@@ -121,7 +121,7 @@ def Idag(atoms, W, full=False):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)
@@ -149,7 +149,7 @@ def Idag(atoms, W, full=False):
 
 
 def Jdag(atoms, W):
-    '''Conjugated forward transformation from reciprocal space to real-space.
+    """Conjugated forward transformation from reciprocal space to real-space.
 
     Args:
         atoms: Atoms object.
@@ -157,7 +157,7 @@ def Jdag(atoms, W):
 
     Returns:
         ndarray: The operator applied on W.
-    '''
+    """
     import torch
     n = np.prod(atoms.s)
     s = tuple(atoms.s)

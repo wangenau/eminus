@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Test total energies using VWN for a small set of spin-paired systems.'''
+"""Test total energies using VWN for a small set of spin-paired systems."""
 import inspect
 import pathlib
 
@@ -21,7 +21,7 @@ E_ref = {
 
 @pytest.mark.parametrize('system', E_ref.keys())
 def test_unpolarized(system):
-    '''Compare total energies for a test system with a reference value (spin-paired).'''
+    """Compare total energies for a test system with a reference value (spin-paired)."""
     file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
     a = 10
     ecut = 10

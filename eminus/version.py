@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Package version number and version info function.'''
+"""Package version number and version info function."""
 import importlib
 import platform
 import sys
@@ -11,7 +11,7 @@ logo = (' ___ _____ _ ___ _ _ ___ \n'
 
 
 def info():
-    '''Print version numbers and availability of packages.'''
+    """Print version numbers and availability of packages."""
     dependencies = ('numpy', 'scipy')
     extras = ('torch', 'pyscf', 'plotly', 'nglview')
     dev = ('notebook', 'pylibxc', 'pytest', 'sphinx', 'furo')
