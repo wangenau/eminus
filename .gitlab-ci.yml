@@ -105,9 +105,10 @@ installation:
   extends: .pytest-pedantic
   script:
     - python setup.py sdist
-    - tar -xf dist/eminus-*
     # Remove pseudopotential files to check if the installation file works on its own
     - rm -rf eminus/psp/
+    - cd dist/
+    - tar -xf eminus-*
     - pip install eminus-*/.
     - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
 
