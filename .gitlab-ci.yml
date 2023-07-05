@@ -100,6 +100,17 @@ platform:windows:
     - refreshenv
     - Set-Alias -Name python3 -Value python
 
+##### Test code installation after creating the source distribution #####
+installation:
+  extends: .pytest-pedantic
+  script:
+    - python setup.py sdist
+    - tar -xf dist/eminus-*
+    # Remove pseudopotential files to check if the installation file works on its own
+    - rm -rf eminus/psp/
+    - pip install eminus-*/.
+    - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
+
 ##### Build documentation #####
 pages:
   stage: deploy
