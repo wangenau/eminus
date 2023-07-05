@@ -34,7 +34,7 @@ extras['dev'] = [
     'notebook',            # Run and convert notebooks to HTML
     'pytest>=5.4',         # Test utilities
     'pytest-cov>=2.6.1',   # Collect test coverage data
-    'ruff>=0.0.263',       # Style guide checker
+    'ruff>=0.0.276',       # Style guide checker
     'sphinx>=4'            # Documentation builder
 ]
 
