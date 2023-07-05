@@ -33,9 +33,6 @@ ignore = [
     # eminus uses, e.g., l (quantum number) as variables or O (overlap operator) as functions
     "E741",
     "E743",
-    # D107: Missing docstring in `__init__`
-    # Docstrings are present in the class definition instead of the init method
-    "D107",
     # S101: Use of `assert` detected
     # This should not introduce a security issue for us
     "S101",

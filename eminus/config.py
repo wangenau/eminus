@@ -13,6 +13,7 @@ class ConfigClass():
     make this module a singleton data class.
     """
     def __init__(self):
+        """Initialize the ConfigClass object."""
         self.use_torch = True     # Use the faster Torch FFTs if available
         self.use_gpu = False      # Disable GPU by default, since it was slower in my tests
         self.use_pylibxc = True   # Use Libxc over PySCF if available

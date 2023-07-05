@@ -73,6 +73,7 @@ class SCF:
     """
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
                  cgform=1, sic=False, symmetric=False, min=None, verbose=None):
+        """Initialize the SCF object."""
         self.atoms = atoms          # Atoms object
         self.xc = xc.lower()        # Exchange-correlation functional
         self.pot = pot              # Used pseudopotential
