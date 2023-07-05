@@ -120,4 +120,4 @@ def create_pdb_str(atom, X, a=None):
         pdb += '          '
         pdb += f'{atom[ia]:>2}'      # 77-78 Element symbol
         # pdb += '  '                # 79-80 Charge
-    return f'{pdb}\nENDMDL'
+    return f'{pdb}\nENDMDL\n'
