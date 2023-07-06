@@ -47,7 +47,7 @@ coverage:
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
-      - coverage/
+      - htmlcov/
     reports:
       coverage_report:
         coverage_format: cobertura
@@ -143,7 +143,7 @@ pages:
     # Compress all text files
     - find public \( -name '*.css' -o -name '*.html' -o -name '*.js' -o -name '*.svg' \) -exec gzip -vrk9 {} \;
     # Copy the coverage artifacts
-    - cp coverage/ public/
+    - cp -r htmlcov/ public/
   artifacts:
     paths:
       - public
