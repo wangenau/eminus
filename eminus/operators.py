@@ -245,12 +245,8 @@ def K(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     """
-    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
-    if len(W) == len(atoms.G2c):
-        G2 = atoms.G2c[:, None]
-    else:
-        G2 = atoms.G2[:, None]
-    return W / (1 + G2)
+    # G2c is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    return W / (1 + atoms.G2c[:, None])
 
 
 @handle_spin_gracefully
