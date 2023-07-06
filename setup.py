@@ -74,12 +74,11 @@ setup(
         'Topic :: Software Development'
     ],
     license='APACHE2.0',
+    include_package_data=True,
     install_requires=[
         'numpy>=1.17',
         'scipy>=1.6'
     ],
-    package_data={'eminus.psp': ['**/*-q*']},
-    zip_safe=False,
     extras_require=extras,
     python_requires='>=3.7',
     project_urls={
