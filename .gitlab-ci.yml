@@ -104,6 +104,7 @@ platform:windows:
 installation:
   extends: .pytest-pedantic
   script:
+    - pip install build
     - python -m build
     # Remove pseudopotential files to check if the installation files work on their own
     - rm -rf eminus/psp/
