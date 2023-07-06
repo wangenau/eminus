@@ -39,7 +39,7 @@ def test_mock():
 def test_custom_files():
     """Test the option to use custom GTH files in Atoms and SCF."""
     file_path = str(pathlib.Path(inspect.getfile(inspect.currentframe())).parent)
-    atoms = Atoms('B', (0, 0, 0)).build()
+    atoms = Atoms('B', (0, 0, 0), Z=file_path).build()
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
     assert scf.GTH['B']['rloc'] == 0.42188166

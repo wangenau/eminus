@@ -5,7 +5,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms
-from eminus.domains import domain_cuboid, domain_sphere, truncate
+from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, truncate
 from eminus.tools import center_of_mass
 
 atoms = Atoms('CH4', ((0, 0, 0),
@@ -39,6 +39,12 @@ def test_domain_sphere(radius):
     out = truncate(atoms.r, domain_sphere(atoms, radius, (com, com)))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=radius)
+
+
+def test_domain_isovalue():
+    """Test isovalue domain execution."""
+    out = truncate(atoms.G2, domain_isovalue(atoms.G2, 0.1))
+    assert not (out == atoms.G2).all()
 
 
 if __name__ == '__main__':

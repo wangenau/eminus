@@ -5,7 +5,19 @@ import os
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, read, SCF, write
+from eminus import (
+    Atoms,
+    read,
+    read_cube,
+    read_json,
+    read_xyz,
+    SCF,
+    write,
+    write_cube,
+    write_json,
+    write_pdb,
+    write_xyz,
+)
 
 atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=1, ecut=1)
 scf = SCF(atoms)
@@ -81,6 +93,22 @@ def test_trajectory(filending):
     os.remove(filename)
     # The trajectory file has to be larger than the original one
     assert old_size < new_size
+
+
+def test_filename_ending():
+    """Test if the functions still work when omiting the filename ending."""
+    filename = 'test'
+    write_xyz(atoms, filename)
+    read_xyz(filename)
+    os.remove(filename + '.xyz')
+    write_cube(atoms, filename, scf.W[0, 0])
+    read_cube(filename)
+    os.remove(filename + '.cube')
+    write_json(atoms, filename)
+    read_json(filename)
+    os.remove(filename + '.json')
+    write_pdb(atoms, filename)
+    os.remove(filename + '.pdb')
 
 
 if __name__ == '__main__':

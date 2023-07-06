@@ -7,6 +7,7 @@ import pytest
 
 from eminus import Atoms, RSCF, SCF
 from eminus.dft import get_psi
+from eminus.gga import get_grad_field
 from eminus.tools import (
     center_of_mass,
     check_norm,
@@ -137,6 +138,7 @@ def test_get_tauw(Nspin):
         scf = scf_unpol
     else:
         scf = scf_pol
+        scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     tauw = get_tauw(scf)
     T = np.sum(tauw) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # vW KED is exact for one- and two-electron systems
@@ -162,6 +164,7 @@ def test_get_reduced_gradient(Nspin):
         scf = scf_unpol
     else:
         scf = scf_pol
+        scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((s >= 0) & (s < 100)).all()
 

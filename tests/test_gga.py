@@ -29,6 +29,16 @@ def test_get_grad_field(Nspin):
     assert np.sum(dn_mock) == 0
 
 
+def test_get_grad_field_type():
+    """Test the gradient field return type."""
+    scf = scf_unpol
+    n_mock = np.zeros_like(scf.n_spin)
+    dn_mock = get_grad_field(scf.atoms, n_mock)
+    assert dn_mock.dtype == 'float64'
+    dn_mock = get_grad_field(scf.atoms, n_mock, real=False)
+    assert dn_mock.dtype == 'complex128'
+
+
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_get_tau(Nspin):
     """Test positive-definite kinetic energy density."""

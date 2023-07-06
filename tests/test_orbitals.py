@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Test orbital functions."""
+import glob
 import os
 
 import numpy as np
+from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, RSCF
-from eminus.orbitals import FLO, FO, KSO, WO
+from eminus.orbitals import cube_writer, FLO, FO, KSO, WO
 
 atoms = Atoms('He', (0, 0, 0), s=10, center=True).build()
 scf = RSCF(atoms)
@@ -41,6 +43,18 @@ def test_wo():
     orb = WO(scf, write_cubes=True, precondition=False)
     os.remove('He_WO_0.cube')
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_cube_writer(Nspin):
+    """Test the orbital cube writer function."""
+    atoms.Nspin = Nspin
+    atoms.f = np.array([[1], [1]])
+    rng = default_rng()
+    orbital = rng.standard_normal((Nspin, len(atoms.G2c), atoms.Nstate))
+    cube_writer(atoms, 'TMP', orbital)
+    for f in glob.glob('He_TMP_0*.cube'):
+        os.remove(f)
 
 
 if __name__ == '__main__':

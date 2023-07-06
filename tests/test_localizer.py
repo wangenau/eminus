@@ -82,6 +82,16 @@ def test_wannier(Nspin):
     assert_allclose(costs, costs[0, 0], atol=0.0025)
 
 
+def test_wannier_random_guess():
+    """Test the random_guess keyword for Wannier localizations."""
+    scf = scf_unpol
+    psi = scf.atoms.I(get_psi(scf, scf.W))
+    costs = wannier_cost(scf.atoms, psi)
+    wo = get_wannier(scf.atoms, psi, Nit=100, random_guess=True, seed=1234)
+    assert check_orthonorm(scf, wo)
+    assert np.sum(wannier_cost(scf.atoms, wo)) < np.sum(costs)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
