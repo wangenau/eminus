@@ -100,16 +100,21 @@ platform:windows:
     - refreshenv
     - Set-Alias -Name python3 -Value python
 
-##### Test code installation after creating the source distribution #####
+##### Test the code installation after building #####
 installation:
   extends: .pytest-pedantic
   script:
-    - python setup.py sdist
-    # Remove pseudopotential files to check if the installation file works on its own
+    - python -m build
+    # Remove pseudopotential files to check if the installation files work on their own
     - rm -rf eminus/psp/
     - cd dist/
-    - tar -xf eminus-*
+    # Test the source distribution
+    - tar -xf eminus-*.tar.gz
     - pip install eminus-*/.
+    - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
+    # Test the wheel
+    - pip uninstall eminus -y
+    - pip install eminus-*.whl
     - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
 
 ##### Build documentation #####
