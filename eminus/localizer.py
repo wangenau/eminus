@@ -269,7 +269,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 
 @handle_spin_gracefully
-def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False):
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False, seed=None):
     """Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from
@@ -289,6 +289,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         conv_tol (float): Convergence tolerance.
         mu (float): Step size.
         random_guess (bool): Weather to use a random unitary starting guess or the identity.
+        seed (int | None): Seed to get a reproducible random guess.
 
     Returns:
         ndarray: Localized orbitals.
@@ -296,7 +297,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
     if random_guess and atoms.Nstate > 1:
-        U = unitary_group.rvs(atoms.Nstate)
+        U = unitary_group.rvs(atoms.Nstate, random_state=seed)
     else:
         U = np.eye(atoms.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
