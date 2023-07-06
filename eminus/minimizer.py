@@ -379,7 +379,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
-                cg[spin] = cg_test(atoms, g, g_old[spin])
+                cg[spin] = cg_test(atoms, g, g_old[spin], precondition)
             beta[spin], norm_g[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition)
             if precondition:
                 d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
