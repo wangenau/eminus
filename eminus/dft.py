@@ -53,7 +53,7 @@ def get_n_total(atoms, Y, n_spin=None):
     return n
 
 
-def get_n_spin(atoms, Y, n=None):
+def get_n_spin(atoms, Y):
     """Calculate the electronic density per spin channel.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -62,16 +62,9 @@ def get_n_spin(atoms, Y, n=None):
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
-    Keyword Args:
-        n (ndarray): Real-space electronic density.
-
     Returns:
         ndarray: Electronic densities per spin channel.
     """
-    # Return the total density in the spin-paired case
-    if n is not None and atoms.Nspin == 1:
-        return np.atleast_2d(n)
-
     Yrs = atoms.I(Y)
     n = np.empty((atoms.Nspin, len(atoms.r)))
     for spin in range(atoms.Nspin):
