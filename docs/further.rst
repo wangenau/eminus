@@ -52,7 +52,8 @@ Coverage
 
    pip install coverage pytest pytest-cov
 
-| To create a webpage that gives a clear overview of covered and uncovered code lines, use
+| A detailed coverage report that gives a clear overview of the covered code `is uploaded regularly <https://wangenau.gitlab.io/eminus/htmlcov>`_.
+| To create this webpage, use
 
 .. code-block:: console
 

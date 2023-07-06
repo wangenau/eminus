@@ -15,6 +15,7 @@ dev
       - Add eigenenergies to the debug output
 - Updated docs
    - Update the introduction page in the documentation
+   - Upload the HTML coverage report
 - Coding style
    - Simplify H function
    - Simplify minimizer module

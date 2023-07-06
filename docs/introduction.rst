@@ -21,7 +21,7 @@ Introduction
    :target: https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE
 
 .. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
-   :target: https://gitlab.com/wangenau/eminus/-/graphs/main/charts
+   :target: https://wangenau.gitlab.io/eminus/htmlcov
 
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
