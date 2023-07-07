@@ -14,14 +14,14 @@ Introduction
 .. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
    :target: https://pypi.org/project/eminus
 
-.. image:: https://img.shields.io/badge/language-Python3-green
-   :target: https://www.python.org
-
-.. image:: https://img.shields.io/badge/license-APACHE2-lightgrey
-   :target: https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE
-
 .. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
    :target: https://wangenau.gitlab.io/eminus/htmlcov
+
+.. image:: https://img.shields.io/pypi/pyversions/eminus?color=green
+   :target: https://wangenau.gitlab.io/eminus/installation.html
+
+.. image:: https://img.shields.io/badge/license-Apache2.0-yellowgreen
+   :target: https://wangenau.gitlab.io/eminus/license.html
 
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841

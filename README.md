@@ -2,10 +2,10 @@
 
 # eminus
 [![pypi](https://img.shields.io/pypi/v/eminus?color=1a962b)](https://pypi.org/project/eminus)
-[![language](https://img.shields.io/badge/language-Python3-green)](https://www.python.org)
-[![license](https://img.shields.io/badge/license-APACHE2-lightgrey)](https://gitlab.com/wangenau/eminus/-/blob/main/LICENSE)
 [![coverage](https://gitlab.com/wangenau/eminus/badges/main/coverage.svg)](https://wangenau.gitlab.io/eminus/htmlcov)
-[![DOI](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
+[![python](https://img.shields.io/pypi/pyversions/eminus?color=green)](https://wangenau.gitlab.io/eminus/installation.html)
+[![license](https://img.shields.io/badge/license-Apache2.0-yellowgreen)](https://wangenau.gitlab.io/eminus/license.html)
+[![doi](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
 
 The eminus package is a plane wave density functional theory (DFT) code.
 It is built upon the [DFT++](https://arxiv.org/abs/cond-mat/9909130) pragmas, that aim to let programming languages and theory coincide.
