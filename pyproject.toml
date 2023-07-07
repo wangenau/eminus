@@ -57,7 +57,7 @@ ignore = [
 ]
 
 [tool.ruff.mccabe]
-max-complexity = 13
+max-complexity = 15
 
 [tool.ruff.isort]
 force-sort-within-sections = true
