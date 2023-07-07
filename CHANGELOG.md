@@ -13,6 +13,9 @@ dev
       - Option to converge the gradient norm
       - Print <S^2> after an unrestricted calculation
       - Add eigenenergies to the debug output
+   - Improved file viewer
+      - Support PDB files
+      - Allow usage outside of notebooks
 - Updated docs
    - Update the introduction page in the documentation
    - Upload the HTML coverage report

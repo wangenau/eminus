@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Viewer functions for Jupyter notebooks."""
+import io
+import pathlib
+
 import numpy as np
 
 from ..data import COVALENT_RADII, CPK_COLORS
@@ -132,7 +135,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
         NGLWidget: Viewable object.
     """
     try:
-        from nglview import NGLWidget, TextStructure
+        from nglview import NGLWidget, TextStructure, write_html
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
@@ -140,12 +143,16 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
 
     if elec_symbols is None:
         elec_symbols = ('X', 'He')
-
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
+
     view = NGLWidget(**kwargs)
     view._set_size('400px', '400px')
+    # Set the gui to the view
+    if gui:
+        view.gui_style = 'ngl'
 
+    # Handle XYZ files
     if filename.endswith('.xyz'):
         # Atoms
         atom, X = read_xyz(filename)
@@ -166,8 +173,8 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
             view[2].clear()
             view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
         view.center()
-
-    if filename.endswith('.cube'):
+    # Handle CUBE files
+    elif filename.endswith('.cube'):
         # Atoms and cell
         atom, X, _, a, _ = read_cube(filename)
         atom, X, X_fod = split_fods(atom, X, elec_symbols)
@@ -207,4 +214,52 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
                                X_fod[1])))
             view[4].clear()
             view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
-    return view.display(gui=gui)
+    # Handle other files (mainly PDB)
+    else:
+        # If no xyz or cube file is used try a more generic file viewer
+        ext = pathlib.Path(filename).suffix.replace('.', '')
+        # It seems that only pdb works with this method
+        if ext != 'pdb':
+            log.warning('Only XYZ, CUBE, and PDB files are support, but others might work.')
+        with open(filename, 'r') as fh:
+            view.add_component(fh, ext=ext)
+        view[0].clear()
+        view[0].add_ball_and_stick()
+        view.center()
+
+    # Check if the function has been executed in a notebook
+    # If yes, just return the view
+    if executed_in_notebook():
+        return view
+    # Otherwise the viewer would display nothing
+    # But if plotly is installed on can write the view to a StringIO object and display it with the
+    # smart open_html_in_browser function from plotly that automatically opens a new browser tab
+    try:
+        from plotly.io._base_renderers import open_html_in_browser
+        # Use StringIO object instead of a temporary file
+        with io.StringIO() as html:
+            write_html(html, view)
+            open_html_in_browser(html.getvalue())
+    except ImportError:
+        log.exception('This function only works in notebooks or with Plotly installed.')
+    return None
+
+
+def executed_in_notebook():
+    """Check if the code runs in a notebook.
+
+    Reference: https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+
+    Returns:
+        bool: Weather in a notebook or not.
+    """
+    try:
+        shell = get_ipython().__class__.__name__
+        if shell == 'ZMQInteractiveShell':  # Jupyter notebook or qtconsole
+            return True
+        elif shell == 'TerminalInteractiveShell':  # Terminal running IPython
+            return False
+        else:  # Other type
+            return False
+    except NameError:
+        return False

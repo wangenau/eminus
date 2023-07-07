@@ -6,6 +6,8 @@ import pathlib
 
 import pytest
 
+from eminus.extras.viewer import executed_in_notebook
+
 
 @pytest.mark.parametrize('name', ['test_view_atoms', 'test_view_file'])
 def test_viewer(name):
@@ -21,6 +23,11 @@ def test_viewer(name):
         nb = read(fh, as_version=4)
         ep = ExecutePreprocessor(timeout=60, kernel_name='python3')
         assert ep.preprocess(nb) is not None
+
+
+def test_executed_in_notebook():
+    """Test the notebook differentiation from a terminal."""
+    assert not executed_in_notebook()
 
 
 if __name__ == '__main__':
