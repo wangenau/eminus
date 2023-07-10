@@ -20,6 +20,9 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cach
 RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[all,dev] --no-cache-dir
 
+# Downgrade Jupyter client to fix nglview
+RUN pip install jupyter_client==7.* --no-cache-dir
+
 # Set up the application stage
 FROM python:3.11-slim
 LABEL maintainer="wangenau"
@@ -28,7 +31,9 @@ LABEL maintainer="wangenau"
 RUN addgroup --system eminus \
 && adduser --system --group eminus \
 && mkdir /usr/app/ \
-&& chown eminus:eminus /usr/app/
+&& chown eminus:eminus /usr/app/ \
+&& mkdir /nonexistent \
+&& chown eminus:eminus /nonexistent
 WORKDIR /usr/app/
 COPY --chown=eminus:eminus --from=build /usr/app/venv/ ./venv/
 COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
