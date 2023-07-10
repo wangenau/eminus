@@ -107,8 +107,10 @@ platform:windows:
 installation:
   extends: .pytest-pedantic
   script:
-    - pip install build
+    - pip install build twine
     - python -m build
+    # Do a check with twine
+    - twine check dist/*
     # Remove pseudopotential files to check if the installation files work on their own
     - rm -rf eminus/psp/
     - cd dist/
