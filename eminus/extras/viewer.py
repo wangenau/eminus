@@ -176,7 +176,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
     # Handle CUBE files
     elif filename.endswith('.cube'):
         # Atoms and cell
-        atom, X, _, a, _ = read_cube(filename)
+        atom, X, _, a, _, _ = read_cube(filename)
         atom, X, X_fod = split_fods(atom, X, elec_symbols)
         view.add_component(TextStructure(create_pdb_str(atom, X, a)))
         view[0].clear()

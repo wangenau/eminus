@@ -20,7 +20,8 @@ def read_cube(filename):
         filename (str): cube input file path/name.
 
     Returns:
-        tuple[list, ndarray, float, ndarray, int]: Species, positions, charges, cell size, sampling.
+        tuple[list, ndarray, float, ndarray, int, ndarray]:
+        Species, positions, charges, cell size, sampling, and field array.
     """
     if not filename.endswith('.cube'):
         filename += '.cube'
@@ -32,7 +33,7 @@ def read_cube(filename):
         # The first and second line can contain comments, print them if available
         comment = f'{lines[0].strip()}\n{lines[1].strip()}'
         if comment:
-            log.info(f'XYZ file comment: "{comment}"')
+            log.info(f'CUBE file comment: "{comment}"')
 
         # Line 4 to 6 contain the sampling per axis, and the cell basis vectors with length a/s
         # A cuboidal cell is assumed, so only use the diagonal entries
@@ -47,6 +48,7 @@ def read_cube(filename):
         X = []
         Z = []
         # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
+        offset = 0
         for line in lines[6:]:
             line_split = line.strip().split()
             # If the first value is not a (positive) integer, we have reached the field data
@@ -55,9 +57,15 @@ def read_cube(filename):
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(float(line_split[1]))
             X.append(np.float_(line_split[2:5]))
-
+            offset += 1
     X = np.asarray(X)
-    return atom, X, Z, a, s
+
+    # The rest of the data is the field data
+    # Split the strings, flatten the lists of lists, and convert to a float numpy array
+    field_list = [l.split() for l in lines[6 + offset:]]
+    field_list = [item for sublist in field_list for item in sublist]
+    field = np.asarray(field_list, dtype=float)
+    return atom, X, Z, a, s, field
 
 
 def write_cube(object, filename, field, fods=None, elec_symbols=None):

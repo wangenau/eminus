@@ -10,7 +10,7 @@ atoms = Atoms(*read_xyz('CH4'))
 
 # # Cube files are supported as well
 # # Here, lattice information are given as well
-atom, X, Z, a, s = read_cube('CH4.cube')
+atom, X, Z, a, s, field = read_cube('CH4.cube')
 
 # # Create an `Atoms` object with it and start a DFT calculation
 atoms = Atoms(atom=atom, X=X, a=a, s=s)

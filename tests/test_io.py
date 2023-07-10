@@ -2,6 +2,7 @@
 """Test input and output functionalities."""
 import os
 
+import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
@@ -19,7 +20,7 @@ from eminus import (
     write_xyz,
 )
 
-atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=1, ecut=1)
+atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), s=2, ecut=1)
 scf = SCF(atoms)
 
 
@@ -43,8 +44,8 @@ def test_cube(Nspin):
     """Test CUBE file output and input."""
     filename = 'test.cube'
     fods = [atoms.X] * Nspin
-    write(atoms, filename, scf.W[0, 0], fods=fods)
-    atom, X, Z, a, s = read(filename)
+    write(atoms, filename, scf.W[0, :, 0], fods=fods)
+    atom, X, Z, a, s, field = read(filename)
     os.remove(filename)
     if Nspin == 1:
         assert atoms.atom + ['X'] * len(atoms.X) == atom
@@ -54,6 +55,7 @@ def test_cube(Nspin):
     assert_allclose(atoms.Z, Z[:len(atoms.Z)])
     assert_allclose(atoms.a, a)
     assert_allclose(atoms.s, s)
+    assert_allclose(np.real(scf.W[0, :, 0]), field, atol=1e-7)
 
 
 @pytest.mark.parametrize('object', [atoms, scf, scf.energies])
@@ -101,7 +103,7 @@ def test_filename_ending():
     write_xyz(atoms, filename)
     read_xyz(filename)
     os.remove(filename + '.xyz')
-    write_cube(atoms, filename, scf.W[0, 0])
+    write_cube(atoms, filename, scf.W[0, :, 0])
     read_cube(filename)
     os.remove(filename + '.cube')
     write_json(atoms, filename)

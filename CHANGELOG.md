@@ -32,6 +32,7 @@ dev
    - Do an unpaired calculation automatically if the system is unpaired
    - Option to use a symmetric initial guess, i.e., the same guess for both spin channels
    - Add trajectory keyword to XYZ and PDB writer to append geometries
+   - Read the field data from CUBE files
    - New functions for the
       - Electron localization function (ELF)
       - Positive-definite kinetic energy density
