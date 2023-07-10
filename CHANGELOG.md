@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.5.0 - Jul 10, 2023
+---------------------
 - New features
    - Add meta-GGA functionals!
       - Use all meta-GGAs that don't need a Laplacian from Libxc using pylibxc or PySCF
