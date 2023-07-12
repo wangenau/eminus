@@ -32,8 +32,8 @@ RUN addgroup --system eminus \
 && adduser --system --group eminus \
 && mkdir /usr/app/ \
 && chown eminus:eminus /usr/app/ \
-&& mkdir /nonexistent \
-&& chown eminus:eminus /nonexistent
+&& mkdir /nonexistent/ \
+&& chown eminus:eminus /nonexistent/
 WORKDIR /usr/app/
 COPY --chown=eminus:eminus --from=build /usr/app/venv/ ./venv/
 COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
