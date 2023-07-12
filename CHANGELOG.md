@@ -5,6 +5,8 @@ dev
 ---
 - New features
    - Add DFT-D3 dispersion correction as an extra
+- Updated docs
+   - Add a list of all packages and its respective licences
 
 v2.5.0 - Jul 10, 2023
 ---------------------
