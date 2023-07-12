@@ -7,7 +7,7 @@ import time
 import numpy as np
 
 from .dft import get_epsilon, guess_pseudo, guess_random
-from .energies import Energy, get_Eewald, get_Esic
+from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gth import init_gth_loc, init_gth_nonloc
 from .io import read_gth
 from .logger import create_logger, get_level
@@ -56,6 +56,10 @@ class SCF:
         sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
 
             Default: False
+        disp (bool | dict): Calculate a dispersion correction.
+
+            Example: {'version': 'd3zero', 'atm': False, 'xc': 'scan'}
+            Default: False
         symmetric (bool): Weather to use the same initial guess for both spin channels.
 
             Default: False
@@ -72,7 +76,7 @@ class SCF:
             Default: 'info'
     """
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 cgform=1, sic=False, symmetric=False, min=None, verbose=None):
+                 cgform=1, sic=False, disp=False, symmetric=False, min=None, verbose=None):
         """Initialize the SCF object."""
         self.atoms = atoms          # Atoms object
         self.xc = xc.lower()        # Exchange-correlation functional
@@ -81,7 +85,8 @@ class SCF:
         self.etol = etol            # Total energy convergence tolerance
         self.gradtol = gradtol      # Gradient norm convergence tolerance
         self.cgform = cgform        # Conjugate gradient form
-        self.sic = sic              # Calculate the sic energy
+        self.sic = sic              # Calculate the SIC energy
+        self.disp = disp            # Calculate the dispersion correction
         self.symmetric = symmetric  # Use the same initial guess for both spin channels
         self.min = min              # Minimization methods
 
@@ -202,6 +207,11 @@ class SCF:
         # Calculate SIC energy if desired
         if self.sic:
             self.energies.Esic = get_Esic(self, self.Y)
+        # Calculate dispersion correction energy if desired
+        if isinstance(self.disp, dict):
+            self.energies.Edisp = get_Edisp(self, **self.disp)
+        elif self.disp:
+            self.energies.Edisp = get_Edisp(self)
 
         # Print the S^2 expecation value for unrestricted calculations
         if self.atoms.Nspin == 2:

@@ -7,6 +7,7 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_grad_field, get_n_single, solve_poisson
+from .extras import get_Edisp  # noqa: F401
 from .gga import get_tau
 from .xc import get_exc
 
@@ -21,6 +22,7 @@ class Energy:
     Enonloc: float = 0  #: Non-local energy.
     Eewald: float = 0   #: Ewald energy.
     Esic: float = 0     #: Self-interaction correction energy.
+    Edisp: float = 0    #: Dispersion correction energy.
 
     @property
     def Etot(self):

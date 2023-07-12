@@ -49,6 +49,7 @@ Modules
    eminus.xc.lda_x
    eminus.xc.utils
    eminus.extras
+   eminus.extras.dftd3
    eminus.extras.fods
    eminus.extras.libxc
    eminus.extras.torch

@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""Test dispersion corrections."""
+from numpy.testing import assert_allclose
+import pytest
+
+from eminus import Atoms, SCF
+from eminus.energies import get_Edisp
+
+atoms = Atoms('CH4', ((0, 0, 0),
+                      (1.186, 1.186, 1.186),
+                      (1.186, -1.186, -1.186),
+                      (-1.186, 1.186, -1.186),
+                      (-1.186, -1.186, 1.186)), ecut=1)
+
+
+@pytest.mark.parametrize('xc', ['svwn', 'pbe', 'pbesol', 'chachiyo'])
+def test_functionals(xc):
+    """Test the use of different functionals in dispersion corrections."""
+    pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
+    ref = {'svwn': 0, 'pbe': -0.0011935254, 'pbesol': -0.0003419625}
+    ref['chachiyo'] = ref['pbe']
+    scf = SCF(atoms, xc=xc)
+    edisp = get_Edisp(scf)
+    assert_allclose(edisp, ref[xc], atol=1e-8)
+
+    # import ase
+    # from dftd3.ase import DFTD3
+    # import numpy as np
+    # from eminus.units import bohr2ang, ev2ha
+    # atm = ase.Atoms(atoms.atom, bohr2ang(atoms.X))
+    # atm.cell = bohr2ang(atoms.R)
+    # atm.pbc = np.array([1, 1, 1])
+    # atm.calc = DFTD3(method=xc, damping='d3bj', atm=True)
+    # print(ev2ha(atm.get_potential_energy()))
+
+
+@pytest.mark.parametrize('atm', [True, False])
+@pytest.mark.parametrize('version', ['d3bj', 'd3bjm', 'd3zero', 'd3zerom', 'd3op'])
+def test_versions(atm, version):
+    """Test the use of different dispersion correction versions."""
+    pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
+    scf = SCF(atoms, xc='pbe')
+    edisp = get_Edisp(scf, version=version, atm=atm)
+    assert edisp == scf.energies.Edisp
+
+
+@pytest.mark.parametrize('disp', [True, False, {'version': 'd3zero', 'atm': False, 'xc': 'scan'}])
+def test_scf(disp):
+    """Test the use in the SCF class."""
+    pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
+    scf = SCF(atoms, xc='pbe', etol=10, disp=disp)
+    scf.run()
+    assert scf.energies.Edisp <= 0
+
+
+if __name__ == '__main__':
+    import inspect
+    import pathlib
+    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    pytest.main(file_path)

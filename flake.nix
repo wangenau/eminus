@@ -14,6 +14,8 @@
           numpy
           pip
           scipy
+          ### dftd3 ###
+          simple-dftd3
           ### fods and libxc ###
           pyscf
           ### torch ###
