@@ -52,8 +52,9 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
     # Try to determine the method keyword
     if xc is None:
         if scf.xc_type == 'lda':
-            log.warning('Dispersion correction for LDA functionals is not supported.')
-            return 0
+            method = 'slaterdiracexchange'
+            version = 'd3zero'
+            log.warning('Dispersion correction for LDA functionals only support d3zero.')
         elif 'pbe_sol' in ''.join(scf.xc):
             method = 'pbesol'
         elif 'pbe' in ''.join(scf.xc):

@@ -17,7 +17,7 @@ atoms = Atoms('CH4', ((0, 0, 0),
 def test_functionals(xc):
     """Test the use of different functionals in dispersion corrections."""
     pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
-    ref = {'svwn': 0, 'pbe': -0.0011935254, 'pbesol': -0.0003419625}
+    ref = {'svwn': 0.0184646051, 'pbe': -0.0011935254, 'pbesol': -0.0003419625}
     ref['chachiyo'] = ref['pbe']
     scf = SCF(atoms, xc=xc)
     edisp = get_Edisp(scf)
