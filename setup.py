@@ -15,7 +15,7 @@ with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
 
 extras = {
-    'dftd3': [
+    'dispersion': [
         'dftd3>=0.6.0'  # Interface for DFT-D3 dispersion corrections
     ],
     'libxc': [

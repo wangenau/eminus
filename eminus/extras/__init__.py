@@ -7,13 +7,13 @@ To also install all additional dependencies, use::
 
 Alternativle, you can only install selected extras using the respective name:
 
-* :mod:`~eminus.extras.dftd3`
+* :mod:`~eminus.extras.dispersion`
 * :mod:`~eminus.extras.fods`
 * :mod:`~eminus.extras.libxc`
 * :mod:`~eminus.extras.torch`
 * :mod:`~eminus.extras.viewer`
 """
-from .dftd3 import get_Edisp
+from .dispersion import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
 from .libxc import libxc_functional
 from .viewer import view, view_atoms, view_file

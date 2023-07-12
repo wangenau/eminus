@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DFT-D3 dispersion correction interface."""
+"""Dispersion correction interface."""
 import numpy as np
 
 from ..data import SYMBOL2NUMBER

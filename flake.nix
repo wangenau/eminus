@@ -14,7 +14,7 @@
           numpy
           pip
           scipy
-          ### dftd3 ###
+          ### dispersion ###
           simple-dftd3
           ### fods and libxc ###
           pyscf
