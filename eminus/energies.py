@@ -7,8 +7,9 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_grad_field, get_n_single, solve_poisson
-from .extras import get_Edisp  # noqa: F401
+from .extras import dftd3
 from .gga import get_tau
+from .logger import log
 from .xc import get_exc
 
 
@@ -309,3 +310,12 @@ def get_Esic(scf, Y, n_single=None):
                 Esic += (coul + xc) * atoms.f[spin, i]
     scf.energies.Esic = Esic
     return Esic
+
+
+def get_Edisp(scf, version='d3bj', atm=True, xc=None):  # noqa: D103
+    try:
+        return dftd3.get_Edisp(scf, version, atm, xc)
+    except ImportError:
+        log.warning('You have to install the dftd3 extra to use this function.')
+        return 0
+get_Edisp.__doc__ = dftd3.get_Edisp.__doc__

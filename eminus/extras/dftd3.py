@@ -1,13 +1,5 @@
 #!/usr/bin/env python3
 """DFT-D3 dispersion correction interface."""
-from dftd3.interface import (
-    DispersionModel,
-    ModifiedRationalDampingParam,
-    ModifiedZeroDampingParam,
-    OptimizedPowerDampingParam,
-    RationalDampingParam,
-    ZeroDampingParam,
-)
 import numpy as np
 
 from ..data import SYMBOL2NUMBER
@@ -31,6 +23,14 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
     Returns:
         float: Dispersion correction energy.
     """
+    from dftd3.interface import (
+        DispersionModel,
+        ModifiedRationalDampingParam,
+        ModifiedZeroDampingParam,
+        OptimizedPowerDampingParam,
+        RationalDampingParam,
+        ZeroDampingParam,
+    )
     # Dictionary of implemented dispersion models
     dispersion_version = {
         'd3bj': RationalDampingParam,
