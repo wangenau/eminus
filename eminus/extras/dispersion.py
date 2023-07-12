@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 """Dispersion correction interface."""
+# Somehow I get wrong energies if I try to move these imports into get_Edisp
+try:  # noqa: SIM105
+    from dftd3.interface import (
+        DispersionModel,
+        ModifiedRationalDampingParam,
+        ModifiedZeroDampingParam,
+        OptimizedPowerDampingParam,
+        RationalDampingParam,
+        ZeroDampingParam,
+    )
+except ImportError:
+    pass
 import numpy as np
 
 from ..data import SYMBOL2NUMBER
@@ -23,14 +35,6 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
     Returns:
         float: Dispersion correction energy.
     """
-    from dftd3.interface import (
-        DispersionModel,
-        ModifiedRationalDampingParam,
-        ModifiedZeroDampingParam,
-        OptimizedPowerDampingParam,
-        RationalDampingParam,
-        ZeroDampingParam,
-    )
     # Dictionary of implemented dispersion models
     dispersion_version = {
         'd3bj': RationalDampingParam,
