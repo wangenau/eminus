@@ -10,7 +10,7 @@ from setuptools import find_packages, setup
 
 with open('eminus/version.py', 'r') as fh:
     version: str = \
-        re.search(r"__version__ = '(.*?)'", fh.read()).group(1)  # type: ignore[union-attr]
+        re.search(r"__version__: str = '(.*?)'", fh.read()).group(1)  # type: ignore[union-attr]
 
 with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description: str = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
