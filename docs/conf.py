@@ -94,4 +94,4 @@ def patched_init(self: Any, app: Any) -> None:
     self.env.filters['remove_package_name'] = remove_package_name
 
 # Monkey patch the init function
-AutosummaryRenderer.__init__ = patched_init  # type: ignore[method-assign]
+AutosummaryRenderer.__init__ = patched_init  # type: ignore[assignment, method-assign]

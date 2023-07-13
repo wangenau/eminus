@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # Move files
     gth_path = psp_path.joinpath('cp2k-data-master/potentials/Goedecker/cp2k/pbe')
     for f in gth_path.iterdir():
-        shutil.move(f, psp_path.joinpath(f.name))
+        shutil.move(str(f), psp_path.joinpath(f.name))
     # Cleanup
     psp_path.joinpath(file).unlink()
     shutil.rmtree('cp2k-data-master')

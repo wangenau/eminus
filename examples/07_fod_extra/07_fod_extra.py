@@ -4,7 +4,8 @@ from eminus.extras import get_fods, remove_core_fods
 from eminus.localizer import get_FLO
 
 # # Start by with a DFT calculation for methane
-atoms = Atoms(*read_xyz('CH4.xyz'), ecut=10, center=True)
+atom, X = read_xyz('CH4.xyz')
+atoms = Atoms(atom, X, ecut=10, center=True)
 scf = SCF(atoms)
 scf.run()
 
