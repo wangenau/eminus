@@ -128,7 +128,6 @@ class ConfigClass():
                   'set them in your Python environment with "eminus.config.threads=n".')
         else:
             print(f'FFT threads : {self.threads}')
-        return
 
 
 # Do not initialize the class when Sphinx is running
