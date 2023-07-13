@@ -35,6 +35,12 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
     Returns:
         float: Dispersion correction energy.
     """
+    try:
+        import dftd3  # noqa: F401
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[dispersion]".\n\n')
+        raise
     # Dictionary of implemented dispersion models
     dispersion_version = {
         'd3bj': RationalDampingParam,

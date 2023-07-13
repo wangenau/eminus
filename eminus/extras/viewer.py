@@ -239,7 +239,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
             write_html(html, view)
             open_html_in_browser(html.getvalue())
     except ImportError:
-        log.exception('This function only works in notebooks or with Plotly installed.')
+        log.error('This function only works in notebooks or with Plotly installed.')
     return None
 
 
