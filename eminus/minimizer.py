@@ -129,7 +129,6 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         scf.log.debug(info)
     else:
         scf.log.info(info)
-    return
 
 
 def linmin_test(g, d):
@@ -204,11 +203,11 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
 
     if scf.cgform == 1:    # Fletcher-Reeves
         return norm_g / dotprod(g_old, Kg_old), norm_g
-    elif scf.cgform == 2:  # Polak-Ribiere
+    if scf.cgform == 2:  # Polak-Ribiere
         return dotprod(g - g_old, Kg) / dotprod(g_old, Kg_old), norm_g
-    elif scf.cgform == 3:  # Hestenes-Stiefel
+    if scf.cgform == 3:  # Hestenes-Stiefel
         return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old), norm_g
-    elif scf.cgform == 4:  # Dai-Yuan
+    if scf.cgform == 4:  # Dai-Yuan
         return norm_g / dotprod(g - g_old, d_old), norm_g
     log.error(f'No cgform found for "{scf.cgform}".')
     return None

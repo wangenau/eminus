@@ -281,7 +281,6 @@ class SCF:
             self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
         else:
             self.Vloc = init_pot(self)
-        return
 
     def _init_W(self):
         """Initialize wave functions."""
@@ -293,7 +292,6 @@ class SCF:
             self.W = guess_pseudo(self, symmetric=self.symmetric)
         else:
             self.log.error(f'No guess found for "{self.guess}".')
-        return
 
     def __repr__(self):
         """Print the parameters stored in the SCF object."""
@@ -316,7 +314,6 @@ class SCF:
     def verbose(self, level):
         self._verbose = get_level(level)
         self.log.verbose = self._verbose
-        return
 
 
 class RSCF(SCF):

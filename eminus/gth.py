@@ -154,21 +154,21 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     if l == 0:  # s-channel
         if iprj == 1:
             return Vprj
-        elif iprj == 2:
+        if iprj == 2:
             return 2 / np.sqrt(15) * (3 - Gr2) * Vprj
-        elif iprj == 3:
+        if iprj == 3:
             return (4 / 3) / np.sqrt(105) * (15 - 10 * Gr2 + Gr2**2) * Vprj
     elif l == 1:  # p-channel
         if iprj == 1:
             return 1 / np.sqrt(3) * Gm * Vprj
-        elif iprj == 2:
+        if iprj == 2:
             return 2 / np.sqrt(105) * Gm * (5 - Gr2) * Vprj
-        elif iprj == 3:
+        if iprj == 3:
             return (4 / 3) / np.sqrt(1155) * Gm * (35 - 14 * Gr2 + Gr2**2) * Vprj
     elif l == 2:  # d-channel
         if iprj == 1:
             return 1 / np.sqrt(15) * Gm**2 * Vprj
-        elif iprj == 2:
+        if iprj == 2:
             return (2 / 3) / np.sqrt(105) * Gm**2 * (7 - Gr2) * Vprj
     elif l == 3:  # f-channel
         # Only one projector

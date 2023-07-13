@@ -91,4 +91,3 @@ def write_json(object, filename):
 
     with open(filename, 'w') as fp:
         json.dump(object, fp, cls=CustomEncoder)
-    return

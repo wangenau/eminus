@@ -71,35 +71,35 @@ def Ylm_real(l, m, G):  # noqa: C901
     if l == 1:
         if m == -1:   # py
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.sin(phi)
-        elif m == 0:  # pz
+        if m == 0:  # pz
             return 0.5 * np.sqrt(3 / np.pi) * cos_theta
-        elif m == 1:  # px
+        if m == 1:  # px
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.cos(phi)
     elif l == 2:
         if m == -2:    # dxy
             return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.sin(2 * phi)
-        elif m == -1:  # dyz
+        if m == -1:  # dyz
             return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.sin(phi)
-        elif m == 0:   # dz2
+        if m == 0:   # dz2
             return 0.25 * np.sqrt(5 / np.pi) * (3 * cos_theta**2 - 1)
-        elif m == 1:   # dxz
+        if m == 1:   # dxz
             return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.cos(phi)
-        elif m == 2:   # dx2-y2
+        if m == 2:   # dx2-y2
             return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.cos(2 * phi)
     elif l == 3:
         if m == -3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.sin(3 * phi)
-        elif m == -2:
+        if m == -2:
             return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.sin(2 * phi)
-        elif m == -1:
+        if m == -1:
             return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.sin(phi)
-        elif m == 0:
+        if m == 0:
             return 0.25 * np.sqrt(7 / np.pi) * (5 * cos_theta**3 - 3 * cos_theta)
-        elif m == 1:
+        if m == 1:
             return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.cos(phi)
-        elif m == 2:
+        if m == 2:
             return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.cos(2 * phi)
-        elif m == 3:
+        if m == 3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
     log.error(f'No definition found for Ylm({l}, {m}).')

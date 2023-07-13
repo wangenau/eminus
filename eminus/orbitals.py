@@ -147,4 +147,3 @@ def cube_writer(atoms, type, orbitals):
                 filename = f'{name}_{type}_{i}{n_spin}.cube'
                 log.info(f'Write {filename}...')
                 write_cube(atoms, filename, orbitals[spin, :, i])
-    return

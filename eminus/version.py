@@ -36,7 +36,6 @@ def info():
                 print(f'{pkg:<9}: Dependency not installed')
             elif pkg in extras:
                 print(f'{pkg:<9}: Extra not installed')
-    return
 
 
 if __name__ == '__main__':

@@ -19,7 +19,6 @@ class ConfigClass():
         self.use_pylibxc = True   # Use Libxc over PySCF if available
         self.threads = None       # Read threads from environment variables by default
         self.verbose = 'INFO'     # Only display warnings and worse by default
-        return
 
     @property
     def use_torch(self):
@@ -37,7 +36,6 @@ class ConfigClass():
     @use_torch.setter
     def use_torch(self, value):
         self._use_torch = value
-        return
 
     @property
     def use_gpu(self):
@@ -51,7 +49,6 @@ class ConfigClass():
     @use_gpu.setter
     def use_gpu(self, value):
         self._use_gpu = value
-        return
 
     @property
     def use_pylibxc(self):
@@ -67,7 +64,6 @@ class ConfigClass():
     @use_pylibxc.setter
     def use_pylibxc(self, value):
         self._use_pylibxc = value
-        return
 
     @property
     def threads(self):
@@ -77,9 +73,8 @@ class ConfigClass():
                 if self.use_torch:
                     import torch
                     return torch.get_num_threads()
-                else:
-                    # Read the OMP threads for the default operators
-                    return int(os.environ['OMP_NUM_THREADS'])
+                # Read the OMP threads for the default operators
+                return int(os.environ['OMP_NUM_THREADS'])
             except KeyError:
                 return None
         return int(self._threads)
@@ -91,8 +86,7 @@ class ConfigClass():
             if self.use_torch:
                 import torch
                 return torch.set_num_threads(value)
-            else:
-                os.environ['OMP_NUM_THREADS'] = str(value)
+            os.environ['OMP_NUM_THREADS'] = str(value)
         return None
 
     @property
@@ -104,7 +98,6 @@ class ConfigClass():
     def verbose(self, value):
         # Logic in setter to run it on initialization
         log.verbose = value
-        return
 
     def info(self):
         """Print configuration and performance information."""

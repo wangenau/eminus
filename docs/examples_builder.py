@@ -34,7 +34,6 @@ def generate(*args):
                     fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
             # Add example subfile to index
             f_index.write(f'\n   {example.name}.rst')
-    return
 
 
 def parse(script):
@@ -64,4 +63,3 @@ def parse(script):
 def clean(*args):
     """Remove generated examples after build."""
     shutil.rmtree('docs/_examples')
-    return

@@ -226,9 +226,9 @@ def parse_xc_pyscf(xc_id):
     # Use the same values as in parse_xc_libxc
     if is_lda(xc_id):
         return 1
-    elif is_gga(xc_id):
+    if is_gga(xc_id):
         return 2
-    elif is_meta_gga(xc_id):
+    if is_meta_gga(xc_id):
         return 4
     return -1
 

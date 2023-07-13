@@ -16,8 +16,7 @@ def view(*args, **kwargs):
     """Unified display function."""
     if isinstance(args[0], str):
         return view_file(*args, **kwargs)
-    else:
-        return view_atoms(*args, **kwargs)
+    return view_atoms(*args, **kwargs)
 
 
 def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
@@ -112,7 +111,6 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
                       hoverlabel_bgcolor='black',
                       template='none')
     fig.show()
-    return
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
@@ -257,9 +255,7 @@ def executed_in_notebook():
         shell = get_ipython().__class__.__name__
         if shell == 'ZMQInteractiveShell':  # Jupyter notebook or qtconsole
             return True
-        elif shell == 'TerminalInteractiveShell':  # Terminal running IPython
-            return False
-        else:  # Other type
-            return False
+        # Terminal running IPython or other type
+        return False
     except NameError:
         return False

@@ -55,7 +55,6 @@ def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
 
     with open(filename, mode) as fp:
         fp.write(create_pdb_str(atom, X, a=atoms.a))
-    return
 
 
 def create_pdb_str(atom, X, a=None):

@@ -34,9 +34,6 @@ ignore = [
     # S101: Use of `assert` detected
     # This should not introduce a security issue for us
     "S101",
-    # RET505: Unnecessary `else` after `return` statement
-    # Having an explicit else can improve the readability
-    "RET505",
     # SIM108: Use ternary operator instead of `if`-`else`-block
     # if-else blocks should be written down explicitly
     "SIM108",

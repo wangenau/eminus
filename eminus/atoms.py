@@ -182,7 +182,6 @@ class Atoms:
 
         # Get the number of atoms
         self.Natoms = len(self.atom)
-        return
 
     def _set_charge(self):
         """Validate the Z input and calculate charges if necessary."""
@@ -208,7 +207,6 @@ class Atoms:
                 gth_dict = read_gth(self.atom[ia], psp_path=psp_path)
                 Z.append(gth_dict['Zion'])
             self.Z = np.asarray(Z)
-        return
 
     def _set_cell_size(self):
         """Validate the a input."""
@@ -217,7 +215,6 @@ class Atoms:
             self.a = self.a * np.ones(3)
         if isinstance(self.a, (list, tuple)):
             self.a = np.asarray(self.a)
-        return
 
     def _set_positions(self):
         """Validate the X and center input and center the system if desired."""
@@ -239,7 +236,6 @@ class Atoms:
             X = self.X
             com = center_of_mass(X)
             self.X = X - (com - self.a / 2)
-        return
 
     def _set_sampling(self):
         """Validate the s input and calculate it if necessary."""
@@ -261,7 +257,6 @@ class Atoms:
             self.s = self.s * np.ones(3, dtype=int)
         if isinstance(self.s, (list, tuple)):
             self.s = np.asarray(self.s)
-        return
 
     def _set_states(self, Nspin):
         """Validate the f and Nstate input and calculate the states if necessary.
@@ -310,7 +305,6 @@ class Atoms:
             self.f = self.f * np.ones((self.Nspin, self.Nstate))
             # Subtract the leftovers from the last spin state
             self.f[-1, -1] -= np.sum(self.Z) % 2
-        return
 
     def _get_index_matrices(self):
         """Build index matrices M and N to build the real and reciprocal space samplings.
@@ -346,7 +340,6 @@ class Atoms:
         self.Omega = np.abs(det(R))
         # Build real-space sampling points
         self.r = M @ inv(np.diag(self.s)) @ R.T
-        return
 
     def _set_G(self, N):
         """Build G-vectors, build squared magnitudes G2, and generate the active space.
@@ -371,7 +364,6 @@ class Atoms:
 
         # Calculate the structure factor per atom
         self.Sf = np.exp(1j * G @ self.X.T).T
-        return
 
     def _set_operators(self):
         """Set operators of an Atoms class instance at runtime."""
@@ -386,7 +378,6 @@ class Atoms:
         else:
             for op in fft_operators:
                 setattr(type(self), op, getattr(operators, op))
-        return
 
     def __repr__(self):
         """Print the parameters stored in the Atoms object."""
@@ -405,4 +396,3 @@ class Atoms:
     def verbose(self, level):
         self._verbose = get_level(level)
         self.log.verbose = self._verbose
-        return

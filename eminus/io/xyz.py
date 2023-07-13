@@ -106,4 +106,3 @@ def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
             for s in range(len(fods)):
                 for ie in fods[s]:
                     fp.write(f'{elec_symbols[s]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
-    return

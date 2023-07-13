@@ -74,23 +74,20 @@ def setup(app):
     app.connect('builder-inited', examples_builder.generate)
     app.connect('autodoc-skip-member', dunder_skip)
     app.connect('build-finished', examples_builder.clean)
-    return
 
 
 def remove_package_name(fullname):
     """Remove the package name from a given fullname."""
     parts = fullname.split('.')
-    if len(parts) > 1:
-        return '.'.join(parts[1:])
-    else:
+    if len(parts) == 1:
         return parts[0]
+    return '.'.join(parts[1:])
 
 
 def patched_init(self, app):
     """Patch the AutosummaryRenderer init function to add the remove_package_name function."""
     AutosummaryRenderer.__old_init__(self, app)
     self.env.filters['remove_package_name'] = remove_package_name
-    return
 
 
 # Monkey patch the init function

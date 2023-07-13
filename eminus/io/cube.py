@@ -137,4 +137,3 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
             fp.write(f'{textwrap.fill(data_str, width=90)}\n\n')
-    return
