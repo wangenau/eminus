@@ -3,9 +3,10 @@
 import pathlib
 import re
 import shutil
+from typing import Any
 
 
-def generate(*args):
+def generate(app: Any) -> None:
     """Automatically generate examples page from examples folder."""
     # Copy template file and create examples folder
     pathlib.Path('docs/_examples').mkdir(exist_ok=True)
@@ -36,7 +37,7 @@ def generate(*args):
             f_index.write(f'\n   {example.name}.rst')
 
 
-def parse(script):
+def parse(script: str) -> str:
     """Parse Python scripts to display them as rst files."""
     # Start with a horizontal line
     rst = '\n----\n'
@@ -60,6 +61,6 @@ def parse(script):
     return re.sub(comp, r':code:`\1`', rst)
 
 
-def clean(*args):
+def clean(app: Any, exception: Any) -> None:
     """Remove generated examples after build."""
     shutil.rmtree('docs/_examples')

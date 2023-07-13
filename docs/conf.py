@@ -5,6 +5,7 @@ For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 import datetime
+from typing import Any
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
@@ -57,14 +58,14 @@ autodoc_preserve_defaults = True
 napoleon_use_rtype = False
 
 
-def dunder_skip(app, what, name, obj, would_skip, options):
+def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:
     """Exclude all dunder methods."""
     if name.startswith('_'):
         return True
     return would_skip
 
 
-def setup(app):
+def setup(app: Any) -> None:
     """Customize build process."""
     import pathlib
     import sys
@@ -76,7 +77,7 @@ def setup(app):
     app.connect('build-finished', examples_builder.clean)
 
 
-def remove_package_name(fullname):
+def remove_package_name(fullname: str) -> str:
     """Remove the package name from a given fullname."""
     parts = fullname.split('.')
     if len(parts) == 1:
@@ -84,12 +85,12 @@ def remove_package_name(fullname):
     return '.'.join(parts[1:])
 
 
-def patched_init(self, app):
+old_init = AutosummaryRenderer.__init__
+
+def patched_init(self: Any, app: Any) -> None:
     """Patch the AutosummaryRenderer init function to add the remove_package_name function."""
-    AutosummaryRenderer.__old_init__(self, app)
+    old_init(self, app)
     self.env.filters['remove_package_name'] = remove_package_name
 
-
 # Monkey patch the init function
-AutosummaryRenderer.__old_init__ = AutosummaryRenderer.__init__
-AutosummaryRenderer.__init__ = patched_init
+AutosummaryRenderer.__init__ = patched_init  # type: ignore[method-assign]
