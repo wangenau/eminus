@@ -396,3 +396,27 @@ class Atoms:
     def verbose(self, level):
         self._verbose = get_level(level)
         self.log.verbose = self._verbose
+
+    def _operator(*args, **kwargs):
+        """Base operator method to show an error for unbuilt Atoms objects."""
+        log.error('Build the Atoms object with "atoms.build()" to call its operators.')
+
+    # Base definition of operators
+    O = _operator
+    O.__doc__ = """See :func:`~eminus.operators.O`."""
+    L = _operator
+    L.__doc__ = """See :func:`~eminus.operators.L`."""
+    Linv = _operator
+    Linv.__doc__ = """See :func:`~eminus.operators.Linv`."""
+    K = _operator
+    K.__doc__ = """See :func:`~eminus.operators.K`."""
+    T = _operator
+    T.__doc__ = """See :func:`~eminus.operators.T`."""
+    I = _operator
+    I.__doc__ = """See :func:`~eminus.operators.I`."""
+    J = _operator
+    J.__doc__ = """See :func:`~eminus.operators.J`."""
+    Idag = _operator
+    Idag.__doc__ = """See :func:`~eminus.operators.Idag`."""
+    Jdag = _operator
+    Jdag.__doc__ = """See :func:`~eminus.operators.Jdag`."""
