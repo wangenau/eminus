@@ -8,7 +8,9 @@ dev
 - Updated docs
    - Add a list of all packages and its respective licences
 - Coding style
-   - Add type hints to scripts in docs
+   - Add type hints to all globals
+   - Add type hints to scripts in docs and setup.py
+   - Fix a lot of type warnings from mypy
 
 v2.5.0 - Jul 10, 2023
 ---------------------
