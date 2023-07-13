@@ -121,6 +121,7 @@ def test_verbose():
 def test_operators():
     """Test that operators are properly set and callable."""
     atoms = Atoms(*inp).build()
+    assert atoms._operator() is None
     for op in ('O', 'L', 'Linv', 'I', 'J', 'Idag', 'Jdag', 'K', 'T'):
         assert callable(getattr(atoms, op))
 
