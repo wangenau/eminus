@@ -77,6 +77,17 @@ Linting
    pip install ruff
    ruff check .
 
+Type checking
+-------------
+
+| This code is type-checked with `mypy <https://www.mypy-lang.org/>`_.
+| To install mypy and do a static type check, use
+
+.. code-block:: console
+
+   pip install mypy
+   mypy .
+
 Documentation
 -------------
 | The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org>`_, using a custom theme called `Furo <https://pradyunsg.me/furo>`_.

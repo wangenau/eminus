@@ -34,6 +34,17 @@ lint:
       - "*.py"
       - "**/*.py"
 
+##### Type check Python files #####
+typecheck:
+  stage: test
+  script:
+    - pip install mypy
+    - mypy .
+  only:
+    changes:
+      - "*.py"
+      - "**/*.py"
+
 ##### Test and create coverage reports #####
 coverage:
   stage: test

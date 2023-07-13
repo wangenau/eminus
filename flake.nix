@@ -27,6 +27,7 @@
           ### dev ###
           coverage
           furo
+          mypy
           pytest
           pytest-cov
           ruff

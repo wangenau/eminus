@@ -6,14 +6,15 @@ dev
 - New features
    - Add DFT-D3 dispersion correction as an extra
 - Updated docs
-   - Add a list of all packages and its respective licences
-   - Readd documentation of operators to Atoms
+   - Add a list of all packages and their respective licenses
+   - Re-add documentation of operators to Atoms
 - Coding style
+   - Type check with mypy
+   - Fix a lot of type warnings from mypy
    - Add type hints to all globals
    - Add type hints to scripts in docs and setup.py
-   - Fix a lot of type warnings from mypy
 - Miscellaneous
-   - Add an error message when attempting to use the operators of an unbuilt Atoms object
+   - Add an error message when attempting to use operators of an unbuilt Atoms object
 
 v2.5.0 - Jul 10, 2023
 ---------------------

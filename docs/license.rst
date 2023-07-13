@@ -57,6 +57,8 @@ License
      - Apache-2.0
    * - furo
      - MIT
+   * - mypy
+     - MIT
    * - notebook
      - BSD-3-Clause
    * - pytest
