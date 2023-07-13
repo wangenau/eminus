@@ -4,13 +4,13 @@
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
 """
 # Ha in eV (https://en.wikipedia.org/wiki/Hartree)
-electronvolt = eV = 27.211386245988
+electronvolt = eV = 27.211386245988  # type: float
 # Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)
-kcalmol = 627.5094740631
+kcalmol = 627.5094740631  # type: float
 # a0 in Angstrom (https://en.wikipedia.org/wiki/Bohr_radius)
-Angstrom = A = 0.529177210903
+Angstrom = A = 0.529177210903  # type: float
 # e * a0 in Debye (https://en.wikipedia.org/wiki/Hartree_atomic_units)
-Debye = D = 2.541746473
+Debye = D = 2.541746473  # type: float
 
 
 def ha2ev(E):

@@ -265,7 +265,7 @@ def mock_xc(n, Nspin=1, **kwargs):
     return zeros, np.array([zeros] * Nspin), None
 
 
-IMPLEMENTED = {
+IMPLEMENTED: dict = {
     'mock_xc': mock_xc,
     'gga_c_chachiyo': gga_c_chachiyo,
     'gga_c_chachiyo_spin': gga_c_chachiyo_spin,
@@ -293,7 +293,7 @@ IMPLEMENTED = {
     'lda_c_chachiyo_mod_spin': lda_c_chachiyo_mod_spin
 }
 
-XC_MAP = {
+XC_MAP: dict = {
     # lda_x
     '1': 'lda_x',
     's': 'lda_x',
@@ -337,7 +337,7 @@ XC_MAP = {
     'chachiyoc': 'gga_c_chachiyo'
 }
 
-ALIAS = {
+ALIAS: dict = {
     'svwn': 'slater,vwn5',
     'svwn5': 'slater,vwn5',
     'spw92': 'slater,pw92mod',

@@ -5,33 +5,33 @@ For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 import datetime
-from typing import Any
+from typing import Any, Callable
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
 import eminus
 
-project = 'eminus'
-author = 'Wanja Timm Schulze'
-copyright = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
-version = eminus.__version__
-release = version
+project: str = 'eminus'
+author: str = 'Wanja Timm Schulze'
+copyright: str = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
+version: str = eminus.__version__
+release: str = version
 
-extensions = [
+extensions: list = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode'
 ]
-templates_path = ['_templates']
-pygments_style = 'friendly'
-pygments_dark_style = 'native'
+templates_path: list = ['_templates']
+pygments_style: str = 'friendly'
+pygments_dark_style: str = 'native'
 
-language = 'en'
+language: str = 'en'
 
-html_theme = 'furo'
-html_favicon = '_static/logo/eminus_favicon.png'
-html_theme_options = {
+html_theme: str = 'furo'
+html_favicon: str = '_static/logo/eminus_favicon.png'
+html_theme_options: dict = {
     'light_logo': 'logo/eminus_logo.png',
     'light_css_variables': {
         'color-brand-primary': '#006700',
@@ -50,12 +50,12 @@ html_theme_options = {
         }
     ]
 }
-html_static_path = ['_static']
-html_css_files = ['css/custom.css']
-html_show_sphinx = False
+html_static_path: list = ['_static']
+html_css_files: list = ['css/custom.css']
+html_show_sphinx: bool = False
 
-autodoc_preserve_defaults = True
-napoleon_use_rtype = False
+autodoc_preserve_defaults: bool = True
+napoleon_use_rtype: bool = False
 
 
 def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:
@@ -86,7 +86,7 @@ def remove_package_name(fullname: str) -> str:
 
 
 # Back up of the original init function
-old_init = AutosummaryRenderer.__init__
+old_init: Callable = AutosummaryRenderer.__init__
 
 def patched_init(self: Any, app: Any) -> None:
     """Patch the AutosummaryRenderer init function to add the remove_package_name function."""

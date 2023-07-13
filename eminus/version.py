@@ -4,10 +4,10 @@ import importlib
 import platform
 import sys
 
-__version__ = '2.5.0'
-logo = (' ___ _____ _ ___ _ _ ___ \n'
-        '| -_|     | |   | | |_ -|\n'
-        '|___|_|_|_|_|_|_|___|___|\n')
+__version__: str = '2.5.0'
+logo: str = (' ___ _____ _ ___ _ _ ___ \n'
+             '| -_|     | |   | | |_ -|\n'
+             '|___|_|_|_|_|_|_|___|___|\n')
 
 
 def info():
