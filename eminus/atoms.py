@@ -81,7 +81,7 @@ class Atoms:
             Default: None
     """
     def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=None, f=None,
-                 Nstate=None, verbose=None) -> None:
+                 Nstate=None, verbose=None):
         """Initialize the Atoms object."""
         self.atom = atom      # Atom symbols
         self.X = X            # Atom positions
@@ -379,7 +379,7 @@ class Atoms:
             for op in fft_operators:
                 setattr(type(self), op, getattr(operators, op))
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         """Print the parameters stored in the Atoms object."""
         out = 'Atom  Charge  Position'
         for i in range(self.Natoms):
