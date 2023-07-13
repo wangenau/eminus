@@ -76,7 +76,7 @@ class SCF:
             Default: 'info'
     """
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 cgform=1, sic=False, disp=False, symmetric=False, min=None, verbose=None):
+                 cgform=1, sic=False, disp=False, symmetric=False, min=None, verbose=None) -> None:
         """Initialize the SCF object."""
         self.atoms = atoms          # Atoms object
         self.xc = xc.lower()        # Exchange-correlation functional
@@ -293,7 +293,7 @@ class SCF:
         else:
             self.log.error(f'No guess found for "{self.guess}".')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Print the parameters stored in the SCF object."""
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return f'XC functionals: {self.xc}\n' \

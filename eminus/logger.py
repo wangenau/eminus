@@ -12,7 +12,7 @@ class CustomLogger(logging.Logger):
     Args:
         name (str): Logger name.
     """
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         """Initialize the CustomLogger object."""
         super().__init__(name)
 

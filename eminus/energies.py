@@ -30,7 +30,7 @@ class Energy:
         """Total energy is the sum of all energy contributions."""
         return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Print the energies stored in the Energy object."""
         out = ''
         for ie in dataclasses.fields(self):

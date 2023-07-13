@@ -13,7 +13,7 @@ class ConfigClass():
     An instance of this class will be set as the same name as this module. This will effectively
     make this module a singleton data class.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the ConfigClass object."""
         self.use_torch = True     # Use the faster Torch FFTs if available
         self.use_gpu = False      # Disable GPU by default, since it was slower in my tests
