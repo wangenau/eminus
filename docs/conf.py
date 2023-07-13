@@ -85,6 +85,7 @@ def remove_package_name(fullname: str) -> str:
     return '.'.join(parts[1:])
 
 
+# Back up of the original init function
 old_init = AutosummaryRenderer.__init__
 
 def patched_init(self: Any, app: Any) -> None:
