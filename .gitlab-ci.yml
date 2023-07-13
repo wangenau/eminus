@@ -91,7 +91,6 @@ platform:macos:
   image: sickcodes/docker-osx:latest
   before_script:
     - python3 -m ensurepip
-    - python3 -m pip config set global.no-warn-script-location true
 
 platform:windows:
   extends: .pytest-pedantic
