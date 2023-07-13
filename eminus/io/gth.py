@@ -24,7 +24,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
         dict: GTH parameters.
     """
     if psp_path in ('pade', 'pbe'):
-        file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+        file_path = pathlib.Path(inspect.stack()[0][1]).parent
         file_path = file_path.parent.joinpath(f'psp/{psp_path}')
     else:
         file_path = pathlib.Path(psp_path)

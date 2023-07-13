@@ -17,7 +17,7 @@ def test_viewer(name):
     from nbconvert.preprocessors import ExecutePreprocessor
     from nbformat import read
 
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    file_path = pathlib.Path(inspect.stack()[0][1]).parent
     os.environ['PYTEST_TEST_DIR'] = str(file_path)
     with open(f'{file_path}/{name}.ipynb', 'r') as fh:
         nb = read(fh, as_version=4)
@@ -31,5 +31,5 @@ def test_executed_in_notebook():
 
 
 if __name__ == '__main__':
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

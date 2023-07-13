@@ -56,5 +56,5 @@ def test_scf(disp):
 if __name__ == '__main__':
     import inspect
     import pathlib
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

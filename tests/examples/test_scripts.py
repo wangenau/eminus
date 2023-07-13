@@ -10,7 +10,7 @@ import pytest
 
 def execute_example(name):
     """Test the execution of a given Python script."""
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    file_path = pathlib.Path(inspect.stack()[0][1]).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
     runpy.run_path(f'{name}.py')
@@ -78,5 +78,5 @@ def test_12():  # noqa: D103
 
 
 if __name__ == '__main__':
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

@@ -38,7 +38,7 @@ def test_mock():
 
 def test_custom_files():
     """Test the option to use custom GTH files in Atoms and SCF."""
-    file_path = str(pathlib.Path(inspect.getfile(inspect.currentframe())).parent)
+    file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atoms = Atoms('B', (0, 0, 0), Z=file_path).build()
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
@@ -47,5 +47,5 @@ def test_custom_files():
 
 if __name__ == '__main__':
     import pytest
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

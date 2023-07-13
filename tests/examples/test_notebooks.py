@@ -29,7 +29,7 @@ def test_notebooks(name, trash):
     from nbconvert.preprocessors import ExecutePreprocessor
     from nbformat import read
 
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    file_path = pathlib.Path(inspect.stack()[0][1]).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
     with open(f'{name}.ipynb', 'r') as fh:
@@ -41,5 +41,5 @@ def test_notebooks(name, trash):
 
 
 if __name__ == '__main__':
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

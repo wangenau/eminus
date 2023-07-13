@@ -11,7 +11,7 @@ if __name__ == '__main__':
     import urllib.request
     import zipfile
 
-    psp_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    psp_path = pathlib.Path(inspect.stack()[0][1]).parent
     file = 'master.zip'
     # Download files
     url = f'https://github.com/cp2k/cp2k-data/archive/refs/heads/{file}'

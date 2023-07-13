@@ -22,7 +22,7 @@ E_ref = {
 @pytest.mark.parametrize('system', E_ref.keys())
 def test_unpolarized(system):
     """Compare total energies for a test system with a reference value (spin-paired)."""
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe())).parent
+    file_path = pathlib.Path(inspect.stack()[0][1]).parent
     a = 10
     ecut = 10
     s = 30
@@ -38,5 +38,5 @@ def test_unpolarized(system):
 
 
 if __name__ == '__main__':
-    file_path = pathlib.Path(inspect.getfile(inspect.currentframe()))
+    file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
