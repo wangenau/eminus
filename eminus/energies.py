@@ -6,9 +6,9 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_grad_field, get_n_single, solve_poisson
+from .dft import get_n_single, solve_poisson
 from .extras import dispersion
-from .gga import get_tau
+from .gga import get_grad_field, get_tau
 from .logger import log
 from .xc import get_exc
 

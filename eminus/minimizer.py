@@ -4,8 +4,9 @@ import logging
 
 import numpy as np
 
-from .dft import get_grad, get_grad_field, get_n_spin, get_n_total, get_tau, orth, solve_poisson
+from .dft import get_grad, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E
+from .gga import get_grad_field, get_tau
 from .logger import log, name
 from .utils import dotprod
 from .xc import get_xc

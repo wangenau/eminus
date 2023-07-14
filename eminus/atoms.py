@@ -170,15 +170,15 @@ class Atoms:
             # Insert a whitespace before every capital letter, these can appear once or none at all
             # Or insert before digits, these can appear at least once
             self.atom = re.sub(r'([A-Z?]|\d+)', r' \1', self.atom).split()
-            atom = []
+            atom_list = []
             for ia in self.atom:
                 if ia.isdigit():
                     # if ia is a integer, append the previous atom ia-1 times
-                    atom += [atom[-1]] * (int(ia) - 1)
+                    atom_list += [atom_list[-1]] * (int(ia) - 1)
                 else:
                     # If ia is a string, add it to the results list
-                    atom += [ia]
-            self.atom = atom
+                    atom_list += [ia]
+            self.atom = atom_list
 
         # Get the number of atoms
         self.Natoms = len(self.atom)

@@ -252,7 +252,7 @@ def executed_in_notebook():
         bool: Weather in a notebook or not.
     """
     try:
-        shell = get_ipython().__class__.__name__
+        shell = get_ipython().__class__.__name__  # type: ignore[name-defined]
         if shell == 'ZMQInteractiveShell':  # Jupyter notebook or qtconsole
             return True
         # Terminal running IPython or other type

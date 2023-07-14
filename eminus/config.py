@@ -137,7 +137,7 @@ use_gpu: bool
 use_pylibxc: bool
 threads: int
 verbose: Union[int, str]
-info: Callable
+info: Callable[[], None]
 
 # Do not initialize the class when Sphinx is running
 # Since we set the class instance to the module name Sphinx will only document the main docstring of

@@ -62,8 +62,8 @@ def read_cube(filename):
 
     # The rest of the data is the field data
     # Split the strings, flatten the lists of lists, and convert to a float numpy array
-    field_list = [l.split() for l in lines[6 + offset:]]
-    field_list = [item for sublist in field_list for item in sublist]
+    tmp_list = [l.split() for l in lines[6 + offset:]]
+    field_list = [item for sublist in tmp_list for item in sublist]
     field = np.asarray(field_list, dtype=float)
     return atom, X, Z, a, s, field
 
