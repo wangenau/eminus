@@ -2,7 +2,7 @@
 """Atomic data collections."""
 
 # Map atom symbols and atom numbers
-SYMBOL2NUMBER: dict = {
+SYMBOL2NUMBER = {
     'X': 0,
     'H': 1,
     'He': 2,
@@ -110,10 +110,10 @@ SYMBOL2NUMBER: dict = {
 }
 
 # Map atom numbers and atom symbols
-NUMBER2SYMBOL: dict = {value: key for key, value in SYMBOL2NUMBER.items()}
+NUMBER2SYMBOL = {value: key for key, value in SYMBOL2NUMBER.items()}
 
 # Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/__init__.py
-COVALENT_RADII: dict = {
+COVALENT_RADII = {
     'X': 0.3779452249251541,
     'H': 0.5858150986339887,
     'He': 0.5291233148952157,
@@ -219,7 +219,7 @@ COVALENT_RADII: dict = {
 }
 
 # Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/colors.py
-CPK_COLORS: dict = {
+CPK_COLORS = {
     'X': '#ff0000',
     'H': '#ffffff',
     'He': '#ffc0ca',

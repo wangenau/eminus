@@ -99,7 +99,7 @@ def init_pot(scf):
     return pot
 
 
-IMPLEMENTED: dict = {
+IMPLEMENTED = {
     'harmonic': harmonic,
     'coulomb': coulomb,
     'ge': ge

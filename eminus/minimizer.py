@@ -498,7 +498,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     return costs
 
 
-IMPLEMENTED: dict = {
+IMPLEMENTED = {
     'sd': sd,
     'lm': lm,
     'pclm': pclm,
