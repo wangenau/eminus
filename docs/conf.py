@@ -5,7 +5,7 @@ For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
 import datetime
-from typing import Any, Callable
+from typing import Any, Callable, Dict, List, Union
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
@@ -17,13 +17,13 @@ copyright: str = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
 version: str = eminus.__version__
 release: str = version
 
-extensions: list = [
+extensions: List[str] = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode'
 ]
-templates_path: list = ['_templates']
+templates_path: List[str] = ['_templates']
 pygments_style: str = 'friendly'
 pygments_dark_style: str = 'native'
 
@@ -31,7 +31,7 @@ language: str = 'en'
 
 html_theme: str = 'furo'
 html_favicon: str = '_static/logo/eminus_favicon.png'
-html_theme_options: dict = {
+html_theme_options: Dict[str, Union[str, Dict[str, str], List[Dict[str, str]]]] = {
     'light_logo': 'logo/eminus_logo.png',
     'light_css_variables': {
         'color-brand-primary': '#006700',
@@ -50,8 +50,8 @@ html_theme_options: dict = {
         }
     ]
 }
-html_static_path: list = ['_static']
-html_css_files: list = ['css/custom.css']
+html_static_path: List[str] = ['_static']
+html_css_files: List[str] = ['css/custom.css']
 html_show_sphinx: bool = False
 
 autodoc_preserve_defaults: bool = True
@@ -86,7 +86,7 @@ def remove_package_name(fullname: str) -> str:
 
 
 # Back up of the original init function
-old_init: Callable = AutosummaryRenderer.__init__
+old_init: Callable[[Any, Any], None] = AutosummaryRenderer.__init__
 
 def patched_init(self: Any, app: Any) -> None:
     """Patch the AutosummaryRenderer init function to add the remove_package_name function."""
@@ -94,4 +94,4 @@ def patched_init(self: Any, app: Any) -> None:
     self.env.filters['remove_package_name'] = remove_package_name
 
 # Monkey patch the init function
-AutosummaryRenderer.__init__ = patched_init  # type: ignore[assignment, method-assign]
+AutosummaryRenderer.__init__ = patched_init

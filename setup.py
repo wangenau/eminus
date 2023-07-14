@@ -5,17 +5,18 @@ For a full list of options see the documentation:
 https://setuptools.pypa.io/en/latest/references/keywords.html
 """
 import re
+from typing import Dict, List
 
 from setuptools import find_packages, setup
 
 with open('eminus/version.py', 'r') as fh:
     version: str = \
-        re.search(r"__version__: str = '(.*?)'", fh.read()).group(1)  # type: ignore[union-attr]
+        re.search(r"__version__ = '(.*?)'", fh.read()).group(1)  # type: ignore[union-attr]
 
 with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description: str = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
 
-extras: dict = {
+extras: Dict[str, List[str]] = {
     'dispersion': [
         'dftd3>=0.6.0'  # Interface for DFT-D3 dispersion corrections
     ],

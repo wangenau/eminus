@@ -11,7 +11,6 @@ dev
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
-   - Add type hints to all globals
    - Add type hints to scripts in docs and setup.py
 - Miscellaneous
    - Add an error message when attempting to use operators of an unbuilt Atoms object
