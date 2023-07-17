@@ -80,6 +80,7 @@ setup(
         'Topic :: Software Development'
     ],
     license='APACHE2.0',
+    keywords=['Python', 'DFT', 'DFT++'],
     include_package_data=True,
     install_requires=[
         'numpy>=1.17',
