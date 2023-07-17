@@ -8,6 +8,7 @@ dev
 - Updated docs
    - Add a list of all packages and their respective licenses
    - Re-add documentation of operators to Atoms
+   - Save the widget state of notebooks to display the NGLView output
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
