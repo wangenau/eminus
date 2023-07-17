@@ -27,7 +27,7 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
         tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
     """
     norm_dn = norm(dn_spin[0], axis=1)
-    ex, vx, _ = lda_x(n, **kwargs)
+    ex, _, _ = lda_x(n, **kwargs)
 
     x = norm_dn / n**(4 / 3) * 2 / 9 * (np.pi / 3)**(1 / 3)
     x1 = x + 1

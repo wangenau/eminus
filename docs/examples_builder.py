@@ -44,7 +44,7 @@ def parse(script: str) -> str:
     last_block_was_code = False
 
     with open(script, 'r') as fh:
-        for line in fh.readlines():
+        for line in fh:
             # Text blocks start with "# # "
             if line.startswith('# # '):
                 rst += f'\n{line.replace("# # ", "")}'
@@ -58,7 +58,7 @@ def parse(script: str) -> str:
 
     # Add the code annotation in front of the first "`"
     comp = re.compile(r'\`(.*?)\`')
-    return re.sub(comp, r':code:`\1`', rst)
+    return comp.sub(r':code:`\1`', rst)
 
 
 def clean(app: Any, exception: Any) -> None:

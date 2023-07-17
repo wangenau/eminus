@@ -124,11 +124,11 @@ def handle_spin_gracefully(func):
         Callable: Decorator.
     """
     @functools.wraps(func)
-    def decorator(object, W, *args, **kwargs):
+    def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
             # If one is brave enough one could add multiprocessing over spin states right here
-            return np.asarray([func(object, Wspin, *args, **kwargs) for Wspin in W])
-        return func(object, W, *args, **kwargs)
+            return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
+        return func(obj, W, *args, **kwargs)
     return decorator
 
 
@@ -168,7 +168,7 @@ def add_maybe_none(a, b):
     Returns:
         ndarray: Sum of a and b.
     """
-    if a is None and b is None:
+    if a is b is None:
         return None
     if a is None:
         return b
