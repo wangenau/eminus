@@ -23,11 +23,11 @@ W_tests = {
 dr = rng.standard_normal(3)
 
 
-@pytest.mark.parametrize('type', ['full', 'full_spin'])
-def test_LinvL(type):
+@pytest.mark.parametrize('field', ['full', 'full_spin'])
+def test_LinvL(field):
     """Test Laplacian operator identity."""
-    out = atoms.Linv(atoms.L(W_tests[type]))
-    test = np.copy(W_tests[type])
+    out = atoms.Linv(atoms.L(W_tests[field]))
+    test = np.copy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -35,11 +35,11 @@ def test_LinvL(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full', 'full_spin'])
-def test_LLinv(type):
+@pytest.mark.parametrize('field', ['full', 'full_spin'])
+def test_LLinv(field):
     """Test Laplacian operator identity."""
-    out = atoms.L(atoms.Linv(W_tests[type]))
-    test = np.copy(W_tests[type])
+    out = atoms.L(atoms.Linv(W_tests[field]))
+    test = np.copy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -47,68 +47,68 @@ def test_LLinv(type):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
-def test_IJ(type):
+@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin'])
+def test_IJ(field):
     """Test forward and backward operator identity."""
-    out = atoms.I(atoms.J(W_tests[type]))
-    test = W_tests[type]
+    out = atoms.I(atoms.J(W_tests[field]))
+    test = W_tests[field]
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                  'active_spin'])
-def test_JI(type):
+@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
+                                   'active_spin'])
+def test_JI(field):
     """Test forward and backward operator identity."""
-    if 'active' in type:
-        out = atoms.J(atoms.I(W_tests[type]), False)
+    if 'active' in field:
+        out = atoms.J(atoms.I(W_tests[field]), False)
     else:
-        out = atoms.J(atoms.I(W_tests[type]))
-    test = W_tests[type]
+        out = atoms.J(atoms.I(W_tests[field]))
+    test = W_tests[field]
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['active', 'active_single', 'active_spin'])
-def test_IdagJdag(type):
+@pytest.mark.parametrize('field', ['active', 'active_single', 'active_spin'])
+def test_IdagJdag(field):
     """Test daggered forward and backward operator identity."""
-    out = atoms.Idag(atoms.Jdag(W_tests[type]))
-    test = W_tests[type]
+    out = atoms.Idag(atoms.Jdag(W_tests[field]))
+    test = W_tests[field]
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full', 'full_single', 'full_spin'])
-def test_JdagIdag(type):
+@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin'])
+def test_JdagIdag(field):
     """Test daggered forward and backward operator identity."""
-    out = atoms.Jdag(atoms.Idag(W_tests[type], True))
-    test = W_tests[type]
+    out = atoms.Jdag(atoms.Idag(W_tests[field], True))
+    test = W_tests[field]
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full_single'])
-def test_hermitian_I(type):
+@pytest.mark.parametrize('field', ['full_single'])
+def test_hermitian_I(field):
     """Test that I and Idag operators are hermitian."""
-    a = W_tests[type]
-    b = W_tests[type] + rng.standard_normal(1)
+    a = W_tests[field]
+    b = W_tests[field] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.I(b)).conj()
     test = b.conj().T @ atoms.Idag(a, True)
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full_single'])
-def test_hermitian_J(type):
+@pytest.mark.parametrize('field', ['full_single'])
+def test_hermitian_J(field):
     """Test that J and Jdag operators are hermitian."""
-    a = W_tests[type]
-    b = W_tests[type] + rng.standard_normal(1)
+    a = W_tests[field]
+    b = W_tests[field] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.J(b)).conj()
     test = b.conj().T @ atoms.Jdag(a)
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('type', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                  'active_spin'])
-def test_TT(type):
+@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
+                                   'active_spin'])
+def test_TT(field):
     """Test translation operator identity."""
-    out = atoms.T(atoms.T(W_tests[type], dr), -dr)
-    test = W_tests[type]
+    out = atoms.T(atoms.T(W_tests[field], dr), -dr)
+    test = W_tests[field]
     assert_allclose(out, test)
 
 

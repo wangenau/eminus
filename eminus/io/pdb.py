@@ -6,13 +6,13 @@ from ..logger import log
 from ..units import bohr2ang
 
 
-def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
+def write_pdb(obj, filename, fods=None, elec_symbols=None, trajectory=False):
     """Generate pdb files from atoms objects.
 
     See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         filename (str): pdb output file path/name.
 
     Keyword Args:
@@ -24,9 +24,9 @@ def write_pdb(object, filename, fods=None, elec_symbols=None, trajectory=False):
         None.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     if not filename.endswith('.pdb'):
         filename += '.pdb'

@@ -61,13 +61,13 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     return loc_orb
 
 
-def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
+def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=None):
     """Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
 
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
@@ -86,9 +86,9 @@ def get_fods(object, basis='pc-1', loc='FB', elec_symbols=None):
         raise
 
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
     loc = loc.upper()
 
     if elec_symbols is None:
@@ -162,20 +162,20 @@ def split_fods(atom, X, elec_symbols=None):
     return atom, X, X_fod
 
 
-def remove_core_fods(object, fods):
+def remove_core_fods(obj, fods):
     """Remove core FODs from a set of FOD coordinates.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         fods (list): FOD positions.
 
     Returns:
         ndarray: Valence FOD positions.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
     if atoms.Nspin == 1 and len(fods[0]) * 2 == np.sum(atoms.f[0]):

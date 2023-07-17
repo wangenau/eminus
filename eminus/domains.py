@@ -6,11 +6,11 @@ from scipy.linalg import norm
 from .tools import center_of_mass
 
 
-def domain_cuboid(object, length, centers=None):
+def domain_cuboid(obj, length, centers=None):
     """Generate a mask for a cuboidal real-space domain.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         length (int | float | list | ndarray): Side length or lengths of the cuboid.
 
     Keyword Args:
@@ -23,9 +23,9 @@ def domain_cuboid(object, length, centers=None):
         ndarray: Boolean mask.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     if isinstance(length, (int, float)):
         length = length * np.ones(3)
@@ -61,11 +61,11 @@ def domain_isovalue(field, isovalue):
     return np.abs(field) > isovalue
 
 
-def domain_sphere(object, radius, centers=None):
+def domain_sphere(obj, radius, centers=None):
     """Generate a mask for a spherical real-space domain.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         radius (float): Radius of the sphere.
 
     Keyword Args:
@@ -78,9 +78,9 @@ def domain_sphere(object, radius, centers=None):
         ndarray: Boolean mask.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     if centers is None:
         centers = center_of_mass(atoms.X)

@@ -55,20 +55,20 @@ def center_of_mass(coords, masses=None):
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
 
 
-def orbital_center(object, psirs):
+def orbital_center(obj, psirs):
     """Calculate the orbital center of masses, e.g., from localized orbitals.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         psirs (ndarray): Set of orbitals in real-space.
 
     Returns:
         bool: Center of masses.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     coms = [np.array([])] * 2
     Ncom = psirs.shape[2]
@@ -164,11 +164,11 @@ def get_ip(scf):
     return -epsilon[-1]
 
 
-def check_ortho(object, func, eps=1e-9):
+def check_ortho(obj, func, eps=1e-9):
     """Check the orthogonality condition for a set of functions.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Keyword Args:
@@ -179,9 +179,9 @@ def check_ortho(object, func, eps=1e-9):
     """
     func = np.atleast_3d(func)
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
     # It makes no sense to calculate anything for only one function
     if atoms.Nstate == 1:
         log.warning('Need at least two functions to check their orthogonality.')
@@ -206,11 +206,11 @@ def check_ortho(object, func, eps=1e-9):
     return ortho_bool
 
 
-def check_norm(object, func, eps=1e-9):
+def check_norm(obj, func, eps=1e-9):
     """Check the normalization condition for a set of functions.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Keyword Args:
@@ -221,9 +221,9 @@ def check_norm(object, func, eps=1e-9):
     """
     func = np.atleast_3d(func)
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
     # We integrate over our cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
@@ -242,20 +242,20 @@ def check_norm(object, func, eps=1e-9):
     return norm_bool
 
 
-def check_orthonorm(object, func):
+def check_orthonorm(obj, func):
     """Check the orthonormality conditions for a set of functions.
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         func (ndarray): Discretized set of functions.
 
     Returns:
         bool: Orthonormality status for the set of functions.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')

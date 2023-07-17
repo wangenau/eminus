@@ -58,11 +58,11 @@ def test_cube(Nspin):
     assert_allclose(np.real(scf.W[0, :, 0]), field, atol=1e-7)
 
 
-@pytest.mark.parametrize('object', [atoms, scf, scf.energies])
-def test_json(object):
+@pytest.mark.parametrize('obj', [atoms, scf, scf.energies])
+def test_json(obj):
     """Test JSON file output and input."""
     filename = 'test.json'
-    write(object, filename)
+    write(obj, filename)
     test = read(filename)
     os.remove(filename)
     for attr in test.__dict__:
@@ -70,9 +70,9 @@ def test_json(object):
         if attr in ('atoms', 'GTH', 'log'):
             continue
         try:
-            assert_allclose(getattr(object, attr), getattr(test, attr))
+            assert_allclose(getattr(obj, attr), getattr(test, attr))
         except TypeError:
-            assert getattr(object, attr) == getattr(test, attr)
+            assert getattr(obj, attr) == getattr(test, attr)
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])

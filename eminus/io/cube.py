@@ -68,14 +68,14 @@ def read_cube(filename):
     return atom, X, Z, a, s, field
 
 
-def write_cube(object, filename, field, fods=None, elec_symbols=None):
+def write_cube(obj, filename, field, fods=None, elec_symbols=None):
     """Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         filename (str): cube output file path/name.
         field (ndarray): Real-space field data.
 
@@ -88,9 +88,9 @@ def write_cube(object, filename, field, fods=None, elec_symbols=None):
     """
     # Atomic units are assumed, so there is no need for conversion.
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     if not filename.endswith('.cube'):
         filename += '.cube'

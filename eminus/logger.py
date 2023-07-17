@@ -58,15 +58,15 @@ handler.setFormatter(formatter)
 logging.root.addHandler(handler)
 
 
-def create_logger(object):
+def create_logger(obj):
     """Create a logger unique to an object.
 
     Args:
-        object: Instance of a class.
+        obj: Instance of a class.
     """
     # Use ID of object to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
-    local_log = logging.getLogger(str(id(object)))
+    local_log = logging.getLogger(str(id(obj)))
     local_log.verbose = log.verbose
     return local_log
 

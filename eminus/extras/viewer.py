@@ -19,13 +19,13 @@ def view(*args, **kwargs):
     return view_atoms(*args, **kwargs)
 
 
-def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
+def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
     """Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python/
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
 
     Keyword Args:
         extra (ndarray | list ): Extra coordinates or FODs to display.
@@ -43,9 +43,9 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     fig = go.Figure()
     # Add species one by one to be able to have them named and be selectable in the legend
@@ -88,7 +88,7 @@ def view_atoms(object, extra=None, plot_n=False, percent=85, surfaces=20):
         if isinstance(plot_n, np.ndarray):
             density = plot_n
         else:
-            density = object.n
+            density = obj.n
         den_data = go.Volume(x=atoms.r[:, 0], y=atoms.r[:, 1], z=atoms.r[:, 2], value=density,
                              name='Density',
                              colorbar_title=f'Density ({percent}%)',

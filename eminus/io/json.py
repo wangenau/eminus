@@ -59,11 +59,11 @@ def read_json(filename):
         return json.load(fh, object_hook=custom_object_hook)
 
 
-def write_json(object, filename):
+def write_json(obj, filename):
     """Save objects in a JSON file.
 
     Args:
-        object: Class object.
+        obj: Class object.
         filename (str): json output file path/name.
     """
     import eminus
@@ -90,4 +90,4 @@ def write_json(object, filename):
         filename += '.json'
 
     with open(filename, 'w') as fp:
-        json.dump(object, fp, cls=CustomEncoder)
+        json.dump(obj, fp, cls=CustomEncoder)

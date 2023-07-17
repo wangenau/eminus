@@ -123,12 +123,12 @@ def WO(scf, write_cubes=False, precondition=True):
     return wo
 
 
-def cube_writer(atoms, type, orbitals):
+def cube_writer(atoms, orb_type, orbitals):
     """Simple cube file writer function.
 
     Args:
         atoms: Atoms object.
-        type (str): Orbital type for the cube file names.
+        orb_type (str): Orbital orb_type for the cube file names.
         orbitals (ndarray): Real-space orbitals.
     """
     # Create the system name
@@ -144,6 +144,6 @@ def cube_writer(atoms, type, orbitals):
             if atoms.f[spin, i] > 0:
                 if atoms.Nspin > 1:
                     n_spin = f'_spin_{spin}'
-                filename = f'{name}_{type}_{i}{n_spin}.cube'
+                filename = f'{name}_{orb_type}_{i}{n_spin}.cube'
                 log.info(f'Write {filename}...')
                 write_cube(atoms, filename, orbitals[spin, :, i])

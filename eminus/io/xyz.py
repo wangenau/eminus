@@ -47,13 +47,13 @@ def read_xyz(filename):
     return atom, X
 
 
-def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
+def write_xyz(obj, filename, fods=None, elec_symbols=None, trajectory=False):
     """Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
-        object: Atoms or SCF object.
+        obj: Atoms or SCF object.
         filename (str): xyz output file path/name.
 
     Keyword Args:
@@ -65,9 +65,9 @@ def write_xyz(object, filename, fods=None, elec_symbols=None, trajectory=False):
         None.
     """
     try:
-        atoms = object.atoms
+        atoms = obj.atoms
     except AttributeError:
-        atoms = object
+        atoms = obj
 
     if not filename.endswith('.xyz'):
         filename += '.xyz'
