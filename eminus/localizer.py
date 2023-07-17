@@ -73,7 +73,8 @@ def get_FO(atoms, psi, fods):
         R = get_R(atoms, psi[spin], fods[spin])
         for i in range(len(R)):
             for j in range(atoms.Nstate):
-                fo[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
+                if atoms.f[spin, j] > 0:
+                    fo[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
     return fo
 
 
