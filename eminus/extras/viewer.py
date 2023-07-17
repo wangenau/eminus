@@ -253,9 +253,8 @@ def executed_in_notebook():
     """
     try:
         shell = get_ipython().__class__.__name__  # type: ignore[name-defined]
-        if shell == 'ZMQInteractiveShell':  # Jupyter notebook or qtconsole
-            return True
-        # Terminal running IPython or other type
-        return False
+        # True for Jupyter notebook or qtconsole
+        # False for terminal running IPython or other type
+        return shell == 'ZMQInteractiveShell'
     except NameError:
         return False

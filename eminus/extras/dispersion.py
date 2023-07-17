@@ -68,7 +68,7 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
         else:
             method = 'pbe'
             log.warning('Functional for the dispersion correction could not be detected, continue'
-                         ' with pbe. You may need to overwrite the functional keyword manually.')
+                        ' with pbe. You may need to overwrite the functional keyword manually.')
     else:
         method = xc
 

@@ -87,10 +87,8 @@ def get_level(verbose):
     if verbose is None:
         return log.verbose
     if isinstance(verbose, int):
-        level = log_levels.get(verbose, 'DEBUG')
-    else:
-        level = verbose.upper()
-    return level
+        return log_levels.get(verbose, 'DEBUG')
+    return verbose.upper()
 
 
 def name(newname):

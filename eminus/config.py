@@ -130,6 +130,7 @@ class ConfigClass():
         else:
             print(f'FFT threads : {self.threads}')
 
+
 # Add type hints for all properties and methods of the ConfigClass to the module
 # This allows type checkers to see that the module has said attribute
 use_torch: bool
