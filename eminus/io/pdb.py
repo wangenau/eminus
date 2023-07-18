@@ -23,10 +23,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=None, trajectory=False):
     Returns:
         None.
     """
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+    atoms = obj.atoms
 
     if not filename.endswith('.pdb'):
         filename += '.pdb'

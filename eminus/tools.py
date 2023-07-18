@@ -65,10 +65,7 @@ def orbital_center(obj, psirs):
     Returns:
         bool: Center of masses.
     """
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+    atoms = obj.atoms
 
     coms = [np.array([])] * 2
     Ncom = psirs.shape[2]
@@ -177,11 +174,9 @@ def check_ortho(obj, func, eps=1e-9):
     Returns:
         bool: Orthogonality status for the set of functions.
     """
+    atoms = obj.atoms
     func = np.atleast_3d(func)
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+
     # It makes no sense to calculate anything for only one function
     if atoms.Nstate == 1:
         log.warning('Need at least two functions to check their orthogonality.')
@@ -219,11 +214,9 @@ def check_norm(obj, func, eps=1e-9):
     Returns:
         bool: Normalization status for the set of functions.
     """
+    atoms = obj.atoms
     func = np.atleast_3d(func)
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+
     # We integrate over our cell, the integration borders then become a=0 and b=cell length
     # The integration prefactor dV is (b-a)/n, with n as the sampling
     # For a 3d integral we have to multiply for every direction
@@ -252,10 +245,7 @@ def check_orthonorm(obj, func):
     Returns:
         bool: Orthonormality status for the set of functions.
     """
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+    atoms = obj.atoms
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')

@@ -42,10 +42,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
-    try:
-        atoms = obj.atoms
-    except AttributeError:
-        atoms = obj
+    atoms = obj.atoms
 
     fig = go.Figure()
     # Add species one by one to be able to have them named and be selectable in the legend
