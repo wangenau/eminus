@@ -31,7 +31,7 @@ def generate(app: Any) -> None:
                              f'eminus/_static/{example.name}.html>`_.\n')
                 # Add download links
                 fp.write('\nDownload')
-                files = sorted(example.glob('[!README.rst, !__pycache_]*'))
+                files = sorted(example.glob('[!README.rst, !__pycache__]*'))
                 for file in files:
                     fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
             # Add example subfile to index
