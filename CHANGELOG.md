@@ -9,12 +9,14 @@ dev
    - Add a list of all packages and their respective licenses
    - Re-add documentation of operators to Atoms
    - Save the widget state of notebooks to display the NGLView output
+   - Add a custom functional example
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
    - Add type hints to scripts in docs and setup.py
 - Miscellaneous
    - Add an error message when attempting to use operators of an unbuilt Atoms object
+
 
 v2.5.0 - Jul 10, 2023
 ---------------------
@@ -34,6 +36,7 @@ v2.5.0 - Jul 10, 2023
 - Updated docs
    - Update the introduction page in the documentation
    - Upload the HTML coverage report
+   - Add a simple geometry optimization example
 - Coding style
    - Simplify H function
    - Simplify minimizer module
@@ -133,6 +136,7 @@ v2.2.0 - Feb 21, 2023
    - Add a nomenclature page of commonly used variables
    - Remove the package name from the module headings
    - Document members of classes
+   - Add a germanium solid example
 - Coding style
    - More secure coding practices
    - Remove the usage of eval, exec, and pickle
@@ -140,7 +144,6 @@ v2.2.0 - Feb 21, 2023
    - Rename save and load to write_json and read_json
    - Fix PW spin-polarized functional
    - Align Chachiyo functional with Libxc
-   - Add a germanium solid example
    - Add a recenter method to the Atoms and SCF class
    - Use pc-1 over pc-0 in the PyCOM extra
    - Add a pyproject.toml

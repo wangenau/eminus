@@ -18,6 +18,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 12_germanium_solid          | Calculate a solid using periodicity |
 | 13_wannier_localization     | Wannier orbital localization |
 | 14_geometry_optimization    | Optimization of the H2 bond distance |
+| 15_custom_functionals       | Usage of customized functionals |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
