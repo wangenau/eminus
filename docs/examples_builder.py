@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Custom examples pages generation utilities."""
+import glob
 import pathlib
 import re
 import shutil
@@ -36,6 +37,11 @@ def generate(app: Any) -> None:
             # Add example subfile to index
             f_index.write(f'\n   {example.name}.rst')
 
+        # Copy all images to the examples folder
+        images = glob.glob('examples/**/*.png')
+        for image in images:
+            shutil.copy2(image, 'docs/_examples/')
+
 
 def parse(script: str) -> str:
     """Parse Python scripts to display them as rst files."""
@@ -49,6 +55,16 @@ def parse(script: str) -> str:
             if line.startswith('# # '):
                 rst += f'\n{line.replace("# # ", "")}'
                 last_block_was_code = False
+                # If there is a figure referenced add the image below the line
+                if '.png' in line:
+                    # Get the image name by searching for its file ending
+                    words = line.split()
+                    for word in words:
+                        if '.png' in word:
+                            image_name = word
+                    # Replace backticks
+                    image_name = image_name.replace('`', '')
+                    rst += f'\n.. image:: {image_name}\n   :align: center\n\n'
             # Otherwise it is a code block
             else:
                 if not last_block_was_code:

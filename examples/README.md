@@ -25,5 +25,8 @@ The following structure has to be kept
 * Each example has its own subfolder
 * Each subfolder contains a README.rst with a title
 * Each subfolder can contain one Python script or one Jupyter notebook with the same name as the subfolder
-* Comments that should be displayed as text start with ##
+* For other files a download button will be generated
+* Comments that should be displayed as text start with # #
 * Comments that should be displayed in code blocks start with #
+* Images should be saved as pngs with unique names
+* Each image should be referenced in the example code in a comment starting with # #
