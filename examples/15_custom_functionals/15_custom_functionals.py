@@ -60,6 +60,8 @@ plt.savefig('correlation_energy_error.png')
 # # These are available in the `xc`, `potentials`, and `minimizer` modules and can be used as seen below
 # # Plug the fitted parameters into the custom functional
 eminus.xc.IMPLEMENTED['custom'] = lambda n, **kwargs: custom_functional(n, *fitted_b)
+# # If the signature of the custom functional matches the signature from eminus it is sufficient to write
+# eminus.xc.IMPLEMENTED['custom'] = custom_functional
 
 # # Start an SCF calculation with our custom functional
 scf = SCF(atoms, xc='lda,custom')
