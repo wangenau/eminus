@@ -52,7 +52,7 @@ plt.axhline(c='dimgrey', ls='--', marker='')
 plt.plot(rs, functional_wrapper(rs, b) - ec, label='Chachiyo')
 plt.plot(rs, functional_wrapper(rs, *fitted_b) - ec, label='mod. Chachiyo')
 plt.xlabel(r'$r_s$')
-plt.ylabel(r'$E_c - E_c^\mathrm{ref}$ [$E_\mathrm{h}$]')
+plt.ylabel(r'$E_c - E_c^\mathrm{QMC}$ [$E_\mathrm{h}$]')
 plt.legend()
 plt.savefig('correlation_energy_error.png')
 

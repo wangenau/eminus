@@ -9,6 +9,7 @@ font.size: 15.0
 
 ## AXES
 axes.labelsize: 20.0
+axes.xmargin: .01
 
 ## FIGURE
 figure.figsize: 6.4, 4
