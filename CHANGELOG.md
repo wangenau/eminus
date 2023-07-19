@@ -17,7 +17,6 @@ dev
 - Miscellaneous
    - Add an error message when attempting to use operators of an unbuilt Atoms object
 
-
 v2.5.0 - Jul 10, 2023
 ---------------------
 - New features

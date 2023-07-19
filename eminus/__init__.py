@@ -33,5 +33,4 @@ __all__ = ['config', 'Atoms', 'get_epsilon', 'get_psi', 'info', 'log', 'read', '
 def demo():
     """Fast demo calculation for helium."""
     atoms = Atoms('He', (0, 0, 0), ecut=5)
-    scf = SCF(atoms)
-    scf.run()
+    SCF(atoms).run()
