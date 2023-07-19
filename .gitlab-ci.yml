@@ -74,7 +74,7 @@ coverage:
       - docs/*
       - docs/**/*
 
-##### Test the minimal supported versions #####
+##### Test the minimally supported versions #####
 minimal:
   extends: .pytest
   image: python:3.7-slim
@@ -128,11 +128,11 @@ installation:
     # Test the source distribution
     - tar -xf eminus-*.tar.gz
     - pip install eminus-*/.
-    - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
+    - python -c "import eminus; eminus.demo()"
     # Test the wheel
     - pip uninstall eminus -y
     - pip install eminus-*.whl
-    - python -c "import eminus; eminus.SCF(eminus.Atoms('He', (0, 0, 0)), etol=10).run()"
+    - python -c "import eminus; eminus.demo()"
 
 ##### Build documentation #####
 pages:

@@ -28,3 +28,10 @@ from .version import __version__, info
 __all__ = ['config', 'Atoms', 'get_epsilon', 'get_psi', 'info', 'log', 'read', 'read_cube',
            'read_json', 'read_xyz', 'RSCF', 'SCF', 'USCF', 'write', 'write_cube', 'write_json',
            'write_pdb', 'write_xyz', '__version__']
+
+
+def demo():
+    """Fast demo calculation for helium."""
+    atoms = Atoms('He', (0, 0, 0), ecut=5)
+    scf = SCF(atoms)
+    scf.run()
