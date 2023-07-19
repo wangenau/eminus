@@ -10,12 +10,14 @@ dev
    - Re-add documentation of operators to Atoms
    - Save the widget state of notebooks to display the NGLView output
    - Add a custom functional example
+   - Improve the geometry optimization example
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
    - Add type hints to scripts in docs and setup.py
 - Miscellaneous
    - Add an error message when attempting to use operators of an unbuilt Atoms object
+   - Add Matplotlib to the viewer setup to generate images in the examples
 
 v2.5.0 - Jul 10, 2023
 ---------------------
