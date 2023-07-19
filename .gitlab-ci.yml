@@ -156,7 +156,8 @@ pages:
     # Compress all text files
     - find public \( -name '*.css' -o -name '*.html' -o -name '*.js' -o -name '*.svg' \) -exec gzip -vrk9 {} \;
     # Copy the coverage artifacts
-    - cp -r htmlcov/ public/
+    # For the dev build we do not generate a coverage report, fail without an error in that case
+    - cp -r htmlcov/ public/ || true
   artifacts:
     paths:
       - public
@@ -169,3 +170,15 @@ pages:
       - eminus/version.py
     refs:
       - main
+
+##### Build the documentation for the dev branch under a different URL #####
+pages:dev:
+  extends: pages
+  dependencies:
+  after_script:
+    - echo "dev pages available at https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
+  only:
+    refs:
+      - dev
+  variables:
+    PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
