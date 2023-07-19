@@ -33,7 +33,8 @@ def generate(app: Any) -> None:
                 fp.write('\nDownload')
                 files = sorted(example.glob('[!README.rst, !__pycache__]*'))
                 for file in files:
-                    fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
+                    if '.png' not in str(file):  # Somehow only some pngs are added to downloads
+                        fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
             # Add example subfile to index
             f_index.write(f'\n   {example.name}.rst')
 
