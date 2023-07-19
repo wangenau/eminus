@@ -1,0 +1,19 @@
+#### MATPLOTLIBRC FORMAT
+
+## LINES
+lines.linestyle: -.
+lines.marker: o
+
+## FONT
+font.size: 15.0
+
+## AXES
+axes.labelsize: 20.0
+
+## FIGURE
+figure.figsize: 6.4, 4
+figure.dpi: 200
+figure.autolayout: True
+
+## SAVING FIGURES
+savefig.bbox: tight

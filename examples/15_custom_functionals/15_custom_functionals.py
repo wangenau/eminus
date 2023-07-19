@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
@@ -11,7 +12,7 @@ scf = SCF(atoms, xc='lda,chachiyo')
 scf.run()
 print(f'Energies with the Chachiyo functional:\n{scf.energies}')
 
-# # Build a new custom functional by fitting the Chachiyo functional over the Quantum Monte Carlo results from Ceperley and Alder
+# # Build a new custom functional by fitting the Chachiyo functional over the Quantum Monte Carlo (QMC) results from Ceperley and Alder
 # # The values are the paramagnetic correlation energies from Tab. 5 in Can. J. Phys. 58, 1200
 rs = np.array([2, 5, 10, 20, 50, 100])
 # Convert from -mRy to Hartree
@@ -39,13 +40,24 @@ def functional_wrapper(rs, b):
     n = 3 / (4 * np.pi * rs**3)  # Density from Wigner-Seitz radius
     return custom_functional(n, b)[0]
 
-# # Do the fit over the Quantum Monte Carlo data
+# # Do the fit over the QMC data
 # # The resulting parameters won't recover the high-density limit but can be more accurate in different density regimes
 fitted_b, _ = curve_fit(functional_wrapper, rs, ec, p0=b)
 print(f'\nFitted parameter:\nb = {fitted_b[0]:.7f}')
 
-# # Some modules of eminus have an IMPLEMENTED lookup dictionary for functions that can be extended
-# # These are available in the xc, potentials, and minimizer modules and can be used as seen below
+# # Plot the error of the correlation energies compared to the QMC data
+# # Find the plot named `correlation_energy_error.png`
+plt.style.use('../eminus.mplstyle')
+plt.axhline(c='dimgrey', ls='--', marker='')
+plt.plot(rs, functional_wrapper(rs, b) - ec, label='Chachiyo')
+plt.plot(rs, functional_wrapper(rs, *fitted_b) - ec, label='mod. Chachiyo')
+plt.xlabel(r'$r_s$')
+plt.ylabel(r'$E_c - E_c^\mathrm{ref}$ [$E_\mathrm{h}$]')
+plt.legend()
+plt.savefig('correlation_energy_error.png')
+
+# # Some modules of eminus have an `IMPLEMENTED` lookup dictionary for functions that can be extended
+# # These are available in the `xc`, `potentials`, and `minimizer` modules and can be used as seen below
 # # Plug the fitted parameters into the custom functional
 eminus.xc.IMPLEMENTED['custom'] = lambda n, **kwargs: custom_functional(n, *fitted_b)
 

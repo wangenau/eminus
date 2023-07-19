@@ -77,6 +77,15 @@ def test_12():  # noqa: D103
     clean_example(['Ge_solid_density.cube'])
 
 
+@pytest.mark.slow()
+def test_14():  # noqa: D103
+    execute_example('14_geometry_optimization')
+
+
+def test_15():  # noqa: D103
+    execute_example('15_custom_functionals')
+
+
 if __name__ == '__main__':
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

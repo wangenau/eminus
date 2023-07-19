@@ -27,8 +27,9 @@ extras: Dict[str, List[str]] = {
         'torch>=1.8'  # Faster FFT operators using Torch
     ],
     'viewer': [
-        'nglview>=2.6.5',  # Molecule and isosurface viewer
-        'plotly>=4.5'      # Grid visualization
+        'matplotlib>=1.5.0',  # Plotting library
+        'nglview>=2.6.5',     # Molecule and isosurface viewer
+        'plotly>=4.5'         # Grid visualization
     ]
 }
 extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
