@@ -19,6 +19,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 13_wannier_localization     | Wannier orbital localization |
 | 14_geometry_optimization    | Optimization of the H2 bond distance |
 | 15_custom_functionals       | Usage of customized functionals |
+| 16_custom_functionals_spin  | Extension of example 15 for the spin-polarized case |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
