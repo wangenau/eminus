@@ -79,11 +79,18 @@ def test_12():  # noqa: D103
 
 @pytest.mark.slow()
 def test_14():  # noqa: D103
+    pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
     execute_example('14_geometry_optimization')
 
 
 def test_15():  # noqa: D103
+    pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
     execute_example('15_custom_functionals')
+
+
+def test_16():  # noqa: D103
+    pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
+    execute_example('16_custom_functionals_spin')
 
 
 if __name__ == '__main__':
