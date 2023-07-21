@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Consolidated configuration module."""
 import os
+import pathlib
 import sys
 from typing import Callable, Union
 
@@ -143,5 +144,5 @@ info: Callable[[], None]
 # Do not initialize the class when Sphinx is running
 # Since we set the class instance to the module name Sphinx will only document the main docstring of
 # the class without the properties
-if 'sphinx-build' not in os.path.basename(sys.argv[0]):
+if 'sphinx-build' not in pathlib.Path(sys.argv[0]).name:
     sys.modules[__name__] = ConfigClass()  # type: ignore[assignment]
