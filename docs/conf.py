@@ -54,6 +54,7 @@ html_static_path: List[str] = ['_static']
 html_css_files: List[str] = ['css/custom.css']
 html_show_sphinx: bool = False
 
+autodoc_member_order: str = 'groupwise'
 autodoc_preserve_defaults: bool = True
 napoleon_use_rtype: bool = False
 
