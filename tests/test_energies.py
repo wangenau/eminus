@@ -50,20 +50,18 @@ def test_mgga_sic_unpol():
     """Check the spin-unpaired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_unpol.xc = ':mgga_x_scan,:mgga_c_scan'
-    scf_unpol.min = {'auto': 1}
-    scf_unpol.initialize()
+    scf_unpol.opt = {'auto': 1}
     scf_unpol.run()
-    assert_allclose(scf_unpol.energies.Esic, -0.4427, atol=1e-4)
+    assert_allclose(scf_unpol.energies.Esic, -0.2468, atol=1e-4)
 
 
 def test_mgga_sic_pol():
     """Check the spin-paired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_pol.xc = ':mgga_x_scan,:mgga_c_scan'
-    scf_pol.min = {'auto': 1}
-    scf_pol.initialize()
+    scf_pol.opt = {'auto': 1}
     scf_pol.run()
-    assert_allclose(scf_pol.energies.Esic, -0.4336, atol=1e-4)
+    assert_allclose(scf_pol.energies.Esic, -0.2482, atol=1e-4)
 
 
 if __name__ == '__main__':

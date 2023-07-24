@@ -29,15 +29,15 @@ def scf_step(scf):
     scf.Y = orth(atoms, scf.W)
     scf.n_spin = get_n_spin(atoms, scf.Y)
     scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
-    if 'gga' in scf.xc_type:
+    if 'gga' in scf._xc_type:
         scf.dn_spin = get_grad_field(atoms, scf.n_spin)
-    if scf.xc_type == 'meta-gga':
+    if scf._xc_type == 'meta-gga':
         scf.tau = get_tau(atoms, scf.Y)
     scf.phi = solve_poisson(atoms, scf.n)
     scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin,
                                                     scf.tau)
-    scf.precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc, 'vsigma': scf.vsigma,
-                       'vtau': scf.vtau}
+    scf._precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc,
+                        'vsigma': scf.vsigma, 'vtau': scf.vtau}
     return get_E(scf)
 
 
@@ -177,13 +177,14 @@ def cg_test(atoms, g, g_old, precondition=True):
     return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
-def cg_method(scf, g, g_old, d_old, precondition=True):
+def cg_method(scf, cgform, g, g_old, d_old, precondition=True):
     """Do different variants of the conjugate gradient method.
 
     Reference: https://indrag49.github.io/Numerical-Optimization/conjugate-gradient-methods-1.html
 
     Args:
         scf: SCF object.
+        cgform (int): Conjugate gradient form.
         g (ndarray): Current gradient.
         g_old (ndarray): Previous gradient.
         d_old (ndarray): Previous search direction.
@@ -202,15 +203,15 @@ def cg_method(scf, g, g_old, d_old, precondition=True):
         Kg, Kg_old = g, g_old
     norm_g = dotprod(g, Kg)
 
-    if scf.cgform == 1:    # Fletcher-Reeves
+    if cgform == 1:    # Fletcher-Reeves
         return norm_g / dotprod(g_old, Kg_old), norm_g
-    if scf.cgform == 2:  # Polak-Ribiere
+    if cgform == 2:  # Polak-Ribiere
         return dotprod(g - g_old, Kg) / dotprod(g_old, Kg_old), norm_g
-    if scf.cgform == 3:  # Hestenes-Stiefel
+    if cgform == 3:  # Hestenes-Stiefel
         return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old), norm_g
-    if scf.cgform == 4:  # Dai-Yuan
+    if cgform == 4:  # Dai-Yuan
         return norm_g / dotprod(g - g_old, d_old), norm_g
-    log.error(f'No cgform found for "{scf.cgform}".')
+    log.error(f'No cgform found for "{cgform}".')
     return None
 
 
@@ -240,7 +241,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         if condition(scf, 'sd', costs):
             break
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
+            g = grad(scf, spin, scf.W, **scf._precomputed)
             scf.W[spin] = scf.W[spin] - betat * g
     return costs
 
@@ -280,7 +281,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     for _ in range(Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
+            g = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin each spin separately
             if scf.log.level <= logging.DEBUG and Nit > 0:
                 linmin[spin] = linmin_test(g, d[spin])
@@ -320,7 +321,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
+def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, cgform=1,
          precondition=True):
     """Preconditioned conjugate-gradient minimization algorithm.
 
@@ -333,6 +334,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
+        cgform (int): Conjugate gradient form.
         precondition (bool): Weather to use a preconditioner.
 
     Returns:
@@ -375,12 +377,13 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g = grad(scf, spin, scf.W, **scf.precomputed)
+            g = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin], precondition)
-            beta[spin], norm_g[spin] = cg_method(scf, g, g_old[spin], d_old[spin], precondition)
+            beta[spin], norm_g[spin] = cg_method(scf, cgform, g, g_old[spin], d_old[spin],
+                                                 precondition)
             if precondition:
                 d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
             else:
@@ -398,7 +401,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
 
 @name('conjugate-gradient minimization')
-def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
+def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, cgform=1):
     """Conjugate-gradient minimization algorithm.
 
     Args:
@@ -410,6 +413,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
+        cgform (int): Conjugate gradient form.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -418,7 +422,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
 
 @name('auto minimization')
-def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
+def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, cgform=1):
     """Automatic preconditioned conjugate-gradient minimization algorithm.
 
     This function chooses an sd step over the pccg step if the energy goes up.
@@ -432,6 +436,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
+        cgform (int): Conjugate gradient form.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -452,7 +457,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for spin in range(atoms.Nspin):
-        g[spin] = grad(scf, spin, scf.W, **scf.precomputed)
+        g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
         d[spin] = -atoms.K(g[spin])
         gt = grad(scf, spin, scf.W + betat * d[spin])
         beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
@@ -468,12 +473,12 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     for _ in range(1, Nit):
         for spin in range(atoms.Nspin):
-            g[spin] = grad(scf, spin, scf.W, **scf.precomputed)
+            g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
                 linmin[spin] = linmin_test(g, d[spin])
                 cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin], norm_g[spin] = cg_method(scf, g[spin], g_old[spin], d_old[spin])
+            beta[spin], norm_g[spin] = cg_method(scf, cgform, g[spin], g_old[spin], d_old[spin])
             d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
             gt = grad(scf, spin, scf.W + betat * d[spin])
             beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])

@@ -8,8 +8,7 @@ import numpy as np
 
 from .dft import get_epsilon, guess_pseudo, guess_random
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
-from .gth import init_gth_loc, init_gth_nonloc
-from .io import read_gth
+from .gth import GTH
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as all_minimizer
 from .potentials import IMPLEMENTED as all_potentials
@@ -26,129 +25,167 @@ class SCF:
         atoms: Atoms object.
 
     Keyword Args:
-        xc (str): Comma-separated exchange-correlation functional description (case insensitive).
+        xc (str): Comma-separated exchange-correlation functional description.
 
-            Adding 'libxc:' before a functional will try to use the Libxc interface.
+            Adding 'libxc:' before a functional will use the Libxc interface for that functional,
+            e.g., with :code:`libxc:mgga_x_scan,libxc:mgga_c_scan`.
+        pot (str): Type of potential.
 
-            Example: 'lda,pw'; 'lda,'; ',vwn'; ','; 'libxc:LDA_X,libxc:7',
-            Default: 'lda,vwn'
-        pot (str): Type of pseudopotential (case insensitive).
+            Can be one of 'GTH' (default), 'Coulomb', 'Harmonic', or 'Ge'. Alternatively, a path to
+            a directory containing custom GTH pseudopotential files can be given.
+        guess (str): Initial guess for the wave functions.
 
-            Example: 'GTH'; 'harmonic'; 'Coulomb'; 'Ge',
-            Default: 'gth'
-        guess (str): Initial guess method for the basis functions (case insensitive).
-
-            Example: 'random'; 'rand'; 'pseudo',
-            Default: 'random'
+            Can be one of 'random' (default) or 'pseudo'. Adding 'symm' to the string will use the
+            same coefficients for both spin channels, e.g., :code:`symm-rand`.
         etol (float): Convergence tolerance of the total energy.
-
-            Default: 1e-7
         gradtol (float): Convergence tolerance of the gradient norm.
 
-            Disabled by default. This tolerance will only be used in conjugate gradient methods.
-
-            Default: None
-        cgform (int): Conjugated-gradient form for the pccg minimization.
-
-            1 for Fletcher-Reeves, 2 for Polak-Ribiere, 3 for Hestenes-Stiefel, and 4 for Dai-Yuan
-
-            Default: 1
+            This tolerance will only be used in conjugate gradient methods.
         sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
-
-            Default: False
         disp (bool | dict): Calculate a dispersion correction.
 
-            Example: {'version': 'd3zero', 'atm': False, 'xc': 'scan'}
-            Default: False
-        symmetric (bool): Weather to use the same initial guess for both spin channels.
+            A dictionary can be used to pass arguments to the respective
+            function, e.g., with :code:`{'version': 'd3zero', 'atm': False, 'xc': 'scan'}`.
+        opt (dict | None): Dictionary to customize the minimization methods.
 
-            Default: False
-        min (dict | None): Dictionary to set the order and number of steps per minimization method.
+            The keys can be chosen out of 'sd', 'lm', 'pclm', 'cg', 'pccg', and 'auto'. Defaults to
+            :code:`{'auto': 250}`.
+        verbose (int | str): Level of output.
 
-            Example: {'sd': 10, 'pccg': 100}; {'pccg': 10, 'lm': 25, 'pclm': 50},
-            Default: None (will default to {'pccg': 250})
-        verbose (int | str): Level of output (case insensitive).
-
-            Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
-            An integer value can be used as well, where larger numbers mean more output, starting
-            from 0.
-
-            Default: 'info'
+            Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
+            value can be used as well, where larger numbers mean more output, starting from 0.
+            Defaults to the verbosity level of the Atoms object.
     """
     def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 cgform=1, sic=False, disp=False, symmetric=False, min=None, verbose=None):
+                 sic=False, disp=False, opt=None, verbose=None):
         """Initialize the SCF object."""
-        self.atoms = atoms          # Atoms object
-        self.xc = xc.lower()        # Exchange-correlation functional
-        self.pot = pot              # Used pseudopotential
-        self.guess = guess.lower()  # Initial wave functions guess
-        self.etol = etol            # Total energy convergence tolerance
-        self.gradtol = gradtol      # Gradient norm convergence tolerance
-        self.cgform = cgform        # Conjugate gradient form
-        self.sic = sic              # Calculate the SIC energy
-        self.disp = disp            # Calculate the dispersion correction
-        self.symmetric = symmetric  # Use the same initial guess for both spin channels
-        self.min = min              # Minimization methods
+        # Set opt here, better to not use mutable data types in signatures
+        if opt is None:
+            opt = {'auto': 250}
 
-        # Set min here, better not use mutable data types in signatures
-        if self.min is None:
-            # For systems with bad convergence throw in some sd steps
-            self.min = {'auto': 250}
+        # Set the input parameters
+        self.atoms = atoms              #: Atoms object.
+        self.log = create_logger(self)  #: Logger object.
+        self.verbose = verbose          #: Verbosity level.
+        self.xc = xc                    #: Exchange-correlation functional.
+        self.pot = pot                  #: Used potential.
+        self.guess = guess              #: Initial wave functions guess.
+        self.etol = etol                #: Total energy convergence tolerance.
+        self.gradtol = gradtol          #: Gradient norm convergence tolerance.
+        self.sic = sic                  #: Enables the SIC energy calculation
+        self.disp = disp                #: Enables the dispersion correction calculation.
+        self.opt = opt                  #: Minimization methods.
 
-        # Initialize logger
-        self.log = create_logger(self)
-        if verbose is None:
-            self.verbose = atoms.verbose
-        else:
-            self.verbose = verbose
+        # Initialize the main attributes
+        self.energies = Energy()        #: Energy object holding energy contributions.
+        self.is_converged = False       #: Determines the SCF object convergence.
 
-        # Set up final and intermediate results
-        self.W = None             # Basis functions
-        self.n = None             # Electronic density
-        self.energies = Energy()  # Energy object that holds energy contributions
-        self.clear()
+        # Listing of private attributes where the explicit setting of values is discouraged:
+        # _xc_type, _psp, _symmetric, _opt_log, _gth
 
-        # Parameters that will be built out of the inputs
-        self.GTH = {}              # Dictionary of GTH parameters per atom species
-        self.Vloc = None           # Local pseudopotential contribution
-        self.NbetaNL = 0           # Number of projector functions for the non-local gth potential
-        self.prj2beta = None       # Index matrix to map to the correct projector function
-        self.betaNL = None         # Atomic-centered projector functions
-        self.xc_type = None        # Type of functional that will be used
-        self.psp = None            # Type of GTH pseudopotential that will be used
-        self.is_converged = False  # Flag to determine if the object was converged or not
-        self.initialize()
+    @property
+    def atoms(self):
+        """Atoms object."""
+        return self._atoms
 
-    def clear(self):
-        """Initialize and clear intermediate results."""
-        self.Y = None          # Orthogonal wave functions
-        self.n_spin = None     # Electronic densities per spin
-        self.dn_spin = None    # Gradient of electronic densities per spin
-        self.tau = None        # Kinetic energy densities per spin
-        self.phi = None        # Hartree field
-        self.exc = None        # Exchange-correlation energy density
-        self.vxc = None        # Exchange-correlation potential
-        self.vsigma = None     # n times d exc/d |dn|^2
-        self.vtau = None       # d exc/d tau
-        self.precomputed = {}  # Dictionary of precomputed values not to be saved
-        return self
-
-    def initialize(self):
-        """Validate inputs, update them and build all necessary parameters."""
-        self.xc = parse_functionals(self.xc)
-        self.xc_type = parse_xc_type(self.xc)
+    @atoms.setter
+    def atoms(self, value):
         # Build the atoms object if necessary and make a copy
-        # This way the atoms object in scf is independent but we ensure that both atoms are build
-        if not self.atoms.is_built:
-            self.atoms = copy.copy(self.atoms.build())
+        # This way the Atoms objects inside and outside the class are independent but both are build
+        if not value.is_built:
+            self._atoms = copy.copy(value.build())
         else:
-            self.atoms = copy.copy(self.atoms)
-        self._set_potential()
-        self._init_W()
-        return self
+            self._atoms = copy.copy(value)
+
+    @property
+    def xc(self):
+        """Exchange-correlation functional."""
+        return self._xc
+
+    @xc.setter
+    def xc(self, value):
+        self._xc = parse_functionals(value.lower())
+        # Determine the type of the functional combination
+        self._xc_type = parse_xc_type(self._xc)
+        if 'mock_xc' in self._xc:
+            self.log.warning('Usage of mock functional detected.')
+
+    @property
+    def pot(self):
+        """Used potential."""
+        return self._pot
+
+    @pot.setter
+    def pot(self, value):
+        if value.lower() in all_potentials:
+            self._pot = value.lower()
+            # Only set the pseudopotential type for GTH pseudopotentials
+            if self._pot == 'gth':
+                if 'gga' in self._xc_type:
+                    self._psp = 'pbe'
+                else:
+                    self._psp = 'pade'
+        # If pot is no supported potential treat it as a path to a directory containing GTH files
+        else:
+            self.log.info(f'Use the path "{value}" to search for GTH pseudopotential files.')
+            self._psp = value
+            self._pot = 'gth'
+        # Build the potential
+        if self._pot == 'gth':
+            self._gth = GTH(self)
+        self.Vloc = init_pot(self)
+
+    @property
+    def guess(self):
+        """Initial wave functions guess."""
+        return self._guess
+
+    @guess.setter
+    def guess(self, value):
+        # Set the guess method
+        value = value.lower()
+        if 'rand' in value:
+            self._guess = 'random'
+        elif 'pseudo' in value:
+            self._guess = 'pseudo'
+        else:
+            self.log.error(f'{value} is no valid initial guess.')
+        # Check if a symmetric or unsymmetric guess is selected
+        if 'sym' in value and 'unsym' not in value:
+            self._symmetric = True
+        else:
+            self._symmetric = False
+
+    @property
+    def opt(self):
+        """Minimization methods."""
+        return self._opt
+
+    @opt.setter
+    def opt(self, value):
+        # Set lowercase to all keys
+        value = {k.lower(): v for k, v in value.items()}
+        for opt in value:
+            if opt not in all_minimizer:
+                self.log.error(f'No minimizer found for "{opt}".')
+        self._opt = value
+
+    @property
+    def verbose(self):
+        """Verbosity level."""
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        # If no verbosity is given use the one from the Atoms object
+        if value is None:
+            value = self.atoms.verbose
+        self._verbose = get_level(value)
+        self.log.verbose = self._verbose
 
     def run(self, **kwargs):
         """Run the self-consistent field (SCF) calculation."""
+        # Print some information about the calculation
         if self.log.level <= logging.DEBUG:
             info()
         self.log.debug(f'\n--- System information ---\n{self.atoms}\n'
@@ -163,26 +200,27 @@ class SCF:
 
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
+        # Build the initial wave function as long as W there is no W
+        if not hasattr(self, 'W'):
+            if 'random' in self.guess:
+                self.W = guess_random(self, symmetric=self._symmetric)
+            elif 'pseudo' in self.guess:
+                self.W = guess_pseudo(self, symmetric=self._symmetric)
 
-        if 'mock_xc' in self.xc:
-            self.log.warning('Usage of mock functional detected.')
-
-        # Start minimization procedures
+        # Start the minimization procedures
+        self.clear()
         Etots = []
-        minimizer_log = {}
-        for imin in self.min:
-            try:
-                self.log.info(f'Start {all_minimizer[imin].__name__}...')
-            except KeyError:
-                self.log.exception(f'No minimizer found for "{imin}".')
-                raise
+        for imin in self.opt:
+            # Call the minimizer
+            self.log.info(f'Start {all_minimizer[imin].__name__}...')
             start = time.perf_counter()
-            Elist = all_minimizer[imin](self, self.min[imin], **kwargs)  # Call minimizer
+            Elist = all_minimizer[imin](self, self.opt[imin], **kwargs)
             end = time.perf_counter()
-            minimizer_log[imin] = {}  # Create an entry for the current minimizer
-            minimizer_log[imin]['time'] = end - start  # Save time in dictionary
-            minimizer_log[imin]['iter'] = len(Elist)  # Save iterations in dictionary
-            Etots += Elist  # Append energies from minimizer
+            # Save the minimizer results
+            self._opt_log[imin] = {}
+            self._opt_log[imin]['iter'] = len(Elist)
+            self._opt_log[imin]['time'] = end - start
+            Etots += Elist
             # Do not start other minimizations if one converged
             if self.is_converged:
                 break
@@ -190,19 +228,6 @@ class SCF:
             self.log.info(f'SCF converged after {len(Etots)} iterations.')
         else:
             self.log.warning('SCF not converged!')
-
-        # Print SCF data
-        self.log.debug('\n--- SCF results ---')
-        t_tot = 0
-        for imin in minimizer_log:
-            N = minimizer_log[imin]['iter']
-            t = minimizer_log[imin]['time']
-            t_tot += t
-            self.log.debug(f'Minimizer: {imin}'
-                           f'\nIterations: {N}'
-                           f'\nTime: {t:.5f} s'
-                           f'\nTime/Iteration: {t / N:.5f} s')
-        self.log.info(f'Total SCF time: {t_tot:.5f} s')
 
         # Calculate SIC energy if desired
         if self.sic:
@@ -213,14 +238,25 @@ class SCF:
         elif self.disp:
             self.energies.Edisp = get_Edisp(self)
 
-        # Print the S^2 expecation value for unrestricted calculations
+        # Print minimizer timings
+        self.log.debug('\n--- SCF results ---')
+        t_tot = 0
+        for imin in self._opt_log:
+            N = self._opt_log[imin]['iter']
+            t = self._opt_log[imin]['time']
+            t_tot += t
+            self.log.debug(f'Minimizer: {imin}'
+                           f'\nIterations: {N}'
+                           f'\nTime: {t:.5f} s'
+                           f'\nTime/Iteration: {t / N:.5f} s')
+        self.log.info(f'Total SCF time: {t_tot:.5f} s')
+        # Print the S^2 expectation value for unrestricted calculations
         if self.atoms.Nspin == 2:
             self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
         if self.log.level <= logging.DEBUG:
             self.log.debug('\n--- Energy data ---\n'
-                           f'Eigenenergies:\n{get_epsilon(self, self.W)}\n'
-                           f'\n{self.energies}')
+                           f'Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}')
         else:
             self.log.info(f'Etot = {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
@@ -233,88 +269,57 @@ class SCF:
         Keyword Args:
             center (float | list | tuple | ndarray | None): Point to center the system around.
         """
+        atoms = self.atoms
         # Get the COM before centering the atoms
-        com = center_of_mass(self.atoms.X)
-
+        com = center_of_mass(atoms.X)
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
-
         if center is None:
-            dr = com - self.atoms.a / 2
+            dr = com - atoms.a / 2
         else:
             center = np.asarray(center)
             dr = com - center
 
         # Shift orbitals and density
-        self.W = self.atoms.T(self.W, dr=-dr)
+        self.W = atoms.T(self.W, dr=-dr)
         # Transform the density to the reciprocal space, shift, and transform back
-        Jn = self.atoms.J(self.n)
-        TJn = self.atoms.T(Jn, dr=-dr)
-        self.n = np.real(self.atoms.I(TJn))
+        Jn = atoms.J(self.n)
+        TJn = atoms.T(Jn, dr=-dr)
+        self.n = np.real(atoms.I(TJn))
 
         # Recalculate the pseudopotential since it depends on the structure factor
-        self._set_potential()
+        self.pot = self.pot
         # Clear intermediate results to make sure no one uses the unshifted results
         self.clear()
         return self
 
-    def _set_potential(self):
-        """Build the potential."""
-        atoms = self.atoms
-
-        # If pot is no supported potential it can be a path to a directory containing GTH files
-        if self.pot.lower() != 'gth' and self.pot.lower() not in all_potentials:
-            self.psp = self.pot
-            self.pot = 'gth'
-        else:
-            self.pot = self.pot.lower()
-            if 'gga' in self.xc_type:
-                self.psp = 'pbe'
-            else:
-                self.psp = 'pade'
-
-        if self.pot == 'gth':
-            for ia in range(atoms.Natoms):
-                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=self.psp)
-            # Set up the local and non-local part
-            self.Vloc = init_gth_loc(self)
-            self.NbetaNL, self.prj2beta, self.betaNL = init_gth_nonloc(self)
-        else:
-            self.Vloc = init_pot(self)
-
-    def _init_W(self):
-        """Initialize wave functions."""
-        if self.guess in ('rand', 'random'):
-            # Start with randomized, complex basis functions with a random seed
-            self.W = guess_random(self, symmetric=self.symmetric)
-        elif self.guess in ('pseudo', 'pseudo_rand', 'pseudo_random'):
-            # Start with pseudo-random numbers, mostly to compare with SimpleDFT
-            self.W = guess_pseudo(self, symmetric=self.symmetric)
-        else:
-            self.log.error(f'No guess found for "{self.guess}".')
+    def clear(self):
+        """Initialize or clear intermediate results."""
+        self.Y = None           # Orthogonal wave functions
+        self.n_spin = None      # Electronic densities per spin
+        self.dn_spin = None     # Gradient of electronic densities per spin
+        self.tau = None         # Kinetic energy densities per spin
+        self.phi = None         # Hartree field
+        self.exc = None         # Exchange-correlation energy density
+        self.vxc = None         # Exchange-correlation potential
+        self.vsigma = None      # n times d exc/d |dn|^2
+        self.vtau = None        # d exc/d tau
+        self._precomputed = {}  # Dictionary of pre-computed values not to be saved
+        self._opt_log = {}      # Log of the optimization procedure
+        return self
 
     def __repr__(self):
-        """Print the parameters stored in the SCF object."""
+        """Print the most important parameters stored in the SCF object."""
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return f'XC functionals: {self.xc}\n' \
                f'Potential: {self.pot}\n' \
-               f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
+               f'{f"GTH files: {self._psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
-               f'Symmetric guess: {self.symmetric}\n' \
+               f'Symmetric guess: {self._symmetric}\n' \
                f'Energy convergence tolerance: {self.etol} Eh\n' \
                f'Gradient convergence tolerance: {self.gradtol}\n' \
-               f'Non-local contribution: {self.NbetaNL > 0}'
-
-    @property
-    def verbose(self):
-        """Verbosity level."""
-        return self._verbose
-
-    @verbose.setter
-    def verbose(self, level):
-        self._verbose = get_level(level)
-        self.log.verbose = self._verbose
-
+               f'Non-local potential: {self._gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
+               f'Converged: {self.is_converged}'
 
 class RSCF(SCF):
     """SCF class for spin-paired systems.
@@ -324,12 +329,17 @@ class RSCF(SCF):
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class.
     """
-    def initialize(self):
-        """Validate inputs, update them and build all necessary parameters."""
-        self.atoms = copy.copy(self.atoms)
-        self.atoms._set_states(Nspin=1)
-        super().initialize()
-        return self
+    @property
+    def atoms(self):
+        """Atoms object."""
+        return self._atoms
+
+    @atoms.setter
+    def atoms(self, value):
+        self._atoms = copy.copy(value)
+        self._atoms._set_states(Nspin=1)
+        if not self._atoms.is_built:
+            self._atoms = self._atoms.build()
 
 
 class USCF(SCF):
@@ -340,9 +350,14 @@ class USCF(SCF):
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class.
     """
-    def initialize(self):
-        """Validate inputs, update them and build all necessary parameters."""
-        self.atoms = copy.copy(self.atoms)
-        self.atoms._set_states(Nspin=2)
-        super().initialize()
-        return self
+    @property
+    def atoms(self):
+        """Atoms object."""
+        return self._atoms
+
+    @atoms.setter
+    def atoms(self, value):
+        self._atoms = copy.copy(value)
+        self._atoms._set_states(Nspin=2)
+        if not self._atoms.is_built:
+            self._atoms = self._atoms.build()

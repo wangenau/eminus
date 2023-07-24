@@ -38,8 +38,8 @@ def read_json(filename):
             if isinstance(atoms.active, list):
                 atoms.active = tuple(atoms.active)
             return atoms
-        if isinstance(dct, dict) and 'atoms' in dct:
-            scf = eminus.SCF(dct['atoms'], verbose=dct['_verbose'])
+        if isinstance(dct, dict) and '_atoms' in dct:
+            scf = eminus.SCF(dct['_atoms'], verbose=dct['_verbose'])
             for attr in dct:
                 if attr == 'log':
                     continue
@@ -50,6 +50,11 @@ def read_json(filename):
             for attr in dct:
                 setattr(energies, attr, dct[attr])
             return energies
+        if isinstance(dct, dict) and 'NbetaNL' in dct:
+            gth = eminus.gth.GTH()
+            for attr in dct:
+                setattr(gth, attr, dct[attr])
+            return gth
         return dct
 
     if not filename.endswith('.json'):
@@ -77,7 +82,7 @@ def write_json(obj, filename):
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is a Atoms or SCF class dump them as a dictionary
-            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy)):
+            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH)):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
                 return dict(json.loads(data))

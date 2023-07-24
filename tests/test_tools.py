@@ -28,17 +28,17 @@ from eminus.tools import (
     orbital_center,
 )
 
-min = {'sd': 25, 'pccg': 25}
+opt = {'sd': 25, 'pccg': 25}
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
-scf = SCF(atoms, min=min)
+scf = SCF(atoms, opt=opt)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))
 
 atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, Nspin=1)
 atoms_pol = Atoms('He', (0, 0, 0), ecut=1, Nspin=2)
-scf_unpol = SCF(atoms_unpol, min=min)
+scf_unpol = SCF(atoms_unpol, opt=opt)
 scf_unpol.run()
-scf_pol = SCF(atoms_pol, min=min)
+scf_pol = SCF(atoms_pol, opt=opt)
 scf_pol.run()
 
 
@@ -63,7 +63,7 @@ def test_center_of_mass(coords, masses, ref):
 def test_pycom(Nspin):
     """Test PyCOM routine."""
     atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
-    scf = SCF(atoms, min=min)
+    scf = SCF(atoms, opt=opt)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
     for spin in range(Nspin):
@@ -176,12 +176,12 @@ def test_spin_squared_and_multiplicity():
     assert get_spin_squared(rscf) == 0
     assert get_multiplicity(rscf) == 1
 
-    scf = SCF(atoms, symmetric=True)
+    scf = SCF(atoms, guess='symm-rand')
     scf.run()
     assert get_spin_squared(scf) == 0
     assert get_multiplicity(scf) == 1
 
-    scf = SCF(atoms, symmetric=False)
+    scf = SCF(atoms, guess='unsymm-rand')
     scf.run()
     assert_allclose(get_spin_squared(scf), 1, atol=1e-2)
     assert get_multiplicity(scf) > 2

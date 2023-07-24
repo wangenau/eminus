@@ -9,6 +9,16 @@ from numpy.testing import assert_allclose
 from eminus import Atoms, SCF
 
 
+def test_GTH():
+    """Test the GTH object."""
+    atoms = Atoms('Ne', (0, 0, 0))
+    scf = SCF(atoms)
+    gth = scf._gth
+    gth['Ne']  # Test that the object can be accessed via square brackets
+    assert gth.NbetaNL == 5
+    assert gth.betaNL.shape == (62669, 5)
+
+
 def test_norm():
     """Test the norm of the GTH projector functions."""
     # Actinium is the perfect test case since it tests all cases in eval_proj_G with the minimum
@@ -17,8 +27,8 @@ def test_norm():
     # Choose an ecut such that we get at least 0.9
     atoms = Atoms('Ac', (0, 0, 0), ecut=35)
     scf = SCF(atoms)
-    for i in range(scf.NbetaNL):
-        norm = np.sum(scf.betaNL[:, i] * scf.betaNL[:, i])
+    for i in range(scf._gth.NbetaNL):
+        norm = np.sum(scf._gth.betaNL[:, i] * scf._gth.betaNL[:, i])
         assert_allclose(abs(norm), 1, atol=1e-1)
 
 
@@ -32,8 +42,8 @@ def test_mock():
     scf = SCF(atoms)
     E = scf.run()
     assert_allclose(E, E_ref)
-    for key in scf.GTH['X']:
-        assert_allclose(scf.GTH['X'][key], 0)
+    for key in scf._gth['X']:
+        assert_allclose(scf._gth['X'][key], 0)
 
 
 def test_custom_files():
@@ -42,7 +52,7 @@ def test_custom_files():
     atoms = Atoms('B', (0, 0, 0), Z=file_path).build()
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
-    assert scf.GTH['B']['rloc'] == 0.42188166
+    assert scf._gth['B']['rloc'] == 0.42188166
 
 
 if __name__ == '__main__':

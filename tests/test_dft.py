@@ -5,7 +5,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, SCF
-from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, H
+from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
 
 atoms_unpol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=1)
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=2)
@@ -16,7 +16,7 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('guess', ['rand', 'pseudo'])
+@pytest.mark.parametrize('guess', ['random', 'pseudo'])
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_wavefunction(guess, Nspin):
     """Test the orthonormalization of wave functions."""
@@ -24,10 +24,14 @@ def test_wavefunction(guess, Nspin):
         scf = SCF(atoms_unpol, guess=guess)
     else:
         scf = SCF(atoms_pol, guess=guess)
-    psi = get_psi(scf, scf.W)
+    if guess == 'random':
+        W = guess_random(scf)
+    elif guess == 'pseudo':
+        W = guess_pseudo(scf)
+    psi = get_psi(scf, W)
     for s in range(Nspin):
         # Test that WOW is the identity
-        ovlp = scf.W[s].conj().T @ scf.atoms.O(scf.W[s])
+        ovlp = W[s].conj().T @ scf.atoms.O(W[s])
         assert_allclose(np.diag(ovlp), np.ones(scf.atoms.Nstate))
         # Also test that psiOpsi is the identity
         ovlp = psi[s].conj().T @ scf.atoms.O(psi[s])

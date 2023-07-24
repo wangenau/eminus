@@ -30,11 +30,11 @@ def test_polarized(system):
     xc = 'svwn'
     guess = 'random'
     etol = 1e-6
-    min = {'sd': 2, 'auto': 18}
+    opt = {'sd': 2, 'auto': 18}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, Z='pade', s=s)
-    E = USCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
+    E = USCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[system], atol=etol)
 
 

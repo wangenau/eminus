@@ -29,11 +29,11 @@ def test_unpolarized(system):
     xc = 'svwn'
     guess = 'random'
     etol = 1e-6
-    min = {'auto': 20}
+    opt = {'auto': 20}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut, Z='pade', s=s)
-    E = RSCF(atoms, xc=xc, guess=guess, etol=etol, min=min).run()
+    E = RSCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[system], atol=etol)
 
 

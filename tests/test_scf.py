@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Test the SCF class."""
+import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, SCF
+from eminus import Atoms, RSCF, SCF, USCF
 from eminus.tools import center_of_mass
 
 atoms = Atoms('He', (0, 0, 0), s=10, Nspin=2)
@@ -19,6 +20,11 @@ def test_xc():
     """Test that xc functionals are correctly parsed."""
     scf = SCF(atoms, xc='LDA,VWN')
     assert scf.xc == ['lda_x', 'lda_c_vwn']
+    assert scf._xc_type == 'lda'
+
+    scf.xc = 'PBE'
+    assert scf._xc_type == 'gga'
+
     scf = SCF(atoms, xc=',')
     assert scf.xc == ['mock_xc', 'mock_xc']
 
@@ -26,39 +32,72 @@ def test_xc():
 def test_pot():
     """Test that potentials are correctly parsed and initialized."""
     scf = SCF(atoms, pot='GTH')
-    assert not [x for x in (scf.Vloc, scf.NbetaNL, scf.prj2beta, scf.betaNL) if x is None]
+    assert scf.pot == 'gth'
+    assert scf._psp == 'pade'
+    assert hasattr(scf, '_gth')
+
+    scf = SCF(atoms, pot='GTH', xc='pbe')
+    assert scf._psp == 'pbe'
+
+    scf.pot = 'test'
+    assert scf.pot == 'gth'
+    assert scf._psp == 'test'
+
     scf = SCF(atoms, pot='GE')
-    assert scf.Vloc is not None
-    assert [x for x in (scf.NbetaNL, scf.prj2beta, scf.betaNL) if x is None]
+    assert scf.pot == 'ge'
+    assert not hasattr(scf, '_gth')
 
 
 def test_guess():
     """Test initialization of the guess method."""
     scf = SCF(atoms, guess='RAND')
-    assert scf.guess == 'rand'
-    scf = SCF(atoms, guess='bogus')
+    assert scf.guess == 'random'
+    assert not scf._symmetric
+
+    scf = SCF(atoms, guess='sym-pseudo')
+    assert scf.guess == 'pseudo'
+    assert scf._symmetric
 
 
 def test_gradtol():
     """Test the convergence depending of the gradient norm."""
-    scf = SCF(atoms, etol=1, gradtol=1e-2)
-    scf.run()
-    assert scf.energies.Etot < -1
+    etot = SCF(atoms, etol=1, gradtol=1e-2).run()
+    assert etot < -1
 
 
 def test_sic():
     """Test that the SIC routine runs."""
-    scf = SCF(atoms, xc='pbe', min={'sd': 1}, sic=True)
+    scf = SCF(atoms, xc='pbe', opt={'sd': 1}, sic=True)
     scf.run()
     assert scf.energies.Esic != 0
+
+
+def test_disp():
+    """Test that the dispersion correction routine runs."""
+    pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
+    scf = SCF(atoms, opt={'sd': 1}, disp=True)
+    scf.run()
+    assert scf.energies.Edisp != 0
 
 
 def test_symmetric():
     """Test the symmetry option for H2 dissociation."""
     atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), Nspin=2, ecut=1)
-    e_symm = SCF(atoms, guess='pseudo', symmetric=True).run()
-    e_unsymm = SCF(atoms, guess='pseudo', symmetric=False).run()
-    assert e_symm > e_unsymm
+    scf_symm = SCF(atoms, guess='symm-pseudo')
+    scf_unsymm = SCF(atoms, guess='unsymm-pseudo')
+    assert scf_symm.run() > scf_unsymm.run()
+
+
+def test_opt():
+    """Test the optimizer option."""
+    atoms = Atoms('He', (0, 0, 0), ecut=1)
+    scf = SCF(atoms, opt={'AUTO': 1})
+    assert 'auto' in scf.opt
+    scf.opt = {'sd': 1}
+    assert 'sd' in scf.opt
+    assert 'auto' not in scf.opt
+    scf.run()
+    assert 'sd' in scf._opt_log
 
 
 def test_verbose():
@@ -66,19 +105,21 @@ def test_verbose():
     scf = SCF(atoms)
     assert scf.verbose == atoms.verbose
     assert scf.log.verbose == atoms.log.verbose
+
     level = 'DEBUG'
-    scf = SCF(atoms, verbose=level)
+    scf.verbose = level
     assert scf.verbose == level
     assert scf.log.verbose == level
 
 
 def test_clear():
     """Test the clear function."""
-    scf = SCF(atoms, min={'sd': 1})
+    scf = SCF(atoms, opt={'sd': 1})
     scf.run()
     scf.clear()
     assert not scf.is_converged
-    assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc) if x is None]
+    assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc,
+            scf.vsigma, scf.vtau) if x is None]
 
 
 @pytest.mark.parametrize('center', [None, atoms.a / 2])
@@ -86,7 +127,9 @@ def test_recenter(center):
     """Test the recenter function."""
     scf = SCF(atoms)
     scf.run()
+    Vloc = scf.Vloc
     assert scf.is_converged
+
     scf.recenter(center)
     W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)
@@ -95,6 +138,24 @@ def test_recenter(center):
     # Check that the orbitals are centered around the atom
     assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.00125)
     assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.00125)
+    # Test that the local potential has been rebuild
+    assert not np.array_equal(scf.Vloc , Vloc)
+
+
+def test_rscf():
+    """Test the RSCF object."""
+    scf = RSCF(atoms)
+    assert scf.atoms.Nspin == 1
+    assert atoms.Nspin == 2
+    assert id(scf.atoms) != id(atoms)
+
+
+def test_uscf():
+    """Test the USCF object."""
+    scf = USCF(atoms)
+    assert scf.atoms.Nspin == 2
+    assert atoms.Nspin == 2
+    assert id(scf.atoms) != id(atoms)
 
 
 if __name__ == '__main__':

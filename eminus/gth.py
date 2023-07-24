@@ -2,8 +2,44 @@
 """Utilities to use Goedecker, Teter, and Hutter pseudopotentials."""
 import numpy as np
 
+from .io import read_gth
 from .logger import log
 from .utils import Ylm_real
+
+
+class GTH:
+    """GTH object that holds non-local projectors and parameters for all atoms in the SCF object.
+
+    Keyword Args:
+        scf: SCF object.
+    """
+    def __init__(self, scf=None):
+        """Initialize the GTH object."""
+        # Allow creating an empty instance (used when loading GTH objects from JSON files)
+        if scf is not None:
+            atoms = scf.atoms
+
+            # Set up a dictionary with all GTH parameters
+            self.GTH = {}  #: Dictionary with GTH parameters per atom type.
+            for ia in range(atoms.Natoms):
+                # Skip if the atom is already in the dictionary
+                if atoms.atom[ia] in self.GTH:
+                    continue
+                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=scf._psp)
+
+            # Initialize the non-local potential
+            NbetaNL, prj2beta, betaNL = init_gth_nonloc(atoms, self)
+            self.NbetaNL = NbetaNL    #: Number of projector functions for the non-local potential.
+            self.prj2beta = prj2beta  #: Index matrix to map to the correct projector function.
+            self.betaNL = betaNL      #: Atomic-centered projector functions.
+
+    def __getitem__(self, key):
+        """Allow accessing the GTH parameters of an atom by indexing the GTH object."""
+        return self.GTH[key]
+
+    def __repr__(self):
+        """Print a short overview over the values stored in the GTH object."""
+        return f'NbetaNL: {self.NbetaNL}\nGTH values for: {", ".join(list(self.GTH))}'
 
 
 def init_gth_loc(scf):
@@ -23,7 +59,7 @@ def init_gth_loc(scf):
 
     Vloc = np.zeros_like(atoms.G2)
     for isp in species:
-        psp = scf.GTH[isp]
+        psp = scf._gth[isp]
         rloc = psp['rloc']
         Zion = psp['Zion']
         c1 = psp['cloc'][0]
@@ -53,24 +89,24 @@ def init_gth_loc(scf):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
-def init_gth_nonloc(scf):
+def init_gth_nonloc(atoms, gth):
     """Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        scf: SCF object.
+        atoms: Atoms object.
+        gth: GTH object.
 
     Returns:
         tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
     """
-    atoms = scf.atoms
     prj2beta = np.zeros((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta += -1  # Set to an invalid index
 
     NbetaNL = 0
     for ia in range(atoms.Natoms):
-        psp = scf.GTH[atoms.atom[ia]]
+        psp = gth[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
@@ -85,7 +121,7 @@ def init_gth_nonloc(scf):
     for ia in range(atoms.Natoms):
         # It is very important to transform the structure factor to make both notations compatible
         Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
-        psp = scf.GTH[atoms.atom[ia]]
+        psp = gth[atoms.atom[ia]]
         for l in range(psp['lmax']):
             for m in range(-l, l + 1):
                 for iprj in range(psp['Nproj_l'][l]):
@@ -112,19 +148,19 @@ def calc_Vnonloc(scf, spin, W):
     atoms = scf.atoms
 
     Vpsi = np.zeros_like(W[spin], dtype=complex)
-    if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
-        betaNL_psi = (W[spin].conj().T @ scf.betaNL).conj()
+    if scf.pot == 'gth' and scf._gth.NbetaNL > 0:  # Only calculate non-local part if necessary
+        betaNL_psi = (W[spin].conj().T @ scf._gth.betaNL).conj()
 
         for ia in range(atoms.Natoms):
-            psp = scf.GTH[atoms.atom[ia]]
+            psp = scf._gth[atoms.atom[ia]]
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                        ibeta = scf._gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                         for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                            jbeta = scf._gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.betaNL[:, ibeta, None]
+                            Vpsi += hij * betaNL_psi[:, jbeta] * scf._gth.betaNL[:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 

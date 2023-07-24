@@ -155,19 +155,19 @@ def get_Enonloc(scf, Y):
     atoms = scf.atoms
 
     Enonloc = 0
-    if scf.NbetaNL > 0:  # Only calculate non-local potential if necessary
+    if scf.pot == 'gth' and scf._gth.NbetaNL > 0:  # Only calculate non-local part if necessary
         for spin in range(atoms.Nspin):
-            betaNL_psi = (Y[spin].conj().T @ scf.betaNL).conj()
+            betaNL_psi = (Y[spin].conj().T @ scf._gth.betaNL).conj()
 
             enl = np.zeros(atoms.Nstate, dtype=complex)
             for ia in range(atoms.Natoms):
-                psp = scf.GTH[atoms.atom[ia]]
+                psp = scf._gth[atoms.atom[ia]]
                 for l in range(psp['lmax']):
                     for m in range(-l, l + 1):
                         for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = scf.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                            ibeta = scf._gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                             for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = scf.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                jbeta = scf._gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
             Enonloc += np.sum(atoms.f[spin] * enl)
@@ -286,14 +286,14 @@ def get_Esic(scf, Y, n_single=None):
                 ni[0] = n_single[spin, :, i] / atoms.f[spin, i]
 
                 # Get the gradient of the single-particle density
-                if 'gga' in scf.xc_type:
+                if 'gga' in scf._xc_type:
                     dni = np.zeros((2, len(atoms.r), 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
 
                 # Get the kinetic energy density of the corresponding orbital
-                if scf.xc_type == 'meta-gga':
+                if scf._xc_type == 'meta-gga':
                     # Use only one orbital for the calculation
                     Ytmp = np.zeros_like(Y)
                     Ytmp[0, :, 0] = Y[spin, :, i]

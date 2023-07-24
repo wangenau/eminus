@@ -3,37 +3,40 @@
 import numpy as np
 from scipy.linalg import norm
 
+from .gth import init_gth_loc
 from .logger import log
 
 
-def harmonic(atoms):
+def harmonic(scf):
     """Harmonic potential.
 
     Can be used for quantum dot calculations.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Harmonic potential in reciprocal space.
     """
+    atoms = scf.atoms
     freq = 2
     dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
 
-def coulomb(atoms):
+def coulomb(scf):
     """All-electron Coulomb potential.
 
     Reference: Bull. Lebedev Phys. Inst. 42, 329.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Coulomb potential in reciprocal space.
     """
+    atoms = scf.atoms
     Z = atoms.Z[0]  # Potential should only be used for same species
 
     # Ignore the division by zero for the first elements
@@ -46,7 +49,7 @@ def coulomb(atoms):
     return atoms.J(Vcoul * Sf)
 
 
-def ge(atoms):
+def ge(scf):
     """Starkloff-Joannopoulos local pseudopotential for germanium.
 
     Fourier-transformed by Tomas Arias.
@@ -54,11 +57,12 @@ def ge(atoms):
     Reference: Phys. Rev. B 16, 5212.
 
     Args:
-        atoms: Atoms object.
+        scf: SCF object.
 
     Returns:
         ndarray: Germanium pseudopotential in reciprocal space.
     """
+    atoms = scf.atoms
     Z = 4  # Potential should only be used for germanium
     lamda = 18.5
     rc = 1.052
@@ -92,7 +96,7 @@ def init_pot(scf):
         ndarray: Potential in reciprocal space.
     """
     try:
-        pot = IMPLEMENTED[scf.pot](scf.atoms)
+        pot = IMPLEMENTED[scf.pot](scf)
     except KeyError:
         log.exception(f'No potential found for "{scf.pot}".')
         raise
@@ -102,5 +106,6 @@ def init_pot(scf):
 IMPLEMENTED = {
     'harmonic': harmonic,
     'coulomb': coulomb,
-    'ge': ge
+    'ge': ge,
+    'gth': init_gth_loc
 }

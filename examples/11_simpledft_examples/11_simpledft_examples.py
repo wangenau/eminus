@@ -6,7 +6,7 @@ from eminus import Atoms, SCF
 def calculate(atoms):
     start = time.perf_counter()
     etot = SCF(atoms, xc='lda,chachiyo', pot='coulomb', guess='pseudo',
-               etol=1e-6, min={'sd': 1001}).run(betat=1e-5)
+               etol=1e-6, opt={'sd': 1001}).run(betat=1e-5)
     print(f'Etot({atoms.atom}) = {etot:.6f} Eh')
     print(f' {time.perf_counter() - start:.6f} seconds')
 
