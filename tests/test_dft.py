@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, SCF
+from eminus import Atoms, demo, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
 
 atoms_unpol = Atoms('Ne', (0, 0, 0), ecut=1, Nspin=1)
@@ -95,6 +95,11 @@ def test_n_single(Nspin):
     for s in range(Nspin):
         n_int = np.sum(n[s], axis=0) * dV
         assert_allclose(n_int, scf.atoms.f[s])
+
+
+def test_demo():
+    """Test that the demo function works without problems."""
+    demo()
 
 
 if __name__ == '__main__':

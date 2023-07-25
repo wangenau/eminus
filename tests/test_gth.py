@@ -15,6 +15,7 @@ def test_GTH():
     scf = SCF(atoms)
     gth = scf._gth
     gth['Ne']  # Test that the object can be accessed via square brackets
+    print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
     assert gth.betaNL.shape == (62669, 5)
 
