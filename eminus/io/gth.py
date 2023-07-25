@@ -39,8 +39,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
             log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}".')
             return mock_gth()
         if len(files) > 1:
-            log.info(f'Multiple pseudopotentials found for "{atom}". '
-                     f'Continue with "{f_psp.name}".')
+            log.info(f'Multiple pseudopotentials found for "{atom}". Continue with "{f_psp.name}".')
 
     psp = {}
     cloc = np.zeros(4)

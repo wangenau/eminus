@@ -128,10 +128,10 @@ def get_dipole(scf, n=None):
     """
     atoms = scf.atoms
     if n is None:
+        if not hasattr(scf, 'n'):
+            log.error('There is no density to calculate a dipole moment.')
+            return 0
         n = scf.n
-    if scf.n is None:
-        log.error('There is no density to calculate a dipole.')
-        return 0
 
     # Diple moment: mu = \sum Z X - \int n(r) r dr
     mu = np.array([0, 0, 0], dtype=float)
