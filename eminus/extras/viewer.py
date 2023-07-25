@@ -110,7 +110,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
     fig.show()
 
 
-def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
+def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kwargs):
     """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -136,8 +136,6 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=None, **kwargs):
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
 
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
     if isinstance(isovalue, str):
         isovalue = float(isovalue)
 

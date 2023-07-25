@@ -68,7 +68,7 @@ def read_cube(filename):
     return atom, X, Z, a, s, field
 
 
-def write_cube(obj, filename, field, fods=None, elec_symbols=None):
+def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
     """Generate cube files from given field data.
 
     There is no standard for cube files. The following format has been used to work with VESTA.
@@ -92,11 +92,9 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=None):
     if not filename.endswith('.cube'):
         filename += '.cube'
 
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
-        if 'He' in atoms.atom and atoms.Nspin == 2:
-            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
-                        'polarized case.')
+    if 'He' in atoms.atom and atoms.Nspin == 2:
+        log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                    'polarized case.')
 
     # Make sure we have real valued data in the correct order
     field = np.real(field)

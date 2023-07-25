@@ -6,7 +6,7 @@ from ..logger import log
 from ..units import bohr2ang
 
 
-def write_pdb(obj, filename, fods=None, elec_symbols=None, trajectory=False):
+def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
     """Generate pdb files from atoms objects.
 
     See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
@@ -28,11 +28,9 @@ def write_pdb(obj, filename, fods=None, elec_symbols=None, trajectory=False):
     if not filename.endswith('.pdb'):
         filename += '.pdb'
 
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
-        if 'He' in atoms.atom and atoms.Nspin == 2:
-            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
-                        'polarized case.')
+    if 'He' in atoms.atom and atoms.Nspin == 2:
+        log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                    'polarized case.')
 
     atom = atoms.atom
     X = atoms.X

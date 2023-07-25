@@ -47,7 +47,7 @@ def read_xyz(filename):
     return atom, X
 
 
-def write_xyz(obj, filename, fods=None, elec_symbols=None, trajectory=False):
+def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
     """Generate xyz files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
@@ -74,11 +74,9 @@ def write_xyz(obj, filename, fods=None, elec_symbols=None, trajectory=False):
     if fods is not None:
         fods = [bohr2ang(i) for i in fods]
 
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
-        if 'He' in atoms.atom and atoms.Nspin == 2:
-            log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
-                        'polarized case.')
+    if 'He' in atoms.atom and atoms.Nspin == 2:
+        log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
+                    'polarized case.')
 
     # Append to a file when using the trajectory keyword
     if trajectory:

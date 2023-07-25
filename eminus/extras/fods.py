@@ -61,7 +61,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     return loc_orb
 
 
-def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=None):
+def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
     """Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
@@ -88,11 +88,9 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=None):
     atoms = obj.atoms
     loc = loc.upper()
 
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
-        if 'He' in atoms.atom and atoms.Nspin == 2:
-            log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
-                        'polarized case.')
+    if 'He' in atoms.atom and atoms.Nspin == 2:
+        log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
+                    'polarized case.')
 
     # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)
@@ -127,7 +125,7 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=None):
     return loc_com
 
 
-def split_fods(atom, X, elec_symbols=None):
+def split_fods(atom, X, elec_symbols=('X', 'He')):
     """Split atom and FOD coordinates.
 
     Args:
@@ -140,9 +138,6 @@ def split_fods(atom, X, elec_symbols=None):
     Returns:
         tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
     """
-    if elec_symbols is None:
-        elec_symbols = ('X', 'He')
-
     X_fod_up = []
     X_fod_dn = []
     # Iterate in reverted order, because we may delete elements
