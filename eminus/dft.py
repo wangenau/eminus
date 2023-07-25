@@ -47,10 +47,12 @@ def get_n_total(atoms, Y, n_spin=None):
 
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
-    n = np.zeros(len(atoms.r))
-    for spin in range(atoms.Nspin):
-        n += np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
-    return n
+    # The commented implementation is easier to read but a bit slower, use np.einsum for performance
+    # n = np.zeros(len(atoms.r))
+    # for spin in range(atoms.Nspin):
+    #     n += np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    # return n
+    return np.real(np.einsum('sj,sij,sij->i', atoms.f, Yrs.conj(), Yrs))
 
 
 def get_n_spin(atoms, Y):
@@ -66,10 +68,12 @@ def get_n_spin(atoms, Y):
         ndarray: Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.Nspin, len(atoms.r)))
-    for spin in range(atoms.Nspin):
-        n[spin] = np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
-    return n
+    # The commented implementation is easier to read but a bit slower, use np.einsum for performance
+    # n = np.empty((atoms.Nspin, len(atoms.r)))
+    # for spin in range(atoms.Nspin):
+    #     n[spin] = np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    # return n
+    return np.real(np.einsum('sj,sij,sij->si', atoms.f, Yrs.conj(), Yrs))
 
 
 def get_n_single(atoms, Y):

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""DFT functions that are only needed for (meta-)GGA calculations."""
+"""DFT functions that are only needed for (meta-)GGA calculations.
+
+Most functions here have been optimized for performance and can be harder to understand than normal.
+To mitigate this easier (but slower) implementations have been added as comments.
+"""
 import numpy as np
 
 
@@ -89,10 +93,12 @@ def get_tau(atoms, Y):
     for dim in range(3):
         dYrs[..., dim] = atoms.I(1j * Gc[..., dim] * Y)
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
-    sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
+    # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
+    sumdYrs = np.real(np.einsum('sijr,sijr->sij', dYrs.conj(), dYrs))
     # Sum over all states
     # Use the definition with a division by two
-    return 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
+    # return 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
+    return 0.5 * np.einsum('sj,sij->si', atoms.f, sumdYrs)
 
 
 def calc_Vtau(scf, spin, W, vtau):
@@ -139,5 +145,6 @@ def calc_Vtau(scf, spin, W, vtau):
             GVpsi[..., dim] = atoms.J(vtau_spin * dWrs[..., dim], full=False)
         # Sum over dimensions
         # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
-        Vpsi = -0.5 * 1j * np.sum(Gc * GVpsi, axis=2)
+        # Vpsi = -0.5 * 1j * np.sum(Gc * GVpsi, axis=2)
+        Vpsi = -0.5 * 1j * np.einsum('ior,ijr->ij', Gc, GVpsi)
     return Vpsi * atoms.Omega

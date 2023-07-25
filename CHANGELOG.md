@@ -28,6 +28,7 @@ dev
    - Fix a lot of type warnings from mypy
    - Add type hints to scripts in docs and setup.py
 - Miscellaneous
+   - Small performance improvements, mostly for meta-GGAs
    - Add an error message when attempting to use operators of an unbuilt Atoms object
    - Add Matplotlib to the viewer setup to generate images in the examples
 
