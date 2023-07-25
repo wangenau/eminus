@@ -3,9 +3,9 @@ import numpy as np
 from eminus import Atoms, SCF, write
 from eminus.units import ang2bohr, ev2ha
 
-# # Create a germanium crystal with an fcc crystal structure
+# # Create a germanium crystal with an FCC crystal structure
 # # Here, `a` is not only the unit cell size but the lattice constant as well, defining the periodicity
-# # As a reminder, the center option should not be used when explicitly using periodicity
+# # As a reminder, the `center` option should not be used when explicitly using periodicity
 # # Since electronvolt and Angstrom are common in solid-state physics convert the units here to atomic units
 atom = 'Ge8'
 a = ang2bohr(5.658)
