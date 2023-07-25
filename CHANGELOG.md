@@ -4,6 +4,17 @@ Changelog
 dev
 ---
 - New features
+   - Complete rewrite of SCF
+      - Update documentation
+      - Use properties when parsing input arguments
+      - Allow direct setting attributes
+      - Better input handling
+      - Simplify by removing some functions and attributes
+      - Use a GTH object to store all GTH data
+      - Indicate non-input arguments and non-results as private
+      - Use the run function to pass cgform to minimizers
+      - Rename min keyword to opt to not shadow the Python builtin
+      - Merge symmetric with guess
    - Add DFT-D3 dispersion correction as an extra
 - Updated docs
    - Add documentation to module data/constants
@@ -11,6 +22,7 @@ dev
    - Re-add documentation of operators to Atoms
    - Add a custom functional example
    - Improve the geometry optimization example
+   - Sort attributes groupwise
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
