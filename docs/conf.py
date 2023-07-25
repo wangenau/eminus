@@ -13,7 +13,7 @@ import eminus
 
 project: str = 'eminus'
 author: str = 'Wanja Timm Schulze'
-copyright: str = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'
+copyright: str = f'2021-{datetime.datetime.today().year}, Wanja Timm Schulze'  # noqa: A001
 version: str = eminus.__version__
 release: str = version
 

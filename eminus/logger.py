@@ -29,7 +29,7 @@ class CustomLogger(logging.Logger):
 
 class CustomFormatter(logging.Formatter):
     """Custom logger formatter."""
-    def format(self, record):
+    def format(self, record):  # noqa: A003
         """Use different formatting for different logging levels.
 
         Args:
