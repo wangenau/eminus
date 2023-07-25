@@ -5,7 +5,8 @@ import platform
 import sys
 
 __version__ = '2.5.0'
-logo = (' ___ _____ _ ___ _ _ ___ \n'
+#: eminus ASCII logo.
+LOGO = (' ___ _____ _ ___ _ _ ___ \n'
         '| -_|     | |   | | |_ -|\n'
         '|___|_|_|_|_|_|_|___|___|\n')
 
@@ -16,7 +17,7 @@ def info():
     extras = ('torch', 'pyscf', 'plotly', 'nglview')
     dev = ('notebook', 'pylibxc', 'pytest', 'sphinx', 'furo')
 
-    print(logo)
+    print(LOGO)
     print('--- Platform infos ---'
           f'\nPlatform : {platform.system()} {platform.machine()}'
           f'\nRelease  : {platform.release()} {platform.version()}'

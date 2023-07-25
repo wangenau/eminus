@@ -504,6 +504,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     return costs
 
 
+#: Map minimizer names with their respective implementation.
 IMPLEMENTED = {
     'sd': sd,
     'lm': lm,

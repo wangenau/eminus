@@ -3,14 +3,14 @@
 
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
 """
-# Ha in eV (https://en.wikipedia.org/wiki/Hartree)
-electronvolt = eV = 27.211386245988
-# Ha in kcal/mol (https://en.wikipedia.org/wiki/Hartree)
-kcalmol = 627.5094740631
-# a0 in Angstrom (https://en.wikipedia.org/wiki/Bohr_radius)
-Angstrom = A = 0.529177210903
-# e * a0 in Debye (https://en.wikipedia.org/wiki/Hartree_atomic_units)
-Debye = D = 2.541746473
+#: Hartree in electronvolt.
+electronvolt = eV = 27.211386245988  # https://en.wikipedia.org/wiki/Hartree
+#: Hartree in kcal per mol.
+kcalmol = 627.5094740631  # https://en.wikipedia.org/wiki/Hartree
+#: Bohr radius in Angstrom.
+Angstrom = A = 0.529177210903  # https://en.wikipedia.org/wiki/Bohr_radius
+#: Elementary charge times bohr radius in Debye.
+Debye = D = 2.541746473  # https://en.wikipedia.org/wiki/Hartree_atomic_units
 
 
 def ha2ev(E):

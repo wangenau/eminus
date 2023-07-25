@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Atomic data collections."""
 
-# Map atom symbols and atom numbers
+#: Map atom symbols and atom numbers.
 SYMBOL2NUMBER = {
     'X': 0,
     'H': 1,
@@ -109,10 +109,11 @@ SYMBOL2NUMBER = {
     'Lr': 103
 }
 
-# Map atom numbers and atom symbols
+#: Map atom numbers and atom symbols.
 NUMBER2SYMBOL = {value: key for key, value in SYMBOL2NUMBER.items()}
 
 # Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/__init__.py
+#: Covalent radii per atom.
 COVALENT_RADII = {
     'X': 0.3779452249251541,
     'H': 0.5858150986339887,
@@ -219,6 +220,7 @@ COVALENT_RADII = {
 }
 
 # Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/colors.py
+#: CPK colors per atom.
 CPK_COLORS = {
     'X': '#ff0000',
     'H': '#ffffff',

@@ -103,6 +103,7 @@ def init_pot(scf):
     return pot
 
 
+#: Map potential names with their respective implementation.
 IMPLEMENTED = {
     'harmonic': harmonic,
     'coulomb': coulomb,

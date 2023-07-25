@@ -6,9 +6,9 @@ dev
 - New features
    - Add DFT-D3 dispersion correction as an extra
 - Updated docs
+   - Add documentation to module data/constants
    - Add a list of all packages and their respective licenses
    - Re-add documentation of operators to Atoms
-   - Save the widget state of notebooks to display the NGLView output
    - Add a custom functional example
    - Improve the geometry optimization example
 - Coding style

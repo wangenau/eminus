@@ -265,6 +265,7 @@ def mock_xc(n, Nspin=1, **kwargs):
     return zeros, np.array([zeros] * Nspin), None
 
 
+#: Map functional names with their respective implementation.
 IMPLEMENTED = {
     i.__name__: i for i in (
         mock_xc,
@@ -295,6 +296,7 @@ IMPLEMENTED = {
     )
 }
 
+#: Map functional shorthands to the actual functional names.
 XC_MAP = {
     # lda_x
     '1': 'lda_x',
@@ -339,6 +341,7 @@ XC_MAP = {
     'chachiyoc': 'gga_c_chachiyo'
 }
 
+#: Dictionary of common functional aliases.
 ALIAS = {
     'svwn': 'slater,vwn5',
     'svwn5': 'slater,vwn5',

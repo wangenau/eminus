@@ -29,3 +29,15 @@
    {%- endfor %}
    {% endif %}
    {% endblock %}
+
+   {% block attributes %}
+   {% if attributes %}
+   .. rubric:: {{ _('Data') }}
+
+   {% for item in attributes %}
+   .. autodata:: {{ fullname }}.{{ item }}
+      :annotation:
+
+   {%- endfor %}
+   {% endif %}
+   {% endblock %}
