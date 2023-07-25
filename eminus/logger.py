@@ -49,13 +49,14 @@ class CustomFormatter(logging.Formatter):
 
 # Create a base logger that can be used outside of classes
 logging.setLoggerClass(CustomLogger)
+#: Global logging object.
 log = logging.getLogger('eminus')
 
 # Basic logger setup
-formatter = CustomFormatter()
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(formatter)
-logging.root.addHandler(handler)
+__formatter = CustomFormatter()
+__handler = logging.StreamHandler(sys.stdout)
+__handler.setFormatter(__formatter)
+logging.root.addHandler(__handler)
 
 
 def create_logger(obj):
