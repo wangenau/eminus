@@ -18,67 +18,46 @@ class Atoms:
     Args:
         atom (str | list | tuple): Atom symbols.
 
-            Example: 'CH4'; ['C', 'H', 'H', 'H', 'H']; ('C', 'H', 'H', 'H', 'H')
-        X (list | tuple | ndarray): Atom positions.
-
-            Example: (0, 0, 0); array([0, 0, 0]); [[0, 0, 0], [1, 1, 1]];
+            A string can be given, e.g., with :code:`CH4` that will be parsed to
+            :code:`['C', 'H', 'H', 'H', 'H']`. When calculating atoms one can directly provide the
+            charge, e.g., with :code:`Li-q3`.
 
     Keyword Args:
         a (float | list | tuple | ndarray): Cell size or vacuum size.
 
-            A cuboidal box with the same side lengths will be created.
-
-            Example: 10; [10, 10, 10]; (7, 8, 9),
-            Default: 20 Bohr (ca. 10.5 Angstrom).
+            Floats will create a cubic unit cell.
         ecut (float | None): Cut-off energy.
 
-            None will disable the G-Vector truncation (needs a separate s).
-            Default: 30 Hartree (ca. 816 eV).
+            None will disable the G-Vector truncation (needs a separate s), defaults to 30 Eh
+            (ca. 816 eV).
         Z (int | list | tuple | ndarray | dict | str | None): Valence charge per atom.
 
-            The charges should not differ for same species. None will use valence charges from GTH
-            files. The same charge for every atom will be assumed for single integers.
-
-            Example: 1; [4, 1, 1, 1, 1],
-            Default: None
+            The charges should not differ for the same species. None will use valence charges from
+            GTH files. The same charge for every atom will be assumed for integers.
         s (int | list | tuple | ndarray | None): Real-space sampling of the cell.
 
             None will make the sampling dependent on a and ecut.
-
-            Example: 30; [30, 40, 50]; array([30, 40, 50]),
-            Default: None
         center (bool | str): Center the system inside the cell (case insensitive).
 
-            Align the geometric center of mass with the center of the call and rotate the system,
-            such that its geometric moment of inertia aligns with the coordinate axes.
-
-            Example: True; 'shift'; 'rotate',
-            Default: False
+            Aligns the geometric center of mass with the center of the call and rotates the system,
+            such that its geometric moment of inertia aligns with the coordinate axes. Can be one of
+            bool, 'shift', and 'rotate'.
         Nspin (int | None): Number of spin states.
 
-            1 for spin-paired, 2 for spin-polarized, None for automatic detection.
-            Default: 2
+            1 for restricted, 2 for unrestricted, and None for automatic detection.
         f (float | list | tuple | ndarray | None): Occupation numbers per state.
 
-            The last state will be adjusted if the sum of f is not equal to the sum of Z.
-            None will assume occupations of 2.
-
-            Example: 2; [2, 2, 2, 2]; array([2, 2/3, 2/3, 2/3]),
-            Default: None
+            The last state will be adjusted if the sum of f is not equal to the sum of Z. None will
+            assume occupations of 1 or 2.
         Nstate (int | None): Number of states.
 
-            None will get the number of states from f or assume occupations of 2 and divide the sum
-            of Z by it.
-
-            Default: None
+            None will get the number of states from f or assume occupations of 1 or 2 and divide by
+            the sum of Z.
         verbose (int | str | None): Level of output (case insensitive).
 
-            Can be one of 'CRITICAL', 'ERROR', 'WARNING', 'INFO', or 'DEBUG'.
-            An integer value can be used as well, where larger numbers mean more output, starting
-            from 0.
-            None will use the default global logger value 'WARNING'.
-
-            Default: None
+            Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
+            value can be used as well, where larger numbers mean more output, starting from 0.
+            None will use the global logger verbosity value.
     """
     def __init__(self, atom, X, a=20, ecut=30, Z=None, s=None, center=False, Nspin=None, f=None,
                  Nstate=None, verbose=None):
