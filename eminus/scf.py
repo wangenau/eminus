@@ -281,11 +281,13 @@ class SCF:
             dr = com - center
 
         # Shift orbitals and density
-        self.W = atoms.T(self.W, dr=-dr)
+        if hasattr(self, 'W'):
+            self.W = atoms.T(self.W, dr=-dr)
         # Transform the density to the reciprocal space, shift, and transform back
-        Jn = atoms.J(self.n)
-        TJn = atoms.T(Jn, dr=-dr)
-        self.n = np.real(atoms.I(TJn))
+        if hasattr(self, 'n'):
+            Jn = atoms.J(self.n)
+            TJn = atoms.T(Jn, dr=-dr)
+            self.n = np.real(atoms.I(TJn))
 
         # Recalculate the pseudopotential since it depends on the structure factor
         self.pot = self.pot
