@@ -266,31 +266,33 @@ def mock_xc(n, Nspin=1, **kwargs):
 
 
 IMPLEMENTED = {
-    'mock_xc': mock_xc,
-    'gga_c_chachiyo': gga_c_chachiyo,
-    'gga_c_chachiyo_spin': gga_c_chachiyo_spin,
-    'gga_c_pbe': gga_c_pbe,
-    'gga_c_pbe_spin': gga_c_pbe_spin,
-    'gga_c_pbe_sol': gga_c_pbe_sol,
-    'gga_c_pbe_sol_spin': gga_c_pbe_sol_spin,
-    'gga_x_chachiyo': gga_x_chachiyo,
-    'gga_x_chachiyo_spin': gga_x_chachiyo_spin,
-    'gga_x_pbe': gga_x_pbe,
-    'gga_x_pbe_spin': gga_x_pbe_spin,
-    'gga_x_pbe_sol': gga_x_pbe_sol,
-    'gga_x_pbe_sol_spin': gga_x_pbe_sol_spin,
-    'lda_x': lda_x,
-    'lda_x_spin': lda_x_spin,
-    'lda_c_pw': lda_c_pw,
-    'lda_c_pw_spin': lda_c_pw_spin,
-    'lda_c_pw_mod': lda_c_pw_mod,
-    'lda_c_pw_mod_spin': lda_c_pw_mod_spin,
-    'lda_c_vwn': lda_c_vwn,
-    'lda_c_vwn_spin': lda_c_vwn_spin,
-    'lda_c_chachiyo': lda_c_chachiyo,
-    'lda_c_chachiyo_spin': lda_c_chachiyo_spin,
-    'lda_c_chachiyo_mod': lda_c_chachiyo_mod,
-    'lda_c_chachiyo_mod_spin': lda_c_chachiyo_mod_spin
+    i.__name__: i for i in (
+        mock_xc,
+        gga_c_chachiyo,
+        gga_c_chachiyo_spin,
+        gga_c_pbe,
+        gga_c_pbe_spin,
+        gga_c_pbe_sol,
+        gga_c_pbe_sol_spin,
+        gga_x_chachiyo,
+        gga_x_chachiyo_spin,
+        gga_x_pbe,
+        gga_x_pbe_spin,
+        gga_x_pbe_sol,
+        gga_x_pbe_sol_spin,
+        lda_x,
+        lda_x_spin,
+        lda_c_pw,
+        lda_c_pw_spin,
+        lda_c_pw_mod,
+        lda_c_pw_mod_spin,
+        lda_c_vwn,
+        lda_c_vwn_spin,
+        lda_c_chachiyo,
+        lda_c_chachiyo_spin,
+        lda_c_chachiyo_mod,
+        lda_c_chachiyo_mod_spin
+    )
 }
 
 XC_MAP = {
