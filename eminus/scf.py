@@ -76,7 +76,7 @@ class SCF:
         self.disp = disp                #: Enables the dispersion correction calculation.
         self.opt = opt                  #: Minimization methods.
 
-        # Initialize the main attributes
+        # Initialize other attributes
         self.energies = Energy()        #: Energy object holding energy contributions.
         self.is_converged = False       #: Determines the SCF object convergence.
 

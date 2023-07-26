@@ -6,6 +6,7 @@ import re
 import numpy as np
 from scipy.linalg import norm
 
+from .io import read_gth
 from .logger import log
 
 
@@ -201,3 +202,23 @@ def molecule2list(molecule):
             # If ia is a string add it to the results list
             atom_list += [ia]
     return atom_list
+
+
+def atom2charge(atom, path=None):
+    """Get the valence charges for a list of chemical symbols from GTH files.
+
+    Args:
+        atom (list): Atom symbols.
+        path (str | None): Directory of GTH files.
+
+    Returns:
+        list: Valence charges per atom.
+    """
+    if path is not None:
+        if path.lower() in ('pade', 'pbe'):
+            psp_path = path.lower()
+        else:
+            psp_path = path
+    else:
+        psp_path = 'pbe'
+    return [read_gth(ia, psp_path=psp_path)['Zion'] for ia in atom]
