@@ -61,7 +61,8 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     Gh = np.empty((len(atoms.G2), 3), dtype=complex)
     for dim in range(3):
         Gh[:, dim] = atoms.J(h[spin, :, dim])
-    return 1j * np.sum(atoms.G * Gh, axis=1)
+    # return 1j * np.sum(atoms.G * Gh, axis=1)
+    return 1j * np.einsum('ir,ir->i', atoms.G, Gh)
 
 
 def get_tau(atoms, Y):
@@ -94,11 +95,11 @@ def get_tau(atoms, Y):
         dYrs[..., dim] = atoms.I(1j * Gc[..., dim] * Y)
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
     # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
-    sumdYrs = np.real(np.einsum('sijr,sijr->sij', dYrs.conj(), dYrs))
     # Sum over all states
     # Use the definition with a division by two
     # return 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
-    return 0.5 * np.einsum('sj,sij->si', atoms.f, sumdYrs)
+    # Or in compressed einsum notation:
+    return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.f, dYrs.conj(), dYrs))
 
 
 def calc_Vtau(scf, spin, W, vtau):
