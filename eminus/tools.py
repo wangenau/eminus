@@ -65,7 +65,7 @@ def orbital_center(obj, psirs):
     Returns:
         bool: Center of masses.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     coms = [np.array([])] * 2
     Ncom = psirs.shape[2]
@@ -174,7 +174,7 @@ def check_ortho(obj, func, eps=1e-9):
     Returns:
         bool: Orthogonality status for the set of functions.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
     func = np.atleast_3d(func)
 
     # It makes no sense to calculate anything for only one function
@@ -214,7 +214,7 @@ def check_norm(obj, func, eps=1e-9):
     Returns:
         bool: Normalization status for the set of functions.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
     func = np.atleast_3d(func)
 
     # We integrate over our cell, the integration borders then become a=0 and b=cell length
@@ -245,7 +245,7 @@ def check_orthonorm(obj, func):
     Returns:
         bool: Orthonormality status for the set of functions.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
     ortho_bool = check_ortho(atoms, func)
     norm_bool = check_norm(atoms, func)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')

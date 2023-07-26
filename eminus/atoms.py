@@ -367,7 +367,7 @@ class Atoms:
         return out
 
     @property
-    def atoms(self):
+    def _atoms(self):
         """Return the atoms object itself.
 
         This way we can access the atoms object from Atoms and SCF classes with the same code.

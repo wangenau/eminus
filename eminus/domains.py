@@ -22,7 +22,7 @@ def domain_cuboid(obj, length, centers=None):
     Returns:
         ndarray: Boolean mask.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     if isinstance(length, (int, float)):
         length = length * np.ones(3)
@@ -74,7 +74,7 @@ def domain_sphere(obj, radius, centers=None):
     Returns:
         ndarray: Boolean mask.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     if centers is None:
         centers = center_of_mass(atoms.X)

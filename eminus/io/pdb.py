@@ -23,7 +23,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     Returns:
         None.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     if not filename.endswith('.pdb'):
         filename += '.pdb'

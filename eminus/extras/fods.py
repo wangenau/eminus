@@ -85,7 +85,7 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
                       'install them with "pip install eminus[fods]".\n\n')
         raise
 
-    atoms = obj.atoms
+    atoms = obj._atoms
     loc = loc.upper()
 
     if 'He' in atoms.atom and atoms.Nspin == 2:
@@ -164,7 +164,7 @@ def remove_core_fods(obj, fods):
     Returns:
         ndarray: Valence FOD positions.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
     if atoms.Nspin == 1 and len(fods[0]) * 2 == np.sum(atoms.f[0]):

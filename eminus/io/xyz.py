@@ -64,7 +64,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     Returns:
         None.
     """
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     if not filename.endswith('.xyz'):
         filename += '.xyz'

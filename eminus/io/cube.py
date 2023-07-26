@@ -87,7 +87,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         None.
     """
     # Atomic units are assumed, so there is no need for conversion.
-    atoms = obj.atoms
+    atoms = obj._atoms
 
     if not filename.endswith('.cube'):
         filename += '.cube'
