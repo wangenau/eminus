@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Consolidated configuration module."""
+import numbers
 import os
 import pathlib
 import sys
@@ -84,7 +85,7 @@ class ConfigClass():
     @threads.setter
     def threads(self, value):
         self._threads = value
-        if isinstance(value, int):
+        if isinstance(value, numbers.Integral):
             if self.use_torch:
                 import torch
                 return torch.set_num_threads(value)

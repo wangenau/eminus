@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Functions to restrict real-space fields to domains."""
+import numbers
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -24,7 +26,7 @@ def domain_cuboid(obj, length, centers=None):
     """
     atoms = obj._atoms
 
-    if isinstance(length, (int, float)):
+    if isinstance(length, numbers.Real):
         length = length * np.ones(3)
     if centers is None:
         centers = center_of_mass(atoms.X)

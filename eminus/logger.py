@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Logger initialization and configuration."""
 import logging
+import numbers
 import sys
 
 
@@ -87,7 +88,7 @@ def get_level(verbose):
     }
     if verbose is None:
         level = log.verbose
-    if isinstance(verbose, int):
+    if isinstance(verbose, numbers.Integral):
         level = log_levels.get(verbose, 'DEBUG')
     level = verbose.upper()
     if level not in log_levels.values():
