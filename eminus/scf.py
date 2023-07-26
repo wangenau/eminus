@@ -81,7 +81,7 @@ class SCF:
         self.is_converged = False       #: Determines the SCF object convergence.
 
         # Listing of private attributes where the explicit setting of values is discouraged:
-        # _xc_type, _psp, _symmetric, _opt_log, _gth
+        # _gth, _opt_log, _psp, _symmetric, _xc_type
 
     @property
     def atoms(self):

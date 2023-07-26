@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Linear algebra calculation utilities."""
 import functools
+import re
 
 import numpy as np
 from scipy.linalg import norm
@@ -175,3 +176,28 @@ def add_maybe_none(a, b):
     if b is None:
         return a
     return a + b
+
+
+def molecule2list(molecule):
+    """Expand a chemical formula to a list of chemical symbols.
+
+    Args:
+        molecule (str): Simplified chemical formula (case sensitive).
+
+        No charges or parentheses are allowed, only chemical symbols followed by their amount.
+
+    Returns:
+        list: Atoms of the molecule expanded to a list.
+    """
+    # Insert a whitespace before every capital letter, these can appear once or none at all
+    # Or insert before digits, these can appear at least once
+    tmp_list = re.sub(r'([A-Z?]|\d+)', r' \1', molecule).split()
+    atom_list = []
+    for ia in tmp_list:
+        if ia.isdigit():
+            # If ia is an integer append the previous atom ia-1 times
+            atom_list += [atom_list[-1]] * (int(ia) - 1)
+        else:
+            # If ia is a string add it to the results list
+            atom_list += [ia]
+    return atom_list
