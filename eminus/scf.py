@@ -72,7 +72,7 @@ class SCF:
         self.guess = guess              #: Initial wave functions guess.
         self.etol = etol                #: Total energy convergence tolerance.
         self.gradtol = gradtol          #: Gradient norm convergence tolerance.
-        self.sic = sic                  #: Enables the SIC energy calculation
+        self.sic = sic                  #: Enables the SIC energy calculation.
         self.disp = disp                #: Enables the dispersion correction calculation.
         self.opt = opt                  #: Minimization methods.
 

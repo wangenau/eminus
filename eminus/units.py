@@ -61,30 +61,6 @@ def kcalmol2ha(E):
     return E / kcalmol
 
 
-def ev2kcalmol(E):
-    """Convert electronvolt to kcal/mol.
-
-    Args:
-        E (float | ndarray): Energy in electronvolt.
-
-    Returns:
-        float | ndarray: Energy in kcal/mol.
-    """
-    return ha2kcalmol(ev2ha(E))
-
-
-def kcalmol2ev(E):
-    """Convert kcal/mol to electronvolt.
-
-    Args:
-        E (float | ndarray): Energy in kcal/mol.
-
-    Returns:
-        float | ndarray: Energy in electronvolt.
-    """
-    return ha2ev(kcalmol2ha(E))
-
-
 def ha2ry(E):
     """Convert Hartree to Rydberg.
 
