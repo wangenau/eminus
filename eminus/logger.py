@@ -86,10 +86,13 @@ def get_level(verbose):
         4: 'DEBUG'
     }
     if verbose is None:
-        return log.verbose
+        level = log.verbose
     if isinstance(verbose, int):
-        return log_levels.get(verbose, 'DEBUG')
-    return verbose.upper()
+        level = log_levels.get(verbose, 'DEBUG')
+    level = verbose.upper()
+    if level not in log_levels.values():
+        log.error(f'{level} is no recognized logging level.')
+    return level
 
 
 def name(newname):
