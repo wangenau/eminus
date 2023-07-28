@@ -88,9 +88,11 @@ def get_level(verbose):
     }
     if verbose is None:
         level = log.verbose
-    if isinstance(verbose, numbers.Integral):
+    elif isinstance(verbose, numbers.Number):
         level = log_levels.get(verbose, 'DEBUG')
-    level = verbose.upper()
+    else:
+        level = verbose
+    level = level.upper()
     if level not in log_levels.values():
         log.error(f'{level} is no recognized logging level.')
     return level
