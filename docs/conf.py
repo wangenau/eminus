@@ -89,10 +89,12 @@ def remove_package_name(fullname: str) -> str:
 # Back up of the original init function
 old_init: Callable[[Any, Any], None] = AutosummaryRenderer.__init__
 
+
 def patched_init(self: Any, app: Any) -> None:
     """Patch the AutosummaryRenderer init function to add the remove_package_name function."""
     old_init(self, app)
     self.env.filters['remove_package_name'] = remove_package_name
+
 
 # Monkey patch the init function
 AutosummaryRenderer.__init__ = patched_init

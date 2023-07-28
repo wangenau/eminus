@@ -18,6 +18,7 @@ b1 = 27.4203609
 fitted_b0 = 21.9469106
 print(f'Original parameter:\nb1 = {b1:.7f}')
 
+
 # # Spin-polarized Chachiyo functional with additional fit parameters
 # # We won't do an extra DFT calculation with this functional, so the function only returns the correlation energies and no potentials
 def lda_c_chachiyo_spin(n, zeta, b0, b1):
@@ -31,11 +32,13 @@ def lda_c_chachiyo_spin(n, zeta, b0, b1):
     ec1 = a1 * np.log(1 + b1 / rs + c1 / rs**2)
     return ec0 + (ec1 - ec0) * chachiyo_scaling(zeta)[0]
 
+
 # # Again, define a wrapper function for the optimization
 # # In the ferromagnetic case we have a relative spin density of 1 (with 0 we would recover the paramagnetic case)
 def functional_wrapper(rs, b1):
     n = 3 / (4 * np.pi * rs**3)
     return lda_c_chachiyo_spin(n, 1, fitted_b0, b1)
+
 
 # # Do the fit over the QMC data
 # # One can see that our fitted value is vastly different from the one derived by Karasiev with `b1=28.3559732`
@@ -56,10 +59,12 @@ plt.ylabel(r'$E_c^\mathrm{F} - E_c^{\mathrm{F,QMC}}$ [m$E_\mathrm{h}$]')
 plt.legend()
 plt.savefig('correlation_energy_error_spin.png')
 
+
 # # Lastly, let us compare the mean absolute errors (MAE) of these functional variants
 # # One could also compare the root mean square error but the result would be obvious since our fit minimizes this error
 def mae(data, ref):
     return 1000 * np.sum(np.abs(data - ref)) / len(ref)
+
 
 # # Begin with the spin-paired case...
 print('\nMAE (spin-paired) [mEh]:')

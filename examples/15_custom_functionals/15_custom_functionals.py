@@ -28,6 +28,7 @@ c = 20.4562557
 b = c
 print(f'\nOriginal parameter:\nb = {b:.7f}')
 
+
 # # All functionals in eminus share the same signature and return types
 # # Define a custom spin-paired functional using said signature based on the Chachiyo functional but with the customizable parameter parameter `b` so we can fit over it
 def custom_functional(n, b, **kwargs):
@@ -36,6 +37,7 @@ def custom_functional(n, b, **kwargs):
     vc = ec + a * (2 * c + b * rs) / (3 * (c + b * rs + b * rs**2))  # Exchange potential
     return ec, np.array([vc]), None
 
+
 # # Fit the functional using a wrapper function
 # # We only fit over the energies so the wrapper function only returns the first argument of the functional
 # # The third return value of the function (here `None`) is only used in GGA functionals
@@ -43,6 +45,7 @@ def custom_functional(n, b, **kwargs):
 def functional_wrapper(rs, b):
     n = 3 / (4 * np.pi * rs**3)  # Density from Wigner-Seitz radius
     return custom_functional(n, b)[0]
+
 
 # # Do the fit over the QMC data
 # # The resulting parameter still recovers the limits of the original functional but can be more accurate in the mid-density regimes

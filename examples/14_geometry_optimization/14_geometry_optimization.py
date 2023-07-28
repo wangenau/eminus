@@ -9,6 +9,7 @@ from eminus.units import bohr2ang, ha2ev
 distances = []
 energies = []
 
+
 # # Create a simple cost function for the optimizer
 # # The objective is of course the total energy of the molecule
 # # Displace one hydrogen by a distance `d`, choose a small `ecut` for a faster evaluation
@@ -20,6 +21,7 @@ def cost(d):
     distances.append(d)
     energies.append(etot)
     return etot
+
 
 # # The total energy for an H2 molecule will be saved in the above lists when calling the cost function
 cost(0.5)
