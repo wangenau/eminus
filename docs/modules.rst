@@ -20,6 +20,7 @@ Modules
    eminus.localizer
    eminus.logger
    eminus.minimizer
+   eminus.occupations
    eminus.operators
    eminus.orbitals
    eminus.potentials
