@@ -140,9 +140,14 @@ class Occupations:
         # Do not use the setter methods in this place to not trigger the setter effects
         # If f is a number use this occupation for all states
         if isinstance(value, numbers.Real):
-            if self.Nspin == 1 or self.Nelec % 2 == self.spin % 2:
+            # Do not leave the states empty when no electrons are present
+            if self.Nelec <= 0:
+                self._Nstate = 1
+                self._f = np.zeros((self.Nspin, 1))
+            elif self.Nspin == 1 or self.Nelec % 2 == self.spin % 2:
                 self._integer_fillings(value)
             else:
+                log.warning('Using fractional occupations.')
                 self._fractional_fillings(value)
         # If f is an array redetermine all attributes from it
         else:
@@ -215,9 +220,9 @@ class Occupations:
 
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""
-        return f'Number of electrons: {self.Nelec}\n' \
-               f'Spin handling: {"un" if self.Nspin == 2 else ""}restricted\n' \
+        return f'Spin handling: {"un" if self.Nspin == 2 else ""}restricted\n' \
+               f'Number of electrons: {self.Nelec}\n' \
                f'Spin: {self.spin}\n' \
                f'Charge: {self.charge}\n' \
                f'Number of states: {self._Nstate}\n' \
-               f'Fillings: \n{self.f if self.is_filled else "Not filled"}\n'
+               f'Fillings: \n{self.f if self.is_filled else "Not filled"}'

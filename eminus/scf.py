@@ -93,9 +93,9 @@ class SCF:
         # Build the atoms object if necessary and make a copy
         # This way the Atoms objects inside and outside the class are independent but both are build
         if not value.is_built:
-            self._atoms = copy.copy(value.build())
+            self._atoms = copy.deepcopy(value.build())
         else:
-            self._atoms = copy.copy(value)
+            self._atoms = copy.deepcopy(value)
 
     @property
     def xc(self):
@@ -105,7 +105,7 @@ class SCF:
     @xc.setter
     def xc(self, value):
         self._xc = parse_functionals(value.lower())
-        # Determine the type of the functional combination
+        # Determine the type of functional combinations
         self._xc_type = parse_xc_type(self._xc)
         if 'mock_xc' in self._xc:
             self.log.warning('Usage of mock functional detected.')
@@ -188,14 +188,12 @@ class SCF:
         # Print some information about the calculation
         if self.log.level <= logging.DEBUG:
             info()
-        self.log.debug(f'\n--- System information ---\n{self.atoms}\n'
-                       f'Spin handling: {"un" if self.atoms.Nspin == 2 else ""}restricted\n'
-                       f'Number of states: {self.atoms.Nstate}\n'
-                       f'Occupation per state:\n{self.atoms.f}\n'
+        self.log.debug(f'\n--- Atoms information ---\n{self.atoms}\n'
                        f'\n--- Cell information ---\nSide lengths: {self.atoms.a} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Eh\n'
-                       f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
+                       f'Compression: {len(self.atoms._G2c) / len(self.atoms._G2):.5f}\n'
+                       f'\n--- State information ---\n{self.atoms.occ}\n'
                        f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
 
         # Calculate Ewald energy that only depends on the system geometry
@@ -251,7 +249,7 @@ class SCF:
                            f'\nTime/Iteration: {t / N:.5f} s')
         self.log.info(f'Total SCF time: {t_tot:.5f} s')
         # Print the S^2 expectation value for unrestricted calculations
-        if self.atoms.Nspin == 2:
+        if self.atoms.unrestricted:
             self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
         if self.log.level <= logging.DEBUG:
@@ -323,13 +321,14 @@ class SCF:
                f'Non-local potential: {self._gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
                f'Converged: {self.is_converged}'
 
+
 class RSCF(SCF):
     """SCF class for spin-paired systems.
 
     Inherited from :class:`eminus.scf.SCF`.
 
     In difference to the SCF class, this class will not build the original Atoms object, only the
-    one attributed to the class.
+    one attributed to the class. Customized fillings could be overwritten when using this class.
     """
     @property
     def atoms(self):
@@ -338,8 +337,9 @@ class RSCF(SCF):
 
     @atoms.setter
     def atoms(self, value):
-        self._atoms = copy.copy(value)
-        self._atoms._set_states(Nspin=1)
+        self._atoms = copy.deepcopy(value)
+        self._atoms.unrestricted = False
+        self._atoms.occ.fill()
         if not self._atoms.is_built:
             self._atoms = self._atoms.build()
 
@@ -350,7 +350,7 @@ class USCF(SCF):
     Inherited from :class:`eminus.scf.SCF`.
 
     In difference to the SCF class, this class will not build the original Atoms object, only the
-    one attributed to the class.
+    one attributed to the class. Customized fillings could be overwritten when using this class.
     """
     @property
     def atoms(self):
@@ -359,7 +359,8 @@ class USCF(SCF):
 
     @atoms.setter
     def atoms(self, value):
-        self._atoms = copy.copy(value)
-        self._atoms._set_states(Nspin=2)
+        self._atoms = copy.deepcopy(value)
+        self._atoms.unrestricted = True
+        self._atoms.occ.fill()
         if not self._atoms.is_built:
             self._atoms = self._atoms.build()

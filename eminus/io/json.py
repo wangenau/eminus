@@ -27,16 +27,16 @@ def read_json(filename):
 
         # Create a simple eminus objects and set all attributes afterwards
         # Explicitly call objects with verbosity since the logger is created at instantiation
-        if isinstance(dct, dict) and 'atom' in dct:
-            atoms = eminus.Atoms(dct['atom'], dct['X'], verbose=dct['_verbose'])
+        if isinstance(dct, dict) and '_atom' in dct:
+            atoms = eminus.Atoms(dct['_atom'], dct['_X'], verbose=dct['_verbose'])
             atoms._set_operators()
             for attr in dct:
                 if attr == 'log':
                     continue
                 setattr(atoms, attr, copy.deepcopy(dct[attr]))
             # The tuple type is not preserved when serializing, manually cast the only important one
-            if isinstance(atoms.active, list):
-                atoms.active = tuple(atoms.active)
+            if isinstance(atoms._active, list):
+                atoms._active = tuple(atoms._active)
             return atoms
         if isinstance(dct, dict) and '_atoms' in dct:
             scf = eminus.SCF(dct['_atoms'], verbose=dct['_verbose'])
@@ -55,6 +55,11 @@ def read_json(filename):
             for attr in dct:
                 setattr(gth, attr, dct[attr])
             return gth
+        if isinstance(dct, dict) and '_Nelec' in dct:
+            occ = eminus.occupations.Occupations()
+            for attr in dct:
+                setattr(occ, attr, dct[attr])
+            return occ
         return dct
 
     if not filename.endswith('.json'):
@@ -82,7 +87,8 @@ def write_json(obj, filename):
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is a Atoms or SCF class dump them as a dictionary
-            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH)):
+            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH,
+                                eminus.occupations.Occupations)):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
                 return dict(json.loads(data))
