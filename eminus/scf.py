@@ -80,9 +80,6 @@ class SCF:
         self.energies = Energy()        #: Energy object holding energy contributions.
         self.is_converged = False       #: Determines the SCF object convergence.
 
-        # Listing of private attributes where the explicit setting of values is discouraged:
-        # _gth, _opt_log, _psp, _symmetric, _xc_type
-
     @property
     def atoms(self):
         """Atoms object."""
@@ -132,7 +129,7 @@ class SCF:
             self._pot = 'gth'
         # Build the potential
         if self._pot == 'gth':
-            self._gth = GTH(self)
+            self.gth = GTH(self)
         self.Vloc = init_pot(self)
 
     @property
@@ -183,6 +180,21 @@ class SCF:
         self._verbose = get_level(value)
         self.log.verbose = self._verbose
 
+    @property
+    def psp(self):
+        """Pseudopotential path."""
+        return self._psp
+
+    @property
+    def symmetric(self):
+        """Determines if the initial guess is the same for both spin channels."""
+        return self._symmetric
+
+    @property
+    def xc_type(self):
+        """Determines the exchange-correlation family."""
+        return self._xc_type
+
     def run(self, **kwargs):
         """Run the self-consistent field (SCF) calculation."""
         # Print some information about the calculation
@@ -192,7 +204,7 @@ class SCF:
                        f'\n--- Cell information ---\nSide lengths: {self.atoms.a} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Eh\n'
-                       f'Compression: {len(self.atoms._G2c) / len(self.atoms._G2):.5f}\n'
+                       f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
                        f'\n--- State information ---\n{self.atoms.occ}\n'
                        f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
 
@@ -201,9 +213,9 @@ class SCF:
         # Build the initial wave function as long as W there is no W
         if not hasattr(self, 'W'):
             if 'random' in self.guess:
-                self.W = guess_random(self, symmetric=self._symmetric)
+                self.W = guess_random(self, symmetric=self.symmetric)
             elif 'pseudo' in self.guess:
-                self.W = guess_pseudo(self, symmetric=self._symmetric)
+                self.W = guess_pseudo(self, symmetric=self.symmetric)
 
         # Start the minimization procedures
         self.clear()
@@ -313,12 +325,12 @@ class SCF:
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return f'XC functionals: {self.xc}\n' \
                f'Potential: {self.pot}\n' \
-               f'{f"GTH files: {self._psp}" + chr(10) if self.pot == "gth" else ""}' \
+               f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
                f'Starting guess: {self.guess}\n' \
-               f'Symmetric guess: {self._symmetric}\n' \
+               f'Symmetric guess: {self.symmetric}\n' \
                f'Energy convergence tolerance: {self.etol} Eh\n' \
                f'Gradient convergence tolerance: {self.gradtol}\n' \
-               f'Non-local potential: {self._gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
+               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
                f'Converged: {self.is_converged}'
 
 

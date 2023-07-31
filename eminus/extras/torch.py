@@ -34,24 +34,24 @@ def I(atoms, W):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms.s)
-    s = tuple(atoms.s)
+    n = np.prod(atoms._s)
+    s = tuple(atoms._s)
 
     if W.ndim < 3:
-        if len(W) == len(atoms.G2):
+        if len(W) == len(atoms._G2):
             Wfft = W
         else:
             if W.ndim == 1:
                 Wfft = np.zeros(n, dtype=W.dtype)
             else:
-                Wfft = np.zeros((n, atoms.Nstate), dtype=W.dtype)
-            Wfft[atoms.active] = W
+                Wfft = np.zeros((n, atoms.occ._Nstate), dtype=W.dtype)
+            Wfft[atoms._active] = W
     else:
-        if W.shape[1] == len(atoms.G2):
+        if W.shape[1] == len(atoms._G2):
             Wfft = W
         else:
-            Wfft = np.zeros((atoms.Nspin, n, atoms.Nstate), dtype=W.dtype)
-            Wfft[:, atoms.active[0]] = W
+            Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
+            Wfft[:, atoms._active[0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:
@@ -61,12 +61,12 @@ def I(atoms, W):
         Wfft = Wfft.view(s)
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.Nstate,))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.Nstate)
+        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.Nspin,) + s + (atoms.Nstate,))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.Nspin, n,
-                                                                              atoms.Nstate)
+        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
+                                                                              atoms.occ._Nstate)
     return Finv.detach().cpu().numpy()
 
 
@@ -84,8 +84,8 @@ def J(atoms, W, full=True):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms.s)
-    s = tuple(atoms.s)
+    n = np.prod(atoms._s)
+    s = tuple(atoms._s)
 
     Wfft = torch.from_numpy(np.copy(W))
     if config.use_gpu:
@@ -95,17 +95,17 @@ def J(atoms, W, full=True):
         Wfft = Wfft.view(s)
         F = torch.fft.fftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.Nstate,))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.Nstate)
+        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.Nspin,) + s + (atoms.Nstate,))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.Nspin, n,
-                                                                          atoms.Nstate)
+        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
+                                                                          atoms.occ._Nstate)
     F = F.detach().cpu().numpy()
     if not full:
         if F.ndim < 3:
-            return F[atoms.active]
-        return F[:, atoms.active[0]]
+            return F[atoms._active]
+        return F[:, atoms._active[0]]
     return F
 
 
@@ -123,8 +123,8 @@ def Idag(atoms, W, full=False):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms.s)
-    s = tuple(atoms.s)
+    n = np.prod(atoms._s)
+    s = tuple(atoms._s)
 
     Wfft = torch.from_numpy(np.copy(W))
     if config.use_gpu:
@@ -134,17 +134,17 @@ def Idag(atoms, W, full=False):
         Wfft = Wfft.view(s)
         F = torch.fft.fftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.Nstate,))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.Nstate)
+        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.Nspin,) + s + (atoms.Nstate,))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.Nspin, n,
-                                                                          atoms.Nstate)
+        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
+                                                                          atoms.occ._Nstate)
     F = F.detach().cpu().numpy() * n
     if not full:
         if F.ndim < 3:
-            return F[atoms.active]
-        return F[:, atoms.active[0]]
+            return F[atoms._active]
+        return F[:, atoms._active[0]]
     return F
 
 
@@ -159,24 +159,24 @@ def Jdag(atoms, W):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms.s)
-    s = tuple(atoms.s)
+    n = np.prod(atoms._s)
+    s = tuple(atoms._s)
 
     if W.ndim < 3:
-        if len(W) == len(atoms.G2):
+        if len(W) == len(atoms._G2):
             Wfft = W
         else:
             if W.ndim == 1:
                 Wfft = np.zeros(n, dtype=W.dtype)
             else:
-                Wfft = np.zeros((n, atoms.Nstate), dtype=W.dtype)
-            Wfft[atoms.active] = W
+                Wfft = np.zeros((n, atoms.occ._Nstate), dtype=W.dtype)
+            Wfft[atoms._active] = W
     else:
-        if W.shape[1] == len(atoms.G2):
+        if W.shape[1] == len(atoms._G2):
             Wfft = W
         else:
-            Wfft = np.zeros((atoms.Nspin, n, atoms.Nstate), dtype=W.dtype)
-            Wfft[:, atoms.active[0]] = W
+            Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
+            Wfft[:, atoms._active[0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:
@@ -186,10 +186,10 @@ def Jdag(atoms, W):
         Wfft = Wfft.view(s)
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.Nstate,))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.Nstate)
+        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.Nspin,) + s + (atoms.Nstate,))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.Nspin, n,
-                                                                              atoms.Nstate)
+        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
+                                                                              atoms.occ._Nstate)
     return Finv.detach().cpu().numpy() / n

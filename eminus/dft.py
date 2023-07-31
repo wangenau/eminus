@@ -48,8 +48,8 @@ def get_n_total(atoms, Y, n_spin=None):
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
     n = np.zeros(len(atoms.r))
-    for spin in range(atoms.Nspin):
-        n += np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    for spin in range(atoms.occ.Nspin):
+        n += np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -66,9 +66,9 @@ def get_n_spin(atoms, Y):
         ndarray: Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.Nspin, len(atoms.r)))
-    for spin in range(atoms.Nspin):
-        n[spin] = np.sum(atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    n = np.empty((atoms.occ.Nspin, len(atoms.r)))
+    for spin in range(atoms.occ.Nspin):
+        n[spin] = np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -83,9 +83,9 @@ def get_n_single(atoms, Y):
         ndarray: Single-electron densities.
     """
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate))
-    for spin in range(atoms.Nspin):
-        n[spin] = atoms.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
+    n = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate))
+    for spin in range(atoms.occ.Nspin):
+        n[spin] = atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
     return n
 
 
@@ -123,7 +123,7 @@ def get_grad(scf, spin, W, **kwargs):
         ndarray: Gradient.
     """
     atoms = scf.atoms
-    F = np.diag(atoms.f[spin])
+    F = atoms.occ.F[spin]
     HW = H(scf, spin, W, **kwargs)
     WHW = W[spin].conj().T @ HW
     # U = Wdag O(W)
@@ -167,7 +167,7 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     # This calculate the representation in the reciprocal space
     Gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a GGA functional is used
-    if 'gga' in scf._xc_type:
+    if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[spin])
@@ -198,16 +198,16 @@ def H_precompute(scf, W):
     Y = orth(atoms, W)
     n_spin = get_n_spin(atoms, Y)
     n = get_n_total(atoms, Y, n_spin)
-    if 'gga' in scf._xc_type:
+    if 'gga' in scf.xc_type:
         dn_spin = get_grad_field(atoms, n_spin)
     else:
         dn_spin = None
-    if scf._xc_type == 'meta-gga':
+    if scf.xc_type == 'meta-gga':
         tau = get_tau(atoms, Y)
     else:
         tau = None
     phi = solve_poisson(atoms, n)
-    vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.Nspin, dn_spin, tau)
+    vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.occ.Nspin, dn_spin, tau)
     return dn_spin, phi, vxc, vsigma, vtau
 
 
@@ -245,7 +245,7 @@ def get_psi(scf, W):
     atoms = scf.atoms
     Y = orth(atoms, W)
     psi = np.empty_like(Y)
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         mu = Y[spin].conj().T @ H(scf, spin, Y)
         _, D = eigh(mu)
         psi[spin] = Y[spin] @ D
@@ -266,8 +266,8 @@ def get_epsilon(scf, W):
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((atoms.Nspin, atoms.Nstate))
-    for spin in range(atoms.Nspin):
+    epsilon = np.empty((atoms.occ.Nspin, atoms.occ.Nstate))
+    for spin in range(atoms.occ.Nspin):
         mu = Y[spin].conj().T @ H(scf, spin, Y)
         epsilon[spin] = np.sort(eigvalsh(mu))
     return epsilon
@@ -289,12 +289,12 @@ def guess_random(scf, seed=42, symmetric=False):
     atoms = scf.atoms
     rng = Generator(SFC64(seed))
     if symmetric:
-        W = rng.standard_normal((len(atoms.G2c), atoms.Nstate)) + \
-            1j * rng.standard_normal((len(atoms.G2c), atoms.Nstate))
-        W = np.array([W] * atoms.Nspin)
+        W = rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate)) + \
+            1j * rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate))
+        W = np.array([W] * atoms.occ.Nspin)
     else:
-        W = rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate)) + \
-            1j * rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
+        W = rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)) + \
+            1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
     return orth(atoms, W)
 
 
@@ -313,8 +313,8 @@ def guess_pseudo(scf, seed=1234, symmetric=False):
     """
     atoms = scf.atoms
     if symmetric:
-        W = pseudo_uniform((1, len(atoms.G2c), atoms.Nstate), seed=seed)
-        W = np.array([W[0]] * atoms.Nspin)
+        W = pseudo_uniform((1, len(atoms.G2c), atoms.occ.Nstate), seed=seed)
+        W = np.array([W[0]] * atoms.occ.Nspin)
     else:
-        W = pseudo_uniform((atoms.Nspin, len(atoms.G2c), atoms.Nstate), seed=seed)
+        W = pseudo_uniform((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate), seed=seed)
     return orth(atoms, W)

@@ -29,13 +29,13 @@ def scf_step(scf):
     scf.Y = orth(atoms, scf.W)
     scf.n_spin = get_n_spin(atoms, scf.Y)
     scf.n = get_n_total(atoms, scf.Y, scf.n_spin)
-    if 'gga' in scf._xc_type:
+    if 'gga' in scf.xc_type:
         scf.dn_spin = get_grad_field(atoms, scf.n_spin)
-    if scf._xc_type == 'meta-gga':
+    if scf.xc_type == 'meta-gga':
         scf.tau = get_tau(atoms, scf.Y)
     scf.phi = solve_poisson(atoms, scf.n)
-    scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.Nspin, scf.dn_spin,
-                                                    scf.tau)
+    scf.exc, scf.vxc, scf.vsigma, scf.vtau = get_xc(scf.xc, scf.n_spin, atoms.occ.Nspin,
+                                                    scf.dn_spin, scf.tau)
     scf._precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc,
                         'vsigma': scf.vsigma, 'vtau': scf.vtau}
     return get_E(scf)
@@ -101,13 +101,13 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         header += 'dEtot [Eh]'.ljust(13)
         # Print the gradient norm for cg methods
         if method not in ('sd', 'lm', 'pclm'):
-            header += '|Gradient|'.ljust(10 * scf.atoms.Nspin + 3)
+            header += '|Gradient|'.ljust(10 * scf.atoms.occ.Nspin + 3)
         # Print extra debugging information if available
         if scf.log.level <= logging.DEBUG:
             if method != 'sd':
-                header += 'linmin-test'.ljust(10 * scf.atoms.Nspin + 3)
+                header += 'linmin-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
             if method not in ('sd', 'lm', 'pclm'):
-                header += 'cg-test'.ljust(10 * scf.atoms.Nspin + 3)
+                header += 'cg-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
             scf.log.debug(header)
         else:
             scf.log.info(header)
@@ -120,12 +120,12 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         if iteration > 1:
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
-                info += str(norm_g).ljust(10 * scf.atoms.Nspin + 3)
+                info += str(norm_g).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
                 if method != 'sd':
-                    info += str(linmin).ljust(10 * scf.atoms.Nspin + 3)
+                    info += str(linmin).ljust(10 * scf.atoms.occ.Nspin + 3)
                 if method not in ('sd', 'lm', 'pclm'):
-                    info += str(cg).ljust(10 * scf.atoms.Nspin + 3)
+                    info += str(cg).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
         scf.log.debug(info)
     else:
@@ -240,7 +240,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         costs.append(c)
         if condition(scf, 'sd', costs):
             break
-        for spin in range(atoms.Nspin):
+        for spin in range(atoms.occ.Nspin):
             g = grad(scf, spin, scf.W, **scf._precomputed)
             scf.W[spin] = scf.W[spin] - betat * g
     return costs
@@ -274,13 +274,13 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         method = 'lm'
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
+    linmin = np.empty(atoms.occ.Nspin)
+    beta = np.empty((atoms.occ.Nspin, 1, 1))
     # Search direction that needs to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
 
     for _ in range(Nit):
-        for spin in range(atoms.Nspin):
+        for spin in range(atoms.occ.Nspin):
             g = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin each spin separately
             if scf.log.level <= logging.DEBUG and Nit > 0:
@@ -349,17 +349,17 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         method = 'cg'
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    cg = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
-    norm_g = np.empty(atoms.Nspin)
+    linmin = np.empty(atoms.occ.Nspin)
+    cg = np.empty(atoms.occ.Nspin)
+    beta = np.empty((atoms.occ.Nspin, 1, 1))
+    norm_g = np.empty(atoms.occ.Nspin)
     # Gradients that need to be saved for each spin
     d = np.empty_like(scf.W, dtype=complex)
     d_old = np.empty_like(scf.W, dtype=complex)
     g_old = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         g = grad(scf, spin, scf.W)
         if precondition:
             d[spin] = -atoms.K(g)
@@ -376,7 +376,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     condition(scf, method, costs)
 
     for _ in range(1, Nit):
-        for spin in range(atoms.Nspin):
+        for spin in range(atoms.occ.Nspin):
             g = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
@@ -445,10 +445,10 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     costs = []
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.Nspin)
-    cg = np.empty(atoms.Nspin)
-    beta = np.empty((atoms.Nspin, 1, 1))
-    norm_g = np.empty(atoms.Nspin)
+    linmin = np.empty(atoms.occ.Nspin)
+    cg = np.empty(atoms.occ.Nspin)
+    beta = np.empty((atoms.occ.Nspin, 1, 1))
+    norm_g = np.empty(atoms.occ.Nspin)
     # Gradients that need to be saved for each spin
     g = np.empty_like(scf.W, dtype=complex)
     d = np.empty_like(scf.W, dtype=complex)
@@ -456,7 +456,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     g_old = np.empty_like(scf.W, dtype=complex)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
         d[spin] = -atoms.K(g[spin])
         gt = grad(scf, spin, scf.W + betat * d[spin])
@@ -472,7 +472,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         return costs
 
     for _ in range(1, Nit):
-        for spin in range(atoms.Nspin):
+        for spin in range(atoms.occ.Nspin):
             g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
             # Calculate linmin and cg for each spin separately
             if scf.log.level <= logging.DEBUG:
@@ -490,7 +490,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         # If the energy does not go down use the steepest descent step and recalculate the energy
         if c > costs[-1]:
             scf.W = W_old
-            for spin in range(atoms.Nspin):
+            for spin in range(atoms.occ.Nspin):
                 scf.W[spin] = scf.W[spin] - betat * g[spin]
             c = cost(scf)
             costs.append(c)

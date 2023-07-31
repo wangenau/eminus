@@ -92,7 +92,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
     if not filename.endswith('.cube'):
         filename += '.cube'
 
-    if 'He' in atoms.atom and atoms.Nspin == 2:
+    if 'He' in atoms.atom and atoms.unrestricted:
         log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                     'polarized case.')
 

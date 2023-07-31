@@ -51,7 +51,7 @@ def get_E(scf):
     """
     scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
     scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
-    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, Nspin=scf.atoms.Nspin)
+    scf.energies.Exc = get_Exc(scf, scf.n, scf.exc, Nspin=scf.atoms.occ.Nspin)
     scf.energies.Eloc = get_Eloc(scf, scf.n)
     scf.energies.Enonloc = get_Enonloc(scf, scf.Y)
     return scf.energies.Etot
@@ -71,9 +71,8 @@ def get_Ekin(atoms, Y):
     """
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
-    for spin in range(atoms.Nspin):
-        F = np.diag(atoms.f[spin])
-        Ekin += -0.5 * np.trace(F @ Y[spin].conj().T @ atoms.L(Y[spin]))
+    for spin in range(atoms.occ.Nspin):
+        Ekin += -0.5 * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y[spin]))
     return np.real(Ekin)
 
 
@@ -155,22 +154,22 @@ def get_Enonloc(scf, Y):
     atoms = scf.atoms
 
     Enonloc = 0
-    if scf.pot == 'gth' and scf._gth.NbetaNL > 0:  # Only calculate non-local part if necessary
-        for spin in range(atoms.Nspin):
-            betaNL_psi = (Y[spin].conj().T @ scf._gth.betaNL).conj()
+    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate non-local part if necessary
+        for spin in range(atoms.occ.Nspin):
+            betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL).conj()
 
-            enl = np.zeros(atoms.Nstate, dtype=complex)
+            enl = np.zeros(atoms.occ.Nstate, dtype=complex)
             for ia in range(atoms.Natoms):
-                psp = scf._gth[atoms.atom[ia]]
+                psp = scf.gth[atoms.atom[ia]]
                 for l in range(psp['lmax']):
                     for m in range(-l, l + 1):
                         for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = scf._gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                            ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                             for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = scf._gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                                jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-            Enonloc += np.sum(atoms.f[spin] * enl)
+            Enonloc += np.sum(atoms.occ.f[spin] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return np.real(Enonloc * atoms.Omega)
 
@@ -276,30 +275,30 @@ def get_Esic(scf, Y, n_single=None):
         n_single = get_n_single(atoms, Y)
 
     Esic = 0
-    for i in range(atoms.Nstate):
-        for spin in range(atoms.Nspin):
-            if atoms.f[spin, i] > 0:
+    for i in range(atoms.occ.Nstate):
+        for spin in range(atoms.occ.Nspin):
+            if atoms.occ.f[spin, i] > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
                 ni = np.zeros((2, len(atoms.r)))
                 # Normalize single-particle densities to 1
-                ni[0] = n_single[spin, :, i] / atoms.f[spin, i]
+                ni[0] = n_single[spin, :, i] / atoms.occ.f[spin, i]
 
                 # Get the gradient of the single-particle density
-                if 'gga' in scf._xc_type:
+                if 'gga' in scf.xc_type:
                     dni = np.zeros((2, len(atoms.r), 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
 
                 # Get the kinetic energy density of the corresponding orbital
-                if scf._xc_type == 'meta-gga':
+                if scf.xc_type == 'meta-gga':
                     # Use only one orbital for the calculation
                     Ytmp = np.zeros_like(Y)
                     Ytmp[0, :, 0] = Y[spin, :, i]
                     taui = np.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Y)[0] / atoms.f[spin, i]
+                    taui[0] = get_tau(atoms, Y)[0] / atoms.occ.f[spin, i]
                 else:
                     taui = None
 
@@ -307,7 +306,7 @@ def get_Esic(scf, Y, n_single=None):
                 # The exchange part for a SIC correction has to be spin-polarized
                 xc = get_Exc(scf, ni[0], n_spin=ni, dn_spin=dni, tau=taui, Nspin=2)
                 # SIC energy is scaled by the occupation number
-                Esic += (coul + xc) * atoms.f[spin, i]
+                Esic += (coul + xc) * atoms.occ.f[spin, i]
     scf.energies.Esic = Esic
     return Esic
 
@@ -318,4 +317,6 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):  # noqa: D103
     except ImportError:
         log.warning('You have to install the dispersion extra to use this function.')
         return 0
+
+
 get_Edisp.__doc__ = dispersion.get_Edisp.__doc__

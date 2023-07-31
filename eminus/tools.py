@@ -69,7 +69,7 @@ def orbital_center(obj, psirs):
 
     coms = [np.array([])] * 2
     Ncom = psirs.shape[2]
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         coms_spin = np.empty((Ncom, 3))
 
         # Square orbitals
@@ -178,7 +178,7 @@ def check_ortho(obj, func, eps=1e-9):
     func = np.atleast_3d(func)
 
     # It makes no sense to calculate anything for only one function
-    if atoms.Nstate == 1:
+    if atoms.occ.Nstate == 1:
         log.warning('Need at least two functions to check their orthogonality.')
         return True
 
@@ -190,9 +190,9 @@ def check_ortho(obj, func, eps=1e-9):
     ortho_bool = True
     # Check the condition for every combination
     # Orthogonality condition: \int func1^* func2 dr = 0
-    for spin in range(atoms.Nspin):
-        for i in range(atoms.Nstate):
-            for j in range(i + 1, atoms.Nstate):
+    for spin in range(atoms.occ.Nspin):
+        for i in range(atoms.occ.Nstate):
+            for j in range(i + 1, atoms.occ.Nstate):
                 res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
@@ -225,8 +225,8 @@ def check_norm(obj, func, eps=1e-9):
     norm_bool = True
     # Check the condition for every function
     # Normality condition: \int func^* func dr = 1
-    for spin in range(atoms.Nspin):
-        for i in range(atoms.Nstate):
+    for spin in range(atoms.occ.Nspin):
+        for i in range(atoms.occ.Nstate):
             res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
@@ -292,7 +292,7 @@ def get_tautf(scf):
     """
     atoms = scf.atoms
     # Use the definition with a division by two
-    tautf = 3 / 10 * (atoms.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
+    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
 
     log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
     log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
@@ -383,7 +383,7 @@ def get_spin_squared(scf):
     """
     atoms = scf.atoms
     # <S^2> for a restricted calculation is always zero
-    if atoms.Nspin == 1:
+    if not atoms.unrestricted:
         return 0
 
     rhoXr = scf.n_spin[0] - scf.n_spin[1]

@@ -57,7 +57,7 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
     numbers = np.array([SYMBOL2NUMBER[ia] for ia in atoms.atom])
     # Try to determine the method keyword
     if xc is None:
-        if scf._xc_type == 'lda':
+        if scf.xc_type == 'lda':
             method = 'slaterdiracexchange'
             version = 'd3zero'
             log.warning('Dispersion correction for LDA functionals only support d3zero.')

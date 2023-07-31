@@ -28,7 +28,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     if not filename.endswith('.pdb'):
         filename += '.pdb'
 
-    if 'He' in atoms.atom and atoms.Nspin == 2:
+    if 'He' in atoms.atom and atoms.unrestricted:
         log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                     'polarized case.')
 

@@ -64,16 +64,16 @@ def get_FO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi orbitals.
     """
-    fo = np.zeros((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
+    fo = np.zeros((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         # Get the transformation matrix R
         R = get_R(atoms, psi[spin], fods[spin])
         for i in range(len(R)):
-            for j in range(atoms.Nstate):
-                if atoms.f[spin, j] > 0:
+            for j in range(atoms.occ.Nstate):
+                if atoms.occ.f[spin, j] > 0:
                     fo[spin, :, i] += R[i, j] * psi_rs[spin, :, j]
     return fo
 
@@ -92,11 +92,11 @@ def get_S(atoms, psirs):
         ndarray: Overlap matrix S.
     """
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
-    S = np.empty((atoms.Nstate, atoms.Nstate), dtype=complex)
+    S = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
 
     dV = atoms.Omega / np.prod(atoms.s)
-    for i in range(atoms.Nstate):
-        for j in range(atoms.Nstate):
+    for i in range(atoms.occ.Nstate):
+        for j in range(atoms.occ.Nstate):
             S[i, j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
@@ -115,9 +115,9 @@ def get_FLO(atoms, psi, fods):
         ndarray: Real-space Fermi-Loewdin orbitals.
     """
     fo = get_FO(atoms, psi, fods)
-    flo = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate), dtype=complex)
+    flo = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate), dtype=complex)
 
-    for spin in range(atoms.Nspin):
+    for spin in range(atoms.occ.Nspin):
         # Calculate the overlap matrix for FOs
         S = get_S(atoms, fo[spin])
         # Calculate eigenvalues and eigenvectors
@@ -167,8 +167,8 @@ def wannier_center(atoms, psirs):
     """
     dV = atoms.Omega / np.prod(atoms.s)
 
-    centers = np.empty((atoms.Nstate, 3))
-    for i in range(atoms.Nstate):
+    centers = np.empty((atoms.occ.Nstate, 3))
+    for i in range(atoms.occ.Nstate):
         for dim in range(3):
             centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
                                            psirs[:, i], axis=0))
@@ -191,8 +191,8 @@ def second_moment(atoms, psirs):
     dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2
 
-    moments = np.empty(atoms.Nstate)
-    for i in range(atoms.Nstate):
+    moments = np.empty(atoms.occ.Nstate)
+    for i in range(atoms.occ.Nstate):
         moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments
 
@@ -254,12 +254,12 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     Returns:
         ndarray: Supercell Wannier gradient.
     """
-    x = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
-    y = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
-    z = np.zeros((atoms.Nstate, atoms.Nstate), dtype=complex)
+    x = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    y = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    z = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
     # Just the indexed gradient from the paper, without fancy optimization
-    for n in range(atoms.Nstate):
-        for m in range(atoms.Nstate):
+    for n in range(atoms.occ.Nstate):
+        for m in range(atoms.occ.Nstate):
             x[m, n] = X[n, m] * (X[n, n].conj() - X[m, m].conj()) \
                 - X[m, n].conj() * (X[m, m] - X[n, n])
             y[m, n] = Y[n, m] * (Y[n, n].conj() - Y[m, m].conj()) \
@@ -297,10 +297,10 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
     """
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
-    if random_guess and atoms.Nstate > 1:
-        U = unitary_group.rvs(atoms.Nstate, random_state=seed)
+    if random_guess and atoms.occ.Nstate > 1:
+        U = unitary_group.rvs(atoms.occ.Nstate, random_state=seed)
     else:
-        U = np.eye(atoms.Nstate)
+        U = np.eye(atoms.occ.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
     atoms.log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"dCost [a0^2]":<13}')

@@ -25,7 +25,7 @@ class GTH:
                 # Skip if the atom is already in the dictionary
                 if atoms.atom[ia] in self.GTH:
                     continue
-                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=scf._psp)
+                self.GTH[atoms.atom[ia]] = read_gth(atoms.atom[ia], atoms.Z[ia], psp_path=scf.psp)
 
             # Initialize the non-local potential
             NbetaNL, prj2beta, betaNL = init_gth_nonloc(atoms, self)
@@ -59,7 +59,7 @@ def init_gth_loc(scf):
 
     Vloc = np.zeros_like(atoms.G2)
     for isp in species:
-        psp = scf._gth[isp]
+        psp = scf.gth[isp]
         rloc = psp['rloc']
         Zion = psp['Zion']
         c1 = psp['cloc'][0]
@@ -150,19 +150,19 @@ def calc_Vnonloc(scf, spin, W):
     atoms = scf.atoms
 
     Vpsi = np.zeros_like(W[spin], dtype=complex)
-    if scf.pot == 'gth' and scf._gth.NbetaNL > 0:  # Only calculate non-local part if necessary
-        betaNL_psi = (W[spin].conj().T @ scf._gth.betaNL).conj()
+    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate non-local part if necessary
+        betaNL_psi = (W[spin].conj().T @ scf.gth.betaNL).conj()
 
         for ia in range(atoms.Natoms):
-            psp = scf._gth[atoms.atom[ia]]
+            psp = scf.gth[atoms.atom[ia]]
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = scf._gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                        ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
                         for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = scf._gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                            jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            Vpsi += hij * betaNL_psi[:, jbeta] * scf._gth.betaNL[:, ibeta, None]
+                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 

@@ -88,7 +88,7 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
     atoms = obj._atoms
     loc = loc.upper()
 
-    if 'He' in atoms.atom and atoms.Nspin == 2:
+    if 'He' in atoms.atom and atoms.unrestricted:
         log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
                     'polarized case.')
 
@@ -97,28 +97,22 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
     # Build the PySCF input format
     atom_pyscf = list(zip(atoms.atom, X))
 
-    # Spin in PySCF is the difference of up and down electrons
-    if atoms.Nspin == 2:
-        spin = int(np.sum(atoms.f[0] - atoms.f[1]))
-    else:
-        spin = int(np.sum(atoms.Z) % 2)
-
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
-    mol = Mole(atom=atom_pyscf, basis=basis, spin=spin).build(parse_arg=False)
-    if atoms.Nspin == 1:
-        mf = RKS(mol=mol)
-    else:
+    mol = Mole(atom=atom_pyscf, basis=basis, spin=atoms.spin).build(parse_arg=False)
+    if atoms.unrestricted:
         mf = UKS(mol=mol)
+    else:
+        mf = RKS(mol=mol)
     mf.verbose = 0
     mf.kernel()
 
     # Get the localized orbital coefficients
-    loc_orb = get_localized_orbitals(mf, atoms.Nspin, loc)
+    loc_orb = get_localized_orbitals(mf, atoms.occ.Nspin, loc)
     # Calculate the COMs
     loc_com = []
     ao = mf._numint.eval_ao(mf.mol, mf.grids.coords)
-    for s in range(atoms.Nspin):
+    for s in range(atoms.occ.Nspin):
         phi = ao @ loc_orb[s]
         dens = phi.conj() * phi * mf.grids.weights[:, None]
         loc_com.append(dens.T @ mf.grids.coords)
@@ -167,13 +161,13 @@ def remove_core_fods(obj, fods):
     atoms = obj._atoms
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
-    if atoms.Nspin == 1 and len(fods[0]) * 2 == np.sum(atoms.f[0]):
+    if not atoms.unrestricted and len(fods[0]) * 2 == np.sum(atoms.occ.f[0]):
         return fods
-    if atoms.Nspin == 2 and len(fods[0]) == np.sum(atoms.f[0]) \
-            and len(fods[1]) == np.sum(atoms.f[1]):
+    if atoms.unrestricted and len(fods[0]) == np.sum(atoms.occ.f[0]) \
+            and len(fods[1]) == np.sum(atoms.occ.f[1]):
         return fods
 
-    for s in range(atoms.Nspin):
+    for s in range(atoms.occ.Nspin):
         for ia in range(atoms.Natoms):
             n_core = SYMBOL2NUMBER[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state

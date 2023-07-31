@@ -2,7 +2,7 @@
 """DFT functions that are only needed for (meta-)GGA calculations.
 
 Most functions here have been optimized for performance and can be harder to understand than normal.
-To mitigate this easier (but slower) implementations have been added as comments.
+To mitigate this, easier (but slower) implementations have been added as comments.
 """
 import numpy as np
 
@@ -20,8 +20,8 @@ def get_grad_field(atoms, field, real=True):
     Returns:
         ndarray: Gradients of field per spin channel.
     """
-    dfield = np.empty((atoms.Nspin, len(atoms.r), 3), dtype=complex)
-    for spin in range(atoms.Nspin):
+    dfield = np.empty((atoms.occ.Nspin, len(atoms.r), 3), dtype=complex)
+    for spin in range(atoms.occ.Nspin):
         fieldG = atoms.J(field[spin])
         for dim in range(3):
             dfield[spin, :, dim] = atoms.I(1j * atoms.G[:, dim] * fieldG)
@@ -46,7 +46,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
     h = np.zeros_like(dn_spin)
-    if atoms.Nspin == 1:
+    if not atoms.unrestricted:
         # In the unpolarized case we have no spin mixing and only one spin density
         h[0] = 2 * vsigma[0, :, None] * dn_spin[0]
     else:
@@ -81,13 +81,13 @@ def get_tau(atoms, Y):
     # Sadly, this implementation is really slow for various reasons so use the faster one below
 
     # Yrs = atoms.I(Y)
-    # tau = np.zeros((atoms.Nspin, len(atoms.r)), dtype=complex)
-    # for i in range(atoms.Nstate):
+    # tau = np.zeros((atoms.occ.Nspin, len(atoms.r)), dtype=complex)
+    # for i in range(atoms.occ.Nstate):
     #     dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
-    #     tau += 0.5 * atoms.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
+    #     tau += 0.5 * atoms.occ.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     # return np.real(tau)
 
-    dYrs = np.empty((atoms.Nspin, len(atoms.r), atoms.Nstate, 3), dtype=complex)
+    dYrs = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
     # Calculate the active G vectors and broadcast to a desired shape
     Gc = atoms.G[atoms.active][None, :, None, :]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real space
@@ -97,9 +97,9 @@ def get_tau(atoms, Y):
     # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
     # Sum over all states
     # Use the definition with a division by two
-    # return 0.5 * np.sum(atoms.f[:, None, :] * sumdYrs, axis=2)
+    # return 0.5 * np.sum(atoms.occ.f[:, None, :] * sumdYrs, axis=2)
     # Or in compressed einsum notation:
-    return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.f, dYrs.conj(), dYrs))
+    return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.occ.f, dYrs.conj(), dYrs))
 
 
 def calc_Vtau(scf, spin, W, vtau):
@@ -118,22 +118,22 @@ def calc_Vtau(scf, spin, W, vtau):
     """
     atoms = scf.atoms
 
-    Vpsi = np.zeros((len(atoms.G2c), atoms.Nstate), dtype=complex)
-    if scf._xc_type == 'meta-gga':  # Only calculate the contribution for meta-GGAs
+    Vpsi = np.zeros((len(atoms.G2c), atoms.occ.Nstate), dtype=complex)
+    if scf.xc_type == 'meta-gga':  # Only calculate the contribution for meta-GGAs
         # The "intuitive" way is the one commented out below
         # Sadly, this implementation is really slow for various reasons so use the faster one below
 
         # GVpsi = np.empty((len(atoms.G2c), 3), dtype=complex)
         # Gc = atoms.G[atoms.active]
         # Wrs = atoms.I(W)
-        # for i in range(atoms.Nstate):
+        # for i in range(atoms.occ.Nstate):
         #     dWrs = get_grad_field(atoms, Wrs[..., i], real=False)
         #     for r in range(3):
         #         GVpsi[:, r] = atoms.J(vtau[spin] * dWrs[spin, :, r], full=False)
         #     Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
 
-        GVpsi = np.empty((len(atoms.G2c), atoms.Nstate, 3), dtype=complex)
-        dWrs = np.empty((len(atoms.r), atoms.Nstate, 3), dtype=complex)
+        GVpsi = np.empty((len(atoms.G2c), atoms.occ.Nstate, 3), dtype=complex)
+        dWrs = np.empty((len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
         Gc = atoms.G[atoms.active][:, None, :]
         # We only calculate Vtau for one spin channel, index, and reshape prior to the loop

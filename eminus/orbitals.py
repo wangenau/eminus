@@ -139,10 +139,10 @@ def cube_writer(atoms, orb_type, orbitals):
         name += f'{ia}{na if na > 1 else ""}'
 
     n_spin = ''
-    for spin in range(atoms.Nspin):
-        for i in range(atoms.Nstate):
-            if atoms.f[spin, i] > 0:
-                if atoms.Nspin > 1:
+    for spin in range(atoms.occ.Nspin):
+        for i in range(atoms.occ.Nstate):
+            if atoms.occ.f[spin, i] > 0:
+                if atoms.occ.Nspin > 1:
                     n_spin = f'_spin_{spin}'
                 filename = f'{name}_{orb_type}_{i}{n_spin}.cube'
                 log.info(f'Write {filename}...')
