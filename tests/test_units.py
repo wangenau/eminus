@@ -8,11 +8,9 @@ from eminus.units import (
     d2ebohr,
     ebohr2d,
     ev2ha,
-    ev2kcalmol,
     ha2ev,
     ha2kcalmol,
     ha2ry,
-    kcalmol2ev,
     kcalmol2ha,
     ry2ha,
 )
@@ -23,7 +21,6 @@ def test_units(value):
     """Check that the identities are satisfied."""
     assert value == ha2ev(ev2ha(value))
     assert value == ha2kcalmol(kcalmol2ha(value))
-    assert value == ev2kcalmol(kcalmol2ev(value))
     assert value == ha2ry(ry2ha(value))
     assert value == ang2bohr(bohr2ang(value))
     assert value == ebohr2d(d2ebohr(value))

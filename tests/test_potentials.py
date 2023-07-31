@@ -17,7 +17,9 @@ def test_harmonic():
     f = (2, 2, 2, 2)
     pot = 'harmonic'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, f=f)
+    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms.s = s
+    atoms.f = f
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6).run()
     # We have to get close to the Etot reference value of 43.337 Eh (for different parameters)
     assert_allclose(E, 43.10344)
@@ -32,7 +34,8 @@ def test_coulomb():
     s = 20
     pot = 'coulomb'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s)
+    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms.s = s
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6).run()
     # In the limit we should come close to the NIST Etot value of -0.445671 Eh
     assert_allclose(E, -0.43937085)
@@ -48,7 +51,9 @@ def test_ge():
     f = (2, 2 / 3, 2 / 3, 2 / 3)
     pot = 'ge'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut, s=s, f=f)
+    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms.s = s
+    atoms.f = f
     scf = RSCF(atoms, pot=pot, guess='random', etol=1e-6)
     scf.run()
     eps = get_epsilon(scf, scf.W)[0]

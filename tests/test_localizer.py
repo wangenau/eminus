@@ -13,7 +13,7 @@ atoms_unpol = Atoms('CH4', ((0, 0, 0),
                             (1.186, 1.186, 1.186),
                             (1.186, -1.186, -1.186),
                             (-1.186, 1.186, -1.186),
-                            (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=1)
+                            (-1.186, -1.186, 1.186)), center=True, ecut=5, unrestricted=False)
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
 
@@ -21,7 +21,7 @@ atoms_pol = Atoms('CH4', ((0, 0, 0),
                           (1.186, 1.186, 1.186),
                           (1.186, -1.186, -1.186),
                           (-1.186, 1.186, -1.186),
-                          (-1.186, -1.186, 1.186)), center=True, ecut=5, Nspin=2)
+                          (-1.186, -1.186, 1.186)), center=True, ecut=5, unrestricted=True)
 scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
@@ -32,13 +32,13 @@ fods = np.array([[9.16, 9.16, 10.89],
                  [9.16, 10.73, 9.16]])
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_spread(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_spread(unrestricted):
     """Test the spread calculation."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     psi = get_psi(scf, scf.W)
     psi_rs = scf.atoms.I(psi)
     assert check_orthonorm(scf, psi_rs)
@@ -49,15 +49,15 @@ def test_spread(Nspin):
     assert_allclose(costs[:, 1:], 5, atol=0.25)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_flo(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_flo(unrestricted):
     """Test the generation of FLOs."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    flo = get_FLO(scf.atoms, psi, [fods] * Nspin)
+    flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)
     assert check_orthonorm(scf, flo)
     costs = wannier_cost(scf.atoms, flo)
     # Check that all transformed orbitals have a similar spread
@@ -65,16 +65,16 @@ def test_flo(Nspin):
     assert_allclose(costs, costs[0, 0], atol=0.05)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_wannier(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_wannier(unrestricted):
     """Test the generation of Wannier functions."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     psi = get_psi(scf, scf.W)
     # Throw in the flo to prelocalize the orbitals
-    flo = get_FLO(scf.atoms, psi, [fods] * Nspin)
+    flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)
     wo = get_wannier(scf.atoms, flo)
     assert check_orthonorm(scf, wo)
     costs = wannier_cost(scf.atoms, wo)

@@ -7,8 +7,8 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.gga import get_grad_field, get_tau
 
-atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, Nspin=1)
-atoms_pol = Atoms('He', (0, 0, 0), ecut=1, Nspin=2)
+atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
+atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
 
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
@@ -16,13 +16,13 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_grad_field(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_grad_field(unrestricted):
     """Test the gradient field calculations."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     n_mock = np.zeros_like(scf.n_spin)
     dn_mock = get_grad_field(scf.atoms, n_mock)
     assert dn_mock.shape == n_mock.shape + (3,)
@@ -39,13 +39,13 @@ def test_get_grad_field_type():
     assert dn_mock.dtype == 'complex128'
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_tau(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_tau(unrestricted):
     """Test positive-definite kinetic energy density."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     tau = get_tau(scf.atoms, scf.Y)
     T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # This integrated KED should be the same as the calculated kinetic energy

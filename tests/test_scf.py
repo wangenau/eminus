@@ -7,7 +7,8 @@ import pytest
 from eminus import Atoms, RSCF, SCF, USCF
 from eminus.tools import center_of_mass
 
-atoms = Atoms('He', (0, 0, 0), s=10, Nspin=2)
+atoms = Atoms('He', (0, 0, 0), unrestricted=True)
+atoms.s = 10
 
 
 def test_atoms():
@@ -20,10 +21,10 @@ def test_xc():
     """Test that xc functionals are correctly parsed."""
     scf = SCF(atoms, xc='LDA,VWN')
     assert scf.xc == ['lda_x', 'lda_c_vwn']
-    assert scf._xc_type == 'lda'
+    assert scf.xc_type == 'lda'
 
     scf.xc = 'PBE'
-    assert scf._xc_type == 'gga'
+    assert scf.xc_type == 'gga'
 
     scf = SCF(atoms, xc=',')
     assert scf.xc == ['mock_xc', 'mock_xc']
@@ -33,30 +34,30 @@ def test_pot():
     """Test that potentials are correctly parsed and initialized."""
     scf = SCF(atoms, pot='GTH')
     assert scf.pot == 'gth'
-    assert scf._psp == 'pade'
-    assert hasattr(scf, '_gth')
+    assert scf.psp == 'pade'
+    assert hasattr(scf, 'gth')
 
     scf = SCF(atoms, pot='GTH', xc='pbe')
-    assert scf._psp == 'pbe'
+    assert scf.psp == 'pbe'
 
     scf.pot = 'test'
     assert scf.pot == 'gth'
-    assert scf._psp == 'test'
+    assert scf.psp == 'test'
 
     scf = SCF(atoms, pot='GE')
     assert scf.pot == 'ge'
-    assert not hasattr(scf, '_gth')
+    assert not hasattr(scf, 'gth')
 
 
 def test_guess():
     """Test initialization of the guess method."""
     scf = SCF(atoms, guess='RAND')
     assert scf.guess == 'random'
-    assert not scf._symmetric
+    assert not scf.symmetric
 
     scf = SCF(atoms, guess='sym-pseudo')
     assert scf.guess == 'pseudo'
-    assert scf._symmetric
+    assert scf.symmetric
 
 
 def test_gradtol():
@@ -82,7 +83,7 @@ def test_disp():
 
 def test_symmetric():
     """Test the symmetry option for H2 dissociation."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), Nspin=2, ecut=1)
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), ecut=1, unrestricted=True)
     scf_symm = SCF(atoms, guess='symm-pseudo')
     scf_unsymm = SCF(atoms, guess='unsymm-pseudo')
     assert scf_symm.run() > scf_unsymm.run()
@@ -139,22 +140,22 @@ def test_recenter(center):
     assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.00125)
     assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.00125)
     # Test that the local potential has been rebuild
-    assert not np.array_equal(scf.Vloc , Vloc)
+    assert not np.array_equal(scf.Vloc, Vloc)
 
 
 def test_rscf():
     """Test the RSCF object."""
     scf = RSCF(atoms)
-    assert scf.atoms.Nspin == 1
-    assert atoms.Nspin == 2
+    assert not scf.atoms.unrestricted
+    assert atoms.occ.Nspin == 2
     assert id(scf.atoms) != id(atoms)
 
 
 def test_uscf():
     """Test the USCF object."""
     scf = USCF(atoms)
-    assert scf.atoms.Nspin == 2
-    assert atoms.Nspin == 2
+    assert scf.atoms.unrestricted
+    assert atoms.occ.Nspin == 2
     assert id(scf.atoms) != id(atoms)
 
 

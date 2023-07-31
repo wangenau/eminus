@@ -12,12 +12,12 @@ config.use_torch = True
 atoms = Atoms('Ne', (0, 0, 0), ecut=1).build()
 rng = default_rng()
 W_tests = {
-    'full': rng.standard_normal((len(atoms.G2), atoms.Nstate)),
-    'active': rng.standard_normal((len(atoms.G2c), atoms.Nstate)),
+    'full': rng.standard_normal((len(atoms.G2), atoms.occ.Nstate)),
+    'active': rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate)),
     'full_single': rng.standard_normal(len(atoms.G2)),
     'active_single': rng.standard_normal(len(atoms.G2c)),
-    'full_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2), atoms.Nstate)),
-    'active_spin': rng.standard_normal((atoms.Nspin, len(atoms.G2c), atoms.Nstate))
+    'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
+    'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
 }
 
 

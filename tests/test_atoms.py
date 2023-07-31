@@ -18,21 +18,21 @@ inp = ('He', (0, 0, 0))
                                                    ('HeX', ['He', 'X'], 2)])
 def test_atom(atom, ref, Nref):
     """Test initialization of the atom variable."""
-    atoms = Atoms(atom, (0, 0, 0))
+    atoms = Atoms(atom, [[0, 0, 0]] * Nref)
     assert atoms.atom == ref
     assert atoms.Natoms == Nref
 
 
 @pytest.mark.parametrize(('X', 'center', 'ref'), [
-    ([0, 0, 0], None, [(0, 0, 0)]),
-    ([0, 0, 0], True, [(10, 10, 10)]),
-    ([0, 0, 0], 'shift', [(10, 10, 10)]),
-    ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (0, np.sqrt(3), 0)]),
+    ([[0, 0, 0]], None, [(0, 0, 0)]),
+    ([[0, 0, 0]], True, [(10, 10, 10)]),
+    ([[0, 0, 0]], 'shift', [(10, 10, 10)]),
+    ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (np.sqrt(3), 0, 0)]),
     ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
-    ([[0] * 3, [1] * 3], True, [[10, 10 + np.sqrt(3) / 2, 10], [10, 10 - np.sqrt(3) / 2, 10]])])
+    ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])])  # ???
 def test_coordinates(X, center, ref):
     """Test the setting of the atom coordinates."""
-    atoms = Atoms('H', X=X, center=center)
+    atoms = Atoms(['H'] * len(X), X=X, center=center)
     assert_allclose(np.abs(atoms.X), ref, atol=1e-15)
 
 
@@ -44,7 +44,8 @@ def test_coordinates(X, center, ref):
                                                 ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2])])
 def test_charge(atom, Z, ref):
     """Test setting of charges."""
-    atoms = Atoms(atom, (0, 0, 0), Z=Z)
+    atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
+    atoms.Z = Z
     assert_equal(atoms.Z, ref)
 
 
@@ -53,7 +54,9 @@ def test_charge(atom, Z, ref):
                                         (None, 99)])
 def test_sampling(s, ref):
     """Test the initialization of sampling."""
-    atoms = Atoms(*inp, s=s)
+    atoms = Atoms(*inp)
+    if s is not None:
+        atoms.s = s
     assert_allclose(atoms.s, ref)
 
 
@@ -70,39 +73,46 @@ def test_cell(size):
 
 def test_G():
     """Test the setting of G-vectors."""
-    atoms = Atoms(*inp, s=2).build()
+    atoms = Atoms(*inp)
+    atoms.s = 2
+    atoms.build()
     assert_allclose(atoms.G[0], 0)
     assert len(atoms.G) == np.prod(atoms.s)
     assert_allclose(atoms.G2, atoms.G2c)
     assert_allclose(atoms.Sf, 1)
-    atoms = Atoms(*inp, s=2, ecut=None).build()
+    atoms = Atoms(*inp)
+    atoms.s = 2
+    atoms.build()
     assert len(atoms.G2) == len(atoms.G2c)
 
 
-@pytest.mark.parametrize(('atom', 'Nspin', 'ref'), [('H', None, 2),
-                                                    ('He', None, 1),
-                                                    ('H', 2, 2),
-                                                    ('He', 1, 1)])
-def test_spin(atom, Nspin, ref):
+@pytest.mark.parametrize(('atom', 'unrestricted', 'ref'), [('H', None, 2),
+                                                           ('He', None, 1),
+                                                           ('H', True, 2),
+                                                           ('He', False, 1)])
+def test_spin(atom, unrestricted, ref):
     """Test the spin option."""
-    atoms = Atoms(atom=atom, X=(0, 0, 0), Nspin=Nspin, s=1).build()
-    assert atoms.Nspin == ref
+    atoms = Atoms(atom=atom, X=(0, 0, 0), unrestricted=unrestricted)
+    assert atoms.occ.Nspin == ref
 
 
-@pytest.mark.parametrize(('f', 'Nstate', 'Nspin', 'fref', 'Nref'), [
-    (None, None, 1, [[2]], 1),
-    (None, None, 2, [[1], [1]], 1),
-    (None, 1, 1, [[2]], 1),
-    (None, 1, 2, [[1], [1]], 1),
-    (2, None, 1, [[2]], 1),
-    (1, None, 2, [[1], [1]], 1),
-    (2, 1, 1, [[2]], 1),
-    (1, 1, 2, [[1], [1]], 1)])
-def test_occupations(f, Nstate, Nspin, fref, Nref):
+@pytest.mark.parametrize(('f', 'unrestricted', 'fref', 'Nref'), [
+    (None, False, [[2]], 1),
+    (None, True, [[1], [1]], 1),
+    (None, False, [[2]], 1),
+    (None, True, [[1], [1]], 1),
+    (2, False, [[2]], 1),
+    (1, True, [[1], [1]], 1),
+    (2, False, [[2]], 1),
+    (1, True, [[1], [1]], 1)])
+def test_occupations(f, unrestricted, fref, Nref):
     """Test the occupation and state options."""
-    atoms = Atoms(*inp, Nspin=Nspin, Nstate=Nstate, f=f, s=1).build()
+    atoms = Atoms(*inp, unrestricted=unrestricted)
+    atoms.s = 1
+    atoms.f = f
+    atoms.build()
     assert_equal(atoms.f, fref)
-    assert atoms.Nstate == Nref
+    assert atoms.occ.Nstate == Nref
 
 
 def test_verbose():
@@ -121,7 +131,7 @@ def test_verbose():
 def test_operators():
     """Test that operators are properly set and callable."""
     atoms = Atoms(*inp).build()
-    assert atoms._operator() is None
+    assert atoms._base_operator() is None
     for op in ('O', 'L', 'Linv', 'I', 'J', 'Idag', 'Jdag', 'K', 'T'):
         assert callable(getattr(atoms, op))
 
@@ -137,12 +147,15 @@ def test_clear():
 
 def test_recenter():
     """Test the recenter function."""
-    atoms = Atoms(*inp, s=2).build()
+    atoms = Atoms(*inp)
+    atoms.s = 2
+    atoms.build()
     Sf_old = atoms.Sf
     center = (1, 1, 1)
     atoms.recenter(center)
     assert_allclose(center_of_mass(atoms.X), center)
     assert not np.array_equal(Sf_old, atoms.Sf)
+    assert atoms.center == 'recentered'
 
 
 if __name__ == '__main__':

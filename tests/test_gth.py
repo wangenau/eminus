@@ -13,7 +13,7 @@ def test_GTH():
     """Test the GTH object."""
     atoms = Atoms('Ne', (0, 0, 0))
     scf = SCF(atoms)
-    gth = scf._gth
+    gth = scf.gth
     gth['Ne']  # Test that the object can be accessed via square brackets
     print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
@@ -28,32 +28,35 @@ def test_norm():
     # Choose an ecut such that we get at least 0.9
     atoms = Atoms('Ac', (0, 0, 0), ecut=35)
     scf = SCF(atoms)
-    for i in range(scf._gth.NbetaNL):
-        norm = np.sum(scf._gth.betaNL[:, i] * scf._gth.betaNL[:, i])
+    for i in range(scf.gth.NbetaNL):
+        norm = np.sum(scf.gth.betaNL[:, i] * scf.gth.betaNL[:, i])
         assert_allclose(abs(norm), 1, atol=1e-1)
 
 
 def test_mock():
     """Test that ghost atoms have no contribution."""
     # Reference calculation without ghost atom
-    atoms = Atoms('He', [(0, 0, 0)], s=10)
+    atoms = Atoms('He', [(0, 0, 0)])
+    atoms.s = 10
     E_ref = SCF(atoms).run()
     # Calculation with ghost atom
-    atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)], s=10)
+    atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)])
+    atoms.s = 10
     scf = SCF(atoms)
     E = scf.run()
     assert_allclose(E, E_ref)
-    for key in scf._gth['X']:
-        assert_allclose(scf._gth['X'][key], 0)
+    for key in scf.gth['X']:
+        assert_allclose(scf.gth['X'][key], 0)
 
 
 def test_custom_files():
     """Test the option to use custom GTH files in Atoms and SCF."""
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
-    atoms = Atoms('B', (0, 0, 0), Z=file_path).build()
+    atoms = Atoms('B', (0, 0, 0)).build()
+    atoms.Z = file_path
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
-    assert scf._gth['B']['rloc'] == 0.42188166
+    assert scf.gth['B']['rloc'] == 0.42188166
 
 
 if __name__ == '__main__':

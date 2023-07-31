@@ -11,7 +11,8 @@ import pytest
 from eminus import Atoms, RSCF
 from eminus.orbitals import cube_writer, FLO, FO, KSO, WO
 
-atoms = Atoms('He', (0, 0, 0), s=10, center=True).build()
+atoms = Atoms('He', (0, 0, 0), center=True).build()
+atoms.s = 10
 scf = RSCF(atoms)
 scf.run()
 dV = atoms.Omega / np.prod(atoms.s)
@@ -45,13 +46,13 @@ def test_wo():
     assert_allclose(dV * np.sum(orb.conj() * orb), 1)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_cube_writer(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_cube_writer(unrestricted):
     """Test the orbital cube writer function."""
-    atoms.Nspin = Nspin
+    atoms.unrestricted = unrestricted
     atoms.f = np.array([[1], [1]])
     rng = default_rng()
-    orbital = rng.standard_normal((Nspin, len(atoms.G2c), atoms.Nstate))
+    orbital = rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
     cube_writer(atoms, 'TMP', orbital)
     for f in glob.glob('He_TMP_0*.cube'):
         os.remove(f)

@@ -29,13 +29,14 @@ from eminus.tools import (
 )
 
 opt = {'sd': 25, 'pccg': 25}
-atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=15, Nspin=1, center=True)
+atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), unrestricted=False, center=True)
+atoms.s = 15
 scf = SCF(atoms, opt=opt)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))
 
-atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, Nspin=1)
-atoms_pol = Atoms('He', (0, 0, 0), ecut=1, Nspin=2)
+atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
+atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
 scf_unpol = SCF(atoms_unpol, opt=opt)
 scf_unpol.run()
 scf_pol = SCF(atoms_pol, opt=opt)
@@ -59,14 +60,15 @@ def test_center_of_mass(coords, masses, ref):
     assert_allclose(out, ref)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_pycom(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_pycom(unrestricted):
     """Test PyCOM routine."""
-    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), s=10, Nspin=Nspin, center=True).build()
+    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), unrestricted=unrestricted, center=True)
+    atoms.s = 10
     scf = SCF(atoms, opt=opt)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
-    for spin in range(Nspin):
+    for spin in range(atoms.occ.Nspin):
         assert_allclose(orbital_center(atoms, psi)[spin], [[10] * 3] * 2, atol=1e-1)
 
 
@@ -118,26 +120,26 @@ def test_get_isovalue():
     assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_tautf(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_tautf(unrestricted):
     """Test Thomas-Fermi kinetic energy density."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     tautf = get_tautf(scf)
     T = np.sum(tautf) * scf.atoms.Omega / np.prod(scf.atoms.s)
     # TF KED is not exact, but similar for simple systems
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_tauw(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_tauw(unrestricted):
     """Test von Weizsaecker kinetic energy density."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
         scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     tauw = get_tauw(scf)
     T = np.sum(tauw) * scf.atoms.Omega / np.prod(scf.atoms.s)
@@ -145,25 +147,25 @@ def test_get_tauw(Nspin):
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_elf(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_elf(unrestricted):
     """Test electron localization function."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
     elf = get_elf(scf)
     # Check the bounds for the ELF
     assert ((elf >= 0) & (elf <= 1)).all()
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
-def test_get_reduced_gradient(Nspin):
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_get_reduced_gradient(unrestricted):
     """Test reduced density gradient."""
-    if Nspin == 1:
-        scf = scf_unpol
-    else:
+    if unrestricted:
         scf = scf_pol
+    else:
+        scf = scf_unpol
         scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((s >= 0) & (s < 100)).all()
@@ -171,7 +173,7 @@ def test_get_reduced_gradient(Nspin):
 
 def test_spin_squared_and_multiplicity():
     """Test the calculation of <S^2> and the multiplicity."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), Nspin=2, ecut=1)
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=1)
     rscf = RSCF(atoms)
     assert get_spin_squared(rscf) == 0
     assert get_multiplicity(rscf) == 1
