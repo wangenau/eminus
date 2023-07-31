@@ -13,7 +13,8 @@ atoms = Atoms(*read_xyz('CH4'))
 atom, X, Z, a, s, field = read_cube('CH4.cube')
 
 # # Create an `Atoms` object with it and start a DFT calculation
-atoms = Atoms(atom=atom, X=X, a=a, s=s)
+atoms = Atoms(atom=atom, X=X, a=a)
+atoms.s = s
 scf = SCF(atoms)
 scf.run()
 

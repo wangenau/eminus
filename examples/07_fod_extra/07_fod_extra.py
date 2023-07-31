@@ -36,8 +36,8 @@ FLO = get_FLO(atoms, psi, fods)
 
 # # Write all FLOs to cube files
 print('\nWrite cube files:')
-for i in range(atoms.Nstate):
-    print(f'{i + 1} of {atoms.Nstate}')
+for i in range(atoms.occ.Nstate):
+    print(f'{i + 1} of {atoms.occ.Nstate}')
     write_cube(atoms, f'CH4_FLO_{i + 1}.cube', FLO[0, :, i])
 
 # # All of the functionality above can be achieved with the following workflow function

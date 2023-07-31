@@ -10,31 +10,21 @@ X = [[0, 0, 0], [2.074, 0, 0]]
 atoms = Atoms(atom, X)
 print(f'Atoms object:\n{atoms}\n')
 
+# # Cut-off energy
+ecut = 20
+
 # # Optional parameters with examples are listed as follows
 # # Cell size or vacuum size
 a = 20
 
-# # Cut-off energy
-ecut = 20
+# # Spin of the system, i.e., the number of unpaired electrons (s, not 2s+1)
+spin = 0
 
-# # Valence charge per atom, the charges should not differ for the same species
-# # `None` will use valence charges from GTH pseudopotentials
-Z = [5, 5]
+# # Total charge of the system
+charge = 0
 
-# # Real-space sampling of the cell using an equidistant grid
-s = 40
-
-# # Number of spin channels
-Nspin = 1
-
-# # Occupation numbers per state
-# # `None` will assume occupations of 2
-# # The last state will be adjusted if the sum of `f` is not equal to the sum of `Z`
-f = [2, 2, 2, 2, 2]
-
-# # Number of states
-# # `None` will get the number of states from `f` or assume occupations of 2
-Nstate = 5
+# # Spin handling
+unrestricted = False
 
 # # Center the system inside the box by its geometric center of mass and rotate it such that its geometric moment of inertia aligns with the coordinate axes
 center = True
@@ -43,11 +33,24 @@ center = True
 verbose = 4
 
 # # Create an `Atoms` object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, a=a, ecut=ecut, Z=Z, s=s, center=center, Nspin=Nspin, f=f,
-              Nstate=Nstate, verbose=verbose)
+atoms = Atoms(atom=atom, X=X, ecut=ecut, a=a, spin=spin, charge=charge, unrestricted=unrestricted,
+              center=center, verbose=verbose)
 print(f'New Atoms object:\n{atoms}\n')
 
-# # You can always manipulate the object freely by displaying or editing properties
+# # Albeit discouraged, some properties can be changed after the initialization as seen below
+# # Valence charge per atom, the charges should not differ for the same species
+# # `None` will use valence charges from GTH pseudopotentials
+atoms.Z = [5, 5]
+
+# # Real-space sampling of the cell using an equidistant grid
+atoms.s = 40
+
+# # Occupation numbers per state
+# # `None` will assume occupations of 2
+# # The last state will be adjusted if the sum of `f` is not equal to the sum of `Z`
+atoms.f = [2, 2, 2, 2, 2]
+
+# # You can manipulate the object by displaying or editing most properties
 # # To display the calculated cell volume
 print(f'Cell volume = {atoms.Omega} a0^3')
 
@@ -58,7 +61,10 @@ atoms.a = 3
 atoms.build()
 print(f'New cell volume = {atoms.Omega} a0^3')
 
-# # More information are always available in the respective docstring
+# # To display all relevant electronic information regarding the occupations, one can display the `Occupations` object every `Atoms` object has
+print(f'\nOccupations object:\n{atoms.occ}')
+
+# # More informations is always available in the respective docstring
 # print(f'\nAtoms docstring:\n{Atoms.__doc__}')
 # # or:
 # help(Atoms)

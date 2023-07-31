@@ -49,8 +49,8 @@ print(f'Neon position = {atoms.X[0]} a0')
 
 # # Write all orbitals to cube files
 print('\nWrite cube files:')
-for i in range(atoms.Nstate):
-    print(f'{i + 1} of {atoms.Nstate}')
+for i in range(atoms.occ.Nstate):
+    print(f'{i + 1} of {atoms.occ.Nstate}')
     write_cube(atoms, f'Ne_{i + 1}.cube', psi[0, :, i])
 
 # # Another useful setting is the number of threads
