@@ -8,7 +8,7 @@ import numpy as np
 from ..logger import log
 
 
-def read_gth(atom, charge=None, psp_path='pade'):
+def read_gth(atom, charge=None, psp_path='pbe'):
     """Read GTH files for a given atom.
 
     Reference: Phys. Rev. B 54, 1703.
@@ -18,7 +18,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
 
     Keyword Args:
         charge (int): Valence charge.
-        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/pade.
+        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/pbe.
 
     Returns:
         dict: GTH parameters.
@@ -85,7 +85,7 @@ def read_gth(atom, charge=None, psp_path='pade'):
 
 
 def mock_gth():
-    """Create a mock dictionary with all-zeros, for atom species with no pseudopotential file.
+    """Create a mock dictionary with all-zeros for atom species with no pseudopotential file.
 
     Returns:
         dict: GTH parameters (all zero).

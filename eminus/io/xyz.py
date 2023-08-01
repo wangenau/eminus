@@ -10,12 +10,12 @@ from ..version import __version__
 
 
 def read_xyz(filename):
-    """Load atom species and positions from xyz files.
+    """Load atom species and positions from XYZ files.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
-        filename (str): xyz input file path/name.
+        filename (str): XYZ input file path/name.
 
     Returns:
         tuple[list, ndarray]: Atom species and positions.
@@ -48,13 +48,13 @@ def read_xyz(filename):
 
 
 def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
-    """Generate xyz files from atoms objects.
+    """Generate XYZ files from atoms objects.
 
     File format definition: https://openbabel.org/wiki/XYZ_%28format%29
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): xyz output file path/name.
+        filename (str): XYZ output file path/name.
 
     Keyword Args:
         fods (list): FOD coordinates to write.
@@ -85,18 +85,19 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         mode = 'w'
 
     with open(filename, mode) as fp:
-        # The first line contains the number of atoms.
-        # If we add FOD coordinates, add them to the count.
+        # The first line contains the number of atoms
+        # If we add FOD coordinates, add them to the count
         if fods is None:
             fp.write(f'{atoms.Natoms}\n')
         else:
             fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}\n')
-        # The second line can contains a comment.
-        # Print information about the file and program, and the file creation time.
+        # The second line can contain a comment
+        # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(atoms.Natoms):
             fp.write(f'{atoms.atom[ia]:<2s}  {X[ia, 0]: .6f}  {X[ia, 1]: .6f}  {X[ia, 2]: .6f}\n')
-        # Add FOD coordinates if desired. The atom symbol will default to X (no atom type).
+        # Add FOD coordinates if desired
+        # The atom symbol will default to X (no atom type)
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:

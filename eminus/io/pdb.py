@@ -7,13 +7,13 @@ from ..units import bohr2ang
 
 
 def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
-    """Generate pdb files from atoms objects.
+    """Generate PDB files from atoms objects.
 
-    See :func:`~eminus.io.pdb.create_pdb_str` for more information about the pdb file format.
+    See :func:`~eminus.io.pdb.create_pdb_str` for more information about the PDB file format.
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): pdb output file path/name.
+        filename (str): PDB output file path/name.
 
     Keyword Args:
         fods (list): FOD coordinates to write.
@@ -53,7 +53,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
 
 
 def create_pdb_str(atom, X, a=None):
-    """Convert atom symbols and positions to the pdb format.
+    """Convert atom symbols and positions to the PDB format.
 
     File format definitions:
         CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
@@ -68,7 +68,7 @@ def create_pdb_str(atom, X, a=None):
         a (float): Cell size.
 
     Returns:
-        str: pdb file format.
+        str: PDB file format.
     """
     # Convert Bohr to Angstrom
     X = bohr2ang(X)
@@ -76,7 +76,7 @@ def create_pdb_str(atom, X, a=None):
         a = bohr2ang(a)
 
     # pdb files have specific numbers of characters for every data with changing justification
-    # Write everything explicitly down to not loose track of line lengths
+    # Write everything explicitly down to not lose track of line lengths
     pdb = ''
     # Create data for a cuboidal cell
     if a is not None:

@@ -11,13 +11,13 @@ from ..version import __version__
 
 
 def read_cube(filename):
-    """Load atom and cell data from cube files.
+    """Load atom and cell data from CUBE files.
 
-    There is no standard for cube files. The following format has been used.
+    There is no standard for CUBE files. The following format has been used.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
-        filename (str): cube input file path/name.
+        filename (str): CUBE input file path/name.
 
     Returns:
         tuple[list, ndarray, float, ndarray, int, ndarray]:
@@ -30,12 +30,12 @@ def read_cube(filename):
     with open(filename, 'r') as fh:
         lines = fh.readlines()
 
-        # The first and second line can contain comments, print them if available
+        # The first and second lines can contain comments, print them if available
         comment = f'{lines[0].strip()}\n{lines[1].strip()}'
         if comment:
             log.info(f'CUBE file comment: "{comment}"')
 
-        # Line 4 to 6 contain the sampling per axis, and the cell basis vectors with length a/s
+        # Lines 4 to 6 contain the sampling per axis and the cell basis vectors with length a/s
         # A cuboidal cell is assumed, so only use the diagonal entries
         s = np.empty(3, dtype=int)
         a = np.empty(3)
@@ -69,14 +69,14 @@ def read_cube(filename):
 
 
 def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
-    """Generate cube files from given field data.
+    """Generate CUBE files from given field data.
 
-    There is no standard for cube files. The following format has been used to work with VESTA.
+    There is no standard for CUBE files. The following format has been used to work with VESTA.
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): cube output file path/name.
+        filename (str): CUBE output file path/name.
         field (ndarray): Real-space field data.
 
     Keyword Args:
@@ -96,12 +96,12 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
                     'polarized case.')
 
-    # Make sure we have real valued data in the correct order
+    # Make sure we have real-valued data in the correct order
     field = np.real(field)
 
     with open(filename, 'w') as fp:
-        # The first two lines have to be a comment.
-        # Print information about the file and program, and the file creation time.
+        # The first two lines have to be a comment
+        # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n\n')
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum

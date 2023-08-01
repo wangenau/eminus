@@ -11,7 +11,7 @@ def read_json(filename):
     """Load objects from a JSON file.
 
     Args:
-        filename (str): json input file path/name.
+        filename (str): JSON input file path/name.
 
     Returns:
         Class object.
@@ -35,6 +35,7 @@ def read_json(filename):
 
         # Create simple eminus objects and set all attributes afterwards
         # Explicitly call objects with verbosity since the logger is created at instantiation
+
         # Atoms objects
         if isinstance(dct, dict) and '_atom' in dct:
             atoms = eminus.Atoms(dct['_atom'], dct['_X'], verbose=dct['_verbose'])
@@ -74,7 +75,7 @@ def write_json(obj, filename):
 
     Args:
         obj: Class object.
-        filename (str): json output file path/name.
+        filename (str): JSON output file path/name.
     """
     import eminus
 
@@ -86,7 +87,7 @@ def write_json(obj, filename):
                 data = base64.b64encode(obj.copy(order='C')).decode('utf-8')
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
-            # If obj is a Atoms or SCF class dump them as a dictionary
+            # If obj is an eminus class dump them as a dictionary
             if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH,
                                 eminus.occupations.Occupations)):
                 # Only dumping the dict would result in a string, so do one dump and one load
