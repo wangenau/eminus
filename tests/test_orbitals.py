@@ -21,7 +21,7 @@ def test_kso():
     """Test the Kohn-Sham orbital function."""
     orb = KSO(scf, write_cubes=True)
     os.remove('He_KSO_0.cube')
-    assert_allclose(dV * np.sum(orb.conj() * orb), 1)
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_fo():

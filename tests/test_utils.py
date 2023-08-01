@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose
 import pytest
 from scipy.special import sph_harm
 
-from eminus.utils import add_maybe_none, pseudo_uniform, Ylm_real
+from eminus.utils import add_maybe_none, atom2charge, molecule2list, pseudo_uniform, Ylm_real
 
 
 @pytest.mark.parametrize('l', [0, 1, 2, 3])
@@ -54,6 +54,25 @@ def test_pseudo_uniform(seed, ref):
 def test_add_maybe_none(a, b, ref):
     """Test the function to add two variables that can be None."""
     out = add_maybe_none(a, b)
+    assert out == ref
+
+
+@pytest.mark.parametrize(('molecule', 'ref'), [('CH4', ['C', 'H', 'H', 'H', 'H']),
+                                               ('HeX', ['He', 'X']),
+                                               ('CH2O2', ['C', 'H', 'H', 'O', 'O'])])
+def test_molecule2list(molecule, ref):
+    """Test the molecule to list expansion."""
+    out = molecule2list(molecule)
+    assert out == ref
+
+
+@pytest.mark.parametrize(('atom', 'ref'), [(['H'], [1]),
+                                           (['Li'], [3]),
+                                           (['He', 'He'], [2, 2]),
+                                           (['C', 'H', 'H', 'H', 'H'], [4, 1, 1, 1, 1])])
+def test_atom2charge(atom, ref):
+    """Test the molecule to charge expansion."""
+    out = atom2charge(atom)
     assert out == ref
 
 

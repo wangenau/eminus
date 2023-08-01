@@ -75,7 +75,7 @@ def test_parse_xc_type_pylibxc(xc, ref):
 def test_libxc_str():
     """Test that strings that start with libxc get properly parsed."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    # Create a random mock densities
+    # Create a random mock density
     rng = default_rng()
     n_spin = np.abs(rng.standard_normal((1, 10000)))
     e_out, v_out, _, _ = get_xc('1,7', n_spin, 1)
