@@ -22,7 +22,7 @@ def view(*args, **kwargs):
 def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
     """Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
 
-    Reference: https://plotly.com/python/
+    Reference: https://plotly.com/python
 
     Args:
         obj: Atoms or SCF object.
@@ -46,7 +46,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
 
     fig = go.Figure()
     # Add species one by one to be able to have them named and be selectable in the legend
-    # Note: The size scaling is mostly arbitray and has no meaning
+    # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):
         mask = np.where(np.asarray(atoms.atom) == ia)[0]
         atom_data = go.Scatter3d(x=atoms.X[mask, 0], y=atoms.X[mask, 1], z=atoms.X[mask, 2],
@@ -57,7 +57,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
                                          'line': {'color': 'black', 'width': 2}})
         fig.add_trace(atom_data)
     if extra is not None:
-        # If a list has been provided with the length of two it has to be FODs
+        # If a list has been provided with a length of two it has to be FODs
         if isinstance(extra, list):
             if len(extra[0]) != 0:
                 extra_data = go.Scatter3d(x=extra[0][:, 0], y=extra[0][:, 1], z=extra[0][:, 2],
@@ -79,9 +79,9 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
                                       marker={'size': 1, 'color': 'red'})
             fig.add_trace(extra_data)
 
-    # A density can be plotted for an scf object
+    # A density can be plotted for an SCF object
     if isinstance(plot_n, np.ndarray) or plot_n:
-        # Plot a given array or use the density from an scf object
+        # Plot a given array or use the density from an SCF object
         if isinstance(plot_n, np.ndarray):
             density = plot_n
         else:
@@ -249,7 +249,7 @@ def executed_in_notebook():
     try:
         shell = get_ipython().__class__.__name__  # type: ignore[name-defined]
         # True for Jupyter notebook or qtconsole
-        # False for terminal running IPython or other type
+        # False for terminal running IPython or other types
         return shell == 'ZMQInteractiveShell'
     except NameError:
         return False

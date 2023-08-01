@@ -3,17 +3,18 @@
 
 For more details see :mod:`~eminus.operators`.
 
-For installation instructions see https://pytorch.org/get-started/locally/.
+For installation instructions see https://pytorch.org/get-started/locally.
 
 This implementation is focused on speed, rather than readability since these operators need the
 most time in most calculations. Notable differences to the default operators are:
 
 * Use Torch FFTs (we need to cast atoms.s to tuples for this)
 * No handle_spin_gracefully decorator to reduce function calls and casts
+* Call properties directly using their private attribute
 * Explicitly implement Idag and Jdag for one function call less and direct normalization
 * Optional GPU calculations
 
-In my tests the overhead to move the arrays to the GPU and back is not worth it, so it is disabled
+In my tests, the overhead to move the arrays to the GPU and back is not worth it, so it is disabled
 by default.
 
 Reference: Adv. Neural. Inf. Process Syst. 32, 8024.

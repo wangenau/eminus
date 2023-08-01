@@ -3,7 +3,7 @@
 
 For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
 
-One can install pylibxc by compiling Libxc according to:
+One can install pylibxc by compiling Libxc according to
 https://tddft.org/programs/libxc/installation/#python-library
 
 Alternatively, one can use the PySCF Libxc interface with::
@@ -52,11 +52,11 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
         out = func.compute({'rho': n_spin.T.ravel()})
     else:
-        # The gradients have to be reshaped as well, but also squared
+        # The gradients have to be reshaped as well but also squared
         if Nspin == 1:
             dn2 = norm(dn_spin, axis=2)**2
         else:
-            # For the spin-polairzed case the gradients of spin-up and -down are mixed together
+            # For the spin-polarized case the gradients of spin-up and -down are mixed
             dn2 = np.vstack((norm(dn_spin[0], axis=1)**2, np.sum(dn_spin[0] * dn_spin[1], axis=1),
                             norm(dn_spin[1], axis=1)**2))
         if tau is None:

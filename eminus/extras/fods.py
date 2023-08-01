@@ -9,7 +9,7 @@ from ..units import bohr2ang
 
 
 def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
-    """Generate localized orbitals with an additional simple stability analysis.
+    """Generate localized orbitals with additional simple stability analysis.
 
     Same as implemented in PyFLOSIC2.
 
@@ -134,7 +134,7 @@ def split_fods(atom, X, elec_symbols=('X', 'He')):
     """
     X_fod_up = []
     X_fod_dn = []
-    # Iterate in reverted order, because we may delete elements
+    # Iterate in reverse order because we may delete elements
     for ia in range(len(X) - 1, -1, -1):
         if atom[ia] in elec_symbols:
             if atom[ia] in elec_symbols[0]:
@@ -172,7 +172,7 @@ def remove_core_fods(obj, fods):
             n_core = SYMBOL2NUMBER[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state
             # Since only core states are removed in pseudopotentials this value is divisible by 2
-            # +1 to account for uneven amount of core FODs (e.g., for hydrogen)
+            # +1 to account for uneven amounts of core FODs (e.g., for hydrogen)
             n_core = (n_core + 1) // 2
             dist = norm(fods[s] - atoms.X[ia], axis=1)
             idx = np.argsort(dist)
