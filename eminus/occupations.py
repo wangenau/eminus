@@ -22,6 +22,8 @@ class Occupations:
     _Nstate: int = 0         #: Number of states.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
+    # ### Class properties ###
+
     @property
     def Nelec(self):
         """Number of electrons."""
@@ -29,6 +31,7 @@ class Occupations:
 
     @Nelec.setter
     def Nelec(self, value):
+        # Only update Nelec if it actually gets updated
         if self._Nelec != int(value):
             self._Nelec = int(value)
             self.is_filled = False
@@ -90,11 +93,6 @@ class Occupations:
             self.is_filled = False
 
     @property
-    def Nstate(self):
-        """Number of states."""
-        return self._Nstate
-
-    @property
     def f(self):
         """Occupation numbers per state."""
         return self._f
@@ -109,10 +107,19 @@ class Occupations:
         # Call the fill function in that case
         self.fill(value)
 
+    # ### Read-only properties ###
+
+    @property
+    def Nstate(self):
+        """Number of states."""
+        return self._Nstate
+
     @property
     def F(self):
         """Diagonal matrices of f per spin."""
         return [np.diag(f) for f in self.f]
+
+    # ### Class methods ###
 
     def fill(self, f=None):
         """Fill the states of the object.
@@ -140,7 +147,7 @@ class Occupations:
         # Do not use the setter methods in this place to not trigger the setter effects
         # If f is a number use this occupation for all states
         if isinstance(value, numbers.Real):
-            # Do not leave the states empty when no electrons are present
+            # Do not leave the states array empty when no electrons are present
             if self.Nelec <= 0:
                 self._Nstate = 1
                 self._f = np.zeros((self.Nspin, 1))

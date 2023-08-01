@@ -23,6 +23,8 @@ class ConfigClass():
         self.threads = None       # Read threads from environment variables by default
         self.verbose = 'INFO'     # Only display warnings (and worse) by default
 
+    # ### Class properties ###
+
     @property
     def use_torch(self):
         """Weather to use Torch or SciPy if Torch is installed."""
@@ -101,6 +103,8 @@ class ConfigClass():
     def verbose(self, value):
         # Logic in setter to run it on initialization
         log.verbose = value
+
+    # ### Class methods ###
 
     def info(self):
         """Print configuration and performance information."""

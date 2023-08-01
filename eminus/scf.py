@@ -63,7 +63,7 @@ class SCF:
         if opt is None:
             opt = {'auto': 250}
 
-        # Set the input parameters
+        # Set the input parameters (the ordering is important)
         self.atoms = atoms              #: Atoms object.
         self.log = create_logger(self)  #: Logger object.
         self.verbose = verbose          #: Verbosity level.
@@ -80,6 +80,8 @@ class SCF:
         self.energies = Energy()        #: Energy object holding energy contributions.
         self.is_converged = False       #: Determines the SCF object convergence.
 
+    # ### Class properties ###
+
     @property
     def atoms(self):
         """Atoms object."""
@@ -87,7 +89,7 @@ class SCF:
 
     @atoms.setter
     def atoms(self, value):
-        # Build the atoms object if necessary and make a copy
+        # Build the Atoms object if necessary and make a copy
         # This way the Atoms objects inside and outside the class are independent but both are build
         if not value.is_built:
             self._atoms = copy.deepcopy(value.build())
@@ -180,6 +182,8 @@ class SCF:
         self._verbose = get_level(value)
         self.log.verbose = self._verbose
 
+    # ### Read-only properties ###
+
     @property
     def psp(self):
         """Pseudopotential path."""
@@ -194,6 +198,8 @@ class SCF:
     def xc_type(self):
         """Determines the exchange-correlation family."""
         return self._xc_type
+
+    # ### Class methods ###
 
     def run(self, **kwargs):
         """Run the self-consistent field (SCF) calculation."""
@@ -210,7 +216,7 @@ class SCF:
 
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
-        # Build the initial wave function as long as W there is no W
+        # Build the initial wave function if there is no W to start from
         if not hasattr(self, 'W'):
             if 'random' in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
@@ -299,7 +305,7 @@ class SCF:
             TJn = atoms.T(Jn, dr=-dr)
             self.n = np.real(atoms.I(TJn))
 
-        # Recalculate the pseudopotential since it depends on the structure factor
+        # Recalculate the potential since it depends on the structure factor
         self.pot = self.pot
         # Clear intermediate results to make sure no one uses the unshifted results
         self.clear()

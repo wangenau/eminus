@@ -53,7 +53,7 @@ class Atoms:
     def __init__(self, atom, X, ecut=30, a=20, spin=None, charge=0, unrestricted=None, center=False,
                  verbose=None):
         """Initialize the Atoms object."""
-        # Set the input parameters (the ordering is important!)
+        # Set the input parameters (the ordering is important)
         self.log = create_logger(self)    #: Logger object.
         self.verbose = verbose            #: Verbosity level.
         self.occ = Occupations()          #: Occupations object.
@@ -69,6 +69,8 @@ class Atoms:
         # Initialize other attributes
         self.occ.fill()                   #: Fill states from the given input.
         self.is_built = False             #: Determines the Atoms object build status.
+
+    # ### Class properties ###
 
     @property
     def atom(self):
@@ -186,6 +188,7 @@ class Atoms:
                 log.error(f'{self._center} is not a recognized center method.')
         else:
             self._center = value
+        # Do nothing when recentering
         if self._center == 'recentered':
             return
         # Center system such that the geometric inertia tensor will be diagonal
@@ -214,6 +217,8 @@ class Atoms:
         self._verbose = get_level(value)
         self.log.verbose = self._verbose
 
+    # ### Class properties with a setter outside of the init method ###
+
     @property
     def f(self):
         """Occupation numbers per state."""
@@ -221,6 +226,7 @@ class Atoms:
 
     @f.setter
     def f(self, value):
+        # Pass through to the Occupations object
         self.occ.f = value
 
     @property
@@ -258,6 +264,8 @@ class Atoms:
                              f'charges ({len(self._Z)}).')
         # Get the number of calculated electrons and pass it to occ
         self.occ.Nelec = np.sum(self._Z) - self.charge
+
+    # ### Read-only properties ###
 
     @property
     def Natoms(self):
@@ -306,11 +314,11 @@ class Atoms:
 
     @property
     def _atoms(self):
-        """Return the Atoms object itself.
-
-        This way we can access the object from Atoms and SCF classes with the same code.
-        """
+        """Return the Atoms object itself."""
+        # This way we can access the object from Atoms and SCF classes with the same code
         return self
+
+    # ### Class methods ###
 
     def build(self):
         """Build all parameters of the Atoms object."""
