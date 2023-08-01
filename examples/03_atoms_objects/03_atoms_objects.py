@@ -64,7 +64,7 @@ print(f'New cell volume = {atoms.Omega} a0^3')
 # # To display all relevant electronic information regarding the occupations, one can display the `Occupations` object every `Atoms` object has
 print(f'\nOccupations object:\n{atoms.occ}')
 
-# # More informations is always available in the respective docstring
+# # More information is always available in the respective docstring
 # print(f'\nAtoms docstring:\n{Atoms.__doc__}')
 # # or:
 # help(Atoms)

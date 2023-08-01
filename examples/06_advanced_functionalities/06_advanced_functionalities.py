@@ -7,7 +7,7 @@ from eminus.localizer import wannier_cost
 from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_ip
 from eminus.units import ebohr2d, ha2kcalmol
 
-# # Start by with a simple DFT calculation for neon
+# # Start with a simple DFT calculation for neon
 # # If one needs cell parameters from the `Atoms` object one can use the `atoms.build` function to generate them
 # # eminus also supports GGA functionals like the Chachiyo GGA
 # # A different cg-form can be used if the system is hard to converge
@@ -47,7 +47,7 @@ com = center_of_mass(atoms.r, scf.n)
 print(f'\nDensity center of mass = {com} a0')
 print(f'Neon position = {atoms.X[0]} a0')
 
-# # Write all orbitals to cube files
+# # Write all orbitals to CUBE files
 print('\nWrite cube files:')
 for i in range(atoms.occ.Nstate):
     print(f'{i + 1} of {atoms.occ.Nstate}')

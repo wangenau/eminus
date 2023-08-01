@@ -8,7 +8,7 @@ atom, X = read_xyz('CH4.xyz')
 # # You can also omit the file ending, they will be appended automatically
 atoms = Atoms(*read_xyz('CH4'))
 
-# # Cube files are supported as well
+# # CUBE files are supported as well
 # # Here, lattice information and field information are given as well
 atom, X, Z, a, s, field = read_cube('CH4.cube')
 
@@ -18,11 +18,11 @@ atoms.s = s
 scf = SCF(atoms)
 scf.run()
 
-# # Write the total density to a cube file, e.g., to visualize it
+# # Write the total density to a CUBE file, e.g., to visualize it
 write_cube(scf, 'CH4_density', scf.n)
 
-# # Please note that xyz files will use Angstrom as length units
-# # Cube files have no standard, but atomic units will be assumed
+# # Please note that XYZ files will use Angstrom as length units
+# # CUBE files have no standard, but atomic units will be assumed
 # # Units can always be converted using the unit conversion functionality
 print(f'\nMethane coordinates in Bohr:\n{X}')
 print(f'\nMethane coordinates in Angstrom:\n{bohr2ang(X)}')

@@ -79,4 +79,4 @@ scf = SCF(atoms, xc='lda,custom')
 scf.run()
 print(f'\nEnergies with the fitted Chachiyo functional:\n{scf.energies}')
 
-# # An extension of this example for the spin polarized case can be found in the next example
+# # An extension of this example for the spin-polarized case can be found in the next example
