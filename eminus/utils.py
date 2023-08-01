@@ -36,7 +36,7 @@ def dotprod(a, b):
 def Ylm_real(l, m, G):  # noqa: C901
     """Calculate real spherical harmonics from cartesian coordinates.
 
-    Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics/
+    Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics
 
     Args:
         l (int): Angular momentum number.
@@ -104,7 +104,7 @@ def Ylm_real(l, m, G):  # noqa: C901
         if m == 3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
-    log.error(f'No definition found for Ylm({l}, {m}).')
+    ValueError(f'No definition found for Ylm({l}, {m}).')
     return None
 
 

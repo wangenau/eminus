@@ -19,7 +19,7 @@ def read(*args, **kwargs):
         return read_xyz(*args, **kwargs)
     if args[0].endswith('.cube'):
         return read_cube(*args, **kwargs)
-    log.error('No viable file ending found.')
+    NotImplementedError('File ending not recognized.')
     return None
 
 
@@ -33,5 +33,5 @@ def write(*args, **kwargs):
         return write_cube(*args, **kwargs)
     if args[1].endswith('.pdb'):
         return write_pdb(*args, **kwargs)
-    log.error('No viable file ending found.')
+    NotImplementedError('File ending not recognized.')
     return None

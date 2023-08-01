@@ -212,5 +212,5 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
         # Only one projector
         return 1 / np.sqrt(105) * Gm**3 * Vprj
 
-    log.error(f'No projector found for l={l}.')
+    ValueError(f'No projector found for l={l}.')
     return None
