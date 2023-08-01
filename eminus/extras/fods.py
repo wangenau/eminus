@@ -18,7 +18,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     Args:
         mf: PySCF SCF object.
         Nspin (int): Number of spin states.
-        loc (str): Localization method (case insensitive).
+        loc (str): Localization method.
 
     Keyword Args:
         Nit (int): Number of tries to get a solution with positive eigenvalues.
@@ -71,7 +71,7 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
 
     Keyword Args:
         basis (str): Basis set for the DFT calculation.
-        loc (str): Localization method (case insensitive).
+        loc (str): Localization method.
         elec_symbols (list): Identifier for up and down FODs.
 
     Returns:

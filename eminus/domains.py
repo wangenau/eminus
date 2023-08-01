@@ -31,7 +31,7 @@ def domain_cuboid(obj, length, centers=None):
     if centers is None:
         centers = center_of_mass(atoms.X)
     centers = np.asarray(centers)
-    # Handle each dimension seperately and add them together
+    # Handle each dimension separately and add them together
     if centers.ndim == 1:
         mask1 = np.abs(centers[0] - atoms.r[:, 0]) < length[0]
         mask2 = np.abs(centers[1] - atoms.r[:, 1]) < length[1]

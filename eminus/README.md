@@ -16,7 +16,7 @@ Main source code directory.
 | logger.py       | Logging configuration |
 | minimizer.py    | Minimization algorithms |
 | occupations.py  | Determine occupations |
-| operators.py    | Plane-wave basis-set dependent operators |
+| operators.py    | Plane wave basis-set dependent operators |
 | orbitals.py     | Orbital generation workflows |
 | potentials.py   | Miscellaneous (pseudo-)potentials |
 | scf.py          | SCF class definition |

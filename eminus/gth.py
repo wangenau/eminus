@@ -3,7 +3,6 @@
 import numpy as np
 
 from .io import read_gth
-from .logger import log
 from .utils import Ylm_real
 
 
@@ -150,7 +149,7 @@ def calc_Vnonloc(scf, spin, W):
     atoms = scf.atoms
 
     Vpsi = np.zeros_like(W[spin], dtype=complex)
-    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate non-local part if necessary
+    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
         betaNL_psi = (W[spin].conj().T @ scf.gth.betaNL).conj()
 
         for ia in range(atoms.Natoms):

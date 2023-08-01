@@ -72,7 +72,7 @@ def orbital_center(obj, psirs):
     for spin in range(atoms.occ.Nspin):
         coms_spin = np.empty((Ncom, 3))
 
-        # Square orbitals
+        # Squared orbitals
         psi2 = np.real(psirs[spin].conj() * psirs[spin])
         for i in range(Ncom):
             coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
@@ -97,13 +97,12 @@ def inertia_tensor(coords, masses=None):
     if masses is None:
         masses = np.ones(len(coords))
 
-    # The inertia tensor for a set of point masses can be calculated with simple summation
+    # The inertia tensor for a set of point masses can be calculated with a simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
     I = np.empty((3, 3))
     I[0, 0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
     I[1, 1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
     I[2, 2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))
-
     I[0, 1] = I[1, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
     I[0, 2] = I[2, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
     I[1, 2] = I[2, 1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
@@ -113,7 +112,7 @@ def inertia_tensor(coords, masses=None):
 def get_dipole(scf, n=None):
     """Calculate the electric dipole moment.
 
-    This function does not account for periodcity, it may be a good idea to center the system.
+    This function does not account for periodicity, it may be a good idea to center the system.
 
     Reference: J. Chem. Phys. 155, 224109.
 
@@ -156,7 +155,7 @@ def get_ip(scf):
         float: Ionization potential in Hartree.
     """
     epsilon = get_epsilon(scf, scf.W)
-    # Add up spin states
+    # Add-up spin states
     epsilon = np.sum(epsilon, axis=0)
     return -epsilon[-1]
 
@@ -166,7 +165,7 @@ def check_ortho(obj, func, eps=1e-9):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): Discretized set of functions.
+        func (ndarray): A discretized set of functions.
 
     Keyword Args:
         eps (float): Tolerance for the condition.
@@ -206,7 +205,7 @@ def check_norm(obj, func, eps=1e-9):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): Discretized set of functions.
+        func (ndarray): A discretized set of functions.
 
     Keyword Args:
         eps (float): Tolerance for the condition.
@@ -240,7 +239,7 @@ def check_orthonorm(obj, func):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): Discretized set of functions.
+        func (ndarray): A discretized set of functions.
 
     Returns:
         bool: Orthonormality status for the set of functions.
@@ -288,7 +287,7 @@ def get_tautf(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real space Thomas-Fermi kinetic energy density.
+        ndarray: Real-space Thomas-Fermi kinetic energy density.
     """
     atoms = scf.atoms
     # Use the definition with a division by two
@@ -308,7 +307,7 @@ def get_tauw(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real space von Weizsaecker kinetic energy density.
+        ndarray: Real-space von Weizsaecker kinetic energy density.
     """
     atoms = scf.atoms
     if scf.dn_spin is None:
@@ -334,7 +333,7 @@ def get_elf(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real space electron localization function.
+        ndarray: Real-space electron localization function.
     """
     D = get_tau(scf.atoms, scf.Y) - get_tauw(scf)
     D0 = get_tautf(scf)
@@ -354,7 +353,7 @@ def get_reduced_gradient(scf, eps=0):
         eps (float): Threshold of the density where s should be truncated.
 
     Returns:
-        ndarray: Real space educed density gradient.
+        ndarray: Real-space reduced density gradient.
     """
     atoms = scf.atoms
     if scf.dn_spin is None:

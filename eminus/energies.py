@@ -154,7 +154,7 @@ def get_Enonloc(scf, Y):
     atoms = scf.atoms
 
     Enonloc = 0
-    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate non-local part if necessary
+    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
         for spin in range(atoms.occ.Nspin):
             betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL).conj()
 

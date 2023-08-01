@@ -8,7 +8,7 @@ import sys
 class CustomLogger(logging.Logger):
     """Custom logger for the usage outside of classes.
 
-    This is just a basic logger, but with an added verbose property.
+    This is just a basic logger but with an added verbose property.
 
     Args:
         name (str): Logger name.
@@ -37,10 +37,10 @@ class CustomFormatter(logging.Formatter):
             record: LogRecord object.
         """
         if record.levelno >= logging.WARNING:
-            # Print the level name for errors and warning
+            # Print the level name for errors and warnings
             self._style._fmt = '%(levelname)s: %(msg)s'
         else:
-            # But not for infos and debug messages
+            # But not for info and debug messages
             self._style._fmt = '%(msg)s'
         return super().format(record)
 
@@ -66,7 +66,7 @@ def create_logger(obj):
     Args:
         obj: Instance of a class.
     """
-    # Use ID of object to create a unique logger
+    # Use the ID of objects to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
     local_log = logging.getLogger(str(id(obj)))
     local_log.verbose = log.verbose
@@ -77,7 +77,7 @@ def get_level(verbose):
     """Validate logging levels.
 
     Args:
-        verbose (int | str): Level of output (case insensitive).
+        verbose (int | str): Level of output.
     """
     log_levels = {
         0: 'CRITICAL',
@@ -86,15 +86,17 @@ def get_level(verbose):
         3: 'INFO',
         4: 'DEBUG'
     }
+    # Use the global logging level for None
     if verbose is None:
         level = log.verbose
+    # Fall back to DEBUG if the level is not available
     elif isinstance(verbose, numbers.Number):
         level = log_levels.get(verbose, 'DEBUG')
     else:
         level = verbose
     level = level.upper()
     if level not in log_levels.values():
-        log.error(f'{level} is no recognized logging level.')
+        ValueError(f'{level} is no recognized logging level.')
     return level
 
 

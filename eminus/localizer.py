@@ -19,7 +19,7 @@ def eval_psi(atoms, psi, r):
     Returns:
         ndarray: Values of psi at points r.
     """
-    # Shift the evaluation point to (0,0,0), because we always have a lattice point there
+    # Shift the evaluation point to (0,0,0) because we always have a lattice point here
     psi_T = atoms.T(psi, -r)
     psi_Trs = atoms.I(psi_T)
     # The zero entry is always the value at point (0,0,0)
@@ -39,7 +39,7 @@ def get_R(atoms, psi, fods):
     Returns:
         ndarray: Transformation matrix R.
     """
-    # We only calculate occupied orbitals, so a zero matrix is enough
+    # We only calculate occupied orbitals
     R = np.empty((len(fods), len(fods)), dtype=complex)
 
     for i in range(len(fods)):
@@ -132,7 +132,7 @@ def get_FLO(atoms, psi, fods):
 def wannier_cost(atoms, psirs):
     """Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
-    This function does not account for periodcity, it may be a good idea to center the system.
+    This function does not account for periodicity, it may be a good idea to center the system.
 
     Reference: J. Chem. Phys. 137, 224114.
 

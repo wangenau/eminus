@@ -39,12 +39,12 @@ class Atoms:
 
             :code:`False` for restricted, :code:`True` for unrestricted, and :code:`None` for
             automatic detection.
-        center (bool | str): Center the system inside the cell (case insensitive).
+        center (bool | str): Center the system inside the cell.
 
             Aligns the geometric center of mass with the center of the call and rotates the system,
             such that its geometric moment of inertia aligns with the coordinate axes. Can be one of
             bool, 'shift', and 'rotate'.
-        verbose (int | str | None): Level of output (case insensitive).
+        verbose (int | str | None): Level of output.
 
             Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
             value can be used as well, where larger numbers mean more output, starting from 0.

@@ -52,7 +52,7 @@ def O(atoms, W):
 def L(atoms, W):
     """Laplacian operator.
 
-    This operator acts on the options 3 and 5.
+    This operator acts on options 3 and 5.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -75,7 +75,7 @@ def L(atoms, W):
 def Linv(atoms, W):
     """Inverse Laplacian operator.
 
-    This operator acts on the options 3 and 4.
+    This operator acts on options 3 and 4.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -102,7 +102,7 @@ def Linv(atoms, W):
 
 @handle_spin_gracefully
 def I(atoms, W):
-    """Backwards transformation from reciprocal space to real-space.
+    """Backward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
 
@@ -150,7 +150,7 @@ def I(atoms, W):
 def J(atoms, W, full=True):
     """Forward transformation from real-space to reciprocal space.
 
-    This operator acts on the options 1 and 2.
+    This operator acts on options 1 and 2.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -159,7 +159,7 @@ def J(atoms, W, full=True):
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        full (bool): Wether to transform in the full or in the active space.
+        full (bool): Whether to transform in the full or in the active space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -189,9 +189,9 @@ def J(atoms, W, full=True):
 
 @handle_spin_gracefully
 def Idag(atoms, W, full=False):
-    """Conjugated backwards transformation from real-space to reciprocal space.
+    """Conjugated backward transformation from real-space to reciprocal space.
 
-    This operator acts on the options 1 and 2.
+    This operator acts on options 1 and 2.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -200,7 +200,7 @@ def Idag(atoms, W, full=False):
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        full (bool): Wether to transform in the full or in the active space.
+        full (bool): Whether to transform in the full or in the active space.
 
     Returns:
         ndarray: The operator applied on W.
@@ -234,7 +234,7 @@ def Jdag(atoms, W):
 def K(atoms, W):
     """Preconditioning operator.
 
-    This operator acts on the options 3 and 5.
+    This operator acts on options 3 and 5.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -253,7 +253,7 @@ def K(atoms, W):
 def T(atoms, W, dr):
     """Translation operator.
 
-    This operator acts on the options 5 and 6.
+    This operator acts on options 5 and 6.
 
     Reference: https://ccrma.stanford.edu/~jos/st/Shift_Theorem.html
 

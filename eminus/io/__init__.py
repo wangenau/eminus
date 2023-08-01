@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """File input and output functionalities."""
-from ..logger import log
 from .cube import read_cube, write_cube
 from .gth import read_gth
 from .json import read_json, write_json

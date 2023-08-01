@@ -75,7 +75,7 @@ def get_tau(atoms, Y):
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Returns:
-        ndarray: Real space positive-definite kinetic energy density.
+        ndarray: Real-space positive-definite kinetic energy density.
     """
     # The "intuitive" way is the one commented out below
     # Sadly, this implementation is really slow for various reasons so use the faster one below
@@ -90,7 +90,7 @@ def get_tau(atoms, Y):
     dYrs = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
     # Calculate the active G vectors and broadcast to a desired shape
     Gc = atoms.G[atoms.active][None, :, None, :]
-    # Calculate the gradients of Y in the active(!) reciprocal space and transform to real space
+    # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
     for dim in range(3):
         dYrs[..., dim] = atoms.I(1j * Gc[..., dim] * Y)
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
@@ -98,7 +98,7 @@ def get_tau(atoms, Y):
     # Sum over all states
     # Use the definition with a division by two
     # return 0.5 * np.sum(atoms.occ.f[:, None, :] * sumdYrs, axis=2)
-    # Or in compressed einsum notation:
+    # Or in compressed Einstein notation:
     return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.occ.f, dYrs.conj(), dYrs))
 
 
@@ -136,11 +136,11 @@ def calc_Vtau(scf, spin, W, vtau):
         dWrs = np.empty((len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
         Gc = atoms.G[atoms.active][:, None, :]
-        # We only calculate Vtau for one spin channel, index, and reshape prior to the loop
+        # We only calculate Vtau for one spin channel, index, and reshape before the loop
         vtau_spin = vtau[spin, :, None]
         W_spin = W[spin]
         for dim in range(3):
-            # Calculate the gradients of W in the active(!) space and transform to real space
+            # Calculate the gradients of W in the active(!) space and transform to real-space
             dWrs[..., dim] = atoms.I(1j * Gc[..., dim] * W_spin)
             # Calculate dexc/dtau * gradpsi and transform to the active reciprocal space
             GVpsi[..., dim] = atoms.J(vtau_spin * dWrs[..., dim], full=False)

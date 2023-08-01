@@ -37,7 +37,7 @@ def coulomb(scf):
         ndarray: Coulomb potential in reciprocal space.
     """
     atoms = scf.atoms
-    Z = atoms.Z[0]  # Potential should only be used for same species
+    Z = atoms.Z[0]  # This potential should only be used for same species
 
     # Ignore the division by zero for the first elements
     # One could do some proper indexing with [1:] but indexing is slow
@@ -63,7 +63,7 @@ def ge(scf):
         ndarray: Germanium pseudopotential in reciprocal space.
     """
     atoms = scf.atoms
-    Z = 4  # Potential should only be used for germanium
+    Z = 4  # This potential should only be used for germanium
     lamda = 18.5
     rc = 1.052
     Gm = np.sqrt(atoms.G2)

@@ -164,9 +164,9 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     if dn_spin is None:
         dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
 
-    # This calculate the representation in the reciprocal space
+    # This calculates the XC potential in the reciprocal space
     Gvxc = atoms.J(vxc[spin])
-    # Calculate the gradient correction to the potential if a GGA functional is used
+    # Calculate the gradient correction to the potential if a (meta-)GGA functional is used
     if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # Vkin = -0.5 L(W)
@@ -193,7 +193,7 @@ def H_precompute(scf, W):
         tuple[ndarray, ndarray, ndarray, ndarray, ndarray]: dn_spin, phi, vxc, vsigma, and vtau
     """
     # We are calculating everything here over both spin channels
-    # In theory we would be fine/faster by only calculating the currently used spin channel
+    # We would be fine/could improve performance by only calculating the currently used spin channel
     atoms = scf.atoms
     Y = orth(atoms, W)
     n_spin = get_n_spin(atoms, Y)

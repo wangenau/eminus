@@ -7,7 +7,6 @@ import numpy as np
 from scipy.linalg import norm
 
 from .io import read_gth
-from .logger import log
 
 
 def dotprod(a, b):
@@ -41,7 +40,7 @@ def Ylm_real(l, m, G):  # noqa: C901
     Args:
         l (int): Angular momentum number.
         m (int): Magnetic quantum number.
-        G (ndarray): Recipocal lattice vector or array of lattice vectors.
+        G (ndarray): Reciprocal lattice vector or array of lattice vectors.
 
     Returns:
         ndarray: Real spherical harmonics.
@@ -109,13 +108,13 @@ def Ylm_real(l, m, G):  # noqa: C901
 
 
 def handle_spin_gracefully(func):
-    """Handle spin calculating the function for each channel seperately.
+    """Handle spin calculating the function for each channel separately.
 
     This can only be applied if the only spin-dependent indexing is the wave function W.
 
     Implementing the explicit handling of spin adds an extra layer of complexity where one has to
     loop over the spin states in many places. We can hide this complexity using this decorator while
-    still supporting many usecases, e.g., the operators previously act on arrays containing wave
+    still supporting many use-cases, e.g., the operators previously act on arrays containing wave
     functions of all states and of one state only. This decorator maintains this functionality and
     adds the option to act on arrays containing wave functions of all spins and all states as well.
 
@@ -128,7 +127,6 @@ def handle_spin_gracefully(func):
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
-            # If one is brave enough one could add multiprocessing over spin states right here
             return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
         return func(obj, W, *args, **kwargs)
     return decorator

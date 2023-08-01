@@ -7,7 +7,7 @@ from .logger import log
 
 
 def KSO(scf, write_cubes=False, **kwargs):
-    """Generate Kohn-Sham orbitals and optionally save them as cube files.
+    """Generate Kohn-Sham orbitals and optionally save them as CUBE files.
 
     Reference: Phys. Rev. 140, A1133.
 
@@ -15,7 +15,7 @@ def KSO(scf, write_cubes=False, **kwargs):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to CUBE files.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -31,7 +31,7 @@ def KSO(scf, write_cubes=False, **kwargs):
 
 
 def FO(scf, write_cubes=False, fods=None):
-    """Generate Fermi orbitals and optionally save them as cube files.
+    """Generate Fermi orbitals and optionally save them as CUBE files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -39,7 +39,7 @@ def FO(scf, write_cubes=False, fods=None):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to CUBE files.
         fods (list): Fermi-orbital descriptors.
 
     Returns:
@@ -55,7 +55,7 @@ def FO(scf, write_cubes=False, fods=None):
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
 
-    # The FO functions needs orbitals in reciprocal space as input
+    # The FO functions need orbitals in reciprocal space as input
     fo = get_FO(atoms, kso, fods)
     if write_cubes:
         cube_writer(atoms, 'FO', fo)
@@ -63,7 +63,7 @@ def FO(scf, write_cubes=False, fods=None):
 
 
 def FLO(scf, write_cubes=False, fods=None):
-    """Generate Fermi-Loewdin orbitals and optionally save them as cube files.
+    """Generate Fermi-Loewdin orbitals and optionally save them as CUBE files.
 
     Reference: J. Chem. Phys. 153, 084104.
 
@@ -71,7 +71,7 @@ def FLO(scf, write_cubes=False, fods=None):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to CUBE files.
         fods (list): Fermi-orbital descriptors.
 
     Returns:
@@ -87,7 +87,7 @@ def FLO(scf, write_cubes=False, fods=None):
         fods = get_fods(atoms)
     fods = remove_core_fods(atoms, fods)
 
-    # The FLO functions needs orbitals in reciprocal space as input
+    # The FLO functions need orbitals in reciprocal space as input
     flo = get_FLO(atoms, kso, fods)
     if write_cubes:
         cube_writer(atoms, 'FLO', flo)
@@ -95,7 +95,7 @@ def FLO(scf, write_cubes=False, fods=None):
 
 
 def WO(scf, write_cubes=False, precondition=True):
-    """Generate Wannier orbitals and optionally save them as cube files.
+    """Generate Wannier orbitals and optionally save them as CUBE files.
 
     Reference: Phys. Rev. B 59, 9703.
 
@@ -103,7 +103,7 @@ def WO(scf, write_cubes=False, precondition=True):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to cube files.
+        write_cubes (bool): Write orbitals to CUBE files.
         precondition (bool): Precondition by calculating FLOs as the initial guess.
 
     Returns:
@@ -124,11 +124,11 @@ def WO(scf, write_cubes=False, precondition=True):
 
 
 def cube_writer(atoms, orb_type, orbitals):
-    """Simple cube file writer function.
+    """Simple CUBE file writer function.
 
     Args:
         atoms: Atoms object.
-        orb_type (str): Orbital orb_type for the cube file names.
+        orb_type (str): Orbital orb_type for the CUBE file names.
         orbitals (ndarray): Real-space orbitals.
     """
     # Create the system name

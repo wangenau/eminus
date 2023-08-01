@@ -7,7 +7,7 @@ import numpy as np
 from .dft import get_grad, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E
 from .gga import get_grad_field, get_tau
-from .logger import log, name
+from .logger import name
 from .utils import dotprod
 from .xc import get_xc
 
@@ -93,7 +93,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
     iteration = len(Elist)
 
     # Print a column header at the beginning
-    # The ljust values just have been choosen such that the output looks decent
+    # The ljust values just have been chosen such that the output looks decent
     if iteration == 1:
         header = 'Method'.ljust(8)
         header += 'Iteration'.ljust(11)
@@ -153,8 +153,8 @@ def linmin_test(g, d):
 def cg_test(atoms, g, g_old, precondition=True):
     """Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
 
-    Calculate the cosine of the angle between g and g_old. For an angle of 90 deg the cosine goes to
-    zero.
+    Calculate the cosine of the angle between g and g_old. For an angle of 90 degree the cosine goes
+    to zero.
 
     Reference: https://www.math.uci.edu/~chenlong/CAMtips/CG.html
 
