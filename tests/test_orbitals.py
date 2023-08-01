@@ -11,8 +11,7 @@ import pytest
 from eminus import Atoms, RSCF
 from eminus.orbitals import cube_writer, FLO, FO, KSO, WO
 
-atoms = Atoms('He', (0, 0, 0), center=True).build()
-atoms.s = 10
+atoms = Atoms('He', (0, 0, 0), ecut=1, center=True).build()
 scf = RSCF(atoms)
 scf.run()
 
@@ -51,8 +50,8 @@ def test_cube_writer(unrestricted):
     atoms.unrestricted = unrestricted
     atoms.f = np.array([[1], [1]])
     rng = default_rng()
-    orbital = rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
-    cube_writer(atoms, 'TMP', orbital)
+    Iorbital = rng.standard_normal((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
+    cube_writer(atoms, 'TMP', Iorbital)
     for f in glob.glob('He_TMP_0*.cube'):
         os.remove(f)
 

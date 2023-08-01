@@ -82,7 +82,7 @@ def init_gth_loc(scf):
 
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
-        for ia in range(len(atoms.atom)):
+        for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
         Vloc += np.real(atoms.J(Vsp * Sf))

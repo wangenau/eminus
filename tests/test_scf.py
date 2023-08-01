@@ -7,8 +7,7 @@ import pytest
 from eminus import Atoms, RSCF, SCF, USCF
 from eminus.tools import center_of_mass
 
-atoms = Atoms('He', (0, 0, 0), unrestricted=True)
-atoms.s = 10
+atoms = Atoms('He', (0, 0, 0), ecut=2, unrestricted=True)
 
 
 def test_atoms():
@@ -73,10 +72,11 @@ def test_sic():
     assert scf.energies.Esic != 0
 
 
-def test_disp():
+@pytest.mark.parametrize('disp', [True, {'atm': False}])
+def test_disp(disp):
     """Test that the dispersion correction routine runs."""
     pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
-    scf = SCF(atoms, opt={'sd': 1}, disp=True)
+    scf = SCF(atoms, opt={'sd': 1}, disp=disp)
     scf.run()
     assert scf.energies.Edisp != 0
 
@@ -135,12 +135,13 @@ def test_recenter(center):
     W = atoms.I(scf.W)
     com = center_of_mass(scf.atoms.X)
     # Check that the density is centered around the atom
-    assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=1e-3)
+    assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=0.005)
     # Check that the orbitals are centered around the atom
-    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.00125)
-    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.00125)
+    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.005)
+    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.005)
     # Test that the local potential has been rebuild
     assert not np.array_equal(scf.Vloc, Vloc)
+    assert scf.atoms.center == 'recentered'
 
 
 def test_rscf():

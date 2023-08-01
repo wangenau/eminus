@@ -2,7 +2,6 @@
 """Test input and output functionalities."""
 import os
 
-import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
@@ -21,7 +20,6 @@ from eminus import (
 )
 
 atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), ecut=1)
-atoms.s = 2
 scf = SCF(atoms, opt={'sd': 1})
 scf.run()
 
@@ -35,10 +33,10 @@ def test_xyz(Nspin):
     atom, X = read(filename)
     os.remove(filename)
     if Nspin == 1:
-        assert atoms.atom + ['X'] * len(atoms.X) == atom
+        assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
-        assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
-    assert_allclose(atoms.X, X[:len(atoms.X)], atol=1e-6)
+        assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
+    assert_allclose(atoms.X, X[:atoms.Natoms], atol=1e-6)
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])
@@ -46,18 +44,18 @@ def test_cube(Nspin):
     """Test CUBE file output and input."""
     filename = 'test.cube'
     fods = [atoms.X] * Nspin
-    write(atoms, filename, scf.W[0, :, 0], fods=fods)
+    write(atoms, filename, scf.n, fods=fods)
     atom, X, Z, a, s, field = read(filename)
     os.remove(filename)
     if Nspin == 1:
-        assert atoms.atom + ['X'] * len(atoms.X) == atom
+        assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
-        assert atoms.atom + ['X'] * len(atoms.X) + ['He'] * len(atoms.X) == atom
-    assert_allclose(atoms.X, X[:len(atoms.X)], atol=1e-6)
-    assert_allclose(atoms.Z, Z[:len(atoms.Z)])
+        assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
+    assert_allclose(atoms.X, X[:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms.Z, Z[:atoms.Natoms])
     assert_allclose(atoms.a, a)
     assert_allclose(atoms.s, s)
-    assert_allclose(np.real(scf.W[0, :, 0]), field, atol=1e-7)
+    assert_allclose(scf.n, field, atol=1e-7)
 
 
 @pytest.mark.parametrize('obj', [atoms, atoms.occ, scf, scf.energies, scf.gth])
@@ -108,7 +106,7 @@ def test_filename_ending():
     write_xyz(atoms, filename)
     read_xyz(filename)
     os.remove(filename + '.xyz')
-    write_cube(atoms, filename, scf.W[0, :, 0])
+    write_cube(atoms, filename, scf.n)
     read_cube(filename)
     os.remove(filename + '.cube')
     write_json(atoms, filename)

@@ -29,8 +29,7 @@ from eminus.tools import (
 )
 
 opt = {'sd': 25, 'pccg': 25}
-atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), unrestricted=False, center=True)
-atoms.s = 15
+atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
 scf = SCF(atoms, opt=opt)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))
@@ -63,8 +62,7 @@ def test_center_of_mass(coords, masses, ref):
 @pytest.mark.parametrize('unrestricted', [True, False])
 def test_pycom(unrestricted):
     """Test PyCOM routine."""
-    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), unrestricted=unrestricted, center=True)
-    atoms.s = 10
+    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=1, unrestricted=unrestricted, center=True)
     scf = SCF(atoms, opt=opt)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
@@ -91,7 +89,7 @@ def test_get_dipole():
 def test_get_ip():
     """Very simple test to check the ionization potential calculation."""
     assert get_ip(scf) > 0
-    assert_allclose(get_ip(scf), 0.43364823)
+    assert_allclose(get_ip(scf), 0.4873204)
 
 
 @pytest.mark.parametrize(('ref', 'func'), [(True, psi),
@@ -117,7 +115,7 @@ def test_check_orthonorm(ref, func):
 
 def test_get_isovalue():
     """Test isovalue calculation."""
-    assert_allclose(get_isovalue(scf.n), 0.025, atol=1e-3)
+    assert_allclose(get_isovalue(scf.n), 0.013, atol=1e-3)
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])

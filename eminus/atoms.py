@@ -240,7 +240,7 @@ class Atoms:
         if isinstance(value, numbers.Integral):
             value = value * np.ones(3, dtype=int)
         self._s = np.asarray(value)
-        self._Ns = np.prod(self._s)
+        self._Ns = int(np.prod(self._s))
         # The cell discretization changes when changing s
         self.is_built = False
 
