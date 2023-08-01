@@ -336,8 +336,7 @@ class SCF:
                f'Symmetric guess: {self.symmetric}\n' \
                f'Energy convergence tolerance: {self.etol} Eh\n' \
                f'Gradient convergence tolerance: {self.gradtol}\n' \
-               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
-               f'Converged: {self.is_converged}'
+               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}'
 
 
 class RSCF(SCF):
