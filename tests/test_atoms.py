@@ -21,6 +21,7 @@ def test_atom(atom, ref, Nref):
     atoms = Atoms(atom, [[0, 0, 0]] * Nref)
     assert atoms.atom == ref
     assert atoms.Natoms == Nref
+    assert len(atoms.Z) == Nref
 
 
 @pytest.mark.parametrize(('X', 'center', 'ref'), [
@@ -29,35 +30,11 @@ def test_atom(atom, ref, Nref):
     ([[0, 0, 0]], 'shift', [(10, 10, 10)]),
     ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (np.sqrt(3), 0, 0)]),
     ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
-    ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])])  # ???
-def test_coordinates(X, center, ref):
+    ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])])
+def test_X(X, center, ref):
     """Test the setting of the atom coordinates."""
     atoms = Atoms(['H'] * len(X), X=X, center=center)
     assert_allclose(np.abs(atoms.X), ref, atol=1e-15)
-
-
-@pytest.mark.parametrize(('atom', 'Z', 'ref'), [('H', None, [1]),
-                                                ('Li', 'pade', [1]),
-                                                ('Li', 'pbe', [3]),
-                                                ('Li-q3', None, [3]),
-                                                ('He2', 2, [2, 2]),
-                                                ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2])])
-def test_charge(atom, Z, ref):
-    """Test setting of charges."""
-    atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
-    atoms.Z = Z
-    assert_equal(atoms.Z, ref)
-
-
-@pytest.mark.parametrize(('s', 'ref'), [(2, [2] * 3),
-                                        ([2, 3, 4], [2, 3, 4]),
-                                        (None, 99)])
-def test_sampling(s, ref):
-    """Test the initialization of sampling."""
-    atoms = Atoms(*inp)
-    if s is not None:
-        atoms.s = s
-    assert_allclose(atoms.s, ref)
 
 
 @pytest.mark.parametrize('size', [3, (5, 10, 15)])
@@ -69,6 +46,110 @@ def test_cell(size):
     assert_allclose(atoms.r[0], 0)
     assert len(atoms.r) == atoms.Ns
     assert_allclose(atoms.s[0] / atoms.s[1], atoms.a[0] / atoms.a[1], atol=0.02)
+    assert atoms.dV == atoms.Omega / np.prod(atoms.s)
+    assert atoms.is_built
+
+
+@pytest.mark.parametrize('spin', [0, 1, 2])
+def test_spin(spin):
+    """Test the spin option."""
+    atoms = Atoms(*inp, spin=spin, unrestricted=True)
+    assert atoms.spin == spin
+    assert atoms.occ.spin == spin
+
+
+@pytest.mark.parametrize('charge', [0, 1, 2, -1, -2])
+def test_charge(charge):
+    """Test the charge option."""
+    atoms = Atoms(*inp, charge=charge)
+    assert atoms.charge == charge
+    assert atoms.occ.charge == charge
+
+
+@pytest.mark.parametrize(('atom', 'unrestricted', 'ref'), [('H', None, 2),
+                                                           ('He', None, 1),
+                                                           ('H', True, 2),
+                                                           ('He', False, 1)])
+def test_unrestricted(atom, unrestricted, ref):
+    """Test the spinpol option."""
+    atoms = Atoms(atom=atom, X=(0, 0, 0), unrestricted=unrestricted)
+    assert atoms.occ.Nspin == ref
+
+
+@pytest.mark.parametrize('center', [False, True, 'rotate', 'shift', 'recentered'])
+def test_center(center):
+    """Test the center option."""
+    atoms = Atoms('H2', [[0, 0, 0], [1, 1, 1]], center=center)
+    if center is False:
+        assert_allclose(atoms.X, [[0, 0, 0], [1, 1, 1]])
+    elif center is True:
+        assert_allclose(atoms.X, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
+    elif center == 'rotate':
+        assert_allclose(atoms.X, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
+    elif center == 'shift':
+        assert_allclose(atoms.X, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
+    elif center == 'recentered':
+        assert_allclose(atoms.X, [[0, 0, 0], [1, 1, 1]])
+
+
+def test_verbose():
+    """Test the verbosity level."""
+    log.verbose = 'DEBUG'
+    atoms = Atoms(*inp)
+    assert atoms.verbose == log.verbose
+    level = 'DEBUG'
+    log.verbose = level
+    atoms = Atoms(*inp)
+    assert atoms.verbose == level
+    atoms = Atoms(*inp, verbose=level)
+    assert atoms.verbose == level
+
+
+@pytest.mark.parametrize(('f', 'unrestricted', 'fref', 'Nref'), [
+    (None, False, [[2]], 1),
+    (None, True, [[1], [1]], 1),
+    (None, False, [[2]], 1),
+    (None, True, [[1], [1]], 1),
+    (2, False, [[2]], 1),
+    (1, True, [[1], [1]], 1),
+    (2, False, [[2]], 1),
+    (1, True, [[1], [1]], 1)])
+def test_f(f, unrestricted, fref, Nref):
+    """Test the occupation and state options."""
+    atoms = Atoms(*inp, unrestricted=unrestricted)
+    atoms.s = 1
+    atoms.f = f
+    atoms.build()
+    assert_equal(atoms.f, fref)
+    assert atoms.occ.is_filled
+    assert atoms.occ.Nstate == Nref
+
+
+@pytest.mark.parametrize(('s', 'ref'), [(2, [2] * 3),
+                                        ([2, 3, 4], [2, 3, 4]),
+                                        (None, 99)])
+def test_s(s, ref):
+    """Test the initialization of sampling."""
+    atoms = Atoms(*inp)
+    if s is not None:
+        atoms.s = s
+    assert_allclose(atoms.s, ref)
+
+
+@pytest.mark.parametrize(('atom', 'Z', 'ref', 'Nref'), [('H', None, [1], 1),
+                                                        ('Li', 'pade', [1], 1),
+                                                        ('Li', 'pbe', [3], 3),
+                                                        ('Li-q3', None, [3], 3),
+                                                        ('He2', 2, [2, 2], 4),
+                                                        ('CH4', {'C': 3, 'H': 2},
+                                                         [3, 2, 2, 2, 2], 11)])
+def test_Z(atom, Z, ref, Nref):
+    """Test setting of charges."""
+    atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
+    atoms.Z = Z
+    assert_equal(atoms.Z, ref)
+    assert len(atoms.Z) == atoms.Natoms
+    assert atoms.occ.Nelec == Nref
 
 
 def test_G():
@@ -84,48 +165,6 @@ def test_G():
     atoms.s = 2
     atoms.build()
     assert len(atoms.G2) == len(atoms.G2c)
-
-
-@pytest.mark.parametrize(('atom', 'unrestricted', 'ref'), [('H', None, 2),
-                                                           ('He', None, 1),
-                                                           ('H', True, 2),
-                                                           ('He', False, 1)])
-def test_spin(atom, unrestricted, ref):
-    """Test the spin option."""
-    atoms = Atoms(atom=atom, X=(0, 0, 0), unrestricted=unrestricted)
-    assert atoms.occ.Nspin == ref
-
-
-@pytest.mark.parametrize(('f', 'unrestricted', 'fref', 'Nref'), [
-    (None, False, [[2]], 1),
-    (None, True, [[1], [1]], 1),
-    (None, False, [[2]], 1),
-    (None, True, [[1], [1]], 1),
-    (2, False, [[2]], 1),
-    (1, True, [[1], [1]], 1),
-    (2, False, [[2]], 1),
-    (1, True, [[1], [1]], 1)])
-def test_occupations(f, unrestricted, fref, Nref):
-    """Test the occupation and state options."""
-    atoms = Atoms(*inp, unrestricted=unrestricted)
-    atoms.s = 1
-    atoms.f = f
-    atoms.build()
-    assert_equal(atoms.f, fref)
-    assert atoms.occ.Nstate == Nref
-
-
-def test_verbose():
-    """Test the verbosity level."""
-    log.verbose = 'DEBUG'
-    atoms = Atoms(*inp)
-    assert atoms.verbose == log.verbose
-    level = 'DEBUG'
-    log.verbose = level
-    atoms = Atoms(*inp)
-    assert atoms.verbose == level
-    atoms = Atoms(*inp, verbose=level)
-    assert atoms.verbose == level
 
 
 def test_operators():
