@@ -62,8 +62,7 @@ def test_n_total(unrestricted):
         scf = scf_unpol
     # Test that the integrated density gives the number of electrons
     n = get_n_total(scf.atoms, scf.Y)
-    dV = scf.atoms.Omega / np.prod(scf.atoms.s)
-    n_int = np.sum(n) * dV
+    n_int = np.sum(n) * scf.atoms.dV
     assert_allclose(n_int, np.sum(scf.atoms.occ.f))
 
 
@@ -76,9 +75,8 @@ def test_n_spin(unrestricted):
         scf = scf_unpol
     # Test that the integrated spin densities gives the number of electrons per spin
     n = get_n_spin(scf.atoms, scf.Y)
-    dV = scf.atoms.Omega / np.prod(scf.atoms.s)
     for s in range(scf.atoms.occ.Nspin):
-        n_int = np.sum(n[s]) * dV
+        n_int = np.sum(n[s]) * scf.atoms.dV
         assert_allclose(n_int, np.sum(scf.atoms.occ.f[s]))
 
 
@@ -91,9 +89,8 @@ def test_n_single(unrestricted):
         scf = scf_unpol
     # Test that the integrated single orbital densities gives occupation number per orbital
     n = get_n_single(scf.atoms, scf.Y)
-    dV = scf.atoms.Omega / np.prod(scf.atoms.s)
     for s in range(scf.atoms.occ.Nspin):
-        n_int = np.sum(n[s], axis=0) * dV
+        n_int = np.sum(n[s], axis=0) * scf.atoms.dV
         assert_allclose(n_int, scf.atoms.occ.f[s])
 
 

@@ -128,7 +128,7 @@ def test_get_tautf(unrestricted):
     else:
         scf = scf_unpol
     tautf = get_tautf(scf)
-    T = np.sum(tautf) * scf.atoms.Omega / np.prod(scf.atoms.s)
+    T = np.sum(tautf) * scf.atoms.dV
     # TF KED is not exact, but similar for simple systems
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
@@ -142,7 +142,7 @@ def test_get_tauw(unrestricted):
         scf = scf_unpol
         scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     tauw = get_tauw(scf)
-    T = np.sum(tauw) * scf.atoms.Omega / np.prod(scf.atoms.s)
+    T = np.sum(tauw) * scf.atoms.dV
     # vW KED is exact for one- and two-electron systems
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 

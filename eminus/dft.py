@@ -47,7 +47,7 @@ def get_n_total(atoms, Y, n_spin=None):
 
     # n = (IW) F (IW)dag
     Yrs = atoms.I(Y)
-    n = np.zeros(len(atoms.r))
+    n = np.zeros(atoms.Ns)
     for spin in range(atoms.occ.Nspin):
         n += np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
@@ -66,7 +66,7 @@ def get_n_spin(atoms, Y):
         ndarray: Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.occ.Nspin, len(atoms.r)))
+    n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
         n[spin] = np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
@@ -83,7 +83,7 @@ def get_n_single(atoms, Y):
         ndarray: Single-electron densities.
     """
     Yrs = atoms.I(Y)
-    n = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate))
+    n = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
         n[spin] = atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
     return n

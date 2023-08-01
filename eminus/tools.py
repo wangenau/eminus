@@ -137,9 +137,8 @@ def get_dipole(scf, n=None):
     for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.X[i]
 
-    dV = atoms.Omega / np.prod(atoms.s)
     for dim in range(3):
-        mu[dim] -= dV * np.sum(n * atoms.r[:, dim])
+        mu[dim] -= atoms.dV * np.sum(n * atoms.r[:, dim])
     return mu
 
 
@@ -181,18 +180,13 @@ def check_ortho(obj, func, eps=1e-9):
         log.warning('Need at least two functions to check their orthogonality.')
         return True
 
-    # We integrate over our cell, the integration borders then become a=0 and b=cell length
-    # The integration prefactor dV is (b-a)/n, with n as the sampling
-    # For a 3d integral we have to multiply for every direction
-    dV = atoms.Omega / np.prod(atoms.s)
-
     ortho_bool = True
     # Check the condition for every combination
     # Orthogonality condition: \int func1^* func2 dr = 0
     for spin in range(atoms.occ.Nspin):
         for i in range(atoms.occ.Nstate):
             for j in range(i + 1, atoms.occ.Nstate):
-                res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
+                res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
                 log.debug(f'Function {i} and {j}:\nValue: {res:.7f}\nOrthogonal: {tmp_bool}')
@@ -216,17 +210,12 @@ def check_norm(obj, func, eps=1e-9):
     atoms = obj._atoms
     func = np.atleast_3d(func)
 
-    # We integrate over our cell, the integration borders then become a=0 and b=cell length
-    # The integration prefactor dV is (b-a)/n, with n as the sampling
-    # For a 3d integral we have to multiply for every direction
-    dV = atoms.Omega / np.prod(atoms.s)
-
     norm_bool = True
     # Check the condition for every function
     # Normality condition: \int func^* func dr = 1
     for spin in range(atoms.occ.Nspin):
         for i in range(atoms.occ.Nstate):
-            res = dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
+            res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
             log.debug(f'Function {i}:\nValue: {res:.7f}\nNormalized: {tmp_bool}')
@@ -294,7 +283,7 @@ def get_tautf(scf):
     tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
 
     log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh')
     return tautf
 
 
@@ -320,7 +309,7 @@ def get_tauw(scf):
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
     log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tauw: {np.sum(tauw) * atoms.Omega / np.prod(atoms.s):.6f} Eh')
+    log.debug(f'Integrated tauw: {np.sum(tauw) * atoms.dV:.6f} Eh')
     return tauw
 
 
@@ -387,8 +376,8 @@ def get_spin_squared(scf):
 
     rhoXr = scf.n_spin[0] - scf.n_spin[1]
     rhoXr[rhoXr < 0] = 0
-    rhoX = np.sum(rhoXr) * atoms.Omega / np.prod(atoms.s)
-    SX = 0.5 * (np.sum(scf.n_spin[0]) - np.sum(scf.n_spin[1])) * atoms.Omega / np.prod(atoms.s)
+    rhoX = np.sum(rhoXr) * atoms.dV
+    SX = 0.5 * (np.sum(scf.n_spin[0]) - np.sum(scf.n_spin[1])) * atoms.dV
     return SX * (SX + 1) + rhoX
 
 

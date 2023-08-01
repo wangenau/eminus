@@ -67,7 +67,7 @@ def test_cell(size):
     assert_allclose(np.diag(atoms.R), size)
     assert_allclose(atoms.Omega, np.prod(atoms.a))
     assert_allclose(atoms.r[0], 0)
-    assert len(atoms.r) == np.prod(atoms.s)
+    assert len(atoms.r) == atoms.Ns
     assert_allclose(atoms.s[0] / atoms.s[1], atoms.a[0] / atoms.a[1], atol=0.02)
 
 
@@ -77,7 +77,7 @@ def test_G():
     atoms.s = 2
     atoms.build()
     assert_allclose(atoms.G[0], 0)
-    assert len(atoms.G) == np.prod(atoms.s)
+    assert len(atoms.G) == atoms.Ns
     assert_allclose(atoms.G2, atoms.G2c)
     assert_allclose(atoms.Sf, 1)
     atoms = Atoms(*inp)

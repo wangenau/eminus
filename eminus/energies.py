@@ -280,13 +280,13 @@ def get_Esic(scf, Y, n_single=None):
             if atoms.occ.f[spin, i] > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
-                ni = np.zeros((2, len(atoms.r)))
+                ni = np.zeros((2, atoms.Ns))
                 # Normalize single-particle densities to 1
                 ni[0] = n_single[spin, :, i] / atoms.occ.f[spin, i]
 
                 # Get the gradient of the single-particle density
                 if 'gga' in scf.xc_type:
-                    dni = np.zeros((2, len(atoms.r), 3))
+                    dni = np.zeros((2, atoms.Ns, 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None

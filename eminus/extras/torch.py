@@ -35,7 +35,7 @@ def I(atoms, W):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms._s)
+    n = atoms._Ns
     s = tuple(atoms._s)
 
     if W.ndim < 3:
@@ -85,7 +85,7 @@ def J(atoms, W, full=True):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms._s)
+    n = atoms._Ns
     s = tuple(atoms._s)
 
     Wfft = torch.from_numpy(np.copy(W))
@@ -124,7 +124,7 @@ def Idag(atoms, W, full=False):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms._s)
+    n = atoms._Ns
     s = tuple(atoms._s)
 
     Wfft = torch.from_numpy(np.copy(W))
@@ -160,7 +160,7 @@ def Jdag(atoms, W):
         ndarray: The operator applied on W.
     """
     import torch
-    n = np.prod(atoms._s)
+    n = atoms._Ns
     s = tuple(atoms._s)
 
     if W.ndim < 3:

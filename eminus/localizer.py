@@ -64,7 +64,7 @@ def get_FO(atoms, psi, fods):
     Returns:
         ndarray: Real-space Fermi orbitals.
     """
-    fo = np.zeros((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate), dtype=complex)
+    fo = np.zeros((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi)
@@ -94,10 +94,9 @@ def get_S(atoms, psirs):
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
 
-    dV = atoms.Omega / np.prod(atoms.s)
     for i in range(atoms.occ.Nstate):
         for j in range(atoms.occ.Nstate):
-            S[i, j] = dV * np.sum(psirs[:, i].conj() * psirs[:, j])
+            S[i, j] = atoms.dV * np.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
 
@@ -115,7 +114,7 @@ def get_FLO(atoms, psi, fods):
         ndarray: Real-space Fermi-Loewdin orbitals.
     """
     fo = get_FO(atoms, psi, fods)
-    flo = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate), dtype=complex)
+    flo = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
     for spin in range(atoms.occ.Nspin):
         # Calculate the overlap matrix for FOs
@@ -165,13 +164,11 @@ def wannier_center(atoms, psirs):
     Returns:
         ndarray: Wannier centers per orbital.
     """
-    dV = atoms.Omega / np.prod(atoms.s)
-
     centers = np.empty((atoms.occ.Nstate, 3))
     for i in range(atoms.occ.Nstate):
         for dim in range(3):
-            centers[i, dim] = dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
-                                           psirs[:, i], axis=0))
+            centers[i, dim] = atoms.dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
+                                                 psirs[:, i], axis=0))
     return centers
 
 
@@ -188,12 +185,11 @@ def second_moment(atoms, psirs):
     Returns:
         ndarray: Second moments per orbital.
     """
-    dV = atoms.Omega / np.prod(atoms.s)
     r2 = norm(atoms.r, axis=1)**2
 
     moments = np.empty(atoms.occ.Nstate)
     for i in range(atoms.occ.Nstate):
-        moments[i] = dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
+        moments[i] = atoms.dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments
 
 
@@ -210,12 +206,11 @@ def wannier_supercell_matrices(atoms, psirs):
     Returns:
         tuple[ndarray, ndarray, ndarray]: Matrices X, Y, and Z.
     """
-    dV = atoms.Omega / np.prod(atoms.s)
     # Similar to the expectation value of r, but accounting for periodicity
     X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0])) @ psirs
     Y = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1])) @ psirs
     Z = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2])) @ psirs
-    return X * dV, Y * dV, Z * dV
+    return X * atoms.dV, Y * atoms.dV, Z * atoms.dV
 
 
 def wannier_supercell_cost(X, Y, Z):

@@ -35,8 +35,6 @@ def test_unpolarized(system):
     atoms = Atoms(atom, X, a=a, ecut=ecut)
     atoms.Z = 'pade'
     atoms.s = s
-    print(atoms.occ)
-    print(atoms.Z)
     E = RSCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[system], atol=etol)
 

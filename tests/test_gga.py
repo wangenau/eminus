@@ -47,7 +47,7 @@ def test_get_tau(unrestricted):
     else:
         scf = scf_unpol
     tau = get_tau(scf.atoms, scf.Y)
-    T = np.sum(tau) * scf.atoms.Omega / np.prod(scf.atoms.s)
+    T = np.sum(tau) * scf.atoms.dV
     # This integrated KED should be the same as the calculated kinetic energy
     assert_allclose(T, scf.energies.Ekin)
 

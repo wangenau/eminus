@@ -20,7 +20,7 @@ def get_grad_field(atoms, field, real=True):
     Returns:
         ndarray: Gradients of field per spin channel.
     """
-    dfield = np.empty((atoms.occ.Nspin, len(atoms.r), 3), dtype=complex)
+    dfield = np.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
     for spin in range(atoms.occ.Nspin):
         fieldG = atoms.J(field[spin])
         for dim in range(3):
@@ -81,13 +81,13 @@ def get_tau(atoms, Y):
     # Sadly, this implementation is really slow for various reasons so use the faster one below
 
     # Yrs = atoms.I(Y)
-    # tau = np.zeros((atoms.occ.Nspin, len(atoms.r)), dtype=complex)
+    # tau = np.zeros((atoms.occ.Nspin, atoms.Ns), dtype=complex)
     # for i in range(atoms.occ.Nstate):
     #     dYrs = get_grad_field(atoms, Yrs[..., i], real=False)
     #     tau += 0.5 * atoms.occ.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     # return np.real(tau)
 
-    dYrs = np.empty((atoms.occ.Nspin, len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
+    dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate, 3), dtype=complex)
     # Calculate the active G vectors and broadcast to a desired shape
     Gc = atoms.G[atoms.active][None, :, None, :]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
@@ -133,7 +133,7 @@ def calc_Vtau(scf, spin, W, vtau):
         #     Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
 
         GVpsi = np.empty((len(atoms.G2c), atoms.occ.Nstate, 3), dtype=complex)
-        dWrs = np.empty((len(atoms.r), atoms.occ.Nstate, 3), dtype=complex)
+        dWrs = np.empty((atoms.Ns, atoms.occ.Nstate, 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
         Gc = atoms.G[atoms.active][:, None, :]
         # We only calculate Vtau for one spin channel, index, and reshape before the loop

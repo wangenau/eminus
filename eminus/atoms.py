@@ -240,6 +240,7 @@ class Atoms:
         if isinstance(value, numbers.Integral):
             value = value * np.ones(3, dtype=int)
         self._s = np.asarray(value)
+        self._Ns = np.prod(self._s)
         # The cell discretization changes when changing s
         self.is_built = False
 
@@ -271,6 +272,11 @@ class Atoms:
     def Natoms(self):
         """Number of atoms."""
         return self._Natoms
+
+    @property
+    def Ns(self):
+        """Number of real-space grid points."""
+        return self._Ns
 
     @property
     def Omega(self):
@@ -311,6 +317,11 @@ class Atoms:
     def Sf(self):
         """Structure factor per atom."""
         return self._Sf
+
+    @property
+    def dV(self):
+        """Volume element to multiply when integrating field properties."""
+        return self.Omega / self._Ns
 
     @property
     def _atoms(self):
@@ -367,7 +378,7 @@ class Atoms:
             tuple[ndarray, ndarray]: Index matrices.
         """
         # Build index matrix M
-        ms = np.arange(np.prod(self.s))
+        ms = np.arange(self._Ns)
         m1 = np.floor(ms / (self.s[2] * self.s[1])) % self.s[0]
         m2 = np.floor(ms / self.s[2]) % self.s[1]
         m3 = ms % self.s[2]

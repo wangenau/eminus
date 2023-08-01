@@ -15,7 +15,6 @@ atoms = Atoms('He', (0, 0, 0), center=True).build()
 atoms.s = 10
 scf = RSCF(atoms)
 scf.run()
-dV = atoms.Omega / np.prod(atoms.s)
 
 
 def test_kso():
@@ -29,21 +28,21 @@ def test_fo():
     """Test the Fermi orbital function."""
     orb = FO(scf, write_cubes=True, fods=[atoms.X])
     os.remove('He_FO_0.cube')
-    assert_allclose(dV * np.sum(orb.conj() * orb), 1)
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_flo():
     """Test the Fermi-Loewdin orbital function."""
     orb = FLO(scf, write_cubes=True, fods=[atoms.X])
     os.remove('He_FLO_0.cube')
-    assert_allclose(dV * np.sum(orb.conj() * orb), 1)
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_wo():
     """Test the Wannier orbital function."""
     orb = WO(scf, write_cubes=True, precondition=False)
     os.remove('He_WO_0.cube')
-    assert_allclose(dV * np.sum(orb.conj() * orb), 1)
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])
