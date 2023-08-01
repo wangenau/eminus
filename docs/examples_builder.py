@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Custom examples pages generation utilities."""
-import glob
 import pathlib
 import re
 import shutil
@@ -31,17 +30,14 @@ def generate(app: Any) -> None:
                              f'eminus/_static/{example.name}.html>`_.\n')
                 # Add download links
                 fp.write('\nDownload')
-                files = sorted(example.glob('[!README.rst, !__pycache__]*'))
+                files = sorted(example.glob('[!README.rst]*'))
                 for file in files:
-                    if '.png' not in str(file):  # Somehow only some pngs are added to downloads
-                        fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
+                    fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
+                    # Copy all images to the examples folder
+                    if '.png' in str(file):
+                        shutil.copy2(file, 'docs/_examples/')
             # Add example subfile to index
             f_index.write(f'\n   {example.name}.rst')
-
-        # Copy all images to the examples folder
-        images = glob.glob('examples/**/*.png')
-        for image in images:
-            shutil.copy2(image, 'docs/_examples/')
 
 
 def parse(script: str) -> str:
