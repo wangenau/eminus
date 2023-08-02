@@ -4,17 +4,23 @@ Changelog
 dev
 ---
 - New features
-   - Complete rewrite of SCF
+   - Complete rewrite of the Atoms and SCF classes
       - Update documentation
+      - Document all public properties
       - Use properties when parsing input arguments
       - Allow direct setting attributes
       - Better input handling
-      - Simplify by removing some functions and attributes
-      - Use a GTH object to store all GTH data
-      - Indicate non-input arguments and non-results as private
-      - Use the run function to pass cgform to minimizers
-      - Rename min keyword to opt to not shadow the Python builtin
-      - Merge symmetric with guess
+      - Use an Occupations object to store electronic states information in Atoms
+      - Use a GTH object to store all GTH data in SCF
+      - Add some properties to the objects, e.g., the volume element dV in Atoms
+      - Indicate non-input arguments and non-results as private or read-only
+      - Breaking:
+         - Use unrestricted instead of Nspin
+         - Use spin and charge instead of Nstate and f
+         - Remove f and s as keyword arguments, can be set after initialization
+         - Remove cgform as a keyword argument, use the run function to pass it to minimizers
+         - Rename min keyword to opt
+         - Merge symmetric with guess
    - Add DFT-D3 dispersion correction as an extra
 - Updated docs
    - Add documentation to module data/constants
@@ -22,15 +28,19 @@ dev
    - Re-add documentation of operators to Atoms
    - Add a custom functional example
    - Improve the geometry optimization example
+   - Add PNGs to the downloads section
    - Sort attributes groupwise
+   - Fix a lot of typos
 - Coding style
    - Type check with mypy
    - Fix a lot of type warnings from mypy
    - Add type hints to scripts in docs and setup.py
+   - Rename some arguments to not shadow builtins
 - Miscellaneous
    - Small performance improvements, mostly for meta-GGAs
    - Add an error message when attempting to use operators of an unbuilt Atoms object
    - Add Matplotlib to the viewer setup to generate images in the examples
+   - Add a small demo function
 
 v2.5.0 - Jul 10, 2023
 ---------------------
