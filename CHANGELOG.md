@@ -40,6 +40,7 @@ dev
    - Small performance improvements, mostly for meta-GGAs
    - Add an error message when attempting to use operators of an unbuilt Atoms object
    - Add Matplotlib to the viewer setup to generate images in the examples
+   - More tests, e.g, for different spin and charge states
    - Add a small demo function
 
 v2.5.0 - Jul 10, 2023
