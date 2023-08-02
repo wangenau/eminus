@@ -156,7 +156,7 @@ def cg_test(atoms, g, g_old, precondition=True):
     Calculate the cosine of the angle between g and g_old. For an angle of 90 degree the cosine goes
     to zero.
 
-    Reference: https://www.math.uci.edu/~chenlong/CAMtips/CG.html
+    Reference: https://math.uci.edu/~chenlong/CAMtips/CG.html
 
     Args:
         atoms: Atoms object.

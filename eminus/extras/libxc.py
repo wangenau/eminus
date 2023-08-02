@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Interface to use Libxc functionals.
 
-For a list of available functionals, see: https://www.tddft.org/programs/libxc/functionals
+For a list of available functionals, see: https://tddft.org/programs/libxc/functionals
 
 One can install pylibxc by compiling Libxc according to
 https://tddft.org/programs/libxc/installation/#python-library

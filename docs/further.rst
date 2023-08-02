@@ -3,7 +3,7 @@
 Further information
 *******************
 
-- The code has been described in a `master thesis <https://www.researchgate.net/publication/356537762_Domain-averaged_Fermi_holes_A_self-interaction_correction_perspective>`_.
+- The code has been described in a `master thesis <https://researchgate.net/publication/356537762_Domain-averaged_Fermi_holes_A_self-interaction_correction_perspective>`_.
 - This thesis comes with an in-detail explanation of a minimalistic implementation called `SimpleDFT <https://gitlab.com/wangenau/simpledft>`_.
 - There is also a version of SimpleDFT written in Julia, called `SimpleDFT.jl <https://gitlab.com/wangenau/simpledft.jl>`_.
 - A comparison of both SimpleDFT codes is available under the `SimpleDFT pages <https://wangenau.gitlab.io/simpledft_pages/>`_.
@@ -80,7 +80,7 @@ Linting
 Type checking
 -------------
 
-| This code is type-checked with `mypy <https://www.mypy-lang.org/>`_.
+| This code is type-checked with `mypy <https://mypy-lang.org/>`_.
 | To install mypy and do a static type check, use
 
 .. code-block:: console

@@ -56,9 +56,9 @@ def create_pdb_str(atom, X, a=None):
     """Convert atom symbols and positions to the PDB format.
 
     File format definitions:
-        CRYST1: https://www.wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
+        CRYST1: https://wwpdb.org/documentation/file-format-content/format33/sect8.html#CRYST1
 
-        ATOM: https://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
+        ATOM: https://wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
 
     Args:
         atom (list): Atom symbols.
