@@ -12,16 +12,16 @@ rng = default_rng()
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])
-@pytest.mark.parametrize(('basis', 'loc', 'elec_symbols'), [('pc-1', 'fb', ['X', 'He']),
-                                                            ('pc-0', 'er', ['X', 'He']),
-                                                            ('pc-0', 'pm', ['He', 'Ne']),
-                                                            ('pc-0', 'gpm', None)])
-def test_get_fods_unpol(unrestricted, basis, loc, elec_symbols):
+@pytest.mark.parametrize(('basis', 'loc'), [('pc-1', 'fb'),
+                                            ('pc-0', 'er'),
+                                            ('pc-0', 'pm'),
+                                            ('pc-0', 'gpm')])
+def test_get_fods_unpol(unrestricted, basis, loc):
     """Test FOD generator."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import get_fods
     atoms = Atoms('He', (0, 0, 0), unrestricted=unrestricted).build()
-    fods = get_fods(atoms, basis=basis, loc=loc, elec_symbols=elec_symbols)
+    fods = get_fods(atoms, basis=basis, loc=loc)
     # For He all FODs are core FODs and therefore should be close to the atom
     assert_allclose(atoms.X, fods[0], atol=1e-6)
 

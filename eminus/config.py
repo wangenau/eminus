@@ -9,7 +9,7 @@ from typing import Callable, Union
 from .logger import log
 
 
-class ConfigClass():
+class ConfigClass:
     """Configuration class holding user specifiable variables.
 
     An instance of this class will be set as the same name as this module. This will effectively

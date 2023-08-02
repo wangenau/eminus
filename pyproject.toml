@@ -19,8 +19,8 @@ select = [
     "I",                  # isort
     "D",                  # pydocstyle
     "S",                  # flake8-bandit
-    "A",                  # flake8-builtins
     "B",                  # flake8-bugbear
+    "A",                  # flake8-builtins
     "C4",                 # flake8-comprehensions
     "PIE",                # flake8-pie
     "PT",                 # flake8-pytest-style

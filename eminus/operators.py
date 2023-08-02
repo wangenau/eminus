@@ -115,7 +115,7 @@ def I(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     """
-    n = atoms._Ns
+    n = atoms.Ns
 
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.G2):
@@ -164,7 +164,7 @@ def J(atoms, W, full=True):
     Returns:
         ndarray: The operator applied on W.
     """
-    n = atoms._Ns
+    n = atoms.Ns
     Wfft = np.copy(W)
 
     # `workers` sets the number of threads the FFT operates on
@@ -205,7 +205,7 @@ def Idag(atoms, W, full=False):
     Returns:
         ndarray: The operator applied on W.
     """
-    n = atoms._Ns
+    n = atoms.Ns
     F = J(atoms, W, full)
     return F * n
 
@@ -225,7 +225,7 @@ def Jdag(atoms, W):
     Returns:
         ndarray: The operator applied on W.
     """
-    n = atoms._Ns
+    n = atoms.Ns
     Finv = I(atoms, W)
     return Finv / n
 

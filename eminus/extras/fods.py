@@ -61,7 +61,7 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     return loc_orb
 
 
-def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
+def get_fods(obj, basis='pc-1', loc='FB'):
     """Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
@@ -87,10 +87,6 @@ def get_fods(obj, basis='pc-1', loc='FB', elec_symbols=('X', 'He')):
 
     atoms = obj._atoms
     loc = loc.upper()
-
-    if 'He' in atoms.atom and atoms.unrestricted:
-        log.warning('You need to modify "elec_symbols" to calculate helium in the spin-'
-                    'polarized case.')
 
     # Convert to Angstrom for PySCF
     X = bohr2ang(atoms.X)

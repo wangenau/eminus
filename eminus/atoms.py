@@ -222,7 +222,7 @@ class Atoms:
     @property
     def f(self):
         """Occupation numbers per state."""
-        return self.occ._f
+        return self.occ.f
 
     @f.setter
     def f(self, value):

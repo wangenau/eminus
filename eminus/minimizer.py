@@ -418,7 +418,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     Returns:
         list: Total energies per SCF cycle.
     """
-    return pccg(scf, Nit, cost, grad, condition, betat, precondition=False)
+    return pccg(scf, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
 
 @name('auto minimization')
