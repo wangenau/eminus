@@ -407,7 +407,8 @@ class Atoms:
         self._Sf = np.exp(1j * self.G @ self.X.T).T
 
     def _base_operator(*args, **kwargs):
-        """Base operator method to show an error for unbuilt Atoms objects."""
+        """See :mod:`~eminus.operators`."""
+        # Base operator method to show an error for unbuilt Atoms objects
         log.error('Build the Atoms object with "atoms.build()" to call this operator.')
 
     def _set_operators(self):
@@ -424,6 +425,16 @@ class Atoms:
             for op in fft_operators:
                 setattr(type(self), op, getattr(operators, op))
 
+    O = _base_operator
+    L = _base_operator
+    Linv = _base_operator
+    K = _base_operator
+    T = _base_operator
+    I = _base_operator
+    J = _base_operator
+    Idag = _base_operator
+    Jdag = _base_operator
+
     def __repr__(self):
         """Print the parameters stored in the Atoms object."""
         out = 'Atom  Valence  Position'
@@ -431,23 +442,3 @@ class Atoms:
             out += f'\n{self.atom[i]:>3}   {self.Z[i]:>6}   ' \
                    f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
         return out
-
-    # Base definition of operators
-    O = _base_operator
-    O.__doc__ = """See :func:`~eminus.operators.O`."""
-    L = _base_operator
-    L.__doc__ = """See :func:`~eminus.operators.L`."""
-    Linv = _base_operator
-    Linv.__doc__ = """See :func:`~eminus.operators.Linv`."""
-    K = _base_operator
-    K.__doc__ = """See :func:`~eminus.operators.K`."""
-    T = _base_operator
-    T.__doc__ = """See :func:`~eminus.operators.T`."""
-    I = _base_operator
-    I.__doc__ = """See :func:`~eminus.operators.I`."""
-    J = _base_operator
-    J.__doc__ = """See :func:`~eminus.operators.J`."""
-    Idag = _base_operator
-    Idag.__doc__ = """See :func:`~eminus.operators.Idag`."""
-    Jdag = _base_operator
-    Jdag.__doc__ = """See :func:`~eminus.operators.Jdag`."""
