@@ -78,6 +78,15 @@ def test_json(obj):
             assert getattr(obj, attr) == getattr(test, attr)
 
 
+def test_json_restart():
+    """Test the SCF restart from JSON files."""
+    filename = 'test.json'
+    write(scf, filename)
+    test_scf = read(filename)
+    test_scf.run()
+    os.remove(filename)
+
+
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_pdb(Nspin):
     """Just test the PDB output execution, since we have no read function for it."""
