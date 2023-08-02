@@ -20,8 +20,8 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cach
 RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[all,dev] --no-cache-dir
 
-# Downgrade Jupyter client to fix NGLView
-RUN pip install jupyter_client==7.* --no-cache-dir
+# Downgrade Jupyter to fix NGLView
+RUN pip install jupyter_client==7.* notebook==6.* --no-cache-dir
 
 # Set up the application stage
 FROM python:3.11-slim
