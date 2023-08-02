@@ -79,7 +79,7 @@ end
 println("}")
 ```
 
-Some calculations use [JDFTx](https://jdftx.org) for calculating reference values. The pseudopotentials for the calculation have been taken from [QE](https://pseudopotentials.quantum-espresso.org/legacy_tables), where the input file, e.g, for the charged systems looks like
+Some calculations use [JDFTx](https://jdftx.org) for calculating reference values. The pseudopotentials for the calculation have been taken from [QE](https://pseudopotentials.quantum-espresso.org/legacy_tables/hartwigesen-goedecker-hutter-pp), where the input file, e.g, for the charged systems looks like
 
 ```terminal
 ion He 0 0 0 1
