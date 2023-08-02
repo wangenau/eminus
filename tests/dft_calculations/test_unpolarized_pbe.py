@@ -8,7 +8,7 @@ import pytest
 
 from eminus import Atoms, read_xyz, RSCF
 
-# Total energies from a spin-polarized calculation with PWDFT.jl with same parameters as below
+# Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 # Closed-shell systems have the same energy for spin-paired and -polarized calculations
 E_ref = {
     'H2': -1.131175,

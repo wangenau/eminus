@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test total energies using SCAN for a small set of spin-paired systems."""
+"""Test total energies for methane using SCAN."""
 import inspect
 import pathlib
 
@@ -8,7 +8,7 @@ import pytest
 
 from eminus import Atoms, read_xyz, RSCF, USCF
 
-# Total energies from a spin-paired calculation with PWDFT.jl with same parameters as below
+# Total energies from a spin-paired calculation with PWDFT.jl with the same parameters as below
 # PWDFT.jl does not support spin-polarized calculations with SCAN
 # Only test methane for faster tests, also SCAN can easily run into convergence issues
 E_ref = {

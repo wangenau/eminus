@@ -8,7 +8,7 @@ import pytest
 
 from eminus import Atoms, read_xyz, USCF
 
-# Total energies from a spin-polarized calculation with PWDFT.jl with same parameters as below
+# Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 E_ref = {
     'H': -0.48985,
     'H2': -1.131175,

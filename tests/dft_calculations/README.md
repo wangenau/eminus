@@ -2,7 +2,7 @@
 
 Test total energies for a small set of systems for spin-paired and spin-polarized DFT calculations for different functionals.
 
-The geometries used are experimental data taken from [CCCBDB](https://cccbdb.nist.gov/introx.asp). The exact origin is stated inside the xyz files.
+The geometries used are experimental data taken from [CCCBDB](https://cccbdb.nist.gov/introx.asp). The exact origin is stated inside the XYZ files.
 
 The reference data can be created with the Julia package [PWDFT.jl](https://github.com/f-fathurrahman/PWDFT.jl) for the VWN calculations using
 
@@ -77,4 +77,20 @@ for i = 1:size(systems, 1)
     println("    '$(systems[i])': $(round.(sum(Ham.energies); digits=6)),")
 end
 println("}")
+```
+
+Some calculations use [JDFTx](https://jdftx.org) for calculating reference values. The pseudopotentials for the calculation have been taken from [QE](https://pseudopotentials.quantum-espresso.org/legacy_tables), where the input file, e.g, for the charged systems looks like
+
+```terminal
+ion He 0 0 0 1
+lattice 10 0 0 0 10 0 0 0 10
+coords-type cartesian
+elec-ex-corr lda-VWN
+wavefunction random
+elec-cutoff 10
+ion-species He.pz-hgh.UPF
+spintype z-spin
+elec-initial-charge -charge
+elec-initial-magnetization charge%2 yes
+dump End None
 ```
