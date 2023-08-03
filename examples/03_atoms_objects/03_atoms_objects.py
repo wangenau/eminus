@@ -17,7 +17,7 @@ ecut = 20
 # # Cell size or vacuum size
 a = 20
 
-# # Spin of the system, i.e., the number of unpaired electrons (s, not 2s+1)
+# # Spin of the system, i.e., the number of unpaired electrons (2S, not 2S+1)
 spin = 0
 
 # # Total charge of the system

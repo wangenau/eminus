@@ -110,6 +110,11 @@ class Occupations:
     # ### Read-only properties ###
 
     @property
+    def multiplicity(self):
+        """Multiplicity, i.e., 2S+1."""
+        return self.spin + 1
+
+    @property
     def Nstate(self):
         """Number of states."""
         return self._Nstate
