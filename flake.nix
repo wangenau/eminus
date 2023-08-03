@@ -22,6 +22,7 @@
           torch-bin
           ### viewer ###
           jupyter
+          matplotlib
           # nglview is missing
           plotly
           ### dev ###
