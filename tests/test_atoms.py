@@ -53,7 +53,7 @@ def test_cell(size):
 @pytest.mark.parametrize('spin', [0, 1, 2])
 def test_spin(spin):
     """Test the spin option."""
-    atoms = Atoms(*inp, spin=spin, unrestricted=True)
+    atoms = Atoms(*inp, spin=spin)
     assert atoms.spin == spin
     assert atoms.occ.spin == spin
 
@@ -66,13 +66,17 @@ def test_charge(charge):
     assert atoms.occ.charge == charge
 
 
-@pytest.mark.parametrize(('atom', 'unrestricted', 'ref'), [('H', None, 2),
-                                                           ('He', None, 1),
-                                                           ('H', True, 2),
-                                                           ('He', False, 1)])
-def test_unrestricted(atom, unrestricted, ref):
+@pytest.mark.parametrize(('atom', 'spin', 'unrestricted', 'ref'), [('H', 0, None, 2),
+                                                                   ('He', 0, None, 1),
+                                                                   ('H', 0, True, 2),
+                                                                   ('He', 0, False, 1),
+                                                                   ('He', 1, None, 2),
+                                                                   ('He', 2, None, 2),
+                                                                   ('H', 0, None, 2),
+                                                                   ('H', 0, False, 1)])
+def test_unrestricted(atom, spin, unrestricted, ref):
     """Test the spinpol option."""
-    atoms = Atoms(atom=atom, X=(0, 0, 0), unrestricted=unrestricted)
+    atoms = Atoms(atom=atom, X=(0, 0, 0), spin=spin, unrestricted=unrestricted)
     assert atoms.occ.Nspin == ref
 
 

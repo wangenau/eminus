@@ -16,7 +16,7 @@ class Occupations:
     """
     # Set the private variable for the attributes that are properties.
     _Nelec: int = 0          #: Number of electrons.
-    _Nspin: int = 1          #: Number of spin states.
+    _Nspin: int = 0          #: Number of spin states.
     _spin: int = 0           #: Number of unpaired electrons.
     _charge: int = 0         #: System charge.
     _Nstate: int = 0         #: Number of states.
@@ -45,7 +45,7 @@ class Occupations:
     def Nspin(self, value):
         # Use a spin-paired calculation for an even number of electrons
         if value is None:
-            if self.Nelec % 2 == 0:
+            if self.Nelec % 2 == 0 and self.spin == 0:
                 value = 1
             else:
                 value = 2

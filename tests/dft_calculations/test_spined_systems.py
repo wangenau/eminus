@@ -23,7 +23,7 @@ opt = {'sd': 8, 'pccg': 20}
 @pytest.mark.parametrize('spin', [1, 2])
 def test_polarized(spin):
     """Compare total energies for a test system with a reference value (spin-polarized)."""
-    atoms = Atoms('He', (0, 0, 0), a=a, ecut=ecut, spin=spin, unrestricted=True)
+    atoms = Atoms('He', (0, 0, 0), a=a, ecut=ecut, spin=spin)
     atoms.s = s
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[spin], rtol=2 * etol)  # Make the comparison a bit looser for JDFTx

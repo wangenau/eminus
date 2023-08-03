@@ -63,8 +63,8 @@ class Atoms:
         self.ecut = ecut                  #: Cut-off energy.
         self.center = center              #: Enables centering the system in the cell.
         self.charge = charge              #: System charge.
-        self.unrestricted = unrestricted  #: Enables unrestricted spin handling.
         self.spin = spin                  #: Number of unpaired electrons.
+        self.unrestricted = unrestricted  #: Enables unrestricted spin handling.
 
         # Initialize other attributes
         self.occ.fill()                   #: Fill states from the given input.

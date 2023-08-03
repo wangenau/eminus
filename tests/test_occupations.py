@@ -45,13 +45,14 @@ def test_Nspin_change_after_fill():
                                                              (1, 2, None, 1),
                                                              (2, 2, None, 0),
                                                              (2, 2, 2, 2),
-                                                             (1, 2, 1, 1)])
+                                                             (1, 2, 1, 1),
+                                                             (1, 1, 2, 0)])
 def test_spin(Nelec, Nspin, spin, ref):
     """Test the setting of spin."""
     occ = Occupations()
     occ.Nelec = Nelec
-    occ.Nspin = Nspin
     occ.spin = spin
+    occ.Nspin = Nspin
     assert occ.spin == ref
 
 
