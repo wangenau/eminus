@@ -14,12 +14,11 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 08_visualizer_extra         | Visualization features |
 | 09_sic_calculations         | Calculate SIC energies |
 | 10_domain_generation        | Generate domains and use them |
-| 11_simpledft_examples       | Comparison to SimpleDFT codes |
-| 12_germanium_solid          | Calculate a solid using periodicity |
-| 13_wannier_localization     | Wannier orbital localization |
-| 14_geometry_optimization    | Optimization of the H2 bond distance |
-| 15_custom_functionals       | Usage of customized functionals |
-| 16_custom_functionals_spin  | Extension of example 15 for the spin-polarized case |
+| 11_germanium_solid          | Calculate a solid using periodicity |
+| 12_wannier_localization     | Wannier orbital localization |
+| 13_geometry_optimization    | Optimization of the H2 bond distance |
+| 14_custom_functionals       | Usage of customized functionals |
+| 15_custom_functionals_spin  | Extension of example 15 for the spin-polarized case |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept

@@ -68,29 +68,24 @@ def test_09():  # noqa: D103
 
 @pytest.mark.slow()
 def test_11():  # noqa: D103
-    execute_example('11_simpledft_examples')
-
-
-@pytest.mark.slow()
-def test_12():  # noqa: D103
-    execute_example('12_germanium_solid')
+    execute_example('11_germanium_solid')
     clean_example(['Ge_solid_density.cube'])
 
 
 @pytest.mark.slow()
+def test_13():  # noqa: D103
+    pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
+    execute_example('13_geometry_optimization')
+
+
 def test_14():  # noqa: D103
     pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
-    execute_example('14_geometry_optimization')
+    execute_example('14_custom_functionals')
 
 
 def test_15():  # noqa: D103
     pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
-    execute_example('15_custom_functionals')
-
-
-def test_16():  # noqa: D103
-    pytest.importorskip('matplotlib', reason='matplotlib not installed, skip tests')
-    execute_example('16_custom_functionals_spin')
+    execute_example('15_custom_functionals_spin')
 
 
 if __name__ == '__main__':
