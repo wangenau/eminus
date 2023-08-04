@@ -6,6 +6,7 @@ Further information
 - The code has been described in a `master thesis <https://researchgate.net/publication/356537762_Domain-averaged_Fermi_holes_A_self-interaction_correction_perspective>`_.
 - This thesis comes with an in-detail explanation of a minimalistic implementation called `SimpleDFT <https://gitlab.com/wangenau/simpledft>`_.
 - There is also a version of SimpleDFT written in Julia, called `SimpleDFT.jl <https://gitlab.com/wangenau/simpledft.jl>`_.
+- A separate repository called `eminus-benchmarks <https://gitlab.com/wangenau/eminus-benchmarks>`_ is available for code and performance comparisons
 - A comparison of both SimpleDFT codes is available under the `SimpleDFT pages <https://wangenau.gitlab.io/simpledft_pages/>`_.
 - For more information about implementing DFT using the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ formulation, fantastic lectures from Tomas Arias can be found `here <https://jdftx.org/PracticalDFT.html>`_.
 - The code `JDFTx <https://jdftx.org/index.html>`_ from Ravishankar Sundararaman et al. offers a great reference implementation in C++ using DFT++.
