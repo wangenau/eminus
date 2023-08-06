@@ -216,7 +216,7 @@ def cg_method(scf, cgform, g, g_old, d_old, precondition=True):
 
 
 @name('steepest descent minimization')
-def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
+def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, **kwargs):
     """Steepest descent minimization algorithm.
 
     Args:
@@ -228,6 +228,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
+        **kwargs: Throwaway arguments.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -248,7 +249,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
 @name('preconditioned line minimization')
 def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5,
-         precondition=True):
+         precondition=True, **kwargs):
     """Preconditioned line minimization algorithm.
 
     Args:
@@ -261,6 +262,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
         precondition (bool): Weather to use a preconditioner.
+        **kwargs: Throwaway arguments.
 
     Returns:
         list: Total energies per SCF cycle.
@@ -301,7 +303,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
 
 @name('line minimization')
-def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5):
+def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, **kwargs):
     """Line minimization algorithm.
 
     Args:
@@ -313,6 +315,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
+        **kwargs: Throwaway arguments.
 
     Returns:
         list: Total energies per SCF cycle.
