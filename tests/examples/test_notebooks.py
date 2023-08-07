@@ -18,7 +18,7 @@ def clean_example(trash):
 @pytest.mark.slow()
 @pytest.mark.parametrize(('name', 'trash'), [('08_visualizer_extra', []),
                                              ('10_domain_generation', []),
-                                             ('13_wannier_localization', ['CH4_WO_0.cube',
+                                             ('12_wannier_localization', ['CH4_WO_0.cube',
                                                                           'CH4_WO_1.cube',
                                                                           'CH4_WO_2.cube',
                                                                           'CH4_WO_3.cube'])])
