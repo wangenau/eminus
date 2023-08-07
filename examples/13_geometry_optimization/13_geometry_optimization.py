@@ -36,6 +36,7 @@ print(f'Optimized bond length: {bohr2ang(res.x):.6f} A')
 # # Find the plot named `dissociation_energy_h2.png`
 plt.style.use('../eminus.mplstyle')
 sort = np.argsort(distances)
+plt.figure()
 plt.axvline(res.x, c='dimgrey', ls='--', marker='')
 plt.plot(np.array(distances)[sort], np.array(energies)[sort])
 plt.xlabel(r'H-H distance [$a_0$]')

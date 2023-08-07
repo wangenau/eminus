@@ -58,6 +58,7 @@ print(f'\nFitted parameter:\nb = {fitted_b[0]:.7f}')
 # # Plot the error of the correlation energies compared to the QMC data for Chachiyo, Karasiev, and our functional
 # # Find the plot named `correlation_energy_error.png`
 plt.style.use('../eminus.mplstyle')
+plt.figure()
 plt.axhline(c='dimgrey', ls='--', marker='')
 plt.plot(rs, 1000 * (functional_wrapper(rs, b) - ecp), label='Chachiyo')
 plt.plot(rs, 1000 * (functional_wrapper(rs, 21.7392245) - ecp), label='Karasiev')
