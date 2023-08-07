@@ -42,7 +42,7 @@ extras['dev'] = [
     'pytest>=5.4',             # Test utilities
     'pytest-cov>=2.6.1',       # Collect test coverage data
     'ruff>=0.0.276',           # Style guide checker
-    'sphinx>=4,'               # Documentation builder
+    'sphinx>=4',               # Documentation builder
     'sphinxcontrib-bibtex>=2'  # Use bib files for citations
 ]
 
