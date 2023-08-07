@@ -5,7 +5,7 @@
 Both packages can be installed with
 
 ```terminal
-pip install sphinx furo
+pip install sphinx furo sphinxcontrib-bibtex
 ```
 
 The document can be built to the public folder using
