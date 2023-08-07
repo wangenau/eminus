@@ -4,7 +4,7 @@ import importlib
 import platform
 import sys
 
-__version__ = '2.5.0'
+__version__ = '2.6.0'
 #: eminus ASCII logo.
 LOGO = (' ___ _____ _ ___ _ _ ___ \n'
         '| -_|     | |   | | |_ -|\n'

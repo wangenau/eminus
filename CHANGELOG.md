@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.6.0 - Aug 07, 2023
+---------------------
 - New features
    - Complete rewrite of the Atoms and SCF classes
       - Easily allow systems with different charge or multiplicity
