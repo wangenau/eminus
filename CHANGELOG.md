@@ -5,13 +5,13 @@ dev
 ---
 - New features
    - Complete rewrite of the Atoms and SCF classes
-      - Update documentation
+      - Easily allow systems with different charge or multiplicity
       - Document all public properties
       - Use properties when parsing input arguments
-      - Allow direct setting attributes
+      - Allow direct setting of attributes
       - Better input handling
       - Use an Occupations object to store electronic states information in Atoms
-      - Use a GTH object to store all GTH data in SCF
+      - Use a GTH object to store GTH data in SCF
       - Add some properties to the objects, e.g., the volume element dV in Atoms
       - Indicate non-input arguments and non-results as private or read-only
       - Breaking:
@@ -38,11 +38,15 @@ dev
    - Add type hints to scripts in docs and setup.py
    - Rename some arguments to not shadow builtins
 - Miscellaneous
+   - Create the eminus-benchmarks repository
+      -  Move the SimpleDFT example to said repository
    - Small performance improvements, mostly for meta-GGAs
    - Add an error message when attempting to use operators of an unbuilt Atoms object
    - Add Matplotlib to the viewer setup to generate images in the examples
    - More tests, e.g, for different spin and charge states
    - Add a small demo function
+
+----
 
 v2.5.0 - Jul 10, 2023
 ---------------------
