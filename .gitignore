@@ -18,6 +18,8 @@ htmlcov/
 # Sphinx documentation
 docs/_autosummary/
 public/
+bibtex.json
+*.bib.sav
 
 # Jupyter Notebook
 .ipynb_checkpoints

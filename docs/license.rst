@@ -69,6 +69,8 @@ License
      - MIT
    * - sphinx
      - BSD-2-Clause
+   * - sphinxcontrib-bibtex
+     - BSD-2-Clause
 
 Apache License
 ==============

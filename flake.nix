@@ -33,6 +33,7 @@
           pytest-cov
           ruff
           sphinx
+          sphinxcontrib-bibtex
         ]);
 
     in {

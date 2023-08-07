@@ -14,6 +14,7 @@ Welcome to the eminus documentation!
 
    introduction.rst
    installation.rst
+   theory.rst
    _examples/examples.rst
    nomenclature.rst
    modules.rst

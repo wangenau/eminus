@@ -21,7 +21,8 @@ extensions: List[str] = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode'
+    'sphinx.ext.viewcode',
+    'sphinxcontrib.bibtex'
 ]
 templates_path: List[str] = ['_templates']
 pygments_style: str = 'friendly'
@@ -57,6 +58,9 @@ html_show_sphinx: bool = False
 autodoc_member_order: str = 'groupwise'
 autodoc_preserve_defaults: bool = True
 napoleon_use_rtype: bool = False
+
+bibtex_bibfiles = ['references.bib']
+bibtex_default_style = 'unsrt'
 
 
 def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:

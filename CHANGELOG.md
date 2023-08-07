@@ -23,6 +23,7 @@ dev
          - Merge symmetric with guess
    - Add DFT-D3 dispersion correction as an extra
 - Updated docs
+   - Add a theory introduction page
    - Add documentation to module data/constants
    - Add a list of all packages and their respective licenses
    - Re-add documentation of operators to Atoms
