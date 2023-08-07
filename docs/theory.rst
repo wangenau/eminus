@@ -6,6 +6,8 @@ Theory
 This theory section serves as a short, but incomplete introduction to electronic structure theory and the theoretical foundations of the code.
 To get a more complete overview one can start by reading the cited articles and/or one can take a look inside a master thesis :cite:`Schulze2021`.
 
+----
+
 One of the main goals in electronic structure theory is to calculate the properties of atoms, molecules, or periodic systems.
 A way to access these properties is by solving the underlying Schrödinger equation of the system.
 While the Schrödinger equation in general is time-dependent, we will focus on the time-independent one
@@ -99,5 +101,6 @@ with :math:`V_{\mathrm{ion}}` for the potential induced by the nuclei and :math:
 
    E^{\mathrm{LDA}}_{\mathrm{XC}}[n(\boldsymbol r)] = \int\mathrm{d}\boldsymbol r\, n(\boldsymbol r) \epsilon_{\mathrm{XC}}[n(\boldsymbol r)].
 
+----
 
 .. bibliography::
