@@ -112,8 +112,8 @@ SYMBOL2NUMBER = {
 #: Map atom numbers and atom symbols.
 NUMBER2SYMBOL = {value: key for key, value in SYMBOL2NUMBER.items()}
 
-# Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/__init__.py
 #: Covalent radii per atom.
+#: Reference: Dalton Trans., 2832.
 COVALENT_RADII = {
     'X': 0.3779452249251541,
     'H': 0.5858150986339887,
@@ -219,8 +219,8 @@ COVALENT_RADII = {
     'Lr': 0.3779452249251541,
 }
 
-# Adapted from https://gitlab.com/ase/ase/-/blob/master/ase/data/colors.py
 #: CPK colors per atom.
+#: Reference: https://gitlab.com/ase/ase/-/blob/master/ase/data/colors.py
 CPK_COLORS = {
     'X': '#ff0000',
     'H': '#ffffff',
