@@ -133,11 +133,23 @@ def test_f(f, unrestricted, fref, Nref):
                                         ([2, 3, 4], [2, 3, 4]),
                                         (None, 99)])
 def test_s(s, ref):
-    """Test the initialization of sampling."""
+    """Test the setting of sampling."""
     atoms = Atoms(*inp)
     if s is not None:
         atoms.s = s
     assert_allclose(atoms.s, ref)
+
+
+@pytest.mark.parametrize(('R', 'ref', 'Omega'), [(5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
+                                                 ([2, 3, 4], [[2, 0, 0], [0, 3, 0], [0, 0, 4]], 24),
+                                                 ([[-1, 0, 1], [0, 1, 1], [-1, 1, 0]],
+                                                  [[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], 2)])
+def test_R(R, ref, Omega):
+    """Test the setting of cell vectors."""
+    atoms = Atoms(*inp)
+    atoms.R = R
+    assert atoms.Omega == Omega
+    assert_allclose(atoms.R, ref)
 
 
 @pytest.mark.parametrize(('atom', 'Z', 'ref', 'Nref'), [('H', None, [1], 1),

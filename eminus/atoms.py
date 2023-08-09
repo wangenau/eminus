@@ -139,9 +139,7 @@ class Atoms:
             self._a = value * np.ones(3)
         else:
             self._a = np.asarray(value)
-        # Build a cuboidal unit cell and calculate its volume
-        self._R = self._a * np.eye(3)
-        self._Omega = abs(det(self._R))
+        self.R = self._a
         # The cell changes when changing a
         self.is_built = False
 
@@ -200,7 +198,7 @@ class Atoms:
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == 'shift':
             com = center_of_mass(self.X)
-            self.X = self.X - (com - self.a / 2)
+            self.X = self.X - (com - np.sum(self.R, axis=0) / 2)
         # The structure factor changes when changing X
         self.is_built = False
 
@@ -242,6 +240,23 @@ class Atoms:
         self._s = np.asarray(value)
         self._Ns = int(np.prod(self._s))
         # The cell discretization changes when changing s
+        self.is_built = False
+
+    @property
+    def R(self):
+        """Unit cell vectors."""
+        return self._R
+
+    @R.setter
+    def R(self, value):
+        # Build a cubic cell if a number is given
+        if isinstance(value, numbers.Real) or np.asarray(value).ndim <= 1:
+            self._R = value * np.eye(3)
+        else:
+            self._R = np.asarray(value)
+        # Calculate the unit cell volume
+        self._Omega = abs(det(self._R))
+        # The cell changes when changing R
         self.is_built = False
 
     @property
@@ -287,11 +302,6 @@ class Atoms:
     def r(self):
         """Real-space sampling points."""
         return self._r
-
-    @property
-    def R(self):
-        """Unit cell vectors."""
-        return self._R
 
     @property
     def active(self):
@@ -349,7 +359,7 @@ class Atoms:
         """
         com = center_of_mass(self.X)
         if center is None:
-            self.X = self.X - (com - self.a / 2)
+            self.X = self.X - (com - np.sum(self.R, axis=0) / 2)
         else:
             center = np.asarray(center)
             self.X = self.X - (com - center)

@@ -41,7 +41,7 @@ class SCF:
         gradtol (float): Convergence tolerance of the gradient norm.
 
             This tolerance will only be used in conjugate gradient methods.
-        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF step.
+        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF.
         disp (bool | dict): Calculate a dispersion correction.
 
             A dictionary can be used to pass arguments to the respective
@@ -291,7 +291,7 @@ class SCF:
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
         if center is None:
-            dr = com - atoms.a / 2
+            dr = com - np.sum(atoms.R, axis=0) / 2
         else:
             center = np.asarray(center)
             dr = com - center
