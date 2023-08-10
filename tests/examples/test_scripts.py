@@ -88,6 +88,13 @@ def test_15():  # noqa: D103
     execute_example('15_custom_functionals_spin')
 
 
+@pytest.mark.slow()
+def test_16():  # noqa: D103
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    execute_example('16_fod_optimization')
+    clean_example(['CH4_fods.xyz'])
+
+
 if __name__ == '__main__':
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

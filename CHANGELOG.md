@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - Updated docs
+   - Add a FOD optimization example
    - Add references to data
 - Miscellaneous
    - Support viewing multiple files

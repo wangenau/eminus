@@ -28,7 +28,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
         obj: Atoms or SCF object.
 
     Keyword Args:
-        extra (ndarray | list ): Extra coordinates or FODs to display.
+        extra (ndarray | list): Extra coordinates or FODs to display.
         plot_n (bool): Weather to plot the electronic density (only for executed scf objects).
         percent (float): Amount of density that should be contained.
         surfaces (int): Number of surfaces to display in density plots (reduce for performance).
