@@ -207,7 +207,7 @@ class SCF:
         if self.log.level <= logging.DEBUG:
             info()
         self.log.debug(f'\n--- Atoms information ---\n{self.atoms}\n'
-                       f'\n--- Cell information ---\nSide lengths: {self.atoms.a} a0\n'
+                       f'\n--- Cell information ---\nCell vectors:\n{self.atoms.R} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Eh\n'
                        f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
