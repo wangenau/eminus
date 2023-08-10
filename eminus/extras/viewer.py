@@ -175,7 +175,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
             view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
         view.center()
     # Handle CUBE files
-    elif filename.endswith('.cube'):
+    elif filename.endswith(('.cub', '.cube')):
         # Atoms and cell
         atom, X, _, a, _, _ = read_cube(filename)
         atom, X, X_fod = split_fods(atom, X, elec_symbols)

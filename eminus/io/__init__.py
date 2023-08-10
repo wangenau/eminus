@@ -16,7 +16,7 @@ def read(*args, **kwargs):
         return read_json(*args, **kwargs)
     if args[0].endswith('.xyz'):
         return read_xyz(*args, **kwargs)
-    if args[0].endswith('.cube'):
+    if args[0].endswith(('.cub', '.cube')):
         return read_cube(*args, **kwargs)
     NotImplementedError('File ending not recognized.')
     return None
@@ -28,7 +28,7 @@ def write(*args, **kwargs):
         return write_json(*args, **kwargs)
     if args[1].endswith('.xyz'):
         return write_xyz(*args, **kwargs)
-    if args[1].endswith('.cube'):
+    if args[1].endswith(('.cub', '.cube')):
         return write_cube(*args, **kwargs)
     if args[1].endswith('.pdb'):
         return write_pdb(*args, **kwargs)

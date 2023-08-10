@@ -23,7 +23,7 @@ def read_cube(filename):
         tuple[list, ndarray, float, ndarray, int, ndarray]:
         Species, positions, charges, cell size, sampling, and field array.
     """
-    if not filename.endswith('.cube'):
+    if not filename.endswith(('.cub', '.cube')):
         filename += '.cube'
 
     # Atomic units and a cuboidal cell that starts at (0,0,0) are assumed.
@@ -87,7 +87,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
     # Atomic units are assumed, so there is no need for conversion.
     atoms = obj._atoms
 
-    if not filename.endswith('.cube'):
+    if not filename.endswith(('.cub', '.cube')):
         filename += '.cube'
 
     if 'He' in atoms.atom and atoms.unrestricted:
