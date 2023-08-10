@@ -116,7 +116,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
     Reference: Bioinformatics 34, 1241.
 
     Args:
-        filename (str): Input file path/name. This can be either a cube or xyz file.
+        filename (str | list | tuple): Input filename(s). This can be either CUBE or XYZ files.
 
     Keyword Args:
         isovalue (float): Isovalue for sizing orbitals.
