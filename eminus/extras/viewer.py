@@ -14,7 +14,7 @@ from .fods import split_fods
 
 def view(*args, **kwargs):
     """Unified display function."""
-    if isinstance(args[0], str):
+    if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)
     return view_atoms(*args, **kwargs)
 
@@ -136,8 +136,16 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
 
-    if isinstance(isovalue, str):
-        isovalue = float(isovalue)
+    # If multiple files are given, try to open them with an interact drop-down menu
+    if isinstance(filename, (list, tuple)):
+        if executed_in_notebook():
+            from ipywidgets import interact
+            return interact(lambda filename: view_file(filename, isovalue, gui, elec_symbols,
+                                                       **kwargs), filename=filename)
+        # If we are not in a notebook open the files one by one
+        for f in filename:
+            view_file(f, isovalue, gui, elec_symbols, **kwargs)
+            return None
 
     view = NGLWidget(**kwargs)
     view._set_size('400px', '400px')

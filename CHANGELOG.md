@@ -1,6 +1,13 @@
 Changelog
 =========
 
+dev
+---
+- Updated docs
+   - Add references to data
+- Miscellaneous
+   - Support viewing multiple files
+
 v2.6.0 - Aug 07, 2023
 ---------------------
 - New features
