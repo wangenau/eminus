@@ -290,6 +290,10 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
     Returns:
         ndarray: Localized orbitals.
     """
+    if atoms.a is None:
+        log.warning('The Wannier localization needs a cubic unit cell.')
+        return psirs
+
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
     if random_guess and atoms.occ.Nstate > 1:

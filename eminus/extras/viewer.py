@@ -100,10 +100,16 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
         fig.data[-1].colorbar.x = -0.15
 
     # Theming
-    fig.update_layout(scene={'xaxis': {'range': [0, atoms.a[0]], 'title': 'x [a<sub>0</sub>]'},
-                             'yaxis': {'range': [0, atoms.a[1]], 'title': 'y [a<sub>0</sub>]'},
-                             'zaxis': {'range': [0, atoms.a[2]], 'title': 'z [a<sub>0</sub>]'},
-                             'aspectmode': 'cube'},
+    scene = {'xaxis': {'title': 'x [a<sub>0</sub>]'},
+             'yaxis': {'title': 'y [a<sub>0</sub>]'},
+             'zaxis': {'title': 'z [a<sub>0</sub>]'},
+             'aspectmode': 'cube'}
+    # If is not None the unit cell is diagonal and we scale the plot, otherwise let plotly decide
+    if atoms.a is not None:
+        scene['xaxis']['range'] = [0, atoms.a[0]]
+        scene['yaxis']['range'] = [0, atoms.a[1]]
+        scene['zaxis']['range'] = [0, atoms.a[2]]
+    fig.update_layout(scene=scene,
                       legend={'itemsizing': 'constant', 'title': 'Selection'},
                       hoverlabel_bgcolor='black',
                       template='none')

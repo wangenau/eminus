@@ -254,6 +254,12 @@ class Atoms:
             self._R = value * np.eye(3)
         else:
             self._R = np.asarray(value)
+        # If R is diagonal set the values for a
+        if np.all(np.diag(np.diag(self._R)) == self._R):
+            self._a = np.diag(self._R)
+        # Otherwise set a to None, to make sure it won't be used wrong
+        else:
+            self._a = None
         # Calculate the unit cell volume
         self._Omega = abs(det(self._R))
         # The cell changes when changing R

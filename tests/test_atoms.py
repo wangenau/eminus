@@ -149,6 +149,8 @@ def test_R(R, ref, Omega):
     atoms = Atoms(*inp)
     atoms.R = R
     assert atoms.Omega == Omega
+    if atoms.a is not None:
+        assert_allclose(atoms.a, np.diag(atoms.R))
     assert_allclose(atoms.R, ref)
 
 
