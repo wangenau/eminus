@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Various tools to check physical properties."""
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 from scipy.optimize import minimize_scalar
 
 from .dft import get_epsilon

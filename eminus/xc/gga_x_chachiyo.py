@@ -4,7 +4,7 @@
 Reference: Molecules 25, 3485.
 """
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 
 from .lda_x import lda_x
 

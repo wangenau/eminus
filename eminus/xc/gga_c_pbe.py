@@ -4,7 +4,7 @@
 Reference: Phys. Rev. Lett. 78, 1396.
 """
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 

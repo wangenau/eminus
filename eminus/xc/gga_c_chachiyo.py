@@ -4,7 +4,7 @@
 Reference: Comput. Theor. Chem. 1172, 112669.
 """
 import numpy as np
-from numpy.linalg import norm
+from scipy.linalg import norm
 
 from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
