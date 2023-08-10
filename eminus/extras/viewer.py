@@ -241,15 +241,15 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
 def executed_in_notebook():
     """Check if the code runs in a notebook.
 
-    Reference: https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+    Reference: https://stackoverflow.com/a/22424821
 
     Returns:
         bool: Weather in a notebook or not.
     """
     try:
-        shell = get_ipython().__class__.__name__  # type: ignore[name-defined]
-        # True for Jupyter notebook or qtconsole
-        # False for terminal running IPython or other types
-        return shell == 'ZMQInteractiveShell'
-    except NameError:
+        from IPython import get_ipython
+        if 'IPKernelApp' not in get_ipython().config:
+            return False
+    except (AttributeError, ImportError):
         return False
+    return True
