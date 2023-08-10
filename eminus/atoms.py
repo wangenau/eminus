@@ -119,7 +119,7 @@ class Atoms:
     def ecut(self, value):
         self._ecut = value
         # Caclulate the sampling from the cut-off energy
-        s = np.int_(self.a / cutoff2gridspacing(value))
+        s = np.int_(norm(self.R, axis=0) / cutoff2gridspacing(value))
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations
@@ -260,6 +260,9 @@ class Atoms:
         # Otherwise set a to None, to make sure it won't be used wrong
         else:
             self._a = None
+        # Update ecut and s if it has been set before
+        if hasattr(self, 'ecut'):
+            self.ecut = self.ecut
         # Calculate the unit cell volume
         self._Omega = abs(det(self._R))
         # The cell changes when changing R

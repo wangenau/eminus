@@ -147,7 +147,9 @@ def test_s(s, ref):
 def test_R(R, ref, Omega):
     """Test the setting of cell vectors."""
     atoms = Atoms(*inp)
+    s = atoms.s
     atoms.R = R
+    assert not np.any(atoms.s == s)
     assert atoms.Omega == Omega
     if atoms.a is not None:
         assert_allclose(atoms.a, np.diag(atoms.R))
