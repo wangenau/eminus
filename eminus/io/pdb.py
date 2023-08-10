@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """PDB file handling."""
 import numpy as np
+from scipy.linalg import norm
 
 from ..logger import log
 from ..units import bohr2ang
+from ..utils import vector_angle
 
 
 def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
@@ -49,10 +51,10 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         mode = 'w'
 
     with open(filename, mode) as fp:
-        fp.write(create_pdb_str(atom, X, a=atoms.a))
+        fp.write(create_pdb_str(atom, X, R=atoms.R))
 
 
-def create_pdb_str(atom, X, a=None):
+def create_pdb_str(atom, X, R=None):
     """Convert atom symbols and positions to the PDB format.
 
     File format definitions:
@@ -65,31 +67,31 @@ def create_pdb_str(atom, X, a=None):
         X (ndarray): Atom positions.
 
     Keyword Args:
-        a (float): Cell size.
+        R (float): Cell vectors.
 
     Returns:
         str: PDB file format.
     """
     # Convert Bohr to Angstrom
     X = bohr2ang(X)
-    if a is not None:
-        a = bohr2ang(a)
+    if R is not None:
+        R = bohr2ang(R)
 
     # pdb files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not lose track of line lengths
     pdb = ''
     # Create data for a cuboidal cell
-    if a is not None:
-        pdb += 'CRYST1'          # 1-6 "CRYST1"
-        pdb += f'{a[0]:>9,.3f}'  # 7-15 a
-        pdb += f'{a[1]:>9,.3f}'  # 16-24 b
-        pdb += f'{a[2]:>9,.3f}'  # 25-33 c
-        pdb += f'{90:>7,.2f}'    # 34-40 alpha
-        pdb += f'{90:>7,.2f}'    # 41-47 beta
-        pdb += f'{90:>7,.2f}'    # 48-54 gamma
+    if R is not None:
+        pdb += 'CRYST1'                              # 1-6 "CRYST1"
+        pdb += f'{norm(R[0]):>9,.3f}'                # 7-15 a
+        pdb += f'{norm(R[1]):>9,.3f}'                # 16-24 b
+        pdb += f'{norm(R[2]):>9,.3f}'                # 25-33 c
+        pdb += f'{vector_angle(R[1], R[2]):>7,.2f}'  # 34-40 alpha
+        pdb += f'{vector_angle(R[0], R[2]):>7,.2f}'  # 41-47 beta
+        pdb += f'{vector_angle(R[0], R[1]):>7,.2f}'  # 48-54 gamma
         pdb += ' '
-        pdb += 'P 1        '     # 56-66 Space group
-        # pdb += '   1'          # 67-70 Z value
+        pdb += 'P 1        '                         # 56-66 Space group
+        # pdb += '   1'                              # 67-70 Z value
         pdb += '\n'
 
     # Create molecule data

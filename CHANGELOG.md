@@ -8,6 +8,7 @@ dev
    - Add references to data
 - Miscellaneous
    - Support viewing multiple files
+   - Support non-cubic cells in io and viewer functions
 
 v2.6.0 - Aug 07, 2023
 ---------------------

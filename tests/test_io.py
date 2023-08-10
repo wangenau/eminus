@@ -2,6 +2,7 @@
 """Test input and output functionalities."""
 import os
 
+import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
@@ -45,7 +46,7 @@ def test_cube(Nspin):
     filename = 'test.cube'
     fods = [atoms.X] * Nspin
     write(atoms, filename, scf.n, fods=fods)
-    atom, X, Z, a, s, field = read(filename)
+    atom, X, Z, R, s, field = read(filename)
     os.remove(filename)
     if Nspin == 1:
         assert atoms.atom + ['X'] * atoms.Natoms == atom
@@ -53,9 +54,24 @@ def test_cube(Nspin):
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
     assert_allclose(atoms.X, X[:atoms.Natoms], atol=1e-6)
     assert_allclose(atoms.Z, Z[:atoms.Natoms])
-    assert_allclose(atoms.a, a)
+    assert_allclose(atoms.R, R)
     assert_allclose(atoms.s, s)
-    assert_allclose(scf.n, field, atol=1e-7)
+    assert_allclose(scf.n, field, atol=1e-9)
+
+
+def test_cube_noncubic():
+    """Test CUBE file output and input for a non-cubic unit cell."""
+    filename = 'test.cube'
+    atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), ecut=1)
+    atoms. R = [[0, 5, 5], [5, 0, 5], [5, 5, 0]]
+    scf = SCF(atoms, opt={'sd': 1})
+    scf.run()
+    write(atoms, filename, scf.n)
+    atom, X, Z, R, s, field = read(filename)
+    os.remove(filename)
+    assert_allclose(atoms.R, R, atol=2e-6)
+    assert_allclose(atoms.s, s)
+    assert_allclose(scf.n, field, atol=1e-8)
 
 
 @pytest.mark.parametrize('obj', [atoms, atoms.occ, scf, scf.energies, scf.gth])

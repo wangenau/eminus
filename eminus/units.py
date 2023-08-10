@@ -3,6 +3,8 @@
 
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
 """
+import numpy as np
+
 #: Hartree in electronvolt.
 #: Reference: https://en.wikipedia.org/wiki/Hartree
 electronvolt = eV = 27.211386245988
@@ -135,3 +137,27 @@ def d2ebohr(p):
         float | ndarray: Electric dipole moment in e * Bohr.
     """
     return p / Debye
+
+
+def rad2deg(a):
+    """Convert Radians to Degree.
+
+    Args:
+        a (float | ndarray): Angle in Radians.
+
+    Returns:
+        float | ndarray: Angle in Degree.
+    """
+    return a * 180 / np.pi
+
+
+def deg2rad(a):
+    """Convert Degree to Radians.
+
+    Args:
+        a (float | ndarray): Angle in Degree.
+
+    Returns:
+        float | ndarray: Angle in Radians.
+    """
+    return a * np.pi / 180

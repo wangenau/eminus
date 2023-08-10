@@ -6,7 +6,7 @@ import re
 import numpy as np
 from scipy.linalg import norm
 
-from .io import read_gth
+from .units import rad2deg
 
 
 def dotprod(a, b):
@@ -212,6 +212,9 @@ def atom2charge(atom, path=None):
     Returns:
         list: Valence charges per atom.
     """
+    # Import here to prevent circular imports
+    from .io import read_gth
+
     if path is not None:
         if path.lower() in ('pade', 'pbe'):
             psp_path = path.lower()
@@ -220,3 +223,19 @@ def atom2charge(atom, path=None):
     else:
         psp_path = 'pbe'
     return [read_gth(ia, psp_path=psp_path)['Zion'] for ia in atom]
+
+
+def vector_angle(a, b):
+    """Calculate the angle between two vectors.
+
+    Args:
+        a (ndarray): Vector.
+        b (ndarray): Vector.
+
+    Returns:
+        float: Angle between a and b in Degree.
+    """
+    a_norm = a / norm(a)
+    b_norm = b / norm(b)
+    angle = np.arccos(np.dot(a_norm, b_norm))
+    return rad2deg(angle)
