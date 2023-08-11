@@ -9,7 +9,8 @@ from eminus.orbitals import FLO
 # # Do a simple calculation for methane
 # # Use a very small cutoff energy for a small grid
 # # The optimization function will be called hundreds of times, so we are interested in speed for this simple example
-atoms = Atoms(*read('CH4.xyz'), ecut=1, center=True)
+atom, pos = read('CH4.xyz')
+atoms = Atoms(atom, pos, ecut=1, center=True)
 scf = SCF(atoms)
 scf.run()
 
