@@ -10,6 +10,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.bandpath
    eminus.config
    eminus.data
    eminus.dft
