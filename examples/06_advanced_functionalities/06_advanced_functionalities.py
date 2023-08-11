@@ -45,7 +45,7 @@ print(f'Total spread = {np.sum(np.sqrt(cost))} a0')
 # # Calculate the center of mass of the density
 com = center_of_mass(atoms.r, scf.n)
 print(f'\nDensity center of mass = {com} a0')
-print(f'Neon position = {atoms.X[0]} a0')
+print(f'Neon position = {atoms.pos[0]} a0')
 
 # # Write all orbitals to CUBE files
 print('\nWrite cube files:')

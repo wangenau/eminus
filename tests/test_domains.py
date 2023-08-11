@@ -22,7 +22,7 @@ def test_domain_cuboid(length):
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=length)
     # Test multiple centers, but use the same center for the test
-    com = center_of_mass(atoms.X)
+    com = center_of_mass(atoms.pos)
     out = truncate(atoms.r, domain_cuboid(atoms, length, (com, com)))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=length)
@@ -35,7 +35,7 @@ def test_domain_sphere(radius):
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=radius)
     # Test multiple centers, but use the same center for the test
-    com = center_of_mass(atoms.X)
+    com = center_of_mass(atoms.pos)
     out = truncate(atoms.r, domain_sphere(atoms, radius, (com, com)))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=radius)

@@ -89,9 +89,9 @@ def get_fods(obj, basis='pc-1', loc='FB'):
     loc = loc.upper()
 
     # Convert to Angstrom for PySCF
-    X = bohr2ang(atoms.X)
+    pos = bohr2ang(atoms.pos)
     # Build the PySCF input format
-    atom_pyscf = list(zip(atoms.atom, X))
+    atom_pyscf = list(zip(atoms.atom, pos))
 
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
@@ -115,12 +115,12 @@ def get_fods(obj, basis='pc-1', loc='FB'):
     return loc_com
 
 
-def split_fods(atom, X, elec_symbols=('X', 'He')):
+def split_fods(atom, pos, elec_symbols=('X', 'He')):
     """Split atom and FOD coordinates.
 
     Args:
         atom (list): Atom symbols.
-        X (ndarray): Atom positions.
+        pos (ndarray): Atom positions.
 
     Keyword Args:
         elec_symbols (list): Identifier for up and down FODs.
@@ -128,20 +128,20 @@ def split_fods(atom, X, elec_symbols=('X', 'He')):
     Returns:
         tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
     """
-    X_fod_up = []
-    X_fod_dn = []
+    pos_fod_up = []
+    pos_fod_dn = []
     # Iterate in reverse order because we may delete elements
-    for ia in range(len(X) - 1, -1, -1):
+    for ia in range(len(pos) - 1, -1, -1):
         if atom[ia] in elec_symbols:
             if atom[ia] in elec_symbols[0]:
-                X_fod_up.append(X[ia])
+                pos_fod_up.append(pos[ia])
             if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
-                X_fod_dn.append(X[ia])
-            X = np.delete(X, ia, axis=0)
+                pos_fod_dn.append(pos[ia])
+            pos = np.delete(pos, ia, axis=0)
             del atom[ia]
 
-    X_fod = [np.asarray(X_fod_up), np.asarray(X_fod_dn)]
-    return atom, X, X_fod
+    pos_fod = [np.asarray(pos_fod_up), np.asarray(pos_fod_dn)]
+    return atom, pos, pos_fod
 
 
 def remove_core_fods(obj, fods):
@@ -170,7 +170,7 @@ def remove_core_fods(obj, fods):
             # Since only core states are removed in pseudopotentials this value is divisible by 2
             # +1 to account for uneven amounts of core FODs (e.g., for hydrogen)
             n_core = (n_core + 1) // 2
-            dist = norm(fods[s] - atoms.X[ia], axis=1)
+            dist = norm(fods[s] - atoms.pos[ia], axis=1)
             idx = np.argsort(dist)
             # Remove core FODs with the smallest distance to the core
             fods[s] = np.delete(fods[s], idx[:n_core], axis=0)

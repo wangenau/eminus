@@ -23,25 +23,25 @@ def test_get_fods_unpol(unrestricted, basis, loc):
     atoms = Atoms('He', (0, 0, 0), unrestricted=unrestricted).build()
     fods = get_fods(atoms, basis=basis, loc=loc)
     # For He all FODs are core FODs and therefore should be close to the atom
-    assert_allclose(atoms.X, fods[0], atol=1e-6)
+    assert_allclose(atoms.pos, fods[0], atol=1e-6)
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])
 @pytest.mark.parametrize('elec_symbols', [('X', 'He'), ('He', 'Ne')])
 def test_split_fods(unrestricted, elec_symbols):
     """Test splitting FODs from atoms."""
-    X = rng.standard_normal((5, 3))
-    atom = ['H'] * len(X)
+    pos = rng.standard_normal((5, 3))
+    atom = ['H'] * len(pos)
     fods = rng.standard_normal((10, 3))
     atom_fods = [elec_symbols[0]] * len(fods)
     if unrestricted:
         atom_fods += [elec_symbols[1]] * len(fods)
         fods = np.vstack((fods, rng.standard_normal((10, 3))))
 
-    atom_split, X_split, fods_split = split_fods(atom + atom_fods, np.vstack((X, fods)),
-                                                 elec_symbols)
+    atom_split, pos_split, fods_split = split_fods(atom + atom_fods, np.vstack((pos, fods)),
+                                                   elec_symbols)
     assert_equal(atom, atom_split)
-    assert_equal(X, X_split)
+    assert_equal(pos, pos_split)
     if unrestricted:
         fods_split = np.vstack((fods_split[0], fods_split[1]))
     else:
@@ -57,7 +57,7 @@ def test_remove_core_fods(unrestricted):
     """Test core FOD removal function."""
     atoms = Atoms('Li5', rng.standard_normal((5, 3)), unrestricted=unrestricted).build()
     atoms.Z = 1
-    core = atoms.X
+    core = atoms.pos
     valence = rng.standard_normal((10, 3))
 
     fods = [np.vstack((core, valence))] * atoms.occ.Nspin

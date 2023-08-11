@@ -132,10 +132,10 @@ def get_dipole(scf, n=None):
             return 0
         n = scf.n
 
-    # Diple moment: mu = \sum Z X - \int n(r) r dr
+    # Diple moment: mu = \sum Z pos - \int n(r) r dr
     mu = np.array([0, 0, 0], dtype=float)
     for i in range(atoms.Natoms):
-        mu += atoms.Z[i] * atoms.X[i]
+        mu += atoms.Z[i] * atoms.pos[i]
 
     for dim in range(3):
         mu[dim] -= atoms.dV * np.sum(n * atoms.r[:, dim])

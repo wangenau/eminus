@@ -133,7 +133,7 @@ def test_recenter(center):
 
     scf.recenter(center)
     W = atoms.I(scf.W)
-    com = center_of_mass(scf.atoms.X)
+    com = center_of_mass(scf.atoms.pos)
     # Check that the density is centered around the atom
     assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=0.005)
     # Check that the orbitals are centered around the atom

@@ -25,14 +25,14 @@ def test_kso():
 
 def test_fo():
     """Test the Fermi orbital function."""
-    orb = FO(scf, write_cubes=True, fods=[atoms.X])
+    orb = FO(scf, write_cubes=True, fods=[atoms.pos])
     os.remove('He_FO_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
 def test_flo():
     """Test the Fermi-Loewdin orbital function."""
-    orb = FLO(scf, write_cubes=True, fods=[atoms.X])
+    orb = FLO(scf, write_cubes=True, fods=[atoms.pos])
     os.remove('He_FLO_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 

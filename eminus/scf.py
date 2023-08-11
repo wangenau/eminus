@@ -287,7 +287,7 @@ class SCF:
         """
         atoms = self.atoms
         # Get the COM before centering the atoms
-        com = center_of_mass(atoms.X)
+        com = center_of_mass(atoms.pos)
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
         if center is None:

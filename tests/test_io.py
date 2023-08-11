@@ -2,7 +2,6 @@
 """Test input and output functionalities."""
 import os
 
-import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
@@ -29,30 +28,30 @@ scf.run()
 def test_xyz(Nspin):
     """Test XYZ file output and input."""
     filename = 'test.xyz'
-    fods = [atoms.X] * Nspin
+    fods = [atoms.pos] * Nspin
     write(atoms, filename, fods=fods)
-    atom, X = read(filename)
+    atom, pos = read(filename)
     os.remove(filename)
     if Nspin == 1:
         assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
-    assert_allclose(atoms.X, X[:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms.pos, pos[:atoms.Natoms], atol=1e-6)
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_cube(Nspin):
     """Test CUBE file output and input."""
     filename = 'test.cube'
-    fods = [atoms.X] * Nspin
+    fods = [atoms.pos] * Nspin
     write(atoms, filename, scf.n, fods=fods)
-    atom, X, Z, a, s, field = read(filename)
+    atom, pos, Z, a, s, field = read(filename)
     os.remove(filename)
     if Nspin == 1:
         assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
-    assert_allclose(atoms.X, X[:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms.pos, pos[:atoms.Natoms], atol=1e-6)
     assert_allclose(atoms.Z, Z[:atoms.Natoms])
     assert_allclose(atoms.a, a)
     assert_allclose(atoms.s, s)
@@ -67,7 +66,7 @@ def test_cube_noncubic():
     scf = SCF(atoms, opt={'sd': 1})
     scf.run()
     write(atoms, filename, scf.n)
-    atom, X, Z, a, s, field = read(filename)
+    atom, pos, Z, a, s, field = read(filename)
     os.remove(filename)
     assert_allclose(atoms.a, a, atol=2e-6)
     assert_allclose(atoms.s, s)
@@ -107,7 +106,7 @@ def test_json_restart():
 def test_pdb(Nspin):
     """Just test the PDB output execution, since we have no read function for it."""
     filename = 'test.pdb'
-    fods = [atoms.X] * Nspin
+    fods = [atoms.pos] * Nspin
     write(atoms, filename, fods=fods)
     os.remove(filename)
 

@@ -1,13 +1,13 @@
 from eminus import Atoms
 
-# # The only necessary parameters are `atom` and `X`
-# # `atom` holds the atom symbols, and `X` holds the atom positions
+# # The only necessary parameters are `atom` and `pos`
+# # `atom` holds the atom symbols, and `pos` holds the atom positions
 # # Please note that atomic units will be used
 atom = 'N2'
-X = [[0, 0, 0], [2.074, 0, 0]]
+pos = [[0, 0, 0], [2.074, 0, 0]]
 
 # # Create an object for dinitrogen and display it
-atoms = Atoms(atom, X)
+atoms = Atoms(atom, pos)
 print(f'Atoms object:\n{atoms}\n')
 
 # # Cut-off energy
@@ -33,8 +33,8 @@ center = True
 verbose = 4
 
 # # Create an `Atoms` object for dinitrogen and display it
-atoms = Atoms(atom=atom, X=X, ecut=ecut, a=a, spin=spin, charge=charge, unrestricted=unrestricted,
-              center=center, verbose=verbose)
+atoms = Atoms(atom=atom, pos=pos, ecut=ecut, a=a, spin=spin, charge=charge,
+              unrestricted=unrestricted, center=center, verbose=verbose)
 print(f'New Atoms object:\n{atoms}\n')
 
 # # Albeit discouraged, some properties can be changed after the initialization as seen below

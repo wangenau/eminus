@@ -44,7 +44,7 @@ def read_cube(filename):
             a[i] = s[i] * np.float_(line_split[1:])
 
         atom = []
-        X = []
+        pos = []
         Z = []
         # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
         for _offset, line in enumerate(lines[6:]):
@@ -54,15 +54,15 @@ def read_cube(filename):
                 break
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(float(line_split[1]))
-            X.append(np.float_(line_split[2:5]))
-    X = np.asarray(X)
+            pos.append(np.float_(line_split[2:5]))
+    pos = np.asarray(pos)
 
     # The rest of the data is the field data
     # Split the strings, flatten the lists of lists, and convert to a float numpy array
     tmp_list = [l.split() for l in lines[6 + _offset:]]
     field_list = [item for sublist in tmp_list for item in sublist]
     field = np.asarray(field_list, dtype=float)
-    return atom, X, Z, a, s, field
+    return atom, pos, Z, a, s, field
 
 
 def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
@@ -117,7 +117,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(atoms.Natoms):
             fp.write(f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
-                     f'{atoms.X[ia, 0]: .6f}  {atoms.X[ia, 1]: .6f}  {atoms.X[ia, 2]: .6f}\n')
+                     f'{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n')
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:

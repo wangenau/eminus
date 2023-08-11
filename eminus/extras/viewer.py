@@ -49,7 +49,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
     # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):
         mask = np.where(np.asarray(atoms.atom) == ia)[0]
-        atom_data = go.Scatter3d(x=atoms.X[mask, 0], y=atoms.X[mask, 1], z=atoms.X[mask, 2],
+        atom_data = go.Scatter3d(x=atoms.pos[mask, 0], y=atoms.pos[mask, 1], z=atoms.pos[mask, 2],
                                  name=ia,
                                  mode='markers',
                                  marker={'size': 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
@@ -105,7 +105,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
              'zaxis': {'title': 'z [a<sub>0</sub>]'},
              'aspectmode': 'cube'}
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
-    if np.all(np.diag(np.diag(atoms.a)) == atoms.a):
+    if (np.diag(np.diag(atoms.a)) == atoms.a).all():
         scene['xaxis']['range'] = [0, atoms.a[0, 0]]
         scene['yaxis']['range'] = [0, atoms.a[1, 1]]
         scene['zaxis']['range'] = [0, atoms.a[2, 2]]
@@ -162,30 +162,30 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
     # Handle XYZ files
     if filename.endswith('.xyz'):
         # Atoms
-        atom, X = read_xyz(filename)
-        atom, X, X_fod = split_fods(atom, X, elec_symbols)
-        view.add_component(TextStructure(create_pdb_str(atom, X)))
+        atom, pos = read_xyz(filename)
+        atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
+        view.add_component(TextStructure(create_pdb_str(atom, pos)))
         view[0].clear()
         view[0].add_ball_and_stick()
         # Spin up FODs
-        if len(X_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(X_fod[0]),
-                               X_fod[0])))
+        if len(pos_fod[0]) > 0:
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
+                               pos_fod[0])))
             view[1].clear()
             view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
         # Spin down FODs
-        if len(X_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(X_fod[1]),
-                               X_fod[1])))
+        if len(pos_fod[1]) > 0:
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
+                               pos_fod[1])))
             view[2].clear()
             view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
         view.center()
     # Handle CUBE files
     elif filename.endswith(('.cub', '.cube')):
         # Atoms and cell
-        atom, X, _, a, _, _ = read_cube(filename)
-        atom, X, X_fod = split_fods(atom, X, elec_symbols)
-        view.add_component(TextStructure(create_pdb_str(atom, X, a)))
+        atom, pos, _, a, _, _ = read_cube(filename)
+        atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
+        view.add_component(TextStructure(create_pdb_str(atom, pos, a)))
         view[0].clear()
         view[0].add_ball_and_stick()
         view.add_unitcell()
@@ -210,15 +210,15 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
                             opacity=0.75,
                             side='front')
         # Spin up FODs
-        if len(X_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(X_fod[0]),
-                               X_fod[0])))
+        if len(pos_fod[0]) > 0:
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
+                               pos_fod[0])))
             view[3].clear()
             view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
         # Spin down FODs
-        if len(X_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(X_fod[1]),
-                               X_fod[1])))
+        if len(pos_fod[1]) > 0:
+            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
+                               pos_fod[1])))
             view[4].clear()
             view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
     # Handle other files (mainly PDB)

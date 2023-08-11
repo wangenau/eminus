@@ -29,7 +29,7 @@ def domain_cuboid(obj, length, centers=None):
     if isinstance(length, numbers.Real):
         length = length * np.ones(3)
     if centers is None:
-        centers = center_of_mass(atoms.X)
+        centers = center_of_mass(atoms.pos)
     centers = np.asarray(centers)
     # Handle each dimension separately and add them together
     if centers.ndim == 1:
@@ -79,7 +79,7 @@ def domain_sphere(obj, radius, centers=None):
     atoms = obj._atoms
 
     if centers is None:
-        centers = center_of_mass(atoms.X)
+        centers = center_of_mass(atoms.pos)
     centers = np.asarray(centers)
     if centers.ndim == 1:
         mask = norm(centers - atoms.r, axis=1) < radius

@@ -199,7 +199,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         m3 = np.arange(-s[2], s[2] + 1)
         M = np.transpose(np.meshgrid(m1, m2, m3)).reshape(-1, 3)
         # Delete the [0, 0, 0] element, to prevent checking for it in every loop
-        return M[~np.all(M == 0, axis=1)]
+        return M[~(M == 0).all(axis=1)]
 
     # Calculate the Ewald splitting parameter nu
     gexp = -np.log(gamma)
@@ -222,14 +222,14 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
-            dX = atoms.X[ia] - atoms.X[ja]
+            dpos = atoms.pos[ia] - atoms.pos[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            rmag = np.sqrt(norm(dX - T, axis=1)**2)
+            rmag = np.sqrt(norm(dpos - T, axis=1)**2)
             # Add the real-space contribution
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = np.sqrt(norm(dX)**2)
+                rmag = np.sqrt(norm(dpos)**2)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
     # Calculate the reciprocal space contribution
@@ -246,11 +246,11 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
-            dX = atoms.X[ia] - atoms.X[ja]
+            dpos = atoms.pos[ia] - atoms.pos[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            GX = np.sum(G * dX, axis=1)
+            Gpos = np.sum(G * dpos, axis=1)
             # Add the reciprocal space contribution
-            Eewald += ZiZj * np.sum(prefactor * np.cos(GX))
+            Eewald += ZiZj * np.sum(prefactor * np.cos(Gpos))
     return Eewald
 
 

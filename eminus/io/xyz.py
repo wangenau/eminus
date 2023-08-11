@@ -35,16 +35,16 @@ def read_xyz(filename):
             log.info(f'XYZ file comment: "{comment}"')
 
         atom = []
-        X = []
+        pos = []
         # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
         for line in lines[2:2 + Natoms]:
             line_split = line.strip().split()
             atom.append(line_split[0])
-            X.append(np.float_(line_split[1:4]))
+            pos.append(np.float_(line_split[1:4]))
 
     # xyz files are in Angstrom, so convert to Bohr
-    X = ang2bohr(np.asarray(X))
-    return atom, X
+    pos = ang2bohr(np.asarray(pos))
+    return atom, pos
 
 
 def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
@@ -70,7 +70,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         filename += '.xyz'
 
     # Convert the coordinates from atomic units to Angstrom
-    X = bohr2ang(atoms.X)
+    pos = bohr2ang(atoms.pos)
     if fods is not None:
         fods = [bohr2ang(i) for i in fods]
 
@@ -95,9 +95,10 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(atoms.Natoms):
-            fp.write(f'{atoms.atom[ia]:<2s}  {X[ia, 0]: .6f}  {X[ia, 1]: .6f}  {X[ia, 2]: .6f}\n')
+            fp.write(f'{atoms.atom[ia]:<2s}  '
+                     f'{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n')
         # Add FOD coordinates if desired
-        # The atom symbol will default to X (no atom type)
+        # The atom symbol will default to pos (no atom type)
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:

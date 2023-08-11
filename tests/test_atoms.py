@@ -25,17 +25,17 @@ def test_atom(atom, ref, Nref):
     assert len(atoms.Z) == Nref
 
 
-@pytest.mark.parametrize(('X', 'center', 'ref'), [
+@pytest.mark.parametrize(('pos', 'center', 'ref'), [
     ([[0, 0, 0]], None, [(0, 0, 0)]),
     ([[0, 0, 0]], True, [(10, 10, 10)]),
     ([[0, 0, 0]], 'shift', [(10, 10, 10)]),
     ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (np.sqrt(3), 0, 0)]),
     ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
     ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])])
-def test_X(X, center, ref):
+def test_pos(pos, center, ref):
     """Test the setting of the atom coordinates."""
-    atoms = Atoms(['H'] * len(X), X=X, center=center)
-    assert_allclose(np.abs(atoms.X), ref, atol=1e-15)
+    atoms = Atoms(['H'] * len(pos), pos=pos, center=center)
+    assert_allclose(np.abs(atoms.pos), ref, atol=1e-15)
 
 
 @pytest.mark.parametrize(('a', 'ref', 'Omega'), [(5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
@@ -81,7 +81,7 @@ def test_charge(charge):
                                                                    ('H', 0, False, 1)])
 def test_unrestricted(atom, spin, unrestricted, ref):
     """Test the spinpol option."""
-    atoms = Atoms(atom=atom, X=(0, 0, 0), spin=spin, unrestricted=unrestricted)
+    atoms = Atoms(atom=atom, pos=(0, 0, 0), spin=spin, unrestricted=unrestricted)
     assert atoms.occ.Nspin == ref
 
 
@@ -90,15 +90,15 @@ def test_center(center):
     """Test the center option."""
     atoms = Atoms('H2', [[0, 0, 0], [1, 1, 1]], center=center)
     if center is False:
-        assert_allclose(atoms.X, [[0, 0, 0], [1, 1, 1]])
+        assert_allclose(atoms.pos, [[0, 0, 0], [1, 1, 1]])
     elif center is True:
-        assert_allclose(atoms.X, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
+        assert_allclose(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
     elif center == 'rotate':
-        assert_allclose(atoms.X, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
+        assert_allclose(atoms.pos, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
     elif center == 'shift':
-        assert_allclose(atoms.X, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
+        assert_allclose(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
     elif center == 'recentered':
-        assert_allclose(atoms.X, [[0, 0, 0], [1, 1, 1]])
+        assert_allclose(atoms.pos, [[0, 0, 0], [1, 1, 1]])
 
 
 def test_verbose():
@@ -201,7 +201,7 @@ def test_recenter():
     Sf_old = atoms.Sf
     center = (1, 1, 1)
     atoms.recenter(center)
-    assert_allclose(center_of_mass(atoms.X), center)
+    assert_allclose(center_of_mass(atoms.pos), center)
     assert not np.array_equal(Sf_old, atoms.Sf)
     assert atoms.center == 'recentered'
 

@@ -35,14 +35,14 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
                     'polarized case.')
 
     atom = atoms.atom
-    X = atoms.X
+    pos = atoms.pos
     if fods is not None:
         if len(fods[0]) != 0:
             atom = atom + [elec_symbols[0]] * len(fods[0])
-            X = np.vstack((X, fods[0]))
+            pos = np.vstack((pos, fods[0]))
         if len(fods) > 1 and len(fods[1]) != 0:
             atom = atom + [elec_symbols[1]] * len(fods[1])
-            X = np.vstack((X, fods[1]))
+            pos = np.vstack((pos, fods[1]))
 
     # Append to a file when using the trajectory keyword
     if trajectory:
@@ -51,10 +51,10 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         mode = 'w'
 
     with open(filename, mode) as fp:
-        fp.write(create_pdb_str(atom, X, a=atoms.a))
+        fp.write(create_pdb_str(atom, pos, a=atoms.a))
 
 
-def create_pdb_str(atom, X, a=None):
+def create_pdb_str(atom, pos, a=None):
     """Convert atom symbols and positions to the PDB format.
 
     File format definitions:
@@ -64,7 +64,7 @@ def create_pdb_str(atom, X, a=None):
 
     Args:
         atom (list): Atom symbols.
-        X (ndarray): Atom positions.
+        pos (ndarray): Atom positions.
 
     Keyword Args:
         a (float): Cell size.
@@ -73,7 +73,7 @@ def create_pdb_str(atom, X, a=None):
         str: PDB file format.
     """
     # Convert Bohr to Angstrom
-    X = bohr2ang(X)
+    pos = bohr2ang(pos)
     if a is not None:
         a = bohr2ang(a)
 
@@ -97,23 +97,23 @@ def create_pdb_str(atom, X, a=None):
     # Create molecule data
     pdb += 'MODEL 1'
     for ia in range(len(atom)):
-        pdb += '\nATOM  '            # 1-6 "ATOM"
-        pdb += f'{ia + 1:>5}'        # 7-11 Atom serial number
+        pdb += '\nATOM  '              # 1-6 "ATOM"
+        pdb += f'{ia + 1:>5}'          # 7-11 Atom serial number
         pdb += ' '
-        pdb += f'{atom[ia]:>4}'      # 13-16 Atom name
-        pdb += ' '                   # 17 Alternate location indicator
-        pdb += 'MOL'                 # 18-20 Residue name
+        pdb += f'{atom[ia]:>4}'        # 13-16 Atom name
+        pdb += ' '                     # 17 Alternate location indicator
+        pdb += 'MOL'                   # 18-20 Residue name
         pdb += ' '
-        pdb += ' '                   # 22 Chain identifier
-        pdb += '   1'                # 23-26 Residue sequence number
-        pdb += ' '                   # 27 Code for insertions of residues
+        pdb += ' '                     # 22 Chain identifier
+        pdb += '   1'                  # 23-26 Residue sequence number
+        pdb += ' '                     # 27 Code for insertions of residues
         pdb += '   '
-        pdb += f'{X[ia, 0]:>8,.3f}'  # 31-38 X orthogonal coordinate
-        pdb += f'{X[ia, 1]:>8,.3f}'  # 39-46 Y orthogonal coordinate
-        pdb += f'{X[ia, 2]:>8,.3f}'  # 47-54 Z orthogonal coordinate
-        pdb += f'{1:>6,.2f}'         # 55-60 Occupancy
-        pdb += f'{0:>6,.2f}'         # 61-66 Temperature factor
+        pdb += f'{pos[ia, 0]:>8,.3f}'  # 31-38 X orthogonal coordinate
+        pdb += f'{pos[ia, 1]:>8,.3f}'  # 39-46 Y orthogonal coordinate
+        pdb += f'{pos[ia, 2]:>8,.3f}'  # 47-54 Z orthogonal coordinate
+        pdb += f'{1:>6,.2f}'           # 55-60 Occupancy
+        pdb += f'{0:>6,.2f}'           # 61-66 Temperature factor
         pdb += '          '
-        pdb += f'{atom[ia]:>2}'      # 77-78 Element symbol
-        # pdb += '  '                # 79-80 Charge
+        pdb += f'{atom[ia]:>2}'        # 77-78 Element symbol
+        # pdb += '  '                  # 79-80 Charge
     return f'{pdb}\nENDMDL\n'

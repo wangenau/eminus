@@ -22,7 +22,7 @@ class Atoms:
             A string can be given, e.g., with :code:`CH4` that will be parsed to
             :code:`['C', 'H', 'H', 'H', 'H']`. When calculating atoms one can directly provide the
             charge, e.g., with :code:`Li-q3`.
-        X (list | tuple | ndarray): Atom positions.
+        pos (list | tuple | ndarray): Atom positions.
 
     Keyword Args:
         ecut (float | None): Cut-off energy.
@@ -51,15 +51,15 @@ class Atoms:
             value can be used as well, where larger numbers mean more output, starting from 0.
             None will use the global logger verbosity value.
     """
-    def __init__(self, atom, X, ecut=30, a=20, spin=None, charge=0, unrestricted=None, center=False,
-                 verbose=None):
+    def __init__(self, atom, pos, ecut=30, a=20, spin=None, charge=0, unrestricted=None,
+                 center=False, verbose=None):
         """Initialize the Atoms object."""
         # Set the input parameters (the ordering is important)
         self.log = create_logger(self)    #: Logger object.
         self.verbose = verbose            #: Verbosity level.
         self.occ = Occupations()          #: Occupations object.
         self.atom = atom                  #: Atom symbols.
-        self.X = X                        #: Atom positions.
+        self.pos = pos                    #: Atom positions.
         self.a = a                        #: Cell/Vacuum size.
         self.ecut = ecut                  #: Cut-off energy.
         self.center = center              #: Enables centering the system in the cell.
@@ -97,18 +97,18 @@ class Atoms:
             self.Z = None
 
     @property
-    def X(self):
+    def pos(self):
         """Atom positions."""
-        return self._X
+        return self._pos
 
-    @X.setter
-    def X(self, value):
+    @pos.setter
+    def pos(self, value):
         # We need atom positions as a two-dimensional array
-        self._X = np.atleast_2d(value)
-        if self.Natoms != len(self._X):
+        self._pos = np.atleast_2d(value)
+        if self.Natoms != len(self._pos):
             raise ValueError(f'Mismatch between number of atoms ({self.Natoms}) and number of '
-                             f'coordinates ({len(self._X)}).')
-        # The structure factor changes when changing X
+                             f'coordinates ({len(self._pos)}).')
+        # The structure factor changes when changing pos
         self.is_built = False
 
     @property
@@ -198,14 +198,14 @@ class Atoms:
         # Center system such that the geometric inertia tensor will be diagonal
         # Rotate before shifting!
         if self._center is True or self._center == 'rotate':
-            I = inertia_tensor(self.X)
+            I = inertia_tensor(self.pos)
             _, eigvecs = eigh(I)
-            self.X = (inv(eigvecs) @ self.X.T).T
+            self.pos = (inv(eigvecs) @ self.pos.T).T
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == 'shift':
-            com = center_of_mass(self.X)
-            self.X = self.X - (com - np.sum(self.a, axis=0) / 2)
-        # The structure factor changes when changing X
+            com = center_of_mass(self.pos)
+            self.pos = self.pos - (com - np.sum(self.a, axis=0) / 2)
+        # The structure factor changes when changing pos
         self.is_built = False
 
     @property
@@ -346,14 +346,14 @@ class Atoms:
         Keyword Args:
             center (float | list | tuple | ndarray | None): Point to center the system around.
         """
-        com = center_of_mass(self.X)
+        com = center_of_mass(self.pos)
         if center is None:
-            self.X = self.X - (com - np.sum(self.a, axis=0) / 2)
+            self.pos = self.pos - (com - np.sum(self.a, axis=0) / 2)
         else:
             center = np.asarray(center)
-            self.X = self.X - (com - center)
+            self.pos = self.pos - (com - center)
         # Recalculate the structure factor since it depends on the atom positions
-        self._Sf = np.exp(1j * self.G @ self.X.T).T
+        self._Sf = np.exp(1j * self.G @ self.pos.T).T
         self._center = 'recentered'
         return self
 
@@ -403,7 +403,7 @@ class Atoms:
         self._active = np.nonzero(2 * self.ecut >= self.G2)
         self._G2c = self.G2[self._active]
         # Calculate the structure factor per atom
-        self._Sf = np.exp(1j * self.G @ self.X.T).T
+        self._Sf = np.exp(1j * self.G @ self.pos.T).T
 
     def _base_operator(*args, **kwargs):
         """See :mod:`~eminus.operators`."""
@@ -439,5 +439,5 @@ class Atoms:
         out = 'Atom  Valence  Position'
         for i in range(self.Natoms):
             out += f'\n{self.atom[i]:>3}   {self.Z[i]:>6}   ' \
-                   f'{self.X[i, 0]:10.5f}  {self.X[i, 1]:10.5f}  {self.X[i, 2]:10.5f}'
+                   f'{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}'
         return out

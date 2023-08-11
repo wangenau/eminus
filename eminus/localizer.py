@@ -290,7 +290,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
     Returns:
         ndarray: Localized orbitals.
     """
-    if not np.all(np.diag(np.diag(atoms.a)) == atoms.a):
+    if not (np.diag(np.diag(atoms.a)) == atoms.a).all():
         log.warning('The Wannier localization needs a cubic unit cell.')
         return psirs
 

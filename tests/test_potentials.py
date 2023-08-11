@@ -10,14 +10,14 @@ from eminus.units import ang2bohr
 def test_harmonic():
     """Compare total energies for the harmonic potential."""
     atom = 'H'
-    X = (0, 0, 0)
+    pos = (0, 0, 0)
     a = 6
     ecut = 10
     s = (20, 25, 30)
     f = (2, 2, 2, 2)
     pot = 'harmonic'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms = Atoms(atom, pos, a=a, ecut=ecut)
     atoms.s = s
     atoms.f = f
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6).run()
@@ -28,13 +28,13 @@ def test_harmonic():
 def test_coulomb():
     """Compare total energies for the ionic potential."""
     atom = 'H'
-    X = (0, 0, 0)
+    pos = (0, 0, 0)
     a = (9, 10, 11)
     ecut = 10
     s = 20
     pot = 'coulomb'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms = Atoms(atom, pos, a=a, ecut=ecut)
     atoms.s = s
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6).run()
     # In the limit we should come close to the NIST Etot value of -0.445671 Eh
@@ -45,14 +45,14 @@ def test_coulomb():
 def test_ge():
     """Compare eigenstate energies for the germanium potential."""
     atom = 'Ge'
-    X = (0, 0, 0)
+    pos = (0, 0, 0)
     a = ang2bohr(5.66)
     ecut = 10
     s = 10
     f = (2, 2 / 3, 2 / 3, 2 / 3)
     pot = 'ge'
 
-    atoms = Atoms(atom, X, a=a, ecut=ecut)
+    atoms = Atoms(atom, pos, a=a, ecut=ecut)
     atoms.s = s
     atoms.f = f
     scf = RSCF(atoms, pot=pot, guess='random', etol=1e-6)
