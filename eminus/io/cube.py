@@ -21,7 +21,7 @@ def read_cube(filename):
 
     Returns:
         tuple[list, ndarray, float, ndarray, int, ndarray]:
-        Species, positions, charges, cell vectors, sampling, and field array.
+        Species, positions, charges, cell size, sampling, and field array.
     """
     if not filename.endswith(('.cub', '.cube')):
         filename += '.cube'
@@ -37,11 +37,11 @@ def read_cube(filename):
 
         # Lines 4 to 6 contain the sampling per axis and the cell basis vectors with length a/s
         s = np.empty(3, dtype=int)
-        R = np.empty((3, 3))
+        a = np.empty((3, 3))
         for i, line in enumerate(lines[3:6]):
             line_split = line.strip().split()
             s[i] = line_split[0]
-            R[i] = s[i] * np.float_(line_split[1:])
+            a[i] = s[i] * np.float_(line_split[1:])
 
         atom = []
         X = []
@@ -62,7 +62,7 @@ def read_cube(filename):
     tmp_list = [l.split() for l in lines[6 + _offset:]]
     field_list = [item for sublist in tmp_list for item in sublist]
     field = np.asarray(field_list, dtype=float)
-    return atom, X, Z, R, s, field
+    return atom, X, Z, a, s, field
 
 
 def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
@@ -108,12 +108,12 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
             fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}  ')
         fp.write('0.0  0.0  0.0\n')
         # Number of points per axis (int), and vector defining the axis (float)
-        fp.write(f'{atoms.s[0]}  {atoms.R[0, 0] / atoms.s[0]:.6f}  {atoms.R[0, 1] / atoms.s[0]:.6f}'
-                 f'  {atoms.R[0, 2] / atoms.s[0]:.6f}\n'
-                 f'{atoms.s[1]}  {atoms.R[1, 0] / atoms.s[1]:.6f}  {atoms.R[1, 1] / atoms.s[1]:.6f}'
-                 f'  {atoms.R[1, 2] / atoms.s[1]:.6f}\n'
-                 f'{atoms.s[2]}  {atoms.R[2, 0] / atoms.s[2]:.6f}  {atoms.R[2, 1] / atoms.s[2]:.6f}'
-                 f'  {atoms.R[2, 2] / atoms.s[2]:.6f}\n')
+        fp.write(f'{atoms.s[0]}  {atoms.a[0, 0] / atoms.s[0]:.6f}  {atoms.a[0, 1] / atoms.s[0]:.6f}'
+                 f'  {atoms.a[0, 2] / atoms.s[0]:.6f}\n'
+                 f'{atoms.s[1]}  {atoms.a[1, 0] / atoms.s[1]:.6f}  {atoms.a[1, 1] / atoms.s[1]:.6f}'
+                 f'  {atoms.a[1, 2] / atoms.s[1]:.6f}\n'
+                 f'{atoms.s[2]}  {atoms.a[2, 0] / atoms.s[2]:.6f}  {atoms.a[2, 1] / atoms.s[2]:.6f}'
+                 f'  {atoms.a[2, 2] / atoms.s[2]:.6f}\n')
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(atoms.Natoms):
             fp.write(f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '

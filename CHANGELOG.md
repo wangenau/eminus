@@ -7,6 +7,7 @@ dev
    - Add a FOD optimization example
    - Add references to data
 - Miscellaneous
+   - Merge R into a in Atoms
    - Support viewing multiple files
    - Support non-cubic cells in io and viewer functions
 

@@ -3,6 +3,7 @@
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
+from scipy.linalg import det
 
 from eminus import Atoms, log
 from eminus.tools import center_of_mass
@@ -37,15 +38,19 @@ def test_X(X, center, ref):
     assert_allclose(np.abs(atoms.X), ref, atol=1e-15)
 
 
-@pytest.mark.parametrize('size', [3, (5, 10, 15)])
-def test_cell(size):
-    """Test the setting of the cell sampling."""
-    atoms = Atoms(*inp, a=size).build()
-    assert_allclose(np.diag(atoms.R), size)
-    assert_allclose(atoms.Omega, np.prod(atoms.a))
+@pytest.mark.parametrize(('a', 'ref', 'Omega'), [(5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
+                                                 ([2, 3, 4], [[2, 0, 0], [0, 3, 0], [0, 0, 4]], 24),
+                                                 ([[-1, 0, 1], [0, 1, 1], [-1, 1, 0]],
+                                                  [[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], 2)])
+def test_cell(a, ref, Omega):
+    """Test the setting of cell size."""
+    atoms = Atoms(*inp, a=a).build()
+    assert atoms.Omega == Omega
+    assert_allclose(atoms.a, ref)
+    assert_allclose(atoms.Omega, det(atoms.a))
     assert_allclose(atoms.r[0], 0)
     assert len(atoms.r) == atoms.Ns
-    assert_allclose(atoms.s[0] / atoms.s[1], atoms.a[0] / atoms.a[1], atol=0.02)
+    assert_allclose(atoms.s[0] / atoms.s[1], abs(atoms.a[0, 0] / atoms.a[1, 1]), atol=0.1)
     assert atoms.dV == atoms.Omega / np.prod(atoms.s)
     assert atoms.is_built
 
@@ -138,22 +143,6 @@ def test_s(s, ref):
     if s is not None:
         atoms.s = s
     assert_allclose(atoms.s, ref)
-
-
-@pytest.mark.parametrize(('R', 'ref', 'Omega'), [(5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
-                                                 ([2, 3, 4], [[2, 0, 0], [0, 3, 0], [0, 0, 4]], 24),
-                                                 ([[-1, 0, 1], [0, 1, 1], [-1, 1, 0]],
-                                                  [[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], 2)])
-def test_R(R, ref, Omega):
-    """Test the setting of cell vectors."""
-    atoms = Atoms(*inp)
-    s = atoms.s
-    atoms.R = R
-    assert not np.any(atoms.s == s)
-    assert atoms.Omega == Omega
-    if atoms.a is not None:
-        assert_allclose(atoms.a, np.diag(atoms.R))
-    assert_allclose(atoms.R, ref)
 
 
 @pytest.mark.parametrize(('atom', 'Z', 'ref', 'Nref'), [('H', None, [1], 1),

@@ -104,11 +104,11 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
              'yaxis': {'title': 'y [a<sub>0</sub>]'},
              'zaxis': {'title': 'z [a<sub>0</sub>]'},
              'aspectmode': 'cube'}
-    # If is not None the unit cell is diagonal and we scale the plot, otherwise let plotly decide
-    if atoms.a is not None:
-        scene['xaxis']['range'] = [0, atoms.a[0]]
-        scene['yaxis']['range'] = [0, atoms.a[1]]
-        scene['zaxis']['range'] = [0, atoms.a[2]]
+    # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
+    if np.all(np.diag(np.diag(atoms.a)) == atoms.a):
+        scene['xaxis']['range'] = [0, atoms.a[0, 0]]
+        scene['yaxis']['range'] = [0, atoms.a[1, 1]]
+        scene['zaxis']['range'] = [0, atoms.a[2, 2]]
     fig.update_layout(scene=scene,
                       legend={'itemsizing': 'constant', 'title': 'Selection'},
                       hoverlabel_bgcolor='black',

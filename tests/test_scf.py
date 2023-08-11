@@ -123,7 +123,7 @@ def test_clear():
             scf.vsigma, scf.vtau) if x is None]
 
 
-@pytest.mark.parametrize('center', [None, atoms.a / 2])
+@pytest.mark.parametrize('center', [None, np.diag(atoms.a) / 2])
 def test_recenter(center):
     """Test the recenter function."""
     scf = SCF(atoms)

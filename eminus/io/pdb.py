@@ -51,10 +51,10 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         mode = 'w'
 
     with open(filename, mode) as fp:
-        fp.write(create_pdb_str(atom, X, R=atoms.R))
+        fp.write(create_pdb_str(atom, X, a=atoms.a))
 
 
-def create_pdb_str(atom, X, R=None):
+def create_pdb_str(atom, X, a=None):
     """Convert atom symbols and positions to the PDB format.
 
     File format definitions:
@@ -67,28 +67,28 @@ def create_pdb_str(atom, X, R=None):
         X (ndarray): Atom positions.
 
     Keyword Args:
-        R (float): Cell vectors.
+        a (float): Cell size.
 
     Returns:
         str: PDB file format.
     """
     # Convert Bohr to Angstrom
     X = bohr2ang(X)
-    if R is not None:
-        R = bohr2ang(R)
+    if a is not None:
+        a = bohr2ang(a)
 
     # pdb files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not lose track of line lengths
     pdb = ''
     # Create data for a cuboidal cell
-    if R is not None:
+    if a is not None:
         pdb += 'CRYST1'                              # 1-6 "CRYST1"
-        pdb += f'{norm(R[0]):>9,.3f}'                # 7-15 a
-        pdb += f'{norm(R[1]):>9,.3f}'                # 16-24 b
-        pdb += f'{norm(R[2]):>9,.3f}'                # 25-33 c
-        pdb += f'{vector_angle(R[1], R[2]):>7,.2f}'  # 34-40 alpha
-        pdb += f'{vector_angle(R[0], R[2]):>7,.2f}'  # 41-47 beta
-        pdb += f'{vector_angle(R[0], R[1]):>7,.2f}'  # 48-54 gamma
+        pdb += f'{norm(a[0]):>9,.3f}'                # 7-15 a
+        pdb += f'{norm(a[1]):>9,.3f}'                # 16-24 b
+        pdb += f'{norm(a[2]):>9,.3f}'                # 25-33 c
+        pdb += f'{vector_angle(a[1], a[2]):>7,.2f}'  # 34-40 alpha
+        pdb += f'{vector_angle(a[0], a[2]):>7,.2f}'  # 41-47 beta
+        pdb += f'{vector_angle(a[0], a[1]):>7,.2f}'  # 48-54 gamma
         pdb += ' '
         pdb += 'P 1        '                         # 56-66 Space group
         # pdb += '   1'                              # 67-70 Z value

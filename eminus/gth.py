@@ -54,7 +54,7 @@ def init_gth_loc(scf):
     """
     atoms = scf.atoms
     species = set(atoms.atom)
-    omega = 1  # Normally this would be det(atoms.R), but Arias notation is off by this factor
+    omega = 1  # Normally this would be det(atoms.a), but Arias notation is off by this factor
 
     Vloc = np.zeros_like(atoms.G2)
     for isp in species:

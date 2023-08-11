@@ -212,13 +212,13 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
-    Rm = norm(atoms.R, axis=1)
+    Rm = norm(atoms.a, axis=1)
     tmax = np.sqrt(0.5 * gexp) / nu
     s = np.rint(tmax / Rm + 1.5)
     # Collect all box index vector in a matrix
     M = get_index_vectors(s)
     # Calculate the translation vectors
-    T = M @ atoms.R
+    T = M @ atoms.a
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
@@ -234,7 +234,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
-    g = 2 * np.pi * inv(atoms.R.T)
+    g = 2 * np.pi * inv(atoms.a.T)
     gm = norm(g, axis=1)
     s = np.rint(gcut / gm + 1.5)
     # Collect all box index vector in a matrix

@@ -20,7 +20,7 @@ def harmonic(scf):
     """
     atoms = scf.atoms
     freq = 2
-    dr = norm(atoms.r - np.sum(atoms.R, axis=1) / 2, axis=1)
+    dr = norm(atoms.r - np.sum(atoms.a, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 

@@ -29,9 +29,6 @@ Atoms variables
    * - :code:`s`
      - Real-space grid points
      - :code:`(Ns)`
-   * - :code:`R`
-     - Lattice vectors
-     - :code:`(3, 3)`
    * - :code:`Omega`
      - Unit cell volume
      - :code:`float`

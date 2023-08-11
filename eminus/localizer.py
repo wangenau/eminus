@@ -207,9 +207,9 @@ def wannier_supercell_matrices(atoms, psirs):
         tuple[ndarray, ndarray, ndarray]: Matrices X, Y, and Z.
     """
     # Similar to the expectation value of r, but accounting for periodicity
-    X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0])) @ psirs
-    Y = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1])) @ psirs
-    Z = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2])) @ psirs
+    X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0, 0])) @ psirs
+    Y = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1, 1])) @ psirs
+    Z = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2, 2])) @ psirs
     return X * atoms.dV, Y * atoms.dV, Z * atoms.dV
 
 
@@ -290,7 +290,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
     Returns:
         ndarray: Localized orbitals.
     """
-    if atoms.a is None:
+    if not np.all(np.diag(np.diag(atoms.a)) == atoms.a):
         log.warning('The Wannier localization needs a cubic unit cell.')
         return psirs
 

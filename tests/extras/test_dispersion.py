@@ -28,7 +28,7 @@ def test_functionals(xc):
     # import numpy as np
     # from eminus.units import bohr2ang, ev2ha
     # atm = ase.Atoms(atoms.atom, bohr2ang(atoms.X))
-    # atm.cell = bohr2ang(atoms.R)
+    # atm.cell = bohr2ang(atoms.a)
     # atm.pbc = np.array([1, 1, 1])
     # atm.calc = DFTD3(method=xc, damping='d3bj', atm=True)
     # print(ev2ha(atm.get_potential_energy()))

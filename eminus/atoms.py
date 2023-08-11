@@ -30,7 +30,8 @@ class Atoms:
             Defaults to 30 Eh (ca. 816 eV).
         a (float | list | tuple | ndarray): Cell size or vacuum size.
 
-            Floats will create a cubic unit cell. Defaults to 20 a0 (ca. 10.5 A).
+            Floats will create a cubic unit cell. Defaults to a 20 a0 (ca. 10.5 A) cubic cell.
+            Scaled lattice vectors can be given to build a custom cell.
         spin (int | None): Number of unpaired electrons.
 
             This is the difference between the number of up and down electrons.
@@ -119,7 +120,7 @@ class Atoms:
     def ecut(self, value):
         self._ecut = value
         # Caclulate the sampling from the cut-off energy
-        s = np.int_(norm(self.R, axis=0) / cutoff2gridspacing(value))
+        s = np.int_(norm(self.a, axis=0) / cutoff2gridspacing(value))
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations
@@ -134,12 +135,17 @@ class Atoms:
 
     @a.setter
     def a(self, value):
-        # Build a cubic cell if a number is given
-        if isinstance(value, numbers.Real):
-            self._a = value * np.ones(3)
+        # Build a cubic cell if a number or 1d-array is given
+        if np.asarray(value).ndim <= 1:
+            self._a = value * np.eye(3)
+        # Otherwise scaled cell vectors are given
         else:
             self._a = np.asarray(value)
-        self.R = self._a
+        # Update ecut and s if it has been set before
+        if hasattr(self, 'ecut'):
+            self.ecut = self.ecut
+        # Calculate the unit cell volume
+        self._Omega = abs(det(self._a))
         # The cell changes when changing a
         self.is_built = False
 
@@ -198,7 +204,7 @@ class Atoms:
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == 'shift':
             com = center_of_mass(self.X)
-            self.X = self.X - (com - np.sum(self.R, axis=0) / 2)
+            self.X = self.X - (com - np.sum(self.a, axis=0) / 2)
         # The structure factor changes when changing X
         self.is_built = False
 
@@ -240,32 +246,6 @@ class Atoms:
         self._s = np.asarray(value)
         self._Ns = int(np.prod(self._s))
         # The cell discretization changes when changing s
-        self.is_built = False
-
-    @property
-    def R(self):
-        """Unit cell vectors."""
-        return self._R
-
-    @R.setter
-    def R(self, value):
-        # Build a cubic cell if a number is given
-        if isinstance(value, numbers.Real) or np.asarray(value).ndim <= 1:
-            self._R = value * np.eye(3)
-        else:
-            self._R = np.asarray(value)
-        # If R is diagonal set the values for a
-        if np.all(np.diag(np.diag(self._R)) == self._R):
-            self._a = np.diag(self._R)
-        # Otherwise set a to None, to make sure it won't be used wrong
-        else:
-            self._a = None
-        # Update ecut and s if it has been set before
-        if hasattr(self, 'ecut'):
-            self.ecut = self.ecut
-        # Calculate the unit cell volume
-        self._Omega = abs(det(self._R))
-        # The cell changes when changing R
         self.is_built = False
 
     @property
@@ -368,7 +348,7 @@ class Atoms:
         """
         com = center_of_mass(self.X)
         if center is None:
-            self.X = self.X - (com - np.sum(self.R, axis=0) / 2)
+            self.X = self.X - (com - np.sum(self.a, axis=0) / 2)
         else:
             center = np.asarray(center)
             self.X = self.X - (com - center)
@@ -414,9 +394,9 @@ class Atoms:
         # Calculate index matrices
         M, N = self._get_index_matrices()
         # Build the real-space sampling
-        self._r = M @ inv(np.diag(self.s)) @ self.R.T
+        self._r = M @ inv(np.diag(self.s)) @ self.a.T
         # Build G-vectors
-        self._G = 2 * np.pi * N @ inv(self.R)
+        self._G = 2 * np.pi * N @ inv(self.a)
         # Calculate squared magnitudes of G-vectors
         self._G2 = norm(self.G, axis=1)**2
         # Calculate the G2 restriction

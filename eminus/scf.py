@@ -207,7 +207,7 @@ class SCF:
         if self.log.level <= logging.DEBUG:
             info()
         self.log.debug(f'\n--- Atoms information ---\n{self.atoms}\n'
-                       f'\n--- Cell information ---\nCell vectors:\n{self.atoms.R} a0\n'
+                       f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Eh\n'
                        f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
@@ -291,7 +291,7 @@ class SCF:
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
         if center is None:
-            dr = com - np.sum(atoms.R, axis=0) / 2
+            dr = com - np.sum(atoms.a, axis=0) / 2
         else:
             center = np.asarray(center)
             dr = com - center
