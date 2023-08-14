@@ -64,23 +64,27 @@ def bandpath(lattice, lattice_vectors, path, N):
     scaled_dists = (N - N_special) * np.array(dists) / sum(dists)
     samplings = np.int_(np.round(scaled_dists))
 
+    # If our sampling does not match the given N add the difference to the longest distance
+    if N - N_special - np.sum(samplings) != 0:
+        samplings[np.argmax(samplings)] += N - N_special - np.sum(samplings)
+
     # Generate k-point coordinates
     k_points = [s_points[path_list[0]]]  # Insert the first special point
     for i in range(len(path_list) - 1):
-        s_start = s_points[path_list[i]]
-        s_end = s_points[path_list[i + 1]]
         # Only do something when not jumping between special points
         if ',' not in path_list[i:i + 2]:
-            for n in range(1, samplings[i] + 1):
-                # Get the vector between special points
-                k_dist = np.subtract(s_end, s_start)
-                # Add the scaled vector to the special point to get a new k-point
-                k_points.append(s_start + k_dist * n / (samplings[i] + 1))
+            s_start = s_points[path_list[i]]
+            s_end = s_points[path_list[i + 1]]
+            # Get the vector between special points
+            k_dist = np.subtract(s_end, s_start)
+            # Add scaled vectors to the special point to get the new k-points
+            k_points += [s_start + k_dist * (n + 1) / (samplings[i] + 1)
+                         for n in range(samplings[i])]
             # Append the special point we are ending at
             k_points.append(s_end)
         # If we jump, add the new special point to start from
         elif path_list[i] == ',':
-            k_points.append(s_end)
+            k_points.append(s_points[path_list[i + 1]])
     return np.asarray(k_points)
 
 
@@ -132,5 +136,5 @@ def kpoints2axis(lattice, lattice_vectors, path, k_points):
             dists[index] = 0
 
     # Insert a zero at the beginning and add up the lengths to create the k-axis
-    k_axis = np.append([0], dists.cumsum())
+    k_axis = np.append([0], np.cumsum(dists))
     return k_axis, k_axis[special_indices], labels
