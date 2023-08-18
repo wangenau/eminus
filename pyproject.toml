@@ -43,9 +43,6 @@ ignore = [
     # SIM108: Use ternary operator instead of `if`-`else`-block
     # if-else blocks should be written down explicitly
     "SIM108",
-    # PERF203: `try`-`except` within a loop incurs performance overhead
-    # This is only used in places where no significant overhead can occur
-    "PERF203",
     # RUF005: Consider `(*t, v)` instead of concatenation
     # This seems to be slower in the cases we use it
     "RUF005"

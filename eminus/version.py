@@ -32,7 +32,7 @@ def info():
             except AttributeError:
                 # pylibxc does not use the standard version identifier
                 print(f'{pkg:<9}: {module.version.__version__}')
-        except ModuleNotFoundError:
+        except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
                 print(f'{pkg:<9}: Dependency not installed')
             elif pkg in extras:
