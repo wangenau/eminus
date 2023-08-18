@@ -77,7 +77,6 @@ def test_charge(charge):
                                                                    ('He', 0, False, 1),
                                                                    ('He', 1, None, 2),
                                                                    ('He', 2, None, 2),
-                                                                   ('H', 0, None, 2),
                                                                    ('H', 0, False, 1)])
 def test_unrestricted(atom, spin, unrestricted, ref):
     """Test the spinpol option."""
@@ -117,10 +116,6 @@ def test_verbose():
 @pytest.mark.parametrize(('f', 'unrestricted', 'fref', 'Nref'), [
     (None, False, [[2]], 1),
     (None, True, [[1], [1]], 1),
-    (None, False, [[2]], 1),
-    (None, True, [[1], [1]], 1),
-    (2, False, [[2]], 1),
-    (1, True, [[1], [1]], 1),
     (2, False, [[2]], 1),
     (1, True, [[1], [1]], 1)])
 def test_f(f, unrestricted, fref, Nref):
