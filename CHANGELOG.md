@@ -6,7 +6,7 @@ dev
 - New features
    - Add band path sampling functionalities
 - Updated docs
-   - Add a FOD optimization example
+   - Add a FOD optimization and a reduced density gradient example
    - Add references to data
 - Miscellaneous
    - Rename X to pos in Atoms

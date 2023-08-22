@@ -20,6 +20,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 14_custom_functionals       | Usage of customized functionals |
 | 15_custom_functionals_spin  | Extension of example 15 for the spin-polarized case |
 | 16_fod_optimization         | Implementation of a simple FOD optimizer |
+| 17_reduced_density_gradient | Calculate the reduced density gradient on a grid |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept
