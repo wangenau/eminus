@@ -6,7 +6,10 @@
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
+      pkgs = import nixpkgs {
+        inherit system;
+        config.allowUnfree = true; # Required for torch-bin
+      };
 
       pyEnv = pkgs.python3.withPackages (p:
         with p; [
@@ -14,12 +17,11 @@
           numpy
           pip
           scipy
-          ### dispersion ###
-          simple-dftd3
           ### fods and libxc ###
           pyscf
           ### torch ###
           torch-bin
+          # torch if allowUnfree = true is undesired
           ### viewer ###
           jupyter
           matplotlib
@@ -31,7 +33,6 @@
           mypy
           pytest
           pytest-cov
-          ruff
           sphinx
           sphinxcontrib-bibtex
         ]);
@@ -39,15 +40,20 @@
     in {
       devShells."${system}".default = with pkgs;
         mkShell {
-          buildInputs = [ pyEnv ];
+          buildInputs = [
+            pyEnv
+            ### dispersion ###
+            # simple-dftd3 does not work in the Python environment
+            ### dev ###
+            ruff
+          ];
 
           shellHook = ''
             pip install -e . --prefix $TMPDIR
             export PYTHONPATH="$(pwd):$PYTHONPATH"
-            export MKL_NUM_THREADS="$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')"
-            export OMP_NUM_THREADS="$(grep ^cpu\\scores /proc/cpuinfo | uniq | awk '{print $4}')"
+            export OMP_NUM_THREADS="$(nproc)"
+            export MKL_NUM_THREADS="$(nproc)"
           '';
         };
     };
-
 }
