@@ -13,6 +13,7 @@ dev
    - Merge R into a in Atoms
    - Support viewing multiple files
    - Support non-cubic cells in Atoms, io, and viewer functions
+   - Fix Nix flake
 
 v2.6.0 - Aug 07, 2023
 ---------------------
