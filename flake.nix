@@ -49,10 +49,11 @@
           ];
 
           shellHook = ''
-            pip install -e . --prefix $TMPDIR
+            pip install -e . --prefix "$TMPDIR"
             export PYTHONPATH="$(pwd):$PYTHONPATH"
             export OMP_NUM_THREADS="$(nproc)"
             export MKL_NUM_THREADS="$(nproc)"
+            export MPLBACKEND="TKAgg"
           '';
         };
     };
