@@ -1,7 +1,7 @@
 {
   description = "eminus - A plane wave density functional theory code.";
 
-  inputs = { nixpkgs.url = "nixpkgs/nixpkgs-unstable"; };
+  inputs = { nixpkgs.url = "nixpkgs/nixos-23.05"; };
 
   outputs = { self, nixpkgs }:
     let
