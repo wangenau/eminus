@@ -5,8 +5,7 @@ dev
 ---
 - New features
    - Add band path sampling functionalities
-   - Add trajectory IO functions
-   - Add support for displaying trajectories
+   - Add support to handle trajectory files
 - Updated docs
    - Add a FOD optimization and a reduced density gradient example
    - Add references to data
@@ -15,6 +14,7 @@ dev
    - Merge R into a in Atoms
    - Support viewing multiple files
    - Support non-cubic cells in Atoms, io, and viewer functions
+   - Support viewing multiple files
    - Fix Nix flake
 
 v2.6.0 - Aug 07, 2023
