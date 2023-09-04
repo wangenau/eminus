@@ -54,6 +54,7 @@ def test_spin(Nelec, Nspin, spin, ref):
     occ.spin = spin
     occ.Nspin = Nspin
     assert occ.spin == ref
+    assert occ.multiplicity == occ.spin + 1
 
 
 def test_charge_change():

@@ -6,12 +6,14 @@ from eminus.units import (
     ang2bohr,
     bohr2ang,
     d2ebohr,
+    deg2rad,
     ebohr2d,
     ev2ha,
     ha2ev,
     ha2kcalmol,
     ha2ry,
     kcalmol2ha,
+    rad2deg,
     ry2ha,
 )
 
@@ -24,6 +26,7 @@ def test_units(value):
     assert value == ha2ry(ry2ha(value))
     assert value == ang2bohr(bohr2ang(value))
     assert value == ebohr2d(d2ebohr(value))
+    assert value == rad2deg(deg2rad(value))
 
 
 if __name__ == '__main__':
