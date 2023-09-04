@@ -40,7 +40,7 @@ def read_xyz(filename):
         for line in lines[2:2 + Natoms]:
             line_split = line.strip().split()
             atom.append(line_split[0])
-            pos.append(np.float_(line_split[1:4]))
+            pos.append(np.float64(line_split[1:4]))
 
     # xyz files are in Angstrom, so convert to Bohr
     pos = ang2bohr(np.asarray(pos))

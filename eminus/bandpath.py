@@ -62,7 +62,7 @@ def bandpath(lattice, lattice_vectors, path, N):
 
     # Calculate sample points between the special points
     scaled_dists = (N - N_special) * np.array(dists) / sum(dists)
-    samplings = np.int_(np.round(scaled_dists))
+    samplings = np.int64(np.round(scaled_dists))
 
     # If our sampling does not match the given N add the difference to the longest distance
     if N - N_special - np.sum(samplings) != 0:
