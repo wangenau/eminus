@@ -36,7 +36,8 @@ def read_gth(atom, charge=None, psp_path='pbe'):
         try:
             f_psp = pathlib.Path(files[0])
         except IndexError:
-            log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}".')
+            if atom != 'X':
+                log.warning(f'There is no GTH pseudopotential in "{file_path}" for "{atom}".')
             return mock_gth()
         if len(files) > 1:
             log.info(f'Multiple pseudopotentials found for "{atom}". Continue with "{f_psp.name}".')
