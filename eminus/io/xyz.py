@@ -66,7 +66,8 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     """
     atoms = obj._atoms
 
-    if not filename.endswith('.xyz'):
+    # The trajectory write calles this function
+    if not filename.endswith(('.xyz', '.trj', '.traj')):
         filename += '.xyz'
 
     # Convert the coordinates from atomic units to Angstrom

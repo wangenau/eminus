@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test input and output functionalities."""
+import copy
 import os
 
 from numpy.testing import assert_allclose
@@ -10,12 +11,14 @@ from eminus import (
     read,
     read_cube,
     read_json,
+    read_traj,
     read_xyz,
     SCF,
     write,
     write_cube,
     write_json,
     write_pdb,
+    write_traj,
     write_xyz,
 )
 
@@ -111,6 +114,35 @@ def test_pdb(Nspin):
     os.remove(filename)
 
 
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_traj(Nspin):
+    """Test TRAJ file output and input."""
+    filename = 'test.traj'
+    fods = [atoms.pos] * Nspin
+    write(atoms, filename, fods=fods)
+    trajectory = read(filename)
+    os.remove(filename)
+    if Nspin == 1:
+        assert atoms.atom + ['X'] * atoms.Natoms == trajectory[0][0]
+    else:
+        assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == trajectory[0][0]
+    assert_allclose(atoms.pos, trajectory[0][1][:atoms.Natoms], atol=1e-6)
+
+    atoms2 = copy.deepcopy(atoms)
+    atoms2.pos += 1
+    write([atoms, atoms2], filename, fods=fods)
+    trajectory = read(filename)
+    os.remove(filename)
+    if Nspin == 1:
+        assert atoms.atom + ['X'] * atoms.Natoms == trajectory[0][0]
+        assert atoms2.atom + ['X'] * atoms2.Natoms == trajectory[1][0]
+    else:
+        assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == trajectory[0][0]
+        assert atoms2.atom + ['X'] * atoms2.Natoms + ['He'] * atoms2.Natoms == trajectory[1][0]
+    assert_allclose(atoms.pos, trajectory[0][1][:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms2.pos, trajectory[1][1][:atoms2.Natoms], atol=1e-6)
+
+
 @pytest.mark.parametrize('filending', ['pdb', 'xyz'])
 def test_trajectory(filending):
     """Test the trajectory keyword that append geometries to a file."""
@@ -138,7 +170,9 @@ def test_filename_ending():
     os.remove(filename + '.json')
     write_pdb(atoms, filename)
     os.remove(filename + '.pdb')
-
+    write_traj(atoms, filename)
+    read_traj(filename)
+    os.remove(filename + '.traj')
 
 if __name__ == '__main__':
     import inspect

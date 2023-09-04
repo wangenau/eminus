@@ -8,4 +8,5 @@ File input and output functionalities.
 | gth.py  | GTH file handling |
 | json.py | JSON file handling |
 | pdb.py  | PDB file handling |
+| traj.py | TRAJ file handling |
 | xyz.py  | XYZ file handling |
