@@ -2,11 +2,13 @@
 """Viewer functions for Jupyter notebooks."""
 import io
 import pathlib
+import uuid
 
 import numpy as np
 
+from ..atoms import Atoms
 from ..data import COVALENT_RADII, CPK_COLORS
-from ..io import create_pdb_str, read_cube, read_xyz
+from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..logger import log
 from ..tools import get_isovalue
 from .fods import split_fods
@@ -116,7 +118,8 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
     fig.show()
 
 
-def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kwargs):
+def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
+              size=('400px', '400px'), **kwargs):
     """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -128,111 +131,51 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), **kw
         isovalue (float): Isovalue for sizing orbitals.
         gui (bool): Turn on the NGLView GUI.
         elec_symbols (list): Identifier for up and down FODs.
+        size (tuple): Widget size.
 
     Keyword Args:
-        **kwargs: Throwaway arguments.
+        **kwargs: NGLWidget keyword arguments.
 
     Returns:
         NGLWidget: Viewable object.
     """
     try:
-        from nglview import NGLWidget, TextStructure, write_html
+        from nglview import NGLWidget, write_html
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
 
     # If multiple files are given, try to open them with an interact drop-down menu
-    if isinstance(filename, (list, tuple)):
+    if isinstance(filename, (list, tuple)) and not filename[0].endswith('.xyz'):
         if executed_in_notebook():
             from ipywidgets import interact
-            return interact(lambda filename: view_file(filename, isovalue, gui, elec_symbols,
-                                                       **kwargs), filename=filename)
+            interact(lambda filename: view_file(filename, isovalue, gui, elec_symbols,
+                                                **kwargs), filename=filename)
+            return None
         # If we are not in a notebook open the files one by one
         for f in filename:
             view_file(f, isovalue, gui, elec_symbols, **kwargs)
             return None
 
     view = NGLWidget(**kwargs)
-    view._set_size('400px', '400px')
+    view._set_size(*size)
     # Set the gui to the view
     if gui:
         view.gui_style = 'ngl'
 
+    # Handle TRAJ files (or multiple XYZ files)
+    if isinstance(filename, (list, tuple)) or filename.endswith(('.trj', '.traj')):
+        view = _traj_view(view, filename)
     # Handle XYZ files
-    if filename.endswith('.xyz'):
-        # Atoms
-        atom, pos = read_xyz(filename)
-        atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
-        view.add_component(TextStructure(create_pdb_str(atom, pos)))
-        view[0].clear()
-        view[0].add_ball_and_stick()
-        # Spin up FODs
-        if len(pos_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
-                               pos_fod[0])))
-            view[1].clear()
-            view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
-        # Spin down FODs
-        if len(pos_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
-                               pos_fod[1])))
-            view[2].clear()
-            view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
-        view.center()
+    elif filename.endswith('.xyz'):
+        view = _xyz_view(view, filename, elec_symbols)
     # Handle CUBE files
     elif filename.endswith(('.cub', '.cube')):
-        # Atoms and cell
-        atom, pos, _, a, _, _ = read_cube(filename)
-        atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
-        view.add_component(TextStructure(create_pdb_str(atom, pos, a)))
-        view[0].clear()
-        view[0].add_ball_and_stick()
-        view.add_unitcell()
-        view.center()
-        # Spin up
-        view.add_component(filename)
-        view[1].clear()
-        # Negate isovalue here as a workaround for some display bugs
-        view[1].add_surface(negateIsolevel=True,
-                            isolevelType='value',
-                            isolevel=-isovalue,
-                            color='lightgreen',
-                            opacity=0.75,
-                            side='front')
-        # Spin down
-        view.add_component(filename)
-        view[2].clear()
-        view[2].add_surface(negateIsolevel=True,
-                            isolevelType='value',
-                            isolevel=isovalue,
-                            color='red',
-                            opacity=0.75,
-                            side='front')
-        # Spin up FODs
-        if len(pos_fod[0]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
-                               pos_fod[0])))
-            view[3].clear()
-            view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
-        # Spin down FODs
-        if len(pos_fod[1]) > 0:
-            view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
-                               pos_fod[1])))
-            view[4].clear()
-            view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
-    # Handle other files (mainly PDB)
+        view = _cube_view(view, filename, isovalue, elec_symbols)
+    # Handle other files (mainly for PDBs)
     else:
-        # If no xyz or cube file is used try a more generic file viewer
-        ext = pathlib.Path(filename).suffix.replace('.', '')
-        # It seems that only pdb works with this method
-        if ext != 'pdb':
-            log.warning('Only XYZ, CUBE, and PDB files are support, but others might work.')
-        with open(filename, 'r') as fh:
-            view.add_component(fh, ext=ext)
-        view[0].clear()
-        view[0].add_ball_and_stick()
-        view.center()
+        view = _generic_view(view, filename)
 
     # Check if the function has been executed in a notebook
     # If yes, just return the view
@@ -267,3 +210,190 @@ def executed_in_notebook():
     except (AttributeError, ImportError):
         return False
     return True
+
+
+def _generic_view(view, filename):
+    """Modify the view for a generic (probably PDB) file.
+
+    Args:
+        view (NGLWidget): Viewable object.
+        filename (str): Input filename.
+
+    Returns:
+        NGLWidget: Viewable object.
+    """
+    # If no XYZ or CUBE file is used try a more generic file viewer
+    ext = pathlib.Path(filename).suffix.replace('.', '')
+    # It seems that only PDB works with this method
+    if ext != 'pdb':
+        log.warning('Only XYZ, CUBE, and PDB files are support, but others might work.')
+    with open(filename, 'r') as fh:
+        view.add_component(fh, ext=ext)
+    view[0].clear()
+    view[0].add_ball_and_stick()
+    view.center()
+    return view
+
+
+def _cube_view(view, filename, isovalue, elec_symbols):
+    """Modify the view for a given CUBE file.
+
+    Args:
+        view (NGLWidget): Viewable object.
+        filename (str | list | tuple): Input filename(s).
+        isovalue (float): Isovalue for sizing orbitals.
+        elec_symbols (list): Identifier for up and down FODs.
+
+    Returns:
+        NGLWidget: Viewable object.
+    """
+    from nglview import TextStructure
+    # Atoms and cell
+    atom, pos, _, a, _, _ = read_cube(filename)
+    atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
+    view.add_component(TextStructure(create_pdb_str(atom, pos, a)))
+    view[0].clear()
+    view[0].add_ball_and_stick()
+    view.add_unitcell()
+    view.center()
+    # Spin up
+    view.add_component(filename)
+    view[1].clear()
+    # Negate isovalue here as a workaround for some display bugs
+    view[1].add_surface(negateIsolevel=True,
+                        isolevelType='value',
+                        isolevel=-isovalue,
+                        color='lightgreen',
+                        opacity=0.75,
+                        side='front')
+    # Spin down
+    view.add_component(filename)
+    view[2].clear()
+    view[2].add_surface(negateIsolevel=True,
+                        isolevelType='value',
+                        isolevel=isovalue,
+                        color='red',
+                        opacity=0.75,
+                        side='front')
+    # Spin up FODs
+    if len(pos_fod[0]) > 0:
+        view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
+                           pos_fod[0])))
+        view[3].clear()
+        view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+    # Spin down FODs
+    if len(pos_fod[1]) > 0:
+        view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
+                           pos_fod[1])))
+        view[4].clear()
+        view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
+    return view
+
+
+def _xyz_view(view, filename, elec_symbols):
+    """Modify the view for a given XYZ file.
+
+    Args:
+        view (NGLWidget): Viewable object.
+        filename (str | list | tuple): Input filename(s).
+        elec_symbols (list): Identifier for up and down FODs.
+
+    Returns:
+        NGLWidget: Viewable object.
+    """
+    from nglview import TextStructure
+    # Atoms
+    atom, pos = read_xyz(filename)
+    atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
+    view.add_component(TextStructure(create_pdb_str(atom, pos)))
+    view[0].clear()
+    view[0].add_ball_and_stick()
+    # Spin up FODs
+    if len(pos_fod[0]) > 0:
+        view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
+                           pos_fod[0])))
+        view[1].clear()
+        view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+    # Spin down FODs
+    if len(pos_fod[1]) > 0:
+        view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
+                           pos_fod[1])))
+        view[2].clear()
+        view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
+    view.center()
+    return view
+
+
+def _traj_view(view, filename):
+    """Modify the view for a given TRAJ file.
+
+    Args:
+        view (NGLWidget): Viewable object.
+        filename (str | list | tuple): Input filename(s).
+
+    Returns:
+        NGLWidget: Viewable object.
+    """
+    try:
+        from nglview.base_adaptor import Structure, Trajectory
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+
+    class eminusTrajectory(Trajectory, Structure):
+        """eminusTrajectory object to handle trajectory files.
+
+        The interface replicates the Trajectory classes in
+        https://nglviewer.org/nglview/latest/_modules/nglview/adaptor.html
+
+        Args:
+            filenames (str | list | tuple): XYZ input file paths/names.
+        """
+        def __init__(self, filenames):
+            """Initialize the eminusTrajectory object."""
+            self.atoms = []
+            if isinstance(filenames, str) and filenames.endswith(('.trj', '.traj')):
+                trajectory = read_traj(filenames)
+                for frame in trajectory:
+                    self.atoms.append(Atoms(*frame))
+            else:
+                if isinstance(filenames, str) and filenames.endswith('.xyz'):
+                    filenames = [filenames]
+                for f in filenames:
+                    self.atoms.append(Atoms(*read_xyz(f)))
+            self.ext = 'pdb'
+            self.params = {}
+            self.id = str(uuid.uuid4())
+
+        def get_coordinates(self, index):
+            """Get the atom coordinates for a given frame.
+
+            Args:
+                index (int): Frame number.
+
+            Returns:
+                ndarray: Atom positions in Bohr.
+            """
+            return self.atoms[index].pos
+
+        @property
+        def n_frames(self):
+            """Number of frames."""
+            return len(self.atoms)
+
+        def get_structure_string(self, index=0):
+            """Get the structure string per frame in the PDB format.
+
+            Keyword Args:
+                index (int): Frame number.
+
+            Returns:
+                str: Structure string.
+            """
+            return create_pdb_str(self.atoms[index].atom, self.atoms[index].pos)
+
+    trajectory = eminusTrajectory(filename)
+    view.add_trajectory(trajectory)
+    view.center()
+    return view

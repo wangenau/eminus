@@ -130,6 +130,7 @@ Feature overview
    <div class="colored-heading" style="background:#cdcc5d">Files</div>
    <ul class="colored-ul">
       <li style="background:#dbdb8d">XYZ</li>
+      <li style="background:#dbdb8d">TRAJ</li>
       <li style="background:#dbdb8d">CUBE</li>
       <li style="background:#dbdb8d">PDB</li>
       <li style="background:#dbdb8d">JSON</li>

@@ -174,6 +174,7 @@ def test_filename_ending():
     read_traj(filename)
     os.remove(filename + '.traj')
 
+
 if __name__ == '__main__':
     import inspect
     import pathlib

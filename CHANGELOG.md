@@ -6,6 +6,7 @@ dev
 - New features
    - Add band path sampling functionalities
    - Add trajectory IO functions
+   - Add support for displaying trajectories
 - Updated docs
    - Add a FOD optimization and a reduced density gradient example
    - Add references to data
