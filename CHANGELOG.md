@@ -10,8 +10,9 @@ dev
    - Add a FOD optimization and a reduced density gradient example
    - Add references to data
 - Miscellaneous
-   - Rename X to pos in Atoms
-   - Merge R into a in Atoms
+   - Breaking:
+      - Rename X to pos in Atoms
+      - Merge R into a in Atoms
    - Support viewing multiple files
    - Support non-cubic cells in Atoms, io, and viewer functions
    - Support viewing multiple files
