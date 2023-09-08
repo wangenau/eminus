@@ -10,7 +10,6 @@ Modules
 
    eminus
    eminus.atoms
-   eminus.bandpath
    eminus.config
    eminus.data
    eminus.dft
@@ -18,6 +17,7 @@ Modules
    eminus.energies
    eminus.gga
    eminus.gth
+   eminus.kpoints
    eminus.localizer
    eminus.logger
    eminus.minimizer

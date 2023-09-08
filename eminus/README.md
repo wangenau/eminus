@@ -5,7 +5,6 @@ Main source code directory.
 | File            | Description |
 | :-------------: | :---------: |
 | atoms.py        | Atoms class definition |
-| bandpath.py     | Parse and sample band paths |
 | config.py       | Consolidated configuration module |
 | data.py         | Atom specific data |
 | dft.py          | DFT routines |
@@ -13,6 +12,7 @@ Main source code directory.
 | energies.py     | Energy object and calculation |
 | gga.py          | Functions needed for GGAs and meta-GGAs |
 | gth.py          | GTH pseudopotential functions |
+| kpoints.py      | Generate k-points and sample band paths |
 | localizer.py    | Localization routines |
 | logger.py       | Logging configuration |
 | minimizer.py    | Minimization algorithms |

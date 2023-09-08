@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Parse and sample band paths for band structures."""
+"""Generate k-points and sample band paths."""
 import numpy as np
 from scipy.linalg import norm, pinv
 
@@ -21,6 +21,29 @@ def kpoint_convert(k_points, lattice_vectors):
     """
     inv_cell = 2 * np.pi * pinv(lattice_vectors).T
     return k_points @ inv_cell
+
+
+def monkhorst_pack(nk, lattice_vectors):
+    """Generate a Monkhorst-Pack mesh of k-points, i.e., equally spaced k-points.
+
+    Args:
+        nk (list | tuple | ndarray): Number of k-points per axis.
+        lattice_vectors (ndarray): Lattice vectors.
+
+    Returns:
+        tuple[ndarray, ndarray]: k-points and their respective weights.
+    """
+    # Same index matrix as in Atoms._get_index_matrices()
+    nktotal = np.prod(nk)
+    ms = np.arange(nktotal)
+    m1 = np.floor(ms / (nk[2] * nk[1])) % nk[0]
+    m2 = np.floor(ms / nk[2]) % nk[1]
+    m3 = ms % nk[2]
+    M = np.column_stack((m1, m2, m3))
+
+    k_points = (M + 0.5) / nk - 0.5
+    # Without removing redundancies the weight is the same for all k-points
+    return kpoint_convert(k_points, lattice_vectors), np.ones(nktotal) / nktotal
 
 
 def bandpath(lattice, lattice_vectors, path, N):
