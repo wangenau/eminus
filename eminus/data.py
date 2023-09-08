@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Atomic data collections."""
+import math
 
 #: Map atom symbols and atom numbers.
 SYMBOL2NUMBER = {
@@ -329,7 +330,7 @@ CPK_COLORS = {
 #: Special points in Brillouin zones of different crystal systems.
 #: Reference: Comput. Mater. Sci. 49, 299.
 SPECIAL_POINTS = {
-    'cubic': {
+    'sc': {
         'G': [0, 0, 0],
         'M': [1 / 2, 1 / 2, 0],
         'R': [1 / 2, 1 / 2, 1 / 2],
@@ -375,4 +376,21 @@ SPECIAL_POINTS = {
         'L': [1 / 2, 0, 1 / 2],
         'M': [1 / 2, 0, 0]
     }
+}
+
+#: Primitive lattice vectors of different crystal systems.
+#: Reference: Comput. Mater. Sci. 49, 299.
+LATTICE_VECTORS = {
+    'sc': [[1, 0, 0],
+           [0, 1, 0],
+           [0, 0, 1]],
+    'fcc': [[0, 1 / 2, 1 / 2],
+            [1 / 2, 0, 1 / 2],
+            [1 / 2, 1 / 2, 0]],
+    'bcc': [[-1 / 2, 1 / 2, 1 / 2],
+            [1 / 2, -1 / 2, 1 / 2],
+            [1 / 2, 1 / 2, -1 / 2]],
+    'hexagonal': [[1 / 2, -math.sqrt(3) / 2, 0],
+                  [1 / 2, math.sqrt(3) / 2, 0],
+                  [0, 0, 1]]
 }
