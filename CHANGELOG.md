@@ -4,7 +4,8 @@ Changelog
 dev
 ---
 - New features
-   - Add band path sampling functionalities
+   - Add a Cell generation function
+   - Add k-point generation functionalities
    - Add support to handle trajectory files
 - Updated docs
    - Add a FOD optimization and a reduced density gradient example

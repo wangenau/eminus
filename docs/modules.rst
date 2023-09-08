@@ -10,6 +10,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.cell
    eminus.config
    eminus.data
    eminus.dft
