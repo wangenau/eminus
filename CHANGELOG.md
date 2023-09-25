@@ -14,6 +14,7 @@ dev
    - Breaking:
       - Rename X to pos in Atoms
       - Merge R into a in Atoms
+   - Indicate Python 3.12 support
    - Support viewing multiple files
    - Support non-cubic cells in Atoms, io, and viewer functions
    - Support viewing multiple files
