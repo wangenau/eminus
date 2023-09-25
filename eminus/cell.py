@@ -52,7 +52,7 @@ STRUCTURES = {
 
 
 def Cell(atom, lattice, ecut, a, basis=None, verbose=None):
-    """Wrapper to create Atoms classes for crytal systems.
+    """Wrapper to create Atoms classes for crystal systems.
 
     Args:
         atom (str | list | tuple): Atom symbols.
