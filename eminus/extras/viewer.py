@@ -147,7 +147,8 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
         raise
 
     # If multiple files are given, try to open them with an interact drop-down menu
-    if isinstance(filename, (list, tuple)) and not filename[0].endswith('.xyz'):
+    # If all files are XYZ files they will be displayed as a trajectory instead
+    if isinstance(filename, (list, tuple)) and not np.all([f.endswith('.xyz')for f in filename]):
         if executed_in_notebook():
             from ipywidgets import interact
             interact(lambda filename: view_file(filename, isovalue, gui, elec_symbols,
