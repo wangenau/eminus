@@ -99,7 +99,8 @@ def get_tau(atoms, Y):
     # Use the definition with a division by two
     # return 0.5 * np.sum(atoms.occ.f[:, None, :] * sumdYrs, axis=2)
     # Or in compressed Einstein notation:
-    return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.occ.f, dYrs.conj(), dYrs))
+    return 0.5 * np.real(np.einsum('sj,sijr,sijr->si', atoms.occ.f, dYrs.conj(), dYrs,
+                         optimize='greedy'))
 
 
 def calc_Vtau(scf, spin, W, vtau):
