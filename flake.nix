@@ -37,7 +37,8 @@
           sphinxcontrib-bibtex
         ]);
 
-    in {
+    in
+    {
       devShells."${system}".default = with pkgs;
         mkShell {
           buildInputs = [
