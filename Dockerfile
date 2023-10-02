@@ -15,13 +15,13 @@ RUN apt-get update -y \
 # Install Torch manually since we only want to compute on the CPU
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
+# Downgrade Jupyter to fix NGLView, see https://github.com/nglviewer/nglview/issues/1071
+RUN pip install notebook==6.* --no-cache-dir
+
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
 RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[all,dev] --no-cache-dir
-
-# Downgrade Jupyter to fix NGLView
-RUN pip install jupyter_client==7.* notebook==6.* --no-cache-dir
 
 # Set up the application stage
 FROM python:3.11-slim
@@ -35,8 +35,7 @@ RUN addgroup --system eminus \
 && mkdir /nonexistent/ \
 && chown eminus:eminus /nonexistent/
 WORKDIR /usr/app/
-COPY --chown=eminus:eminus --from=build /usr/app/venv/ ./venv/
-COPY --chown=eminus:eminus --from=build /usr/app/eminus/ ./eminus/
+COPY --chown=eminus:eminus --from=build /usr/app/ /usr/app/
 
 # Set the working directory and set variables
 WORKDIR /usr/app/eminus/
