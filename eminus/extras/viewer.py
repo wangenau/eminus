@@ -260,13 +260,13 @@ def _cube_view(view, filename, isovalue, elec_symbols):
     # Spin up
     view.add_component(filename)
     view[1].clear()
-    # Negate isovalue here as a workaround for some display bugs
-    view[1].add_surface(negateIsolevel=True,
+    view[1].add_surface(negateIsolevel=False,
                         isolevelType='value',
-                        isolevel=-isovalue,
+                        isolevel=isovalue,
                         color='lightgreen',
                         opacity=0.75,
-                        side='front')
+                        side='front',
+                        depthWrite=False)
     # Spin down
     view.add_component(filename)
     view[2].clear()
@@ -275,7 +275,8 @@ def _cube_view(view, filename, isovalue, elec_symbols):
                         isolevel=isovalue,
                         color='red',
                         opacity=0.75,
-                        side='front')
+                        side='front',
+                        depthWrite=False)
     # Spin up FODs
     if len(pos_fod[0]) > 0:
         view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
