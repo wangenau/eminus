@@ -15,9 +15,6 @@ RUN apt-get update -y \
 # Install Torch manually since we only want to compute on the CPU
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
-# Downgrade Jupyter to fix NGLView, see https://github.com/nglviewer/nglview/issues/1071
-RUN pip install notebook==6.* --no-cache-dir
-
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
 RUN git clone https://gitlab.com/wangenau/eminus.git \

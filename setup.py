@@ -38,7 +38,7 @@ extras['dev'] = [
     'coverage>=4.4',           # Generate coverage reports
     'furo>=2022.02.14.1',      # Documentation theme
     'mypy>=0.931',             # Static type checker
-    'notebook',                # Run and convert notebooks to HTML
+    'notebook<7',              # Run and convert notebooks to HTML
     'pytest>=5.4',             # Test utilities
     'pytest-cov>=2.6.1',       # Collect test coverage data
     'ruff>=0.0.276',           # Style guide checker
