@@ -87,7 +87,7 @@ python:
   image: python:$PYTHON_VERSIONS-slim
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.12-rc']
+      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.12']
 
 ##### Test code functionality under Linux, macOS, and Windows #####
 platform:linux:
