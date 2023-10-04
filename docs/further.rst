@@ -53,7 +53,7 @@ Coverage
 
    pip install coverage pytest pytest-cov
 
-| A detailed coverage report that gives a clear overview of the covered code `is uploaded regularly <https://wangenau.gitlab.io/eminus/htmlcov>`_.
+| A detailed coverage report that gives a clear overview of the covered code `is uploaded with every release <https://wangenau.gitlab.io/eminus/htmlcov>`_.
 | To create this webpage, use
 
 .. code-block:: console
