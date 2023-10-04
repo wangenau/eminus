@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.6.1 - Oct 04, 2023
+---------------------
 - New features
    - Add a Cell generation function
    - Add k-point generation functionalities
