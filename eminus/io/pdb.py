@@ -77,7 +77,7 @@ def create_pdb_str(atom, pos, a=None):
     if a is not None:
         a = bohr2ang(a)
 
-    # pdb files have specific numbers of characters for every data with changing justification
+    # PDB files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not lose track of line lengths
     pdb = ''
     # Create data for a cuboidal cell

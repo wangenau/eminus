@@ -112,7 +112,7 @@ def bandpath(lattice, lattice_vectors, path, N):
 
 
 def kpoints2axis(lattice, lattice_vectors, path, k_points):
-    """Generate the x-axis for band structure plots from k-points and the corresponding band path.
+    """Generate the x-axis for band structures from k-points and the respective band path.
 
     Args:
         lattice (str): Lattice type.

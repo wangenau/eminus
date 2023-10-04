@@ -99,8 +99,8 @@ Documentation
    pip install sphinx furo sphinxcontrib-bibtex
    sphinx-build -b html ./docs ./public
 
-The documentation build time can be shortened by using more processes, e.g., with 6 processes
+The documentation build time can be shortened by using more processes, e.g., with
 
 .. code-block:: console
 
-   sphinx-build -j 6 -b html ./docs ./public
+   sphinx-build -j $(nproc) -b html ./docs ./public

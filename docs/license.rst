@@ -45,6 +45,8 @@ License
      -
    * -
      -
+   * - matplotlib
+     - PSF
    * - nglview
      - MIT
    * - plotly

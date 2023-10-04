@@ -82,7 +82,7 @@ def write_json(obj, filename):
     class CustomEncoder(json.JSONEncoder):
         """Custom JSON encoder class to serialize eminus classes."""
         def default(self, obj):
-            # ndarrays are not json serializable, encode them as base64 to save them
+            # ndarrays are not JSON serializable, encode them as base64 to save them
             if isinstance(obj, np.ndarray):
                 data = base64.b64encode(obj.copy(order='C')).decode('utf-8')
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}

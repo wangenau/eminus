@@ -22,7 +22,7 @@ def view(*args, **kwargs):
 
 
 def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
-    """Display atoms and 3D-coordinates, e.g., FODs or grid points, or even densities.
+    """Display atoms with optional FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python
 

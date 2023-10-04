@@ -260,7 +260,7 @@ def T(atoms, W, dr):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        dr (ndarray): Real-space shift.
+        dr (ndarray): Real-space shifting vector.
 
     Returns:
         ndarray: The operator applied on W.

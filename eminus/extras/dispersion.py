@@ -27,7 +27,7 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
         scf: SCF object.
 
     Keyword Args:
-        version (str): Damping function, can be one of: d3bj', 'd3bjm', 'd3zero', 'd3zerom', 'd3op'.
+        version (str): Damping function, can be one of 'd3bj', 'd3bjm', 'd3zero', 'd3zerom', 'd3op'.
         atm (bool): Weather to use three-body dispersion energies.
         xc (str | None): Overwrite the functional keyword if the automatic detection does not work.
 

@@ -42,7 +42,7 @@ def read_xyz(filename):
             atom.append(line_split[0])
             pos.append(np.float64(line_split[1:4]))
 
-    # xyz files are in Angstrom, so convert to Bohr
+    # XYZ files are in Angstrom, so convert to Bohr
     pos = ang2bohr(np.asarray(pos))
     return atom, pos
 
