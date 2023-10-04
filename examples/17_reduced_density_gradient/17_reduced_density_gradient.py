@@ -21,6 +21,7 @@ s = get_reduced_gradient(scf, eps=1e-5)
 # # Plot s over n
 # # Compare with figure 2 of the supplemental material
 # # Find the plot named `density_finger.png`
+plt.style.use('../eminus.mplstyle')
 plt.figure()
 plt.scatter(scf.n, s, c=s, cmap='inferno')
 plt.xlabel('$n$')
