@@ -1,15 +1,8 @@
 #!/usr/bin/env python3
 """Dispersion correction interface."""
-# Somehow I get wrong energies if I try to move these imports into get_Edisp
+# Import the DFT-D3 C extension beforehand, if one doesn't do this the dispersion energies are wrong
 try:  # noqa: SIM105
-    from dftd3.interface import (
-        DispersionModel,
-        ModifiedRationalDampingParam,
-        ModifiedZeroDampingParam,
-        OptimizedPowerDampingParam,
-        RationalDampingParam,
-        ZeroDampingParam,
-    )
+    import dftd3._libdftd3  # noqa: F401
 except ImportError:
     pass
 import numpy as np
@@ -35,7 +28,14 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
         float: Dispersion correction energy.
     """
     try:
-        import dftd3  # noqa: F401
+        from dftd3.interface import (
+            DispersionModel,
+            ModifiedRationalDampingParam,
+            ModifiedZeroDampingParam,
+            OptimizedPowerDampingParam,
+            RationalDampingParam,
+            ZeroDampingParam,
+        )
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[dispersion]".\n\n')
