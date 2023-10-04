@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Consolidated configuration module."""
+from __future__ import annotations
+
 import numbers
 import os
 import pathlib
 import sys
-from typing import Callable, Union
+from typing import Callable
 
 from .logger import log
 
@@ -143,7 +145,7 @@ use_torch: bool
 use_gpu: bool
 use_pylibxc: bool
 threads: int
-verbose: Union[int, str]
+verbose: int | str
 info: Callable[[], None]
 
 # Do not initialize the class when Sphinx is running

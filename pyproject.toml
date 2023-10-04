@@ -22,6 +22,7 @@ select = [
     "B",       # flake8-bugbear
     "A",       # flake8-builtins
     "C4",      # flake8-comprehensions
+    "FA",      # flake8-future-annotations
     "PIE",     # flake8-pie
     "PT",      # flake8-pytest-style
     "RSE",     # flake8-raise

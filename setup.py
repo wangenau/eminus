@@ -4,8 +4,9 @@
 For a full list of options see the documentation:
 https://setuptools.pypa.io/en/latest/references/keywords.html
 """
+from __future__ import annotations
+
 import re
-from typing import Dict, List
 
 from setuptools import find_packages, setup
 
@@ -16,7 +17,7 @@ with open('eminus/version.py', 'r') as fh:
 with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
     long_description: str = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
 
-extras: Dict[str, List[str]] = {
+extras: dict[str, list[str]] = {
     'dispersion': [
         'dftd3>=0.6.0'  # Interface for DFT-D3 dispersion corrections
     ],
