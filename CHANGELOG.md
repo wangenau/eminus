@@ -17,7 +17,7 @@ v2.6.1 - Oct 04, 2023
    - Indicate Python 3.12 support
    - Support viewing multiple files
    - Support non-cubic cells in Atoms, io, and viewer functions
-   - Support viewing multiple files
+   - Support viewing trajectory files
    - Fix Nix flake
 
 v2.6.0 - Aug 07, 2023
