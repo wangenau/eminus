@@ -69,10 +69,9 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
                 scf.is_converged = True
                 return True
         # If a gradient tolerance has been set we also check norm_g for convergence
-        else:
-            if abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
-                scf.is_converged = True
-                return True
+        elif abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
+            scf.is_converged = True
+            return True
         # Check if the current energy is higher than the last two values
         if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
             scf.log.warning('Total energy is not decreasing.')

@@ -47,12 +47,11 @@ def I(atoms, W):
             else:
                 Wfft = np.zeros((n, atoms.occ._Nstate), dtype=W.dtype)
             Wfft[atoms._active] = W
+    elif W.shape[1] == len(atoms._G2):
+        Wfft = W
     else:
-        if W.shape[1] == len(atoms._G2):
-            Wfft = W
-        else:
-            Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
-            Wfft[:, atoms._active[0]] = W
+        Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
+        Wfft[:, atoms._active[0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:
@@ -172,12 +171,11 @@ def Jdag(atoms, W):
             else:
                 Wfft = np.zeros((n, atoms.occ._Nstate), dtype=W.dtype)
             Wfft[atoms._active] = W
+    elif W.shape[1] == len(atoms._G2):
+        Wfft = W
     else:
-        if W.shape[1] == len(atoms._G2):
-            Wfft = W
-        else:
-            Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
-            Wfft[:, atoms._active[0]] = W
+        Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
+        Wfft[:, atoms._active[0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:

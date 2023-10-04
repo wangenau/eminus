@@ -13,24 +13,24 @@ target-version = "py37"
 respect-gitignore = true
 
 select = [
-    "F",                  # Pyflakes
-    "E", "W",             # pycodestyle
-    "C90",                # mccabe
-    "I",                  # isort
-    "D",                  # pydocstyle
-    "S",                  # flake8-bandit
-    "B",                  # flake8-bugbear
-    "A",                  # flake8-builtins
-    "C4",                 # flake8-comprehensions
-    "PIE",                # flake8-pie
-    "PT",                 # flake8-pytest-style
-    "RSE",                # flake8-raise
-    "RET",                # flake8-return
-    "SIM",                # flake8-simplify
-    "PLC", "PLE", "PLW",  # Pylint
-    "NPY",                # NumPy-specific rules
-    "PERF",               # Perflint
-    "RUF"                 # Ruff-specific rules
+    "F",       # Pyflakes
+    "E", "W",  # pycodestyle
+    "C90",     # mccabe
+    "I",       # isort
+    "D",       # pydocstyle
+    "S",       # flake8-bandit
+    "B",       # flake8-bugbear
+    "A",       # flake8-builtins
+    "C4",      # flake8-comprehensions
+    "PIE",     # flake8-pie
+    "PT",      # flake8-pytest-style
+    "RSE",     # flake8-raise
+    "RET",     # flake8-return
+    "SIM",     # flake8-simplify
+    "PL",      # Pylint
+    "NPY",     # NumPy-specific rules
+    "PERF",    # Perflint
+    "RUF"      # Ruff-specific rules
 ]
 
 ignore = [
@@ -43,6 +43,12 @@ ignore = [
     # SIM108: Use ternary operator instead of `if`-`else`-block
     # if-else blocks should be written down explicitly
     "SIM108",
+    # PLR0911: Too many return statements
+    # PLR0912: Too many branches
+    # PLR0913: Too many arguments to function call
+    # PLR2004: Magic value used in comparison
+    # These rules feel a bit to restrictive for now
+    "PLR0911", "PLR0912", "PLR0913", "PLR2004",
     # RUF005: Consider `(*t, v)` instead of concatenation
     # This seems to be slower in the cases we use it
     "RUF005"

@@ -107,26 +107,25 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     if dn_spin is None:
         # For LDAs we only need the spin densities that are already in the needed shape
         rho = n_spin
-    else:
-        if tau is None:
-            # For GGAs we have to append the density gradients
-            # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
-            if Nspin == 1:
-                # For spin-paired systems we have to remove the spin indexing (the outermost shape)
-                rho = np.vstack((n_spin[0], dn_spin[0].T))
-            else:
-                rho = np.array([np.vstack((n_spin[0], dn_spin[0].T)),
-                                np.vstack((n_spin[1], dn_spin[1].T))])
+    elif tau is None:
+        # For GGAs we have to append the density gradients
+        # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
+        if Nspin == 1:
+            # For spin-paired systems we have to remove the spin indexing (the outermost shape)
+            rho = np.vstack((n_spin[0], dn_spin[0].T))
         else:
-            # For meta-GGAs we have to append the kinetic energy densities as well
-            # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n,lapl,tau)
-            # We do not support meta-GGAs with a dependency of the laplacian so set it to zero
-            lapl = np.zeros(len(n_spin[0]))
-            if Nspin == 1:
-                rho = np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
-            else:
-                rho = np.array([np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
-                                np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1]))])
+            rho = np.array([np.vstack((n_spin[0], dn_spin[0].T)),
+                            np.vstack((n_spin[1], dn_spin[1].T))])
+    else:
+        # For meta-GGAs we have to append the kinetic energy densities as well
+        # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n,lapl,tau)
+        # We do not support meta-GGAs with a dependency of the laplacian so set it to zero
+        lapl = np.zeros(len(n_spin[0]))
+        if Nspin == 1:
+            rho = np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
+        else:
+            rho = np.array([np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
+                            np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1]))])
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
