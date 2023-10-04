@@ -10,8 +10,8 @@ from .dft import get_epsilon, guess_pseudo, guess_random
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gth import GTH
 from .logger import create_logger, get_level
-from .minimizer import IMPLEMENTED as all_minimizer
-from .potentials import IMPLEMENTED as all_potentials
+from .minimizer import IMPLEMENTED as ALL_MINIMIZER
+from .potentials import IMPLEMENTED as ALL_POTENTIALS
 from .potentials import init_pot
 from .tools import center_of_mass, get_spin_squared
 from .version import info
@@ -116,7 +116,7 @@ class SCF:
 
     @pot.setter
     def pot(self, value):
-        if value.lower() in all_potentials:
+        if value.lower() in ALL_POTENTIALS:
             self._pot = value.lower()
             # Only set the pseudopotential type for GTH pseudopotentials
             if self._pot == 'gth':
@@ -165,7 +165,7 @@ class SCF:
         # Set lowercase to all keys
         value = {k.lower(): v for k, v in value.items()}
         for opt in value:
-            if opt not in all_minimizer:
+            if opt not in ALL_MINIMIZER:
                 KeyError(f'No minimizer found for "{opt}".')
         self._opt = value
 
@@ -228,9 +228,9 @@ class SCF:
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self.log.info(f'Start {all_minimizer[imin].__name__}...')
+            self.log.info(f'Start {ALL_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
-            Elist = all_minimizer[imin](self, self.opt[imin], **kwargs)
+            Elist = ALL_MINIMIZER[imin](self, self.opt[imin], **kwargs)
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}
