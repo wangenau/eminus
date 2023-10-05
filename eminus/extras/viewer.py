@@ -171,7 +171,7 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, l
     fig.add_trace(contours)
 
     # Theming
-    fig.update_layout(template=None,
+    fig.update_layout(template='none',
                       width=size[0],
                       height=size[1],
                       margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
