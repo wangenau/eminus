@@ -21,7 +21,7 @@ def view(*args, **kwargs):
     return view_atoms(*args, **kwargs)
 
 
-def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
+def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600, 600)):
     """Display atoms with optional FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python
@@ -34,9 +34,10 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
         plot_n (bool): Weather to plot the electronic density (only for executed scf objects).
         percent (float): Amount of density that should be contained.
         surfaces (int): Number of surfaces to display in density plots (reduce for performance).
+        size (tuple): Widget size.
 
     Returns:
-        None.
+        Figure: Viewable object.
     """
     try:
         import plotly.graph_objects as go
@@ -112,14 +113,79 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20):
         scene['yaxis']['range'] = [0, atoms.a[1, 1]]
         scene['zaxis']['range'] = [0, atoms.a[2, 2]]
     fig.update_layout(scene=scene,
+                      width=size[0],
+                      height=size[1],
                       legend={'itemsizing': 'constant', 'title': 'Selection'},
                       hoverlabel_bgcolor='black',
                       template='none')
-    fig.show()
+    return fig
+
+
+def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, linewidth=1,
+                 size=(400, 400)):
+    """Display contour lines of field data like electronic densities.
+
+    Reference: https://plotly.com/python
+
+    Args:
+        obj: Atoms or SCF object.
+        field: Real-space field data.
+
+    Keyword Args:
+        axis (int): Axis to slice through.
+        value: (float): Slice value scaled by the axis size.
+        lines: Number of contour lines.
+        max_value (float): Truncation value for the field data.
+        zoom (float): Initial zoom.
+        linewidth (float): Contour line width.
+        size (tuple): Widget size.
+
+    Returns:
+        Figure: Viewable object.
+    """
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+    atoms = obj._atoms
+
+    # Get the axes indices
+    axes = [(axis + 1) % 3, (axis + 2) % 3, axis]
+    # Create an index mask to obtain a clean slice through the cell
+    # Since the expression is a bit involved it can be understood with the following pseudo-code:
+    # mask = |axis_values - slice_value| < axis_value_dist
+    mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < \
+        (atoms.a[axes[2], axes[2]] / atoms.s[axes[2]])
+    # Remove large and small values (similar to VESTA)
+    field[field > max_value] = max_value
+    field[field < -max_value] = -max_value
+
+    # Create the contour lines
+    fig = go.Figure()
+    contours = go.Contour(x=atoms.r[:, axes[0]][mask], y=atoms.r[:, axes[1]][mask], z=field[mask],
+                          contours_coloring='none',
+                          ncontours=lines,
+                          line_width=linewidth)
+    fig.add_trace(contours)
+
+    # Theming
+    fig.update_layout(template=None,
+                      width=size[0],
+                      height=size[1],
+                      margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
+                      xaxis={'range': [(1 - zoom) * atoms.a[axes[0], axes[0]],
+                                       zoom * atoms.a[axes[0], axes[0]]],
+                             'visible': False},
+                      yaxis={'range': [(1 - zoom) * atoms.a[axes[1], axes[1]],
+                                       zoom * atoms.a[axes[1], axes[1]]],
+                             'visible': False})
+    return fig
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
-              size=('400px', '400px'), **kwargs):
+              size=(600, 600), **kwargs):
     """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -160,7 +226,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
             return None
 
     view = NGLWidget(**kwargs)
-    view._set_size(*size)
+    view._set_size(f'{size[0]}px', f'{size[1]}px')
     # Set the gui to the view
     if gui:
         view.gui_style = 'ngl'
