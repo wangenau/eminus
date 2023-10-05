@@ -1,6 +1,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Add a contour line viewer
+
 v2.6.1 - Oct 04, 2023
 ---------------------
 - New features

@@ -122,7 +122,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
 
 
 def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, linewidth=1,
-                 size=(400, 400)):
+                 size=(600, 600)):
     """Display contour lines of field data like electronic densities.
 
     Reference: https://plotly.com/python
@@ -185,7 +185,7 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, l
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
-              size=(600, 600), **kwargs):
+              size=(400, 400), **kwargs):
     """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
