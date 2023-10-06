@@ -80,7 +80,7 @@ minimal:
   image: python:3.7-slim
   before_script:
     - pip install numpy==1.17.0 scipy==1.6.0
-    - export OMP_NUM_THREADS=$(nproc)
+    - export OPENBLAS_NUM_THREADS=$(nproc)
 
 ##### Test code functionality for all Python versions between #####
 python:
