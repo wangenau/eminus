@@ -59,7 +59,7 @@ You can also pass command line arguments to the container, e.g., to start a Pyth
 
 .. code-block:: console
 
-    docker run -it  wangenau/eminus:version python
+    docker run -it wangenau/eminus:version python
 
 Nix usage
 =========

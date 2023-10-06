@@ -5,6 +5,7 @@ dev
 ---
 - Miscellaneous
    - Add a contour line viewer
+   - Add a NixOS CI test
 
 v2.6.1 - Oct 04, 2023
 ---------------------

@@ -103,6 +103,17 @@ platform:macos:
   before_script:
     - python3 -m ensurepip
 
+platform:nixos:
+  extends: .pytest-pedantic
+  image: nixpkgs/nix:nixos-23.05
+  script:
+    # Remove Torch since the build time takes too long
+    - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/  torch-bin/  \# torch-bin/g" flake.nix
+    # Remove Matplotlib since some example scripts will fail in the CI
+    - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/matplotlib/\# matplotlib/g" flake.nix
+    # In the CI nix develop will open a shell and close in immediately, use -c to execute commands
+    - nix --extra-experimental-features "nix-command flakes" develop -c pytest tests/ -m "not slow"
+
 platform:windows:
   extends: .pytest-pedantic
   tags:
