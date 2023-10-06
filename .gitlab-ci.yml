@@ -80,6 +80,7 @@ minimal:
   image: python:3.7-slim
   before_script:
     - pip install numpy==1.17.0 scipy==1.6.0
+    - export OMP_NUM_THREADS=$nproc
 
 ##### Test code functionality for all Python versions between #####
 python:
@@ -154,7 +155,7 @@ pages:
     - pip install -e .
     # Build Sphinx documentation
     - pip install sphinx furo sphinxcontrib-bibtex
-    - sphinx-build -b html ./docs ./public
+    - sphinx-build -j $nproc -b html ./docs ./public
     # Convert notebooks to HTML
     - pip install notebook
     - find examples -name '*.ipynb' -exec jupyter nbconvert --to html {} --template classic --ExecutePreprocessor.store_widget_state=True \;
