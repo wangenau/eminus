@@ -46,9 +46,9 @@ def test_cell(a, ref, Omega):
     """Test the setting of cell size."""
     atoms = Atoms(*inp, a=a).build()
     assert atoms.Omega == Omega
-    assert_allclose(atoms.a, ref)
+    assert_equal(atoms.a, ref)
     assert_allclose(atoms.Omega, det(atoms.a))
-    assert_allclose(atoms.r[0], 0)
+    assert_equal(atoms.r[0], 0)
     assert len(atoms.r) == atoms.Ns
     assert_allclose(atoms.s[0] / atoms.s[1], abs(atoms.a[0, 0] / atoms.a[1, 1]), atol=0.1)
     assert atoms.dV == atoms.Omega / np.prod(atoms.s)
@@ -89,15 +89,15 @@ def test_center(center):
     """Test the center option."""
     atoms = Atoms('H2', [[0, 0, 0], [1, 1, 1]], center=center)
     if center is False:
-        assert_allclose(atoms.pos, [[0, 0, 0], [1, 1, 1]])
+        assert_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
     elif center is True:
-        assert_allclose(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
+        assert_equal(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
     elif center == 'rotate':
         assert_allclose(atoms.pos, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
     elif center == 'shift':
-        assert_allclose(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
+        assert_equal(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
     elif center == 'recentered':
-        assert_allclose(atoms.pos, [[0, 0, 0], [1, 1, 1]])
+        assert_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
 
 
 def test_verbose():
@@ -137,7 +137,7 @@ def test_s(s, ref):
     atoms = Atoms(*inp)
     if s is not None:
         atoms.s = s
-    assert_allclose(atoms.s, ref)
+    assert_equal(atoms.s, ref)
 
 
 @pytest.mark.parametrize(('atom', 'Z', 'ref', 'Nref'), [('H', None, [1], 1),
@@ -161,10 +161,10 @@ def test_G():
     atoms = Atoms(*inp)
     atoms.s = 2
     atoms.build()
-    assert_allclose(atoms.G[0], 0)
+    assert_equal(atoms.G[0], 0)
     assert len(atoms.G) == atoms.Ns
-    assert_allclose(atoms.G2, atoms.G2c)
-    assert_allclose(atoms.Sf, 1)
+    assert_equal(atoms.G2, atoms.G2c)
+    assert_equal(atoms.Sf, 1)
     atoms = Atoms(*inp)
     atoms.s = 2
     atoms.build()

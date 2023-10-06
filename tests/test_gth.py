@@ -4,7 +4,7 @@ import inspect
 import pathlib
 
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 
 from eminus import Atoms, SCF
 
@@ -44,7 +44,7 @@ def test_mock():
     E = scf.run()
     assert_allclose(E, E_ref)
     for key in scf.gth['X']:
-        assert_allclose(scf.gth['X'][key], 0)
+        assert_equal(scf.gth['X'][key], 0)
 
 
 def test_custom_files():

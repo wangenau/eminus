@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Test the k-points functionalities."""
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_equal
 
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
 from eminus.kpoints import bandpath, kpoints2axis, monkhorst_pack
@@ -14,7 +14,7 @@ def test_monkhorst_pack():
     assert_equal(k_points, 0)
     k_points, wk = monkhorst_pack((2, 2, 2), LATTICE_VECTORS['sc'])
     assert_equal(wk, 1 / 8)
-    assert_allclose(np.abs(k_points), np.pi / 2)
+    assert_equal(np.abs(k_points), np.pi / 2)
 
 
 def test_bandpath_lgx():
@@ -25,15 +25,15 @@ def test_bandpath_lgx():
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'LGX', 3)
     assert len(k_points) == 3
-    assert_allclose(k_points, s_points)
+    assert_equal(k_points, s_points)
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'LGX', 10)
     assert len(k_points) == 10
-    assert_allclose(k_points[[0, 4, 9]], s_points)
+    assert_equal(k_points[[0, 4, 9]], s_points)
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'LGX', 50)
     assert len(k_points) == 50
-    assert_allclose(k_points[[0, 23, 49]], s_points)
+    assert_equal(k_points[[0, 23, 49]], s_points)
 
 
 def test_bandpath_xukg():
@@ -45,15 +45,15 @@ def test_bandpath_xukg():
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'XU,KG', 4)
     assert len(k_points) == 4
-    assert_allclose(k_points, s_points)
+    assert_equal(k_points, s_points)
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'XU,KG', 10)
     assert len(k_points) == 10
-    assert_allclose(k_points[[0, 2, 3, 9]], s_points)
+    assert_equal(k_points[[0, 2, 3, 9]], s_points)
 
     k_points = bandpath('fcc', LATTICE_VECTORS['fcc'], 'XU,KG', 50)
     assert len(k_points) == 50
-    assert_allclose(k_points[[0, 12, 13, 49]], s_points)
+    assert_equal(k_points[[0, 12, 13, 49]], s_points)
 
 
 def test_kpoints2axis_lgx():

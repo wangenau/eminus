@@ -3,7 +3,7 @@
 import copy
 import os
 
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 import pytest
 
 from eminus import (
@@ -55,9 +55,9 @@ def test_cube(Nspin):
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
     assert_allclose(atoms.pos, pos[:atoms.Natoms], atol=1e-6)
-    assert_allclose(atoms.Z, Z[:atoms.Natoms])
-    assert_allclose(atoms.a, a)
-    assert_allclose(atoms.s, s)
+    assert_equal(atoms.Z, Z[:atoms.Natoms])
+    assert_equal(atoms.a, a)
+    assert_equal(atoms.s, s)
     assert_allclose(scf.n, field, atol=1e-9)
 
 
@@ -72,7 +72,7 @@ def test_cube_noncubic():
     atom, pos, Z, a, s, field = read(filename)
     os.remove(filename)
     assert_allclose(atoms.a, a, atol=2e-6)
-    assert_allclose(atoms.s, s)
+    assert_equal(atoms.s, s)
     assert_allclose(scf.n, field, atol=1e-8)
 
 
