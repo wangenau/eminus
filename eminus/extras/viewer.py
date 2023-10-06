@@ -121,7 +121,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     return fig
 
 
-def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, linewidth=1,
+def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1, linewidth=1,
                  size=(600, 600)):
     """Display contour lines of field data like electronic densities.
 
@@ -135,7 +135,7 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, l
         axis (int): Axis to slice through.
         value: (float): Slice value scaled by the axis size.
         lines: Number of contour lines.
-        max_value (float): Truncation value for the field data.
+        limits (tuple): Maximal and minimal truncation values for the field data.
         zoom (float): Initial zoom.
         linewidth (float): Contour line width.
         size (tuple): Widget size.
@@ -158,9 +158,11 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, max_value=1, zoom=1, l
     # mask = |axis_values - slice_value| < axis_value_dist
     mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < \
         (atoms.a[axes[2], axes[2]] / atoms.s[axes[2]])
+    # Create a copy of the field data to not overwrite the input
+    field = np.copy(field)
     # Remove large and small values (similar to VESTA)
-    field[field > max_value] = max_value
-    field[field < -max_value] = -max_value
+    field[field > limits[0]] = limits[0]
+    field[field < limits[1]] = limits[1]
 
     # Create the contour lines
     fig = go.Figure()
