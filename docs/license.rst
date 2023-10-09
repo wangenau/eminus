@@ -74,6 +74,8 @@ License
    * - sphinxcontrib-bibtex
      - BSD-2-Clause
 
+The GTH pseudopotential files are copied from CP2K, which is licensed under the GPL-2.0 license.
+
 Apache License
 ==============
 
