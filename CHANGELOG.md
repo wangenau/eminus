@@ -6,6 +6,7 @@ dev
 - Miscellaneous
    - Add a contour line viewer
    - Add a NixOS CI test
+   - Use Python 3.12 as the CI base image
 
 v2.6.1 - Oct 04, 2023
 ---------------------
