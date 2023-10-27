@@ -220,18 +220,6 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # Calculate the translation vectors
     T = M @ atoms.a
 
-    for ia in range(atoms.Natoms):
-        for ja in range(atoms.Natoms):
-            dpos = atoms.pos[ia] - atoms.pos[ja]
-            ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            rmag = np.sqrt(norm(dpos - T, axis=1)**2)
-            # Add the real-space contribution
-            Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
-            # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
-            if ia != ja:
-                rmag = np.sqrt(norm(dpos)**2)
-                Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
-
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
     g = 2 * np.pi * inv(atoms.a.T)
@@ -248,8 +236,17 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         for ja in range(atoms.Natoms):
             dpos = atoms.pos[ia] - atoms.pos[ja]
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
-            Gpos = np.sum(G * dpos, axis=1)
+
+            # Add the real-space contribution
+            rmag = np.sqrt(norm(dpos - T, axis=1)**2)
+            Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
+            # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
+            if ia != ja:
+                rmag = np.sqrt(norm(dpos)**2)
+                Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
+
             # Add the reciprocal space contribution
+            Gpos = np.sum(G * dpos, axis=1)
             Eewald += ZiZj * np.sum(prefactor * np.cos(Gpos))
     return Eewald
 
