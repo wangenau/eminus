@@ -313,6 +313,16 @@ class Atoms:
         return self._G2c
 
     @property
+    def Gk2(self):
+        """Squared magnitudes of G+k-vectors.."""
+        return self._Gk2
+
+    @property
+    def Gk2c(self):
+        """Truncated squared magnitudes of G+k-vectors."""
+        return self._Gk2c
+
+    @property
     def Sf(self):
         """Structure factor per atom."""
         return self._Sf
@@ -400,8 +410,11 @@ class Atoms:
         # Calculate squared magnitudes of G-vectors
         self._G2 = norm(self.G, axis=1)**2
         # Calculate the G2 restriction
-        self._active = np.nonzero(2 * self.ecut >= self.G2)
-        self._G2c = self.G2[self._active]
+        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.k[ik], axis=1)**2) for ik in range(len(self.wk))]
+        self._G2c = self.G2[np.nonzero(2 * self.ecut >= self._G2)]
+        # Calculate G+k-vectors
+        self._Gk2 = np.asarray([norm(self.G + self.k[ik], axis=1)**2 for ik in range(len(self.wk))])
+        self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(len(self.wk))]
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
 

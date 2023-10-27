@@ -107,7 +107,7 @@ def Ylm_real(l, m, G):  # noqa: C901
     return None
 
 
-def handle_spin_gracefully(func):
+def handle_spin_gracefully(func, *args, **kwargs):
     """Handle spin calculating the function for each channel separately.
 
     This can only be applied if the only spin-dependent indexing is the wave function W.
@@ -120,6 +120,8 @@ def handle_spin_gracefully(func):
 
     Args:
         func (Callable): Function that acts on spin-states.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
 
     Returns:
         Callable: Decorator.
@@ -128,6 +130,63 @@ def handle_spin_gracefully(func):
     def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
             return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
+        return func(obj, W, *args, **kwargs)
+    return decorator
+
+
+def handle_k_gracefully(func, *args, **kwargs):
+    """Handle k-points calculating the function for each channel separately.
+
+    Args:
+        func (Callable): Function that acts on k-point.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    @functools.wraps(func)
+    def decorator(obj, W, *args, **kwargs):
+        if isinstance(W, list):
+            return [func(obj, Wk, *args, **kwargs) for Wk in W]
+        return func(obj, W, *args, **kwargs)
+    return decorator
+
+
+def handle_k_indexable(func, *args, **kwargs):
+    """Handle k-points calculating the function for each channel separately but with an index.
+
+    Args:
+        func (Callable): Function that acts on k-point.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    @functools.wraps(func)
+    def decorator(obj, W, *args, **kwargs):
+        if isinstance(W, list):
+            return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
+        return func(obj, W, *args, **kwargs)
+    return decorator
+
+
+def handle_k_reducable(func, *args, **kwargs):
+    """Handle k-points calculating the function for each channel and reducing in the end.
+
+    Args:
+        func (Callable): Function that acts on k-point.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    @functools.wraps(func)
+    def decorator(obj, W, *args, **kwargs):
+        if isinstance(W, list):
+            return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
         return func(obj, W, *args, **kwargs)
     return decorator
 

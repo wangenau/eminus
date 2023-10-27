@@ -6,7 +6,7 @@ from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
 
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
-from .utils import handle_spin_gracefully, pseudo_uniform
+from .utils import handle_k_gracefully, handle_k_reducable, handle_spin_gracefully, pseudo_uniform
 from .xc import get_vxc
 
 
@@ -53,7 +53,8 @@ def get_n_total(atoms, Y, n_spin=None):
     return n
 
 
-def get_n_spin(atoms, Y):
+@handle_k_reducable
+def get_n_spin(atoms, Y, ik):
     """Calculate the electronic density per spin channel.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -61,14 +62,15 @@ def get_n_spin(atoms, Y):
     Args:
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: Electronic densities per spin channel.
     """
-    Yrs = atoms.I(Y)
+    Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+        n[spin] = np.sum(atoms.occ.f[spin] * atoms.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -89,6 +91,7 @@ def get_n_single(atoms, Y):
     return n
 
 
+@handle_k_gracefully
 @handle_spin_gracefully
 def orth(atoms, W):
     """Orthogonalize coefficient matrix W.
@@ -106,13 +109,14 @@ def orth(atoms, W):
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
 
 
-def get_grad(scf, spin, W, **kwargs):
+def get_grad(scf, ik, spin, W, **kwargs):
     """Calculate the energy gradient with respect to W.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.
+        ik (int): k-point index.
         spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
@@ -124,26 +128,27 @@ def get_grad(scf, spin, W, **kwargs):
     """
     atoms = scf.atoms
     F = atoms.occ.F[spin]
-    HW = H(scf, spin, W, **kwargs)
-    WHW = W[spin].conj().T @ HW
+    HW = H(scf, ik, spin, W, **kwargs)
+    WHW = W[ik][spin].conj().T @ HW
     # U = Wdag O(W)
-    OW = atoms.O(W[spin])
-    U = W[spin].conj().T @ OW
+    OW = atoms.O(W[ik][spin])
+    U = W[ik][spin].conj().T @ OW
     invU = inv(U)
     U12 = sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return (HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U))
+    return atoms.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
 
 
-def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
+def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     """Left-hand side of the eigenvalue equation.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
         scf: SCF object.
+        ik (int): k-point index.
         spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
@@ -170,16 +175,16 @@ def H(scf, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # Vkin = -0.5 L(W)
-    Vkin_psi = -0.5 * atoms.L(W[spin])
+    Vkin_psi = -0.5 * atoms.L(W[ik], ik)[spin]
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
     Veff = scf.Vloc + atoms.Jdag(atoms.O(Gvxc + phi))
-    Vnonloc_psi = calc_Vnonloc(scf, spin, W)
-    Vtau_psi = calc_Vtau(scf, spin, W, vtau)
+    Vnonloc_psi = calc_Vnonloc(scf, ik, spin, W)
+    Vtau_psi = calc_Vtau(scf, spin, W, vtau)  # TODO
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[spin])) + Vnonloc_psi + Vtau_psi
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi  # + Vtau_psi
 
 
 def H_precompute(scf, W):
@@ -288,13 +293,16 @@ def guess_random(scf, seed=42, symmetric=False):
     """
     atoms = scf.atoms
     rng = Generator(SFC64(seed))
-    if symmetric:
-        W = rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate)) + \
-            1j * rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate))
-        W = np.array([W] * atoms.occ.Nspin)
-    else:
-        W = rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)) + \
-            1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
+    W = []
+    for ik in range(len(atoms.wk)):
+        if symmetric:
+            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate)) + \
+                1j * rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate))
+            W.append(np.array([W_ik] * atoms.occ.Nspin))
+        else:
+            W_ik = rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate)) + \
+                1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate))
+            W.append(W_ik)
     return orth(atoms, W)
 
 

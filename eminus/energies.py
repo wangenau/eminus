@@ -10,6 +10,7 @@ from .dft import get_n_single, solve_poisson
 from .extras import dispersion
 from .gga import get_grad_field, get_tau
 from .logger import log
+from .utils import handle_k_reducable
 from .xc import get_exc
 
 
@@ -57,7 +58,8 @@ def get_E(scf):
     return scf.energies.Etot
 
 
-def get_Ekin(atoms, Y):
+@handle_k_reducable
+def get_Ekin(atoms, Y, ik):
     """Calculate the kinetic energy.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -65,6 +67,7 @@ def get_Ekin(atoms, Y):
     Args:
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         float: Kinetic energy in Hartree.
@@ -72,7 +75,7 @@ def get_Ekin(atoms, Y):
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
     for spin in range(atoms.occ.Nspin):
-        Ekin += -0.5 * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y[spin]))
+        Ekin += -0.5 * atoms.wk[ik] * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y, ik)[spin])
     return np.real(Ekin)
 
 
@@ -139,7 +142,8 @@ def get_Eloc(scf, n):
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
-def get_Enonloc(scf, Y):
+@handle_k_reducable
+def get_Enonloc(scf, Y, ik):
     """Calculate the non-local GTH energy contribution.
 
     Reference: Phys. Rev. B 54, 1703.
@@ -147,6 +151,7 @@ def get_Enonloc(scf, Y):
     Args:
         scf: SCF object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         float: Non-local GTH energy contribution in Hartree.
@@ -156,7 +161,7 @@ def get_Enonloc(scf, Y):
     Enonloc = 0
     if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
         for spin in range(atoms.occ.Nspin):
-            betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL).conj()
+            betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
 
             enl = np.zeros(atoms.occ.Nstate, dtype=complex)
             for ia in range(atoms.Natoms):
@@ -169,7 +174,7 @@ def get_Enonloc(scf, Y):
                                 jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-            Enonloc += np.sum(atoms.occ.f[spin] * enl)
+            Enonloc += np.sum(atoms.occ.f[spin] * atoms.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return np.real(Enonloc * atoms.Omega)
 

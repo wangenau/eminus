@@ -114,32 +114,35 @@ def init_gth_nonloc(atoms, gth):
                     NbetaNL += 1
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
-    g = atoms.G[atoms.active]  # Simplified, would normally be G+k
-    Gm = np.sqrt(atoms.G2c)
-
-    ibeta = 0
-    betaNL = np.empty((len(atoms.G2c), NbetaNL), dtype=complex)
-    for ia in range(atoms.Natoms):
-        # It is very important to transform the structure factor to make both notations compatible
-        Sf = atoms.Idag(atoms.J(atoms.Sf[ia]))
-        psp = gth[atoms.atom[ia]]
-        for l in range(psp['lmax']):
-            for m in range(-l, l + 1):
-                for iprj in range(psp['Nproj_l'][l]):
-                    betaNL[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
-                        eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
-                    ibeta += 1
+    betaNL = []
+    for ik in range(len(atoms.wk)):
+        betaNL_ik = np.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
+        ibeta = 0
+        g = atoms.G[atoms.active[ik]] + atoms.k[ik]
+        Gm = np.sqrt(atoms.Gk2c[ik])
+        for ia in range(atoms.Natoms):
+            # It is very important to transform the structure factor to make both notations compatible
+            Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
+            psp = gth[atoms.atom[ia]]
+            for l in range(psp['lmax']):
+                for m in range(-l, l + 1):
+                    for iprj in range(psp['Nproj_l'][l]):
+                        betaNL_ik[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
+                            eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
+                        ibeta += 1
+        betaNL.append(betaNL_ik)
     return NbetaNL, prj2beta, betaNL
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
-def calc_Vnonloc(scf, spin, W):
+def calc_Vnonloc(scf, ik, spin, W):
     """Calculate the non-local pseudopotential, applied on the basis functions W.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
         scf: SCF object.
+        ik (int): k-point index.
         spin (int): Spin variable to track weather to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
@@ -148,9 +151,9 @@ def calc_Vnonloc(scf, spin, W):
     """
     atoms = scf.atoms
 
-    Vpsi = np.zeros_like(W[spin], dtype=complex)
+    Vpsi = np.zeros_like(W[ik][spin], dtype=complex)
     if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
-        betaNL_psi = (W[spin].conj().T @ scf.gth.betaNL).conj()
+        betaNL_psi = (W[ik][spin].conj().T @ scf.gth.betaNL[ik]).conj()
 
         for ia in range(atoms.Natoms):
             psp = scf.gth[atoms.atom[ia]]
@@ -161,7 +164,7 @@ def calc_Vnonloc(scf, spin, W):
                         for jprj in range(psp['Nproj_l'][l]):
                             jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                             hij = psp['h'][l, iprj, jprj]
-                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[:, ibeta, None]
+                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[ik][:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return Vpsi * atoms.Omega
 

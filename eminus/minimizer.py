@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Minimization algorithms."""
+import copy
 import logging
 
 import numpy as np
@@ -119,7 +120,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         if iteration > 1:
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
-                info += str(norm_g).ljust(10 * scf.atoms.occ.Nspin + 3)
+                info += str(np.ravel(norm_g)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
                 if method != 'sd':
                     info += str(linmin).ljust(10 * scf.atoms.occ.Nspin + 3)
@@ -176,13 +177,14 @@ def cg_test(atoms, g, g_old, precondition=True):
     return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
-def cg_method(scf, cgform, g, g_old, d_old, precondition=True):
+def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
     """Do different variants of the conjugate gradient method.
 
     Reference: https://indrag49.github.io/Numerical-Optimization/conjugate-gradient-methods-1.html
 
     Args:
         scf: SCF object.
+        ik (int): k-point index.
         cgform (int): Conjugate gradient form.
         g (ndarray): Current gradient.
         g_old (ndarray): Previous gradient.
@@ -197,7 +199,7 @@ def cg_method(scf, cgform, g, g_old, d_old, precondition=True):
     atoms = scf.atoms
 
     if precondition:
-        Kg, Kg_old = atoms.K(g), atoms.K(g_old)
+        Kg, Kg_old = atoms.K(g, ik), atoms.K(g_old, ik)
     else:
         Kg, Kg_old = g, g_old
     norm_g = dotprod(g, Kg)
@@ -240,9 +242,10 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
         costs.append(c)
         if condition(scf, 'sd', costs):
             break
-        for spin in range(atoms.occ.Nspin):
-            g = grad(scf, spin, scf.W, **scf._precomputed)
-            scf.W[spin] = scf.W[spin] - betat * g
+        for ik in range(len(atoms.wk)):
+            for spin in range(atoms.occ.Nspin):
+                g = grad(scf, ik, spin, scf.W, **scf._precomputed)
+                scf.W[ik][spin] = scf.W[ik][spin] - betat * g
     return costs
 
 
@@ -351,50 +354,58 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         method = 'cg'
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.occ.Nspin)
-    cg = np.empty(atoms.occ.Nspin)
-    beta = np.empty((atoms.occ.Nspin, 1, 1))
-    norm_g = np.empty(atoms.occ.Nspin)
+    linmin = np.empty((len(atoms.wk), atoms.occ.Nspin))
+    cg = np.empty((len(atoms.wk), atoms.occ.Nspin))
+    beta = np.empty((len(atoms.wk), atoms.occ.Nspin, 1, 1))
+    norm_g = np.empty((len(atoms.wk), atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    d = np.empty_like(scf.W, dtype=complex)
-    d_old = np.empty_like(scf.W, dtype=complex)
-    g_old = np.empty_like(scf.W, dtype=complex)
+    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
+    d_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
+    g_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
-    for spin in range(atoms.occ.Nspin):
-        g = grad(scf, spin, scf.W)
-        if precondition:
-            d[spin] = -atoms.K(g)
-        else:
-            d[spin] = -g
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-        g_old[spin], d_old[spin] = g, d[spin]
+    for ik in range(len(atoms.wk)):
+        for spin in range(atoms.occ.Nspin):
+            g = grad(scf, ik, spin, scf.W)
+            if precondition:
+                d[ik][spin] = -atoms.K(g, ik)
+            else:
+                d[ik][spin] = -g
+            W_tmp = copy.deepcopy(scf.W)
+            W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+            gt = grad(scf, ik, spin, W_tmp)
+            beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+            g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
 
     # Update wave functions after calculating the gradients for each spin
-    scf.W = scf.W + beta * d
+    for ik in range(len(atoms.wk)):
+        scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
     c = cost(scf)
     costs.append(c)
     condition(scf, method, costs)
 
     for _ in range(1, Nit):
-        for spin in range(atoms.occ.Nspin):
-            g = grad(scf, spin, scf.W, **scf._precomputed)
-            # Calculate linmin and cg for each spin separately
-            if scf.log.level <= logging.DEBUG:
-                linmin[spin] = linmin_test(g, d[spin])
-                cg[spin] = cg_test(atoms, g, g_old[spin], precondition)
-            beta[spin], norm_g[spin] = cg_method(scf, cgform, g, g_old[spin], d_old[spin],
-                                                 precondition)
-            if precondition:
-                d[spin] = -atoms.K(g) + beta[spin] * d_old[spin]
-            else:
-                d[spin] = -g + beta[spin] * d_old[spin]
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
-            g_old[spin], d_old[spin] = g, d[spin]
+        for ik in range(len(atoms.wk)):
+            for spin in range(atoms.occ.Nspin):
+                g = grad(scf, ik, spin, scf.W, **scf._precomputed)
+                # Calculate linmin and cg for each spin separately
+                if scf.log.level <= logging.DEBUG:
+                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
+                    cg[ik][spin] = cg_test(atoms, g, g_old[ik][spin], precondition)
+                beta[ik][spin], norm_g[ik][spin] = cg_method(scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin],
+                                                    precondition)
+                if precondition:
+                    d[ik][spin] = -atoms.K(g, ik) + beta[ik][spin] * d_old[ik][spin]
+                else:
+                    d[ik][spin] = -g + beta[ik][spin] * d_old[ik][spin]
+                W_tmp = copy.deepcopy(scf.W)
+                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                gt = grad(scf, ik, spin, W_tmp)
+                beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+                g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
 
-        scf.W = scf.W + beta * d
+        for ik in range(len(atoms.wk)):
+            scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
         c = cost(scf)
         costs.append(c)
         if condition(scf, method, costs, linmin, cg, norm_g):
@@ -447,53 +458,62 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     costs = []
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.occ.Nspin)
-    cg = np.empty(atoms.occ.Nspin)
-    beta = np.empty((atoms.occ.Nspin, 1, 1))
-    norm_g = np.empty(atoms.occ.Nspin)
+    linmin = np.empty((len(atoms.wk), atoms.occ.Nspin))
+    cg = np.empty((len(atoms.wk), atoms.occ.Nspin))
+    beta = np.empty((len(atoms.wk), atoms.occ.Nspin, 1, 1))
+    norm_g = np.empty((len(atoms.wk), atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    g = np.empty_like(scf.W, dtype=complex)
-    d = np.empty_like(scf.W, dtype=complex)
-    d_old = np.empty_like(scf.W, dtype=complex)
-    g_old = np.empty_like(scf.W, dtype=complex)
+    g = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
+    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
+    d_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
+    g_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
-    for spin in range(atoms.occ.Nspin):
-        g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
-        d[spin] = -atoms.K(g[spin])
-        gt = grad(scf, spin, scf.W + betat * d[spin])
-        beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
-        g_old[spin], d_old[spin] = g[spin], d[spin]
+    for ik in range(len(atoms.wk)):
+        for spin in range(atoms.occ.Nspin):
+            g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
+            d[ik][spin] = -atoms.K(g[ik][spin], ik)
+            W_tmp = copy.deepcopy(scf.W)
+            W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+            gt = grad(scf, ik, spin, W_tmp)
+            beta[ik][spin] = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+            g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
 
     # Update wave functions after calculating the gradients for each spin, save the wave function
-    W_old = np.copy(scf.W)
-    scf.W = scf.W + beta * d
+    W_old = copy.deepcopy(scf.W)
+    for ik in range(len(atoms.wk)):
+        scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
     c = cost(scf)
     costs.append(c)
     if condition(scf, 'pccg', costs):
         return costs
 
     for _ in range(1, Nit):
-        for spin in range(atoms.occ.Nspin):
-            g[spin] = grad(scf, spin, scf.W, **scf._precomputed)
-            # Calculate linmin and cg for each spin separately
-            if scf.log.level <= logging.DEBUG:
-                linmin[spin] = linmin_test(g, d[spin])
-                cg[spin] = cg_test(atoms, g, g_old[spin])
-            beta[spin], norm_g[spin] = cg_method(scf, cgform, g[spin], g_old[spin], d_old[spin])
-            d[spin] = -atoms.K(g[spin]) + beta[spin] * d_old[spin]
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g[spin], d[spin]) / dotprod(g[spin] - gt, d[spin])
-            g_old[spin], d_old[spin] = g[spin], d[spin]
+        for ik in range(len(atoms.wk)):
+            for spin in range(atoms.occ.Nspin):
+                g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
+                # Calculate linmin and cg for each spin separately
+                if scf.log.level <= logging.DEBUG:
+                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
+                    cg[ik][spin] = cg_test(atoms, g, g_old[ik][spin])
+                beta[ik][spin], norm_g[ik][spin] = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin], d_old[ik][spin])
+                d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta[ik][spin] * d_old[ik][spin]
+                W_tmp = copy.deepcopy(scf.W)
+                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                gt = grad(scf, ik, spin, W_tmp)
+                beta[ik][spin] = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+                g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
 
-        W_old = np.copy(scf.W)
-        scf.W = scf.W + beta * d
+        W_old = copy.deepcopy(scf.W)
+        for ik in range(len(atoms.wk)):
+            scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
         c = cost(scf)
         # If the energy does not go down use the steepest descent step and recalculate the energy
         if c > costs[-1]:
             scf.W = W_old
-            for spin in range(atoms.occ.Nspin):
-                scf.W[spin] = scf.W[spin] - betat * g[spin]
+            for ik in range(len(atoms.wk)):
+                for spin in range(atoms.occ.Nspin):
+                    scf.W[ik][spin] = scf.W[ik][spin] - betat * g[ik][spin]
             c = cost(scf)
             costs.append(c)
             # Do not print cg and linmin if we do the sd step

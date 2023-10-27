@@ -27,10 +27,11 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_spin_gracefully
+from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully
 
 
 # Spin handling is trivial for this operator
+@handle_k_gracefully
 def O(atoms, W):
     """Overlap operator.
 
@@ -49,8 +50,8 @@ def O(atoms, W):
 
 
 @handle_spin_gracefully
-def L(atoms, W):
-    """Laplacian operator.
+def L(atoms, W, ik=0):
+    """Laplacian operator with k-point dependency.
 
     This operator acts on options 3 and 5.
 
@@ -59,16 +60,17 @@ def L(atoms, W):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
     """
-    # G2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
-    if len(W) == len(atoms.G2c):
-        G2 = atoms.G2c[:, None]
+    # Gk2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    if len(W) == len(atoms.Gk2c[ik]):
+        Gk2 = atoms.Gk2c[ik][:, None]
     else:
-        G2 = atoms.G2[:, None]
-    return -atoms.Omega * G2 * W
+        Gk2 = atoms.Gk2[ik][:, None]
+    return -atoms.Omega * Gk2 * W
 
 
 @handle_spin_gracefully
@@ -101,7 +103,7 @@ def Linv(atoms, W):
 
 
 @handle_spin_gracefully
-def I(atoms, W):
+def I(atoms, W, ik=0):
     """Backward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -111,6 +113,7 @@ def I(atoms, W):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
@@ -118,7 +121,7 @@ def I(atoms, W):
     n = atoms.Ns
 
     # If W is in the full space do nothing with W
-    if len(W) == len(atoms.G2):
+    if len(W) == len(atoms.Gk2[ik]):
         Wfft = np.copy(W)
     else:
         # Fill with zeros if W is in the active space
@@ -126,7 +129,7 @@ def I(atoms, W):
             Wfft = np.zeros(n, dtype=W.dtype)
         else:
             Wfft = np.zeros((n, atoms.occ.Nstate), dtype=W.dtype)
-        Wfft[atoms.active] = W
+        Wfft[atoms.active[ik]] = W
 
     # `workers` sets the number of threads the FFT operates on
     # `overwrite_x` allows writing in Wfft, but since we do not need Wfft later on, we can set this
@@ -147,7 +150,7 @@ def I(atoms, W):
 
 
 @handle_spin_gracefully
-def J(atoms, W, full=True):
+def J(atoms, W, ik=0, full=True):
     """Forward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -157,6 +160,7 @@ def J(atoms, W, full=True):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Keyword Args:
         full (bool): Whether to transform in the full or in the active space.
@@ -183,12 +187,12 @@ def J(atoms, W, full=True):
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:
-        return F[atoms.active]
+        return F[atoms.active[ik]]
     return F
 
 
-@handle_spin_gracefully
-def Idag(atoms, W, full=False):
+# Spin handling will be handled by the J operator
+def Idag(atoms, W, ik=0, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -198,6 +202,7 @@ def Idag(atoms, W, full=False):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Keyword Args:
         full (bool): Whether to transform in the full or in the active space.
@@ -206,12 +211,12 @@ def Idag(atoms, W, full=False):
         ndarray: The operator applied on W.
     """
     n = atoms.Ns
-    F = J(atoms, W, full)
+    F = J(atoms, W, ik, full)
     return F * n
 
 
-@handle_spin_gracefully
-def Jdag(atoms, W):
+# Spin handling will be handled by the I operator
+def Jdag(atoms, W, ik=0):
     """Conjugated forward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -221,18 +226,20 @@ def Jdag(atoms, W):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
     """
     n = atoms.Ns
-    Finv = I(atoms, W)
+    Finv = I(atoms, W, ik)
     return Finv / n
 
 
+@handle_k_indexable
 @handle_spin_gracefully
-def K(atoms, W):
-    """Preconditioning operator.
+def K(atoms, W, ik=0):
+    """Preconditioning operator with k-point dependency.
 
     This operator acts on options 3 and 5.
 
@@ -241,12 +248,13 @@ def K(atoms, W):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
     """
-    # G2c is a normal 1d row vector, reshape it so it can be applied to the column vector W
-    return W / (1 + atoms.G2c[:, None])
+    # Gk2c is a normal 1d row vector, reshape it so it can be applied to the column vector W
+    return W / (1 + atoms.Gk2c[ik][:, None])
 
 
 @handle_spin_gracefully

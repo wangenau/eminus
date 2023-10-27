@@ -19,7 +19,7 @@ class ConfigClass:
     """
     def __init__(self):
         """Initialize the ConfigClass object."""
-        self.use_torch = True     # Use the faster Torch FFTs if available
+        self.use_torch = False    # Use the faster Torch FFTs if available
         self.use_gpu = False      # Disable GPU by default, since it is slower in my tests
         self.use_pylibxc = True   # Use Libxc over PySCF if available, since it is faster
         self.threads = None       # Read threads from environment variables by default
