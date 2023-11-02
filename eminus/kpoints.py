@@ -23,7 +23,7 @@ def kpoint_convert(k_points, lattice_vectors):
     return k_points @ inv_cell
 
 
-def monkhorst_pack(nk, lattice_vectors):
+def monkhorst_pack(nk):
     """Generate a Monkhorst-Pack mesh of k-points, i.e., equally spaced k-points.
 
     Args:
@@ -43,7 +43,7 @@ def monkhorst_pack(nk, lattice_vectors):
 
     k_points = (M + 0.5) / nk - 0.5
     # Without removing redundancies the weight is the same for all k-points
-    return kpoint_convert(k_points, lattice_vectors), np.ones(nktotal) / nktotal
+    return k_points, np.ones(nktotal) / nktotal
 
 
 def bandpath(lattice, lattice_vectors, path, N):
