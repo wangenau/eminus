@@ -115,7 +115,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
     with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
-        info = f'{method:<8}{iteration:>8}   {scf.energies.Etot:<+13,.6f}'
+        info = f'{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}'
         # In the first step we do not have all information yet
         if iteration > 1:
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'

@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_n_single, solve_poisson
+from .dft import get_n_single, H, solve_poisson
 from .extras import dispersion
 from .gga import get_grad_field, get_tau
 from .logger import log
@@ -322,3 +322,27 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):  # noqa: D103
 
 
 get_Edisp.__doc__ = dispersion.get_Edisp.__doc__
+
+
+def get_Eband(scf, Y, **kwargs):
+    """Calculate the band energy.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        scf: SCF object.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
+
+    Returns:
+        float: Band energy in Hartree.
+    """
+    atoms = scf.atoms
+    # Eband = Tr(Wdag H(W))
+    Eband = 0
+    for ik in range(len(atoms.wk)):
+        for spin in range(atoms.occ.Nspin):
+            Eband += atoms.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs))
+    return np.real(Eband)
