@@ -278,25 +278,29 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         method = 'lm'
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty(atoms.occ.Nspin)
-    beta = np.empty((atoms.occ.Nspin, 1, 1))
+    linmin = np.empty((len(atoms.wk), atoms.occ.Nspin))
+    beta = np.empty((len(atoms.wk), atoms.occ.Nspin, 1, 1))
     # Search direction that needs to be saved for each spin
-    d = np.empty_like(scf.W, dtype=complex)
+    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(len(atoms.wk))]
 
     for _ in range(Nit):
-        for spin in range(atoms.occ.Nspin):
-            g = grad(scf, spin, scf.W, **scf._precomputed)
-            # Calculate linmin each spin separately
-            if scf.log.level <= logging.DEBUG and Nit > 0:
-                linmin[spin] = linmin_test(g, d[spin])
-            if precondition:
-                d[spin] = -atoms.K(g)
-            else:
-                d[spin] = -g
-            gt = grad(scf, spin, scf.W + betat * d[spin])
-            beta[spin] = betat * dotprod(g, d[spin]) / dotprod(g - gt, d[spin])
+        for ik in range(len(atoms.wk)):
+            for spin in range(atoms.occ.Nspin):
+                g = grad(scf, ik, spin, scf.W, **scf._precomputed)
+                # Calculate linmin each spin separately
+                if scf.log.level <= logging.DEBUG and Nit > 0:
+                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
+                if precondition:
+                    d[ik][spin] = -atoms.K(g, ik)
+                else:
+                    d[ik][spin] = -g
+                W_tmp = copy.deepcopy(scf.W)
+                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                gt = grad(scf, ik, spin, W_tmp)
+                beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
 
-        scf.W = scf.W + beta * d
+        for ik in range(len(atoms.wk)):
+            scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
         c = cost(scf)
         costs.append(c)
         if condition(scf, method, costs, linmin):
