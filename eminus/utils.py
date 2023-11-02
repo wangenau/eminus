@@ -147,7 +147,7 @@ def handle_k_gracefully(func, *args, **kwargs):
     """
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list):
+        if isinstance(W, list) or isinstance(W, np.ndarray) and W.ndim == 4:
             return [func(obj, Wk, *args, **kwargs) for Wk in W]
         return func(obj, W, *args, **kwargs)
     return decorator
@@ -166,7 +166,7 @@ def handle_k_indexable(func, *args, **kwargs):
     """
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list):
+        if isinstance(W, list) or isinstance(W, np.ndarray) and W.ndim == 4:
             return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
         return func(obj, W, *args, **kwargs)
     return decorator
@@ -185,7 +185,7 @@ def handle_k_reducable(func, *args, **kwargs):
     """
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list):
+        if isinstance(W, list) or isinstance(W, np.ndarray) and W.ndim == 4:
             return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
         return func(obj, W, *args, **kwargs)
     return decorator
