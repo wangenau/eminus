@@ -166,7 +166,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
 
     # If dn_spin is None all other keyword arguments are None by design
     # In that case precompute values from the SCF class
-    if dn_spin is None:
+    if phi is None:
         dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
 
     # This calculates the XC potential in the reciprocal space
@@ -257,7 +257,7 @@ def get_psi(scf, W):
     return psi
 
 
-def get_epsilon(scf, W):
+def get_epsilon(scf, W, **kwargs):
     """Calculate eigenvalues from H.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -266,15 +266,19 @@ def get_epsilon(scf, W):
         scf: SCF object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
+    Keyword Args:
+        **kwargs: See :func:`H`.
+
     Returns:
         ndarray: Eigenvalues.
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((atoms.occ.Nspin, atoms.occ.Nstate))
-    for spin in range(atoms.occ.Nspin):
-        mu = Y[spin].conj().T @ H(scf, spin, Y)
-        epsilon[spin] = np.sort(eigvalsh(mu))
+    epsilon = np.empty((len(atoms.wk), atoms.occ.Nspin, atoms.occ.Nstate))
+    for ik in range(len(atoms.wk)):
+        for spin in range(atoms.occ.Nspin):
+            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
+            epsilon[ik][spin] = np.sort(eigvalsh(mu))
     return epsilon
 
 
