@@ -33,7 +33,8 @@ extras: dict[str, list[str]] = {
         'plotly>=4.5'         # Grid visualization
     ]
 }
-extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
+extras['fods'] = extras['libxc']     # PyCOM FOD guessing method uses PySCF
+extras['kpoints'] = extras['libxc']  # k-point symmetrization uses PySCF
 extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
     'coverage>=4.4',           # Generate coverage reports
