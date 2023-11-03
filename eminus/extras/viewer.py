@@ -502,7 +502,7 @@ def plot_bandstructure(scf):
         plt.axvline(x=i, c='grey', lw=1)
     plt.xticks(special, label, fontsize=12.5)
     plt.xlabel('k-path', fontsize=15)
-    plt.ylabel('eigenvalues [eV]', fontsize=15)
+    plt.ylabel(r'$E - E_\mathrm{F}$ [eV]', fontsize=15)
     plt.xlim(0, k_axis[-1])
     plt.tight_layout()
     plt.show()
