@@ -303,6 +303,7 @@ class SCF:
             elif 'pseudo' in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
+        self.log.info('Minimize occupied band energies...')
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
@@ -351,6 +352,7 @@ class SCF:
         elif 'pseudo' in self.guess:
             Z = guess_pseudo(self, symmetric=self.symmetric)
 
+        self.log.info('Minimize unoccupied band energies...')
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
