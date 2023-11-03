@@ -75,7 +75,7 @@ def get_Ekin(atoms, Y, ik):
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
     for spin in range(atoms.occ.Nspin):
-        Ekin += -0.5 * atoms.wk[ik] * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y, ik)[spin])
+        Ekin += -0.5 * atoms.kpts.wk[ik] * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y, ik)[spin])
     return np.real(Ekin)
 
 
@@ -174,7 +174,7 @@ def get_Enonloc(scf, Y, ik):
                                 jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
                                 hij = psp['h'][l, iprj, jprj]
                                 enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-            Enonloc += np.sum(atoms.occ.f[spin] * atoms.wk[ik] * enl)
+            Enonloc += np.sum(atoms.occ.f[spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return np.real(Enonloc * atoms.Omega)
 
@@ -342,7 +342,7 @@ def get_Eband(scf, Y, **kwargs):
     atoms = scf.atoms
     # Eband = Tr(Wdag H(W))
     Eband = 0
-    for ik in range(len(atoms.wk)):
+    for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            Eband += atoms.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs))
+            Eband += atoms.kpts.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs))
     return np.real(Eband)

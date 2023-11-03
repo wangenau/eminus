@@ -70,7 +70,7 @@ def get_n_spin(atoms, Y, ik):
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(atoms.occ.f[spin] * atoms.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+        n[spin] = np.sum(atoms.occ.f[spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -138,7 +138,7 @@ def get_grad(scf, ik, spin, W, **kwargs):
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return atoms.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
+    return atoms.kpts.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
 
 
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
@@ -274,8 +274,8 @@ def get_epsilon(scf, W, **kwargs):
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((len(atoms.wk), atoms.occ.Nspin, atoms.occ.Nstate))
-    for ik in range(len(atoms.wk)):
+    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, atoms.occ.Nstate))
+    for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             epsilon[ik][spin] = np.sort(eigvalsh(mu))
@@ -298,7 +298,7 @@ def guess_random(scf, seed=42, symmetric=False):
     atoms = scf.atoms
     rng = Generator(SFC64(seed))
     W = []
-    for ik in range(len(atoms.wk)):
+    for ik in range(atoms.kpts.Nk):
         if symmetric:
             W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate)) + \
                 1j * rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate))

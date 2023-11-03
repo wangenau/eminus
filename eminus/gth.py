@@ -115,10 +115,10 @@ def init_gth_nonloc(atoms, gth):
                     prj2beta[iprj, ia, l, m + psp['lmax'] - 1] = NbetaNL
 
     betaNL = []
-    for ik in range(len(atoms.wk)):
+    for ik in range(atoms.kpts.Nk):
         betaNL_ik = np.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
         ibeta = 0
-        g = atoms.G[atoms.active[ik]] + atoms.k[ik]
+        g = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         Gm = np.sqrt(atoms.Gk2c[ik])
         for ia in range(atoms.Natoms):
             # It is very important to transform the structure factor to make both notations compatible
