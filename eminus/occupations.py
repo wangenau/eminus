@@ -20,6 +20,7 @@ class Occupations:
     _spin: int = 0           #: Number of unpaired electrons.
     _charge: int = 0         #: System charge.
     _Nstate: int = 0         #: Number of states.
+    _Nempty: int = 0         #: Number of empty states.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
     # ### Class properties ###
@@ -106,6 +107,15 @@ class Occupations:
         # This setter will only be called when explicitly setting f
         # Call the fill function in that case
         self.fill(value)
+
+    @property
+    def Nempty(self):
+        """Number of empty states."""
+        return self._Nempty
+
+    @Nempty.setter
+    def Nempty(self, value):
+        self._Nempty = int(value)
 
     # ### Read-only properties ###
 
@@ -237,4 +247,5 @@ class Occupations:
                f'Spin: {self.spin}\n' \
                f'Charge: {self.charge}\n' \
                f'Number of states: {self._Nstate}\n' \
+               f'Number of empty states: {self._Nempty}\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
