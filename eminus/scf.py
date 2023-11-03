@@ -6,9 +6,9 @@ import time
 
 import numpy as np
 
+from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
 from .dft import get_epsilon, guess_pseudo, guess_random
-from .empty_bands import get_grad, scf_step
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gth import GTH
 from .logger import create_logger, get_level
@@ -354,8 +354,8 @@ class SCF:
             # Call the minimizer
             self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
-            Elist, self.Z = BAND_MINIMIZER[imin](self, Z, self.opt[imin], cost=scf_step,
-                                                 grad=get_grad, **kwargs)
+            Elist, self.Z = BAND_MINIMIZER[imin](self, Z, self.opt[imin], cost=scf_step_unocc,
+                                                 grad=get_grad_unocc, **kwargs)
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}

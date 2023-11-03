@@ -56,6 +56,70 @@ def get_grad(scf, ik, spin, W, **kwargs):
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
 
+def orth_occ(atoms, Y, Z):
+    """Orthogonalize coefficient matrix Z while maintaining orthogonality to Y.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        atoms: Atoms object.
+        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: Orthogonalized wave functions.
+    """
+    R = Z - Y @ Y.conj().T @ atoms.O(Z)
+    return R @ inv(sqrtm(R.conj().T @ atoms.O(R)))
+
+
+def scf_step_unocc(scf, Z):
+    """Perform one SCF step for a unoccupied band minimization calculation.
+
+    Args:
+        scf: SCF object.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        float: Total energy.
+    """
+    atoms = scf.atoms
+    scf.D = [np.empty_like(Z[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            scf.D[ik][spin] = orth_occ(atoms, scf.Y[ik][spin], Z[ik][spin])
+    return get_Eband(scf, scf.D, **scf._precomputed)
+
+
+def get_grad_unocc(scf, ik, spin, Z, **kwargs):
+    """Calculate the unoccupied band energy gradient with respect to Z.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        scf: SCF object.
+        ik (int): k-point index.
+        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
+        **kwargs: See :func:`H`.
+
+    Returns:
+        ndarray: Gradient.
+    """
+    atoms = scf.atoms
+    Y = scf.Y[ik][spin]
+    R = Z[ik][spin] - Y @ Y.conj().T @ atoms.O(Z[ik][spin])
+    X12 = inv(sqrtm(R.conj().T @ atoms.O(R)))
+    D = R @ X12
+    D_tmp = copy.deepcopy(Z)
+    D_tmp[ik][spin] = D
+    return atoms.kpts.wk[ik] * ((np.eye(Z[ik].shape[-2]) - atoms.O(Y) @ Y.conj().T) @
+                                (np.eye(Z[ik].shape[-2]) - atoms.O(D) @ D.conj().T) @
+                                (H(scf, ik, spin, D_tmp, **kwargs) @ X12))
+
+
 @name('steepest descent minimization')
 def sd(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, **kwargs):
     """Steepest descent minimization algorithm.
