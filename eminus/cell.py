@@ -62,6 +62,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
 
     Keyword Args:
         basis (list | tuple | ndarray | None): Lattice basis.
+        bands (int): Number of bands(must be larger than the number of occupied states).
         kmesh (int | list | tuple | ndarray): k-point mesh.
         verbose (int | str | None): Level of output.
 

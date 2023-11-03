@@ -6,9 +6,7 @@ import numpy as np
 from scipy.linalg import norm, pinv
 
 from .data import SPECIAL_POINTS
-from .dft import get_epsilon
 from .logger import log
-from .units import ha2ev
 
 
 class KPoints:
