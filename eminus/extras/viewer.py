@@ -497,7 +497,7 @@ def plot_bandstructure(scf):
     if hasattr(scf, 'Z'):
         e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
         for i in range(scf.atoms.occ.Nempty):
-            plt.plot(k_axis, e_unocc[:, 0, i] - e_fermi, '.-')
+            plt.plot(k_axis, e_unocc[:, 0, i] - e_fermi, '.--')
     for i in special:
         plt.axvline(x=i, c='grey', lw=1)
     plt.xticks(special, label, fontsize=12.5)
