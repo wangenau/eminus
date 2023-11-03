@@ -51,7 +51,7 @@ STRUCTURES = {
 }
 
 
-def Cell(atom, lattice, ecut, a, basis=None, verbose=None):
+def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
     """Wrapper to create Atoms classes for crystal systems.
 
     Args:
@@ -62,6 +62,7 @@ def Cell(atom, lattice, ecut, a, basis=None, verbose=None):
 
     Keyword Args:
         basis (list | tuple | ndarray | None): Lattice basis.
+        kmesh (int | list | tuple | ndarray): k-point mesh.
         verbose (int | str | None): Level of output.
 
     Returns:
@@ -69,6 +70,7 @@ def Cell(atom, lattice, ecut, a, basis=None, verbose=None):
     """
     # Get the lattice vectors from a string or use them directly
     if isinstance(lattice, str):
+        lattice = lattice.lower()
         if basis is None:
             basis = STRUCTURES[lattice]['basis']
         lattice = STRUCTURES[lattice]['lattice']
@@ -90,4 +92,10 @@ def Cell(atom, lattice, ecut, a, basis=None, verbose=None):
         atom_list = atom
     if len(atom_list) != len(basis):
         atom = [atom] * len(basis)
-    return Atoms(atom, basis, ecut=ecut, a=lattice_vectors, verbose=verbose)
+    atoms = Atoms(atom, basis, ecut=ecut, a=lattice_vectors, verbose=verbose)
+    atoms.kpts.kmesh = kmesh
+    if isinstance(lattice, str):
+        atoms.kpts.lattice = lattice
+    if bands is not None:
+        atoms.occ.Nempty = bands - atoms.occ.Nstate
+    return atoms
