@@ -1,10 +1,126 @@
 #!/usr/bin/env python3
 """Generate k-points and sample band paths."""
+import numbers
+
 import numpy as np
 from scipy.linalg import norm, pinv
 
 from .data import SPECIAL_POINTS
 from .logger import log
+
+
+class KPoints:
+    """KPoints object that holds k-points properties and build functions.
+
+    Args:
+        lattice (str | list | tuple | ndarray): Lattice system.
+        a (float | list | tuple | ndarray | None): Cell size.
+    """
+    def __init__(self, lattice, a):
+        """Initialize the KPoints object."""
+        self.lattice = lattice   #: Lattice system.
+        self.a = a               #: Cell size.
+        self.kmesh = [1, 1, 1]   #: Monkhorst-Pack k-point mesh.
+        self.wk = [1]            #: k-point weights.
+        self.k = [0, 0, 0]       #: k-point coordinates.
+        self.kshift = [0, 0, 0]  #: k-point shift vector.
+        self.is_built = True     #: Determines the Atoms object build status.
+
+    @property
+    def kmesh(self):
+        """Monkhorst-Pack k-point mesh."""
+        return self._kmesh
+
+    @kmesh.setter
+    def kmesh(self, value):
+        if value is not None:
+            if isinstance(value, numbers.Integral):
+                value = value * np.ones(3, dtype=int)
+            self._kmesh = np.asarray(value)
+            self.path = None
+            self.is_built = False
+        else:
+            self._kmesh = None
+
+    @property
+    def wk(self):
+        """k-point weights."""
+        return self._wk
+
+    @wk.setter
+    def wk(self, value):
+        self._wk = np.asarray(value)
+        self._Nk = len(self._wk)
+        self.is_built = False
+
+    @property
+    def k(self):
+        """k-point coordinates."""
+        return self._k
+
+    @k.setter
+    def k(self, value):
+        self._k = np.asarray(value)
+        self.is_built = False
+
+    @property
+    def Nk(self):
+        """Number of k-points."""
+        return self._Nk
+
+    @Nk.setter
+    def Nk(self, value):
+        self._Nk = int(value)
+        self.is_built = False
+
+    @property
+    def kshift(self):
+        """k-point shift vector."""
+        return self._kshift
+
+    @kshift.setter
+    def kshift(self, value):
+        self._kshift = np.asarray(value)
+        self.is_built = False
+
+    @property
+    def path(self):
+        """k-point bandpath."""
+        return self._path
+
+    @path.setter
+    def path(self, value):
+        if value is not None:
+            self._path = value.upper()
+            self.kmesh = None
+            self.kshift = [0, 0, 0]
+            self.is_built = False
+        else:
+            self._path = None
+
+    def build(self):
+        """Build all parameters of the KPoints object."""
+        if self.is_built:
+            return self
+        if self.kmesh is not None:
+            k, self.wk = monkhorst_pack(self.kmesh)
+        else:
+            k = bandpath(self.lattice, self.a, self.path, self.Nk)
+            self.wk = np.ones(len(k)) / len(k)
+        k_shift = k + self.kshift
+        self.k = kpoint_convert(k_shift, self.a)
+        self.is_built = True
+        return self
+
+    kernel = build
+
+    def __repr__(self):
+        """Print the parameters stored in the KPoints object."""
+        return f'Number of k-points: {self.Nk}\n' \
+               f'k-mesh: {self.kmesh}\n' \
+               f'Band path: {self.path}\n' \
+               f'Shift: {self.kshift}\n' \
+               f'Weights: {self.wk}'
 
 
 def kpoint_convert(k_points, lattice_vectors):
