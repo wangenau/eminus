@@ -12,7 +12,7 @@ from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..kpoints import kpoints2axis
 from ..logger import log
-from ..tools import get_isovalue
+from ..tools import get_Efermi, get_isovalue
 from ..units import ha2ev
 from .fods import split_fods
 
@@ -442,7 +442,7 @@ def _traj_view(view, filename):
         def get_coordinates(self, index):
             """Get the atom coordinates for a given frame.
 
-            Args:
+            Args:get_Efermi
                 index (int): Frame number.
 
             Returns:
@@ -488,7 +488,7 @@ def plot_bandstructure(scf):
                                           scf.atoms.kpts.path, scf.atoms.kpts.k_scaled)
     label = [r'$\Gamma$' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
-    e_fermi = np.max(e_occ)
+    e_fermi = ha2ev(get_Efermi(scf))
 
     plt.figure()
     for i in range(scf.atoms.occ.Nstate):
