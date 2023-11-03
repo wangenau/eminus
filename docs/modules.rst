@@ -10,6 +10,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.band_minimizer
    eminus.cell
    eminus.config
    eminus.data
@@ -55,6 +56,7 @@ Modules
    eminus.extras
    eminus.extras.dispersion
    eminus.extras.fods
+   eminus.extras.kpoints
    eminus.extras.libxc
    eminus.extras.torch
    eminus.extras.viewer
