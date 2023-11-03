@@ -6,14 +6,16 @@ import numpy as np
 from scipy.linalg import norm, pinv
 
 from .data import SPECIAL_POINTS
+from .dft import get_epsilon
 from .logger import log
+from .units import ha2ev
 
 
 class KPoints:
     """KPoints object that holds k-points properties and build functions.
 
     Args:
-        lattice (str | list | tuple | ndarray): Lattice system.
+        lattice (str): Lattice system.
         a (float | list | tuple | ndarray | None): Cell size.
     """
     def __init__(self, lattice, a):
@@ -64,6 +66,11 @@ class KPoints:
         self.is_built = False
 
     @property
+    def k_scaled(self):
+        """Scaled k-point coordinates."""
+        return self._k_scaled
+
+    @property
     def Nk(self):
         """Number of k-points."""
         return self._Nk
@@ -100,14 +107,16 @@ class KPoints:
 
     def build(self):
         """Build all parameters of the KPoints object."""
+        if self.lattice == 'sc' and not np.all(self.a == np.diag(np.diag(self.a))):
+            log.warning('Lattice system and lattice vectors do not match.')
         if self.is_built:
             return self
         if self.kmesh is not None:
-            k, self.wk = monkhorst_pack(self.kmesh)
+            self._k_scaled, self.wk = monkhorst_pack(self.kmesh)
         else:
-            k = bandpath(self.lattice, self.a, self.path, self.Nk)
-            self.wk = np.ones(len(k)) / len(k)
-        k_shift = k + self.kshift
+            self._k_scaled = bandpath(self.lattice, self.a, self.path, self.Nk)
+            self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
+        k_shift = self._k_scaled + self.kshift
         self.k = kpoint_convert(k_shift, self.a)
         self.is_built = True
         return self
