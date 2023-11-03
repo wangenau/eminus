@@ -7,6 +7,7 @@ from scipy.fft import next_fast_len
 from scipy.linalg import det, eigh, inv, norm
 
 from . import config, operators
+from .kpoints import KPoints
 from .logger import create_logger, get_level, log
 from .occupations import Occupations
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
@@ -55,17 +56,18 @@ class Atoms:
                  center=False, verbose=None):
         """Initialize the Atoms object."""
         # Set the input parameters (the ordering is important)
-        self.log = create_logger(self)    #: Logger object.
-        self.verbose = verbose            #: Verbosity level.
-        self.occ = Occupations()          #: Occupations object.
-        self.atom = atom                  #: Atom symbols.
-        self.pos = pos                    #: Atom positions.
-        self.a = a                        #: Cell/Vacuum size.
-        self.ecut = ecut                  #: Cut-off energy.
-        self.center = center              #: Enables centering the system in the cell.
-        self.charge = charge              #: System charge.
-        self.spin = spin                  #: Number of unpaired electrons.
-        self.unrestricted = unrestricted  #: Enables unrestricted spin handling.
+        self.log = create_logger(self)     #: Logger object.
+        self.verbose = verbose             #: Verbosity level.
+        self.occ = Occupations()           #: Occupations object.
+        self.atom = atom                   #: Atom symbols.
+        self.pos = pos                     #: Atom positions.
+        self.a = a                         #: Cell/Vacuum size.
+        self.ecut = ecut                   #: Cut-off energy.
+        self.center = center               #: Enables centering the system in the cell.
+        self.charge = charge               #: System charge.
+        self.spin = spin                   #: Number of unpaired electrons.
+        self.unrestricted = unrestricted   #: Enables unrestricted spin handling.
+        self.kpts = KPoints('sc', self.a)  #: KPoints object.
 
         # Initialize other attributes
         self.occ.fill()                   #: Fill states from the given input.
@@ -146,6 +148,7 @@ class Atoms:
             self.ecut = self.ecut
         # Calculate the unit cell volume
         self._Omega = abs(det(self._a))
+        self.kpts = self._a
         # The cell changes when changing a
         self.is_built = False
 
@@ -343,6 +346,7 @@ class Atoms:
     def build(self):
         """Build all parameters of the Atoms object."""
         self._set_operators()
+        self.kpts.build()
         self._sample_unit_cell()
         self.occ.fill()
         self.is_built = True
@@ -410,11 +414,11 @@ class Atoms:
         # Calculate squared magnitudes of G-vectors
         self._G2 = norm(self.G, axis=1)**2
         # Calculate the G2 restriction
-        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.k[ik], axis=1)**2) for ik in range(len(self.wk))]
+        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1)**2) for ik in range(self.kpts.Nk)]
         self._G2c = self.G2[np.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
-        self._Gk2 = np.asarray([norm(self.G + self.k[ik], axis=1)**2 for ik in range(len(self.wk))])
-        self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(len(self.wk))]
+        self._Gk2 = np.asarray([norm(self.G + self.kpts.k[ik], axis=1)**2 for ik in range(self.kpts.Nk)])
+        self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
 
