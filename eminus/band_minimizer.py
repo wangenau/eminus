@@ -229,7 +229,8 @@ def pccg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
                 if scf.log.level <= logging.DEBUG:
                     linmin = linmin_test(g, d)
                     cg = cg_test(atoms, g, g_old[ik][spin], precondition)
-                beta, norm_g = cg_method(scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin], precondition)
+                beta, norm_g = cg_method(scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin],
+                                         precondition)
                 if precondition:
                     d = -atoms.K(g, ik) + beta * d_old[ik][spin]
                 else:
@@ -320,7 +321,8 @@ def auto(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
                 if scf.log.level <= logging.DEBUG:
                     linmin = linmin_test(g[ik][spin], d)
                     cg = cg_test(atoms, g[ik][spin], g_old[ik][spin])
-                beta, norm_g = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin], d_old[ik][spin])
+                beta, norm_g = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin],
+                                         d_old[ik][spin])
                 d = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d
                 gt = grad(scf, ik, spin, W, **scf._precomputed)

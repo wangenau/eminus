@@ -121,7 +121,7 @@ def init_gth_nonloc(atoms, gth):
         g = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         Gm = np.sqrt(atoms.Gk2c[ik])
         for ia in range(atoms.Natoms):
-            # It is very important to transform the structure factor to make both notations compatible
+            # It is important to transform the structure factor to make both notations compatible
             Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
             psp = gth[atoms.atom[ia]]
             for l in range(psp['lmax']):

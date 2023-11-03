@@ -414,10 +414,12 @@ class Atoms:
         # Calculate squared magnitudes of G-vectors
         self._G2 = norm(self.G, axis=1)**2
         # Calculate the G2 restriction
-        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1)**2) for ik in range(self.kpts.Nk)]
+        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1)**2)
+                        for ik in range(self.kpts.Nk)]
         self._G2c = self.G2[np.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
-        self._Gk2 = np.asarray([norm(self.G + self.kpts.k[ik], axis=1)**2 for ik in range(self.kpts.Nk)])
+        self._Gk2 = np.asarray([norm(self.G + self.kpts.k[ik], axis=1)**2
+                               for ik in range(self.kpts.Nk)])
         self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T

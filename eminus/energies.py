@@ -75,7 +75,8 @@ def get_Ekin(atoms, Y, ik):
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
     for spin in range(atoms.occ.Nspin):
-        Ekin += -0.5 * atoms.kpts.wk[ik] * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @ atoms.L(Y, ik)[spin])
+        Ekin += -0.5 * atoms.kpts.wk[ik] * np.trace(atoms.occ.F[spin] @ Y[spin].conj().T @
+                                                    atoms.L(Y, ik)[spin])
     return np.real(Ekin)
 
 
@@ -344,5 +345,6 @@ def get_Eband(scf, Y, **kwargs):
     Eband = 0
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            Eband += atoms.kpts.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs))
+            Eband += atoms.kpts.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y,
+                                                                           **kwargs))
     return np.real(Eband)

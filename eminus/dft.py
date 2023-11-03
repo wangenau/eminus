@@ -70,7 +70,8 @@ def get_n_spin(atoms, Y, ik):
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(atoms.occ.f[spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+        n[spin] = np.sum(atoms.occ.f[spin] * atoms.kpts.wk[ik] *
+                         np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -138,7 +139,8 @@ def get_grad(scf, ik, spin, W, **kwargs):
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = U12 @ WHW @ U12
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return atoms.kpts.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) + OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
+    return atoms.kpts.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) +
+                                OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
 
 
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
@@ -184,7 +186,8 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     Vtau_psi = calc_Vtau(scf, spin, W, vtau)  # TODO
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi  # + Vtau_psi
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi
+    # + Vtau_psi  # TODO
 
 
 def H_precompute(scf, W):
@@ -324,9 +327,13 @@ def guess_pseudo(scf, seed=1234, symmetric=False):
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     """
     atoms = scf.atoms
-    if symmetric:
-        W = pseudo_uniform((1, len(atoms.G2c), atoms.occ.Nstate), seed=seed)
-        W = np.array([W[0]] * atoms.occ.Nspin)
-    else:
-        W = pseudo_uniform((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate), seed=seed)
+    W = []
+    for ik in range(atoms.kpts.Nk):
+        if symmetric:
+            W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), atoms.occ.Nstate), seed=seed)
+            W.append(np.array([W_ik[0]] * atoms.occ.Nspin))
+        else:
+            W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate),
+                                  seed=seed)
+            W.append(W_ik)
     return orth(atoms, W)
