@@ -6,7 +6,9 @@ import time
 
 import numpy as np
 
+from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
 from .dft import get_epsilon, guess_pseudo, guess_random
+from .empty_bands import get_grad, scf_step
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gth import GTH
 from .logger import create_logger, get_level
@@ -185,6 +187,11 @@ class SCF:
     # ### Read-only properties ###
 
     @property
+    def kpts(self):
+        """Pass-through to the KPoints object of the Atoms object."""
+        return self.atoms.kpts
+
+    @property
     def psp(self):
         """Pseudopotential path."""
         return self._psp
@@ -278,6 +285,104 @@ class SCF:
         return self.energies.Etot
 
     kernel = run
+
+    def converge_bands(self, **kwargs):
+        """Converge occupied bands after conerging a SCF calculation."""
+        if not self.is_converged:
+            self.log.warning('The previous calculation has not been converged.')
+
+        if not self.atoms.kpts.is_built:
+            self.atoms.build()
+            self.pot = self.pot
+            self.is_converged = False
+
+        # Build the initial wave function if there is no W to start from
+        if not hasattr(self, 'W') or len(self.W) != self.atoms.kpts.Nk:
+            if 'random' in self.guess:
+                self.W = guess_random(self, symmetric=self.symmetric)
+            elif 'pseudo' in self.guess:
+                self.W = guess_pseudo(self, symmetric=self.symmetric)
+
+        # Start the minimization procedures
+        Etots = []
+        for imin in self.opt:
+            # Call the minimizer
+            self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            start = time.perf_counter()
+            Elist, self.W = BAND_MINIMIZER[imin](self, self.W, self.opt[imin], **kwargs)
+            end = time.perf_counter()
+            # Save the minimizer results
+            self._opt_log[imin] = {}
+            self._opt_log[imin]['iter'] = len(Elist)
+            self._opt_log[imin]['time'] = end - start
+            Etots += Elist
+            # Do not start other minimizations if one converged
+            if self.is_converged:
+                break
+        if self.is_converged:
+            self.log.info(f'Band minimization converged after {len(Etots)} iterations.')
+        else:
+            self.log.warning('Band minimization not converged!')
+
+        # Print minimizer timings
+        self.log.debug('\n--- Band minimization results ---')
+        t_tot = 0
+        for imin in self._opt_log:
+            N = self._opt_log[imin]['iter']
+            t = self._opt_log[imin]['time']
+            t_tot += t
+            self.log.debug(f'Minimizer: {imin}'
+                           f'\nIterations: {N}'
+                           f'\nTime: {t:.5f} s'
+                           f'\nTime/Iteration: {t / N:.5f} s')
+        self.log.info(f'Total band minimization time: {t_tot:.5f} s')
+        return self
+
+    def converge_empty_bands(self, **kwargs):
+        """Converge unoccupied bands after conerging a SCF calculation."""
+        if not self.is_converged:
+            self.log.warning('The previous calculation has not been converged.')
+
+        if 'random' in self.guess:
+            Z = guess_random(self, symmetric=self.symmetric)
+        elif 'pseudo' in self.guess:
+            Z = guess_pseudo(self, symmetric=self.symmetric)
+
+        # Start the minimization procedures
+        Etots = []
+        for imin in self.opt:
+            # Call the minimizer
+            self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            start = time.perf_counter()
+            Elist, self.Z = BAND_MINIMIZER[imin](self, Z, self.opt[imin], cost=scf_step,
+                                                 grad=get_grad, **kwargs)
+            end = time.perf_counter()
+            # Save the minimizer results
+            self._opt_log[imin] = {}
+            self._opt_log[imin]['iter'] = len(Elist)
+            self._opt_log[imin]['time'] = end - start
+            Etots += Elist
+            # Do not start other minimizations if one converged
+            if self.is_converged:
+                break
+        if self.is_converged:
+            self.log.info(f'Band minimization converged after {len(Etots)} iterations.')
+        else:
+            self.log.warning('Band minimization not converged!')
+
+        # Print minimizer timings
+        self.log.debug('\n--- Band minimization results ---')
+        t_tot = 0
+        for imin in self._opt_log:
+            N = self._opt_log[imin]['iter']
+            t = self._opt_log[imin]['time']
+            t_tot += t
+            self.log.debug(f'Minimizer: {imin}'
+                           f'\nIterations: {N}'
+                           f'\nTime: {t:.5f} s'
+                           f'\nTime/Iteration: {t / N:.5f} s')
+        self.log.info(f'Total band minimization time: {t_tot:.5f} s')
+        return self
 
     def recenter(self, center=None):
         """Recenter the system inside the cell.
