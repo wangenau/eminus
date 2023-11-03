@@ -8,9 +8,12 @@ import numpy as np
 
 from ..atoms import Atoms
 from ..data import COVALENT_RADII, CPK_COLORS
+from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
+from ..kpoints import kpoints2axis
 from ..logger import log
 from ..tools import get_isovalue
+from ..units import ha2ev
 from .fods import split_fods
 
 
@@ -467,3 +470,39 @@ def _traj_view(view, filename):
     view.add_trajectory(trajectory)
     view.center()
     return view
+
+
+def plot_bandstructure(scf):
+    """Plot band structures.
+
+    Args:
+        scf: SCF object.
+    """
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+    k_axis, special, label = kpoints2axis(scf.atoms.kpts.lattice, scf.atoms.kpts.a,
+                                          scf.atoms.kpts.path, scf.atoms.kpts.k_scaled)
+    label = [r'$\Gamma$' if l == 'G' else l for l in label]
+    e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
+    e_fermi = np.max(e_occ)
+
+    plt.figure()
+    for i in range(scf.atoms.occ.Nstate):
+        plt.plot(k_axis, e_occ[:, 0, i] - e_fermi, '.-')
+
+    if hasattr(scf, 'Z'):
+        e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
+        for i in range(scf.atoms.occ.Nempty):
+            plt.plot(k_axis, e_unocc[:, 0, i] - e_fermi, '.-')
+    for i in special:
+        plt.axvline(x=i, c='grey', lw=1)
+    plt.xticks(special, label, fontsize=12.5)
+    plt.xlabel('k-path', fontsize=15)
+    plt.ylabel('eigenvalues [eV]', fontsize=15)
+    plt.xlim(0, k_axis[-1])
+    plt.tight_layout()
+    plt.show()

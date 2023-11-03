@@ -16,7 +16,15 @@ Alternativle, you can only install selected extras using the respective name:
 from .dispersion import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
 from .libxc import libxc_functional
-from .viewer import executed_in_notebook, view, view_atoms, view_contour, view_file
+from .viewer import (
+    executed_in_notebook,
+    plot_bandstructure,
+    view,
+    view_atoms,
+    view_contour,
+    view_file,
+)
 
-__all__ = ['executed_in_notebook', 'get_Edisp', 'get_fods', 'libxc_functional', 'remove_core_fods',
-           'split_fods', 'view', 'view_atoms', 'view_contour', 'view_file']
+__all__ = ['executed_in_notebook', 'get_Edisp', 'get_fods', 'libxc_functional',
+           'plot_bandstructure', 'remove_core_fods', 'split_fods', 'view', 'view_atoms',
+           'view_contour', 'view_file']
