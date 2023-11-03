@@ -336,6 +336,9 @@ class SCF:
                            f'\nTime: {t:.5f} s'
                            f'\nTime/Iteration: {t / N:.5f} s')
         self.log.info(f'Total band minimization time: {t_tot:.5f} s')
+
+        if self.atoms.occ.Nempty > 0:
+            self.converge_empty_bands(**kwargs)
         return self
 
     def converge_empty_bands(self, **kwargs):
