@@ -112,6 +112,10 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         else:
             scf.log.info(header)
 
+    def weighted_property(values):
+        """Sum properties weighted with their respective k-point weight."""
+        return np.sum(scf.atoms.kpts.wk[:, None] * values, axis=0)
+
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
     with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
@@ -120,12 +124,12 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         if iteration > 1:
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
-                info += str(np.ravel(norm_g)).ljust(10 * scf.atoms.occ.Nspin + 3)
+                info += str(weighted_property(norm_g)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
                 if method != 'sd':
-                    info += str(linmin).ljust(10 * scf.atoms.occ.Nspin + 3)
+                    info += str(weighted_property(linmin)).ljust(10 * scf.atoms.occ.Nspin + 3)
                 if method not in ('sd', 'lm', 'pclm'):
-                    info += str(cg).ljust(10 * scf.atoms.occ.Nspin + 3)
+                    info += str(weighted_property(cg)).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
         scf.log.debug(info)
     else:
@@ -150,7 +154,7 @@ def linmin_test(g, d):
     return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
 
 
-def cg_test(atoms, g, g_old, precondition=True):
+def cg_test(atoms, ik, g, g_old, precondition=True):
     """Test the gradient-orthogonality theorem, i.e., g and g_old should be orthogonal.
 
     Calculate the cosine of the angle between g and g_old. For an angle of 90 degree the cosine goes
@@ -160,6 +164,7 @@ def cg_test(atoms, g, g_old, precondition=True):
 
     Args:
         atoms: Atoms object.
+        ik (int): k-point index.
         g (ndarray): Current gradient.
         g_old (ndarray): Previous gradient.
 
@@ -170,7 +175,7 @@ def cg_test(atoms, g, g_old, precondition=True):
         float: CG angle.
     """
     if precondition:
-        Kg, Kg_old = atoms.K(g), atoms.K(g_old)
+        Kg, Kg_old = atoms.K(g, ik), atoms.K(g_old, ik)
     else:
         Kg, Kg_old = g, g_old
     # cos = A B / |A| |B|
@@ -281,7 +286,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     # Search direction that needs to be saved for each spin
-    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    d = copy.deepcopy(scf.W)
 
     for _ in range(Nit):
         for ik in range(atoms.kpts.Nk):
@@ -295,7 +300,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
                 else:
                     d[ik][spin] = -g
                 W_tmp = copy.deepcopy(scf.W)
-                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                W_tmp[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W_tmp)
                 beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
 
@@ -363,9 +368,9 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    d_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    g_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    d = copy.deepcopy(scf.W)
+    d_old = copy.deepcopy(scf.W)
+    g_old = copy.deepcopy(scf.W)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):
@@ -376,7 +381,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             else:
                 d[ik][spin] = -g
             W_tmp = copy.deepcopy(scf.W)
-            W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+            W_tmp[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W_tmp)
             beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
             g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
@@ -395,7 +400,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g, d[ik][spin])
-                    cg[ik][spin] = cg_test(atoms, g, g_old[ik][spin], precondition)
+                    cg[ik][spin] = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
                 beta[ik][spin], norm_g[ik][spin] = cg_method(scf, ik, cgform, g, g_old[ik][spin],
                                                              d_old[ik][spin], precondition)
                 if precondition:
@@ -403,7 +408,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
                 else:
                     d[ik][spin] = -g + beta[ik][spin] * d_old[ik][spin]
                 W_tmp = copy.deepcopy(scf.W)
-                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                W_tmp[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W_tmp)
                 beta[ik][spin] = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
                 g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
@@ -467,10 +472,10 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    g = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    d = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    d_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    g_old = [np.empty_like(scf.W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    g = copy.deepcopy(scf.W)
+    d = copy.deepcopy(scf.W)
+    d_old = copy.deepcopy(scf.W)
+    g_old = copy.deepcopy(scf.W)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):
@@ -478,7 +483,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
             d[ik][spin] = -atoms.K(g[ik][spin], ik)
             W_tmp = copy.deepcopy(scf.W)
-            W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+            W_tmp[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W_tmp)
             beta[ik][spin] = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt,
                                                                                  d[ik][spin])
@@ -499,13 +504,13 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
-                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
-                    cg[ik][spin] = cg_test(atoms, g, g_old[ik][spin])
+                    linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
+                    cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
                 beta[ik][spin], norm_g[ik][spin] = cg_method(scf, ik, cgform, g[ik][spin],
                                                              g_old[ik][spin], d_old[ik][spin])
                 d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta[ik][spin] * d_old[ik][spin]
                 W_tmp = copy.deepcopy(scf.W)
-                W_tmp[ik] = scf.W[ik] + betat * d[ik][spin]
+                W_tmp[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W_tmp)
                 beta[ik][spin] = betat * dotprod(g[ik][spin], d[ik][spin]) / \
                     dotprod(g[ik][spin] - gt, d[ik][spin])
