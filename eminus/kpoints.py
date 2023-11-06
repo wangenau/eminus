@@ -10,7 +10,7 @@ from .logger import log
 
 
 class KPoints:
-    """KPoints object that holds k-points properties and build functions.
+    """KPoints object that holds k-points properties and build methods.
 
     Args:
         lattice (str): Lattice system.
@@ -24,7 +24,9 @@ class KPoints:
         self.wk = [1]            #: k-point weights.
         self.k = [0, 0, 0]       #: k-point coordinates.
         self.kshift = [0, 0, 0]  #: k-point shift vector.
-        self.is_built = True     #: Determines the Atoms object build status.
+        self.is_built = True     #: Determines the KPoints object build status.
+
+    # ### Class properties ###
 
     @property
     def kmesh(self):
@@ -64,11 +66,6 @@ class KPoints:
         self.is_built = False
 
     @property
-    def k_scaled(self):
-        """Scaled k-point coordinates."""
-        return self._k_scaled
-
-    @property
     def Nk(self):
         """Number of k-points."""
         return self._Nk
@@ -103,9 +100,18 @@ class KPoints:
         else:
             self._path = None
 
+    # ### Read-only properties ###
+
+    @property
+    def k_scaled(self):
+        """Scaled k-point coordinates."""
+        return self._k_scaled
+
+     # ### Class methods ###
+
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == 'sc' and not np.all(self.a == np.diag(np.diag(self.a))):
+        if self.lattice == 'sc' and not (self.a == np.diag(np.diag(self.a))).all():
             log.warning('Lattice system and lattice vectors do not match.')
         if self.is_built:
             return self
