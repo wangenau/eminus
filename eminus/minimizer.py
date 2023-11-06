@@ -126,9 +126,9 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
             if norm_g is not None:
                 info += str(weighted_property(norm_g)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
-                if method != 'sd':
+                if method != 'sd' and linmin is not None:
                     info += str(weighted_property(linmin)).ljust(10 * scf.atoms.occ.Nspin + 3)
-                if method not in ('sd', 'lm', 'pclm'):
+                if method not in ('sd', 'lm', 'pclm') and cg is not None:
                     info += str(weighted_property(cg)).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
         scf.log.debug(info)
@@ -288,12 +288,12 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     # Search direction that needs to be saved for each spin
     d = copy.deepcopy(scf.W)
 
-    for _ in range(Nit):
+    for i in range(Nit):
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, scf.W, **scf._precomputed)
                 # Calculate linmin each spin separately
-                if scf.log.level <= logging.DEBUG and Nit > 0:
+                if scf.log.level <= logging.DEBUG and i > 0:
                     linmin[ik][spin] = linmin_test(g, d[ik][spin])
                 if precondition:
                     d[ik][spin] = -atoms.K(g, ik)

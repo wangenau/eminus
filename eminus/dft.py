@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Main DFT functions based on the DFT++ formulation."""
+import copy
+
 import numpy as np
 from numpy.random import Generator, SFC64
 from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
@@ -108,6 +110,29 @@ def orth(atoms, W):
     """
     # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
+
+
+def orth_unocc(atoms, Y, Z):
+    """Orthogonalize unoccupied coefficient matrix Z while maintaining orthogonality to occupied Y.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        atoms: Atoms object.
+        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: Orthogonalized wave functions.
+    """
+    D = copy.deepcopy(Z)
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            # rhoZ = (I - Y Ydag O) Z
+            rhoZ = Z[ik][spin] - Y[ik][spin] @ Y[ik][spin].conj().T @ atoms.O(Z[ik][spin])
+            # D = rhoZ (rhoZdag O(rhoZ))^-0.5
+            D[ik][spin] = rhoZ @ inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+    return D
 
 
 def get_grad(scf, ik, spin, W, **kwargs):

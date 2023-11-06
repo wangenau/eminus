@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Minimization algorithms."""
+"""Minimization algorithms for fixed Hamiltonians.
+
+Similar to :mod:`eminus.minimizer` but for a fixed Hamiltonian the implementation can be simplified
+and made more performant.
+"""
 import copy
 import logging
 
 import numpy as np
 from scipy.linalg import inv, sqrtm
 
-from .dft import H, orth
+from .dft import H, orth, orth_unocc
 from .energies import get_Eband
 from .logger import name
 from .minimizer import cg_method, cg_test, check_convergence, linmin_test
 from .utils import dotprod
 
 
-def scf_step(scf, W):
-    """Perform one SCF step for a band minimization calculation.
+def scf_step_occ(scf, W):
+    """Perform one SCF step for a occupied band minimization calculation.
 
     Args:
         scf: SCF object.
@@ -28,8 +32,23 @@ def scf_step(scf, W):
     return get_Eband(scf, scf.Y, **scf._precomputed)
 
 
-def get_grad(scf, ik, spin, W, **kwargs):
-    """Calculate the band energy gradient with respect to W.
+def scf_step_unocc(scf, Z):
+    """Perform one SCF step for a unoccupied band minimization calculation.
+
+    Args:
+        scf: SCF object.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        float: Total energy.
+    """
+    atoms = scf.atoms
+    scf.D = orth_unocc(atoms, scf.Y, Z)
+    return get_Eband(scf, scf.D, **scf._precomputed)
+
+
+def get_grad_occ(scf, ik, spin, W, **kwargs):
+    """Calculate the occupied band energy gradient with respect to W.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -54,41 +73,6 @@ def get_grad(scf, ik, spin, W, **kwargs):
     invU = inv(U)
     U12 = sqrtm(invU)
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
-
-
-def orth_occ(atoms, Y, Z):
-    """Orthogonalize coefficient matrix Z while maintaining orthogonality to Y.
-
-    Reference: Comput. Phys. Commun. 128, 1.
-
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Orthogonalized wave functions.
-    """
-    R = Z - Y @ Y.conj().T @ atoms.O(Z)
-    return R @ inv(sqrtm(R.conj().T @ atoms.O(R)))
-
-
-def scf_step_unocc(scf, Z):
-    """Perform one SCF step for a unoccupied band minimization calculation.
-
-    Args:
-        scf: SCF object.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        float: Total energy.
-    """
-    atoms = scf.atoms
-    scf.D = [np.empty_like(Z[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    for ik in range(atoms.kpts.Nk):
-        for spin in range(atoms.occ.Nspin):
-            scf.D[ik][spin] = orth_occ(atoms, scf.Y[ik][spin], Z[ik][spin])
-    return get_Eband(scf, scf.D, **scf._precomputed)
 
 
 def get_grad_unocc(scf, ik, spin, Z, **kwargs):
@@ -121,8 +105,9 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
 
 
 @name('steepest descent minimization')
-def sd(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, **kwargs):
-    """Steepest descent minimization algorithm.
+def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+       **kwargs):
+    """Steepest descent minimization algorithm for a fixed Hamiltonian.
 
     Args:
         scf: SCF object.
@@ -155,9 +140,9 @@ def sd(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, b
 
 
 @name('preconditioned line minimization')
-def pclm(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1,
+def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
          precondition=True, **kwargs):
-    """Preconditioned line minimization algorithm.
+    """Preconditioned line minimization algorithm for a fixed Hamiltonian.
 
     Args:
         scf: SCF object.
@@ -179,14 +164,14 @@ def pclm(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
     costs = []
 
     linmin = None
-    d = np.empty_like(W[0][0], dtype=complex)
+    d = copy.deepcopy(scf.W)
 
     if precondition:
         method = 'pclm'
     else:
         method = 'lm'
 
-    for _ in range(Nit):
+    for i in range(Nit):
         c = cost(scf, W)
         costs.append(c)
         if condition(scf, method, costs, linmin):
@@ -194,22 +179,23 @@ def pclm(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, W, **scf._precomputed)
-                if scf.log.level <= logging.DEBUG and Nit > 0:
-                    linmin = linmin_test(g, d)
+                if scf.log.level <= logging.DEBUG and i > 0:
+                    linmin = linmin_test(g, d[ik][spin])
                 if precondition:
-                    d = -atoms.K(g, ik)
+                    d[ik][spin] = -atoms.K(g, ik)
                 else:
-                    d = -g
-                W[ik][spin] = W[ik][spin] + betat * d
+                    d[ik][spin] = -g
+                W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-                W[ik][spin] = W[ik][spin] + beta * d
+                beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+                W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
     return costs, W
 
 
 @name('line minimization')
-def lm(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, **kwargs):
-    """Line minimization algorithm.
+def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+       **kwargs):
+    """Line minimization algorithm for a fixed Hamiltonian.
 
     Args:
         scf: SCF object.
@@ -230,9 +216,9 @@ def lm(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, b
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, cgform=1,
-         precondition=True):
-    """Preconditioned conjugate-gradient minimization algorithm.
+def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+         cgform=1, precondition=True):
+    """Preconditioned conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     Args:
         scf: SCF object.
@@ -256,8 +242,9 @@ def pccg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
     linmin = None
     cg = None
     norm_g = None
-    d_old = [np.empty_like(W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    g_old = [np.empty_like(W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    d = copy.deepcopy(scf.W)
+    d_old = copy.deepcopy(scf.W)
+    g_old = copy.deepcopy(scf.W)
 
     if precondition:
         method = 'pccg'
@@ -272,14 +259,14 @@ def pccg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
         for spin in range(atoms.occ.Nspin):
             g = grad(scf, ik, spin, W, **scf._precomputed)
             if precondition:
-                d = -atoms.K(g, ik)
+                d[ik][spin] = -atoms.K(g, ik)
             else:
-                d = -g
-            W[ik][spin] = W[ik][spin] + betat * d
+                d[ik][spin] = -g
+            W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-            g_old[ik][spin], d_old[ik][spin] = g, d
-            W[ik][spin] = W[ik][spin] + beta * d
+            beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+            g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
+            W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
     for _ in range(1, Nit):
         c = cost(scf, W)
@@ -291,25 +278,26 @@ def pccg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
                 g = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
-                    linmin = linmin_test(g, d)
-                    cg = cg_test(atoms, g, g_old[ik][spin], precondition)
+                    linmin = linmin_test(g, d[ik][spin])
+                    cg = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
                 beta, norm_g = cg_method(scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin],
                                          precondition)
                 if precondition:
-                    d = -atoms.K(g, ik) + beta * d_old[ik][spin]
+                    d[ik][spin] = -atoms.K(g, ik) + beta * d_old[ik][spin]
                 else:
-                    d = -g + beta * d_old[ik][spin]
-                W[ik][spin] = W[ik][spin] + betat * d
+                    d[ik][spin] = -g + beta * d_old[ik][spin]
+                W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g, d) / dotprod(g - gt, d)
-                g_old[ik][spin], d_old[ik][spin] = g, d
-                W[ik][spin] = W[ik][spin] + beta * d
+                beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+                g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
+                W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
     return costs, W
 
 
 @name('conjugate-gradient minimization')
-def cg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, cgform=1):
-    """Conjugate-gradient minimization algorithm.
+def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+       cgform=1):
+    """Conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     Args:
         scf: SCF object.
@@ -330,8 +318,9 @@ def cg(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, b
 
 
 @name('auto minimization')
-def auto(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=1, cgform=1):
-    """Automatic preconditioned conjugate-gradient minimization algorithm.
+def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+         cgform=1):
+    """Automatic preconditioned conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     This function chooses an sd step over the pccg step if the energy goes up.
 
@@ -356,20 +345,21 @@ def auto(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
     linmin = None
     cg = None
     norm_g = None
-    g = [np.empty_like(W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    d_old = [np.empty_like(W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
-    g_old = [np.empty_like(W[ik], dtype=complex) for ik in range(atoms.kpts.Nk)]
+    g = copy.deepcopy(scf.W)
+    d = copy.deepcopy(scf.W)
+    d_old = copy.deepcopy(scf.W)
+    g_old = copy.deepcopy(scf.W)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             g[ik][spin] = grad(scf, ik, spin, W, **scf._precomputed)
-            d = -atoms.K(g[ik][spin], ik)
-            W[ik][spin] = W[ik][spin] + betat * d
+            d[ik][spin] = -atoms.K(g[ik][spin], ik)
+            W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = betat * dotprod(g[ik][spin], d) / dotprod(g[ik][spin] - gt, d)
-            g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d
-            W[ik][spin] = W[ik][spin] + beta * d
+            beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+            g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
+            W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
     c = cost(scf, W)
     costs.append(c)
@@ -383,16 +373,16 @@ def auto(scf, W, Nit, cost=scf_step, grad=get_grad, condition=check_convergence,
                 g[ik][spin] = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
-                    linmin = linmin_test(g[ik][spin], d)
-                    cg = cg_test(atoms, g[ik][spin], g_old[ik][spin])
+                    linmin = linmin_test(g[ik][spin], d[ik][spin])
+                    cg = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
                 beta, norm_g = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin],
                                          d_old[ik][spin])
-                d = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
-                W[ik][spin] = W[ik][spin] + betat * d
+                d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
+                W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g[ik][spin], d) / dotprod(g[ik][spin] - gt, d)
-                g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d
-                W[ik][spin] = W[ik][spin] + beta * d
+                beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+                g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
+                W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
         c = cost(scf, W)
         # If the energy does not go down use the steepest descent step and recalculate the energy
