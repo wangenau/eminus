@@ -115,6 +115,9 @@ class Occupations:
 
     @Nempty.setter
     def Nempty(self, value):
+        if value < 0:
+            value = 0
+            log.warning('Negative empty states are not allowed. Try to set the fillings manually.')
         self._Nempty = int(value)
 
     # ### Read-only properties ###
@@ -128,6 +131,11 @@ class Occupations:
     def Nstate(self):
         """Number of states."""
         return self._Nstate
+
+    @property
+    def bands(self):
+        """Number of bands."""
+        return self.Nstate + self.Nempty
 
     @property
     def F(self):
@@ -246,6 +254,6 @@ class Occupations:
                f'Number of electrons: {self.Nelec}\n' \
                f'Spin: {self.spin}\n' \
                f'Charge: {self.charge}\n' \
-               f'Number of states: {self._Nstate}\n' \
-               f'Number of empty states: {self._Nempty}\n' \
+               f'Number of states: {self.Nstate}\n' \
+               f'Number of empty states: {self.Nempty}\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
