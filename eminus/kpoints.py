@@ -3,7 +3,7 @@
 import numbers
 
 import numpy as np
-from scipy.linalg import norm, pinv
+from scipy.linalg import inv, norm
 
 from .data import SPECIAL_POINTS
 from .logger import log
@@ -41,6 +41,7 @@ class KPoints:
             self._kmesh = np.asarray(value)
             self.path = None
             self.is_built = False
+        # If we set a band path to the object the k-mesh gets set to None
         else:
             self._kmesh = None
 
@@ -95,8 +96,8 @@ class KPoints:
         if value is not None:
             self._path = value.upper()
             self.kmesh = None
-            self.kshift = [0, 0, 0]
             self.is_built = False
+        # If we set a k-mesh to the object the band path gets set to None
         else:
             self._path = None
 
@@ -105,6 +106,7 @@ class KPoints:
     @property
     def k_scaled(self):
         """Scaled k-point coordinates."""
+        # This will not be set when setting the k-point coordinates manually
         return self._k_scaled
 
      # ### Class methods ###
@@ -118,7 +120,7 @@ class KPoints:
         if self.kmesh is not None:
             self._k_scaled, self.wk = monkhorst_pack(self.kmesh)
         else:
-            self._k_scaled = bandpath(self.lattice, self.a, self.path, self.Nk)
+            self._k_scaled = bandpath(self)
             self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
         k_shift = self._k_scaled + self.kshift
         self.k = kpoint_convert(k_shift, self.a)
@@ -148,7 +150,7 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         ndarray: k-points in cartesian coordinates.
     """
-    inv_cell = 2 * np.pi * pinv(lattice_vectors).T
+    inv_cell = 2 * np.pi * inv(lattice_vectors).T
     return k_points @ inv_cell
 
 
@@ -175,31 +177,29 @@ def monkhorst_pack(nk):
     return k_points, np.ones(nktotal) / nktotal
 
 
-def bandpath(lattice, lattice_vectors, path, N):
+def bandpath(kpts):
     """Generate sampled band paths.
 
     Args:
-        lattice (str): Lattice type.
-        lattice_vectors (ndarray): Lattice vectors.
-        path (str): Bandpath.
-        N (int): Number of sampling points.
+        kpts: KPoints object.
 
     Returns:
         ndarray: Sampled k-points.
     """
     # Convert path to a list and get special points
-    path_list = list(path.upper())
-    s_points = SPECIAL_POINTS[lattice]
+    path_list = list(kpts.path)
+    s_points = SPECIAL_POINTS[kpts.lattice]
     # Commas indicate jumps and are no special points
     N_special = len([p for p in path_list if p != ','])
 
     # Input handling
+    N = kpts.Nk
     if N_special > N:
         log.warning('Sampling is smaler than the number of special points.')
         N = N_special
     for p in path_list:
         if p not in (*s_points, ','):
-            raise KeyError(f'{p} is not a special point for the {lattice} lattice.')
+            raise KeyError(f'{p} is not a special point for the {kpts.lattice} lattice.')
 
     # Calculate distances between special points
     dists = []
@@ -207,7 +207,7 @@ def bandpath(lattice, lattice_vectors, path, N):
         if ',' not in path_list[i:i + 2]:
             # Use subtract since s_points are lists
             dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
-            dists.append(norm(kpoint_convert(dist, lattice_vectors)))
+            dists.append(norm(kpoint_convert(dist, kpts.a)))
         else:
             # Set distance to zero when jumping between special points
             dists.append(0)
@@ -240,25 +240,22 @@ def bandpath(lattice, lattice_vectors, path, N):
     return np.asarray(k_points)
 
 
-def kpoints2axis(lattice, lattice_vectors, path, k_points):
+def kpoints2axis(kpts):
     """Generate the x-axis for band structures from k-points and the respective band path.
 
     Args:
-        lattice (str): Lattice type.
-        lattice_vectors (ndarray): Lattice vectors.
-        path (str): Bandpath.
-        k_points (ndarray): k-points.
+        kpts: KPoints object.
 
     Returns:
         tuple[ndarray, ndarray, list]: k-point axis, special point coordinates, and labels.
     """
     # Convert path to a list and get the special points
-    path_list = list(path.upper())
-    s_points = SPECIAL_POINTS[lattice]
+    path_list = list(kpts.path)
+    s_points = SPECIAL_POINTS[kpts.lattice]
 
     # Calculate the distances between k-points
-    k_dist = k_points[1:] - k_points[:-1]
-    dists = norm(kpoint_convert(k_dist, lattice_vectors), axis=1)
+    k_dist = kpts.k_scaled[1:] - kpts.k_scaled[:-1]
+    dists = norm(kpoint_convert(k_dist, kpts.a), axis=1)
 
     # Create the labels
     labels = []
@@ -278,7 +275,7 @@ def kpoints2axis(lattice, lattice_vectors, path, k_points):
     for p in labels[1:]:
         # Only search the k-points starting from the previous special point
         shift = special_indices[-1]
-        k = k_points[shift:]
+        k = kpts.k_scaled[shift:]
         # We index p[0] since p could be a joined label of a jump
         # This expression simply finds the special point in the k_points matrix
         index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
