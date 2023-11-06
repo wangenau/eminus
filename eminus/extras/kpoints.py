@@ -24,6 +24,7 @@ def symmetrize(atoms, space_group_symmetry=True, time_reversal_symmetry=False):
     if not atoms.kpts.is_built:
         atoms.kpts.build()
 
+    # Build Cell and KPoints objects
     cell = Cell()
     cell.atom = [[atoms.atom[ia], atoms.pos[ia]] for ia in range(atoms.Natoms)]
     cell.a = atoms.a
@@ -32,7 +33,8 @@ def symmetrize(atoms, space_group_symmetry=True, time_reversal_symmetry=False):
     kpts.build(space_group_symmetry=space_group_symmetry,
                time_reversal_symmetry=time_reversal_symmetry)
 
+    # Set the k-points
     atoms.kpts.k = kpts.kpts_ibz
     atoms.kpts.wk = kpts.weights_ibz
-    atoms.kpts._k_scaled = None
-    atoms.kpts.is_built = True
+    atoms.kpts._k_scaled = None  # Remove the scaled k-points
+    atoms.kpts.is_built = True  # Indicate the object as built

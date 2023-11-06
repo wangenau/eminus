@@ -472,11 +472,14 @@ def _traj_view(view, filename):
     return view
 
 
-def plot_bandstructure(scf):
+def plot_bandstructure(scf, spin=0):
     """Plot band structures.
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        spin (int): Spin index.
     """
     try:
         import matplotlib.pyplot as plt
@@ -484,20 +487,23 @@ def plot_bandstructure(scf):
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
-    k_axis, special, label = kpoints2axis(scf.atoms.kpts.lattice, scf.atoms.kpts.a,
-                                          scf.atoms.kpts.path, scf.atoms.kpts.k_scaled)
+    k_axis, special, label = kpoints2axis(scf.atoms.kpts)
+    # Replace 'G' with the Greek 'Gamma'
     label = [r'$\Gamma$' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
     e_fermi = ha2ev(get_Efermi(scf))
 
     plt.figure()
+    # Plot occupied bands
     for i in range(scf.atoms.occ.Nstate):
-        plt.plot(k_axis, e_occ[:, 0, i] - e_fermi, '.-')
+        plt.plot(k_axis, e_occ[:, spin, i] - e_fermi, '.-')
 
+    # Calculate and plot unoccupied bands if available
     if hasattr(scf, 'Z'):
         e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
         for i in range(scf.atoms.occ.Nempty):
-            plt.plot(k_axis, e_unocc[:, 0, i] - e_fermi, '.--')
+            plt.plot(k_axis, e_unocc[:, spin, i] - e_fermi, '.--')
+
     for i in special:
         plt.axvline(x=i, c='grey', lw=1)
     plt.xticks(special, label, fontsize=12.5)
