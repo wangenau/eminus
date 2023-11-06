@@ -326,7 +326,7 @@ get_Edisp.__doc__ = dispersion.get_Edisp.__doc__
 
 
 def get_Eband(scf, Y, **kwargs):
-    """Calculate the band energy.
+    """Calculate the band energy for occupied or unoccupied bands.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -335,7 +335,7 @@ def get_Eband(scf, Y, **kwargs):
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        **kwargs: Throwaway arguments.
+        **kwargs: See :func:`eminus.dft.H`.
 
     Returns:
         float: Band energy in Hartree.

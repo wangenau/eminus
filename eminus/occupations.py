@@ -115,6 +115,8 @@ class Occupations:
 
     @Nempty.setter
     def Nempty(self, value):
+        # Do not overwrite the fillings when setting a negative amount of empty states, let the user
+        # handle this
         if value < 0:
             value = 0
             log.warning('Negative empty states are not allowed. Try to set the fillings manually.')

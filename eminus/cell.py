@@ -62,7 +62,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
 
     Keyword Args:
         basis (list | tuple | ndarray | None): Lattice basis.
-        bands (int): Number of bands(must be larger than the number of occupied states).
+        bands (int): Number of bands (has to be larger or equal to the number of occupied states).
         kmesh (int | list | tuple | ndarray): k-point mesh.
         verbose (int | str | None): Level of output.
 
@@ -93,7 +93,10 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
         atom_list = atom
     if len(atom_list) != len(basis):
         atom = [atom] * len(basis)
+
+    # Build the atoms object
     atoms = Atoms(atom, basis, ecut=ecut, a=lattice_vectors, verbose=verbose)
+    # Handle k-points and states
     atoms.kpts.kmesh = kmesh
     if isinstance(lattice, str):
         atoms.kpts.lattice = lattice
