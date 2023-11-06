@@ -72,6 +72,7 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     U = W[ik][spin].conj().T @ OW
     invU = inv(U)
     U12 = sqrtm(invU)
+    # grad E = (I - O(Y) Ydag) H(Y) U^-0.5
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
 
@@ -94,14 +95,19 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     """
     atoms = scf.atoms
     Y = scf.Y[ik][spin]
-    R = Z[ik][spin] - Y @ Y.conj().T @ atoms.O(Z[ik][spin])
-    X12 = inv(sqrtm(R.conj().T @ atoms.O(R)))
-    D = R @ X12
+    Ydag = Y.conj().T
+    # We need X12 later, so orthogonalize in-place and onle the current state
+    rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
+    X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+    D = rhoZ @ X12
+    # Create the correct input shape for the Hamiltonian
     D_tmp = copy.deepcopy(Z)
     D_tmp[ik][spin] = D
-    return atoms.kpts.wk[ik] * ((np.eye(Z[ik].shape[-2]) - atoms.O(Y) @ Y.conj().T) @
-                                (np.eye(Z[ik].shape[-2]) - atoms.O(D) @ D.conj().T) @
-                                (H(scf, ik, spin, D_tmp, **kwargs) @ X12))
+    HD = H(scf, ik, spin, D_tmp, **kwargs)
+    DHD = D.conj().T @ HD
+    I = np.eye(Z[ik].shape[1])
+    # grad E = (I - O(Y) Ydag) (I - O(D) Ddag) H(D) X^-0.5
+    return atoms.kpts.wk[ik] * ((I - atoms.O(Y) @ Ydag) @ (HD - atoms.O(D) @ DHD) @ X12)
 
 
 @name('steepest descent minimization')
