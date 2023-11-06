@@ -137,6 +137,8 @@ def handle_spin_gracefully(func, *args, **kwargs):
 def handle_k_gracefully(func, *args, **kwargs):
     """Handle k-points calculating the function for each channel separately.
 
+    This uses the same principle as described in :func:`~eminus.utils.handle_spin_gracefully`.
+
     Args:
         func (Callable): Function that acts on k-point.
         args: Pass-through arguments.
@@ -154,7 +156,10 @@ def handle_k_gracefully(func, *args, **kwargs):
 
 
 def handle_k_indexable(func, *args, **kwargs):
-    """Handle k-points calculating the function for each channel separately but with an index.
+    """Handle k-points calculating the function for each channel with an index.
+
+    Similar to :func:`~eminus.utils.handle_k_gracefully`, but with using an explicit index in the
+    signature.
 
     Args:
         func (Callable): Function that acts on k-point.
@@ -173,7 +178,10 @@ def handle_k_indexable(func, *args, **kwargs):
 
 
 def handle_k_reducable(func, *args, **kwargs):
-    """Handle k-points calculating the function for each channel and reducing in the end.
+    """Handle k-points calculating the function for each channel and reducing it.
+
+    Similar to :func:`~eminus.utils.handle_k_gracefully`, but with using an explicit index in the
+    signature and summing up all results in the end.
 
     Args:
         func (Callable): Function that acts on k-point.
