@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.spatial import Voronoi
 
-from .data import SPECIAL_POINTS
+from .data import LATTICE_VECTORS, SPECIAL_POINTS
 from .logger import log
 
 
@@ -17,13 +17,15 @@ class KPoints:
         lattice (str): Lattice system.
         a (float | list | tuple | ndarray | None): Cell size.
     """
-    def __init__(self, lattice, a):
+    def __init__(self, lattice, a=None):
         """Initialize the KPoints object."""
         self.lattice = lattice   #: Lattice system.
+        if a is None:
+            a = LATTICE_VECTORS[self.lattice]
         self.a = a               #: Cell size.
         self.kmesh = [1, 1, 1]   #: Monkhorst-Pack k-point mesh.
         self.wk = [1]            #: k-point weights.
-        self.k = [0, 0, 0]       #: k-point coordinates.
+        self.k = [[0, 0, 0]]     #: k-point coordinates.
         self.kshift = [0, 0, 0]  #: k-point shift vector.
         self.is_built = True     #: Determines the KPoints object build status.
 
