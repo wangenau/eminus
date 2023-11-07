@@ -172,7 +172,8 @@ def monkhorst_pack(nk):
     m3 = ms % nk[2]
     M = np.column_stack((m1, m2, m3))
 
-    k_points = (M + 0.5) / nk - 0.5
+    # k_points = (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
+    k_points = M / nk  # Grid that always includes the Gamma point
     # Without removing redundancies the weight is the same for all k-points
     return k_points, np.ones(nktotal) / nktotal
 
