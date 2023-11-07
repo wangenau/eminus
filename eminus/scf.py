@@ -348,6 +348,7 @@ class SCF:
         """Converge unoccupied bands after conerging a SCF calculation."""
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
+        self.is_converged = False
 
         # Build the initial wave functions
         if 'random' in self.guess:

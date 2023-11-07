@@ -169,7 +169,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     atoms = scf.atoms
     costs = []
 
-    linmin = None
+    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     d = copy.deepcopy(scf.W)
 
     if precondition:
@@ -186,7 +186,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, W, **scf._precomputed)
                 if scf.log.level <= logging.DEBUG and i > 0:
-                    linmin = linmin_test(g, d[ik][spin])
+                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
                 if precondition:
                     d[ik][spin] = -atoms.K(g, ik)
                 else:
@@ -245,9 +245,9 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     atoms = scf.atoms
     costs = []
 
-    linmin = None
-    cg = None
-    norm_g = None
+    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     d = copy.deepcopy(scf.W)
     d_old = copy.deepcopy(scf.W)
     g_old = copy.deepcopy(scf.W)
@@ -284,10 +284,10 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 g = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
-                    linmin = linmin_test(g, d[ik][spin])
-                    cg = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
-                beta, norm_g = cg_method(scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin],
-                                         precondition)
+                    linmin[ik][spin] = linmin_test(g, d[ik][spin])
+                    cg[ik][spin] = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
+                beta, norm_g[ik][spin] = cg_method(scf, ik, cgform, g, g_old[ik][spin],
+                                                   d_old[ik][spin], precondition)
                 if precondition:
                     d[ik][spin] = -atoms.K(g, ik) + beta * d_old[ik][spin]
                 else:
@@ -348,9 +348,9 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     atoms = scf.atoms
     costs = []
 
-    linmin = None
-    cg = None
-    norm_g = None
+    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     g = copy.deepcopy(scf.W)
     d = copy.deepcopy(scf.W)
     d_old = copy.deepcopy(scf.W)
@@ -379,10 +379,10 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 g[ik][spin] = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
                 if scf.log.level <= logging.DEBUG:
-                    linmin = linmin_test(g[ik][spin], d[ik][spin])
-                    cg = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
-                beta, norm_g = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin],
-                                         d_old[ik][spin])
+                    linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
+                    cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
+                beta, norm_g[ik][spin] = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin],
+                                                   d_old[ik][spin])
                 d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
