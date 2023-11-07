@@ -114,7 +114,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
 
     def weighted_property(values):
         """Sum properties weighted with their respective k-point weight."""
-        return np.sum(scf.atoms.kpts.wk[:, None] * values, axis=0)
+        return np.sum(scf.kpts.wk[:, None] * values, axis=0)
 
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg

@@ -487,7 +487,7 @@ def plot_bandstructure(scf, spin=0):
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
-    k_axis, special, label = kpoints2axis(scf.atoms.kpts)
+    k_axis, special, label = kpoints2axis(scf.kpts)
     # Replace 'G' with the Greek 'Gamma'
     label = [r'$\Gamma$' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))

@@ -291,6 +291,7 @@ class SCF:
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
 
+        # If new k-points have been set rebuild the atoms object and the potential
         if not self.atoms.kpts.is_built:
             self.atoms.build()
             self.pot = self.pot
@@ -338,6 +339,7 @@ class SCF:
                            f'\nTime/Iteration: {t / N:.5f} s')
         self.log.info(f'Total band minimization time: {t_tot:.5f} s')
 
+        # Converge empty bands automatically if desired
         if self.atoms.occ.Nempty > 0:
             self.converge_empty_bands(**kwargs)
         return self
@@ -347,6 +349,7 @@ class SCF:
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
 
+        # Build the initial wave functions
         if 'random' in self.guess:
             Z = guess_random(self, symmetric=self.symmetric)
         elif 'pseudo' in self.guess:
