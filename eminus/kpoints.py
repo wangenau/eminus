@@ -4,6 +4,7 @@ import numbers
 
 import numpy as np
 from scipy.linalg import inv, norm
+from scipy.spatial import Voronoi
 
 from .data import SPECIAL_POINTS
 from .logger import log
@@ -109,7 +110,7 @@ class KPoints:
         # This will not be set when setting the k-point coordinates manually
         return self._k_scaled
 
-     # ### Class methods ###
+    # ### Class methods ###
 
     def build(self):
         """Build all parameters of the KPoints object."""
@@ -288,3 +289,29 @@ def kpoints2axis(kpts):
     # Insert a zero at the beginning and add up the lengths to create the k-axis
     k_axis = np.append([0], np.cumsum(dists))
     return k_axis, k_axis[special_indices], labels
+
+
+def get_brillouin_zone(lattice_vectors):
+    """Generate the Brillouin zone for given lattice vectors.
+
+    The Brillouin zone can be constructed with a Voronoi decomposition of the reciprocal lattice.
+
+    Reference: http://staff.ustc.edu.cn/~zqj/posts/howto-plot-brillouin-zone
+
+    Args:
+        lattice_vectors (ndarray): Lattice vectors.
+
+    Returns:
+        ndarray: Brillouin zone vertices.
+    """
+    inv_cell = kpoint_convert(np.eye(3), lattice_vectors)
+
+    px, py, pz = np.tensordot(inv_cell, np.mgrid[-1:2, -1:2, -1:2], axes=(0, 0))
+    points = np.c_[px.ravel(), py.ravel(), pz.ravel()]
+    vor = Voronoi(points)
+
+    bz_ridges = []
+    for pid, rid in zip(vor.ridge_points, vor.ridge_vertices):
+        if pid[0] == 13 or pid[1] == 13:
+            bz_ridges.append(vor.vertices[np.r_[rid, [rid[0]]]])
+    return bz_ridges
