@@ -25,8 +25,9 @@ from .viewer import (
     view_atoms,
     view_contour,
     view_file,
+    view_kpts,
 )
 
 __all__ = ['executed_in_notebook', 'get_Edisp', 'get_fods', 'libxc_functional',
            'plot_bandstructure', 'remove_core_fods', 'split_fods', 'symmetrize', 'view',
-           'view_atoms', 'view_contour', 'view_file']
+           'view_atoms', 'view_contour', 'view_file', 'view_kpts']

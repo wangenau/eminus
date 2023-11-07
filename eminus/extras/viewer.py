@@ -7,10 +7,10 @@ import uuid
 import numpy as np
 
 from ..atoms import Atoms
-from ..data import COVALENT_RADII, CPK_COLORS
+from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
 from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
-from ..kpoints import kpoints2axis
+from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
 from ..logger import log
 from ..tools import get_Efermi, get_isovalue
 from ..units import ha2ev
@@ -21,6 +21,8 @@ def view(*args, **kwargs):
     """Unified display function."""
     if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)
+    if isinstance(args[0], KPoints):
+        return view_kpts(*args, **kwargs)
     return view_atoms(*args, **kwargs)
 
 
@@ -512,3 +514,72 @@ def plot_bandstructure(scf, spin=0):
     plt.xlim(0, k_axis[-1])
     plt.tight_layout()
     plt.show()
+
+
+def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
+    """Display KPoints objects including the Brillouin zone, special points, and optionally k-paths.
+
+    Reference: https://plotly.com/python
+
+    Args:
+        kpts: KPoints object.
+
+    Keyword Args:
+        path (bool): Determines if k-points should be plotted.
+        special (bool): Determines if special points should be plotted.
+        connect (bool): Determines if k-points should connected.
+        size (tuple): Widget size.
+
+    Returns:
+        Figure: Viewable object.
+    """
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        log.exception('Necessary dependencies not found. To use this module, '
+                      'install them with "pip install eminus[viewer]".\n\n')
+        raise
+
+    fig = go.Figure()
+    # Calculate vertices of the Brillouin zone and plot them
+    bz = get_brillouin_zone(kpts.a)
+    for xx in bz:
+        bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
+                               showlegend=False,
+                               marker={'size': 0.1, 'color': 'black'})
+        fig.add_trace(bz_data)
+
+    # Plot special points if desired
+    if special:
+        for k, v_scaled in SPECIAL_POINTS[kpts.lattice].items():
+            v = kpoint_convert(v_scaled, kpts.a)
+            extra_data = go.Scatter3d(x=[v[0]], y=[v[1]], z=[v[2]],
+                                      name=k,
+                                      mode='markers',
+                                      marker={'size': 4, 'opacity': 0.9})
+            fig.add_trace(extra_data)
+
+    # Plot optional k-points
+    if connect:
+        mode = 'lines+markers'
+    else:
+        mode = 'markers'
+    if path:
+        extra_data = go.Scatter3d(x=kpts.k[:, 0], y=kpts.k[:, 1], z=kpts.k[:, 2],
+                                  name='k-points',
+                                  mode=mode,
+                                  marker={'size': 2, 'color': '#1a962b', 'opacity': 0.75})
+        fig.add_trace(extra_data)
+
+    # Theming
+    scene = {'xaxis': {'title': 'b<sub>1</sub>'},
+             'yaxis': {'title': 'b<sub>2</sub>'},
+             'zaxis': {'title': 'b<sub>3</sub>'},
+             'aspectmode': 'cube'}
+    fig.update_layout(scene=scene,
+                      width=size[0],
+                      height=size[1],
+                      legend={'itemsizing': 'constant', 'title': 'Selection'},
+                      hoverlabel_bgcolor='black',
+                      template='none')
+    return fig
