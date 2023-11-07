@@ -363,7 +363,8 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
             d[ik][spin] = -atoms.K(g[ik][spin], ik)
             W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+            beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt,
+                                                                       d[ik][spin])
             g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
             W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
@@ -386,7 +387,8 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+                beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt,
+                                                                           d[ik][spin])
                 g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
                 W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 

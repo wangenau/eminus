@@ -28,6 +28,10 @@ STRUCTURES = {
         'lattice': 'sc',
         'basis': [[0, 0, 0]]
     },
+    'hexagonal': {
+        'lattice': 'hexagonal',
+        'basis': [[0, 0, 0]]
+    },
     'diamond': {
         'lattice': 'fcc',
         'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]]
