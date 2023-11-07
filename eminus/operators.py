@@ -50,7 +50,7 @@ def O(atoms, W):
 
 
 @handle_spin_gracefully
-def L(atoms, W, ik=0):
+def L(atoms, W, ik):
     """Laplacian operator with k-point dependency.
 
     This operator acts on options 3 and 5.
@@ -236,9 +236,8 @@ def Jdag(atoms, W, ik=0):
     return Finv / n
 
 
-@handle_k_indexable
 @handle_spin_gracefully
-def K(atoms, W, ik=0):
+def K(atoms, W, ik):
     """Preconditioning operator with k-point dependency.
 
     This operator acts on options 3 and 5.
@@ -257,8 +256,9 @@ def K(atoms, W, ik=0):
     return W / (1 + atoms.Gk2c[ik][:, None])
 
 
+@handle_k_indexable
 @handle_spin_gracefully
-def T(atoms, W, dr):
+def T(atoms, W, ik, dr):
     """Translation operator.
 
     This operator acts on options 5 and 6.
@@ -268,17 +268,18 @@ def T(atoms, W, dr):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik (int): k-point index.
         dr (ndarray): Real-space shifting vector.
 
     Returns:
         ndarray: The operator applied on W.
     """
     # Do the shift by multiplying a phase factor, given by the shift theorem
-    if len(W) == len(atoms.G2c):
-        G = atoms.G[atoms.active]
+    if len(W) == len(atoms.Gk2c[ik]):
+        Gk = atoms.Gk[atoms.active[ik]]
     else:
-        G = atoms.G
-    factor = np.exp(-1j * G @ dr)
+        Gk = atoms.G + atoms.kpts.k[ik]
+    factor = np.exp(-1j * Gk @ dr)
     # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if W.ndim == 2:
         factor = factor[:, None]
