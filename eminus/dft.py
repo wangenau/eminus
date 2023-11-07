@@ -208,11 +208,10 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
     Veff = scf.Vloc + atoms.Jdag(atoms.O(Gvxc + phi))
     Vnonloc_psi = calc_Vnonloc(scf, ik, spin, W)
-    Vtau_psi = calc_Vtau(scf, spin, W, vtau)  # TODO
+    Vtau_psi = calc_Vtau(scf, ik, spin, W, vtau)
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi
-    # + Vtau_psi  # TODO
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi + Vtau_psi
 
 
 def H_precompute(scf, W):
