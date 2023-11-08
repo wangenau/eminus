@@ -72,7 +72,7 @@ def get_n_spin(atoms, Y, ik):
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(atoms.occ.f[spin] * atoms.kpts.wk[ik] *
+        n[spin] = np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
                          np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
@@ -153,7 +153,7 @@ def get_grad(scf, ik, spin, W, **kwargs):
         ndarray: Gradient.
     """
     atoms = scf.atoms
-    F = atoms.occ.F[spin]
+    F = atoms.occ.F[ik][spin]
     HW = H(scf, ik, spin, W, **kwargs)
     WHW = W[ik][spin].conj().T @ HW
     # U = Wdag O(W)

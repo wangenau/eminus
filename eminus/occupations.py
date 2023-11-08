@@ -21,6 +21,7 @@ class Occupations:
     _charge: int = 0         #: System charge.
     _Nstate: int = 0         #: Number of states.
     _Nempty: int = 0         #: Number of empty states.
+    _Nk: int = 1             #: Number of k-points.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
     # ### Class properties ###
@@ -122,6 +123,18 @@ class Occupations:
             log.warning('Negative empty states are not allowed. Try to set the fillings manually.')
         self._Nempty = int(value)
 
+    @property
+    def Nk(self):
+        """Number of k-points."""
+        return self._Nk
+
+    @Nk.setter
+    def Nk(self, value):
+        # Only update Nk if it actually gets updated
+        if self._Nk != int(value):
+            self._Nk = int(value)
+            self.is_filled = False
+
     # ### Read-only properties ###
 
     @property
@@ -136,13 +149,13 @@ class Occupations:
 
     @property
     def bands(self):
-        """Number of bands."""
+        """Total number of bands."""
         return self.Nstate + self.Nempty
 
     @property
     def F(self):
-        """Diagonal matrices of f per spin."""
-        return [np.diag(f) for f in self.f]
+        """Diagonal matrices of f per k-point and spin."""
+        return [[np.diag(f) for f in f_spin] for f_spin in self.f]
 
     # ### Class methods ###
 
@@ -161,7 +174,7 @@ class Occupations:
         self._update_from_fillings(f)
         # Assure that no electrons have been lost
         if np.sum(self.f) != self.Nelec:
-            ValueError(f'Sum of fillings ({np.sum(self.f)}) differs from Nelec ({self.Nelec}).')
+            ValueError(f'Sum of fillings ({np.sum(self.f[0])}) differs from Nelec ({self.Nelec}).')
         self.is_filled = True
         return self
 
@@ -175,7 +188,7 @@ class Occupations:
             # Do not leave the states array empty when no electrons are present
             if self.Nelec <= 0:
                 self._Nstate = 1
-                self._f = np.zeros((self.Nspin, 1))
+                self._f = np.zeros((self.Nk, self.Nspin, 1))
             elif self.Nspin == 1 or self.Nelec % 2 == self.spin % 2:
                 self._integer_fillings(value)
             else:
@@ -220,6 +233,7 @@ class Occupations:
             rest -= self._f[-1, -i]
             self._f[-1, -i] = 0
             i += 1
+        self._f = np.vstack([[self._f]] * self.Nk)
 
     def _fractional_fillings(self, f):
         """Update fillings while allowing fractional occupation numbers.
@@ -249,6 +263,7 @@ class Occupations:
                 rest[s] -= self._f[s, -i]
                 self._f[s, -i] = 0
                 i += 1
+        self._f = np.vstack([[self._f]] * self.Nk)
 
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""
@@ -258,4 +273,5 @@ class Occupations:
                f'Charge: {self.charge}\n' \
                f'Number of states: {self.Nstate}\n' \
                f'Number of empty states: {self.Nempty}\n' \
+               f'Number of k-points: {self.Nk}\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'

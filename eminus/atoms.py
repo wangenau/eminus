@@ -348,6 +348,7 @@ class Atoms:
         self._set_operators()
         self.kpts.build()
         self._sample_unit_cell()
+        self.occ.Nk = self.kpts.Nk  # Pass the number of k-points to the occupations object
         self.occ.fill()
         self.is_built = True
         return self
