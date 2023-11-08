@@ -552,6 +552,8 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     # Plot special points if desired
     if special:
         for k, v_scaled in SPECIAL_POINTS[kpts.lattice].items():
+            if k == 'G':
+                k = r'$\Gamma$'
             v = kpoint_convert(v_scaled, kpts.a)
             extra_data = go.Scatter3d(x=[v[0]], y=[v[1]], z=[v[2]],
                                       name=k,
