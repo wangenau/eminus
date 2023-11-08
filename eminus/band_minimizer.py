@@ -170,7 +170,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     costs = []
 
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = copy.deepcopy(scf.W)
+    d = copy.deepcopy(W)
 
     if precondition:
         method = 'pclm'
@@ -248,9 +248,9 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = copy.deepcopy(scf.W)
-    d_old = copy.deepcopy(scf.W)
-    g_old = copy.deepcopy(scf.W)
+    d = copy.deepcopy(W)
+    d_old = copy.deepcopy(W)
+    g_old = copy.deepcopy(W)
 
     if precondition:
         method = 'pccg'
@@ -351,10 +351,10 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    g = copy.deepcopy(scf.W)
-    d = copy.deepcopy(scf.W)
-    d_old = copy.deepcopy(scf.W)
-    g_old = copy.deepcopy(scf.W)
+    g = copy.deepcopy(W)
+    d = copy.deepcopy(W)
+    d_old = copy.deepcopy(W)
+    g_old = copy.deepcopy(W)
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):

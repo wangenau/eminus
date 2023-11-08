@@ -164,7 +164,7 @@ def get_Enonloc(scf, Y, ik):
         for spin in range(atoms.occ.Nspin):
             betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
 
-            enl = np.zeros(atoms.occ.Nstate, dtype=complex)
+            enl = np.zeros(Y.shape[-1], dtype=complex)
             for ia in range(atoms.Natoms):
                 psp = scf.gth[atoms.atom[ia]]
                 for l in range(psp['lmax']):

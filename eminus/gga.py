@@ -91,7 +91,7 @@ def get_tau(atoms, Y, ik):
     #     tau += 0.5 * atoms.occ.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     # return np.real(tau)
 
-    dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate, 3), dtype=complex)
+    dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
     # Calculate the active G vectors and broadcast to a desired shape
     Gc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
@@ -124,7 +124,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     """
     atoms = scf.atoms
 
-    Vpsi = np.zeros((len(atoms.Gk2c[ik]), atoms.occ.Nstate), dtype=complex)
+    Vpsi = np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
     if scf.xc_type == 'meta-gga':  # Only calculate the contribution for meta-GGAs
         # The "intuitive" way is the one commented out below
         # Sadly, this implementation is really slow for various reasons so use the faster one below
@@ -138,8 +138,8 @@ def calc_Vtau(scf, ik, spin, W, vtau):
         #         GVpsi[:, r] = atoms.J(vtau[spin] * dWrs[spin, :, r], full=False)
         #     Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
 
-        GVpsi = np.empty((len(atoms.Gk2c[ik]), atoms.occ.Nstate, 3), dtype=complex)
-        dWrs = np.empty((atoms.Ns, atoms.occ.Nstate, 3), dtype=complex)
+        GVpsi = np.empty((len(atoms.Gk2c[ik]), W[ik].shape[-1], 3), dtype=complex)
+        dWrs = np.empty((atoms.Ns, W.shape[-1], 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
         Gc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
         # We only calculate Vtau for one spin channel, index, and reshape before the loop

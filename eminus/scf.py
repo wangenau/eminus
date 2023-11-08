@@ -344,17 +344,21 @@ class SCF:
             self.converge_empty_bands(**kwargs)
         return self
 
-    def converge_empty_bands(self, **kwargs):
+    def converge_empty_bands(self, Nempty=None, **kwargs):
         """Converge unoccupied bands after conerging a SCF calculation."""
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
         self.is_converged = False
 
+        if Nempty is None:
+            Nempty = self.atoms.occ.Nempty
+
         # Build the initial wave functions
-        if 'random' in self.guess:
-            Z = guess_random(self, symmetric=self.symmetric)
-        elif 'pseudo' in self.guess:
-            Z = guess_pseudo(self, symmetric=self.symmetric)
+        if not hasattr(self, 'Z'):
+            if 'random' in self.guess:
+                self.Z = guess_random(self, Nempty, symmetric=self.symmetric)
+            elif 'pseudo' in self.guess:
+                self.Z = guess_pseudo(self, Nempty, symmetric=self.symmetric)
 
         self.log.info('Minimize unoccupied band energies...')
         # Start the minimization procedures
@@ -363,7 +367,7 @@ class SCF:
             # Call the minimizer
             self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
-            Elist, self.Z = BAND_MINIMIZER[imin](self, Z, self.opt[imin], cost=scf_step_unocc,
+            Elist, self.Z = BAND_MINIMIZER[imin](self, self.Z, self.opt[imin], cost=scf_step_unocc,
                                                  grad=get_grad_unocc, **kwargs)
             end = time.perf_counter()
             # Save the minimizer results

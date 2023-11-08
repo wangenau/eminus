@@ -302,7 +302,7 @@ def get_epsilon(scf, W, **kwargs):
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, atoms.occ.Nstate))
+    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
@@ -310,13 +310,14 @@ def get_epsilon(scf, W, **kwargs):
     return epsilon
 
 
-def guess_random(scf, seed=42, symmetric=False):
+def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     """Generate random initial-guess coefficients as starting values.
 
     Args:
         scf: SCF object.
 
     Keyword Args:
+        Nstate (int | None): Number of states.
         seed (int): Seed to initialize the random number generator.
         symmetric (bool): Weather to use the same guess for both spin channels.
 
@@ -324,27 +325,31 @@ def guess_random(scf, seed=42, symmetric=False):
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     """
     atoms = scf.atoms
+    if Nstate is None:
+        Nstate = atoms.occ.Nstate
+
     rng = Generator(SFC64(seed))
     W = []
     for ik in range(atoms.kpts.Nk):
         if symmetric:
-            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate)) + \
-                1j * rng.standard_normal((len(atoms.Gk2c[ik]), atoms.occ.Nstate))
+            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + \
+                1j * rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
             W.append(np.array([W_ik] * atoms.occ.Nspin))
         else:
-            W_ik = rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate)) + \
-                1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate))
+            W_ik = rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)) + \
+                1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
             W.append(W_ik)
     return orth(atoms, W)
 
 
-def guess_pseudo(scf, seed=1234, symmetric=False):
+def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     """Generate initial-guess coefficients using pseudo-random starting values.
 
     Args:
         scf: SCF object.
 
     Keyword Args:
+        Nstate (int | None): Number of states.
         seed (int): Seed to initialize the random number generator.
         symmetric (bool): Weather to use the same guess for both spin channels.
 
@@ -352,13 +357,16 @@ def guess_pseudo(scf, seed=1234, symmetric=False):
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
     """
     atoms = scf.atoms
+    if Nstate is None:
+        Nstate = atoms.occ.Nstate
+
     W = []
     for ik in range(atoms.kpts.Nk):
         if symmetric:
-            W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), atoms.occ.Nstate), seed=seed)
+            W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), Nstate), seed=seed)
             W.append(np.array([W_ik[0]] * atoms.occ.Nspin))
         else:
-            W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), atoms.occ.Nstate),
+            W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate),
                                   seed=seed)
             W.append(W_ik)
     return orth(atoms, W)

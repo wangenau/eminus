@@ -128,7 +128,7 @@ def I(atoms, W, ik=0):
         if W.ndim == 1:
             Wfft = np.zeros(n, dtype=W.dtype)
         else:
-            Wfft = np.zeros((n, atoms.occ.Nstate), dtype=W.dtype)
+            Wfft = np.zeros((n, W.shape[-1]), dtype=W.dtype)
         Wfft[atoms.active[ik]] = W
 
     # `workers` sets the number of threads the FFT operates on
@@ -142,10 +142,10 @@ def I(atoms, W, ik=0):
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
-        Wfft = Wfft.reshape(np.append(atoms.s, atoms.occ.Nstate))
+        Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
         # Tell the function that the FFT only has to act on the first 3 axes
         Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
-                     axes=(0, 1, 2)).reshape((n, atoms.occ.Nstate))
+                     axes=(0, 1, 2)).reshape((n, W.shape[-1]))
     return Finv
 
 
@@ -180,9 +180,9 @@ def J(atoms, W, ik=0, full=True):
         Wfft = Wfft.reshape(atoms.s)
         F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
     else:
-        Wfft = Wfft.reshape(np.append(atoms.s, atoms.occ.Nstate))
+        Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
         F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
-                 axes=(0, 1, 2)).reshape((n, atoms.occ.Nstate))
+                 axes=(0, 1, 2)).reshape((n, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
