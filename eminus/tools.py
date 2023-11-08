@@ -432,3 +432,18 @@ def get_bandgap(scf):
 
     e_unocc = get_epsilon(scf, scf.Z, **scf._precomputed)
     return np.min(e_unocc) - np.max(e_occ)
+
+
+def fermi_distribution(E, mu, kbT):
+    """Calculate the Fermi distribution.
+
+    Args:
+        E (float): State energy.
+        mu (float | ndarray): Chemical energy or Fermi energy.
+        kbT (float): Thermic energy or smearing width.
+
+    Returns:
+        float | ndarray: Fermi distribution.
+    """
+    x = (E - mu) / kbT
+    return 1 / (np.exp(2 * x) + 1)

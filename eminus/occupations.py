@@ -6,6 +6,7 @@ import numbers
 import numpy as np
 
 from .logger import log
+from .tools import fermi_distribution
 
 
 @dataclasses.dataclass
@@ -145,6 +146,7 @@ class Occupations:
     @bands.setter
     def bands(self, value):
         self._bands = int(value)
+        self.is_filled = False
 
     @property
     def smearing(self):
@@ -154,6 +156,7 @@ class Occupations:
     @smearing.setter
     def smearing(self, value):
         self._smearing = value
+        self.is_filled = False
         if self.Nempty > 0:
             log.warning('Empty states with smearing enabled found.')
 
@@ -226,7 +229,7 @@ class Occupations:
     def _integer_fillings(self, f):
         """Update fillings while maintaining integer occupations numbers.
 
-        Keyword Args:
+        Args:
             f: (int | ndarray): Fillings.
         """
         # Determine the electrons per spin channel
@@ -270,7 +273,7 @@ class Occupations:
     def _fractional_fillings(self, f):
         """Update fillings while allowing fractional occupation numbers.
 
-        Keyword Args:
+        Args:
             f: (float | ndarray): Fillings.
         """
         # Determine the electrons per spin channel
