@@ -55,7 +55,7 @@ STRUCTURES = {
 }
 
 
-def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
+def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None):
     """Wrapper to create Atoms classes for crystal systems.
 
     Args:
@@ -68,6 +68,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
         basis (list | tuple | ndarray | None): Lattice basis.
         bands (int): Number of bands (has to be larger or equal to the number of occupied states).
         kmesh (int | list | tuple | ndarray): k-point mesh.
+        smearing (float): Smearing width.
         verbose (int | str | None): Level of output.
 
     Returns:
@@ -104,6 +105,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, verbose=None):
     atoms.kpts.kmesh = kmesh
     if isinstance(lattice, str):
         atoms.kpts.lattice = lattice
+    atoms.occ.smearing = smearing
     if bands is not None:
-        atoms.occ.Nempty = bands - atoms.occ.Nstate
+        atoms.occ.bands = bands
     return atoms

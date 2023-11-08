@@ -22,6 +22,8 @@ class Occupations:
     _Nstate: int = 0         #: Number of states.
     _Nempty: int = 0         #: Number of empty states.
     _Nk: int = 1             #: Number of k-points.
+    _bands: int = 0          #: Number of bands.
+    _smearing: float = 0     #: Smearing width.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
     # ### Class properties ###
@@ -135,6 +137,26 @@ class Occupations:
             self._Nk = int(value)
             self.is_filled = False
 
+    @property
+    def bands(self):
+        """Total number of bands."""
+        return self._bands
+
+    @bands.setter
+    def bands(self, value):
+        self._bands = int(value)
+
+    @property
+    def smearing(self):
+        """Smearing width."""
+        return self._smearing
+
+    @smearing.setter
+    def smearing(self, value):
+        self._smearing = value
+        if self.Nempty > 0:
+            log.warning('Empty states with smearing enabled found.')
+
     # ### Read-only properties ###
 
     @property
@@ -146,11 +168,6 @@ class Occupations:
     def Nstate(self):
         """Number of states."""
         return self._Nstate
-
-    @property
-    def bands(self):
-        """Total number of bands."""
-        return self.Nstate + self.Nempty
 
     @property
     def F(self):
@@ -216,8 +233,23 @@ class Occupations:
         Nup = self.Nelec // self.Nspin + self.spin // self.Nspin + self.Nelec % self.Nspin
         Ndw = self.Nelec // self.Nspin - self.spin // self.Nspin
         elecs = np.array([Nup, Ndw])
+
         # Get the number of states
-        self._Nstate = int(np.ceil(max(elecs / f)))
+        Nstate = int(np.ceil(max(elecs / f)))
+        # If no bands are set, set them now
+        if self.bands == 0:
+            self.bands = Nstate
+            self._Nstate = Nstate
+        if self.bands < Nstate:
+            log.error('Number of bands is smaller than the number of valence electrons.')
+        # Disallow empty bands when using smearing
+        if self.smearing > 0:
+            self._Nstate = self.bands
+        # Set the number of empty states if no smearing is used
+        else:
+            self._Nstate = Nstate
+            self.Nempty = self.bands - Nstate
+
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, self._Nstate), dtype=int)
         # If we have filled too much correct it in the second spin channel
@@ -245,8 +277,23 @@ class Occupations:
         Nup = self.Nelec / self.Nspin + self.spin / self.Nspin
         Ndw = self.Nelec / self.Nspin - self.spin / self.Nspin
         elecs = np.array([Nup, Ndw])
+
         # Get the number of states
-        self._Nstate = int(np.ceil(max(elecs / f)))
+        Nstate = int(np.ceil(max(elecs / f)))
+        # If no bands are set, set them now
+        if self.bands == 0:
+            self.bands = Nstate
+            self._Nstate = Nstate
+        if self.bands < Nstate:
+            log.error('Number of bands is smaller than the number of valence electrons.')
+        # Disallow empty bands when using smearing
+        if self.smearing > 0:
+            self._Nstate = self.bands
+        # Set the number of empty states if no smearing is used
+        else:
+            self._Nstate = Nstate
+            self.Nempty = self.bands - Nstate
+
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, self._Nstate))
         # If we have filled too much correct it in both spin channels
@@ -271,7 +318,9 @@ class Occupations:
                f'Number of electrons: {self.Nelec}\n' \
                f'Spin: {self.spin}\n' \
                f'Charge: {self.charge}\n' \
+               f'Number of bands: {self.bands}\n' \
                f'Number of states: {self.Nstate}\n' \
                f'Number of empty states: {self.Nempty}\n' \
                f'Number of k-points: {self.Nk}\n' \
+               f'Smearing width: {self.smearing}\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
