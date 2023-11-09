@@ -41,7 +41,7 @@ def scf_step(scf, step):
     scf._precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc,
                         'vsigma': scf.vsigma, 'vtau': scf.vtau}
     if scf.atoms.occ.smearing > 0 and step % scf.occ_recalc == 0:
-        scf.log.verbose('Recalculate fillings...')
+        scf.log.info('Recalculate fillings...')
         verbose = scf.log.verbose
         scf.log.verbose = 'error'
         e = get_epsilon_band(scf)
