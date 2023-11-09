@@ -12,6 +12,7 @@ from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
 from ..logger import log
+from ..occupations import find_Efermi
 from ..tools import get_Efermi, get_isovalue
 from ..units import ha2ev
 from .fods import split_fods
@@ -493,18 +494,21 @@ def plot_bandstructure(scf, spin=0):
     # Replace 'G' with the Greek 'Gamma'
     label = [r'$\Gamma$' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
-    e_fermi = ha2ev(get_Efermi(scf))
+    if hasattr(scf, 'Z'):
+        Efermi = ha2ev(get_Efermi(scf))
+    else:
+        Efermi = find_Efermi(scf.atoms.occ, e_occ)
 
     plt.figure()
     # Plot occupied bands
     for i in range(scf.atoms.occ.Nstate):
-        plt.plot(k_axis, e_occ[:, spin, i] - e_fermi, '.-')
+        plt.plot(k_axis, e_occ[:, spin, i] - Efermi, '.-')
 
     # Calculate and plot unoccupied bands if available
     if hasattr(scf, 'Z'):
         e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
         for i in range(scf.atoms.occ.Nempty):
-            plt.plot(k_axis, e_unocc[:, spin, i] - e_fermi, '.--')
+            plt.plot(k_axis, e_unocc[:, spin, i] - Efermi, '.--')
 
     for i in special:
         plt.axvline(x=i, c='grey', lw=1)
