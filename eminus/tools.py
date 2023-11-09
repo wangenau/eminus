@@ -446,4 +446,4 @@ def fermi_distribution(E, mu, kbT):
         float | ndarray: Fermi distribution.
     """
     x = (E - mu) / kbT
-    return 1 / (np.exp(2 * x) + 1)
+    return 1 / (np.exp(x) + 1)
