@@ -5,7 +5,7 @@ import logging
 
 import numpy as np
 
-from .dft import get_grad, get_n_spin, get_n_total, orth, solve_poisson
+from .dft import get_epsilon_band, get_grad, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E
 from .gga import get_grad_field, get_tau
 from .logger import name
@@ -13,7 +13,7 @@ from .utils import dotprod
 from .xc import get_xc
 
 
-def scf_step(scf):
+def scf_step(scf, step):
     """Perform one SCF step for a DFT calculation.
 
     Calculating intermediate results speeds up the energy and gradient calculation.
@@ -22,6 +22,7 @@ def scf_step(scf):
 
     Args:
         scf: SCF object.
+        step (int): Optimization step.
 
     Returns:
         float: Total energy.
@@ -39,6 +40,13 @@ def scf_step(scf):
                                                     scf.dn_spin, scf.tau)
     scf._precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc,
                         'vsigma': scf.vsigma, 'vtau': scf.vtau}
+    if scf.atoms.occ.smearing > 0 and step % scf.occ_recalc == 0:
+        scf.log.verbose('Recalculate fillings...')
+        verbose = scf.log.verbose
+        scf.log.verbose = 'error'
+        e = get_epsilon_band(scf)
+        scf.log.verbose = verbose
+        scf.atoms.occ.smear(e)
     return get_E(scf)
 
 
@@ -242,8 +250,8 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     atoms = scf.atoms
     costs = []
 
-    for _ in range(Nit):
-        c = cost(scf)
+    for i in range(Nit):
+        c = cost(scf, i)
         costs.append(c)
         if condition(scf, 'sd', costs):
             break
@@ -306,7 +314,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
         for ik in range(atoms.kpts.Nk):
             scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
-        c = cost(scf)
+        c = cost(scf, i)
         costs.append(c)
         if condition(scf, method, costs, linmin):
             break
@@ -389,11 +397,11 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     # Update wave functions after calculating the gradients for each spin
     for ik in range(atoms.kpts.Nk):
         scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
-    c = cost(scf)
+    c = cost(scf, -1)
     costs.append(c)
     condition(scf, method, costs)
 
-    for _ in range(1, Nit):
+    for i in range(1, Nit):
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, scf.W, **scf._precomputed)
@@ -415,7 +423,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
         for ik in range(atoms.kpts.Nk):
             scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
-        c = cost(scf)
+        c = cost(scf, i)
         costs.append(c)
         if condition(scf, method, costs, linmin, cg, norm_g):
             break
@@ -493,12 +501,12 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     W_old = copy.deepcopy(scf.W)
     for ik in range(atoms.kpts.Nk):
         scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
-    c = cost(scf)
+    c = cost(scf, -1)
     costs.append(c)
     if condition(scf, 'pccg', costs):
         return costs
 
-    for _ in range(1, Nit):
+    for i in range(1, Nit):
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
@@ -519,18 +527,18 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         W_old = copy.deepcopy(scf.W)
         for ik in range(atoms.kpts.Nk):
             scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
-        c = cost(scf)
+        c = cost(scf, i)
         # If the energy does not go down use the steepest descent step and recalculate the energy
         if c > costs[-1]:
             scf.W = W_old
             for ik in range(atoms.kpts.Nk):
                 for spin in range(atoms.occ.Nspin):
                     scf.W[ik][spin] = scf.W[ik][spin] - betat * g[ik][spin]
-            c = cost(scf)
+            c = cost(scf, -1)
             costs.append(c)
             # Do not print cg and linmin if we do the sd step
-            if condition(scf, 'sd', costs, norm_g=norm_g):
-                break
+            condition(scf, 'sd', costs, norm_g=norm_g)
+            #    break
         else:
             costs.append(c)
             if condition(scf, 'pccg', costs, linmin, cg, norm_g):

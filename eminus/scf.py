@@ -77,6 +77,7 @@ class SCF:
         self.sic = sic                  #: Enables the SIC energy calculation.
         self.disp = disp                #: Enables the dispersion correction calculation.
         self.opt = opt                  #: Minimization methods.
+        self.occ_recalc = 10            #: Steps after the occupations are recalculated.
 
         # Initialize other attributes
         self.energies = Energy()        #: Energy object holding energy contributions.
