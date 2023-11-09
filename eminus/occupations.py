@@ -133,10 +133,19 @@ class Occupations:
 
     @Nk.setter
     def Nk(self, value):
-        # Only update Nk if it actually gets updated
-        if self._Nk != int(value):
-            self._Nk = int(value)
-            self.is_filled = False
+        self._Nk = int(value)
+        self.is_filled = False
+
+    @property
+    def wk(self):
+        """k-point weights."""
+        return self._wk
+
+    @wk.setter
+    def wk(self, value):
+        self._wk = np.asarray(value)
+        self._Nk = len(self._wk)
+        self.is_filled = False
 
     @property
     def bands(self):
@@ -327,3 +336,94 @@ class Occupations:
                f'Number of k-points: {self.Nk}\n' \
                f'Smearing width: {self.smearing}\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
+
+    def smear(self, epsilon):
+        """Update fillings according to a Fermi distribution.
+
+        Args:
+            epsilon (ndarray): Eigenenergies.
+            Efermi (float): Fermi energy.
+        """
+        if self.smearing == 0:
+            log.info('Smearing is set to zero, nothing to do.')
+            return
+
+        Efermi = find_Efermi(self, epsilon)
+
+        f = np.empty_like(self.f)
+        for ik in range(self.Nk):
+            for spin in range(self.Nspin):
+                for istate in range(self.Nstate):
+                    f[ik, spin, istate] = fermi_distribution(epsilon[ik, spin, istate], Efermi,
+                                                             self.smearing)
+        self._f = f * 2 / self.Nspin
+        return
+
+
+def sumkg(occ, epsilon, Efermi):
+    """Sum occupation numbers for given eigenenergies up to the Fermi energy.
+
+    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
+
+    Args:
+        occ: Occupations object.
+        epsilon (ndarray): Eigenenergies.
+        Efermi (float): Fermi energy.
+
+    Returns:
+        float: Summed occupations.
+    """
+    wk = occ.wk
+    if occ.Nspin == 1:
+        wk = 2 * wk
+
+    ss = 0
+    for ik in range(len(wk)):
+        for spin in range(occ.Nspin):
+            ss1 = 0
+            for istate in range(occ.Nstate):
+                ss1 = ss1 + fermi_distribution(epsilon[ik, spin, istate], Efermi, occ.smearing)
+            ss = ss + wk[ik] * ss1
+    return ss
+
+
+def find_Efermi(occ, epsilon):
+    """Find the Fermi energy for given eigenenergies.
+
+    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
+
+    Args:
+        occ: Occupations object.
+        epsilon (ndarray): Eigenenergies.
+
+    Returns:
+        float: Fermi energy.
+    """
+    eps = 1e-10
+
+    Elw = np.min(epsilon[:, :, 0])
+    Eup = np.max(epsilon[:, :, -1])
+    Elw -= 2 * occ.smearing
+    Eup += 2 * occ.smearing
+
+    sumklw = sumkg(occ, epsilon, Elw)
+    sumkup = sumkg(occ, epsilon, Eup)
+    if (sumkup - occ.Nelec) < -1e-15 or (sumklw - occ.Nelec) > 1e-15:
+        log.exception('Bounds for Efermi not found.')
+
+    Ef = 0.5 * (Eup + Elw)
+    Ef_old = Ef
+    for _ in range(500):
+        sumkmid = sumkg(occ, epsilon, Ef)
+        if abs(sumkmid - occ.Nelec) < eps:
+            return Ef
+        if sumkmid - occ.Nelec < -eps:
+            Elw = Ef
+        else:
+            Eup = Ef
+        Ef = 0.5 * (Eup + Elw)
+        diff_Ef = abs(Ef - Ef_old)
+        if diff_Ef < eps:
+            return Ef
+        Ef_old = Ef
+    return Ef
