@@ -469,3 +469,34 @@ def electronic_entropy(E, mu, kbT):
         f = 1 / (1 + np.exp(-x))
         return -(f * np.log(f) + (1 - f) * np.log(1 - f))
     return 0
+
+
+def get_dos(epsilon, wk, spin=0, npts=201, width=0.1):
+    """Calculate the total density of states.
+
+    Reference: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/calculator.py
+
+    Args:
+        epsilon (ndarray): Eigenenergies.
+        wk (ndarray): Chemical energy or Fermi energy.
+
+    Keyword Args:
+        spin (int): Spin channel.
+        npts (int): Number of energy discretizations.
+        width (float): Gaussian width.
+
+    Returns:
+        tuple[ndarray, ndarray]: Eigenenergies and DOS.
+    """
+    def delta(x, x0, width):
+       """Gaussian of given width centered at x0."""
+       return np.exp(np.clip(-((x - x0) / width)**2, -100, 100)) / (np.sqrt(np.pi) * width)
+
+    energies = epsilon[:, spin].flatten()
+    emin = np.min(energies) - 5 * width
+    emax = np.max(energies) + 5 * width
+    e = np.linspace(emin, emax, npts)
+    dos_e = np.zeros(npts)
+    for e0, w in zip(energies, wk):
+        dos_e += w * delta(e, e0, width)
+    return e, dos_e
