@@ -262,6 +262,10 @@ class SCF:
         elif self.disp:
             self.energies.Edisp = get_Edisp(self)
 
+        # Delete the unoccupied smearing states
+        if self.atoms.occ.smearing > 0:
+            del self.Z
+
         # Print minimizer timings
         self.log.debug('\n--- SCF results ---')
         t_tot = 0
