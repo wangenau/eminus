@@ -129,7 +129,8 @@ def orth_unocc(atoms, Y, Z):
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             # rhoZ = (I - Y Ydag O) Z
-            rhoZ = Z[ik][spin] - Y[ik][spin] @ Y[ik][spin].conj().T @ atoms.O(Z[ik][spin])
+            Yocc = np.copy(Y[ik][spin][:, atoms.occ.f[ik][spin] > 0])
+            rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
             D[ik][spin] = rhoZ @ inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     return D

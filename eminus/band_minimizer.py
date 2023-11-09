@@ -94,7 +94,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
         ndarray: Gradient.
     """
     atoms = scf.atoms
-    Y = scf.Y[ik][spin]
+    Y = scf.Y[ik][spin][:, scf.atoms.occ.f[ik][spin] > 0]
     Ydag = Y.conj().T
     # We need X12 later, so orthogonalize in-place and onle the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
