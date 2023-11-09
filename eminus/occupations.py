@@ -346,7 +346,7 @@ class Occupations:
         """
         if self.smearing == 0:
             log.info('Smearing is set to zero, nothing to do.')
-            return
+            return 0
 
         Efermi = find_Efermi(self, epsilon)
 
@@ -357,7 +357,7 @@ class Occupations:
                     f[ik, spin, istate] = fermi_distribution(epsilon[ik, spin, istate], Efermi,
                                                              self.smearing)
         self._f = f * 2 / self.Nspin
-        return
+        return Efermi
 
 
 def sumkg(occ, epsilon, Efermi):
@@ -383,7 +383,7 @@ def sumkg(occ, epsilon, Efermi):
             ss1 = 0
             for istate in range(occ.Nstate):
                 ss1 = ss1 + fermi_distribution(epsilon[ik, spin, istate], Efermi, occ.smearing)
-            ss = ss + wk[ik] * ss1
+            ss += wk[ik] * ss1
     return ss
 
 

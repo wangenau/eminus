@@ -437,13 +437,35 @@ def get_bandgap(scf):
 def fermi_distribution(E, mu, kbT):
     """Calculate the Fermi distribution.
 
+    Reference: https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics
+
     Args:
         E (float): State energy.
-        mu (float | ndarray): Chemical energy or Fermi energy.
+        mu (float): Chemical energy or Fermi energy.
         kbT (float): Thermic energy or smearing width.
 
     Returns:
-        float | ndarray: Fermi distribution.
+        float: Fermi distribution.
     """
     x = (E - mu) / kbT
     return 1 / (np.exp(x) + 1)
+
+
+def electronic_entropy(E, mu, kbT):
+    """Calculate the electronic entropic energy.
+
+    Reference: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
+
+    Args:
+        E (float): State energy.
+        mu (float): Chemical energy or Fermi energy.
+        kbT (float): Thermic energy or smearing width.
+
+    Returns:
+        float: Electronic entropic energy.
+    """
+    x = (E - mu) / kbT
+    if abs(x) <= 36:
+        f = 1 / (1 + np.exp(-x))
+        return -(f * np.log(f) + (1 - f) * np.log(1 - f))
+    return 0

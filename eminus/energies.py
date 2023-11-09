@@ -10,6 +10,7 @@ from .dft import get_n_single, H, solve_poisson
 from .extras import dispersion
 from .gga import get_grad_field, get_tau
 from .logger import log
+from .tools import electronic_entropy
 from .utils import handle_k_reducable
 from .xc import get_exc
 
@@ -25,6 +26,7 @@ class Energy:
     Eewald: float = 0   #: Ewald energy.
     Esic: float = 0     #: Self-interaction correction energy.
     Edisp: float = 0    #: Dispersion correction energy.
+    Ets: float = 0      #: Fillings entropic energy.
 
     @property
     def Etot(self):
@@ -348,3 +350,32 @@ def get_Eband(scf, Y, **kwargs):
             Eband += atoms.kpts.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y,
                                                                            **kwargs))
     return np.real(Eband)
+
+
+def get_Ets(scf, epsilon, Efermi):
+    """Calculate the fillings entropic energy.
+
+    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
+
+    Args:
+        scf: SCF object.
+        epsilon (ndarray): Eigenenergies.
+        Efermi (float): Fermi energy.
+
+    Returns:
+        float: Entropic energy in Hartree.
+    """
+    occ = scf.atoms.occ
+
+    wk = occ.wk
+    if occ.Nspin == 1:
+        wk = 2 * wk
+
+    Ets = 0
+    for ik in range(len(wk)):
+        for spin in range(occ.Nspin):
+            for istate in range(occ.Nstate):
+                Ets -= wk[ik] * occ.smearing * electronic_entropy(epsilon[ik, spin, istate], Efermi,
+                                                                  occ.smearing)
+    scf.energies.Ets = Ets
+    return Ets
