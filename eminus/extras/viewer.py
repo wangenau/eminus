@@ -7,6 +7,7 @@ import uuid
 import numpy as np
 
 from ..atoms import Atoms
+from ..cell import get_lattice
 from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
 from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
@@ -54,6 +55,13 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     atoms = obj._atoms
 
     fig = go.Figure()
+    # Calculate vertices of the Brillouin zone and plot them
+    lattice = get_lattice(atoms.a)
+    for xx in lattice:
+        bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
+                               showlegend=False,
+                               marker={'size': 0.1, 'color': 'black'})
+        fig.add_trace(bz_data)
     # Add species one by one to be able to have them named and be selectable in the legend
     # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):

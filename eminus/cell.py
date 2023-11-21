@@ -109,3 +109,40 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, ve
     if bands is not None:
         atoms.occ.bands = bands
     return atoms
+
+
+def get_lattice(lattice_vectors):
+    """Generate a cell for given lattice vectors.
+
+    Args:
+        lattice_vectors (ndarray): Lattice vectors.
+
+    Returns:
+        ndarray: Lattice vertices.
+    """
+    # Vertices of a cube
+    vertices = np.array([[0, 0, 0],
+                         [0, 0, 1],
+                         [0, 1, 0],
+                         [0, 1, 1],
+                         [1, 0, 0],
+                         [1, 0, 1],
+                         [1, 1, 0],
+                         [1, 1, 1]])
+    # Connected vertices of a cube with the above ordering
+    edges = np.array([[0, 1],
+                      [0, 2],
+                      [0, 4],
+                      [1, 3],
+                      [1, 5],
+                      [2, 3],
+                      [2, 6],
+                      [3, 7],
+                      [4, 5],
+                      [4, 6],
+                      [5, 7],
+                      [6, 7]])
+    # Scale vertices with the lattice vectors
+    # Select pairs of vertices to plot them later
+    # The resulting return value is similar to the get_brillouin_zone function
+    return [(vertices @ lattice_vectors)[e, :] for e in edges]
