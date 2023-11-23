@@ -2,21 +2,23 @@
 """Collection of constants and unit conversion functions.
 
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
+All values are directly calculated from the CODATA 2018 constants as found in SciPy.
 """
 import numpy as np
 
 #: Hartree in electronvolt.
-#: Reference: https://en.wikipedia.org/wiki/Hartree
+# scipy.constants.value('Hartree energy in eV')
 electronvolt = eV = 27.211386245988
 #: Hartree in kcal per mol.
-#: Reference: https://en.wikipedia.org/wiki/Hartree
-kcalmol = 627.5094740631
+# scipy.constants.value('Hartree energy') * scipy.constants.value('Avogadro constant') / 4.184 / 1e3
+kcalmol = 627.5094740630557
 #: Bohr radius in Angstrom.
-#: Reference: https://en.wikipedia.org/wiki/Bohr_radius
+# scipy.constants.value('Bohr radius') * 1e10
 Angstrom = A = 0.529177210903
 #: Elementary charge times bohr radius in Debye.
-#: Reference: https://en.wikipedia.org/wiki/Hartree_atomic_units
-Debye = D = 2.541746473
+# scipy.constants.value('atomic unit of electric dipole mom.') / \
+# scipy.constants.value('hertz-inverse meter relationship') * 1e21
+Debye = D = 2.5417464731818566
 
 
 def ha2ev(E):
