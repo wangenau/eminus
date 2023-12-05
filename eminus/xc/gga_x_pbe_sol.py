@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Perdew-Burke-Ernzerhof GGA exchange for solids and surfaces.
 
-Reference: Phys. Rev. Lett. 102, 039902.
+Reference: Phys. Rev. Lett. 100, 136406.
 """
 from .gga_x_pbe import gga_x_pbe, gga_x_pbe_spin
 
@@ -11,7 +11,7 @@ def gga_x_pbe_sol(n, **kwargs):
 
     Corresponds to the functional with the label GGA_X_PBE_SOL and ID 116 in Libxc.
 
-    Reference: Phys. Rev. Lett. 102, 039902.
+    Reference: Phys. Rev. Lett. 100, 136406.
 
     Args:
         n (ndarray): Real-space electronic density.
@@ -30,7 +30,7 @@ def gga_x_pbe_sol_spin(n, zeta, **kwargs):
 
     Corresponds to the functional with the label GGA_X_PBE_SOL and ID 116 in Libxc.
 
-    Reference: Phys. Rev. Lett. 102, 039902.
+    Reference: Phys. Rev. Lett. 100, 136406.
 
     Args:
         n (ndarray): Real-space electronic density.
