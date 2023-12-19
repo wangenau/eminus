@@ -59,6 +59,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     lattice = get_lattice(atoms.a)
     for xx in lattice:
         bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
+                               name='Unit cell',
                                showlegend=False,
                                marker={'size': 0.1, 'color': 'black'})
         fig.add_trace(bz_data)
@@ -557,6 +558,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     bz = get_brillouin_zone(kpts.a)
     for xx in bz:
         bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
+                               name='Brillouin zone',
                                showlegend=False,
                                marker={'size': 0.1, 'color': 'black'})
         fig.add_trace(bz_data)

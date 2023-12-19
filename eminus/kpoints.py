@@ -121,10 +121,11 @@ class KPoints:
         if self.is_built:
             return self
         if self.kmesh is not None:
-            self._k_scaled, self.wk = monkhorst_pack(self.kmesh)
+            self._k_scaled = monkhorst_pack(self.kmesh)
         else:
             self._k_scaled = bandpath(self)
-            self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
+        # Without removing redundancies the weight is the same for all k-points
+        self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
         k_shift = self._k_scaled + self.kshift
         self.k = kpoint_convert(k_shift, self.a)
         self.is_built = True
@@ -165,7 +166,7 @@ def monkhorst_pack(nk):
         lattice_vectors (ndarray): Lattice vectors.
 
     Returns:
-        tuple[ndarray, ndarray]: k-points and their respective weights.
+        ndarray: k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
     nktotal = np.prod(nk)
@@ -175,10 +176,7 @@ def monkhorst_pack(nk):
     m3 = ms % nk[2]
     M = np.column_stack((m1, m2, m3))
 
-    # k_points = (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
-    k_points = M / nk  # Grid that always includes the Gamma point
-    # Without removing redundancies the weight is the same for all k-points
-    return k_points, np.ones(nktotal) / nktotal
+    return (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
 
 
 def bandpath(kpts):
