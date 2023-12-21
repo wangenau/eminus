@@ -54,7 +54,7 @@ coverage:
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
     - coverage report --precision=2
     - coverage xml
-    - coverage html
+    - coverage html --precision=2
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
