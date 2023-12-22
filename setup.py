@@ -29,7 +29,6 @@ extras: dict[str, list[str]] = {
         'torch>=1.8'  # Faster FFT operators using Torch
     ],
     'viewer': [
-        'matplotlib>=1.5.0',  # Plotting library
         'nglview>=2.6.5',     # Molecule and isosurface viewer
         'plotly>=4.5'         # Grid visualization
     ]
@@ -40,6 +39,7 @@ extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
     'coverage>=4.4',           # Generate coverage reports
     'furo>=2022.02.14.1',      # Documentation theme
+    'matplotlib>=1.5.0',       # Plotting library
     'mypy>=0.931',             # Static type checker
     'notebook<7',              # Run and convert notebooks to HTML
     'pytest>=5.4',             # Test utilities
