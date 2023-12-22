@@ -23,7 +23,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
     Returns:
         dict: GTH parameters.
     """
-    if psp_path in ('pade', 'pbe'):
+    if psp_path in {'pade', 'pbe'}:
         file_path = pathlib.Path(inspect.stack()[0][1]).parent
         file_path = file_path.parent.joinpath(f'psp/{psp_path}')
     else:

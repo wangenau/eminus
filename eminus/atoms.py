@@ -191,7 +191,7 @@ class Atoms:
     def center(self, value):
         if isinstance(value, str):
             self._center = value.lower()
-            if self._center not in ('rotate', 'shift', 'recentered'):
+            if self._center not in {'rotate', 'shift', 'recentered'}:
                 log.error(f'{self._center} is not a recognized center method.')
         else:
             self._center = value

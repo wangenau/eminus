@@ -284,7 +284,7 @@ def atom2charge(atom, path=None):
     from .io import read_gth
 
     if path is not None:
-        if path.lower() in ('pade', 'pbe'):
+        if path.lower() in {'pade', 'pbe'}:
             psp_path = path.lower()
         else:
             psp_path = path

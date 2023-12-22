@@ -200,7 +200,7 @@ def bandpath(kpts):
         log.warning('Sampling is smaler than the number of special points.')
         N = N_special
     for p in path_list:
-        if p not in (*s_points, ','):
+        if p not in {*s_points, ','}:
             raise KeyError(f'{p} is not a special point for the {kpts.lattice} lattice.')
 
     # Calculate distances between special points

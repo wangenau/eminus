@@ -109,13 +109,13 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         header += 'Etot [Eh]'.ljust(13)
         header += 'dEtot [Eh]'.ljust(13)
         # Print the gradient norm for cg methods
-        if method not in ('sd', 'lm', 'pclm'):
+        if method not in {'sd', 'lm', 'pclm'}:
             header += '|Gradient|'.ljust(10 * scf.atoms.occ.Nspin + 3)
         # Print extra debugging information if available
         if scf.log.level <= logging.DEBUG:
             if method != 'sd':
                 header += 'linmin-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
-            if method not in ('sd', 'lm', 'pclm'):
+            if method not in {'sd', 'lm', 'pclm'}:
                 header += 'cg-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
             scf.log.debug(header)
         else:
@@ -137,7 +137,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
             if scf.log.level <= logging.DEBUG:
                 if method != 'sd' and linmin is not None:
                     info += str(weighted_property(linmin)).ljust(10 * scf.atoms.occ.Nspin + 3)
-                if method not in ('sd', 'lm', 'pclm') and cg is not None:
+                if method not in {'sd', 'lm', 'pclm'} and cg is not None:
                     info += str(weighted_property(cg)).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
         scf.log.debug(info)
