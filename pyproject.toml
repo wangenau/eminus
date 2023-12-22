@@ -11,6 +11,7 @@ exclude = ["public"]
 line-length = 100
 target-version = "py37"
 respect-gitignore = true
+extend-include = ["*.ipynb"]
 
 select = [
     "F",       # Pyflakes
