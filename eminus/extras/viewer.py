@@ -127,13 +127,16 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
         scene['xaxis']['range'] = [0, atoms.a[0, 0]]
         scene['yaxis']['range'] = [0, atoms.a[1, 1]]
         scene['zaxis']['range'] = [0, atoms.a[2, 2]]
-    fig.update_layout(scene=scene,
-                      width=size[0],
-                      height=size[1],
-                      legend={'itemsizing': 'constant', 'title': 'Selection'},
-                      hoverlabel_bgcolor='black',
-                      template='none')
-    return fig
+    fig.update_layout(
+        scene=scene,
+        width=size[0],
+        height=size[1],
+        legend={'itemsizing': 'constant', 'title': 'Selection'},
+        hoverlabel_bgcolor='black',
+        template='none')
+    if executed_in_notebook():
+        return fig
+    return fig.show()
 
 
 def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1, linewidth=1,
@@ -188,17 +191,18 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1
     fig.add_trace(contours)
 
     # Theming
-    fig.update_layout(template='none',
-                      width=size[0],
-                      height=size[1],
-                      margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
-                      xaxis={'range': [(1 - zoom) * atoms.a[axes[0], axes[0]],
-                                       zoom * atoms.a[axes[0], axes[0]]],
-                             'visible': False},
-                      yaxis={'range': [(1 - zoom) * atoms.a[axes[1], axes[1]],
-                                       zoom * atoms.a[axes[1], axes[1]]],
-                             'visible': False})
-    return fig
+    fig.update_layout(
+        width=size[0],
+        height=size[1],
+        margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
+        xaxis={'range': [(1 - zoom) * atoms.a[axes[0], axes[0]], zoom * atoms.a[axes[0], axes[0]]],
+               'visible': False},
+        yaxis={'range': [(1 - zoom) * atoms.a[axes[1], axes[1]], zoom * atoms.a[axes[1], axes[1]]],
+               'visible': False},
+        template='none')
+    if executed_in_notebook():
+        return fig
+    return fig.show()
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
@@ -484,7 +488,7 @@ def _traj_view(view, filename):
     return view
 
 
-def plot_bandstructure(scf, spin=0):
+def plot_bandstructure(scf, spin=0, size=(800, 600)):
     """Plot band structures.
 
     Args:
@@ -492,41 +496,58 @@ def plot_bandstructure(scf, spin=0):
 
     Keyword Args:
         spin (int): Spin index.
+        size (tuple): Widget size.
     """
     try:
-        import matplotlib.pyplot as plt
+        import plotly.graph_objects as go
     except ImportError:
         log.exception('Necessary dependencies not found. To use this module, '
                       'install them with "pip install eminus[viewer]".\n\n')
         raise
     k_axis, special, label = kpoints2axis(scf.kpts)
-    # Replace 'G' with the Greek 'Gamma'
-    label = [r'$\Gamma$' if l == 'G' else l for l in label]
+    # Replace 'G' with the Greek 'Gamma' encoded in unicode
+    label = ['\u0393' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
+
     if hasattr(scf, 'Z'):
         Efermi = ha2ev(get_Efermi(scf))
     else:
         Efermi = find_Efermi(scf.atoms.occ, e_occ)
 
-    plt.figure()
+    fig = go.Figure()
     # Plot occupied bands
     for i in range(scf.atoms.occ.Nstate):
-        plt.plot(k_axis, e_occ[:, spin, i] - Efermi, '.-')
+        fig.add_trace(go.Scatter(x=k_axis, y=e_occ[:, spin, i] - Efermi,
+                      mode='lines+markers',
+                      name=f'Band {i + 1}'))
 
     # Calculate and plot unoccupied bands if available
     if hasattr(scf, 'Z'):
         e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
         for i in range(scf.atoms.occ.Nempty):
-            plt.plot(k_axis, e_unocc[:, spin, i] - Efermi, '.--')
+            fig.add_trace(go.Scatter(x=k_axis, y=e_unocc[:, spin, i] - Efermi,
+                          mode='lines+markers',
+                          line={'dash': 'dash'},
+                          name=f'Unocc. band {i + 1}'))
 
-    for i in special:
-        plt.axvline(x=i, c='grey', lw=1)
-    plt.xticks(special, label, fontsize=12.5)
-    plt.xlabel('k-path', fontsize=15)
-    plt.ylabel(r'$E - E_\mathrm{F}$ [eV]', fontsize=15)
-    plt.xlim(0, k_axis[-1])
-    plt.tight_layout()
-    plt.show()
+    fig.update_layout(
+        width=size[0],
+        height=size[1],
+        showlegend=False,
+        font={'size': 20},
+        xaxis={'zeroline': False, 'showline': True, 'mirror': True, 'ticks': 'outside',
+               'tickmode': 'array', 'tickvals': special, 'ticktext': label,
+               'gridcolor': 'grey', 'gridwidth': 2},
+        yaxis={'zeroline': False, 'showline': True, 'mirror': True, 'ticks': 'outside',
+               'showgrid': False},
+        xaxis_range=(0, k_axis[-1]),
+        xaxis_title='k-path',
+        yaxis_title='E - E<sub>F</sub> [eV]',
+        hoverlabel_bgcolor='black',
+        template='none')
+    if executed_in_notebook():
+        return fig
+    return fig.show()
 
 
 def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
@@ -567,7 +588,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     if special:
         for label, k_scaled in SPECIAL_POINTS[kpts.lattice].items():
             if label == 'G':
-                label = r'$\Gamma$'  # noqa: PLW2901
+                label = '\u0393'  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
             extra_data = go.Scatter3d(x=[v[0]], y=[v[1]], z=[v[2]],
                                       name=label,
@@ -592,10 +613,13 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
              'yaxis': {'title': 'b<sub>2</sub>'},
              'zaxis': {'title': 'b<sub>3</sub>'},
              'aspectmode': 'cube'}
-    fig.update_layout(scene=scene,
-                      width=size[0],
-                      height=size[1],
-                      legend={'itemsizing': 'constant', 'title': 'Selection'},
-                      hoverlabel_bgcolor='black',
-                      template='none')
-    return fig
+    fig.update_layout(
+        scene=scene,
+        width=size[0],
+        height=size[1],
+        legend={'itemsizing': 'constant', 'title': 'Selection'},
+        hoverlabel_bgcolor='black',
+        template='none')
+    if executed_in_notebook():
+        return fig
+    return fig.show()
