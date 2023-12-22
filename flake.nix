@@ -23,13 +23,13 @@
           torch-bin
           # torch if allowUnfree = true is undesired
           ### viewer ###
-          jupyter
-          matplotlib
           # nglview is missing
           plotly
           ### dev ###
           coverage
           furo
+          jupyter
+          matplotlib
           mypy
           pytest
           pytest-cov
