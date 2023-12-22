@@ -18,11 +18,14 @@ select = [
     "C90",     # mccabe
     "I",       # isort
     "D",       # pydocstyle
+    "UP",      # pyupgrade
     "S",       # flake8-bandit
+    "BLE",     # flake8-blind-except
     "B",       # flake8-bugbear
     "A",       # flake8-builtins
     "C4",      # flake8-comprehensions
     "FA",      # flake8-future-annotations
+    "ICN",     # flake8-import-conventions
     "PIE",     # flake8-pie
     "PT",      # flake8-pytest-style
     "RSE",     # flake8-raise
