@@ -49,10 +49,7 @@ ignore = [
     # PLR0913: Too many arguments to function call
     # PLR2004: Magic value used in comparison
     # These rules feel too restrictive for now
-    "PLR0911", "PLR0912", "PLR0913", "PLR2004",
-    # RUF005: Consider `(*t, v)` instead of concatenation
-    # This seems to be slower in the cases we use it
-    "RUF005"
+    "PLR0911", "PLR0912", "PLR0913", "PLR2004"
 ]
 
 [tool.ruff.per-file-ignores]

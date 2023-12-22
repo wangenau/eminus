@@ -61,10 +61,10 @@ def I(atoms, W):
         Wfft = Wfft.view(s)
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((*s, atoms.occ._Nstate))
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((atoms.occ._Nspin, *s, atoms.occ._Nstate))
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
                                                                               atoms.occ._Nstate)
     return Finv.detach().cpu().numpy()
@@ -95,10 +95,10 @@ def J(atoms, W, full=True):
         Wfft = Wfft.view(s)
         F = torch.fft.fftn(Wfft, s=s, norm='forward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((*s, atoms.occ._Nstate))
         F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((atoms.occ._Nspin, *s, atoms.occ._Nstate))
         F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
                                                                           atoms.occ._Nstate)
     F = F.detach().cpu().numpy()
@@ -134,10 +134,10 @@ def Idag(atoms, W, full=False):
         Wfft = Wfft.view(s)
         F = torch.fft.fftn(Wfft, s=s, norm='backward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((*s, atoms.occ._Nstate))
         F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((atoms.occ._Nspin, *s, atoms.occ._Nstate))
         F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
                                                                            atoms.occ._Nstate)
     F = F.detach().cpu().numpy()
@@ -185,10 +185,10 @@ def Jdag(atoms, W):
         Wfft = Wfft.view(s)
         Finv = torch.fft.ifftn(Wfft, s=s, norm='backward').view(n)
     elif W.ndim == 2:
-        Wfft = Wfft.view(s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((*s, atoms.occ._Nstate))
         Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, atoms.occ._Nstate)
     else:
-        Wfft = Wfft.view((atoms.occ._Nspin,) + s + (atoms.occ._Nstate,))
+        Wfft = Wfft.view((atoms.occ._Nspin, *s, atoms.occ._Nstate))
         Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
                                                                                atoms.occ._Nstate)
     return Finv.detach().cpu().numpy()

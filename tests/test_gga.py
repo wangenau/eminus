@@ -25,7 +25,7 @@ def test_get_grad_field(unrestricted):
         scf = scf_unpol
     n_mock = np.zeros_like(scf.n_spin)
     dn_mock = get_grad_field(scf.atoms, n_mock)
-    assert dn_mock.shape == n_mock.shape + (3,)
+    assert dn_mock.shape == (*n_mock.shape, 3)
     assert np.sum(dn_mock) == 0
 
 
