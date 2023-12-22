@@ -169,6 +169,9 @@ class Occupations:
         if self.Nempty > 0:
             log.warning('Empty states with smearing enabled found.')
 
+        if value > 0:
+            log.warning('The current smearing implementation is untested and should not be used!')
+
     # ### Read-only properties ###
 
     @property
