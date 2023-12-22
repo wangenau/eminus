@@ -27,7 +27,7 @@ def read_cube(filename):
         filename += '.cube'
 
     # Atomic units and a cell that starts at (0,0,0) are assumed.
-    with open(filename, 'r') as fh:
+    with open(filename, encoding='utf-8') as fh:
         lines = fh.readlines()
 
         # The first and second lines can contain comments, print them if available
@@ -96,7 +96,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
     # Make sure we have real-valued data in the correct order
     field = np.real(field)
 
-    with open(filename, 'w') as fp:
+    with open(filename, 'w', encoding='utf-8') as fp:
         # The first two lines have to be a comment
         # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n\n')

@@ -15,10 +15,10 @@ def generate(app: Any) -> None:
     examples = sorted(pathlib.Path('examples').iterdir())
     examples = [name for name in examples if name.is_dir()]
 
-    with open('docs/_examples/examples.rst', 'a') as f_index:
+    with open('docs/_examples/examples.rst', 'a', encoding='utf-8') as f_index:
         for example in examples:
             # Create example subfile
-            with open(f'docs/_examples/{example.name}.rst', 'w') as fp:
+            with open(f'docs/_examples/{example.name}.rst', 'w', encoding='utf-8') as fp:
                 fp.write(f'.. _{example.name}:\n')
                 # Include readme
                 fp.write(f'\n.. include:: ../../{example}/README.rst\n')
@@ -46,7 +46,7 @@ def parse(script: str) -> str:
     rst = '\n----\n'
     last_block_was_code = False
 
-    with open(script, 'r') as fh:
+    with open(script, encoding='utf-8') as fh:
         for line in fh:
             # Text blocks start with "# # "
             if line.startswith('# # '):

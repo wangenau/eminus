@@ -311,7 +311,7 @@ def _generic_view(view, filename):
     # It seems that only PDB works with this method
     if ext != 'pdb':
         log.warning('Only XYZ, CUBE, and PDB files are support, but others might work.')
-    with open(filename, 'r') as fh:
+    with open(filename, encoding='utf-8') as fh:
         view.add_component(fh, ext=ext)
     view[0].clear()
     view[0].add_ball_and_stick()

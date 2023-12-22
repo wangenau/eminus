@@ -23,7 +23,7 @@ def read_xyz(filename):
     if not filename.endswith('.xyz'):
         filename += '.xyz'
 
-    with open(filename, 'r') as fh:
+    with open(filename, encoding='utf-8') as fh:
         lines = fh.readlines()
 
         # The first line contains the number of atoms

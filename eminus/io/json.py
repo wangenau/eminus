@@ -66,7 +66,7 @@ def read_json(filename):
     if not filename.endswith('.json'):
         filename += '.json'
 
-    with open(filename, 'r') as fh:
+    with open(filename, encoding='utf-8') as fh:
         return json.load(fh, object_hook=custom_object_hook)
 
 
@@ -101,5 +101,5 @@ def write_json(obj, filename):
     if not filename.endswith('.json'):
         filename += '.json'
 
-    with open(filename, 'w') as fp:
+    with open(filename, 'w', encoding='utf-8') as fp:
         json.dump(obj, fp, cls=CustomEncoder)

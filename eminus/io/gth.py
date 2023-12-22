@@ -48,7 +48,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
     Nproj_l = np.zeros(4, dtype=int)
     h = np.zeros((4, 3, 3))
     try:
-        with open(f_psp, 'r') as fh:
+        with open(f_psp, encoding='utf-8') as fh:
             atom = fh.readline()
             # Skip the first line, since we don't need the atom symbol here. If needed, use
             # psp['atom'] = atom.split()[0]  # Atom symbol

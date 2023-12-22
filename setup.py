@@ -6,16 +6,16 @@ https://setuptools.pypa.io/en/latest/references/keywords.html
 """
 from __future__ import annotations
 
+import pathlib
 import re
 
 from setuptools import find_packages, setup
 
-with open('eminus/version.py', 'r') as fh:
-    version: str = \
-        re.search(r"__version__ = '(.*?)'", fh.read()).group(1)  # type: ignore[union-attr]
+version: str = re.search(r"__version__ = '(.*?)'", \
+    pathlib.Path('eminus/version.py').read_text()).group(1)  # type: ignore[union-attr]
 
-with open('README.md', 'r') as readme, open('CHANGELOG.md', 'r') as changelog:
-    long_description: str = readme.read() + '\n\n' + changelog.read().split('\n----\n')[0]
+long_description: str = pathlib.Path('README.md').read_text() + '\n\n' + \
+    pathlib.Path('CHANGELOG.md').read_text().split('\n----\n')[0]
 
 extras: dict[str, list[str]] = {
     'dispersion': [

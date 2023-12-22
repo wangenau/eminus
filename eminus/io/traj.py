@@ -21,7 +21,7 @@ def read_traj(filename):
     if not filename.endswith(('.trj', '.traj')):
         filename += '.traj'
 
-    with open(filename, 'r') as fh:
+    with open(filename, encoding='utf-8') as fh:
         lines = fh.readlines()
         Nlines = len(lines)
 
