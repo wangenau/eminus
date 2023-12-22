@@ -489,8 +489,8 @@ def get_dos(epsilon, wk, spin=0, npts=201, width=0.1):
         tuple[ndarray, ndarray]: Eigenenergies and DOS.
     """
     def delta(x, x0, width):
-       """Gaussian of given width centered at x0."""
-       return np.exp(np.clip(-((x - x0) / width)**2, -100, 100)) / (np.sqrt(np.pi) * width)
+        """Gaussian of given width centered at x0."""
+        return np.exp(np.clip(-((x - x0) / width)**2, -100, 100)) / (np.sqrt(np.pi) * width)
 
     energies = epsilon[:, spin].flatten()
     emin = np.min(energies) - 5 * width

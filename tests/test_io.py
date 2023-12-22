@@ -69,7 +69,7 @@ def test_cube_noncubic():
     scf = SCF(atoms, opt={'sd': 1})
     scf.run()
     write(atoms, filename, scf.n)
-    atom, pos, Z, a, s, field = read(filename)
+    _, _, _, a, s, field = read(filename)
     os.remove(filename)
     assert_allclose(atoms.a, a, atol=2e-6)
     assert_equal(atoms.s, s)
