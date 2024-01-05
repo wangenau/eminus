@@ -17,7 +17,7 @@ def test_GTH():
     gth['Ne']  # Test that the object can be accessed via square brackets
     print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
-    assert gth.betaNL.shape == (62669, 5)
+    assert gth.betaNL[0].shape == (62669, 5)
 
 
 def test_norm():
@@ -29,7 +29,7 @@ def test_norm():
     atoms = Atoms('Ac', (0, 0, 0), ecut=35)
     scf = SCF(atoms)
     for i in range(scf.gth.NbetaNL):
-        norm = np.sum(scf.gth.betaNL[:, i] * scf.gth.betaNL[:, i])
+        norm = np.sum(scf.gth.betaNL[0][:, i] * scf.gth.betaNL[0][:, i])
         assert_allclose(abs(norm), 1, atol=1e-1)
 
 
