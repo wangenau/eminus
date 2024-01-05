@@ -159,8 +159,9 @@ def remove_core_fods(obj, fods):
     # If the number of valence electrons is the same as the number of FODs, do nothing
     if not atoms.unrestricted and len(fods[0]) * 2 == np.sum(atoms.occ.f[0]):
         return fods
-    if atoms.unrestricted and len(fods[0]) == np.sum(atoms.occ.f[0]) \
-            and len(fods[1]) == np.sum(atoms.occ.f[1]):
+    if atoms.unrestricted and len(fods[0]) == np.sum(atoms.occ.f[0, 0]) \
+            and len(fods[1]) == np.sum(atoms.occ.f[0, 1]):
+        atoms.kpts.assert_gamma_only()
         return fods
 
     for s in range(atoms.occ.Nspin):
