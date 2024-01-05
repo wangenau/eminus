@@ -139,7 +139,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
         #     Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
 
         GVpsi = np.empty((len(atoms.Gk2c[ik]), W[ik].shape[-1], 3), dtype=complex)
-        dWrs = np.empty((atoms.Ns, W.shape[-1], 3), dtype=complex)
+        dWrs = np.empty((atoms.Ns, W[ik].shape[-1], 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
         Gc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
         # We only calculate Vtau for one spin channel, index, and reshape before the loop
