@@ -148,7 +148,8 @@ class Atoms:
             self.ecut = self.ecut
         # Calculate the unit cell volume
         self._Omega = abs(det(self._a))
-        self.kpts = self._a
+        if hasattr(self, 'kpts'):
+            self.kpts.a = self._a
         # The cell changes when changing a
         self.is_built = False
 
