@@ -113,6 +113,8 @@ def I(atoms, W, ik=0):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
         ik (int): k-point index.
 
     Returns:
@@ -160,9 +162,9 @@ def J(atoms, W, ik=0, full=True):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik (int): k-point index.
 
     Keyword Args:
+        ik (int): k-point index.
         full (bool): Whether to transform in the full or in the active space.
 
     Returns:
@@ -202,9 +204,9 @@ def Idag(atoms, W, ik=0, full=False):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik (int): k-point index.
 
     Keyword Args:
+        ik (int): k-point index.
         full (bool): Whether to transform in the full or in the active space.
 
     Returns:
@@ -226,6 +228,8 @@ def Jdag(atoms, W, ik=0):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
         ik (int): k-point index.
 
     Returns:
@@ -276,7 +280,7 @@ def T(atoms, W, ik, dr):
     """
     # Do the shift by multiplying a phase factor, given by the shift theorem
     if len(W) == len(atoms.Gk2c[ik]):
-        Gk = atoms.Gk[atoms.active[ik]]
+        Gk = atoms.G[atoms.active[ik]]
     else:
         Gk = atoms.G + atoms.kpts.k[ik]
     factor = np.exp(-1j * Gk @ dr)

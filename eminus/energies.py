@@ -282,12 +282,12 @@ def get_Esic(scf, Y, n_single=None):
     Esic = 0
     for i in range(atoms.occ.Nstate):
         for spin in range(atoms.occ.Nspin):
-            if atoms.occ.f[spin, i] > 0:
+            if np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk) > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
                 ni = np.zeros((2, atoms.Ns))
                 # Normalize single-particle densities to 1
-                ni[0] = n_single[spin, :, i] / atoms.occ.f[spin, i]
+                ni[0] = n_single[spin, :, i] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
 
                 # Get the gradient of the single-particle density
                 if 'gga' in scf.xc_type:
@@ -299,11 +299,13 @@ def get_Esic(scf, Y, n_single=None):
                 # Get the kinetic energy density of the corresponding orbital
                 if scf.xc_type == 'meta-gga':
                     # Use only one orbital for the calculation
-                    Ytmp = np.zeros_like(Y)
-                    Ytmp[0, :, 0] = Y[spin, :, i]
+                    Ytmp = []
+                    for ik in range(atoms.kpts.Nk):
+                        Ytmp.append(np.zeros_like(Y[ik]))
+                        Ytmp[ik][0, :, 0] = Y[ik][spin, :, i]
                     taui = np.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Y)[0] / atoms.occ.f[spin, i]
+                    taui[0] = get_tau(atoms, Y)[0] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
                 else:
                     taui = None
 
@@ -311,7 +313,7 @@ def get_Esic(scf, Y, n_single=None):
                 # The exchange part for a SIC correction has to be spin-polarized
                 xc = get_Exc(scf, ni[0], n_spin=ni, dn_spin=dni, tau=taui, Nspin=2)
                 # SIC energy is scaled by the occupation number
-                Esic += (coul + xc) * atoms.occ.f[spin, i]
+                Esic += (coul + xc) * np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
     scf.energies.Esic = Esic
     return Esic
 

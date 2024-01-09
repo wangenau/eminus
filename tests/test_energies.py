@@ -30,7 +30,7 @@ scf_unpol.run()
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=10, unrestricted=True)
 atoms_pol.s = 20
 scf_pol = SCF(atoms_pol, sic=True)
-scf_pol.W = np.array([scf_unpol.W[0] / 2, scf_unpol.W[0] / 2])
+scf_pol.W = [np.array([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
 scf_pol.run()
 
 
