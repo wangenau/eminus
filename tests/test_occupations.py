@@ -109,7 +109,8 @@ def test_fill(Nelec, Nspin, spin, charge, ref):
                           (0.5, 2, 2, 1, np.array([[[0.5, 0.5, 0.5], [0.5, 0, 0]]])),
                           (2 / 3, 2, 1, 0, np.array([[[2 / 3, 2 / 3, 2 / 3]]])),
                           (2 / 3, 3, 2, 1, np.array([[[2 / 3, 2 / 3, 2 / 3], [2 / 3, 1 / 3, 0]]])),
-                          (2 / 3, 3, 2, 2, np.array([[[2 / 3, 2 / 3, 2 / 3, 0.5], [0.5, 0, 0, 0]]]))])
+                          (2 / 3, 3, 2, 2, np.array([[[2 / 3, 2 / 3, 2 / 3, 0.5],
+                                                    [0.5, 0, 0, 0]]]))])
 def test_f_change(f, Nelec, Nspin, spin, ref):
     """Test changing f with a number."""
     occ = Occupations()
