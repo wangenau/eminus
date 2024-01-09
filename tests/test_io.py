@@ -76,7 +76,7 @@ def test_cube_noncubic():
     assert_allclose(scf.n, field, atol=1e-8)
 
 
-@pytest.mark.parametrize('obj', [atoms, atoms.occ, scf, scf.energies, scf.gth])
+@pytest.mark.parametrize('obj', [atoms, atoms.kpts, atoms.occ, scf, scf.energies, scf.gth])
 def test_json(obj):
     """Test JSON file output and input."""
     filename = 'test.json'
@@ -85,7 +85,7 @@ def test_json(obj):
     os.remove(filename)
     for attr in test.__dict__:
         # Skip objects and dictionaries
-        if attr in {'_atoms', 'gth', 'log', '_precomputed'}:
+        if attr in {'_atoms', 'gth', 'kpts', 'log', '_precomputed'}:
             continue
         if attr == 'GTH':
             assert getattr(obj, attr).keys() == getattr(test, attr).keys()

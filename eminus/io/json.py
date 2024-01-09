@@ -61,6 +61,10 @@ def read_json(filename):
         if isinstance(dct, dict) and '_Nelec' in dct:
             occ = eminus.occupations.Occupations()
             return set_attrs(occ, dct)
+        # KPoints objects
+        if isinstance(dct, dict) and '_kmesh' in dct:
+            kpts = eminus.kpoints.KPoints(dct['lattice'])
+            return set_attrs(kpts, dct)
         return dct
 
     if not filename.endswith('.json'):
@@ -89,7 +93,7 @@ def write_json(obj, filename):
 
             # If obj is an eminus class dump them as a dictionary
             if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH,
-                                eminus.occupations.Occupations)):
+                                eminus.kpoints.KPoints, eminus.occupations.Occupations)):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
                 return dict(json.loads(data))
