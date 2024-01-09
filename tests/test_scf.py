@@ -132,7 +132,7 @@ def test_recenter(center):
     assert scf.is_converged
 
     scf.recenter(center)
-    W = atoms.I(scf.W)
+    W = atoms.I(scf.W[0], 0)
     com = center_of_mass(scf.atoms.pos)
     # Check that the density is centered around the atom
     assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=0.005)

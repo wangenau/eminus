@@ -23,11 +23,13 @@ The active space is the truncated reciprocal space by restricting it with a sphe
 Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
 spin individually.
 """
+import copy
+
 import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully
+from .utils import handle_k_gracefully, handle_spin_gracefully
 
 
 # Spin handling is trivial for this operator
@@ -260,9 +262,7 @@ def K(atoms, W, ik):
     return W / (1 + atoms.Gk2c[ik][:, None])
 
 
-@handle_k_indexable
-@handle_spin_gracefully
-def T(atoms, W, ik, dr):
+def T(atoms, W, dr):
     """Translation operator.
 
     This operator acts on options 5 and 6.
@@ -278,13 +278,16 @@ def T(atoms, W, ik, dr):
     Returns:
         ndarray: The operator applied on W.
     """
-    # Do the shift by multiplying a phase factor, given by the shift theorem
-    if len(W) == len(atoms.Gk2c[ik]):
-        Gk = atoms.G[atoms.active[ik]]
-    else:
-        Gk = atoms.G + atoms.kpts.k[ik]
-    factor = np.exp(-1j * Gk @ dr)
-    # factor is a normal 1d row vector, reshape it so it can be applied to the column vector W
-    if W.ndim == 2:
-        factor = factor[:, None]
-    return factor * W
+    if isinstance(W, np.ndarray) and W.ndim == 1:
+        factor = np.exp(-1j * atoms.G @ dr)
+        return factor * W
+
+    Wshift = copy.deepcopy(W)
+    for ik in range(atoms.kpts.Nk):
+        # Do the shift by multiplying a phase factor, given by the shift theorem
+        if W[ik].shape[1] == len(atoms.Gk2c[ik]):
+            Gk = atoms.G[atoms.active[ik]]
+        else:
+            Gk = atoms.G + atoms.kpts.k[ik]
+        Wshift[ik] = np.exp(-1j * Gk @ dr)[:, None] * W[ik]
+    return Wshift
