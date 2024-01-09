@@ -28,7 +28,8 @@ def solve_poisson(atoms, n):
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
-def get_n_total(atoms, Y, n_spin=None):
+@handle_k_reducable
+def get_n_total(atoms, Y, ik, n_spin=None):
     """Calculate the total electronic density.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -36,6 +37,7 @@ def get_n_total(atoms, Y, n_spin=None):
     Args:
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Keyword Args:
         n_spin (ndarray): Real-space electronic densities per spin channel.
@@ -48,10 +50,11 @@ def get_n_total(atoms, Y, n_spin=None):
         return np.sum(n_spin, axis=0)
 
     # n = (IW) F (IW)dag
-    Yrs = atoms.I(Y)
+    Yrs = atoms.I(Y, ik)
     n = np.zeros(atoms.Ns)
     for spin in range(atoms.occ.Nspin):
-        n += np.sum(atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+        n += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
+                    np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
     return n
 
 
@@ -77,20 +80,22 @@ def get_n_spin(atoms, Y, ik):
     return n
 
 
-def get_n_single(atoms, Y):
+@handle_k_reducable
+def get_n_single(atoms, Y, ik):
     """Calculate the single-electron densities.
 
     Args:
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik (int): k-point index.
 
     Returns:
         ndarray: Single-electron densities.
     """
-    Yrs = atoms.I(Y)
+    Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = atoms.occ.f[spin] * np.real(Yrs[spin].conj() * Yrs[spin])
+        n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin])
     return n
 
 
@@ -264,7 +269,7 @@ def Q(inp, U):
     return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
 
 
-def get_psi(scf, W):
+def get_psi(scf, W, **kwargs):
     """Calculate eigenstates from H.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -273,16 +278,20 @@ def get_psi(scf, W):
         scf: SCF object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
+    Keyword Args:
+        **kwargs: See :func:`H`.
+
     Returns:
         ndarray: Eigenstates in reciprocal space.
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    psi = np.empty_like(Y)
-    for spin in range(atoms.occ.Nspin):
-        mu = Y[spin].conj().T @ H(scf, spin, Y)
-        _, D = eigh(mu)
-        psi[spin] = Y[spin] @ D
+    psi = copy.deepcopy(Y)
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
+            _, D = eigh(mu)
+            psi[ik][spin] = Y[ik][spin] @ D
     return psi
 
 

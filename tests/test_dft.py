@@ -31,10 +31,10 @@ def test_wavefunction(guess, unrestricted):
     psi = get_psi(scf, W)
     for s in range(scf.atoms.occ.Nspin):
         # Test that WOW is the identity
-        ovlp = W[s].conj().T @ scf.atoms.O(W[s])
+        ovlp = W[0][s].conj().T @ scf.atoms.O(W[0][s])
         assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
         # Also test that psiOpsi is the identity
-        ovlp = psi[s].conj().T @ scf.atoms.O(psi[s])
+        ovlp = psi[0][s].conj().T @ scf.atoms.O(psi[0][s])
         assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
 
 
@@ -47,8 +47,8 @@ def test_H(unrestricted):
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
     for s in range(scf.atoms.occ.Nspin):
-        HW = H(scf, s, psi)
-        WHW = psi[s].conj().T @ HW
+        HW = H(scf, 0, s, psi)
+        WHW = psi[0][s].conj().T @ HW
         # Test that WHW is a diagonal matrix
         assert_allclose(WHW, np.diag(np.diag(WHW)), atol=1e-12)
 
@@ -77,7 +77,7 @@ def test_n_spin(unrestricted):
     n = get_n_spin(scf.atoms, scf.Y)
     for s in range(scf.atoms.occ.Nspin):
         n_int = np.sum(n[s]) * scf.atoms.dV
-        assert_allclose(n_int, np.sum(scf.atoms.occ.f[s]))
+        assert_allclose(n_int, np.sum(scf.atoms.occ.f[0, s]))
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])
@@ -91,7 +91,7 @@ def test_n_single(unrestricted):
     n = get_n_single(scf.atoms, scf.Y)
     for s in range(scf.atoms.occ.Nspin):
         n_int = np.sum(n[s], axis=0) * scf.atoms.dV
-        assert_allclose(n_int, scf.atoms.occ.f[s])
+        assert_allclose(n_int, scf.atoms.occ.f[0, s])
 
 
 def test_demo():
