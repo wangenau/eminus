@@ -29,7 +29,7 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_k_gracefully, handle_spin_gracefully
+from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully
 
 
 # Spin handling is trivial for this operator
@@ -52,7 +52,7 @@ def O(atoms, W):
 
 
 @handle_spin_gracefully
-def L(atoms, W, ik):
+def L(atoms, W, ik=0):
     """Laplacian operator with k-point dependency.
 
     This operator acts on options 3 and 5.
@@ -62,6 +62,8 @@ def L(atoms, W, ik):
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
         ik (int): k-point index.
 
     Returns:
@@ -103,7 +105,7 @@ def Linv(atoms, W):
             out[0, :] = 0
     return out
 
-
+@handle_k_indexable
 @handle_spin_gracefully
 def I(atoms, W, ik=0):
     """Backward transformation from reciprocal space to real-space.
@@ -153,6 +155,7 @@ def I(atoms, W, ik=0):
     return Finv
 
 
+@handle_k_indexable
 @handle_spin_gracefully
 def J(atoms, W, ik=0, full=True):
     """Forward transformation from real-space to reciprocal space.
@@ -195,7 +198,8 @@ def J(atoms, W, ik=0, full=True):
     return F
 
 
-# Spin handling will be handled by the J operator
+@handle_k_indexable
+@handle_spin_gracefully
 def Idag(atoms, W, ik=0, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
@@ -219,7 +223,8 @@ def Idag(atoms, W, ik=0, full=False):
     return F * n
 
 
-# Spin handling will be handled by the I operator
+@handle_k_indexable
+@handle_spin_gracefully
 def Jdag(atoms, W, ik=0):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -279,7 +284,11 @@ def T(atoms, W, dr):
         ndarray: The operator applied on W.
     """
     if isinstance(W, np.ndarray) and W.ndim == 1:
-        factor = np.exp(-1j * atoms.G @ dr)
+        if len(W) == len(atoms.G2c):
+            G = atoms.G[np.nonzero(2 * atoms.ecut >= atoms.G2)]
+        else:
+            G = atoms.G
+        factor = np.exp(-1j * G @ dr)
         return factor * W
 
     Wshift = copy.deepcopy(W)

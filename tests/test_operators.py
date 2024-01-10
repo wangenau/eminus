@@ -18,7 +18,9 @@ W_tests = {
     'full_single': rng.standard_normal(len(atoms.G2)),
     'active_single': rng.standard_normal(len(atoms.G2c)),
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
-    'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))
+    'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
+    'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))]
 }
 dr = rng.standard_normal(3)
 
@@ -47,7 +49,7 @@ def test_LLinv(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin'])
+@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin', 'full_k'])
 def test_IJ(field):
     """Test forward and backward operator identity."""
     out = atoms.I(atoms.J(W_tests[field]))
@@ -56,18 +58,18 @@ def test_IJ(field):
 
 
 @pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin'])
+                                   'active_spin', 'full_k', 'active_k'])
 def test_JI(field):
     """Test forward and backward operator identity."""
     if 'active' in field:
-        out = atoms.J(atoms.I(W_tests[field]), False)
+        out = atoms.J(atoms.I(W_tests[field]), full=False)
     else:
         out = atoms.J(atoms.I(W_tests[field]))
     test = W_tests[field]
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['active', 'active_single', 'active_spin'])
+@pytest.mark.parametrize('field', ['active', 'active_single', 'active_spin', 'active_k'])
 def test_IdagJdag(field):
     """Test daggered forward and backward operator identity."""
     out = atoms.Idag(atoms.Jdag(W_tests[field]))
@@ -75,10 +77,10 @@ def test_IdagJdag(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin'])
+@pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin', 'full_k'])
 def test_JdagIdag(field):
     """Test daggered forward and backward operator identity."""
-    out = atoms.Jdag(atoms.Idag(W_tests[field], True))
+    out = atoms.Jdag(atoms.Idag(W_tests[field], full=True))
     test = W_tests[field]
     assert_allclose(out, test)
 
@@ -89,7 +91,7 @@ def test_hermitian_I(field):
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
     out = (a.conj().T @ atoms.I(b)).conj()
-    test = b.conj().T @ atoms.Idag(a, True)
+    test = b.conj().T @ atoms.Idag(a, full=True)
     assert_allclose(out, test)
 
 
@@ -103,8 +105,7 @@ def test_hermitian_J(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin'])
+@pytest.mark.parametrize('field', ['full_single', 'active_single', 'full_k', 'active_k'])
 def test_TT(field):
     """Test translation operator identity."""
     out = atoms.T(atoms.T(W_tests[field], dr), -dr)
