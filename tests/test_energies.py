@@ -54,7 +54,7 @@ def test_mgga_sic_unpol():
     scf_unpol.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_unpol.opt = {'auto': 1}
     scf_unpol.run()
-    assert_allclose(scf_unpol.energies.Esic, -0.2468, atol=1e-4)
+    assert_allclose(scf_unpol.energies.Esic, -0.5374, atol=1e-4)
 
 
 def test_mgga_sic_pol():
@@ -63,7 +63,7 @@ def test_mgga_sic_pol():
     scf_pol.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_pol.opt = {'auto': 1}
     scf_pol.run()
-    assert_allclose(scf_pol.energies.Esic, -0.2482, atol=1e-4)
+    assert_allclose(scf_pol.energies.Esic, -0.497, atol=1e-4)
 
 
 if __name__ == '__main__':

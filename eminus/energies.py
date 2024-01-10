@@ -305,7 +305,8 @@ def get_Esic(scf, Y, n_single=None):
                         Ytmp[ik][0, :, 0] = Y[ik][spin, :, i]
                     taui = np.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Y)[0] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
+                    taui[0] = get_tau(atoms, Ytmp)[0] / np.sum(atoms.occ.f[:, spin, i] *
+                                                               atoms.kpts.wk)
                 else:
                     taui = None
 

@@ -105,6 +105,7 @@ def Linv(atoms, W):
             out[0, :] = 0
     return out
 
+
 @handle_k_indexable
 @handle_spin_gracefully
 def I(atoms, W, ik=0):
