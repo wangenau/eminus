@@ -22,14 +22,19 @@ Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 import numpy as np
 
 from .. import config
+from ..utils import handle_k_indexable
 
 
-def I(atoms, W):
+@handle_k_indexable
+def I(atoms, W, ik=0):
     """Backwards transformation from reciprocal space to real-space.
 
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
@@ -39,7 +44,7 @@ def I(atoms, W):
     s = tuple(atoms._s)
 
     if W.ndim < 3:
-        if len(W) == len(atoms._G2):
+        if len(W) == len(atoms._Gk2[ik]):
             Wfft = W
         else:
             if W.ndim == 1:
@@ -51,7 +56,7 @@ def I(atoms, W):
         Wfft = W
     else:
         Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
-        Wfft[:, atoms._active[0]] = W
+        Wfft[:, atoms._active[ik][0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:
@@ -70,7 +75,8 @@ def I(atoms, W):
     return Finv.detach().cpu().numpy()
 
 
-def J(atoms, W, full=True):
+@handle_k_indexable
+def J(atoms, W, ik=0, full=True):
     """Forward transformation from real-space to reciprocal space.
 
     Args:
@@ -78,6 +84,7 @@ def J(atoms, W, full=True):
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
+        ik (int): k-point index.
         full (bool): Wether to transform in the full or in the active space.
 
     Returns:
@@ -104,12 +111,13 @@ def J(atoms, W, full=True):
     F = F.detach().cpu().numpy()
     if not full:
         if F.ndim < 3:
-            return F[atoms._active]
-        return F[:, atoms._active[0]]
+            return F[atoms._active[ik]]
+        return F[:, atoms._active[ik][0]]
     return F
 
 
-def Idag(atoms, W, full=False):
+@handle_k_indexable
+def Idag(atoms, W, ik=0, full=False):
     """Conjugated backwards transformation from real-space to reciprocal space.
 
     Args:
@@ -117,6 +125,7 @@ def Idag(atoms, W, full=False):
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
+        ik (int): k-point index.
         full (bool): Wether to transform in the full or in the active space.
 
     Returns:
@@ -143,17 +152,21 @@ def Idag(atoms, W, full=False):
     F = F.detach().cpu().numpy()
     if not full:
         if F.ndim < 3:
-            return F[atoms._active]
-        return F[:, atoms._active[0]]
+            return F[atoms._active[ik]]
+        return F[:, atoms._active[ik][0]]
     return F
 
 
-def Jdag(atoms, W):
+@handle_k_indexable
+def Jdag(atoms, W, ik=0):
     """Conjugated forward transformation from reciprocal space to real-space.
 
     Args:
         atoms: Atoms object.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
+        ik (int): k-point index.
 
     Returns:
         ndarray: The operator applied on W.
@@ -163,7 +176,7 @@ def Jdag(atoms, W):
     s = tuple(atoms._s)
 
     if W.ndim < 3:
-        if len(W) == len(atoms._G2):
+        if len(W) == len(atoms._Gk2[ik]):
             Wfft = W
         else:
             if W.ndim == 1:
@@ -175,7 +188,7 @@ def Jdag(atoms, W):
         Wfft = W
     else:
         Wfft = np.zeros((atoms.occ._Nspin, n, atoms.occ._Nstate), dtype=W.dtype)
-        Wfft[:, atoms._active[0]] = W
+        Wfft[:, atoms._active[ik][0]] = W
 
     Wfft = torch.from_numpy(Wfft)
     if config.use_gpu:
