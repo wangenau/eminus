@@ -40,7 +40,7 @@ def test_spread(unrestricted):
     else:
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    psi_rs = scf.atoms.I(psi)
+    psi_rs = scf.atoms.I(psi)[0]
     assert check_orthonorm(scf, psi_rs)
     costs = wannier_cost(scf.atoms, psi_rs)
     # The first orbital is a s-type orbital
@@ -57,7 +57,7 @@ def test_flo(unrestricted):
     else:
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)
+    flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)[0]
     assert check_orthonorm(scf, flo)
     costs = wannier_cost(scf.atoms, flo)
     # Check that all transformed orbitals have a similar spread
@@ -75,7 +75,7 @@ def test_wannier(unrestricted):
     psi = get_psi(scf, scf.W)
     # Throw in the flo to prelocalize the orbitals
     flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)
-    wo = get_wannier(scf.atoms, flo)
+    wo = get_wannier(scf.atoms, flo)[0]
     assert check_orthonorm(scf, wo)
     costs = wannier_cost(scf.atoms, wo)
     # Check that all transformed orbitals have a similar spread
@@ -85,7 +85,7 @@ def test_wannier(unrestricted):
 def test_wannier_random_guess():
     """Test the random_guess keyword for Wannier localizations."""
     scf = scf_unpol
-    psi = scf.atoms.I(get_psi(scf, scf.W))
+    psi = scf.atoms.I(get_psi(scf, scf.W))[0]
     costs = wannier_cost(scf.atoms, psi)
     wo = get_wannier(scf.atoms, psi, Nit=100, random_guess=True, seed=1234)
     assert check_orthonorm(scf, wo)
