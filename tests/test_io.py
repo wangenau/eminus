@@ -22,7 +22,8 @@ from eminus import (
     write_xyz,
 )
 
-atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), ecut=1)
+atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), ecut=1).build()
+print(atoms.active)
 scf = SCF(atoms, opt={'sd': 1})
 scf.run()
 
