@@ -134,6 +134,26 @@ def handle_spin_gracefully(func, *args, **kwargs):
     return decorator
 
 
+def skip_k(func, *args, **kwargs):
+    """Handle calculations that do not support k-points.
+
+    Args:
+        func (Callable): Function that acts on k-point.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    @functools.wraps(func)
+    def decorator(obj, W, *args, **kwargs):
+        if isinstance(W, list) or isinstance(W, np.ndarray) and W.ndim == 4:
+            obj._atoms.kpts.assert_gamma_only()
+            return [func(obj, W[0], *args, **kwargs)]
+        return func(obj, W, *args, **kwargs)
+    return decorator
+
+
 def handle_k_gracefully(func, *args, **kwargs):
     """Handle k-points calculating the function for each channel separately.
 

@@ -5,7 +5,7 @@ from scipy.linalg import eig, expm, norm
 from scipy.stats import unitary_group
 
 from .logger import log
-from .utils import handle_spin_gracefully
+from .utils import handle_spin_gracefully, skip_k
 
 
 def eval_psi(atoms, psi, r):
@@ -51,6 +51,7 @@ def get_R(atoms, psi, fods):
     return R
 
 
+@skip_k
 def get_FO(atoms, psi, fods):
     """Calculate Fermi orbitals from Kohn-Sham orbitals.
 
@@ -100,6 +101,7 @@ def get_S(atoms, psirs):
     return S
 
 
+@skip_k
 def get_FLO(atoms, psi, fods):
     """Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
 
@@ -264,6 +266,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     return x + y + z
 
 
+@skip_k
 @handle_spin_gracefully
 def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False, seed=None):
     """Steepest descent supercell Wannier localization.
