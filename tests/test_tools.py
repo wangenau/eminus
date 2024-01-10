@@ -32,7 +32,7 @@ opt = {'sd': 25, 'pccg': 25}
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
 scf = SCF(atoms, opt=opt)
 scf.run()
-psi = atoms.I(get_psi(scf, scf.W))
+psi = atoms.I(get_psi(scf, scf.W))[0]
 
 atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
 atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
@@ -67,7 +67,7 @@ def test_pycom(unrestricted):
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
     for spin in range(atoms.occ.Nspin):
-        assert_allclose(orbital_center(atoms, psi)[spin], [[10] * 3] * 2, atol=1e-1)
+        assert_allclose(orbital_center(atoms, psi)[0][spin], [[10] * 3] * 2, atol=1e-1)
 
 
 @pytest.mark.parametrize('coords', [np.array([[1, 0, 0]]),

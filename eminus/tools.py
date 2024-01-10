@@ -7,6 +7,7 @@ from scipy.optimize import minimize_scalar
 from .dft import get_epsilon
 from .gga import get_grad_field, get_tau
 from .logger import log
+from .utils import handle_k_gracefully
 
 
 def cutoff2gridspacing(E):
@@ -55,6 +56,7 @@ def center_of_mass(coords, masses=None):
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
 
 
+@handle_k_gracefully
 def orbital_center(obj, psirs):
     """Calculate the orbital center of masses, e.g., from localized orbitals.
 
@@ -153,7 +155,8 @@ def get_ip(scf):
     Returns:
         float: Ionization potential in Hartree.
     """
-    epsilon = get_epsilon(scf, scf.W)
+    scf.atoms.kpts.assert_gamma_only()
+    epsilon = get_epsilon(scf, scf.W)[0]
     # Add-up spin states
     epsilon = np.sum(epsilon, axis=0)
     return -epsilon[-1]
