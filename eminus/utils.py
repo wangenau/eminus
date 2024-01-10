@@ -149,7 +149,10 @@ def skip_k(func, *args, **kwargs):
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or isinstance(W, np.ndarray) and W.ndim == 4:
             obj._atoms.kpts.assert_gamma_only()
-            return [func(obj, W[0], *args, **kwargs)]
+            ret = func(obj, W[0], *args, **kwargs)
+            if isinstance(ret, np.ndarray) and ret.ndim == 3:
+                return [ret]
+            return ret
         return func(obj, W, *args, **kwargs)
     return decorator
 

@@ -38,7 +38,7 @@ FLO = get_FLO(atoms, psi, fods)
 print('\nWrite cube files:')
 for i in range(atoms.occ.Nstate):
     print(f'{i + 1} of {atoms.occ.Nstate}')
-    write_cube(atoms, f'CH4_FLO_{i + 1}.cube', FLO[0, :, i])
+    write_cube(atoms, f'CH4_FLO_{i + 1}.cube', FLO[0][0, :, i])
 
 # # All of the functionality above can be achieved with the following workflow function
 # from eminus.orbitals import FLO

@@ -129,6 +129,7 @@ def get_FLO(atoms, psi, fods):
     return flo
 
 
+@skip_k
 @handle_spin_gracefully
 def wannier_cost(atoms, psirs):
     """Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
@@ -153,6 +154,7 @@ def wannier_cost(atoms, psirs):
     return costs
 
 
+@skip_k
 @handle_spin_gracefully
 def wannier_center(atoms, psirs):
     """Calculate Wannier centers, i.e., the expectation values of r.
@@ -174,6 +176,7 @@ def wannier_center(atoms, psirs):
     return centers
 
 
+@skip_k
 @handle_spin_gracefully
 def second_moment(atoms, psirs):
     """Calculate the second moments, i.e., the expectation values of r^2.
@@ -195,6 +198,7 @@ def second_moment(atoms, psirs):
     return moments
 
 
+@skip_k
 @handle_spin_gracefully
 def wannier_supercell_matrices(atoms, psirs):
     """Calculate matrices for the supercell Wannier localization.
