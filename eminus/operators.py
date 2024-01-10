@@ -284,19 +284,25 @@ def T(atoms, W, dr):
     Returns:
         ndarray: The operator applied on W.
     """
-    if isinstance(W, np.ndarray) and W.ndim == 1:
+    if isinstance(W, np.ndarray) and W.ndim == 3:
+        return np.asarray([T(atoms, Wspin, dr) for Wspin in W])
+
+    if isinstance(W, np.ndarray):
+        atoms.kpts.assert_gamma_only()
         if len(W) == len(atoms.G2c):
             G = atoms.G[np.nonzero(2 * atoms.ecut >= atoms.G2)]
         else:
             G = atoms.G
         factor = np.exp(-1j * G @ dr)
+        if W.ndim == 2:
+            factor = factor[:, None]
         return factor * W
 
     Wshift = copy.deepcopy(W)
     for ik in range(atoms.kpts.Nk):
         # Do the shift by multiplying a phase factor, given by the shift theorem
         if W[ik].shape[1] == len(atoms.Gk2c[ik]):
-            Gk = atoms.G[atoms.active[ik]]
+            Gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         else:
             Gk = atoms.G + atoms.kpts.k[ik]
         Wshift[ik] = np.exp(-1j * Gk @ dr)[:, None] * W[ik]

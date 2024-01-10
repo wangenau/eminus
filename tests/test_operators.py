@@ -105,7 +105,8 @@ def test_hermitian_J(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full_single', 'active_single', 'full_k', 'active_k'])
+@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
+                                   'active_spin', 'full_k', 'active_k'])
 def test_TT(field):
     """Test translation operator identity."""
     out = atoms.T(atoms.T(W_tests[field], dr), -dr)
