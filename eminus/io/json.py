@@ -43,7 +43,7 @@ def read_json(filename):
             atoms = set_attrs(atoms, dct)
             # The tuple type is not preserved when serializing, manually cast the only important one
             if isinstance(atoms._active, list):
-                atoms._active = tuple(atoms._active)
+                atoms._active = [tuple(i) for i in atoms._active]
             return atoms
         # SCF objects
         if isinstance(dct, dict) and '_atoms' in dct:
