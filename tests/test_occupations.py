@@ -149,6 +149,22 @@ def test_F():
     assert_equal(occ.F[0][1], np.diag([0, 1, 2]))
 
 
+def test_Nk():
+    """Test the Nk property."""
+    occ = Occupations()
+    assert occ.Nk == 1
+    occ.Nk = 2
+    assert occ.Nk == 2
+
+
+def test_wk():
+    """Test the wk property."""
+    occ = Occupations()
+    occ.wk = [1, 1]
+    assert_equal(occ.wk, 1)
+    assert occ.Nk == 2
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
