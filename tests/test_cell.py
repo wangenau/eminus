@@ -57,3 +57,30 @@ def test_basis():
     cell = Cell('Si', 'diamond', 30, 20, basis=basis)
     assert len(cell.pos) == len(basis)
     assert len(basis) == cell.Natoms
+
+
+def test_bands():
+    """Test the bands setting."""
+    cell = Cell('Si', 'diamond', 30, 0, bands=None)
+    assert cell.occ.bands == 4
+    cell = Cell('Si', 'diamond', 30, 0, bands=5)
+    assert cell.occ.bands == 5
+
+
+def test_kmesh():
+    """Test the kmesh setting."""
+    cell = Cell('Si', 'diamond', 30, 0, kmesh=1)
+    assert_equal(cell.kpts.kmesh, 1)
+    cell = Cell('Si', 'diamond', 30, 1, kmesh=2)
+    assert cell.kpts.build().Nk == 8
+    cell = Cell('Si', 'diamond', 30, 1, kmesh=(1, 3, 2))
+    assert cell.kpts.build().Nk == 6
+
+
+if __name__ == '__main__':
+    import inspect
+    import pathlib
+
+    import pytest
+    file_path = pathlib.Path(inspect.stack()[0][1])
+    pytest.main(file_path)

@@ -93,3 +93,12 @@ def test_kpoints2axis_xukg():
     assert k_axis[6] == k_axis[7]  # No distance between jumps
     for s in s_axis:
         assert s in k_axis
+
+
+if __name__ == '__main__':
+    import inspect
+    import pathlib
+
+    import pytest
+    file_path = pathlib.Path(inspect.stack()[0][1])
+    pytest.main(file_path)
