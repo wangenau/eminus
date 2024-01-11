@@ -2,11 +2,24 @@
 """Test utility functions."""
 import numpy as np
 from numpy.random import default_rng
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 import pytest
 from scipy.special import sph_harm
 
-from eminus.utils import add_maybe_none, atom2charge, molecule2list, pseudo_uniform, Ylm_real
+from eminus import Atoms
+from eminus.utils import (
+    add_maybe_none,
+    atom2charge,
+    handle_k_gracefully,
+    handle_k_indexable,
+    handle_k_reducable,
+    handle_spin_gracefully,
+    molecule2list,
+    pseudo_uniform,
+    skip_k,
+    vector_angle,
+    Ylm_real,
+)
 
 
 @pytest.mark.parametrize('l', [0, 1, 2, 3])
@@ -74,6 +87,78 @@ def test_atom2charge(atom, ref):
     """Test the molecule to charge expansion."""
     out = atom2charge(atom)
     assert out == ref
+
+
+@pytest.mark.parametrize(('a', 'b', 'ref'), [([1, 0], [0, 1], 90),
+                                             ([1, 0, 0], [0, 1, 0], 90),
+                                             ([1, 1, 0], [0, 1, 1], 60),
+                                             ([3, -2], [1, 7], 115.559965)])
+def test_vector_angle(a, b, ref):
+    """Test the vector angle calculation."""
+    out = vector_angle(a, b)
+    assert_allclose(out, ref, )
+
+
+def test_handle_spin_gracefully():
+    """Test the test_handle_spin_gracefully decorator."""
+    @handle_spin_gracefully
+    def mock(obj, W):
+        return W
+    W = np.ones((1, 1, 1))
+    out = mock(None, W)
+    assert_equal(out, W)
+    out = mock(None, W[0])
+    assert_equal(out, W[0])
+
+
+def test_skip_k():
+    """Test the skip_k decorator."""
+    @skip_k
+    def mock(obj, W):
+        assert isinstance(W, np.ndarray)
+        return W
+    atoms = Atoms('He', (0, 0, 0))
+    W = [np.ones((1, 1, 1))]
+    out = mock(atoms, W)
+    assert_equal(out, W)
+    out = mock(atoms, W[0])
+    assert_equal(out, W[0])
+
+
+def test_handle_k_gracefully():
+    """Test the handle_k_gracefully decorator."""
+    @handle_k_gracefully
+    def mock(obj, W):
+        return W
+    W = [np.ones((1, 1, 1))]
+    out = mock(None, W)
+    assert_equal(out, W)
+    out = mock(None, W[0])
+    assert_equal(out, W[0])
+
+
+def test_handle_k_indexable():
+    """Test the handle_k_indexable decorator."""
+    @handle_k_indexable
+    def mock(obj, W, ik=0):
+        return W
+    W = [np.ones((1, 1, 1))] * 2
+    out = mock(None, W)
+    assert_equal(out, W)
+    out = mock(None, W[0])
+    assert_equal(out, W[0])
+
+
+def test_handle_k_reducable():
+    """Test the handle_k_reducable decorator."""
+    @handle_k_reducable
+    def mock(obj, W, ik=0):
+        return W
+    W = [np.ones((1, 1, 1))] * 2
+    out = mock(None, W)
+    assert_equal(out, np.ones((1, 1, 1)) * 2)
+    out = mock(None, W[0])
+    assert_equal(out, W[0])
 
 
 if __name__ == '__main__':
