@@ -3,10 +3,21 @@ Changelog
 
 dev
 ---
+- New features
+   - Add k-points!
+      - Add a k-points object
+      - Add k-point generation functions
+      - Add a band structure, k-point, and Brillouin zone viewer
+      - Add minimization functions for fixed Hamiltonians
 - Miscellaneous
    - Add a contour line viewer
+   - Plot lattice vectors in the view_atoms function
    - Add a NixOS CI test
    - Use Python 3.12 as the CI base image
+- Experimental
+   - Smearing functionalities
+
+----
 
 v2.6.1 - Oct 04, 2023
 ---------------------
