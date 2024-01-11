@@ -113,6 +113,12 @@ def test_verbose():
     assert scf.log.verbose == level
 
 
+def test_kpts():
+    """Test the k-points object."""
+    scf = SCF(atoms)
+    assert id(scf.kpts) == id(scf.atoms.kpts)
+
+
 def test_clear():
     """Test the clear function."""
     scf = SCF(atoms, opt={'sd': 1})

@@ -52,6 +52,16 @@ def test_minimizer_pol(minimizer):
         assert_allclose(E, E_ref_pol, atol=tolerance)
 
 
+def test_empty_W():
+    """Test the band minimization for a few edge cases."""
+    scf_unpol.is_converged = False
+    del scf_unpol.W
+    scf_unpol.guess = 'pseudo'
+    scf_unpol.opt = {'auto': 1}
+    scf_unpol.converge_bands()
+    scf_unpol.converge_empty_bands(1)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
