@@ -10,6 +10,7 @@ from eminus import Atoms
 from eminus.utils import (
     add_maybe_none,
     atom2charge,
+    get_lattice,
     handle_k_gracefully,
     handle_k_indexable,
     handle_k_reducable,
@@ -97,6 +98,16 @@ def test_vector_angle(a, b, ref):
     """Test the vector angle calculation."""
     out = vector_angle(a, b)
     assert_allclose(out, ref, )
+
+
+def test_get_lattice():
+    """Test the lattice utility function."""
+    out = get_lattice(np.eye(3))
+    for vert in out:
+        assert_equal(np.linalg.norm(vert[0] - vert[1]), 1)
+    out = get_lattice(np.ones((3, 3)) - np.eye(3))
+    for vert in out:
+        assert_equal(np.linalg.norm(vert[0] - vert[1]), np.sqrt(2))
 
 
 def test_handle_spin_gracefully():

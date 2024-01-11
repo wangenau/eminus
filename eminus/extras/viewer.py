@@ -7,7 +7,6 @@ import uuid
 import numpy as np
 
 from ..atoms import Atoms
-from ..cell import get_lattice
 from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
 from ..dft import get_epsilon
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
@@ -16,6 +15,7 @@ from ..logger import log
 from ..occupations import find_Efermi
 from ..tools import get_Efermi, get_isovalue
 from ..units import ha2ev
+from ..utils import get_lattice
 from .fods import split_fods
 
 
