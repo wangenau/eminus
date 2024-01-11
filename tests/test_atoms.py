@@ -5,7 +5,7 @@ from numpy.testing import assert_allclose, assert_equal
 import pytest
 from scipy.linalg import det
 
-from eminus import Atoms, log
+from eminus import Atoms, Cell, log
 from eminus.tools import center_of_mass
 
 inp = ('He', (0, 0, 0))
@@ -169,6 +169,30 @@ def test_G():
     atoms.s = 2
     atoms.build()
     assert len(atoms.G2) == len(atoms.G2c)
+
+
+def test_Gk():
+    """Test the setting of G+k-vectors."""
+    atoms = Cell('He', 'fcc', 30, 5)
+    atoms.kpts.kmesh = (2, 1, 2)
+    atoms.build()
+    assert len(atoms.Gk2) == atoms.kpts.Nk
+    assert len(atoms.Gk2[0]) == len(atoms.G2)
+    assert len(atoms.Gk2c) == atoms.kpts.Nk
+    assert len(atoms.Gk2c[0]) != len(atoms.Gk2c[1])
+
+
+def test_kpts():
+    """Test the k-points object."""
+    atoms = Atoms(*inp, a=(1, 2, 3)).build()
+    assert_equal(atoms.kpts.a, atoms.a)
+    atoms.a = [2] * 3
+    assert_equal(atoms.kpts.a, atoms.a)
+    assert_equal(atoms.occ.wk, atoms.kpts.wk)
+    atoms.kpts.wk = [0.5]
+    atoms.kpts.is_built = True
+    atoms.build()
+    assert_equal(atoms.occ.wk, atoms.kpts.wk)
 
 
 def test_operators():
