@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test orbital functions."""
+import copy
 import glob
 import os
 
@@ -18,8 +19,14 @@ scf.run()
 
 def test_kso():
     """Test the Kohn-Sham orbital function."""
-    orb = KSO(scf, write_cubes=True)[0]
+    scf_tmp = copy.deepcopy(scf)
+    scf_tmp.kpts.Nk = 2
+    scf_tmp.kpts.path = 'GX'
+    scf_tmp.atoms.build()
+    scf_tmp.W = scf_tmp.atoms.J([atoms.I(scf.W)[0], atoms.I(scf.W)[0]], full=False)
+    orb = KSO(scf_tmp, write_cubes=True)[0]
     os.remove('He_KSO_k0_0.cube')
+    os.remove('He_KSO_k1_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
