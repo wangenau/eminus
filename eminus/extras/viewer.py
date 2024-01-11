@@ -139,7 +139,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     return fig.show()
 
 
-def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1, linewidth=1,
+def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1, linewidth=1,
                  size=(600, 600)):
     """Display contour lines of field data like electronic densities.
 
@@ -153,8 +153,8 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1
         axis (int): Axis to slice through.
         value: (float): Slice value scaled by the axis size.
         lines: Number of contour lines.
-        limits (tuple): Maximal and minimal truncation values for the field data.
-        zoom (float): Initial zoom.
+        limits (tuple): Minimal and maximal truncation values for the field data.
+        zoom (float): Initial zoom .
         linewidth (float): Contour line width.
         size (tuple): Widget size.
 
@@ -179,8 +179,8 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1
     # Create a copy of the field data to not overwrite the input
     field = np.copy(field)
     # Remove large and small values (similar to VESTA)
-    field[field > limits[0]] = limits[0]
-    field[field < limits[1]] = limits[1]
+    field[field < limits[0]] = limits[0]
+    field[field > limits[1]] = limits[1]
 
     # Create the contour lines
     fig = go.Figure()
@@ -195,9 +195,11 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(1, -1), zoom=1
         width=size[0],
         height=size[1],
         margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
-        xaxis={'range': [(1 - zoom) * atoms.a[axes[0], axes[0]], zoom * atoms.a[axes[0], axes[0]]],
+        xaxis={'range': [(1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
+                         1 / zoom * atoms.a[axes[0], axes[0]]],
                'visible': False},
-        yaxis={'range': [(1 - zoom) * atoms.a[axes[1], axes[1]], zoom * atoms.a[axes[1], axes[1]]],
+        yaxis={'range': [(1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
+                         1 / zoom * atoms.a[axes[1], axes[1]]],
                'visible': False},
         template='none')
     if executed_in_notebook():
@@ -509,7 +511,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     label = ['\u0393' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
 
-    if hasattr(scf, 'Z'):
+    if hasattr(scf, 'Z') or scf.atoms.occ.bands <= scf.atoms.occ.Nstate:
         Efermi = ha2ev(get_Efermi(scf))
     else:
         Efermi = find_Efermi(scf.atoms.occ, e_occ)
