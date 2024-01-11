@@ -538,8 +538,8 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             c = cost(scf, -1)
             costs.append(c)
             # Do not print cg and linmin if we do the sd step
-            condition(scf, 'sd', costs, norm_g=norm_g)
-            #    break
+            if condition(scf, 'sd', costs, norm_g=norm_g):
+                break
         else:
             costs.append(c)
             if condition(scf, 'pccg', costs, linmin, cg, norm_g):
