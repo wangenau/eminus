@@ -400,7 +400,9 @@ def get_multiplicity(scf):
 
 
 def get_Efermi(scf):
-    """Calculate the Fermi Energy.
+    """Calculate the Fermi energy.
+
+    Only non-smeared occupations are considered here.
 
     Args:
         scf: SCF object.
@@ -409,6 +411,11 @@ def get_Efermi(scf):
         float: Fermi energy.
     """
     e_occ = get_epsilon(scf, scf.W, **scf._precomputed)
+
+    # For smeard systems we need to do a binary search
+    if scf.atoms.occ.smearing != 0:
+        from .occupations import find_Efermi
+        return find_Efermi(scf, e_occ)
 
     if not hasattr(scf, 'Z'):
         log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
@@ -419,18 +426,18 @@ def get_Efermi(scf):
 
 
 def get_bandgap(scf):
-    """Calculate the bandgap.
+    """Calculate the band gap.
 
     Args:
         scf: SCF object.
 
     Returns:
-        float: Bandgap energy.
+        float: Band gap energy.
     """
     e_occ = get_epsilon(scf, scf.W, **scf._precomputed)
 
     if not hasattr(scf, 'Z'):
-        log.warning("The SCF object has no unoccupied energies, can't calculate bandgap.")
+        log.warning("The SCF object has no unoccupied energies, can't calculate band gap.")
         return 0
 
     e_unocc = get_epsilon(scf, scf.Z, **scf._precomputed)

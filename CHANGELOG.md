@@ -16,6 +16,7 @@ dev
    - Use Python 3.12 as the CI base image
 - Experimental
    - Smearing functionalities
+   - Add a density of states function
 
 ----
 

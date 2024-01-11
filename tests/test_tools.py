@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Test tools functions."""
+import copy
+
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, RSCF, SCF
-from eminus.dft import get_psi
+from eminus.dft import get_epsilon, get_psi
 from eminus.gga import get_grad_field
 from eminus.tools import (
     center_of_mass,
@@ -14,7 +16,9 @@ from eminus.tools import (
     check_ortho,
     check_orthonorm,
     cutoff2gridspacing,
+    get_bandgap,
     get_dipole,
+    get_Efermi,
     get_elf,
     get_ip,
     get_isovalue,
@@ -40,6 +44,11 @@ scf_unpol = SCF(atoms_unpol, opt=opt)
 scf_unpol.run()
 scf_pol = SCF(atoms_pol, opt=opt)
 scf_pol.run()
+
+scf_band = copy.deepcopy(scf_unpol)
+scf_band.kpts.path = 'GX'
+scf_band.kpts.Nk = 2
+scf_band.converge_bands()
 
 
 def test_cutoff_and_gridspacing():
@@ -185,6 +194,28 @@ def test_spin_squared_and_multiplicity():
     scf.run()
     assert_allclose(get_spin_squared(scf), 1, atol=1e-2)
     assert get_multiplicity(scf) > 2
+
+
+def test_get_Efermi():
+    """Test the Fermi energy calculation."""
+    Ef = get_Efermi(scf_band)
+    e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
+    assert_allclose(Ef, np.max(e_occ))
+    scf_band.converge_empty_bands(Nempty=1)
+    Ef = get_Efermi(scf_band)
+    e_unocc = get_epsilon(scf_band, scf_band.Z, **scf_band._precomputed)
+    assert np.max(e_occ) < Ef < np.min(e_unocc)
+
+
+def test_get_bandgap():
+    """Test the band gap calculation."""
+    if hasattr(scf_band, 'Z'):
+        del scf_band.Z
+    Eg = get_bandgap(scf_band)
+    assert Eg == 0
+    scf_band.converge_empty_bands(Nempty=1)
+    Eg = get_bandgap(scf_band)
+    assert_allclose(Eg, 0.3793232)
 
 
 if __name__ == '__main__':
