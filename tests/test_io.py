@@ -8,6 +8,7 @@ import pytest
 
 from eminus import (
     Atoms,
+    Cell,
     read,
     read_cube,
     read_json,
@@ -23,7 +24,6 @@ from eminus import (
 )
 
 atoms = Atoms('LiH', ((0, 0, 0), (3, 0, 0)), ecut=1).build()
-print(atoms.active)
 scf = SCF(atoms, opt={'sd': 1})
 scf.run()
 
@@ -101,6 +101,14 @@ def test_json_restart():
     """Test the SCF restart from JSON files."""
     filename = 'test.json'
     write(scf, filename)
+    test_scf = read(filename)
+    test_scf.run()
+    os.remove(filename)
+
+    cell = Cell('He', 'sc', 1, 1)
+    scf_cell = SCF(cell, opt={'sd': 1})
+    scf_cell.run()
+    write(scf_cell, filename)
     test_scf = read(filename)
     test_scf.run()
     os.remove(filename)
