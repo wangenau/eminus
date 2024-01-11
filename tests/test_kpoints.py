@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Test the k-points functionalities."""
 import numpy as np
-from numpy.testing import assert_equal
+from numpy.testing import assert_allclose, assert_equal
 
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
-from eminus.kpoints import bandpath, KPoints, kpoints2axis, monkhorst_pack
+from eminus.kpoints import bandpath, get_brillouin_zone, KPoints, kpoints2axis, monkhorst_pack
 
 
 def test_monkhorst_pack():
@@ -22,8 +22,9 @@ def test_bandpath_lgx():
                 SPECIAL_POINTS['fcc']['X']]
 
     kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
+    print(kpts)  # Test that the object can be printed
     kpts.path = 'LGX'
-    kpts.Nk = 3
+    kpts.Nk = 2  # Test that that Nk gets set to 3, since 3 special points are set
     k_points = bandpath(kpts.build())
     assert len(k_points) == 3
     assert_equal(k_points, s_points)
@@ -93,6 +94,13 @@ def test_kpoints2axis_xukg():
     assert k_axis[6] == k_axis[7]  # No distance between jumps
     for s in s_axis:
         assert s in k_axis
+
+
+def test_get_brillouin_zone():
+    """Test the Brillouin zone generation."""
+    ridges = get_brillouin_zone(np.eye(3))
+    # The Brillouin zone of a cubic lattice is cubic again
+    assert_allclose(np.abs(ridges), np.pi)
 
 
 if __name__ == '__main__':

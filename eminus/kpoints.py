@@ -203,7 +203,7 @@ def bandpath(kpts):
     # Input handling
     N = kpts.Nk
     if N_special > N:
-        log.warning('Sampling is smaler than the number of special points.')
+        log.warning('Sampling is smaller than the number of special points.')
         N = N_special
     for p in path_list:
         if p not in {*s_points, ','}:
