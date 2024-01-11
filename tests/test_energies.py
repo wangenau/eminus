@@ -5,6 +5,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, SCF
+from eminus.energies import get_Eband
 
 # The reference contributions are similar for the polarized and unpolarized case,
 # but not necessary the same (for bad numerics)
@@ -64,6 +65,20 @@ def test_mgga_sic_pol():
     scf_pol.opt = {'auto': 1}
     scf_pol.run()
     assert_allclose(scf_pol.energies.Esic, -0.497, atol=1e-4)
+
+
+def test_get_Eband_unpol():
+    """Check the spin-unpaired band energy."""
+    Eband = get_Eband(scf_unpol, scf_unpol.Y)
+    assert_allclose(Eband, -290.8234, atol=1e-4)
+
+
+def test_get_Eband_pol():
+    """Check the spin-paired band energy."""
+    Eband = get_Eband(scf_pol, scf_pol.Y, **scf_pol._precomputed)
+    # About twice as large as the unpolarized case since we do not account for occupations
+    # The "real" energy does not matter, we only want to minimize the band energy
+    assert_allclose(Eband, -556.4278, atol=1e-4)
 
 
 if __name__ == '__main__':
