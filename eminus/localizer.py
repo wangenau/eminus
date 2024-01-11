@@ -8,6 +8,7 @@ from .logger import log
 from .utils import handle_spin_gracefully, skip_k
 
 
+@skip_k
 def eval_psi(atoms, psi, r):
     """Evaluate orbitals at given coordinate points.
 
@@ -26,6 +27,7 @@ def eval_psi(atoms, psi, r):
     return psi_Trs[0]
 
 
+@skip_k
 def get_R(atoms, psi, fods):
     """Calculate transformation matrix to build Fermi orbitals.
 
