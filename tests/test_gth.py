@@ -6,18 +6,19 @@ import pathlib
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 
-from eminus import Atoms, SCF
+from eminus import Atoms, Cell, SCF
 
 
 def test_GTH():
     """Test the GTH object."""
-    atoms = Atoms('Ne', (0, 0, 0))
-    scf = SCF(atoms)
+    cell = Cell('Ne', 'sc', 20, 10, kmesh=(1, 1, 2))
+    scf = SCF(cell)
     gth = scf.gth
     gth['Ne']  # Test that the object can be accessed via square brackets
     print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
-    assert gth.betaNL[0].shape == (62669, 5)
+    assert len(gth.betaNL) == cell.kpts.Nk
+    assert gth.betaNL[0].shape == (4252, 5)
 
 
 def test_norm():
@@ -28,15 +29,16 @@ def test_norm():
     # Choose an ecut such that we get at least 0.9
     atoms = Atoms('Ac', (0, 0, 0), ecut=35)
     scf = SCF(atoms)
-    for i in range(scf.gth.NbetaNL):
-        norm = np.sum(scf.gth.betaNL[0][:, i] * scf.gth.betaNL[0][:, i])
-        assert_allclose(abs(norm), 1, atol=1e-1)
+    for ik in range(scf.kpts.Nk):
+        for i in range(scf.gth.NbetaNL):
+            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])
+            assert_allclose(abs(norm), 1, atol=1e-1)
 
 
 def test_mock():
     """Test that ghost atoms have no contribution."""
     # Reference calculation without ghost atom
-    atoms = Atoms('He', [(0, 0, 0)], ecut=1)
+    atoms = Atoms('He', (0, 0, 0), ecut=1)
     E_ref = SCF(atoms).run()
     # Calculation with ghost atom
     atoms = Atoms('HeX', [(0, 0, 0), (1, 0, 0)], ecut=1)
