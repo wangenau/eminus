@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Test different energy contributions."""
+import copy
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -52,25 +54,27 @@ def test_energies_pol(energy):
 def test_mgga_sic_unpol():
     """Check the spin-unpaired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    scf_unpol.xc = ':mgga_x_scan,:mgga_c_scan'
-    scf_unpol.opt = {'auto': 1}
-    scf_unpol.run()
-    assert_allclose(scf_unpol.energies.Esic, -0.5374, atol=1e-4)
+    scf_tmp = copy.deepcopy(scf_unpol)
+    scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
+    scf_tmp.opt = {'auto': 1}
+    scf_tmp.run()
+    assert_allclose(scf_tmp.energies.Esic, -0.5374, atol=1e-4)
 
 
 def test_mgga_sic_pol():
     """Check the spin-paired SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    scf_pol.xc = ':mgga_x_scan,:mgga_c_scan'
-    scf_pol.opt = {'auto': 1}
-    scf_pol.run()
-    assert_allclose(scf_pol.energies.Esic, -0.497, atol=1e-4)
+    scf_tmp = copy.deepcopy(scf_pol)
+    scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
+    scf_tmp.opt = {'auto': 1}
+    scf_tmp.run()
+    assert_allclose(scf_tmp.energies.Esic, -0.497, atol=1e-4)
 
 
 def test_get_Eband_unpol():
     """Check the spin-unpaired band energy."""
     Eband = get_Eband(scf_unpol, scf_unpol.Y)
-    assert_allclose(Eband, -290.8234, atol=1e-4)
+    assert_allclose(Eband, -4.1123, atol=1e-4)
 
 
 def test_get_Eband_pol():
@@ -78,7 +82,7 @@ def test_get_Eband_pol():
     Eband = get_Eband(scf_pol, scf_pol.Y, **scf_pol._precomputed)
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy
-    assert_allclose(Eband, -556.4278, atol=1e-4)
+    assert_allclose(Eband, -8.2246, atol=1e-4)
 
 
 if __name__ == '__main__':
