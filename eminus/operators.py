@@ -288,7 +288,7 @@ def T(atoms, W, dr):
         return np.asarray([T(atoms, Wspin, dr) for Wspin in W])
 
     if isinstance(W, np.ndarray):
-        atoms.kpts.assert_gamma_only()
+        atoms.kpts._assert_gamma_only()
         if len(W) == len(atoms.G2c):
             G = atoms.G[np.nonzero(2 * atoms.ecut >= atoms.G2)]
         else:

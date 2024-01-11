@@ -133,7 +133,7 @@ class KPoints:
 
     kernel = build
 
-    def assert_gamma_only(self):
+    def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
         if not np.all(self.k == 0):
             log.exception('The k-points object does not contain only the Gamma point.')

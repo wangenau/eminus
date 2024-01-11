@@ -155,7 +155,7 @@ def get_ip(scf):
     Returns:
         float: Ionization potential in Hartree.
     """
-    scf.atoms.kpts.assert_gamma_only()
+    scf.atoms.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
     # Add-up spin states
     epsilon = np.sum(epsilon, axis=0)

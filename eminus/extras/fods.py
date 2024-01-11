@@ -161,7 +161,7 @@ def remove_core_fods(obj, fods):
         return fods
     if atoms.unrestricted and len(fods[0]) == np.sum(atoms.occ.f[0, 0]) \
             and len(fods[1]) == np.sum(atoms.occ.f[0, 1]):
-        atoms.kpts.assert_gamma_only()
+        atoms.kpts._assert_gamma_only()
         return fods
 
     for s in range(atoms.occ.Nspin):
