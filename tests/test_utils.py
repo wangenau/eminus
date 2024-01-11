@@ -134,6 +134,8 @@ def test_skip_k():
     assert_equal(out, W)
     out = mock(atoms, W[0])
     assert_equal(out, W[0])
+    out = mock(atoms, W[0][0])
+    assert_equal(out, W[0][0])
 
 
 def test_handle_k_gracefully():
@@ -141,11 +143,16 @@ def test_handle_k_gracefully():
     @handle_k_gracefully
     def mock(obj, W):
         return W
+
+    def mock_val(obj, W):
+        return 0
     W = [np.ones((1, 1, 1))]
     out = mock(None, W)
     assert_equal(out, W)
     out = mock(None, W[0])
     assert_equal(out, W[0])
+    out = mock_val(None, W)
+    assert_equal(out, 0)
 
 
 def test_handle_k_indexable():

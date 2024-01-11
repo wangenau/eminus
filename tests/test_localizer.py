@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Test localization functions."""
+import copy
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -80,6 +82,9 @@ def test_wannier(unrestricted):
     costs = wannier_cost(scf.atoms, wo)
     # Check that all transformed orbitals have a similar spread
     assert_allclose(costs, costs[0, 0], atol=0.0025)
+    scf_tmp = copy.deepcopy(scf)
+    scf_tmp.atoms.a = [[1, 1, 0], [1, 0, 1], [0, 1, 1]]
+    assert_allclose(get_wannier(scf_tmp.atoms, flo), flo)
 
 
 def test_wannier_random_guess():
