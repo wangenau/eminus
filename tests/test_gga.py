@@ -8,10 +8,14 @@ from eminus import Atoms, SCF
 from eminus.gga import get_grad_field, get_tau
 
 atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
-atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
-
+atoms_unpol.kpts.Nk = 2
+atoms_unpol.kpts.k = [[0, 0, 0], [0, 0, 0]]
+atoms_unpol.kpts.wk = [0.5, 0.5]
+atoms_unpol.kpts.is_built = True
 scf_unpol = SCF(atoms_unpol)
-scf_unpol.run()
+scf_unpol.run(betat=1e-4)
+
+atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
 scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
