@@ -4,15 +4,15 @@
 from ..logger import log
 
 
-def symmetrize(atoms, space_group_symmetry=True, time_reversal_symmetry=False):
+def symmetrize(atoms, space_group=True, time_reversal=False):
     """Symmetrize k-points of an Atoms object.
 
     Args:
         atoms: Atoms object.
 
     Keyword Args:
-        space_group_symmetry (bool): Whether to consider space group symmetry.
-        time_reversal_symmetry (bool): Whether to consider time reversal symmetry.
+        space_group (bool): Whether to consider space group symmetry.
+        time_reversal (bool): Whether to consider time reversal symmetry.
     """
     try:
         from pyscf.pbc.gto import Cell
@@ -31,11 +31,11 @@ def symmetrize(atoms, space_group_symmetry=True, time_reversal_symmetry=False):
     cell.a = atoms.a
     cell.build()
     kpts = KPoints(cell, atoms.kpts.k)
-    kpts.build(space_group_symmetry=space_group_symmetry,
-               time_reversal_symmetry=time_reversal_symmetry)
+    kpts.build(space_group_symmetry=space_group, time_reversal_symmetry=time_reversal)
 
     # Set the k-points
     atoms.kpts.k = kpts.kpts_ibz
     atoms.kpts.wk = kpts.weights_ibz
     atoms.kpts._k_scaled = None  # Remove the scaled k-points
     atoms.kpts.is_built = True  # Indicate the object as built
+    atoms.is_built = False  # wk has to be passed to the occ object and G-vectors need to be updated
