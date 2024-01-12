@@ -100,6 +100,10 @@ def test_17():  # noqa: D103
     execute_example('17_reduced_density_gradient')
 
 
+def test_18():  # noqa: D103
+    execute_example('18_k_points')
+
+
 if __name__ == '__main__':
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
