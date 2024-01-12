@@ -95,9 +95,8 @@ def test_multiple_k():
     scf.dn_spin, scf.tau = None, None
     scf_step(scf, 0)
 
-    atoms = Cell('Si', 'diamond', ecut=30, a=10.2631, kmesh=(2, 2, 2)).build()
-    atoms.kpts._k = np.zeros_like(atoms.kpts._k)
-    atoms.build()
+    atoms = Cell('Si', 'diamond', ecut=30, a=10.2631, kmesh=(2, 2, 2))
+    atoms.set_k(np.zeros((8, 3)))
     scf_k = SCF(atoms, etol=1e-5)
     scf_k.W = guess_pseudo(scf_k)
     scf_k.dn_spin, scf_k.tau = None, None

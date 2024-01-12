@@ -225,6 +225,20 @@ def test_recenter():
     assert atoms.center == 'recentered'
 
 
+def test_set_k():
+    """Test the setting of custom k-points."""
+    atoms = Atoms(*inp)
+    atoms.s = 2
+    atoms.build()
+    atoms.set_k([[0] * 3] * 2)
+    assert atoms.kpts.Nk == 2
+    assert len(atoms.kpts.k) == 2
+    assert len(atoms.kpts.wk) == 2
+    assert len(atoms.occ.wk) == 2
+    assert len(atoms.Gk2) == 2
+    assert len(atoms.Gk2c) == 2
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

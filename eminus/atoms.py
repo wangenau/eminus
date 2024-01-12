@@ -373,6 +373,26 @@ class Atoms:
         self._center = 'recentered'
         return self
 
+    def set_k(self, k, wk=None):
+        """Interface to set custom k-points.
+
+        Args:
+            k (list | tuple | ndarray): k-point coordinates.
+
+        Keyword Args:
+            wk (list | tuple | ndarray | None): k-point weights.
+        """
+        self.kpts.build()
+        self.kpts._k = np.asarray(k)
+        if wk is None:
+            self.kpts._wk = np.ones(len(k)) / len(k)
+        else:
+            self.kpts._wk = np.asarray(wk)
+        self.kpts._Nk = len(self.kpts._wk)
+        self.occ.wk = self.kpts.wk
+        self._sample_unit_cell()
+        return self
+
     def clear(self):
         """Initialize or clear parameters that will be built out of the inputs."""
         self._r = None          # Sample points in cell
