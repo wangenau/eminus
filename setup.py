@@ -29,8 +29,8 @@ extras: dict[str, list[str]] = {
         'torch>=1.8'  # Faster FFT operators using Torch
     ],
     'viewer': [
-        'nglview>=2.6.5',     # Molecule and isosurface viewer
-        'plotly>=4.5'         # Grid visualization
+        'nglview>=2.6.5',  # Molecule and isosurface viewer
+        'plotly>=4.5'      # Grid visualization
     ]
 }
 extras['fods'] = extras['libxc']     # PyCOM FOD guessing method uses PySCF
@@ -41,7 +41,7 @@ extras['dev'] = [
     'furo>=2022.02.14.1',      # Documentation theme
     'matplotlib>=1.5.0',       # Plotting library
     'mypy>=0.931',             # Static type checker
-    'notebook<7',              # Run and convert notebooks to HTML
+    'notebook',                # Run and convert notebooks to HTML
     'pytest>=5.4',             # Test utilities
     'pytest-cov>=2.6.1',       # Collect test coverage data
     'ruff>=0.0.276',           # Style guide checker
