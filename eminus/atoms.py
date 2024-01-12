@@ -383,9 +383,9 @@ class Atoms:
             wk (list | tuple | ndarray | None): k-point weights.
         """
         self.kpts.build()
-        self.kpts._k = np.asarray(k)
+        self.kpts._k = np.atleast_2d(k)
         if wk is None:
-            self.kpts._wk = np.ones(len(k)) / len(k)
+            self.kpts._wk = np.ones(len(self.kpts._k)) / len(self.kpts._k)
         else:
             self.kpts._wk = np.asarray(wk)
         self.kpts._Nk = len(self.kpts._wk)

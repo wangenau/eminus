@@ -25,7 +25,7 @@ class KPoints:
         if isinstance(a, numbers.Real):
             a = a * np.asarray(LATTICE_VECTORS[self.lattice])
         self.a = a                    #: Cell size.
-        self.kmesh = [1, 1, 1]        #: Monkhorst-Pack k-point mesh.
+        self.kmesh = [1, 1, 1]        #: k-point mesh.
         self.wk = [1]                 #: k-point weights.
         self.k = [[0, 0, 0]]          #: k-point coordinates.
         self.kshift = [0, 0, 0]       #: k-point shift vector.
