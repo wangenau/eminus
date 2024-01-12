@@ -124,7 +124,7 @@ class KPoints:
         if self.is_built:
             return self
         if self.kmesh is not None:
-            if gamma_centered:
+            if self.gamma_centered:
                 self._k_scaled = gamma_centered(self.kmesh)
             else:
                 self._k_scaled = monkhorst_pack(self.kmesh)

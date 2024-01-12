@@ -32,6 +32,19 @@ def test_symmetrize(space_group, time_reversal):
         assert_allclose(np.sort(np.linalg.norm(orig_k - k, axis=1))[0], 0, atol=1e-15)
 
 
+def test_unbuilt():
+    """Test unbuilt KPoints objects."""
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    from eminus.extras import symmetrize
+    cell = Cell('Si', 'diamond', 1, 10, kmesh=3).build()
+    symmetrize(cell)
+    orig_k = cell.kpts.k
+    cell.kpts.is_built = False
+    symmetrize(cell)
+    symm_k = cell.kpts.k
+    assert_allclose(orig_k, symm_k)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
