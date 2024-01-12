@@ -3,11 +3,13 @@
 import copy
 
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 import pytest
 
-from eminus import Atoms, SCF
+from eminus import Atoms, Cell, SCF
+from eminus.dft import guess_pseudo
 from eminus.energies import get_Eband
+from eminus.minimizer import scf_step
 
 # The reference contributions are similar for the polarized and unpolarized case,
 # but not necessary the same (for bad numerics)
@@ -83,6 +85,25 @@ def test_get_Eband_pol():
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy
     assert_allclose(Eband, -8.2246, atol=1e-4)
+
+
+def test_multiple_k():
+    """Test that the energy for one or multiple, identical k-points is the same."""
+    atoms = Cell('Si', 'diamond', ecut=30, a=10.2631)
+    scf = SCF(atoms, etol=1e-5)
+    scf.W = guess_pseudo(scf)
+    scf.dn_spin, scf.tau = None, None
+    scf_step(scf, 0)
+
+    atoms = Cell('Si', 'diamond', ecut=30, a=10.2631, kmesh=(2, 2, 2)).build()
+    atoms.kpts._k = np.zeros_like(atoms.kpts._k)
+    atoms.build()
+    scf_k = SCF(atoms, etol=1e-5)
+    scf_k.W = guess_pseudo(scf_k)
+    scf_k.dn_spin, scf_k.tau = None, None
+    scf_step(scf_k, 0)
+
+    assert_equal(scf.energies.Etot, scf_k.energies.Etot)
 
 
 if __name__ == '__main__':

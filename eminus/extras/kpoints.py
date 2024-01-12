@@ -26,6 +26,7 @@ def symmetrize(atoms, space_group_symmetry=True, time_reversal_symmetry=False):
 
     # Build Cell and KPoints objects
     cell = Cell()
+    cell.unit = 'bohr'
     cell.atom = [[atoms.atom[ia], atoms.pos[ia]] for ia in range(atoms.Natoms)]
     cell.a = atoms.a
     cell.build()
