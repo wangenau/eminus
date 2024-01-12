@@ -19,18 +19,18 @@ class KPoints:
     """
     def __init__(self, lattice, a=None):
         """Initialize the KPoints object."""
-        self.lattice = lattice   #: Lattice system.
+        self.lattice = lattice        #: Lattice system.
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
             a = a * np.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a                   #: Cell size.
-        self.kmesh = [1, 1, 1]       #: Monkhorst-Pack k-point mesh.
-        self.wk = [1]                #: k-point weights.
-        self.k = [[0, 0, 0]]         #: k-point coordinates.
-        self.kshift = [0, 0, 0]      #: k-point shift vector.
-        self.gamma_centered = False  #: Generate a Gamma-point centered grid.
-        self.is_built = True         #: Determines the KPoints object build status.
+        self.a = a                    #: Cell size.
+        self.kmesh = [1, 1, 1]        #: Monkhorst-Pack k-point mesh.
+        self.wk = [1]                 #: k-point weights.
+        self.k = [[0, 0, 0]]          #: k-point coordinates.
+        self.kshift = [0, 0, 0]       #: k-point shift vector.
+        self._gamma_centered = False  #: Generate a Gamma-point centered grid.
+        self.is_built = True          #: Determines the KPoints object build status.
 
     # ### Class properties ###
 
@@ -93,6 +93,17 @@ class KPoints:
         self.is_built = False
 
     @property
+    def gamma_centered(self):
+        """Generate a Gamma-point centered grid."""
+        return self._gamma_centered
+
+    @gamma_centered.setter
+    def gamma_centered(self, value):
+        if value != self._gamma_centered:
+            self._gamma_centered = value
+            self.is_built = False
+
+    @property
     def path(self):
         """k-point bandpath."""
         return self._path
@@ -132,8 +143,7 @@ class KPoints:
             self._k_scaled = bandpath(self)
         # Without removing redundancies the weight is the same for all k-points
         self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
-        k_shift = self._k_scaled + self.kshift
-        self.k = kpoint_convert(k_shift, self.a)
+        self.k = kpoint_convert(self._k_scaled, self.a) + self.kshift
         self.is_built = True
         return self
 
