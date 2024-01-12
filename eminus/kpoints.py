@@ -24,12 +24,13 @@ class KPoints:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
             a = a * np.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a               #: Cell size.
-        self.kmesh = [1, 1, 1]   #: Monkhorst-Pack k-point mesh.
-        self.wk = [1]            #: k-point weights.
-        self.k = [[0, 0, 0]]     #: k-point coordinates.
-        self.kshift = [0, 0, 0]  #: k-point shift vector.
-        self.is_built = True     #: Determines the KPoints object build status.
+        self.a = a                   #: Cell size.
+        self.kmesh = [1, 1, 1]       #: Monkhorst-Pack k-point mesh.
+        self.wk = [1]                #: k-point weights.
+        self.k = [[0, 0, 0]]         #: k-point coordinates.
+        self.kshift = [0, 0, 0]      #: k-point shift vector.
+        self.gamma_centered = False  #: Generate a Gamma-point centered grid.
+        self.is_built = True         #: Determines the KPoints object build status.
 
     # ### Class properties ###
 
@@ -123,7 +124,10 @@ class KPoints:
         if self.is_built:
             return self
         if self.kmesh is not None:
-            self._k_scaled = monkhorst_pack(self.kmesh)
+            if gamma_centered:
+                self._k_scaled = gamma_centered(self.kmesh)
+            else:
+                self._k_scaled = monkhorst_pack(self.kmesh)
         else:
             self._k_scaled = bandpath(self)
         # Without removing redundancies the weight is the same for all k-points
@@ -171,7 +175,6 @@ def monkhorst_pack(nk):
 
     Args:
         nk (list | tuple | ndarray): Number of k-points per axis.
-        lattice_vectors (ndarray): Lattice vectors.
 
     Returns:
         ndarray: k-points.
@@ -185,6 +188,26 @@ def monkhorst_pack(nk):
     M = np.column_stack((m1, m2, m3))
 
     return (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
+
+
+def gamma_centered(nk):
+    """Generate a Gamma-point centered mesh of k-points.
+
+    Args:
+        nk (list | tuple | ndarray): Number of k-points per axis.
+
+    Returns:
+        ndarray: k-points.
+    """
+    # Same index matrix as in Atoms._get_index_matrices()
+    nktotal = np.prod(nk)
+    ms = np.arange(nktotal)
+    m1 = np.floor(ms / (nk[2] * nk[1])) % nk[0]
+    m2 = np.floor(ms / nk[2]) % nk[1]
+    m3 = ms % nk[2]
+    M = np.column_stack((m1, m2, m3))
+
+    return M / nk  # Gamma-centered grid
 
 
 def bandpath(kpts):

@@ -4,7 +4,14 @@ import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
-from eminus.kpoints import bandpath, get_brillouin_zone, KPoints, kpoints2axis, monkhorst_pack
+from eminus.kpoints import (
+    bandpath,
+    gamma_centered,
+    get_brillouin_zone,
+    KPoints,
+    kpoints2axis,
+    monkhorst_pack,
+)
 
 
 def test_monkhorst_pack():
@@ -13,6 +20,15 @@ def test_monkhorst_pack():
     assert_equal(k_points, 0)
     k_points = monkhorst_pack((2, 2, 2))
     assert_equal(np.abs(k_points), 1 / 4)
+
+
+def test_gamma_centered():
+    """Test the Gamma centered mesh generation."""
+    k_points = gamma_centered((1, 1, 1))
+    assert_equal(k_points, 0)
+    k_points = gamma_centered((2, 2, 2))
+    assert_equal(k_points[0], 0)
+    assert np.all(k_points >= 0)
 
 
 def test_bandpath_lgx():
