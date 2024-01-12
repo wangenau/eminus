@@ -28,8 +28,7 @@ def solve_poisson(atoms, n):
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
-@handle_k_reducable
-def get_n_total(atoms, Y, ik, n_spin=None):
+def get_n_total(atoms, Y, n_spin=None):
     """Calculate the total electronic density.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -37,7 +36,6 @@ def get_n_total(atoms, Y, ik, n_spin=None):
     Args:
         atoms: Atoms object.
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
 
     Keyword Args:
         n_spin (ndarray): Real-space electronic densities per spin channel.
@@ -50,11 +48,12 @@ def get_n_total(atoms, Y, ik, n_spin=None):
         return np.sum(n_spin, axis=0)
 
     # n = (IW) F (IW)dag
-    Yrs = atoms.I(Y, ik)
     n = np.zeros(atoms.Ns)
-    for spin in range(atoms.occ.Nspin):
-        n += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
-                    np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+    Yrs = atoms.I(Y)
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            n += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
+                        np.real(Yrs[ik][spin].conj() * Yrs[ik][spin]), axis=1)
     return n
 
 
