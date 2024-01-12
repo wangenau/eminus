@@ -7,7 +7,7 @@ import pytest
 from eminus import Atoms, Cell, demo, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
 
-atoms_unpol = Cell('Si', 'diamond', 1, 10, kmesh=(2, 1, 1), bands=8)
+atoms_unpol = Cell('Si', 'diamond', 1, 10, kmesh=(2, 1, 1), bands=5)
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, unrestricted=True)
 
 scf_unpol = SCF(atoms_unpol)
