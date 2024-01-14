@@ -413,16 +413,14 @@ class Atoms:
             tuple[ndarray, ndarray]: Index matrices.
         """
         # Build index matrix M
-        ms = np.arange(self._Ns)
-        m1 = np.floor(ms / (self.s[2] * self.s[1])) % self.s[0]
-        m2 = np.floor(ms / self.s[2]) % self.s[1]
-        m3 = ms % self.s[2]
-        M = np.column_stack((m1, m2, m3))
+        # ms = np.arange(self._Ns)
+        # m1 = np.floor(ms / (self.s[2] * self.s[1])) % self.s[0]
+        # m2 = np.floor(ms / self.s[2]) % self.s[1]
+        # m3 = ms % self.s[2]
+        # M = np.column_stack((m1, m2, m3))
+        M = np.indices(self.s).transpose((1, 2, 3, 0)).reshape((-1, 3))
         # Build index matrix N
-        n1 = m1 - (m1 > self.s[0] / 2) * self.s[0]
-        n2 = m2 - (m2 > self.s[1] / 2) * self.s[1]
-        n3 = m3 - (m3 > self.s[2] / 2) * self.s[2]
-        N = np.column_stack((n1, n2, n3))
+        N = M - (self.s / 2 < M) * self.s
         return M, N
 
     def _sample_unit_cell(self):

@@ -190,13 +190,7 @@ def monkhorst_pack(nk):
         ndarray: k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    nktotal = np.prod(nk)
-    ms = np.arange(nktotal)
-    m1 = np.floor(ms / (nk[2] * nk[1])) % nk[0]
-    m2 = np.floor(ms / nk[2]) % nk[1]
-    m3 = ms % nk[2]
-    M = np.column_stack((m1, m2, m3))
-
+    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
     return (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
 
 
@@ -210,13 +204,7 @@ def gamma_centered(nk):
         ndarray: k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    nktotal = np.prod(nk)
-    ms = np.arange(nktotal)
-    m1 = np.floor(ms / (nk[2] * nk[1])) % nk[0]
-    m2 = np.floor(ms / nk[2]) % nk[1]
-    m3 = ms % nk[2]
-    M = np.column_stack((m1, m2, m3))
-
+    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
     return M / nk  # Gamma-centered grid
 
 
