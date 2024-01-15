@@ -51,7 +51,7 @@ def I(atoms, W, ik=0):
                 Wfft = np.zeros(n, dtype=W.dtype)
             else:
                 Wfft = np.zeros((n, W.shape[-1]), dtype=W.dtype)
-            Wfft[atoms._active] = W
+            Wfft[atoms._active[ik]] = W
     elif W.shape[1] == len(atoms._G2):
         Wfft = W
     else:
@@ -183,7 +183,7 @@ def Jdag(atoms, W, ik=0):
                 Wfft = np.zeros(n, dtype=W.dtype)
             else:
                 Wfft = np.zeros((n, W.shape[-1]), dtype=W.dtype)
-            Wfft[atoms._active] = W
+            Wfft[atoms._active[ik]] = W
     elif W.shape[1] == len(atoms._G2):
         Wfft = W
     else:
