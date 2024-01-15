@@ -9,14 +9,26 @@ dev
       - Add k-point generation functions
       - Add a band structure, k-point, and Brillouin zone viewer
       - Add minimization functions for fixed Hamiltonians
+   - Add a symmetry extra so symmetrize k-points
+- Updated docs
+   - Add k-point examples
+- Coding style
+   - Activate several Ruff rules
+      - Lint check notebooks
+   - Rewrite operator handling
+   - Increase coverage precision
+   - Add a lot of new tests
 - Miscellaneous
    - Add a contour line viewer
    - Plot lattice vectors in the view_atoms function
    - Add a NixOS CI test
    - Use Python 3.12 as the CI base image
+   - Move Matplotlib to dev extras
+   - Unpin the notebook version
+   - Small performance improvements, e.g, in Atoms object creation
 - Experimental
    - Smearing functionalities
-   - Add a density of states function
+   - Density of states function
 
 ----
 
