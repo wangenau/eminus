@@ -189,8 +189,9 @@ def test_handle_torch():
     out = mock(np.pi)
     assert_equal(out, np.pi)
     config.use_torch = True
-    with pytest.raises(AttributeError):
-        mock(np.pi)
+    if config.use_torch:
+        with pytest.raises(AttributeError):
+            mock(np.pi)
 
 
 if __name__ == '__main__':

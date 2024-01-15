@@ -297,7 +297,7 @@ class SCF:
             self.log.warning('The previous calculation has not been converged.')
 
         # If new k-points have been set rebuild the atoms object and the potential
-        if not self.atoms.kpts.is_built or len(self.W) != self.atoms.kpts.Nk:
+        if not self.atoms.kpts.is_built or hasattr(self, 'W') and len(self.W) != self.atoms.kpts.Nk:
             self.atoms.build()
             self.pot = self.pot
             self.is_converged = False
