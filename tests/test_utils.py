@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose, assert_equal
 import pytest
 from scipy.special import sph_harm
 
-from eminus import Atoms
+from eminus import Atoms, config
 from eminus.utils import (
     add_maybe_none,
     atom2charge,
@@ -15,6 +15,7 @@ from eminus.utils import (
     handle_k_indexable,
     handle_k_reducable,
     handle_spin_gracefully,
+    handle_torch,
     molecule2list,
     pseudo_uniform,
     skip_k,
@@ -177,6 +178,19 @@ def test_handle_k_reducable():
     assert_equal(out, np.ones((1, 1, 1)) * 2)
     out = mock(None, W[0])
     assert_equal(out, W[0])
+
+
+def test_handle_torch():
+    """Test the handle_torch decorator."""
+    @handle_torch
+    def mock(x):
+        return x
+    config.use_torch = False
+    out = mock(np.pi)
+    assert_equal(out, np.pi)
+    config.use_torch = True
+    with pytest.raises(AttributeError):
+        mock(np.pi)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ import numpy as np
 from scipy.fft import next_fast_len
 from scipy.linalg import det, eigh, inv, norm
 
-from . import config, operators
+from . import operators
 from .kpoints import KPoints
 from .logger import create_logger, get_level, log
 from .occupations import Occupations
@@ -346,7 +346,6 @@ class Atoms:
 
     def build(self):
         """Build all parameters of the Atoms object."""
-        self._set_operators()
         self.kpts.build()
         self._sample_unit_cell()
         self.occ.wk = self.kpts.wk  # Pass the weights of k-points to the Occupations object
@@ -444,34 +443,15 @@ class Atoms:
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
 
-    def _base_operator(*args, **kwargs):
-        """See :mod:`~eminus.operators`."""
-        # Base operator method to show an error for unbuilt Atoms objects
-        log.error('Build the Atoms object with "atoms.build()" to call this operator.')
-
-    def _set_operators(self):
-        """Set operators of an Atoms class instance at runtime."""
-        for op in ('O', 'L', 'Linv', 'K', 'T'):
-            setattr(type(self), op, getattr(operators, op))
-        fft_operators = ('I', 'J', 'Idag', 'Jdag')
-        # Use the Torch operators if desired, or the default ones otherwise
-        if config.use_torch:
-            from .extras import torch
-            for op in fft_operators:
-                setattr(type(self), op, getattr(torch, op))
-        else:
-            for op in fft_operators:
-                setattr(type(self), op, getattr(operators, op))
-
-    O = _base_operator
-    L = _base_operator
-    Linv = _base_operator
-    K = _base_operator
-    T = _base_operator
-    I = _base_operator
-    J = _base_operator
-    Idag = _base_operator
-    Jdag = _base_operator
+    O = operators.O
+    L = operators.L
+    Linv = operators.Linv
+    K = operators.K
+    T = operators.T
+    I = operators.I
+    J = operators.J
+    Idag = operators.Idag
+    Jdag = operators.Jdag
 
     def __repr__(self):
         """Print the parameters stored in the Atoms object."""

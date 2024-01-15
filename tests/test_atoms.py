@@ -198,7 +198,6 @@ def test_kpts():
 def test_operators():
     """Test that operators are properly set and callable."""
     atoms = Atoms(*inp).build()
-    assert atoms._base_operator() is None
     for op in ('O', 'L', 'Linv', 'I', 'J', 'Idag', 'Jdag', 'K', 'T'):
         assert callable(getattr(atoms, op))
 

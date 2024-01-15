@@ -39,7 +39,6 @@ def read_json(filename):
         # Atoms objects
         if isinstance(dct, dict) and '_atom' in dct:
             atoms = eminus.Atoms(dct['_atom'], dct['_pos'], verbose=dct['_verbose'])
-            atoms._set_operators()
             atoms = set_attrs(atoms, dct)
             # The tuple type is not preserved when serializing, manually cast the only important one
             if isinstance(atoms._active, list):

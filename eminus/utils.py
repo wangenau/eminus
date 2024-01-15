@@ -6,6 +6,9 @@ import re
 import numpy as np
 from scipy.linalg import norm
 
+import eminus
+
+from . import config
 from .units import rad2deg
 
 
@@ -220,6 +223,25 @@ def handle_k_reducable(func, *args, **kwargs):
             # The Python sum allows summing single values and NumPy arrays elementwise
             return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
         return func(obj, W, *args, **kwargs)
+    return decorator
+
+
+def handle_torch(func, *args, **kwargs):
+    """Use a function optimized with Torch if available.
+
+    Args:
+        func (Callable): Function with a Torch alternative.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    def decorator(*args, **kwargs):
+        if config.use_torch:
+            func_torch = getattr(eminus.extras.torch, func.__name__)
+            return func_torch(*args, **kwargs)
+        return func(*args, **kwargs)
     return decorator
 
 

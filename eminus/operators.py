@@ -29,7 +29,7 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully
+from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully, handle_torch
 
 
 # Spin handling is trivial for this operator
@@ -106,6 +106,7 @@ def Linv(atoms, W):
     return out
 
 
+@handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
 def I(atoms, W, ik=0):
@@ -156,6 +157,7 @@ def I(atoms, W, ik=0):
     return Finv
 
 
+@handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
 def J(atoms, W, ik=0, full=True):
@@ -199,6 +201,7 @@ def J(atoms, W, ik=0, full=True):
     return F
 
 
+@handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
 def Idag(atoms, W, ik=0, full=False):
@@ -224,6 +227,7 @@ def Idag(atoms, W, ik=0, full=False):
     return F * n
 
 
+@handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
 def Jdag(atoms, W, ik=0):
