@@ -25,7 +25,7 @@ def scf_step_occ(scf, W):
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        float: Total energy.
+        float: Band energy.
     """
     atoms = scf.atoms
     scf.Y = orth(atoms, W)
@@ -40,7 +40,7 @@ def scf_step_unocc(scf, Z):
         Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        float: Total energy.
+        float: Band energy.
     """
     atoms = scf.atoms
     scf.D = orth_unocc(atoms, scf.Y, Z)
