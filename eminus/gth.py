@@ -166,7 +166,7 @@ def calc_Vnonloc(scf, ik, spin, W):
                             hij = psp['h'][l, iprj, jprj]
                             Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[ik][:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
-    return Vpsi * atoms.Omega
+    return atoms.O(Vpsi)
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl

@@ -154,4 +154,4 @@ def calc_Vtau(scf, ik, spin, W, vtau):
         # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
         # Vpsi = -0.5 * 1j * np.sum(Gc * GVpsi, axis=2)
         Vpsi = -0.5 * 1j * np.einsum('ior,ijr->ij', Gc, GVpsi)
-    return Vpsi * atoms.Omega
+    return atoms.O(Vpsi)
