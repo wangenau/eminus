@@ -404,8 +404,8 @@ def find_Efermi(occ, epsilon):
     """
     eps = 1e-10
 
-    Elw = np.min(epsilon[:, :, 0])
-    Eup = np.max(epsilon[:, :, -1])
+    Elw = np.min(epsilon[..., 0])
+    Eup = np.max(epsilon[..., -1])
     Elw -= 2 * occ.smearing
     Eup += 2 * occ.smearing
 

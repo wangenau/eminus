@@ -295,7 +295,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     # Search direction that needs to be saved for each spin
-    d = copy.deepcopy(scf.W)
+    d = [np.empty_like(Wk) for Wk in scf.W]
 
     for i in range(Nit):
         for ik in range(atoms.kpts.Nk):
@@ -377,9 +377,9 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    d = copy.deepcopy(scf.W)
-    d_old = copy.deepcopy(scf.W)
-    g_old = copy.deepcopy(scf.W)
+    d = [np.empty_like(Wk) for Wk in scf.W]
+    d_old = [np.empty_like(Wk) for Wk in scf.W]
+    g_old = [np.empty_like(Wk) for Wk in scf.W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):
@@ -481,10 +481,10 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     beta = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, 1, 1))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    g = copy.deepcopy(scf.W)
-    d = copy.deepcopy(scf.W)
-    d_old = copy.deepcopy(scf.W)
-    g_old = copy.deepcopy(scf.W)
+    g = [np.empty_like(Wk) for Wk in scf.W]
+    d = [np.empty_like(Wk) for Wk in scf.W]
+    d_old = [np.empty_like(Wk) for Wk in scf.W]
+    g_old = [np.empty_like(Wk) for Wk in scf.W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):

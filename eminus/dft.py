@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """Main DFT functions based on the DFT++ formulation."""
-import copy
-
 import numpy as np
 from numpy.random import Generator, SFC64
 from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
@@ -129,7 +127,7 @@ def orth_unocc(atoms, Y, Z):
     Returns:
         ndarray: Orthogonalized wave functions.
     """
-    D = copy.deepcopy(Z)
+    D = [np.empty_like(Zk) for Zk in Z]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             # rhoZ = (I - Y Ydag O) Z
@@ -285,7 +283,7 @@ def get_psi(scf, W, **kwargs):
     """
     atoms = scf.atoms
     Y = orth(atoms, W)
-    psi = copy.deepcopy(Y)
+    psi = [np.empty_like(Yk) for Yk in Y]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)

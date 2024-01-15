@@ -101,7 +101,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
-    D_tmp = copy.deepcopy(Z)
+    D_tmp = [np.empty_like(Zk) for Zk in Z]
     D_tmp[ik][spin] = D
     HD = H(scf, ik, spin, D_tmp, **kwargs)
     DHD = D.conj().T @ HD
@@ -170,7 +170,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     costs = []
 
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = copy.deepcopy(W)
+    d = [np.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = 'pclm'
@@ -248,9 +248,9 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = copy.deepcopy(W)
-    d_old = copy.deepcopy(W)
-    g_old = copy.deepcopy(W)
+    d = [np.empty_like(Wk) for Wk in W]
+    d_old = [np.empty_like(Wk) for Wk in W]
+    g_old = [np.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = 'pccg'
@@ -351,10 +351,10 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    g = copy.deepcopy(W)
-    d = copy.deepcopy(W)
-    d_old = copy.deepcopy(W)
-    g_old = copy.deepcopy(W)
+    g = [np.empty_like(Wk) for Wk in W]
+    d = [np.empty_like(Wk) for Wk in W]
+    d_old = [np.empty_like(Wk) for Wk in W]
+    g_old = [np.empty_like(Wk) for Wk in W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):
