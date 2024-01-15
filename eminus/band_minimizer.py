@@ -128,7 +128,7 @@ def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -164,7 +164,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -216,7 +216,7 @@ def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     return pclm(scf, W, Nit, cost, grad, condition, betat, precondition=False)
 
@@ -240,7 +240,7 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
         precondition (bool): Weather to use a preconditioner.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -318,7 +318,7 @@ def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
         cgform (int): Conjugate gradient form.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     return pccg(scf, W, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
@@ -326,7 +326,7 @@ def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 @name('auto minimization')
 def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
          cgform=1):
-    """Automatic preconditioned conjugate-gradient minimization algorithm for a fixed Hamiltonian.
+    """Automatic precond. conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     This function chooses an sd step over the pccg step if the energy goes up.
 
@@ -343,7 +343,7 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
         cgform (int): Conjugate gradient form.
 
     Returns:
-        tuple[list, ndarray]: Energies per SCF cycle and optimized expansion coefficients.
+        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []

@@ -125,6 +125,9 @@ Feature overview
       <li style="background:#c7c7c7">Densities</li>
       <li style="background:#c7c7c7">Grids</li>
       <li style="background:#c7c7c7">Files</li>
+      <li style="background:#c7c7c7">Contours</li>
+      <li style="background:#c7c7c7">Brillouin zones</li>
+      <li style="background:#c7c7c7">Band structures</li>
    </ul>
 
    <div class="colored-heading" style="background:#cdcc5d">Files</div>

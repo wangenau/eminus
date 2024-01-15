@@ -292,7 +292,7 @@ class SCF:
     kernel = run
 
     def converge_bands(self, **kwargs):
-        """Converge occupied bands after conerging a SCF calculation."""
+        """Converge occupied bands after an SCF calculation."""
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
 
@@ -351,7 +351,7 @@ class SCF:
         return self
 
     def converge_empty_bands(self, Nempty=None, **kwargs):
-        """Converge unoccupied bands after conerging a SCF calculation."""
+        """Converge unoccupied bands after converging occ. bands."""
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
         self.is_converged = False

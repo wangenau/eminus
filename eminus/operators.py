@@ -21,7 +21,9 @@ These operators can act on six different options, namely
 The active space is the truncated reciprocal space by restricting it with a sphere given by ecut.
 
 Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
-spin individually.
+spin individually. The same goes for the handling of k-points, while for k-points W is represented
+as a list of arrays. This gives the final indexing for the k-point k, spin s, and state n of
+W[ik][s, :, n].
 """
 import copy
 

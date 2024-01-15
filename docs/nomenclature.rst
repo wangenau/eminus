@@ -6,6 +6,7 @@ Nomenclature
 The source code uses various nomenclatures for variables for easier reading and understanding.
 The most common variables and their meaning will be listed here. Some variables not listed here are explained in docstrings.
 Since most variables are :code:`ndarrays` the respective shape will be displayed as well. If the variable is not a ndarray, the respective datatype will be shown.
+If the list is indexed over k-points it will be labeled as `list over k`.
 
 Atoms variables
 ===============
@@ -28,13 +29,7 @@ Atoms variables
      - :code:`int`
    * - :code:`s`
      - Real-space grid points
-     - :code:`(Ns)`
-   * - :code:`Omega`
-     - Unit cell volume
-     - :code:`float`
-   * - :code:`dV`
-     - Integration volume element
-     - :code:`float`
+     - :code:`(3)`
    * - :code:`r`
      - Real-space sampling points
      - :code:`(Ns, 3)`
@@ -44,18 +39,25 @@ Atoms variables
    * - :code:`G2`
      - Squared G-vectors
      - :code:`(Number of G-vectors)`
+   * - :code:`Gk2`
+     - Squared G+k-vectors
+     - :code:`list over k [(Number of G-vectors)]`
    * - :code:`active`
-     - Indices for a selection of G-vectors
-     - :code:`tuple ((Number of active G-vectors),)`
+     - Indices for a selection of G+k-vectors
+     - :code:`list over k [(Number of active G-vectors)]`
    * - :code:`G2c`
      - Selected squared G-vectors
      - :code:`(Number of active G-vectors)`
+   * - :code:`Gk2c`
+     - Selected squared G+k-vectors
+     - :code:`list over k [(Number of active G-vectors)]`
    * - :code:`Sf`
      - Structure factor per atom
      - :code:`(Natoms, Number of active G-vectors)`
 
 | The variables of the Atoms object are explained here: :class:`~eminus.atoms.Atoms`.
 | The variables of the Occupations object are documented here: :class:`~eminus.occupations.Occupations`.
+| The variables of the KPoints object are documented here: :class:`~eminus.kpoints.KPoints`.
 
 
 Field variables
@@ -88,16 +90,22 @@ Field variables
      - :code:`(Ns)`
    * - :code:`W`
      - Reciprocal space unconstrained wave functions
-     - :code:`(Nspin, Number of active G-vectors, Nstate)`
+     - :code:`list over k [(Nspin, Number of active G-vectors, Nstate)]`
    * - :code:`Y`
      - Reciprocal space constrained wave functions
-     - :code:`(Nspin, Number of active G-vectors, Nstate)`
+     - :code:`list over k [(Nspin, Number of active G-vectors, Nstate)]`
+   * - :code:`Z`
+     - Reciprocal space unconstrained unoccupied wave functions
+     - :code:`list over k [(Nspin, Number of active G-vectors, Nempty)]`
+   * - :code:`D`
+     - Reciprocal space constrained unoccupied wave functions
+     - :code:`list over k [(Nspin, Number of active G-vectors, Nempty)]`
    * - :code:`Yrs`
      - Real-space constrained wave functions
-     - :code:`(Nspin, Ns, Nstate)`
+     - :code:`list over k [(Nspin, Ns, Nstate)]`
    * - :code:`psi`
      - Reciprocal space Hamiltonian eigenstates
-     - :code:`(Nspin, Number of active G-vectors, Nstate)`
+     - :code:`list over k [(Nspin, Number of active G-vectors, Nstate)]`
    * - :code:`phi`
      - Real-space electrostatic Hartree field
      - :code:`(Ns)`
@@ -121,16 +129,16 @@ Field variables
      - :code:`(Nspin, Number of active G-vectors, Nstate)`
    * - :code:`kso`
      - Real-space Kohn-Sham orbitals
-     - :code:`(Nspin, Ns, Nstate)`
+     - :code:`list over k [(Nspin, Ns, Nstate)]`
    * - :code:`fo`
      - Real-space Fermi orbitals
-     - :code:`(Nspin, Ns, Nstate)`
+     - :code:`list [(Nspin, Ns, Nstate)]`
    * - :code:`flo`
      - Real-space Fermi-Löwdin orbitals
-     - :code:`(Nspin, Ns, Nstate)`
+     - :code:`list [(Nspin, Ns, Nstate)]`
    * - :code:`wo`
      - Real-space Wannier orbitals
-     - :code:`(Nspin, Ns, Nstate)`
+     - :code:`list [(Nspin, Ns, Nstate)]`
 
 | The variables of the SCF object are explained here: :class:`~eminus.scf.SCF`.
 | The variables of the Energy object are documented here: :class:`~eminus.energies.Energy`.
@@ -175,18 +183,32 @@ Miscellaneous variables
    * - Variable
      - Meaning
      - Type/Shape
+   * - :code:`Nk`
+     - Number of k-points
+     - :code:`int`
+   * - :code:`k`
+     - k-point coordinates
+     - :code:`(Nk, 3)`
+   * - :code:`wk`
+     - k-point weights
+     - :code:`(Nk)`
    * - :code:`f`
      - Occupation numbers per spin and state
-     - :code:`(Nspin, Nstate)`
+     - :code:`(Nk, Nspin, Nstate)`
    * - :code:`F`
      - Diagonal matrix of occupation numbers
-     - :code:`(Nspin, Nstate, Nstate)`
+     - :code:`list over k [(Nspin, Nstate, Nstate)]`
    * - :code:`U`
      - Overlap of wave functions
      - :code:`(Nstate, Nstate)`
+   * - :code:`epsilon`
+     - Eigenenergies
+     - :code:`list over k [(Nspin, Nstate)]`
    * - :code:`fods`
      - List of FOD positions
      - :code:`list [(Number of up-FODs, 3), (Number of down-FODs, 3)]`
    * - :code:`elec_symbols`
      - List of FOD identifier atoms
      - :code:`list`
+
+The configuration variables are listed here: :class:`~eminus.config.ConfigClass`.

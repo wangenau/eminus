@@ -272,7 +272,7 @@ def bandpath(kpts):
 
 
 def kpoints2axis(kpts):
-    """Generate the x-axis for band structures from k-points and the respective band path.
+    """Generate the x-axis for band structures and the respective band path.
 
     Args:
         kpts: KPoints object.

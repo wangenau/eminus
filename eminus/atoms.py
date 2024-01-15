@@ -318,7 +318,7 @@ class Atoms:
 
     @property
     def Gk2(self):
-        """Squared magnitudes of G+k-vectors.."""
+        """Squared magnitudes of G+k-vectors."""
         return self._Gk2
 
     @property

@@ -115,7 +115,7 @@ def orth(atoms, W):
 
 
 def orth_unocc(atoms, Y, Z):
-    """Orthogonalize unoccupied coefficient matrix Z while maintaining orthogonality to occupied Y.
+    """Orthogonalize unoccupied matrix Z while maintaining orthogonality to Y.
 
     Reference: Comput. Phys. Commun. 128, 1.
 

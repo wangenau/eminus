@@ -237,6 +237,7 @@ def handle_torch(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+    @functools.wraps(func)
     def decorator(*args, **kwargs):
         if config.use_torch:
             func_torch = getattr(eminus.extras.torch, func.__name__)
