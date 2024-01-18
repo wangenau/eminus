@@ -5,18 +5,18 @@ dev
 ---
 - New features
    - Add k-points!
+      - Add k-point dependent calculations
       - Add a k-points object
-      - Add k-point generation functions
       - Add a band structure, k-point, and Brillouin zone viewer
       - Add minimization functions for fixed Hamiltonians
-   - Add a symmetry extra so symmetrize k-points
+   - Add a symmetry extra to symmetrize k-points
 - Updated docs
    - Add k-point examples
+   - Increase coverage precision
 - Coding style
    - Activate several Ruff rules
-      - Lint check notebooks
+   - Lint check notebooks
    - Rewrite operator handling
-   - Increase coverage precision
    - Add a lot of new tests
 - Miscellaneous
    - Add a contour line viewer
