@@ -81,7 +81,7 @@ def get_tau(atoms, Y, ik):
     Returns:
         ndarray: Real-space positive-definite kinetic energy density.
     """
-    # The "intuitive" way is the one commented out below
+    # The "intuitive" way is the one commented out below (without k-point dependency)
     # Sadly, this implementation is really slow for various reasons so use the faster one below
 
     # Yrs = atoms.I(Y)
@@ -93,10 +93,10 @@ def get_tau(atoms, Y, ik):
 
     dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
     # Calculate the active G vectors and broadcast to a desired shape
-    Gc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
+    Gkc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
     for dim in range(3):
-        dYrs[..., dim] = atoms.I(1j * Gc[..., dim] * Y, ik)
+        dYrs[..., dim] = atoms.I(1j * Gkc[..., dim] * Y, ik)
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
     # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
     # Sum over all states
@@ -126,7 +126,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
 
     Vpsi = np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
     if scf.xc_type == 'meta-gga':  # Only calculate the contribution for meta-GGAs
-        # The "intuitive" way is the one commented out below
+        # The "intuitive" way is the one commented out below (without k-point dependency)
         # Sadly, this implementation is really slow for various reasons so use the faster one below
 
         # GVpsi = np.empty((len(atoms.G2c), 3), dtype=complex)
@@ -141,17 +141,17 @@ def calc_Vtau(scf, ik, spin, W, vtau):
         GVpsi = np.empty((len(atoms.Gk2c[ik]), W[ik].shape[-1], 3), dtype=complex)
         dWrs = np.empty((atoms.Ns, W[ik].shape[-1], 3), dtype=complex)
         # Calculate the active G vectors and broadcast to a desired shape
-        Gc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
+        Gkc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
         # We only calculate Vtau for one spin channel, index, and reshape before the loop
         vtau_spin = vtau[spin, :, None]
         W_spin = W[ik][spin]
         for dim in range(3):
             # Calculate the gradients of W in the active(!) space and transform to real-space
-            dWrs[..., dim] = atoms.I(1j * Gc[..., dim] * W_spin, ik)
+            dWrs[..., dim] = atoms.I(1j * Gkc[..., dim] * W_spin, ik)
             # Calculate dexc/dtau * gradpsi and transform to the active reciprocal space
             GVpsi[..., dim] = atoms.J(vtau_spin * dWrs[..., dim], ik, full=False)
         # Sum over dimensions
         # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
-        # Vpsi = -0.5 * 1j * np.sum(Gc * GVpsi, axis=2)
-        Vpsi = -0.5 * 1j * np.einsum('ior,ijr->ij', Gc, GVpsi)
+        # Vpsi = -0.5 * 1j * np.sum(Gkc * GVpsi, axis=2)
+        Vpsi = -0.5 * 1j * np.einsum('ior,ijr->ij', Gkc, GVpsi)
     return atoms.O(Vpsi)
