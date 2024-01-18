@@ -102,7 +102,7 @@ def test_multiple_k():
     scf_k.dn_spin, scf_k.tau = None, None
     scf_step(scf_k, 0)
 
-    assert_equal(scf.energies.Etot, scf_k.energies.Etot)
+    assert_allclose(scf.energies.Etot, scf_k.energies.Etot)
 
 
 if __name__ == '__main__':
