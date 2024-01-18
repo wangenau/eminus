@@ -22,7 +22,7 @@ def eval_psi(atoms, psi, r):
     """
     # Shift the evaluation point to (0,0,0) because we always have a lattice point here
     psi_T = atoms.T(psi, -r)
-    psi_Trs = atoms.I(psi_T)
+    psi_Trs = atoms.I(psi_T, 0)
     # The zero entry is always the value at point (0,0,0)
     return psi_Trs[0]
 
@@ -70,7 +70,7 @@ def get_FO(atoms, psi, fods):
     fo = np.zeros((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
     # Transform psi to real-space
-    psi_rs = atoms.I(psi)
+    psi_rs = atoms.I(psi, 0)
     for spin in range(atoms.occ.Nspin):
         # Get the transformation matrix R
         R = get_R(atoms, psi[spin], fods[spin])

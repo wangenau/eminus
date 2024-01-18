@@ -218,7 +218,6 @@ class SCF:
                        f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
                        f'Sampling per axis: {self.atoms.s}\n'
                        f'Cut-off energy: {self.atoms.ecut} Eh\n'
-                       f'Compression: {len(self.atoms.G2c) / len(self.atoms.G2):.5f}\n'
                        f'\n--- State information ---\n{self.atoms.occ}\n'
                        f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
 

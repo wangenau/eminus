@@ -176,9 +176,9 @@ def test_Gk():
     atoms = Cell('He', 'fcc', 30, 5)
     atoms.kpts.kmesh = (2, 1, 2)
     atoms.build()
-    assert len(atoms.Gk2) == atoms.kpts.Nk
+    assert len(atoms.Gk2) == atoms.kpts.Nk + 1
     assert len(atoms.Gk2[0]) == len(atoms.G2)
-    assert len(atoms.Gk2c) == atoms.kpts.Nk
+    assert len(atoms.Gk2c) == atoms.kpts.Nk + 1
     assert len(atoms.Gk2c[0]) != len(atoms.Gk2c[1])
 
 
@@ -234,8 +234,8 @@ def test_set_k():
     assert len(atoms.kpts.k) == 2
     assert len(atoms.kpts.wk) == 2
     assert len(atoms.occ.wk) == 2
-    assert len(atoms.Gk2) == 2
-    assert len(atoms.Gk2c) == 2
+    assert len(atoms.Gk2) == 2 + 1
+    assert len(atoms.Gk2c) == 2 + 1
 
 
 if __name__ == '__main__':

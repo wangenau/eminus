@@ -82,7 +82,7 @@ def test_k_scaled():
     kpts = KPoints('sc')
     kpts.kmesh = 2
     kpts.build()
-    assert_allclose(np.abs(kpts.k_scaled), 1 / 4)
+    assert_allclose(np.abs(kpts.k_scaled - 1 / 4), 1 / 4)
 
 
 def test_monkhorst_pack_generation():

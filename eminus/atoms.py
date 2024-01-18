@@ -443,6 +443,11 @@ class Atoms:
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
 
+        # Create the grid used for the non-wavefunction fields and append it to the end
+        self._active.append(np.nonzero(2 * self.ecut >= self._G2))
+        self._Gk2 = np.vstack((self._Gk2, self._G2))
+        self._Gk2c.append(self._G2c)
+
     O = operators.O
     L = operators.L
     Linv = operators.Linv

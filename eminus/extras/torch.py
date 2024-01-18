@@ -26,7 +26,7 @@ from ..utils import handle_k_indexable
 
 
 @handle_k_indexable
-def I(atoms, W, ik=0):
+def I(atoms, W, ik=-1):
     """Backwards transformation from reciprocal space to real-space.
 
     Args:
@@ -76,7 +76,7 @@ def I(atoms, W, ik=0):
 
 
 @handle_k_indexable
-def J(atoms, W, ik=0, full=True):
+def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
     Args:
@@ -117,7 +117,7 @@ def J(atoms, W, ik=0, full=True):
 
 
 @handle_k_indexable
-def Idag(atoms, W, ik=0, full=False):
+def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backwards transformation from real-space to reciprocal space.
 
     Args:
@@ -158,7 +158,7 @@ def Idag(atoms, W, ik=0, full=False):
 
 
 @handle_k_indexable
-def Jdag(atoms, W, ik=0):
+def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
     Args:

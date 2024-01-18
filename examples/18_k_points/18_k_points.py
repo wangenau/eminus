@@ -17,11 +17,11 @@ scf.run(betat=1e-4)
 # # The `SCF` and `Atoms` objects have a k-point object
 print(f'\nKPoints object\n{scf.kpts}\n')
 
-# # The object can be modified, e.g., to create a Gamma-point centered mesh or to shift the k-points (do not forget to rebuild the object)
+# # The object can be modified, e.g., to create a non-Gamma-point centered mesh or to shift the k-points (do not forget to rebuild the object)
 print(f'Original points:\n{cell.kpts.k}')
-cell.kpts.gamma_centered = True
+cell.kpts.gamma_centered = False
 cell.build()
-print(f'Gamma-centered points:\n{cell.kpts.k}')
+print(f'non-Gamma-centered points:\n{cell.kpts.k}')
 cell.kpts.kshift = [1, 0, 0]
 cell.kpts.build()
 print(f'Shifted points:\n{cell.kpts.k}\n')

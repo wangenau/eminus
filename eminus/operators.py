@@ -54,7 +54,7 @@ def O(atoms, W):
 
 
 @handle_spin_gracefully
-def L(atoms, W, ik=0):
+def L(atoms, W, ik=-1):
     """Laplacian operator with k-point dependency.
 
     This operator acts on options 3 and 5.
@@ -111,7 +111,7 @@ def Linv(atoms, W):
 @handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
-def I(atoms, W, ik=0):
+def I(atoms, W, ik=-1):
     """Backward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -162,7 +162,7 @@ def I(atoms, W, ik=0):
 @handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
-def J(atoms, W, ik=0, full=True):
+def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -206,7 +206,7 @@ def J(atoms, W, ik=0, full=True):
 @handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
-def Idag(atoms, W, ik=0, full=False):
+def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -232,7 +232,7 @@ def Idag(atoms, W, ik=0, full=False):
 @handle_torch
 @handle_k_indexable
 @handle_spin_gracefully
-def Jdag(atoms, W, ik=0):
+def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -295,8 +295,10 @@ def T(atoms, W, dr):
 
     if isinstance(W, np.ndarray):
         atoms.kpts._assert_gamma_only()
-        if len(W) == len(atoms.G2c):
-            G = atoms.G[np.nonzero(2 * atoms.ecut >= atoms.G2)]
+        if len(W) == len(atoms.Gk2c[0]):
+            G = atoms.G[atoms.active[0]]
+        elif len(W) == len(atoms.Gk2c[-1]):
+            G = atoms.G[atoms.active[-1]]
         else:
             G = atoms.G
         factor = np.exp(-1j * G @ dr)

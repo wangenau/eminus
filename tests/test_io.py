@@ -95,6 +95,9 @@ def test_json(obj):
             assert_allclose(getattr(obj, attr), getattr(test, attr))
         except TypeError:
             assert getattr(obj, attr) == getattr(test, attr)
+        except ValueError:
+            for i in range(len(getattr(obj, attr))):
+                assert_allclose(getattr(obj, attr)[i], getattr(test, attr)[i])
 
 
 def test_json_restart():

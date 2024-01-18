@@ -24,13 +24,13 @@ class KPoints:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
             a = a * np.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a                    #: Cell size.
-        self.kmesh = [1, 1, 1]        #: k-point mesh.
-        self.wk = [1]                 #: k-point weights.
-        self.k = [[0, 0, 0]]          #: k-point coordinates.
-        self.kshift = [0, 0, 0]       #: k-point shift vector.
-        self._gamma_centered = False  #: Generate a Gamma-point centered grid.
-        self.is_built = True          #: Determines the KPoints object build status.
+        self.a = a                   #: Cell size.
+        self.kmesh = [1, 1, 1]       #: k-point mesh.
+        self.wk = [1]                #: k-point weights.
+        self.k = [[0, 0, 0]]         #: k-point coordinates.
+        self.kshift = [0, 0, 0]      #: k-point shift vector.
+        self._gamma_centered = True  #: Generate a Gamma-point centered grid.
+        self.is_built = True         #: Determines the KPoints object build status.
 
     # ### Class properties ###
 

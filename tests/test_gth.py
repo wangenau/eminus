@@ -18,7 +18,7 @@ def test_GTH():
     print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
     assert len(gth.betaNL) == cell.kpts.Nk
-    assert gth.betaNL[0].shape == (4252, 5)
+    assert gth.betaNL[0].shape == (4337, 5)
 
 
 def test_norm():

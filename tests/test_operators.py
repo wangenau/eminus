@@ -20,7 +20,7 @@ W_tests = {
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
     'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
     'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
-    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate))]
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))]
 }
 dr = rng.standard_normal(3)
 
