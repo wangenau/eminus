@@ -3,7 +3,7 @@
 import copy
 
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, Cell, SCF
