@@ -388,6 +388,7 @@ class Atoms:
         else:
             self.kpts._wk = np.asarray(wk)
         self.kpts._Nk = len(self.kpts._wk)
+        self.kpts._kmesh = None
         self.occ.wk = self.kpts.wk
         self._sample_unit_cell()
         return self
