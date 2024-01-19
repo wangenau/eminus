@@ -215,7 +215,8 @@ def test_get_bandgap():
     assert Eg == 0
     scf_band.converge_empty_bands(Nempty=1)
     Eg = get_bandgap(scf_band)
-    assert_allclose(Eg, 0.3793232)
+    print(Eg)
+    assert_allclose(Eg, 0.380516)
 
 
 if __name__ == '__main__':

@@ -118,8 +118,8 @@ def init_gth_nonloc(atoms, gth):
     for ik in range(atoms.kpts.Nk):
         betaNL_ik = np.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
         ibeta = 0
-        g = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
-        Gm = np.sqrt(atoms.Gk2c[ik])
+        gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
+        Gkm = np.sqrt(atoms.Gk2c[ik])
         for ia in range(atoms.Natoms):
             # It is important to transform the structure factor to make both notations compatible
             Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
@@ -127,8 +127,8 @@ def init_gth_nonloc(atoms, gth):
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
-                        betaNL_ik[:, ibeta] = (-1j)**l * Ylm_real(l, m, g) * \
-                            eval_proj_G(psp, l, iprj + 1, Gm, atoms.Omega) * Sf
+                        betaNL_ik[:, ibeta] = (-1j)**l * Ylm_real(l, m, gk) * \
+                            eval_proj_G(psp, l, iprj + 1, Gkm, atoms.Omega) * Sf
                         ibeta += 1
         betaNL.append(betaNL_ik)
     return NbetaNL, prj2beta, betaNL

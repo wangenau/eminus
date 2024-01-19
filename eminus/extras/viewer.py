@@ -8,7 +8,7 @@ import numpy as np
 
 from ..atoms import Atoms
 from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
-from ..dft import get_epsilon
+from ..dft import get_epsilon, get_epsilon_unocc
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
 from ..logger import log
@@ -527,7 +527,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
 
     # Calculate and plot unoccupied bands if available
     if hasattr(scf, 'Z'):
-        e_unocc = ha2ev(get_epsilon(scf, scf.Z, **scf._precomputed))
+        e_unocc = ha2ev(get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed))
         for i in range(scf.atoms.occ.Nempty):
             fig.add_trace(go.Scatter(x=k_axis, y=e_unocc[:, spin, i] - Efermi,
                           mode='lines+markers',

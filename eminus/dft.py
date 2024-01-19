@@ -293,7 +293,7 @@ def get_psi(scf, W, **kwargs):
 
 
 def get_epsilon(scf, W, **kwargs):
-    """Calculate eigenvalues from H.
+    """Calculate eigenvalues from H of unoccupied states.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -317,6 +317,33 @@ def get_epsilon(scf, W, **kwargs):
     return epsilon
 
 
+def get_epsilon_unocc(scf, W, Z, **kwargs):
+    """Calculate eigenvalues from H.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        scf: SCF object.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Keyword Args:
+        **kwargs: See :func:`H`.
+
+    Returns:
+        ndarray: Eigenvalues.
+    """
+    atoms = scf.atoms
+    Y = orth(atoms, W)
+    D = orth_unocc(atoms, Y, Z)
+    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            mu = D[ik][spin].conj().T @ H(scf, ik, spin, D, **kwargs)
+            epsilon[ik][spin] = np.sort(eigvalsh(mu))
+    return epsilon
+
+
 def get_epsilon_band(scf):
     """Calculate eigenvalues from H for all bands, independent of occupations.
 
@@ -334,7 +361,7 @@ def get_epsilon_band(scf):
     # Calculate the unoccupied band energies, use the maximum number of empty states
     Nocc_k = np.sum(scf.atoms.occ.f > 0, axis=2)
     scf.converge_empty_bands(Nempty=np.max(Nempty_k))
-    e_unocc = get_epsilon(scf, scf.Z, **scf._precomputed)
+    e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     # Merge the occupied and unoccupied energies
     for ik in range(scf.kpts.Nk):
         for spin in range(scf.atoms.occ.Nspin):

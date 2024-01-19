@@ -4,7 +4,7 @@ import numpy as np
 from scipy.linalg import norm
 from scipy.optimize import minimize_scalar
 
-from .dft import get_epsilon
+from .dft import get_epsilon, get_epsilon_unocc
 from .gga import get_grad_field, get_tau
 from .logger import log
 from .utils import handle_k_gracefully
@@ -421,7 +421,7 @@ def get_Efermi(scf):
         log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
         return np.max(e_occ)
 
-    e_unocc = get_epsilon(scf, scf.Z, **scf._precomputed)
+    e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     return np.max(e_occ) + (np.min(e_unocc) - np.max(e_occ)) / 2
 
 
@@ -440,7 +440,7 @@ def get_bandgap(scf):
         log.warning("The SCF object has no unoccupied energies, can't calculate band gap.")
         return 0
 
-    e_unocc = get_epsilon(scf, scf.Z, **scf._precomputed)
+    e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     return np.min(e_unocc) - np.max(e_occ)
 
 
