@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Cell
+from eminus import Cell, SCF
 
 
 @pytest.mark.parametrize('space_group', [True, False])
@@ -43,6 +43,24 @@ def test_unbuilt():
     symmetrize(cell)
     symm_k = cell.kpts.k
     assert_allclose(orig_k, symm_k)
+
+
+def test_energies():
+    """Compare the energies of normal and symmetrized k-meshes."""
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    from eminus.extras import symmetrize
+    cell = Cell('Si', 'diamond', ecut=5, a=10.2631, kmesh=(3, 2, 1)).build()
+    orig_k = cell.kpts.k
+    scf = SCF(cell)
+    orig_etot = scf.run(betat=1e-3)
+
+    symmetrize(cell, space_group=False, time_reversal=True)
+    symm_k = cell.kpts.k
+    scf = SCF(cell)
+    symm_etot = scf.run(betat=1e-3)
+
+    assert len(orig_k) > len(symm_k)
+    assert_allclose(orig_etot, symm_etot, atol=1e-7)
 
 
 if __name__ == '__main__':

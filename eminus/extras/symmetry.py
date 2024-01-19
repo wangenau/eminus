@@ -4,7 +4,7 @@
 from ..logger import log
 
 
-def symmetrize(atoms, space_group=True, time_reversal=False):
+def symmetrize(atoms, space_group=False, time_reversal=True):
     """Symmetrize k-points of an Atoms object.
 
     Reference: WIREs Comput. Mol. Sci. 8, e1340.
