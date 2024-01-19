@@ -110,6 +110,18 @@ def test_n_single(unrestricted):
             assert_allclose(n_int, scf.atoms.occ.f[ik, s])
 
 
+def test_k_point_permutation():
+    """Check that the order of k-points does not change the calculation."""
+    cell = Cell('C', 'diamond', 10, 6.75, kmesh=(2, 1, 1))
+    scf = SCF(cell)
+    etot1 = scf.run()
+    cell.kpts._k = cell.kpts._k[::-1]
+    assert not np.all(cell.kpts.k == scf.kpts.k)
+    scf = SCF(cell)
+    etot2 = scf.run()
+    assert_allclose(etot1, etot2, atol=1e-7)
+
+
 def test_demo():
     """Test that the demo function works without problems."""
     demo()
