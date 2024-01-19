@@ -3,16 +3,17 @@
 import numpy as np
 from numpy.testing import assert_allclose
 
-from eminus import Cell, RSCF
+from eminus import Cell, RSCF, USCF
 from eminus.dft import get_epsilon, get_epsilon_unocc
 from eminus.tools import get_bandgap
 
-epsilon_ref = np.array([[[-0.1120735697, -0.0223086429, 0.1874096636, 0.1874096657,
-                         0.3024433520, 0.3533744734, 0.3533746945, 0.5029139877]],
-                       [[-0.1991130675, 0.2336390609, 0.2336390610, 0.2336390730,
-                         0.3236558181, 0.3236558199, 0.3236562389, 0.3723404989]],
-                       [[-0.0471149116, -0.0471146587, 0.1244731242, 0.1244731242,
-                         0.2552557610, 0.2552561594, 0.5979018826, 0.5979073606]]])
+# Eigenenergies from a spin-paired calculation with PWDFT.jl with the same parameters as below
+epsilon_ref = np.array([[-0.1120735697, -0.0223086429, 0.1874096636, 0.1874096657,
+                         0.3024433520, 0.3533744734, 0.3533746945, 0.5029139877],
+                        [-0.1991130675, 0.2336390609, 0.2336390610, 0.2336390730,
+                         0.3236558181, 0.3236558199, 0.3236562389, 0.3723404989],
+                        [-0.0471149116, -0.0471146587, 0.1244731242, 0.1244731242,
+                         0.2552557610, 0.2552561594, 0.5979018826, 0.5979073606]])
 bandgap_ref = 0.021616688
 
 a = 10.2631
@@ -21,26 +22,52 @@ s = 15
 kmesh = 2
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 3, 'pccg': 30}
-betat = 1e-3
+path = 'LGX'
 
 
-def test_band_structure():
-    """Compare band energies for a test system with reference values."""
+def test_polarized():
+    """Compare band energies for a test system with reference values (spin-polarized)."""
+    opt = {'sd': 4, 'pccg': 29}
+    betat = 3e-3
+
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
     cell.s = s
-    scf = RSCF(cell, guess=guess, etol=etol, opt=opt)
+    scf = USCF(cell, guess=guess, etol=etol, opt=opt)
     scf.run(betat=betat)
 
-    scf.kpts.path = 'LGX'
-    scf.kpts.Nk = 3
+    scf.kpts.path = path
+    scf.kpts.Nk = len(path)
     scf.converge_bands()
 
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
     # Eigenenergies are a bit more sensitive than total energies
-    assert_allclose(epsilon, epsilon_ref, atol=1e-5)
+    assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
+    assert_allclose(epsilon[:, 1], epsilon_ref, atol=1e-5)
+    bandgap = get_bandgap(scf)
+    assert_allclose(bandgap, bandgap_ref, atol=1e-5)
+
+
+def test_unpolarized():
+    """Compare band energies for a test system with reference values (spin-paired)."""
+    opt = {'sd': 3, 'pccg': 30}
+    betat = 1e-3
+
+    cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
+    cell.s = s
+    scf = RSCF(cell, guess=guess, etol=etol, opt=opt)
+    scf.run(betat=betat)
+
+    scf.kpts.path = path
+    scf.kpts.Nk = len(path)
+    scf.converge_bands()
+
+    epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
+    epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
+    epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
+    # Eigenenergies are a bit more sensitive than total energies
+    assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
     bandgap = get_bandgap(scf)
     assert_allclose(bandgap, bandgap_ref, atol=1e-5)
 
