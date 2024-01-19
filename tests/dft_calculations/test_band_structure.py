@@ -39,6 +39,7 @@ def test_band_structure():
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
+    # Eigenenergies are a bit more sensitive than total energies
     assert_allclose(epsilon, epsilon_ref, atol=1e-5)
     bandgap = get_bandgap(scf)
     assert_allclose(bandgap, bandgap_ref, atol=1e-5)
