@@ -293,7 +293,7 @@ def get_psi(scf, W, **kwargs):
 
 
 def get_epsilon(scf, W, **kwargs):
-    """Calculate eigenvalues from H of unoccupied states.
+    """Calculate eigenvalues from H.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
@@ -318,7 +318,7 @@ def get_epsilon(scf, W, **kwargs):
 
 
 def get_epsilon_unocc(scf, W, Z, **kwargs):
-    """Calculate eigenvalues from H.
+    """Calculate eigenvalues from H of unoccupied states.
 
     Reference: Comput. Phys. Commun. 128, 1.
 
