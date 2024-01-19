@@ -183,6 +183,8 @@ def kpoint_convert(k_points, lattice_vectors):
 def monkhorst_pack(nk):
     """Generate a Monkhorst-Pack mesh of k-points, i.e., equally spaced k-points.
 
+    Reference: https://gitlab.com/ase/ase/-/blob/master/ase/dft/kpoints.py
+
     Args:
         nk (list | tuple | ndarray): Number of k-points per axis.
 
@@ -196,6 +198,8 @@ def monkhorst_pack(nk):
 
 def gamma_centered(nk):
     """Generate a Gamma-point centered mesh of k-points.
+
+    Reference: https://github.com/pyscf/pyscf/blob/master/pyscf/pbc/gto/cell.py
 
     Args:
         nk (list | tuple | ndarray): Number of k-points per axis.

@@ -493,6 +493,8 @@ def _traj_view(view, filename):
 def plot_bandstructure(scf, spin=0, size=(800, 600)):
     """Plot band structures.
 
+    Reference: https://plotly.com/python
+
     Args:
         scf: SCF object.
 

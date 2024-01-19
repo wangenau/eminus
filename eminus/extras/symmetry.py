@@ -7,6 +7,8 @@ from ..logger import log
 def symmetrize(atoms, space_group=True, time_reversal=False):
     """Symmetrize k-points of an Atoms object.
 
+    Reference: WIREs Comput. Mol. Sci. 8, e1340.
+
     Args:
         atoms: Atoms object.
 

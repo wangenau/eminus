@@ -45,8 +45,6 @@ License
      -
    * -
      -
-   * - matplotlib
-     - PSF
    * - nglview
      - MIT
    * - plotly
@@ -59,6 +57,8 @@ License
      - Apache-2.0
    * - furo
      - MIT
+   * - matplotlib
+     - PSF
    * - mypy
      - MIT
    * - notebook

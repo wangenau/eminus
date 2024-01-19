@@ -20,8 +20,6 @@ from ..logger import log
 def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     """Handle Libxc exchange-correlation functionals via pylibxc.
 
-    Only LDA and GGA functionals can be used.
-
     Reference: SoftwareX 7, 1.
 
     Args:
@@ -80,8 +78,6 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
 
 def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     """Handle Libxc exchange-correlation functionals via PySCF.
-
-    Only LDA and GGA functionals can be used.
 
     Reference: WIREs Comput. Mol. Sci. 8, e1340.
 

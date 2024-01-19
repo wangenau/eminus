@@ -106,7 +106,6 @@ for i = 1:size(xcfuncs, 1)
         in_bohr=true,
         LatVecs=gen_lattice_fcc(10.2631))
     Ham = Hamiltonian(atoms, psp, 5.0, Nspin=1, xcfunc=xcfuncs[i], meshk=[2,2,2])
-    println(Ham.pw.Ns)
     KS_solve_Emin_PCG!(Ham, startingrhoe=:random, verbose=false, etot_conv_thr=1e-6)
     println("    '$(xcfuncs[i])': $(round.(sum(Ham.energies); digits=6)),")
 end

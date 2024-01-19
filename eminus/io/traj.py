@@ -11,6 +11,7 @@ def read_traj(filename):
     """Load atom species and positions from TRAJ files.
 
     TRAJ files are just multiple XYZ files appended to one file.
+    See :func:`~eminus.io.xyz.read_xyz` for more information about the XYZ file format.
 
     Args:
         filename (str): TRAJ input file path/name.
@@ -52,6 +53,7 @@ def write_traj(obj, filename, fods=None, elec_symbols=('X', 'He')):
     """Generate TRAJ files from atoms objects.
 
     TRAJ files are just multiple XYZ files appended to one file.
+    See :func:`~eminus.io.xyz.write_xyz` for more information about the XYZ file format.
 
     Args:
         obj: Atoms or SCF object or list/tuple of these objects.
