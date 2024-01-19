@@ -40,7 +40,7 @@ class SCF:
             Can be one of 'random' (default) or 'pseudo'. Adding 'symm' to the string will use the
             same coefficients for both spin channels, e.g., :code:`symm-rand`.
         etol (float): Convergence tolerance of the total energy.
-        gradtol (float): Convergence tolerance of the gradient norm.
+        gradtol (float | None): Convergence tolerance of the gradient norm.
 
             This tolerance will only be used in conjugate gradient methods.
         sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF.
@@ -52,7 +52,7 @@ class SCF:
 
             The keys can be chosen out of 'sd', 'lm', 'pclm', 'cg', 'pccg', and 'auto'. Defaults to
             :code:`{'auto': 250}`.
-        verbose (int | str): Level of output.
+        verbose (int | str | None): Level of output.
 
             Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
             value can be used as well, where larger numbers mean more output, starting from 0.
@@ -350,7 +350,12 @@ class SCF:
         return self
 
     def converge_empty_bands(self, Nempty=None, **kwargs):
-        """Converge unoccupied bands after converging occ. bands."""
+        """Converge unoccupied bands after converging occ. bands.
+
+        Keyword Args:
+            Nempty (int | None): Number of empty states.
+            **kwargs: Throwaway arguments.
+        """
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
         self.is_converged = False

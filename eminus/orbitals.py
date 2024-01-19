@@ -40,7 +40,7 @@ def FO(scf, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to CUBE files.
-        fods (list): Fermi-orbital descriptors.
+        fods (list | None): Fermi-orbital descriptors.
 
     Returns:
         ndarray: Real-space Fermi orbitals.
@@ -72,7 +72,7 @@ def FLO(scf, write_cubes=False, fods=None):
 
     Keyword Args:
         write_cubes (bool): Write orbitals to CUBE files.
-        fods (list): Fermi-orbital descriptors.
+        fods (list | None): Fermi-orbital descriptors.
 
     Returns:
         ndarray: Real-space Fermi-Loewdin orbitals.

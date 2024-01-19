@@ -36,7 +36,7 @@ def get_n_total(atoms, Y, n_spin=None):
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n_spin (ndarray): Real-space electronic densities per spin channel.
+        n_spin (ndarray | None): Real-space electronic densities per spin channel.
 
     Returns:
         ndarray: Electronic density.
@@ -183,11 +183,11 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        phi (ndarray): Hartree field.
-        vxc (ndarray): Exchange-correlation potential.
-        vsigma (ndarray): Contracted gradient potential derivative.
-        vtau (ndarray): Kinetic energy gradient potential derivative.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        phi (ndarray | None): Hartree field.
+        vxc (ndarray | None): Exchange-correlation potential.
+        vsigma (ndarray | None): Contracted gradient potential derivative.
+        vtau (ndarray | None): Kinetic energy gradient potential derivative.
 
     Returns:
         ndarray: Hamiltonian applied on W.

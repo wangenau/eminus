@@ -16,7 +16,7 @@ def domain_cuboid(obj, length, centers=None):
         length (int | float | list | ndarray): Side length or lengths of the cuboid.
 
     Keyword Args:
-        centers (ndarray): Center of the cuboid.
+        centers (ndarray | None): Center of the cuboid.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.
@@ -68,7 +68,7 @@ def domain_sphere(obj, radius, centers=None):
         radius (float): Radius of the sphere.
 
     Keyword Args:
-        centers (ndarray): Center of the sphere.
+        centers (ndarray | None): Center of the sphere.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.

@@ -77,7 +77,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         field (ndarray): Real-space field data.
 
     Keyword Args:
-        fods (list): FOD coordinates to write.
+        fods (list | None): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
 
     Returns:

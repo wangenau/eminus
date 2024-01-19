@@ -21,7 +21,7 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Keyword Args:
         mu (float): Functional parameter.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -45,7 +45,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Keyword Args:
         mu (float): Functional parameter.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -74,7 +74,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
 
     Keyword Args:
         mu (float): Functional parameter.
-        dn (ndarray): Real-space gradient of densities per spin channel.
+        dn (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

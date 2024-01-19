@@ -28,8 +28,8 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
         Nspin (int): Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        tau (ndarray): Real-space kinetic energy densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
         dens_threshold (float): Do not treat densities smaller than the threshold.
 
     Returns:

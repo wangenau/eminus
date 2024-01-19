@@ -45,7 +45,7 @@ def center_of_mass(coords, masses=None):
         coords (ndarray): Array of real-space coordinates.
 
     Keyword Args:
-        masses (ndarray): Mass or weight for each coordinate.
+        masses (ndarray | None): Mass or weight for each coordinate.
 
     Returns:
         ndarray: Center of mass.
@@ -91,7 +91,7 @@ def inertia_tensor(coords, masses=None):
         coords (ndarray): Array of real-space coordinates.
 
     Keyword Args:
-        masses (ndarray): Mass or weight for each coordinate.
+        masses (ndarray | None): Mass or weight for each coordinate.
 
     Returns:
         ndarray: Inertia tensor.
@@ -122,7 +122,7 @@ def get_dipole(scf, n=None):
         scf: SCF object.
 
     Keyword Args:
-        n (float): Real-space electronic density.
+        n (float | None): Real-space electronic density.
 
     Returns:
         ndarray: Electric dipole moment in e * Bohr.

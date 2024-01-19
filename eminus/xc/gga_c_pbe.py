@@ -21,7 +21,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Keyword Args:
         beta (float): Functional parameter.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -69,7 +69,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Keyword Args:
         beta (float): Functional parameter.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

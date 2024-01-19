@@ -60,7 +60,7 @@ def write_traj(obj, filename, fods=None, elec_symbols=('X', 'He')):
         filename (str): TRAJ output file path/name.
 
     Keyword Args:
-        fods (list): FOD coordinates to write.
+        fods (list | None): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
 
     Returns:

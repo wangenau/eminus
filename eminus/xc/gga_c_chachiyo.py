@@ -20,7 +20,7 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -69,7 +69,7 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
         zeta (ndarray): Relative spin polarization.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

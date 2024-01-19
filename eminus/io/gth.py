@@ -17,7 +17,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
         atom (str): Atom name.
 
     Keyword Args:
-        charge (int): Valence charge.
+        charge (int | None): Valence charge.
         psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/pbe.
 
     Returns:

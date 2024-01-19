@@ -92,7 +92,7 @@ def get_Ecoul(atoms, n, phi=None):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        phi (ndarray): Hartree field.
+        phi (ndarray | None): Hartree field.
 
     Returns:
         float: Coulomb energy in Hartree.
@@ -113,10 +113,10 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
         n (ndarray): Real-space electronic density.
 
     Keyword Args:
-        exc (ndarray): Exchange-correlation energy density.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        tau (ndarray): Real-space kinetic energy densities per spin channel.
+        exc (ndarray | None): Exchange-correlation energy density.
+        n_spin (ndarray | None): Real-space electronic densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
         Nspin (int): Number of spin states.
 
     Returns:
@@ -269,7 +269,7 @@ def get_Esic(scf, Y, n_single=None):
         Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n_single (ndarray): Single-electron densities.
+        n_single (ndarray | None): Single-electron densities.
 
     Returns:
         float: PZ self-interaction energy.

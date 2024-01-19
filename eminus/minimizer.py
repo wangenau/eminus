@@ -60,9 +60,9 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
         Elist (list): Total energies per SCF step.
 
     Keyword Args:
-        linmin (ndarray): Cosine between previous search direction and current gradient.
-        cg (ndarray): Conjugate-gradient orthogonality.
-        norm_g (ndarray): Gradient norm.
+        linmin (ndarray | None): Cosine between previous search direction and current gradient.
+        cg (ndarray | None): Conjugate-gradient orthogonality.
+        norm_g (ndarray | None): Gradient norm.
 
     Returns:
         bool: Convergence condition.

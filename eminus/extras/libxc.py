@@ -28,8 +28,8 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
         Nspin (int): Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        tau (ndarray): Real-space kinetic energy densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
@@ -87,8 +87,8 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
         Nspin (int): Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        tau (ndarray): Real-space kinetic energy densities per spin channel.
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
 
     Returns:
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.

@@ -57,7 +57,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         filename (str): XYZ output file path/name.
 
     Keyword Args:
-        fods (list): FOD coordinates to write.
+        fods (list | None): FOD coordinates to write.
         elec_symbols (list): Identifier for up and down FODs.
         trajectory (bool): Allow appending to a file to create trajectories.
 
