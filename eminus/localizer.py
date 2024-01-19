@@ -293,7 +293,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         Nit (int): Number of iterations.
         conv_tol (float): Convergence tolerance.
         mu (float): Step size.
-        random_guess (bool): Weather to use a random unitary starting guess or the identity.
+        random_guess (bool): Whether to use a random unitary starting guess or the identity.
         seed (int | None): Seed to get a reproducible random guess.
 
     Returns:

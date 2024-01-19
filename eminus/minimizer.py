@@ -178,7 +178,7 @@ def cg_test(atoms, ik, g, g_old, precondition=True):
         g_old (ndarray): Previous gradient.
 
     Keyword Args:
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
 
     Returns:
         float: CG angle.
@@ -205,7 +205,7 @@ def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
         d_old (ndarray): Previous search direction.
 
     Keyword Args:
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
 
     Returns:
         tuple[float, float]: Conjugate scalar and gradient norm.
@@ -277,7 +277,7 @@ def pclm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -358,7 +358,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
         cgform (int): Conjugate gradient form.
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
 
     Returns:
         list: Total energies per SCF cycle.

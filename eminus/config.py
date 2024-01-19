@@ -21,7 +21,7 @@ class ConfigClass:
         """Initialize the ConfigClass object."""
         self.use_torch = True     # Use the faster Torch FFTs if available
         self.use_gpu = False      # Disable GPU by default, since it is slower in my tests
-        self.use_pylibxc = True   # Use Libxc over PySCF if available, since it is faster
+        self.use_pylibxc = True   # Use Libxc over PySCF if available since it is faster
         self.threads = None       # Read threads from environment variables by default
         self.verbose = 'INFO'     # Only display warnings (and worse) by default
 
@@ -29,7 +29,7 @@ class ConfigClass:
 
     @property
     def use_torch(self):
-        """Weather to use Torch or SciPy if Torch is installed."""
+        """Whether to use Torch or SciPy if Torch is installed."""
         # Add the logic in the getter method so it does not run on initialization since importing
         # Torch is rather slow
         if self._use_torch:
@@ -46,7 +46,7 @@ class ConfigClass:
 
     @property
     def use_gpu(self):
-        """Weather to use Torch on the GPU if available."""
+        """Whether to use Torch on the GPU if available."""
         # Only use GPU if Torch is available
         if self.use_torch and self._use_gpu:
             import torch
@@ -59,7 +59,7 @@ class ConfigClass:
 
     @property
     def use_pylibxc(self):
-        """Weather to use pylibxc or PySCF for functionals if both are installed."""
+        """Whether to use pylibxc or PySCF for functionals if both are installed."""
         if self._use_pylibxc:
             try:
                 import pylibxc  # noqa: F401

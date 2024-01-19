@@ -70,8 +70,8 @@ class Atoms:
         self.kpts = KPoints('sc', self.a)  #: KPoints object.
 
         # Initialize other attributes
-        self.occ.fill()                   #: Fill states from the given input.
-        self.is_built = False             #: Determines the Atoms object build status.
+        self.occ.fill()                    #: Fill states from the given input.
+        self.is_built = False              #: Determines the Atoms object build status.
 
     # ### Class properties ###
 

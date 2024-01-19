@@ -143,7 +143,7 @@ def calc_Vnonloc(scf, ik, spin, W):
     Args:
         scf: SCF object.
         ik (int): k-point index.
-        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        spin (int): Spin variable to track whether to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:

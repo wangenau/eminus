@@ -28,7 +28,7 @@ class KPoints:
         self.kmesh = [1, 1, 1]       #: k-point mesh.
         self.wk = [1]                #: k-point weights.
         self.k = [[0, 0, 0]]         #: k-point coordinates.
-        self.kshift = [0, 0, 0]      #: k-point shift vector.
+        self.kshift = [0, 0, 0]      #: k-point shift-vector.
         self._gamma_centered = True  #: Generate a Gamma-point centered grid.
         self.is_built = True         #: Determines the KPoints object build status.
 
@@ -84,7 +84,7 @@ class KPoints:
 
     @property
     def kshift(self):
-        """k-point shift vector."""
+        """k-point shift-vector."""
         return self._kshift
 
     @kshift.setter
@@ -105,7 +105,7 @@ class KPoints:
 
     @property
     def path(self):
-        """k-point bandpath."""
+        """k-point band path."""
         return self._path
 
     @path.setter

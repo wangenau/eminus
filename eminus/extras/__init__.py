@@ -5,7 +5,7 @@ To also install all additional dependencies, use::
 
     pip install eminus[all]
 
-Alternativle, you can only install selected extras using the respective name:
+Alternatively, you can only install selected extras using the respective name:
 
 * :mod:`~eminus.extras.dispersion`
 * :mod:`~eminus.extras.fods`

@@ -117,7 +117,7 @@ def handle_spin_gracefully(func, *args, **kwargs):
 
     Implementing the explicit handling of spin adds an extra layer of complexity where one has to
     loop over the spin states in many places. We can hide this complexity using this decorator while
-    still supporting many use-cases, e.g., the operators previously act on arrays containing wave
+    still supporting many use cases, e.g., the operators previously act on arrays containing wave
     functions of all states and of one state only. This decorator maintains this functionality and
     adds the option to act on arrays containing wave functions of all spins and all states as well.
 

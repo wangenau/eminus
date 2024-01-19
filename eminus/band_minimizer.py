@@ -18,7 +18,7 @@ from .utils import dotprod
 
 
 def scf_step_occ(scf, W):
-    """Perform one SCF step for a occupied band minimization calculation.
+    """Perform one SCF step for an occupied band minimization calculation.
 
     Args:
         scf: SCF object.
@@ -33,7 +33,7 @@ def scf_step_occ(scf, W):
 
 
 def scf_step_unocc(scf, Z):
-    """Perform one SCF step for a unoccupied band minimization calculation.
+    """Perform one SCF step for an unoccupied band minimization calculation.
 
     Args:
         scf: SCF object.
@@ -55,7 +55,7 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     Args:
         scf: SCF object.
         ik (int): k-point index.
-        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        spin (int): Spin variable to track whether to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -84,7 +84,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     Args:
         scf: SCF object.
         ik (int): k-point index.
-        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        spin (int): Spin variable to track whether to do the calculation for spin up or down.
         Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -96,7 +96,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     atoms = scf.atoms
     Y = scf.Y[ik][spin][:, scf.atoms.occ.f[ik][spin] > 0]
     Ydag = Y.conj().T
-    # We need X12 later, so orthogonalize in-place and onle the current state
+    # We need X12 later, so orthogonalize in-place and only the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
     X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     D = rhoZ @ X12
@@ -160,7 +160,7 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
         grad (Callable): Function that calculates the respective gradient.
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -237,7 +237,7 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
         condition (Callable): Function to check and log the convergence condition.
         betat (float): Step size.
         cgform (int): Conjugate gradient form.
-        precondition (bool): Weather to use a preconditioner.
+        precondition (bool): Whether to use a preconditioner.
 
     Returns:
         tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.

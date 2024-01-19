@@ -223,7 +223,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     Rm = norm(atoms.a, axis=1)
     tmax = np.sqrt(0.5 * gexp) / nu
     s = np.rint(tmax / Rm + 1.5)
-    # Collect all box index vector in a matrix
+    # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the translation vectors
     T = M @ atoms.a
@@ -233,7 +233,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     g = 2 * np.pi * inv(atoms.a.T)
     gm = norm(g, axis=1)
     s = np.rint(gcut / gm + 1.5)
-    # Collect all box index vector in a matrix
+    # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
@@ -248,7 +248,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             # Add the real-space contribution
             rmag = np.sqrt(norm(dpos - T, axis=1)**2)
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
-            # The T=[0, 0, 0] element is ommited in M but needed if ia!=ja, so add it manually
+            # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
                 rmag = np.sqrt(norm(dpos)**2)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag

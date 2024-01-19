@@ -22,6 +22,7 @@ dev
    - Add a contour line viewer
    - Plot lattice vectors in the view_atoms function
    - Add a NixOS CI test
+   - Add a Nix lock file
    - Use Python 3.12 as the CI base image
    - Move Matplotlib to dev extras
    - Unpin the notebook version

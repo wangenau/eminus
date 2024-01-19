@@ -38,7 +38,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
 
     Keyword Args:
         extra (ndarray | list | None): Extra coordinates or FODs to display.
-        plot_n (bool): Weather to plot the electronic density (only for executed scf objects).
+        plot_n (bool): Whether to plot the electronic density (only for executed scf objects).
         percent (float): Amount of density that should be contained.
         surfaces (int): Number of surfaces to display in density plots (reduce for performance).
         size (tuple): Widget size.
@@ -154,7 +154,7 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
         value: (float): Slice value scaled by the axis size.
         lines: Number of contour lines.
         limits (tuple): Minimal and maximal truncation values for the field data.
-        zoom (float): Initial zoom .
+        zoom (float): Initial zoom.
         linewidth (float): Contour line width.
         size (tuple): Widget size.
 
@@ -291,7 +291,7 @@ def executed_in_notebook():
     Reference: https://stackoverflow.com/a/22424821
 
     Returns:
-        bool: Weather in a notebook or not.
+        bool: Whether in a notebook or not.
     """
     try:
         from IPython import get_ipython
@@ -555,7 +555,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
 
 
 def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
-    """Display KPoints objects including the Brillouin zone, special points, and optionally k-paths.
+    """Display KPoints objects including Brillouin zones, special- and k-points.
 
     Reference: https://plotly.com/python
 

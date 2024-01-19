@@ -146,7 +146,7 @@ def get_grad(scf, ik, spin, W, **kwargs):
     Args:
         scf: SCF object.
         ik (int): k-point index.
-        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        spin (int): Spin variable to track whether to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -179,7 +179,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     Args:
         scf: SCF object.
         ik (int): k-point index.
-        spin (int): Spin variable to track weather to do the calculation for spin up or down.
+        spin (int): Spin variable to track whether to do the calculation for spin up or down.
         W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
@@ -379,7 +379,7 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     Keyword Args:
         Nstate (int | None): Number of states.
         seed (int): Seed to initialize the random number generator.
-        symmetric (bool): Weather to use the same guess for both spin channels.
+        symmetric (bool): Whether to use the same guess for both spin channels.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
@@ -411,7 +411,7 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     Keyword Args:
         Nstate (int | None): Number of states.
         seed (int): Seed to initialize the random number generator.
-        symmetric (bool): Weather to use the same guess for both spin channels.
+        symmetric (bool): Whether to use the same guess for both spin channels.
 
     Returns:
         ndarray: Initial-guess orthogonal wave functions in reciprocal space.
