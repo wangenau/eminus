@@ -101,7 +101,8 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
-    D_tmp = [np.empty_like(Zk) for Zk in Z]
+    D_tmp = [None] * len(Z)
+    D_tmp[ik] = np.empty_like(Z[ik])
     D_tmp[ik][spin] = D
     HD = H(scf, ik, spin, D_tmp, **kwargs)
     DHD = D.conj().T @ HD
