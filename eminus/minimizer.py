@@ -499,7 +499,6 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
 
     # Update wave functions after calculating the gradients for each spin, save the wave function
-    W_old = copy.deepcopy(scf.W)
     for ik in range(atoms.kpts.Nk):
         scf.W[ik] = scf.W[ik] + beta[ik] * d[ik]
     c = cost(scf, -1)

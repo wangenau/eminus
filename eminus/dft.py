@@ -205,7 +205,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     if 'gga' in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # Vkin = -0.5 L(W)
-    Vkin_psi = -0.5 * atoms.L(W[ik], ik)[spin]
+    Vkin_psi = -0.5 * atoms.L(W[ik][spin], ik)
     # Veff = Jdag(Vion) + Jdag(O(J(vxc))) + Jdag(O(phi))
     # We get the full potential in the functional definition (different to the DFT++ notation)
     # Normally Vxc = Jdag(O(J(exc))) + diag(exc') Jdag(O(J(n))) (for LDA functionals)
@@ -214,7 +214,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     Vtau_psi = calc_Vtau(scf, ik, spin, W, vtau)
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik], ik)[spin], ik) + Vnonloc_psi + \
+    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik][spin], ik), ik) + Vnonloc_psi + \
         Vtau_psi
 
 

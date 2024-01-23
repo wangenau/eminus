@@ -78,7 +78,7 @@ def get_Ekin(atoms, Y, ik):
     Ekin = 0
     for spin in range(atoms.occ.Nspin):
         Ekin += -0.5 * atoms.kpts.wk[ik] * np.trace(atoms.occ.F[ik][spin] @ Y[spin].conj().T @
-                                                    atoms.L(Y, ik)[spin])
+                                                    atoms.L(Y[spin], ik))
     return np.real(Ekin)
 
 
