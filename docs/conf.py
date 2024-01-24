@@ -24,6 +24,7 @@ extensions: list[str] = [
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'sphinx_design',
     'sphinxcontrib.bibtex'
 ]
 templates_path: list[str] = ['_templates']

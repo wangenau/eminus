@@ -34,6 +34,7 @@
           pytest
           pytest-cov
           sphinx
+          sphinx-design
           sphinxcontrib-bibtex
         ]);
 

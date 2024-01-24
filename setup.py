@@ -20,13 +20,13 @@ long_description: str = \
 
 extras: dict[str, list[str]] = {
     'dispersion': [
-        'dftd3>=0.6.0'  # Interface for DFT-D3 dispersion corrections
+        'dftd3>=0.6.0'     # Interface for DFT-D3 dispersion corrections
     ],
     'libxc': [
-        'pyscf>=1.7.3'  # Libxc interface via PySCF
+        'pyscf>=1.7.3'     # Libxc interface via PySCF
     ],
     'torch': [
-        'torch>=1.8'  # Faster FFT operators using Torch
+        'torch>=1.8'       # Faster FFT operators using Torch
     ],
     'viewer': [
         'nglview>=2.6.5',  # Molecule and isosurface viewer
@@ -46,6 +46,7 @@ extras['dev'] = [
     'pytest-cov>=2.6.1',       # Collect test coverage data
     'ruff>=0.0.276',           # Style guide checker
     'sphinx>=4',               # Documentation builder
+    'sphinx-design>=0.2.0',    # More directives for Sphinx
     'sphinxcontrib-bibtex>=2'  # Use bib files for citations
 ]
 

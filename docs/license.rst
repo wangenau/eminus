@@ -71,6 +71,8 @@ License
      - MIT
    * - sphinx
      - BSD-2-Clause
+   * - sphinx-design
+     - MIT
    * - sphinxcontrib-bibtex
      - BSD-2-Clause
 

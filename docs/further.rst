@@ -96,7 +96,7 @@ Documentation
 
 .. code-block:: console
 
-   pip install sphinx furo sphinxcontrib-bibtex
+   pip install sphinx furo sphinx-design sphinxcontrib-bibtex
    sphinx-build -b html ./docs ./public
 
 The documentation build time can be shortened by using more processes, e.g., with

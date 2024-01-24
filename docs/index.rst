@@ -20,6 +20,7 @@ Home
    nomenclature.rst
    modules.rst
    changelog.rst
+   citation.rst
    license.rst
    further.rst
 
@@ -165,19 +166,3 @@ Feature overview
       <li style="background:#9edae5">Cuboidal</li>
       <li style="background:#9edae5">Isovalue</li>
    </ul>
-
-How to cite
-===========
-
-The project has been published with `Zenodo <https://doi.org/10.5281/zenodo.5720635>`_ and has an assigned DOI. The following BibTeX key can be used
-
-.. code-block:: TeX
-
-  @Misc{Schulze2021,
-   author    = {Wanja Timm Schulze and Kai Trepte and Sebastian Schwalbe},
-   title     = {eminus},
-   year      = {2021},
-   month     = nov,
-   doi       = {10.5281/zenodo.5720635},
-   publisher = {Zenodo},
-  }
