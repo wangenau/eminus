@@ -141,7 +141,7 @@ def get_Eloc(scf, n):
     Returns:
         float: Local energy contribution in Hartree.
     """
-    return np.real(scf.Vloc.conj().T @ n)
+    return np.real(np.vdot(scf.Vloc, n))
 
 
 # Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl

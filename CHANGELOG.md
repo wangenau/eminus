@@ -1,6 +1,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Small performance improvements
+
 v2.7.0 - Jan 19, 2024
 ---------------------
 - New features

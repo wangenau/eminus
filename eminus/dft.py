@@ -165,10 +165,11 @@ def get_grad(scf, ik, spin, W, **kwargs):
     invU = inv(U)
     U12 = sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
-    Ht = U12 @ WHW @ U12
+    Ht = np.linalg.multi_dot([U12, WHW, U12])
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    return atoms.kpts.wk[ik] * ((HW - (OW @ invU) @ WHW) @ (U12 @ F @ U12) +
-                                OW @ (U12 @ Q(Ht @ F - F @ Ht, U)))
+    tmp = np.linalg.multi_dot([OW, invU, WHW])
+    return atoms.kpts.wk[ik] * (np.linalg.multi_dot([HW - tmp, U12, F, U12]) +
+                                np.linalg.multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)]))
 
 
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
@@ -263,7 +264,9 @@ def Q(inp, U):
     mu = mu[:, None]
     denom = np.sqrt(mu) @ np.ones((1, len(mu)))
     denom2 = denom + denom.conj().T
-    return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
+    # return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
+    tmp = np.linalg.multi_dot([V.conj().T, inp, V])
+    return np.linalg.multi_dot([V, tmp / denom2, V.conj().T])
 
 
 def get_psi(scf, W, **kwargs):
