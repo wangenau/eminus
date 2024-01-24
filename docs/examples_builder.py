@@ -26,8 +26,10 @@ def generate(app: Any) -> None:
                 if example.joinpath(f'{example.name}.py').exists():
                     fp.write(parse(f'{example}/{example.name}.py'))
                 if example.joinpath(f'{example.name}.ipynb').exists():
-                    fp.write('\nSee a preview of the notebook `here <https://wangenau.gitlab.io/'
-                             f'eminus/_static/{example.name}.html>`_.\n')
+                    fp.write('\nTo see a preview of the notebook click the button below.'
+                             '\n\n.. button-link:: https://wangenau.gitlab.io/'
+                             f'eminus/_static/{example.name}.html\n'
+                             '   :color: primary\n   :outline:\n\n   Preview\n')
                 # Add download links
                 fp.write('\nDownload')
                 files = sorted(example.glob('[!README.rst]*'))
