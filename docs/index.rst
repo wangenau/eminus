@@ -47,6 +47,35 @@ Home
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
 
+.. grid:: 1 1 2 2
+    :gutter: 1
+
+    .. grid-item::
+
+        .. grid:: 1 1 1 1
+            :gutter: 1
+
+            .. grid-item-card:: :octicon:`rocket` Installation
+               :link: installation
+               :link-type: doc
+
+            .. grid-item-card:: :octicon:`code` API reference
+               :link: modules
+               :link-type: doc
+
+    .. grid-item::
+
+        .. grid:: 1 1 1 1
+            :gutter: 1
+
+            .. grid-item-card:: :octicon:`book` User guide
+               :link: _examples/examples
+               :link-type: doc
+
+            .. grid-item-card:: :octicon:`tools` Source code
+               :link: https://gitlab.com/wangenau/eminus
+               :link-type: url
+
 eminus is a plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
 The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
 It is built upon the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ pragmas proposed by Tomas Arias et al. that aim to let programming languages and theory coincide.
