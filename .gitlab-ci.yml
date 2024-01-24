@@ -153,7 +153,7 @@ pages:
   script:
     - pip install -e .
     # Build Sphinx documentation
-    - pip install sphinx furo sphinxcontrib-bibtex
+    - pip install sphinx furo sphinx-design sphinxcontrib-bibtex
     - sphinx-build -j $(nproc) -b html ./docs ./public
     # Convert notebooks to HTML
     - pip install notebook
