@@ -3,6 +3,7 @@
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
+from scipy.linalg import norm
 
 from eminus import Cell, SCF
 
@@ -29,7 +30,7 @@ def test_symmetrize(space_group, time_reversal):
     assert_allclose(np.sum(cell.kpts.wk), 1)
     # Make sure the original k-points are included in the symmetrized ones
     for k in symm_k:
-        assert_allclose(np.sort(np.linalg.norm(orig_k - k, axis=1))[0], 0, atol=1e-15)
+        assert_allclose(np.sort(norm(orig_k - k, axis=1))[0], 0, atol=1e-15)
 
 
 def test_unbuilt():

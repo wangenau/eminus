@@ -4,6 +4,7 @@ import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
 import pytest
+from scipy.linalg import norm
 from scipy.special import sph_harm
 
 from eminus import Atoms, config
@@ -105,10 +106,10 @@ def test_get_lattice():
     """Test the lattice utility function."""
     out = get_lattice(np.eye(3))
     for vert in out:
-        assert_equal(np.linalg.norm(vert[0] - vert[1]), 1)
+        assert_equal(norm(vert[0] - vert[1]), 1)
     out = get_lattice(np.ones((3, 3)) - np.eye(3))
     for vert in out:
-        assert_equal(np.linalg.norm(vert[0] - vert[1]), np.sqrt(2))
+        assert_equal(norm(vert[0] - vert[1]), np.sqrt(2))
 
 
 def test_handle_spin_gracefully():
