@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""eminus - A plane wave density functional theory code.
+"""eminus - A pythonic plane wave density functional theory (DFT) code.
 
 Minimal usage example to do a DFT calculation for helium::
 

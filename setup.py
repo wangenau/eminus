@@ -53,7 +53,7 @@ extras['dev'] = [
 setup(
     name='eminus',
     version=version,
-    description='A plane wave density functional theory code.',
+    description='A pythonic plane wave density functional theory (DFT) code.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Wanja Timm Schulze',

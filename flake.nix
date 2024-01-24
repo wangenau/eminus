@@ -1,5 +1,5 @@
 {
-  description = "eminus - A plane wave density functional theory code.";
+  description = "eminus - A pythonic plane wave density functional theory (DFT) code.";
 
   inputs = { nixpkgs.url = "nixpkgs/nixos-unstable"; };
 

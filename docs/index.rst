@@ -32,21 +32,6 @@ Home
 
 |
 
-.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
-   :target: https://pypi.org/project/eminus
-
-.. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
-   :target: https://wangenau.gitlab.io/eminus/htmlcov
-
-.. image:: https://img.shields.io/pypi/pyversions/eminus?color=green
-   :target: https://wangenau.gitlab.io/eminus/installation.html
-
-.. image:: https://img.shields.io/badge/license-Apache2.0-yellowgreen
-   :target: https://wangenau.gitlab.io/eminus/license.html
-
-.. image:: https://zenodo.org/badge/431079841.svg
-   :target: https://zenodo.org/badge/latestdoi/431079841
-
 .. grid:: 1 1 2 2
     :gutter: 1
 
@@ -76,7 +61,22 @@ Home
                :link: https://gitlab.com/wangenau/eminus
                :link-type: url
 
-eminus is a plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
+.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
+   :target: https://pypi.org/project/eminus
+
+.. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
+   :target: https://wangenau.gitlab.io/eminus/htmlcov
+
+.. image:: https://img.shields.io/pypi/pyversions/eminus?color=green
+   :target: https://wangenau.gitlab.io/eminus/installation.html
+
+.. image:: https://img.shields.io/badge/license-Apache2.0-yellowgreen
+   :target: https://wangenau.gitlab.io/eminus/license.html
+
+.. image:: https://zenodo.org/badge/431079841.svg
+   :target: https://zenodo.org/badge/latestdoi/431079841
+
+eminus is a pythonic plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
 The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
 It is built upon the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ pragmas proposed by Tomas Arias et al. that aim to let programming languages and theory coincide.
 This can be shown by, e.g., solving the Poisson equation. In the operator notation of DFT++ the equation reads
