@@ -3,6 +3,9 @@ Changelog
 
 dev
 ---
+- Updated docs
+   - Restyle many pages
+   - Add a workflow example
 - Miscellaneous
    - Small performance improvements
 
