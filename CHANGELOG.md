@@ -5,6 +5,7 @@ dev
 ---
 - Updated docs
    - Restyle many pages
+   - Add acitation page
    - Add an overview page with a workflow example
 - Miscellaneous
    - Small performance improvements

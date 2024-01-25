@@ -9,7 +9,8 @@ Installation
 * `NumPy <https://numpy.org>`_
 * `SciPy <https://scipy.org>`_
 
-All packages used have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.
+| All packages used have `OSI-approved <https://opensource.org/licenses/alphabetical>`_ licenses and are publicly visible.
+| The code is tested to run under Ubuntu, Debian, macOS, Windows, and NixOS.
 
 Installation with pip
 =====================
