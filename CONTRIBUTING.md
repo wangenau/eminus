@@ -6,13 +6,13 @@ As an open-source project, eminus welcomes all contributions, including
 * Refining existing features
 * Documentation improvements
 * Bug fixes
+* Bug reports
 
 Information about running tests, linting, and building the documentary can be found [online](https://wangenau.gitlab.io/eminus/further.html).
-All merge requests and issues should be uploaded to the [main repository](https://gitlab.com/wangenau/eminus).
-If desired, you can add yourself to the contributor list in your merge request.
+All merge requests and issues should be uploaded to the [main GitLab repository](https://gitlab.com/wangenau/eminus).
 
 ## Contributors
-* Wanja Timm Schulze
-* Sebastian Schwalbe
-* Kai Trepte
-* Jens Kortus
+
+<a href="https://github.com/wangenau/eminus/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=wangenau/eminus">
+</a>
