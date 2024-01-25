@@ -134,9 +134,9 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
         legend={'itemsizing': 'constant', 'title': 'Selection'},
         hoverlabel_bgcolor='black',
         template='none')
-    if executed_in_notebook():
-        return fig
-    return fig.show()
+    if not executed_in_notebook():
+        fig.show()
+    return fig
 
 
 def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1, linewidth=1,
@@ -202,9 +202,9 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
                          1 / zoom * atoms.a[axes[1], axes[1]]],
                'visible': False},
         template='none')
-    if executed_in_notebook():
-        return fig
-    return fig.show()
+    if not executed_in_notebook():
+        fig.show()
+    return fig
 
 
 def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
@@ -549,9 +549,9 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         yaxis_title='E - E<sub>F</sub> [eV]',
         hoverlabel_bgcolor='black',
         template='none')
-    if executed_in_notebook():
-        return fig
-    return fig.show()
+    if not executed_in_notebook():
+        fig.show()
+    return fig
 
 
 def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
@@ -624,6 +624,6 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         legend={'itemsizing': 'constant', 'title': 'Selection'},
         hoverlabel_bgcolor='black',
         template='none')
-    if executed_in_notebook():
-        return fig
-    return fig.show()
+    if not executed_in_notebook():
+        fig.show()
+    return fig
