@@ -18,11 +18,11 @@ Home
    installation.rst
    theory.rst
    _examples/examples.rst
-   nomenclature.rst
    modules.rst
    changelog.rst
    citation.rst
    license.rst
+   nomenclature.rst
    further.rst
 
 .. image:: /_static/logo/eminus.svg
