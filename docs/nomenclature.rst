@@ -41,16 +41,16 @@ Atoms variables
      - :code:`(Number of G-vectors)`
    * - :code:`Gk2`
      - Squared G+k-vectors
-     - :code:`list over k [(Number of G-vectors)]`
+     - :code:`list over k + 1 [(Number of G-vectors)]`
    * - :code:`active`
      - Indices for a selection of G+k-vectors
-     - :code:`list over k [(Number of active G-vectors)]`
+     - :code:`list over k + 1 [(Number of active G-vectors)]`
    * - :code:`G2c`
      - Selected squared G-vectors
      - :code:`(Number of active G-vectors)`
    * - :code:`Gk2c`
      - Selected squared G+k-vectors
-     - :code:`list over k [(Number of active G-vectors)]`
+     - :code:`list over k + 1 [(Number of active G-vectors)]`
    * - :code:`Sf`
      - Structure factor per atom
      - :code:`(Natoms, Number of active G-vectors)`
