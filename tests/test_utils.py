@@ -99,7 +99,7 @@ def test_atom2charge(atom, ref):
 def test_vector_angle(a, b, ref):
     """Test the vector angle calculation."""
     out = vector_angle(a, b)
-    assert_allclose(out, ref, )
+    assert_allclose(out, ref)
 
 
 def test_get_lattice():
