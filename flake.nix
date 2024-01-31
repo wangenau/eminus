@@ -17,6 +17,8 @@
           numpy
           pip
           scipy
+          ### dispersion ###
+          simple-dftd3
           ### fods and libxc ###
           pyscf
           ### torch ###
@@ -44,8 +46,6 @@
         mkShell {
           buildInputs = [
             pyEnv
-            ### dispersion ###
-            # simple-dftd3 does not work in the Python environment
             ### dev ###
             ruff
           ];
