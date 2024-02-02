@@ -12,7 +12,12 @@ line-length = 100
 target-version = "py37"
 respect-gitignore = true
 extend-include = ["*.ipynb"]
+output-format = "grouped"
 
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
 select = [
     "F",       # Pyflakes
     "E", "W",  # pycodestyle
@@ -35,6 +40,7 @@ select = [
     "PL",      # Pylint
     "NPY",     # NumPy-specific rules
     "PERF",    # Perflint
+    "LOG",     # flake8-logging
     "RUF"      # Ruff-specific rules
 ]
 
@@ -56,7 +62,7 @@ ignore = [
     "PLR0911", "PLR0912", "PLR0913", "PLR2004"
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "examples/*" = [
     # D100, D103: Missing docstring in public module or function
     "D100", "D103",
@@ -64,15 +70,12 @@ ignore = [
     "E501"
 ]
 
-[tool.ruff.format]
-quote-style = "single"
-
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-sort-within-sections = true
 order-by-type = false
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 15
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
