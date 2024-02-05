@@ -20,17 +20,17 @@ long_description: str = \
 
 extras: dict[str, list[str]] = {
     'dispersion': [
-        'dftd3>=0.6.0'     # Interface for DFT-D3 dispersion corrections
+        'dftd3>=0.6'       # Interface for DFT-D3 dispersion corrections
     ],
     'libxc': [
-        'pyscf>=1.7.3'     # Libxc interface via PySCF
+        'pyscf>=2.1'       # Libxc interface via PySCF
     ],
     'torch': [
-        'torch>=1.8'       # Faster FFT operators using Torch
+        'torch>=1.8'       # Faster FFT operators
     ],
     'viewer': [
-        'nglview>=2.6.5',  # Molecule and isosurface viewer
-        'plotly>=4.5'      # Grid visualization
+        'nglview>=2.6.5',  # Molecule viewer
+        'plotly>=4.5'      # Various visualizations
     ]
 }
 extras['fods'] = extras['libxc']      # PyCOM FOD guessing method uses PySCF
@@ -39,15 +39,15 @@ extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
     'coverage>=4.4',           # Generate coverage reports
     'furo>=2022.02.14.1',      # Documentation theme
-    'matplotlib>=1.5.0',       # Plotting library
+    'matplotlib>=1.5',         # Plotting library for examples
     'mypy>=0.931',             # Static type checker
     'notebook',                # Run and convert notebooks to HTML
     'pytest>=5.4',             # Test utilities
     'pytest-cov>=2.6.1',       # Collect test coverage data
-    'ruff>=0.2.0',             # Style guide checker
+    'ruff>=0.2',               # Linter
     'sphinx>=4',               # Documentation builder
-    'sphinx-design>=0.2.0',    # More directives for Sphinx
-    'sphinxcontrib-bibtex>=2'  # Use bib files for citations
+    'sphinx-design>=0.2',      # More directives for Sphinx
+    'sphinxcontrib-bibtex>=2'  # Use bib files for citations in Sphinx
 ]
 
 setup(
