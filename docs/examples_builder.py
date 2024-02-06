@@ -32,12 +32,14 @@ def generate(app: Any) -> None:
                              '   :color: primary\n   :outline:\n\n   Preview\n')
                 # Add download links
                 fp.write('\nDownload')
-                files = sorted(example.glob('[!README.rst]*'))
+                files = sorted(example.glob('*'))
+                exclude = ['.ipynb_checkpoints', '__pycache__', 'README.rst']
                 for file in files:
-                    fp.write(f' :download:`{str(file).split("/")[-1]} <../../{file}>`')
-                    # Copy all images to the examples folder
-                    if '.png' in str(file):
-                        shutil.copy2(file, 'docs/_examples/')
+                    if file.name not in exclude:
+                        fp.write(f' :download:`{file.name} <../../{file}>`')
+                        # Copy all images to the examples folder
+                        if file.suffix == '.png':
+                            shutil.copy2(file, 'docs/_examples/')
             # Add example subfile to index
             f_index.write(f'\n   {example.name}.rst')
 
