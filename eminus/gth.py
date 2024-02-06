@@ -152,19 +152,20 @@ def calc_Vnonloc(scf, ik, spin, W):
     atoms = scf.atoms
 
     Vpsi = np.zeros_like(W[ik][spin], dtype=complex)
-    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
-        betaNL_psi = (W[ik][spin].conj().T @ scf.gth.betaNL[ik]).conj()
+    if scf.pot != 'gth' or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
+        return Vpsi
 
-        for ia in range(atoms.Natoms):
-            psp = scf.gth[atoms.atom[ia]]
-            for l in range(psp['lmax']):
-                for m in range(-l, l + 1):
-                    for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                        for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                            hij = psp['h'][l, iprj, jprj]
-                            Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[ik][:, ibeta, None]
+    betaNL_psi = (W[ik][spin].conj().T @ scf.gth.betaNL[ik]).conj()
+    for ia in range(atoms.Natoms):
+        psp = scf.gth[atoms.atom[ia]]
+        for l in range(psp['lmax']):
+            for m in range(-l, l + 1):
+                for iprj in range(psp['Nproj_l'][l]):
+                    ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                    for jprj in range(psp['Nproj_l'][l]):
+                        jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                        hij = psp['h'][l, iprj, jprj]
+                        Vpsi += hij * betaNL_psi[:, jbeta] * scf.gth.betaNL[ik][:, ibeta, None]
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return atoms.O(Vpsi)
 

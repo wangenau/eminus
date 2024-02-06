@@ -162,22 +162,24 @@ def get_Enonloc(scf, Y, ik):
     atoms = scf.atoms
 
     Enonloc = 0
-    if scf.pot == 'gth' and scf.gth.NbetaNL > 0:  # Only calculate the non-local part if necessary
-        for spin in range(atoms.occ.Nspin):
-            betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
+    if scf.pot != 'gth' or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
+        return Enonloc
 
-            enl = np.zeros(Y.shape[-1], dtype=complex)
-            for ia in range(atoms.Natoms):
-                psp = scf.gth[atoms.atom[ia]]
-                for l in range(psp['lmax']):
-                    for m in range(-l, l + 1):
-                        for iprj in range(psp['Nproj_l'][l]):
-                            ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                            for jprj in range(psp['Nproj_l'][l]):
-                                jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                                hij = psp['h'][l, iprj, jprj]
-                                enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-            Enonloc += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
+    for spin in range(atoms.occ.Nspin):
+        betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
+
+        enl = np.zeros(Y.shape[-1], dtype=complex)
+        for ia in range(atoms.Natoms):
+            psp = scf.gth[atoms.atom[ia]]
+            for l in range(psp['lmax']):
+                for m in range(-l, l + 1):
+                    for iprj in range(psp['Nproj_l'][l]):
+                        ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
+                        for jprj in range(psp['Nproj_l'][l]):
+                            jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
+                            hij = psp['h'][l, iprj, jprj]
+                            enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
+        Enonloc += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return np.real(Enonloc * atoms.Omega)
 
