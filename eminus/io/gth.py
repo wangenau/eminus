@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """GTH file handling."""
-import inspect
+import importlib.resources
 import pathlib
 
 import numpy as np
@@ -24,8 +24,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
         dict: GTH parameters.
     """
     if psp_path in {'pade', 'pbe'}:
-        file_path = pathlib.Path(inspect.stack()[0][1]).parent
-        file_path = file_path.parent.joinpath(f'psp/{psp_path}')
+        file_path = importlib.resources.files(f'eminus.psp.{psp_path}')
     else:
         file_path = pathlib.Path(psp_path)
 

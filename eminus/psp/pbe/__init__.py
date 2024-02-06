@@ -5,13 +5,12 @@ Reference: Theor. Chem. Acc. 114, 145.
 """
 
 if __name__ == '__main__':
-    import inspect
-    import pathlib
+    import importlib.resources
     import shutil
     import urllib.request
     import zipfile
 
-    psp_path = pathlib.Path(inspect.stack()[0][1]).parent
+    psp_path = importlib.resources.files('eminus.psp.pbe')
     file = 'master.zip'
     # Download files
     url = f'https://github.com/cp2k/cp2k-data/archive/refs/heads/{file}'
