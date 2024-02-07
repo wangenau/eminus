@@ -5,7 +5,7 @@ import logging
 
 import numpy as np
 
-from .dft import get_epsilon_band, get_grad, get_n_spin, get_n_total, orth, solve_poisson
+from .dft import get_epsilon, get_grad, get_n_spin, get_n_total, orth, solve_poisson
 from .energies import get_E, get_Eentropy
 from .gga import get_grad_field, get_tau
 from .logger import name
@@ -42,12 +42,9 @@ def scf_step(scf, step):
                         'vsigma': scf.vsigma, 'vtau': scf.vtau}
     if scf.atoms.occ.smearing > 0 and step % scf.occ_recalc == 0:
         scf.log.info('Recalculate fillings...')
-        verbose = scf.log.verbose
-        scf.log.verbose = 'error'
-        e = get_epsilon_band(scf)
-        scf.log.verbose = verbose
-        Efermi = scf.atoms.occ.smear(e)
-        get_Eentropy(scf, e, Efermi)
+        epsilon = get_epsilon(scf, scf.W, **scf._precomputed)
+        Efermi = scf.atoms.occ.smear(epsilon)
+        get_Eentropy(scf, epsilon, Efermi)
     return get_E(scf)
 
 
