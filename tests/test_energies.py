@@ -8,7 +8,7 @@ import pytest
 
 from eminus import Atoms, Cell, SCF
 from eminus.dft import guess_pseudo
-from eminus.energies import get_Eband
+from eminus.energies import Energy, get_Eband
 from eminus.minimizer import scf_step
 
 # The reference contributions are similar for the polarized and unpolarized case,
@@ -103,6 +103,15 @@ def test_multiple_k():
     scf_step(scf_k, 0)
 
     assert_allclose(scf.energies.Etot, scf_k.energies.Etot)
+
+
+def test_extrapolate():
+    """Test the extrapolation function."""
+    e = Energy()
+    e.Ekin = 2
+    assert e.extrapolate() == 2
+    e.Eentropy = 2
+    assert e.extrapolate() == 3
 
 
 if __name__ == '__main__':

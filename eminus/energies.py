@@ -18,20 +18,30 @@ from .xc import get_exc
 @dataclasses.dataclass
 class Energy:
     """Energy class to save energy contributions in one place."""
-    Ekin: float = 0     #: Kinetic energy.
-    Ecoul: float = 0    #: Coulomb energy.
-    Exc: float = 0      #: Exchange-correlation energy.
-    Eloc: float = 0     #: Local energy.
-    Enonloc: float = 0  #: Non-local energy.
-    Eewald: float = 0   #: Ewald energy.
-    Esic: float = 0     #: Self-interaction correction energy.
-    Edisp: float = 0    #: Dispersion correction energy.
-    Ets: float = 0      #: Fillings entropic energy.
+    Ekin: float = 0       #: Kinetic energy.
+    Ecoul: float = 0      #: Coulomb energy.
+    Exc: float = 0        #: Exchange-correlation energy.
+    Eloc: float = 0       #: Local energy.
+    Enonloc: float = 0    #: Non-local energy.
+    Eewald: float = 0     #: Ewald energy.
+    Esic: float = 0       #: Self-interaction correction energy.
+    Edisp: float = 0      #: Dispersion correction energy.
+    Eentropy: float = 0   #: Fillings entropic energy.
 
     @property
     def Etot(self):
         """Total energy is the sum of all energy contributions."""
         return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
+
+    def extrapolate(self):
+        """Calculate the total energy at T=0.
+
+        Reference: J. Phys.: Condens. Matter 1, 689.
+
+        Returns:
+            float: Total energy extrapolated to T=0.
+        """
+        return self.Etot - 0.5 * self.Eentropy
 
     def __repr__(self):
         """Print the energies stored in the Energy object."""
@@ -39,8 +49,8 @@ class Energy:
         for ie in dataclasses.fields(self):
             energy = getattr(self, ie.name)
             if energy != 0:
-                out += f'{ie.name:<8}: {energy:+.9f} Eh\n'
-        return f'{out}{"-" * 25}\nEtot    : {self.Etot:+.9f} Eh'
+                out += f'{ie.name:<9}: {energy:+.9f} Eh\n'
+        return f'{out}{"-" * 26}\nEtot     : {self.Etot:+.9f} Eh'
 
 
 def get_E(scf):
@@ -357,7 +367,7 @@ def get_Eband(scf, Y, **kwargs):
     return np.real(Eband)
 
 
-def get_Ets(scf, epsilon, Efermi):
+def get_Eentropy(scf, epsilon, Efermi):
     """Calculate the fillings entropic energy.
 
     Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
@@ -376,11 +386,11 @@ def get_Ets(scf, epsilon, Efermi):
     if occ.Nspin == 1:
         wk = 2 * wk
 
-    Ets = 0
-    for ik in range(len(wk)):
+    Eentropy = 0
+    for ik in range(scf.atoms.kpts.Nk):
         for spin in range(occ.Nspin):
             for istate in range(occ.Nstate):
-                Ets -= wk[ik] * occ.smearing * electronic_entropy(epsilon[ik, spin, istate], Efermi,
-                                                                  occ.smearing)
-    scf.energies.Ets = Ets
-    return Ets
+                Eentropy -= wk[ik] * occ.smearing * electronic_entropy(epsilon[ik, spin, istate],
+                                                                       Efermi, occ.smearing)
+    scf.energies.Eentropy = Eentropy
+    return Eentropy

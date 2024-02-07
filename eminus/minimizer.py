@@ -6,7 +6,7 @@ import logging
 import numpy as np
 
 from .dft import get_epsilon_band, get_grad, get_n_spin, get_n_total, orth, solve_poisson
-from .energies import get_E, get_Ets
+from .energies import get_E, get_Eentropy
 from .gga import get_grad_field, get_tau
 from .logger import name
 from .utils import dotprod
@@ -47,7 +47,7 @@ def scf_step(scf, step):
         e = get_epsilon_band(scf)
         scf.log.verbose = verbose
         Efermi = scf.atoms.occ.smear(e)
-        get_Ets(scf, e, Efermi)
+        get_Eentropy(scf, e, Efermi)
     return get_E(scf)
 
 
