@@ -129,6 +129,7 @@ platform:windows:
 installation:
   extends: .pytest-pedantic
   script:
+    - pip install --upgrade pip
     - pip install build twine
     - python -m build
     # Do a check with twine
