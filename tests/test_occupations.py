@@ -165,6 +165,38 @@ def test_wk():
     assert occ.Nk == 2
 
 
+@pytest.mark.parametrize(('Nelec', 'Nspin', 'spin', 'bands', 'ref'),
+                         [(2, 1, 0, 2, np.array([[[2, 0]]])),
+                          (2, 2, 0, 2, np.array([[[1, 0], [1, 0]]])),
+                          (4, 1, 0, 4, np.array([[[2, 2, 0, 0]]])),
+                          (4, 2, 2, 4, np.array([[[1, 1, 1, 0], [1, 0, 0, 0]]])),
+                          (4, 2, 1, 4, np.array([[[1, 1, 0.5, 0], [1, 0.5, 0, 0]]])),
+                          (4, 2, 3, 5, np.array([[[1, 1, 1, 0.5, 0], [0.5, 0, 0, 0, 0]]]))])
+def test_bands(Nelec, Nspin, spin, bands, ref):
+    """Test the bands property."""
+    occ = Occupations()
+    occ.Nelec = Nelec
+    occ.Nspin = Nspin
+    occ.spin = spin
+    occ.bands = bands
+    occ.fill()
+    assert_allclose(occ.f, ref)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_smearing(Nspin):
+    """Test the smearing property."""
+    occ = Occupations()
+    occ.Nelec = 2
+    occ.Nspin = Nspin
+    occ.spin = 1
+    occ.fill()
+    occ.smearing = 1
+    assert not occ.is_filled
+    occ.fill()
+    assert occ.Nempty == 0
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib
