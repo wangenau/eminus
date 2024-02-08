@@ -19,6 +19,9 @@ Angstrom = A = 0.529177210903
 # scipy.constants.value('atomic unit of electric dipole mom.') / \
 # scipy.constants.value('hertz-inverse meter relationship') * 1e21
 Debye = D = 2.5417464731818566
+#: Hartree in kb times Kelvin.
+# scipy.constants.value('kelvin-hartree relationship')
+Kelvin = K = 3.1668115634556e-06
 
 
 def ha2ev(E):
@@ -91,6 +94,30 @@ def ry2ha(E):
         float | ndarray: Energy in Hartree.
     """
     return E / 2
+
+
+def ha2kelvin(E):
+    """Convert Hartree to Kelvin.
+
+    Args:
+        E (float | ndarray): Energy in Hartree.
+
+    Returns:
+        float | ndarray: Temperature in Kelvin.
+    """
+    return E / Kelvin
+
+
+def kelvin2ha(T):
+    """Convert Kelvin to Hartree.
+
+    Args:
+        T (float | ndarray): Temperature in Kelvin.
+
+    Returns:
+        float | ndarray: Energy in Hartree.
+    """
+    return T * Kelvin
 
 
 def ang2bohr(r):
