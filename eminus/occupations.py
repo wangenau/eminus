@@ -6,7 +6,7 @@ import numbers
 import numpy as np
 
 from .logger import log
-from .tools import fermi_distribution
+from .tools import fermi_distribution, get_Efermi
 
 
 @dataclasses.dataclass
@@ -362,67 +362,6 @@ class Occupations:
             log.info('Smearing is set to zero, nothing to do.')
             return 0
 
-        Efermi = find_Efermi(self, epsilon)
+        Efermi = get_Efermi(self, epsilon)
         self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
         return Efermi
-
-
-def sumkg(occ, epsilon, Efermi):
-    """Sum occupation numbers for given eigenenergies up to the Fermi energy.
-
-    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
-
-    Args:
-        occ: Occupations object.
-        epsilon (ndarray): Eigenenergies.
-        Efermi (float): Fermi energy.
-
-    Returns:
-        float: Summed occupations.
-    """
-    occ_sum = 0
-    for ik in range(len(occ.wk)):
-        occ_sum += occ.wk[ik] * np.sum(fermi_distribution(epsilon[ik], Efermi, occ.smearing))
-    return occ_sum * 2 / occ.Nspin
-
-
-def find_Efermi(occ, epsilon):
-    """Find the Fermi energy for given eigenenergies.
-
-    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
-
-    Args:
-        occ: Occupations object.
-        epsilon (ndarray): Eigenenergies.
-
-    Returns:
-        float: Fermi energy.
-    """
-    eps = 1e-10
-
-    Elw = np.min(epsilon[..., 0])
-    Eup = np.max(epsilon[..., -1])
-    Elw -= 2 * occ.smearing
-    Eup += 2 * occ.smearing
-
-    sumklw = sumkg(occ, epsilon, Elw)
-    sumkup = sumkg(occ, epsilon, Eup)
-    if (sumkup - occ.Nelec) < -1e-15 or (sumklw - occ.Nelec) > 1e-15:
-        log.exception('Bounds for Efermi not found.')
-
-    Ef = 0.5 * (Eup + Elw)
-    Ef_old = Ef
-    for _ in range(500):
-        sumkmid = sumkg(occ, epsilon, Ef)
-        if abs(sumkmid - occ.Nelec) < eps:
-            return Ef
-        if sumkmid - occ.Nelec < -eps:
-            Elw = Ef
-        else:
-            Eup = Ef
-        Ef = 0.5 * (Eup + Elw)
-        diff_Ef = abs(Ef - Ef_old)
-        if diff_Ef < eps:
-            return Ef
-        Ef_old = Ef
-    return Ef

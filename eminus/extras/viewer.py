@@ -12,7 +12,6 @@ from ..dft import get_epsilon, get_epsilon_unocc
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
 from ..logger import log
-from ..occupations import find_Efermi
 from ..tools import get_Efermi, get_isovalue
 from ..units import ha2ev
 from ..utils import get_lattice
@@ -460,7 +459,7 @@ def _traj_view(view, filename):
         def get_coordinates(self, index):
             """Get the atom coordinates for a given frame.
 
-            Args:get_Efermi
+            Args:
                 index (int): Frame number.
 
             Returns:
@@ -512,11 +511,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     # Replace 'G' with the Greek 'Gamma' encoded in unicode
     label = ['\u0393' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
-
-    if hasattr(scf, 'Z') or scf.atoms.occ.bands <= scf.atoms.occ.Nstate:
-        Efermi = ha2ev(get_Efermi(scf))
-    else:
-        Efermi = find_Efermi(scf.atoms.occ, e_occ)
+    Efermi = ha2ev(get_Efermi(scf))
 
     fig = go.Figure()
     # Plot occupied bands
