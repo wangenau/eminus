@@ -348,32 +348,6 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
     return epsilon
 
 
-def get_epsilon_band(scf):
-    """Calculate eigenvalues from H for all bands, independent of occupations.
-
-    Args:
-        scf: SCF object.
-
-    Returns:
-        ndarray: Eigenvalues.
-    """
-    # Calculate the occupied energies
-    e_occ = get_epsilon(scf, scf.W, **scf._precomputed)
-    e_all = np.empty_like(e_occ)
-    # Get the number of empty and occupied states per k-point
-    Nempty_k = np.sum(scf.atoms.occ.f == 0, axis=2)
-    # Calculate the unoccupied band energies, use the maximum number of empty states
-    Nocc_k = np.sum(scf.atoms.occ.f > 0, axis=2)
-    scf.converge_empty_bands(Nempty=np.max(Nempty_k))
-    e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
-    # Merge the occupied and unoccupied energies
-    for ik in range(scf.kpts.Nk):
-        for spin in range(scf.atoms.occ.Nspin):
-            e_all[ik, spin, :Nocc_k[ik][spin]] = e_occ[ik, spin, :Nocc_k[ik][spin]]
-            e_all[ik, spin, Nocc_k[ik][spin]:] = e_unocc[ik, spin, :Nempty_k[ik][spin]]
-    return e_all
-
-
 def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     """Generate random initial-guess coefficients as starting values.
 
