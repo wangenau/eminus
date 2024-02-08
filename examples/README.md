@@ -23,6 +23,7 @@ Examples that act as a tutorial for the most important functionalities of the co
 | 17_reduced_density_gradient | Calculate the reduced density gradient on a grid |
 | 18_k_points                 | Basic DFT calculations including k-points |
 | 19_band_structures          | Calculate band structures and visualize them |
+| 20_smeared_occupations      | Calculations with smeared occupations |
 
 This folder will automatically be parsed to generate the documentation.
 The following structure has to be kept

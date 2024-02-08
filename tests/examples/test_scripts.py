@@ -104,6 +104,10 @@ def test_18():  # noqa: D103
     execute_example('18_k_points')
 
 
+def test_20():  # noqa: D103
+    execute_example('20_smeared_occupations')
+
+
 if __name__ == '__main__':
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
