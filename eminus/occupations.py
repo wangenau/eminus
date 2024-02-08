@@ -169,9 +169,6 @@ class Occupations:
         if self.Nempty > 0:
             log.warning('Empty states with smearing enabled found.')
 
-        if value > 0:
-            log.warning('The current smearing implementation is untested and should not be used!')
-
     # ### Read-only properties ###
 
     @property
@@ -257,6 +254,8 @@ class Occupations:
             self._Nstate = Nstate
         if self.bands < Nstate:
             log.error('Number of bands is smaller than the number of valence electrons.')
+        if self.bands == Nstate and self.smearing > 0:
+            log.warning('Smearing has been enabled but no extra bands have been set.')
         # Disallow empty bands when using smearing
         if self.smearing > 0:
             self._Nstate = self.bands
@@ -301,6 +300,8 @@ class Occupations:
             self._Nstate = Nstate
         if self.bands < Nstate:
             log.error('Number of bands is smaller than the number of valence electrons.')
+        if self.bands == Nstate and self.smearing > 0:
+            log.warning('Smearing has been enabled but no extra bands have been set.')
         # Disallow empty bands when using smearing
         if self.smearing > 0:
             self._Nstate = self.bands
