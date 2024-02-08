@@ -256,16 +256,13 @@ class Occupations:
             log.error('Number of bands is smaller than the number of valence electrons.')
         if self.bands == Nstate and self.smearing > 0:
             log.warning('Smearing has been enabled but no extra bands have been set.')
-        # Disallow empty bands when using smearing
-        if self.smearing > 0:
-            self._Nstate = self.bands
         # Set the number of empty states if no smearing is used
-        else:
+        if self.smearing == 0:
             self._Nstate = Nstate
             self.Nempty = self.bands - Nstate
 
         # Simply build the occupations array
-        self._f = f * np.ones((self.Nspin, self._Nstate), dtype=int)
+        self._f = f * np.ones((self.Nspin, Nstate), dtype=int)
         # If we have filled too much correct it in the second spin channel
         # The following procedure ensures that we have no negative fillings
         rest = np.sum(self._f) - self.Nelec
@@ -279,6 +276,11 @@ class Occupations:
             rest -= self._f[-1, -i]
             self._f[-1, -i] = 0
             i += 1
+
+        if self.smearing > 0:
+            # Append extra states
+            self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - Nstate))))
+            self._Nstate = self.bands
         self._f = np.vstack([[self._f]] * self.Nk)
 
     def _fractional_fillings(self, f):
@@ -302,16 +304,13 @@ class Occupations:
             log.error('Number of bands is smaller than the number of valence electrons.')
         if self.bands == Nstate and self.smearing > 0:
             log.warning('Smearing has been enabled but no extra bands have been set.')
-        # Disallow empty bands when using smearing
-        if self.smearing > 0:
-            self._Nstate = self.bands
         # Set the number of empty states if no smearing is used
-        else:
+        if self.smearing == 0:
             self._Nstate = Nstate
             self.Nempty = self.bands - Nstate
 
         # Simply build the occupations array
-        self._f = f * np.ones((self.Nspin, self._Nstate))
+        self._f = f * np.ones((self.Nspin, Nstate))
         # If we have filled too much correct it in both spin channels
         # The following procedure ensures that we have no negative fillings
         rest = np.sum(self._f, axis=1) - elecs
@@ -326,6 +325,11 @@ class Occupations:
                 rest[s] -= self._f[s, -i]
                 self._f[s, -i] = 0
                 i += 1
+
+        if self.smearing > 0:
+            # Append extra states
+            self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - Nstate))))
+            self._Nstate = self.bands
         self._f = np.vstack([[self._f]] * self.Nk)
 
     def __repr__(self):
