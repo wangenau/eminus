@@ -370,7 +370,7 @@ def get_Eband(scf, Y, **kwargs):
 def get_Eentropy(scf, epsilon, Efermi):
     """Calculate the fillings entropic energy.
 
-    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
+    Reference: J. Phys. Condens. Matter 1, 689.
 
     Args:
         scf: SCF object.
@@ -382,15 +382,14 @@ def get_Eentropy(scf, epsilon, Efermi):
     """
     occ = scf.atoms.occ
 
-    wk = occ.wk
-    if occ.Nspin == 1:
-        wk = 2 * wk
-
     Eentropy = 0
     for ik in range(scf.atoms.kpts.Nk):
         for spin in range(occ.Nspin):
-            for istate in range(occ.Nstate):
-                Eentropy -= wk[ik] * occ.smearing * electronic_entropy(epsilon[ik, spin, istate],
-                                                                       Efermi, occ.smearing)
+            for i in range(occ.Nstate):
+                # Beware the sign change, it is handled in the electronic_entropy function
+                Eentropy += occ.wk[ik] * occ.smearing * \
+                    electronic_entropy(epsilon[ik, spin, i], Efermi, occ.smearing)
+
+    Eentropy *= 2 / occ.Nspin
     scf.energies.Eentropy = Eentropy
     return Eentropy
