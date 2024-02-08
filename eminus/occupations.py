@@ -169,6 +169,9 @@ class Occupations:
         if self.Nempty > 0:
             log.warning('Empty states with smearing enabled found.')
 
+        if value > 0:
+            log.warning('The current smearing implementation is untested and should not be used!')
+
     # ### Read-only properties ###
 
     @property
@@ -254,14 +257,13 @@ class Occupations:
             self._Nstate = Nstate
         if self.bands < Nstate:
             log.error('Number of bands is smaller than the number of valence electrons.')
-        if self.bands == Nstate and self.smearing > 0:
-            log.warning('Smearing has been enabled but no extra bands have been set.')
-        self._Nstate = Nstate
         # Disallow empty bands when using smearing
         if self.smearing > 0:
-            self.Nempty = self.bands - Nstate
+            self._Nstate = self.bands
+        # Set the number of empty states if no smearing is used
         else:
-            self.Nempty = 0
+            self._Nstate = Nstate
+            self.Nempty = self.bands - Nstate
 
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, self._Nstate), dtype=int)
@@ -278,12 +280,6 @@ class Occupations:
             rest -= self._f[-1, -i]
             self._f[-1, -i] = 0
             i += 1
-
-        # Append extra states
-        self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - self._Nstate))))
-        if self.smearing > 0:
-            self._Nstate = self.bands
-
         self._f = np.vstack([[self._f]] * self.Nk)
 
     def _fractional_fillings(self, f):
@@ -305,14 +301,13 @@ class Occupations:
             self._Nstate = Nstate
         if self.bands < Nstate:
             log.error('Number of bands is smaller than the number of valence electrons.')
-        if self.bands == Nstate and self.smearing > 0:
-            log.warning('Smearing has been enabled but no extra bands have been set.')
-        self._Nstate = Nstate
         # Disallow empty bands when using smearing
         if self.smearing > 0:
-            self.Nempty = self.bands - Nstate
+            self._Nstate = self.bands
+        # Set the number of empty states if no smearing is used
         else:
-            self.Nempty = 0
+            self._Nstate = Nstate
+            self.Nempty = self.bands - Nstate
 
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, self._Nstate))
@@ -330,12 +325,6 @@ class Occupations:
                 rest[s] -= self._f[s, -i]
                 self._f[s, -i] = 0
                 i += 1
-
-        # Append extra states
-        self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - self._Nstate))))
-        if self.smearing > 0:
-            self._Nstate = self.bands
-
         self._f = np.vstack([[self._f]] * self.Nk)
 
     def __repr__(self):
