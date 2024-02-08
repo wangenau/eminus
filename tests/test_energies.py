@@ -7,8 +7,8 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, Cell, SCF
-from eminus.dft import guess_pseudo
-from eminus.energies import Energy, get_Eband
+from eminus.dft import get_epsilon, guess_pseudo
+from eminus.energies import Energy, get_Eband, get_Eentropy
 from eminus.minimizer import scf_step
 
 # The reference contributions are similar for the polarized and unpolarized case,
@@ -24,12 +24,12 @@ E_ref = {
     'Etot': -29.686363700
 }
 
-# Run the spin-unpaired calculation at first
+# Run the spin-unpolarized calculation at first
 atoms_unpol = Atoms('Ne', (0, 0, 0), ecut=10, unrestricted=False)
 atoms_unpol.s = 20
 scf_unpol = SCF(atoms_unpol, sic=True)
 scf_unpol.run()
-# Do the spin-paired calculation afterwards
+# Do the spin-polarized calculation afterwards
 # Use the orbitals from the restricted calculation as an initial guess for the unrestricted case
 # This saves time and ensures we run into the same minimum
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=10, unrestricted=True)
@@ -41,20 +41,20 @@ scf_pol.run()
 
 @pytest.mark.parametrize('energy', E_ref.keys())
 def test_energies_unpol(energy):
-    """Check the spin-unpaired energy contributions."""
+    """Check the spin-unpolarized energy contributions."""
     E = getattr(scf_unpol.energies, energy)
     assert_allclose(E, E_ref[energy], atol=1e-4)
 
 
 @pytest.mark.parametrize('energy', E_ref.keys())
 def test_energies_pol(energy):
-    """Check the spin-paired energy contributions."""
+    """Check the spin-polarized energy contributions."""
     E = getattr(scf_pol.energies, energy)
     assert_allclose(E, E_ref[energy], atol=1e-4)
 
 
 def test_mgga_sic_unpol():
-    """Check the spin-unpaired SIC energy for meta-GGAs."""
+    """Check the spin-unpolarized SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_tmp = copy.deepcopy(scf_unpol)
     scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
@@ -64,7 +64,7 @@ def test_mgga_sic_unpol():
 
 
 def test_mgga_sic_pol():
-    """Check the spin-paired SIC energy for meta-GGAs."""
+    """Check the spin-polarized SIC energy for meta-GGAs."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     scf_tmp = copy.deepcopy(scf_pol)
     scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
@@ -74,17 +74,33 @@ def test_mgga_sic_pol():
 
 
 def test_get_Eband_unpol():
-    """Check the spin-unpaired band energy."""
+    """Check the spin-unpolarized band energy."""
     Eband = get_Eband(scf_unpol, scf_unpol.Y)
     assert_allclose(Eband, -4.1123, atol=1e-4)
 
 
 def test_get_Eband_pol():
-    """Check the spin-paired band energy."""
+    """Check the spin-polarized band energy."""
     Eband = get_Eband(scf_pol, scf_pol.Y, **scf_pol._precomputed)
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy
     assert_allclose(Eband, -8.2246, atol=1e-4)
+
+
+def test_get_Eentropy_unpol():
+    """Check the spin-unpolarized entropic energy."""
+    scf_unpol.atoms.occ.smearing = 1
+    epsilon = get_epsilon(scf_unpol, scf_unpol.W)
+    Eband = get_Eentropy(scf_unpol, epsilon, 0)
+    assert_allclose(Eband, -4.4395, atol=1e-4)
+
+
+def test_get_Eentropy_pol():
+    """Check the spin-polarized entropic energy."""
+    scf_pol.atoms.occ.smearing = 1
+    epsilon = get_epsilon(scf_pol, scf_pol.W)
+    Eband = get_Eentropy(scf_pol, epsilon, 0)
+    assert_allclose(Eband, -4.4395, atol=1e-4)
 
 
 def test_multiple_k():

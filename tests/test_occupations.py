@@ -165,6 +165,20 @@ def test_wk():
     assert occ.Nk == 2
 
 
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_smearing(Nspin):
+    """Test the smearing property."""
+    occ = Occupations()
+    occ.Nelec = 2
+    occ.Nspin = Nspin
+    occ.spin = 1
+    occ.fill()
+    occ.smearing = 1
+    assert not occ.is_filled
+    occ.fill()
+    assert occ.Nempty == 0
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

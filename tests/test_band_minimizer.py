@@ -24,7 +24,7 @@ scf_pol.run()
 
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_unpol(minimizer):
-    """Check the spin-unpaired band minimizer functions."""
+    """Check the spin-unpolarized band minimizer functions."""
     scf_unpol.opt = {minimizer: 100}
     if minimizer in {'cg', 'pccg', 'auto'}:
         for i in range(1, 5):
@@ -39,7 +39,7 @@ def test_minimizer_unpol(minimizer):
 
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_pol(minimizer):
-    """Check the spin-paired band minimizer functions."""
+    """Check the spin-polarized band minimizer functions."""
     scf_pol.opt = {minimizer: 100}
     if minimizer in {'cg', 'pccg', 'auto'}:
         for i in range(1, 5):
