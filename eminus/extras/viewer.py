@@ -511,7 +511,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     # Replace 'G' with the Greek 'Gamma' encoded in unicode
     label = ['\u0393' if l == 'G' else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
-    Efermi = ha2ev(get_Efermi(scf))
+    Efermi = get_Efermi(scf, e_occ)
 
     fig = go.Figure()
     # Plot occupied bands
