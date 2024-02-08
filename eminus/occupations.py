@@ -24,7 +24,7 @@ class Occupations:
     _Nempty: int = 0         #: Number of empty states.
     _Nk: int = 1             #: Number of k-points.
     _bands: int = 0          #: Number of bands.
-    _smearing: float = 0     #: Smearing width.
+    _smearing: float = 0     #: Smearing width in Hartree.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
     # ### Class properties ###
@@ -159,7 +159,7 @@ class Occupations:
 
     @property
     def smearing(self):
-        """Smearing width."""
+        """Smearing width in Hartree."""
         return self._smearing
 
     @smearing.setter
@@ -348,7 +348,7 @@ class Occupations:
                f'Number of states: {self.Nstate}\n' \
                f'Number of empty states: {self.Nempty}\n' \
                f'Number of k-points: {self.Nk}\n' \
-               f'Smearing width: {self.smearing}\n' \
+               f'Smearing width: {self.smearing} Eh\n' \
                f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
 
     def smear(self, epsilon):

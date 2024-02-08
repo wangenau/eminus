@@ -40,7 +40,7 @@ def scf_step(scf, step):
                                                     scf.dn_spin, scf.tau)
     scf._precomputed = {'dn_spin': scf.dn_spin, 'phi': scf.phi, 'vxc': scf.vxc,
                         'vsigma': scf.vsigma, 'vtau': scf.vtau}
-    if scf.atoms.occ.smearing > 0 and step % scf.occ_recalc == 0:
+    if scf.atoms.occ.smearing > 0 and step % scf.smear_update == 0:
         epsilon = get_epsilon(scf, scf.W, **scf._precomputed)
         Efermi = scf.atoms.occ.smear(epsilon)
         get_Eentropy(scf, epsilon, Efermi)

@@ -68,7 +68,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, ve
         basis (list | tuple | ndarray | None): Lattice basis.
         bands (int | None): Number of bands (has to be larger or equal than the occupied states).
         kmesh (int | list | tuple | ndarray): k-point mesh.
-        smearing (float): Smearing width.
+        smearing (float): Smearing width in Hartree.
         verbose (int | str | None): Level of output.
 
     Returns:
