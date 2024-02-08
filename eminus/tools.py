@@ -413,13 +413,6 @@ def get_Efermi(obj, epsilon=None):
     Returns:
         float: Fermi energy.
     """
-    def electron_root(Efermi, occ, epsilon):
-        """Number of electrons by Fermi distribution minus the actual number of electrons."""
-        occ_sum = 0
-        for ik in range(len(occ.wk)):
-            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(epsilon[ik], Efermi, occ.smearing))
-        return occ_sum * 2 / occ.Nspin - occ.Nelec
-
     # Handle the boj argument
     if hasattr(obj, 'smearing'):
         if epsilon is None:
@@ -438,10 +431,16 @@ def get_Efermi(obj, epsilon=None):
     else:
         e_occ = epsilon
 
+    def electron_root(Efermi):
+        """Number of electrons by Fermi distribution minus the actual number of electrons."""
+        occ_sum = 0
+        for ik in range(len(occ.wk)):
+            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
+        return occ_sum * 2 / occ.Nspin - occ.Nelec
+
     # For smeared systems we have to find the root of an objective function
     if occ.smearing != 0:
-        return root_scalar(electron_root, args=(occ, e_occ),
-                           bracket=(np.min(e_occ), np.max(e_occ))).root
+        return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
 
     if not hasattr(obj, 'Z'):
         log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
