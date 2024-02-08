@@ -363,18 +363,14 @@ class Occupations:
             return 0
 
         Efermi = find_Efermi(self, epsilon)
-
-        f = np.zeros_like(self.f)
-        for ik in range(self.Nk):
-            for spin in range(self.Nspin):
-                for i in range(self.Nstate):
-                    f[ik, spin, i] = fermi_distribution(epsilon[ik, spin, i], Efermi, self.smearing)
-        self._f = f * 2 / self.Nspin
+        self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
         return Efermi
 
 
 def sumkg(occ, epsilon, Efermi):
     """Sum occupation numbers for given eigenenergies up to the Fermi energy.
+
+    Reference: https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/occupations.jl
 
     Args:
         occ: Occupations object.
@@ -384,12 +380,10 @@ def sumkg(occ, epsilon, Efermi):
     Returns:
         float: Summed occupations.
     """
-    ss = 0
+    occ_sum = 0
     for ik in range(len(occ.wk)):
-        for spin in range(occ.Nspin):
-            for i in range(occ.Nstate):
-                ss += occ.wk[ik] * fermi_distribution(epsilon[ik, spin, i], Efermi, occ.smearing)
-    return ss * 2 / occ.Nspin
+        occ_sum += occ.wk[ik] * np.sum(fermi_distribution(epsilon[ik], Efermi, occ.smearing))
+    return occ_sum * 2 / occ.Nspin
 
 
 def find_Efermi(occ, epsilon):
