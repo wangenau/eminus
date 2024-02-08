@@ -458,13 +458,14 @@ def fermi_distribution(E, mu, kbT):
         float: Fermi distribution.
     """
     x = (E - mu) / kbT
-    return 1 / (np.exp(x) + 1)
+    with np.errstate(over='ignore'):
+        return 1 / (np.exp(x) + 1)
 
 
 def electronic_entropy(E, mu, kbT):
     """Calculate the electronic entropic energy.
 
-    Reference: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
+    Reference: J. Phys. Condens. Matter 1, 689.
 
     Args:
         E (float): State energy.
@@ -474,11 +475,11 @@ def electronic_entropy(E, mu, kbT):
     Returns:
         float: Electronic entropic energy.
     """
-    x = (E - mu) / kbT
-    if abs(x) <= 36:
-        f = 1 / (1 + np.exp(-x))
-        return -(f * np.log(f) + (1 - f) * np.log(1 - f))
-    return 0
+    # Taken from: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
+    if abs((E - mu) / kbT) > 36:
+        return 0
+    f = fermi_distribution(E, mu, kbT)
+    return f * np.log(f) + (1 - f) * np.log(1 - f)
 
 
 def get_dos(epsilon, wk, spin=0, npts=201, width=0.1):
