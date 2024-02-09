@@ -89,9 +89,10 @@ def init_gth_loc(scf):
     return Vloc
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 def init_gth_nonloc(atoms, gth):
     """Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
+
+    Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPotNL.jl
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -134,9 +135,10 @@ def init_gth_nonloc(atoms, gth):
     return NbetaNL, prj2beta, betaNL
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 def calc_Vnonloc(scf, ik, spin, W):
     """Calculate the non-local pseudopotential, applied on the basis functions W.
+
+    Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/op_V_Ps_nloc.jl
 
     Reference: Phys. Rev. B 54, 1703.
 
@@ -170,9 +172,10 @@ def calc_Vnonloc(scf, ik, spin, W):
     return atoms.O(Vpsi)
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 def eval_proj_G(psp, l, iprj, Gm, Omega):
     """Evaluate GTH projector functions in G-space.
+
+    Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
 
     Reference: Phys. Rev. B 54, 1703.
 

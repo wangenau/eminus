@@ -154,10 +154,11 @@ def get_Eloc(scf, n):
     return np.real(np.vdot(scf.Vloc, n))
 
 
-# Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 @handle_k_reducable
 def get_Enonloc(scf, Y, ik):
     """Calculate the non-local GTH energy contribution.
+
+    Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/calc_energies.jl
 
     Reference: Phys. Rev. B 54, 1703.
 
