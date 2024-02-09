@@ -436,10 +436,6 @@ def get_Efermi(obj, epsilon=None):
     if hasattr(obj, 'smearing'):
         if epsilon is None:
             log.error('When passing an Occupations object the eigenenergies have to be given.')
-        if obj.smearing == 0:
-            log.warning('No eigenenergies given with the Occupations object,'
-                        'return the maximum energy instead.')
-            return np.max(epsilon)
         occ = obj
     else:
         occ = obj.atoms.occ
