@@ -1,8 +1,8 @@
 Changelog
 =========
 
-dev
----
+v2.7.1 - Feb 09, 2024
+---------------------
 - New features
    - Stabilized Fermi smearing!
 - Updated docs
