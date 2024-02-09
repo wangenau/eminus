@@ -121,7 +121,7 @@ class Atoms:
     @ecut.setter
     def ecut(self, value):
         self._ecut = value
-        # Caclulate the sampling from the cut-off energy
+        # Calculate the sampling from the cut-off energy
         s = np.int64(norm(self.a, axis=0) / cutoff2gridspacing(value))
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
@@ -444,7 +444,7 @@ class Atoms:
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
 
-        # Create the grid used for the non-wavefunction fields and append it to the end
+        # Create the grid used for the non-wave function fields and append it to the end
         self._active.append(np.nonzero(2 * self.ecut >= self._G2))
         self._Gk2 = np.vstack((self._Gk2, self._G2))
         self._Gk2c.append(self._G2c)

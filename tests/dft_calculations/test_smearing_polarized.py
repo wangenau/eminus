@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 # using PWDFT
 
-# const smearing = [1e-5, 1e-4, 1e-3]
+# const smearing = [1e-4, 1e-3]
 # const psp_path = joinpath(dirname(pathof(PWDFT)), "..", "pseudopotentials", "pade_gth")
 # const psp = [joinpath(psp_path, "Li-q3.gth")]
 

@@ -66,7 +66,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     """
     atoms = obj._atoms
 
-    # The trajectory write calles this function
+    # The trajectory write calls this function
     if not filename.endswith(('.xyz', '.trj', '.traj')):
         filename += '.xyz'
 

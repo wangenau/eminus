@@ -6,7 +6,7 @@ dev
 - New features
    - Stabilized Fermi smearing!
 - Updated docs
-   - Restyle many pages
+   - Restyle many documentation pages
    - Add a citation page
    - Add an overview page with a workflow example
    - Add a smearing example

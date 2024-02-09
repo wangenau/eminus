@@ -70,7 +70,7 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **
     ec0, vc0, _ = lda_c_pw(n, A[0], a1[0], b1[0], b2[0], b3[0], b4[0])  # Unpolarized
     ec1, vc1, _ = lda_c_pw(n, A[1], a1[1], b1[1], b2[1], b3[1], b4[1])  # Polarized
     ac, dac, _ = lda_c_pw(n, A[2], a1[2], b1[2], b2[2], b3[2], b4[2])   # Spin stiffness
-    ac = -ac  # The PW spin interpolation parametrizes -ac instead of ac
+    ac = -ac  # The PW spin interpolation is parametrized with -ac instead of ac
 
     fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
     zeta3 = zeta**3
