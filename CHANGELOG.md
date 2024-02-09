@@ -45,7 +45,6 @@ v2.7.0 - Jan 19, 2024
    - Small performance improvements, e.g, in Atoms object creation
 - Experimental
    - Smearing functionalities
-   - Density of states function
 
 ----
 
