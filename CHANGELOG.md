@@ -3,12 +3,19 @@ Changelog
 
 dev
 ---
+- New features
+   - Stabilized Fermi smearing!
 - Updated docs
    - Restyle many pages
-   - Add acitation page
+   - Add a citation page
    - Add an overview page with a workflow example
+   - Add a smearing example
 - Miscellaneous
    - Small performance improvements
+   - Temperature unit conversion functions
+   - Tests for the smearing implementation
+   - Update Ruff rules
+   - Misc coding style updates
 
 v2.7.0 - Jan 19, 2024
 ---------------------
