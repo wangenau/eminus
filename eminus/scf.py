@@ -460,7 +460,9 @@ class SCF:
                f'Symmetric guess: {self.symmetric}\n' \
                f'Energy convergence tolerance: {self.etol} Eh\n' \
                f'Gradient convergence tolerance: {self.gradtol}\n' \
-               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}'
+               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
+               f'Smearing: {self.atoms.occ.smearing > 0}\n' \
+               f'{f"Smearing update: {self.smear_update}" if self.atoms.occ.smearing > 0 else ""}'
 
 
 class RSCF(SCF):

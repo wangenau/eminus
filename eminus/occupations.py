@@ -164,6 +164,8 @@ class Occupations:
 
     @smearing.setter
     def smearing(self, value):
+        if value < 0:
+            log.error('The smearing width can not be negative.')
         self._smearing = value
         self.is_filled = False
         if self.Nempty > 0:

@@ -399,57 +399,6 @@ def get_multiplicity(scf):
     return 2 * S + 1
 
 
-def get_Efermi(obj, epsilon=None):
-    """Calculate the Fermi energy.
-
-    Reference: Phys. Rev. B 107, 195122.
-
-    Args:
-        obj: SCF or Occupations object.
-
-    Keyword Args:
-        epsilon (ndarray): Eigenenergies.
-
-    Returns:
-        float: Fermi energy.
-    """
-    # Handle the boj argument
-    if hasattr(obj, 'smearing'):
-        if epsilon is None:
-            log.error('When passing an Occupations object the eigenenergies have to be given.')
-        if obj.smearing == 0:
-            log.warning('No eigenenergies given with the Occupations object,'
-                        'return the maximum energy instead.')
-            return np.max(epsilon)
-        occ = obj
-    else:
-        occ = obj.atoms.occ
-
-    # Calculate the eigenenergies if neccessary
-    if epsilon is None:
-        e_occ = get_epsilon(obj, obj.W, **obj._precomputed)
-    else:
-        e_occ = epsilon
-
-    def electron_root(Efermi):
-        """Number of electrons by Fermi distribution minus the actual number of electrons."""
-        occ_sum = 0
-        for ik in range(len(occ.wk)):
-            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
-        return occ_sum * 2 / occ.Nspin - occ.Nelec
-
-    # For smeared systems we have to find the root of an objective function
-    if occ.smearing != 0:
-        return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
-
-    if not hasattr(obj, 'Z'):
-        log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
-        return np.max(e_occ)
-
-    e_unocc = get_epsilon_unocc(obj, obj.W, obj.Z, **obj._precomputed)
-    return np.max(e_occ) + (np.min(e_unocc) - np.max(e_occ)) / 2
-
-
 def get_bandgap(scf):
     """Calculate the band gap.
 
@@ -467,6 +416,57 @@ def get_bandgap(scf):
 
     e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     return np.min(e_unocc) - np.max(e_occ)
+
+
+def get_Efermi(obj, epsilon=None):
+    """Calculate the Fermi energy.
+
+    Reference: Phys. Rev. B 107, 195122.
+
+    Args:
+        obj: SCF or Occupations object.
+
+    Keyword Args:
+        epsilon (ndarray): Eigenenergies.
+
+    Returns:
+        float: Fermi energy.
+    """
+    # Handle the obj argument
+    if hasattr(obj, 'smearing'):
+        if epsilon is None:
+            log.error('When passing an Occupations object the eigenenergies have to be given.')
+        if obj.smearing == 0:
+            log.warning('No eigenenergies given with the Occupations object,'
+                        'return the maximum energy instead.')
+            return np.max(epsilon)
+        occ = obj
+    else:
+        occ = obj.atoms.occ
+
+    # Calculate the eigenenergies if necessary
+    if epsilon is None:
+        e_occ = get_epsilon(obj, obj.W, **obj._precomputed)
+    else:
+        e_occ = epsilon
+
+    def electron_root(Efermi):
+        """Number of electrons by Fermi distribution minus the actual number of electrons."""
+        occ_sum = 0
+        for ik in range(occ.Nk):
+            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
+        return occ_sum * 2 / occ.Nspin - occ.Nelec
+
+    # For smeared systems we have to find the root of an objective function
+    if occ.smearing > 0:
+        return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
+
+    if not hasattr(obj, 'Z'):
+        log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
+        return np.max(e_occ)
+
+    e_unocc = get_epsilon_unocc(obj, obj.W, obj.Z, **obj._precomputed)
+    return np.max(e_occ) + (np.min(e_unocc) - np.max(e_occ)) / 2
 
 
 def fermi_distribution(E, mu, kbT):
