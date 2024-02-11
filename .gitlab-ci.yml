@@ -164,7 +164,7 @@ pages:
     - apt-get update -y
     - apt-get install minify -y --no-install-recommends
     - find public \( -name '*.css' -o -name '*.js' -o -name '*.svg' \) -exec minify -vo {} {} \;
-    - find public -name '*.html' -exec minify -vo {} {} --html-keep-document-tags --html-keep-end-tags \;
+    - find public -name '*.html' -exec minify -vo {} {} --html-keep-document-tags --html-keep-end-tags --html-keep-whitespace \;
     # Compress all text files
     - find public \( -name '*.css' -o -name '*.html' -o -name '*.js' -o -name '*.svg' \) -exec gzip -vrk9 {} \;
     # Copy the coverage artifacts
