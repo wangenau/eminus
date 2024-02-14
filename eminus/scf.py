@@ -488,7 +488,7 @@ class SCF:
                f'Gradient convergence tolerance: {self.gradtol}\n' \
                f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
                f'Smearing: {self.atoms.occ.smearing > 0}\n' \
-               f'{f"Smearing update: {self.smear_update}" if self.atoms.occ.smearing > 0 else ""}'
+               f'Smearing update cycle: {self.smear_update}'
 
 
 class RSCF(SCF):
