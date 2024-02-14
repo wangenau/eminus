@@ -70,7 +70,7 @@ def test_mgga_sic_pol():
     scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_tmp.opt = {'auto': 1}
     scf_tmp.run()
-    assert_allclose(scf_tmp.energies.Esic, -0.497, atol=1e-4)
+    assert_allclose(scf_tmp.energies.Esic, -0.5187, atol=1e-4)
 
 
 def test_get_Eband_unpol():

@@ -19,8 +19,8 @@ s = 15
 kmesh = 2
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 4, 'pccg': 27}
-betat = 1e-3
+opt = {'sd': 5, 'pccg': 27}
+betat = 3e-3
 
 
 @pytest.mark.slow()

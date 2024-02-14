@@ -27,7 +27,7 @@ path = 'LGX'
 
 def test_polarized():
     """Compare band energies for a test system with reference values (spin-polarized)."""
-    opt = {'sd': 4, 'pccg': 29}
+    opt = {'sd': 11, 'pccg': 29}
     betat = 3e-3
 
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)

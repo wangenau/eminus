@@ -19,7 +19,7 @@ s = 32
 xc = 'svwn'
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 4, 'pccg': 20}
+opt = {'sd': 11, 'pccg': 13}
 
 
 @pytest.mark.parametrize('charge', [1, -1])

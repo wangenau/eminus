@@ -32,7 +32,7 @@ from eminus.tools import (
     orbital_center,
 )
 
-opt = {'sd': 25, 'pccg': 25}
+opt = {'sd': 26, 'pccg': 35}
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
 scf = SCF(atoms, opt=opt)
 scf.run()
@@ -180,15 +180,15 @@ def test_get_reduced_gradient(unrestricted):
 
 def test_spin_squared_and_multiplicity():
     """Test the calculation of <S^2> and the multiplicity."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=1)
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=2)
     rscf = RSCF(atoms)
     assert get_spin_squared(rscf) == 0
     assert get_multiplicity(rscf) == 1
 
     scf = SCF(atoms, guess='symm-rand')
     scf.run()
-    assert get_spin_squared(scf) == 0
-    assert get_multiplicity(scf) == 1
+    assert_allclose(get_spin_squared(scf), 0, atol=1e-2)
+    assert_allclose(get_multiplicity(scf), 1, atol=1e-2)
 
     scf = SCF(atoms, guess='unsymm-rand')
     scf.run()
@@ -215,7 +215,7 @@ def test_get_bandgap():
     assert Eg == 0
     scf_band.converge_empty_bands(Nempty=1)
     Eg = get_bandgap(scf_band)
-    assert_allclose(Eg, 0.380516)
+    assert_allclose(Eg, 0.38051525)
 
 
 if __name__ == '__main__':

@@ -17,8 +17,8 @@ s = 9
 xc = 'LDA,VWN'
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 12, 'pccg': 16}
-betat = 1e-3
+opt = {'sd': 29, 'pccg': 18}
+betat = 5e-4
 
 
 @pytest.mark.parametrize('smearing', E_ref.keys())

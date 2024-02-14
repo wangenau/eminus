@@ -17,7 +17,7 @@ s = 32
 xc = 'svwn'
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 8, 'pccg': 20}
+opt = {'sd': 15, 'pccg': 18}
 
 
 @pytest.mark.parametrize('spin', [1, 2])

@@ -8,8 +8,17 @@ import numpy as np
 
 from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
-from .dft import get_epsilon, guess_pseudo, guess_random
+from .dft import (
+    get_epsilon,
+    get_n_spin,
+    get_n_total,
+    guess_pseudo,
+    guess_random,
+    orth,
+    solve_poisson,
+)
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
+from .gga import get_grad_field, get_tau
 from .gth import GTH
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as ALL_MINIMIZER
@@ -17,7 +26,7 @@ from .potentials import IMPLEMENTED as ALL_POTENTIALS
 from .potentials import init_pot
 from .tools import center_of_mass, get_spin_squared
 from .version import info
-from .xc import parse_functionals, parse_xc_type
+from .xc import get_xc, parse_functionals, parse_xc_type
 
 
 class SCF:
@@ -448,6 +457,23 @@ class SCF:
         self.vtau = None        # d exc/d tau
         self._precomputed = {}  # Dictionary of pre-computed values not to be saved
         self._opt_log = {}      # Log of the optimization procedure
+        return self
+
+    def _precompute(self):
+        """Precompute fields stored in the SCF object."""
+        atoms = self.atoms
+        self.Y = orth(atoms, self.W)
+        self.n_spin = get_n_spin(atoms, self.Y)
+        self.n = get_n_total(atoms, self.Y, self.n_spin)
+        if 'gga' in self.xc_type:
+            self.dn_spin = get_grad_field(atoms, self.n_spin)
+        if self.xc_type == 'meta-gga':
+            self.tau = get_tau(atoms, self.Y)
+        self.phi = solve_poisson(atoms, self.n)
+        self.exc, self.vxc, self.vsigma, self.vtau = get_xc(self.xc, self.n_spin, atoms.occ.Nspin,
+                                                            self.dn_spin, self.tau)
+        self._precomputed = {'dn_spin': self.dn_spin, 'phi': self.phi, 'vxc': self.vxc,
+                             'vsigma': self.vsigma, 'vtau': self.vtau}
         return self
 
     def __repr__(self):
