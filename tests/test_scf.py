@@ -84,8 +84,8 @@ def test_disp(disp):
 def test_symmetric():
     """Test the symmetry option for H2 dissociation."""
     atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), ecut=1, unrestricted=True)
-    scf_symm = SCF(atoms, guess='symm-pseudo')
-    scf_unsymm = SCF(atoms, guess='unsymm-pseudo')
+    scf_symm = SCF(atoms, guess='symm-rand')
+    scf_unsymm = SCF(atoms, guess='unsymm-rand')
     assert scf_symm.run() > scf_unsymm.run()
 
 

@@ -30,7 +30,7 @@ def test_polarized(system):
     xc = 'pbe'
     guess = 'random'
     etol = 1e-6
-    opt = {'sd': 4, 'auto': 26}
+    opt = {'auto': 26}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)

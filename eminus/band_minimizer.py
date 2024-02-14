@@ -112,7 +112,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
 
 
 @name('steepest descent minimization')
-def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
        **kwargs):
     """Steepest descent minimization algorithm for a fixed Hamiltonian.
 
@@ -147,7 +147,7 @@ def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('preconditioned line minimization')
-def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
          precondition=True, **kwargs):
     """Preconditioned line minimization algorithm for a fixed Hamiltonian.
 
@@ -194,13 +194,13 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                     d[ik][spin] = -g
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+                beta = abs(betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin]))
                 W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
     return costs, W
 
 
 @name('line minimization')
-def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
        **kwargs):
     """Line minimization algorithm for a fixed Hamiltonian.
 
@@ -223,7 +223,7 @@ def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
          cgform=1, precondition=True):
     """Preconditioned conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
@@ -271,7 +271,7 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 d[ik][spin] = -g
             W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+            beta = abs(betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin]))
             g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
             W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
@@ -295,14 +295,14 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                     d[ik][spin] = -g + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin])
+                beta = abs(betat * dotprod(g, d[ik][spin]) / dotprod(g - gt, d[ik][spin]))
                 g_old[ik][spin], d_old[ik][spin] = g, d[ik][spin]
                 W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
     return costs, W
 
 
 @name('conjugate-gradient minimization')
-def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
        cgform=1):
     """Conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
@@ -325,7 +325,7 @@ def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('auto minimization')
-def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=1,
+def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
          cgform=1):
     """Automatic precond. conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
@@ -364,8 +364,8 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
             d[ik][spin] = -atoms.K(g[ik][spin], ik)
             W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt,
-                                                                       d[ik][spin])
+            beta = abs(betat * dotprod(g[ik][spin], d[ik][spin]) /
+                       dotprod(g[ik][spin] - gt, d[ik][spin]))
             g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
             W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
@@ -388,8 +388,8 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt,
-                                                                           d[ik][spin])
+                beta = abs(betat * dotprod(g[ik][spin], d[ik][spin]) /
+                           dotprod(g[ik][spin] - gt, d[ik][spin]))
                 g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
                 W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 

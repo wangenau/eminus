@@ -17,8 +17,7 @@ s = 9
 xc = 'LDA,VWN'
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 2, 'pccg': 10}
-betat = 3e-3
+opt = {'auto': 15}
 
 
 @pytest.mark.parametrize('smearing', E_ref.keys())
@@ -26,7 +25,7 @@ def test_unpolarized(smearing):
     """Compare total energies for a test system with a reference value (spin-paired)."""
     cell = Cell('Li', 'bcc', ecut=ecut, a=a, smearing=smearing)
     cell.s = s
-    E = RSCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run(betat=betat)
+    E = RSCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[smearing], atol=etol)
 
 

@@ -20,20 +20,19 @@ a = 10.2631
 ecut = 5
 s = 15
 kmesh = 2
-guess = 'random'
+guess = 'sym-random'
 etol = 1e-6
 path = 'LGX'
 
 
 def test_polarized():
     """Compare band energies for a test system with reference values (spin-polarized)."""
-    opt = {'sd': 11, 'pccg': 29}
-    betat = 3e-3
+    opt = {'auto': 27}
 
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
     cell.s = s
     scf = USCF(cell, guess=guess, etol=etol, opt=opt)
-    scf.run(betat=betat)
+    scf.run()
 
     scf.kpts.path = path
     scf.kpts.Nk = len(path)
@@ -46,18 +45,17 @@ def test_polarized():
     assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
     assert_allclose(epsilon[:, 1], epsilon_ref, atol=1e-5)
     bandgap = get_bandgap(scf)
-    assert_allclose(bandgap, bandgap_ref, atol=1e-5)
+    assert_allclose(bandgap, bandgap_ref, atol=etol)
 
 
 def test_unpolarized():
     """Compare band energies for a test system with reference values (spin-paired)."""
-    opt = {'sd': 3, 'pccg': 30}
-    betat = 1e-3
+    opt = {'auto': 26}
 
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
     cell.s = s
     scf = RSCF(cell, guess=guess, etol=etol, opt=opt)
-    scf.run(betat=betat)
+    scf.run()
 
     scf.kpts.path = path
     scf.kpts.Nk = len(path)
@@ -69,7 +67,7 @@ def test_unpolarized():
     # Eigenenergies are a bit more sensitive than total energies
     assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
     bandgap = get_bandgap(scf)
-    assert_allclose(bandgap, bandgap_ref, atol=1e-5)
+    assert_allclose(bandgap, bandgap_ref, atol=etol)
 
 
 if __name__ == '__main__':

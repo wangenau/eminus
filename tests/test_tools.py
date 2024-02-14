@@ -32,17 +32,16 @@ from eminus.tools import (
     orbital_center,
 )
 
-opt = {'sd': 26, 'pccg': 35}
 atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
-scf = SCF(atoms, opt=opt)
+scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))[0]
 
 atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
 atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
-scf_unpol = SCF(atoms_unpol, opt=opt)
+scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
-scf_pol = SCF(atoms_pol, opt=opt)
+scf_pol = SCF(atoms_pol, guess='sym-rand')
 scf_pol.run()
 
 scf_band = copy.deepcopy(scf_unpol)
@@ -71,8 +70,8 @@ def test_center_of_mass(coords, masses, ref):
 @pytest.mark.parametrize('unrestricted', [True, False])
 def test_pycom(unrestricted):
     """Test PyCOM routine."""
-    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=1, unrestricted=unrestricted, center=True)
-    scf = SCF(atoms, opt=opt)
+    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=2, unrestricted=unrestricted, center=True)
+    scf = SCF(atoms)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
     for spin in range(atoms.occ.Nspin):
@@ -98,7 +97,7 @@ def test_get_dipole():
 def test_get_ip():
     """Very simple test to check the ionization potential calculation."""
     assert get_ip(scf) > 0
-    assert_allclose(get_ip(scf), 0.4873204)
+    assert_allclose(get_ip(scf), 0.4873203)
 
 
 @pytest.mark.parametrize(('ref', 'func'), [(True, psi),
@@ -180,7 +179,7 @@ def test_get_reduced_gradient(unrestricted):
 
 def test_spin_squared_and_multiplicity():
     """Test the calculation of <S^2> and the multiplicity."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=2)
+    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=1)
     rscf = RSCF(atoms)
     assert get_spin_squared(rscf) == 0
     assert get_multiplicity(rscf) == 1
@@ -215,7 +214,8 @@ def test_get_bandgap():
     assert Eg == 0
     scf_band.converge_empty_bands(Nempty=1)
     Eg = get_bandgap(scf_band)
-    assert_allclose(Eg, 0.38051525)
+    print(Eg)
+    assert_allclose(Eg, 0.3805155)
 
 
 if __name__ == '__main__':

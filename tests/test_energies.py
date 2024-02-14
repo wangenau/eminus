@@ -14,14 +14,14 @@ from eminus.minimizer import scf_step
 # The reference contributions are similar for the polarized and unpolarized case,
 # but not necessary the same (for bad numerics)
 E_ref = {
-    'Ekin': 12.034539521,
-    'Ecoul': 17.843659217,
-    'Exc': -4.242215291,
-    'Eloc': -58.537341024,
-    'Enonloc': 8.152487157,
+    'Ekin': 12.034547463,
+    'Ecoul': 17.843671711,
+    'Exc': -4.242216786,
+    'Eloc': -58.537381335,
+    'Enonloc': 8.152508709,
     'Eewald': -4.539675967,
-    'Esic': -0.397817332,
-    'Etot': -29.686363700
+    'Esic': -0.397094829,
+    'Etot': -29.685641033
 }
 
 # Run the spin-unpolarized calculation at first
@@ -60,7 +60,7 @@ def test_mgga_sic_unpol():
     scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_tmp.opt = {'auto': 1}
     scf_tmp.run()
-    assert_allclose(scf_tmp.energies.Esic, -0.5374, atol=1e-4)
+    assert_allclose(scf_tmp.energies.Esic, -0.6092, atol=1e-4)
 
 
 def test_mgga_sic_pol():
@@ -70,7 +70,7 @@ def test_mgga_sic_pol():
     scf_tmp.xc = ':mgga_x_scan,:mgga_c_scan'
     scf_tmp.opt = {'auto': 1}
     scf_tmp.run()
-    assert_allclose(scf_tmp.energies.Esic, -0.5187, atol=1e-4)
+    assert_allclose(scf_tmp.energies.Esic, -0.5515, atol=1e-4)
 
 
 def test_get_Eband_unpol():

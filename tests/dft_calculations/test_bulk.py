@@ -19,8 +19,7 @@ s = 15
 kmesh = 2
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 5, 'pccg': 27}
-betat = 3e-3
+opt = {'auto': 25}
 
 
 @pytest.mark.slow()
@@ -30,7 +29,7 @@ def test_polarized(xc):
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh)
     cell.s = s
-    E = USCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run(betat=betat)
+    E = USCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[xc], rtol=etol)  # Use rtol over atol so SCAN can pass the test
 
 
@@ -40,7 +39,7 @@ def test_unpolarized(xc):
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh)
     cell.s = s
-    E = RSCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run(betat=betat)
+    E = RSCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[xc], rtol=etol)  # Use rtol over atol so SCAN can pass the test
 
 

@@ -53,12 +53,12 @@ def test_energies():
     cell = Cell('Si', 'diamond', ecut=5, a=10.2631, kmesh=(3, 2, 1)).build()
     orig_k = cell.kpts.k
     scf = SCF(cell)
-    orig_etot = scf.run(betat=1e-3)
+    orig_etot = scf.run()
 
     symmetrize(cell, space_group=False, time_reversal=True)
     symm_k = cell.kpts.k
     scf = SCF(cell)
-    symm_etot = scf.run(betat=1e-3)
+    symm_etot = scf.run()
 
     assert len(orig_k) > len(symm_k)
     assert_allclose(orig_etot, symm_etot, atol=1e-7)

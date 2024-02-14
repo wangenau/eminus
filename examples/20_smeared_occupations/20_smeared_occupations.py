@@ -13,7 +13,7 @@ scf = RSCF(cell, etol=1e-5, verbose=0)
 scf.smear_update = 1
 
 # # Do the DFT calculation
-scf.run(betat=1e-3)
+scf.run()
 
 # # The resulting total energy includes an entropic term when smearing is enabled
 print(scf.energies)

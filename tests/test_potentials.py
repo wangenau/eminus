@@ -39,7 +39,7 @@ def test_coulomb():
     E = RSCF(atoms, pot=pot, guess='random', etol=1e-6).run()
     # In the limit we should come close to the NIST Etot value of -0.445671 Eh
     # See https://nist.gov/pml/atomic-reference-data-electronic-structure-calculations/atomic-reference-data-electronic-7-0
-    assert_allclose(E, -0.43937085)
+    assert_allclose(E, -0.4393708)
 
 
 def test_ge():

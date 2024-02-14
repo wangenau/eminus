@@ -10,9 +10,7 @@ cell = Cell('C', 'diamond', 30, ang2bohr(3.57), kmesh=(2, 1, 1))
 
 # # Do a DFT calculation for the cell
 scf = SCF(cell)
-
-# # It might be advisable to increase the SCF step width `betat` for many k-points
-scf.run(betat=1e-4)
+scf.run()
 
 # # The `SCF` and `Atoms` objects have a k-point object
 print(f'\nKPoints object\n{scf.kpts}\n')

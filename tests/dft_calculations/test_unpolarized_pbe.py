@@ -29,7 +29,7 @@ def test_unpolarized(system):
     xc = 'pbe'
     guess = 'random'
     etol = 1e-6
-    opt = {'auto': 24}
+    opt = {'auto': 25}
 
     atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)

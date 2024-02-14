@@ -14,8 +14,7 @@ ecut = 5
 s = 15
 guess = 'random'
 etol = 1e-6
-opt = {'sd': 3, 'pccg': 28}
-betat = 1e-3
+opt = {'auto': 27}
 wk = [0.4, 0.6]
 k = [[0.1, 0.2, 0.3], [0.1, 0.1, 0.1]]
 
@@ -25,7 +24,7 @@ def test_polarized():
     cell = Cell('Si', 'diamond', ecut=ecut, a=a)
     cell.s = s
     cell.set_k(kpoint_convert(k, cell.a), wk)
-    E = USCF(cell, guess=guess, etol=etol, opt=opt).run(betat=betat)
+    E = USCF(cell, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref, atol=etol)
 
 
@@ -34,7 +33,7 @@ def test_unpolarized():
     cell = Cell('Si', 'diamond', ecut=ecut, a=a)
     cell.s = s
     cell.set_k(kpoint_convert(k, cell.a), wk)
-    E = RSCF(cell, guess=guess, etol=etol, opt=opt).run(betat=betat)
+    E = RSCF(cell, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref, atol=etol)
 
 

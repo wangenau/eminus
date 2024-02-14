@@ -9,8 +9,8 @@ from eminus.minimizer import IMPLEMENTED
 
 # The reference the polarized and unpolarized case is not the same since the band energies are not a
 # physical property, only something we want to minimize
-E_ref_unpol = -0.4386558
-E_ref_pol = -0.8773131
+E_ref_unpol = -0.438666603
+E_ref_pol = -0.877315883
 tolerance = 1e-9
 atoms_unpol = Atoms('He', (0, 0, 0), ecut=2, unrestricted=False, verbose='debug')
 atoms_pol = Atoms('He', (0, 0, 0), ecut=2, unrestricted=True, verbose='debug')
