@@ -5,11 +5,14 @@ import os
 import pathlib
 import runpy
 
-import matplotlib.pyplot as plt
 import pytest
 
-# Do not create new plots when executing tests
-plt.savefig = lambda fname: None
+try:
+    # Do not create new plots when executing tests
+    import matplotlib.pyplot as plt
+    plt.savefig = lambda fname: None
+except ModuleNotFoundError:
+    pass
 
 
 def execute_example(name):
