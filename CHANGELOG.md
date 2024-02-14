@@ -8,7 +8,8 @@ dev
    - Breaking:
       - Rewritten minimizer
       - Massive speedup for more k-points
-      - This will slightly change the convergence behaviour of some systems!
+      - Fixed some convergence issues
+      - This will change the convergence behaviour of some systems!
 
 v2.7.1 - Feb 09, 2024
 ---------------------
