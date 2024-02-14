@@ -26,7 +26,7 @@ def test_polarized(spin):
     atoms = Atoms('He', (0, 0, 0), a=a, ecut=ecut, spin=spin)
     atoms.s = s
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
-    assert_allclose(E, E_ref[spin], rtol=etol)
+    assert_allclose(E, E_ref[spin], rtol=etol)  # Use rtol for a looser comparison with JDFTx
 
 
 if __name__ == '__main__':

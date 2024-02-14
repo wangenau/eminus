@@ -10,7 +10,7 @@ import pytest
 try:
     # Do not create new plots when executing tests
     import matplotlib.pyplot as plt
-    plt.savefig = lambda fname: None
+    plt.savefig = lambda *args, **kwargs: None
 except ModuleNotFoundError:
     pass
 

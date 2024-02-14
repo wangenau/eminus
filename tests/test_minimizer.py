@@ -19,7 +19,7 @@ scf_pol = SCF(atoms_pol, etol=tolerance)
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_unpol(minimizer):
     """Check the spin-unpolarized minimizer functions."""
-    scf_unpol.opt = {minimizer: 100}
+    scf_unpol.opt = {minimizer: 110}
     if minimizer in {'cg', 'pccg', 'auto'}:
         for i in range(1, 5):
             E = scf_unpol.run(cgform=i)
@@ -33,9 +33,9 @@ def test_minimizer_unpol(minimizer):
 @pytest.mark.parametrize('minimizer', IMPLEMENTED.keys())
 def test_minimizer_pol(minimizer):
     """Check the spin-polarized minimizer functions."""
-    scf_pol.opt = {minimizer: 100}
+    scf_pol.opt = {minimizer: 110}
     if minimizer in {'cg', 'pccg', 'auto'}:
-        for i in range(1, 4):
+        for i in range(1, 5):
             E = scf_pol.run(cgform=i)
             assert_allclose(E, E_ref, atol=tolerance)
     else:

@@ -13,7 +13,7 @@ from eminus.units import ebohr2d, ha2kcalmol
 # # A different cg-form can be used if the system is hard to converge
 atoms = Atoms('Ne', [0, 0, 0], ecut=10, center=True)
 scf = SCF(atoms, xc='chachiyo')
-scf.run(cgform=4)
+scf.run(cgform=3)
 
 # # Calculate the dipole moment
 # # Make sure that the cell is big enough, and that the density does not extend over the borders
