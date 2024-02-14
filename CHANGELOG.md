@@ -1,6 +1,15 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Drop Python 3.7 support
+   - Breaking:
+      - Rewritten minimizer
+      - Massive speedup for more k-points
+      - This will slightly change the convergence behaviour of some systems!
+
 v2.7.1 - Feb 09, 2024
 ---------------------
 - New features

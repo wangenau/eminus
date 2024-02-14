@@ -74,7 +74,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -90,11 +89,11 @@ setup(
     keywords=['Python', 'DFT', 'DFT++'],
     include_package_data=True,
     install_requires=[
-        'numpy>=1.17',
+        'numpy>=1.17.3',
         'scipy>=1.6'
     ],
     extras_require=extras,
-    python_requires='>=3.7',
+    python_requires='>=3.8',
     project_urls={
         'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',
         'Changelog': 'https://wangenau.gitlab.io/eminus/changelog.html',
