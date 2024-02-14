@@ -5,7 +5,11 @@ import os
 import pathlib
 import runpy
 
+import matplotlib.pyplot as plt
 import pytest
+
+# Do not create new plots when executing tests
+plt.savefig = lambda fname: None
 
 
 def execute_example(name):
