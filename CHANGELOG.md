@@ -9,6 +9,7 @@ dev
       - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
+      - Fix gradient convergence check
       - This will change the convergence behaviour of some systems!
 
 v2.7.1 - Feb 09, 2024

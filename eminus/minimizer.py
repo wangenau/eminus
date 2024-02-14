@@ -61,7 +61,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
                 scf.is_converged = True
                 return True
         # If a gradient tolerance has been set we also check norm_g for convergence
-        elif abs(Elist[-2] - Elist[-1]) < scf.etol and (norm_g < scf.gradtol).all():
+        elif abs(Elist[-2] - Elist[-1]) < scf.etol and (np.sum(norm_g, axis=0) < scf.gradtol).all():
             scf.is_converged = True
             return True
         # Check if the current energy is higher than the last two values
@@ -103,10 +103,6 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         else:
             scf.log.info(header)
 
-    def weighted_property(values):
-        """Sum properties weighted with their respective k-point weight."""
-        return np.sum(scf.kpts.wk[:, None] * values, axis=0)
-
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
     with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
@@ -115,12 +111,12 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         if iteration > 1:
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
-                info += str(weighted_property(norm_g)).ljust(10 * scf.atoms.occ.Nspin + 3)
+                info += str(np.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf.log.level <= logging.DEBUG:
                 if method != 'sd' and linmin is not None:
-                    info += str(weighted_property(linmin)).ljust(10 * scf.atoms.occ.Nspin + 3)
+                    info += str(np.sum(linmin, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
                 if method not in {'sd', 'lm', 'pclm'} and cg is not None:
-                    info += str(weighted_property(cg)).ljust(10 * scf.atoms.occ.Nspin + 3)
+                    info += str(np.sum(cg, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf.log.level <= logging.DEBUG:
         scf.log.debug(info)
     else:
