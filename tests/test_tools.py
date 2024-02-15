@@ -96,8 +96,10 @@ def test_get_dipole():
 
 def test_get_ip():
     """Very simple test to check the ionization potential calculation."""
-    assert get_ip(scf) > 0
-    assert_allclose(get_ip(scf), 0.4873203)
+    assert get_ip(scf_unpol) > 0
+    assert_allclose(get_ip(scf_unpol), 0.39626074)
+    assert get_ip(scf_pol) > 0
+    assert_allclose(get_ip(scf_pol), 0.39626631)
 
 
 @pytest.mark.parametrize(('ref', 'func'), [(True, psi),

@@ -52,7 +52,6 @@ def center_of_mass(coords, masses=None):
     """
     if masses is None:
         masses = np.ones(len(coords))
-
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
 
 
@@ -135,7 +134,7 @@ def get_dipole(scf, n=None):
         n = scf.n
 
     # Diple moment: mu = \sum Z pos - \int n(r) r dr
-    mu = np.array([0, 0, 0], dtype=float)
+    mu = np.zeros(3)
     for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.pos[i]
 
@@ -157,8 +156,8 @@ def get_ip(scf):
     """
     scf.atoms.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
-    # Add-up spin states
-    epsilon = np.sum(epsilon, axis=0)
+    # Account for spin-polarized calculations
+    epsilon = np.sort(np.ravel(epsilon))
     return -epsilon[-1]
 
 
@@ -496,7 +495,7 @@ def electronic_entropy(E, mu, kbT):
     Returns:
         float: Electronic entropic energy.
     """
-    # Taken from: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
+    # Condition taken from: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
     if abs((E - mu) / kbT) > 36:
         return 0
     f = fermi_distribution(E, mu, kbT)
