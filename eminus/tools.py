@@ -7,7 +7,7 @@ from scipy.optimize import minimize_scalar, root_scalar
 from .dft import get_epsilon, get_epsilon_unocc
 from .gga import get_grad_field, get_tau
 from .logger import log
-from .utils import handle_k_gracefully
+from .utils import handle_k_gracefully, skip_k
 
 
 def cutoff2gridspacing(E):
@@ -161,6 +161,7 @@ def get_ip(scf):
     return -epsilon[-1]
 
 
+@skip_k
 def check_ortho(obj, func, eps=1e-9):
     """Check the orthogonality condition for a set of functions.
 
@@ -196,6 +197,7 @@ def check_ortho(obj, func, eps=1e-9):
     return ortho_bool
 
 
+@skip_k
 def check_norm(obj, func, eps=1e-9):
     """Check the normalization condition for a set of functions.
 
@@ -225,19 +227,23 @@ def check_norm(obj, func, eps=1e-9):
     return norm_bool
 
 
-def check_orthonorm(obj, func):
+@skip_k
+def check_orthonorm(obj, func, eps=1e-9):
     """Check the orthonormality conditions for a set of functions.
 
     Args:
         obj: Atoms or SCF object.
         func (ndarray): A discretized set of functions.
 
+    Keyword Args:
+        eps (float): Tolerance for the condition.
+
     Returns:
         bool: Orthonormality status for the set of functions.
     """
     atoms = obj._atoms
-    ortho_bool = check_ortho(atoms, func)
-    norm_bool = check_norm(atoms, func)
+    ortho_bool = check_ortho(atoms, func, eps)
+    norm_bool = check_norm(atoms, func, eps)
     log.info(f'Orthonormal: {ortho_bool * norm_bool}')
     return ortho_bool * norm_bool
 
