@@ -195,7 +195,7 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     prefactor = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / Omega)
     Vprj = prefactor * np.exp(-0.5 * Gr2)
 
-    if l == 0:  # s-channel
+    if l == 0:    # s-channel
         if iprj == 1:
             return Vprj
         if iprj == 2:

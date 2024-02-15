@@ -73,14 +73,14 @@ def Ylm_real(l, m, G):  # noqa: C901
     phi[phi_idx] = np.pi / 2 * np.sign(G[phi_idx, 1])
 
     if l == 1:
-        if m == -1:   # py
+        if m == -1:  # py
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.sin(phi)
-        if m == 0:  # pz
+        if m == 0:   # pz
             return 0.5 * np.sqrt(3 / np.pi) * cos_theta
-        if m == 1:  # px
+        if m == 1:   # px
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.cos(phi)
     elif l == 2:
-        if m == -2:    # dxy
+        if m == -2:  # dxy
             return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.sin(2 * phi)
         if m == -1:  # dyz
             return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.sin(phi)
@@ -133,29 +133,6 @@ def handle_spin_gracefully(func, *args, **kwargs):
     def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
             return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
-        return func(obj, W, *args, **kwargs)
-    return decorator
-
-
-def skip_k(func, *args, **kwargs):
-    """Handle calculations that do not support k-points.
-
-    Args:
-        func (Callable): Function that acts on k-point.
-        args: Pass-through arguments.
-        kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Callable: Decorator.
-    """
-    @functools.wraps(func)
-    def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
-            obj._atoms.kpts._assert_gamma_only()
-            ret = func(obj, W[0], *args, **kwargs)
-            if isinstance(ret, np.ndarray) and ret.ndim == 3:
-                return [ret]
-            return ret
         return func(obj, W, *args, **kwargs)
     return decorator
 
@@ -222,6 +199,29 @@ def handle_k_reducable(func, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             # The Python sum allows summing single values and NumPy arrays elementwise
             return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
+        return func(obj, W, *args, **kwargs)
+    return decorator
+
+
+def skip_k(func, *args, **kwargs):
+    """Handle calculations that do not support k-points.
+
+    Args:
+        func (Callable): Function that acts on k-point.
+        args: Pass-through arguments.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Callable: Decorator.
+    """
+    @functools.wraps(func)
+    def decorator(obj, W, *args, **kwargs):
+        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
+            obj._atoms.kpts._assert_gamma_only()
+            ret = func(obj, W[0], *args, **kwargs)
+            if isinstance(ret, np.ndarray) and ret.ndim == 3:
+                return [ret]
+            return ret
         return func(obj, W, *args, **kwargs)
     return decorator
 
@@ -294,10 +294,10 @@ def add_maybe_none(a, b):
 def molecule2list(molecule):
     """Expand a chemical formula to a list of chemical symbols.
 
+    No charges or parentheses are allowed, only chemical symbols followed by their amount.
+
     Args:
         molecule (str): Simplified chemical formula (case sensitive).
-
-        No charges or parentheses are allowed, only chemical symbols followed by their amount.
 
     Returns:
         list: Atoms of the molecule expanded to a list.
@@ -349,9 +349,10 @@ def vector_angle(a, b):
     Returns:
         float: Angle between a and b in Degree.
     """
+    # Normalize vectors first
     a_norm = a / norm(a)
     b_norm = b / norm(b)
-    angle = np.arccos(np.dot(a_norm, b_norm))
+    angle = np.arccos(a_norm @ b_norm)
     return rad2deg(angle)
 
 

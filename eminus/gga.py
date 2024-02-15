@@ -47,7 +47,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
         ndarray: Gradient correction in reciprocal space.
     """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
-    h = np.zeros_like(dn_spin)
+    h = np.empty_like(dn_spin)
     if not atoms.unrestricted:
         # In the unpolarized case we have no spin mixing and only one spin density
         h[0] = 2 * vsigma[0, :, None] * dn_spin[0]

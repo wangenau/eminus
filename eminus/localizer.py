@@ -257,9 +257,9 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     Returns:
         ndarray: Supercell Wannier gradient.
     """
-    x = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
-    y = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
-    z = np.zeros((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    x = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    y = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    z = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
     # Just the indexed gradient from the paper, without fancy optimization
     for n in range(atoms.occ.Nstate):
         for m in range(atoms.occ.Nstate):

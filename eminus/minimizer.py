@@ -26,6 +26,7 @@ def scf_step(scf, step):
         float: Total energy.
     """
     scf._precompute()
+    # Update occupations every smear_update'th cycle
     if scf.atoms.occ.smearing > 0 and step % scf.smear_update == 0:
         epsilon = get_epsilon(scf, scf.W, **scf._precomputed)
         Efermi = scf.atoms.occ.smear(epsilon)
@@ -366,7 +367,7 @@ def pccg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     W_tmp = copy.deepcopy(scf.W)
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            g[ik][spin] = grad(scf, ik, spin, scf.W)
+            g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
             if precondition:
                 d[ik][spin] = -atoms.K(g[ik][spin], ik)
             else:
@@ -484,6 +485,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             d[ik][spin] = -atoms.K(g[ik][spin], ik)
             scf.W[ik][spin] = scf.W[ik][spin] + betat * d[ik][spin]
 
+    # Calculate the optimal step width
     scf._precompute()
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
@@ -493,11 +495,13 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             scf.W[ik][spin] = W_tmp[ik][spin] + beta * d[ik][spin]
             g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
 
+    # Evaluate the cost function
     c = cost(scf, -1)
     costs.append(c)
     if condition(scf, 'pccg', costs):
         return costs
 
+    # Start the iteration
     for i in range(1, Nit):
         W_tmp = copy.deepcopy(scf.W)
         for ik in range(atoms.kpts.Nk):

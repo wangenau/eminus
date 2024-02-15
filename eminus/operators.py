@@ -260,7 +260,7 @@ def K(atoms, W, ik):
 
     This operator acts on options 3 and 5.
 
-    Reference: Comput. Phys. Commun. 128, 1.
+    Reference: Comput. Mater. Sci. 14, 4.
 
     Args:
         atoms: Atoms object.
@@ -290,6 +290,7 @@ def T(atoms, W, dr):
     Returns:
         ndarray: The operator applied on W.
     """
+    # We can not use a fancy decorator for this operator, so handle it here
     if isinstance(W, np.ndarray) and W.ndim == 3:
         return np.asarray([T(atoms, Wspin, dr) for Wspin in W])
 
@@ -306,6 +307,7 @@ def T(atoms, W, dr):
             factor = factor[:, None]
         return factor * W
 
+    # If W is a list we have to account for k-points
     Wshift = copy.deepcopy(W)
     for ik in range(atoms.kpts.Nk):
         # Do the shift by multiplying a phase factor, given by the shift theorem

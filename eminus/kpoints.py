@@ -19,7 +19,7 @@ class KPoints:
     """
     def __init__(self, lattice, a=None):
         """Initialize the KPoints object."""
-        self.lattice = lattice        #: Lattice system.
+        self.lattice = lattice       #: Lattice system.
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
