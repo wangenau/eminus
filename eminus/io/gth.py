@@ -24,7 +24,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
         dict: GTH parameters.
     """
     if psp_path in {'pade', 'pbe'}:
-        # The try-except block can be removed once eminus drops Python 3.8 support
+        # The try-except block can be removed once eminus drops Python 3.7 support
         try:
             file_path = importlib.resources.files(f'eminus.psp.{psp_path}')
         except AttributeError:

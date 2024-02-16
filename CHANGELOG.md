@@ -4,7 +4,6 @@ Changelog
 dev
 ---
 - Miscellaneous
-   - Drop Python 3.7 support
    - Breaking:
       - Rewritten minimizer
       - Massive speedup for more k-points

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package version number and version info function."""
-import importlib.metadata
+import importlib
 import platform
 import sys
 
@@ -26,8 +26,13 @@ def info():
           f'\neminus     : {__version__}')
     for pkg in dependencies + extras + dev:
         try:
-            print(f'{pkg:<11}: {importlib.metadata.version(pkg)}')
-        except importlib.metadata.PackageNotFoundError:  # noqa: PERF203
+            module = importlib.import_module(pkg)
+            try:
+                print(f'{pkg:<11}: {module.__version__}')
+            except AttributeError:
+                # pylibxc does not use the standard version identifier
+                print(f'{pkg:<11}: {module.version.__version__}')
+        except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
                 print(f'{pkg:<11}: Dependency not installed')
             elif pkg in extras:
