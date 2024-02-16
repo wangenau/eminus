@@ -105,7 +105,7 @@ platform:macos:
 
 platform:nixos:
   extends: .pytest-pedantic
-  image: nixpkgs/nix:nixos-23.05
+  image: nixpkgs/nix:nixos-23.11
   script:
     # Remove Torch since the build time takes too long
     - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/  torch-bin/  \# torch-bin/g" flake.nix
