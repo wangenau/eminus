@@ -12,7 +12,8 @@ from ..version import __version__
 def read_xyz(filename):
     """Load atom species and positions from XYZ files.
 
-    File format definition: https://openbabel.org/wiki/XYZ_%28format%29
+    File format definition:
+    https://open-babel.readthedocs.io/en/latest/FileFormats/XYZ_cartesian_coordinates_format.html
 
     Args:
         filename (str): XYZ input file path/name.
@@ -50,7 +51,8 @@ def read_xyz(filename):
 def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=False):
     """Generate XYZ files from atoms objects.
 
-    File format definition: https://openbabel.org/wiki/XYZ_%28format%29
+    File format definition:
+    https://open-babel.readthedocs.io/en/latest/FileFormats/XYZ_cartesian_coordinates_format.html
 
     Args:
         obj: Atoms or SCF object.
