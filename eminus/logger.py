@@ -96,7 +96,7 @@ def get_level(verbose):
         level = verbose
     level = level.upper()
     if level not in log_levels.values():
-        ValueError(f'{level} is no recognized logging level.')
+        raise ValueError(f'{level} is no recognized logging level.')
     return level
 
 

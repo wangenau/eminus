@@ -106,7 +106,7 @@ def Ylm_real(l, m, G):  # noqa: C901
         if m == 3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
-    ValueError(f'No definition found for Ylm({l}, {m}).')
+    raise ValueError(f'No definition found for Ylm({l}, {m}).')
     return None
 
 

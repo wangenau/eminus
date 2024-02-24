@@ -205,7 +205,7 @@ class Occupations:
         self._update_from_fillings(f)
         # Assure that no electrons have been lost
         if np.sum(self.f) != self.Nelec:
-            ValueError(f'Sum of fillings ({np.sum(self.f[0])}) differs from Nelec ({self.Nelec}).')
+            raise ValueError(f'Fillings ({np.sum(self.f[0])}) differs from Nelec ({self.Nelec}).')
         self.is_filled = True
         return self
 

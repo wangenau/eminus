@@ -160,7 +160,7 @@ class SCF:
         elif 'pseudo' in value:
             self._guess = 'pseudo'
         else:
-            ValueError(f'{value} is no valid initial guess.')
+            raise ValueError(f'{value} is no valid initial guess.')
         # Check if a symmetric or unsymmetric guess is selected
         if 'sym' in value and 'unsym' not in value:
             self._symmetric = True
@@ -178,7 +178,7 @@ class SCF:
         value = {k.lower(): v for k, v in value.items()}
         for opt in value:
             if opt not in ALL_MINIMIZER:
-                KeyError(f'No minimizer found for "{opt}".')
+                raise KeyError(f'No minimizer found for "{opt}".')
         self._opt = value
 
     @property

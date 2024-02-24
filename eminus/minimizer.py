@@ -205,7 +205,7 @@ def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
         return dotprod(g - g_old, Kg) / dotprod(g - g_old, d_old), norm_g
     if cgform == 4:  # Dai-Yuan
         return norm_g / dotprod(g - g_old, d_old), norm_g
-    ValueError(f'No cgform found for "{cgform}".')
+    raise ValueError(f'No cgform found for "{cgform}".')
     return None
 
 
