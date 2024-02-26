@@ -8,8 +8,10 @@ dev
       - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
-      - Fix gradient convergence check
-      - This will change the convergence behaviour of some systems!
+      - This will change the convergence behavior of some systems!
+   - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
+   - Small tests improvements
+   - Add an eminus Discord server
 
 v2.7.1 - Feb 09, 2024
 ---------------------

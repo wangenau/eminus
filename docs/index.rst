@@ -72,6 +72,9 @@ Home
 .. image:: https://img.shields.io/badge/license-Apache2.0-yellowgreen
    :target: https://wangenau.gitlab.io/eminus/license.html
 
+.. image:: https://img.shields.io/badge/chat-Discord-7289da
+   :target: https://discord.gg/k2XwdMtVec
+
 .. image:: https://zenodo.org/badge/431079841.svg
    :target: https://zenodo.org/badge/latestdoi/431079841
 

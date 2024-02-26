@@ -14,6 +14,13 @@ Further information
 - This book outlines an implementation in Julia using a different formulation called `PWDFT.jl <https://github.com/f-fathurrahman/PWDFT.jl>`_.
 - More open-source codes related to DFT, SIC, and more can be found on the `ESP <https://esp42.gitlab.io>`_ and `OpenSIC <https://opensic.gitlab.io/opensic>`_ pages.
 
+Contact
+=======
+
+- If you encounter issues, please use the `GitLab issue tracker <https://gitlab.com/wangenau/eminus/-/issues>`_ file in bug reports.
+- Additionally, there is a `Discord server <https://discord.gg/k2XwdMtVec>`_ where you can easily ask your questions.
+- If there are still open questions about anything, feel free to `contact me <mailto:wangenau@protonmail.com>`_.
+
 Development
 ===========
 

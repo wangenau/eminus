@@ -5,6 +5,7 @@
 [![coverage](https://gitlab.com/wangenau/eminus/badges/main/coverage.svg)](https://wangenau.gitlab.io/eminus/htmlcov)
 [![python](https://img.shields.io/pypi/pyversions/eminus?color=green)](https://wangenau.gitlab.io/eminus/installation.html)
 [![license](https://img.shields.io/badge/license-Apache2.0-yellowgreen)](https://wangenau.gitlab.io/eminus/license.html)
+[![discord](https://img.shields.io/badge/chat-Discord-7289da)](https://discord.gg/k2XwdMtVec)
 [![doi](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
 
 eminus is a pythonic plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
