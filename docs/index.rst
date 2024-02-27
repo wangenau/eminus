@@ -60,23 +60,20 @@ Home
       :link-type: url
       :columns: 6
 
-.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b
+.. image:: https://img.shields.io/pypi/v/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Version
    :target: https://pypi.org/project/eminus
 
-.. image:: https://gitlab.com/wangenau/eminus/badges/main/coverage.svg
-   :target: https://wangenau.gitlab.io/eminus/htmlcov
-
-.. image:: https://img.shields.io/pypi/pyversions/eminus?color=green
+.. image:: https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python
    :target: https://wangenau.gitlab.io/eminus/installation.html
 
-.. image:: https://img.shields.io/badge/license-Apache2.0-yellowgreen
+.. image:: https://img.shields.io/badge/license-Apache2.0-1a962b?logo=python&logoColor=a0dba2&label=License
    :target: https://wangenau.gitlab.io/eminus/license.html
 
-.. image:: https://img.shields.io/badge/chat-Discord-7289da
-   :target: https://discord.gg/k2XwdMtVec
+.. image:: https://img.shields.io/gitlab/pipeline-coverage/wangenau%2Feminus?branch=main&color=1a962b&logo=gitlab&logoColor=a0dba2&label=Coverage
+   :target: https://wangenau.gitlab.io/eminus/htmlcov
 
-.. image:: https://zenodo.org/badge/431079841.svg
-   :target: https://zenodo.org/badge/latestdoi/431079841
+.. image:: https://img.shields.io/badge/Chat-Discord-1a962b?logo=discord&logoColor=a0dba2
+   :target: https://discord.gg/k2XwdMtVec
 
 eminus is a pythonic plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
 The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.

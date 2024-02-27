@@ -1,12 +1,11 @@
 ![eminus logo](https://gitlab.com/wangenau/eminus/-/raw/main/docs/_static/logo/eminus_logo.png)
 
 # eminus
-[![pypi](https://img.shields.io/pypi/v/eminus?color=1a962b)](https://pypi.org/project/eminus)
-[![coverage](https://gitlab.com/wangenau/eminus/badges/main/coverage.svg)](https://wangenau.gitlab.io/eminus/htmlcov)
-[![python](https://img.shields.io/pypi/pyversions/eminus?color=green)](https://wangenau.gitlab.io/eminus/installation.html)
-[![license](https://img.shields.io/badge/license-Apache2.0-yellowgreen)](https://wangenau.gitlab.io/eminus/license.html)
-[![discord](https://img.shields.io/badge/chat-Discord-7289da)](https://discord.gg/k2XwdMtVec)
-[![doi](https://zenodo.org/badge/431079841.svg)](https://zenodo.org/badge/latestdoi/431079841)
+[![Version](https://img.shields.io/pypi/v/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Version)](https://pypi.org/project/eminus)
+[![Python](https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python)](https://wangenau.gitlab.io/eminus/installation.html)
+[![License](https://img.shields.io/badge/license-Apache2.0-1a962b?logo=python&logoColor=a0dba2&label=License)](https://wangenau.gitlab.io/eminus/license.html)
+[![Coverage](https://img.shields.io/gitlab/pipeline-coverage/wangenau%2Feminus?branch=main&color=1a962b&logo=gitlab&logoColor=a0dba2&label=Coverage)](https://wangenau.gitlab.io/eminus/htmlcov)
+[![Chat](https://img.shields.io/badge/Chat-Discord-1a962b?logo=discord&logoColor=a0dba2)](https://discord.gg/k2XwdMtVec)
 
 eminus is a pythonic plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
 The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
