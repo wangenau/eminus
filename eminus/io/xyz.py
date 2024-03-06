@@ -87,7 +87,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     else:
         mode = 'w'
 
-    with open(filename, mode) as fp:
+    with open(filename, mode, encoding='utf-8') as fp:
         # The first line contains the number of atoms
         # If we add FOD coordinates, add them to the count
         if fods is None:

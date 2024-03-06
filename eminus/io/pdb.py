@@ -50,7 +50,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
     else:
         mode = 'w'
 
-    with open(filename, mode) as fp:
+    with open(filename, mode, encoding='utf-8') as fp:
         fp.write(create_pdb_str(atom, pos, a=atoms.a))
 
 
