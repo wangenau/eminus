@@ -66,9 +66,9 @@ def test_gamma_centered():
     assert np.any(kpts.k[0] != 0)
 
 
-@pytest.mark.parametrize(('path', 'Nk', 'ref'), [('G', 1, 0),
-                                                 ('gX', 2, [[0, 0, 0], [0, 2 * np.pi, 0]])])
-def test_path(path, Nk, ref):
+@pytest.mark.parametrize(('path', 'ref'), [('G', 0),
+                                           ('gX', [[0, 0, 0], [0, 2 * np.pi, 0]])])
+def test_path(path, ref):
     """Test the setting of path."""
     kpts = KPoints('fcc')
     kpts.path = path
