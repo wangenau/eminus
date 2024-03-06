@@ -22,7 +22,6 @@ def read(*args, **kwargs):
     if args[0].endswith(('.cub', '.cube')):
         return read_cube(*args, **kwargs)
     raise NotImplementedError('File ending not recognized.')
-    return None
 
 
 def write(*args, **kwargs):
@@ -38,4 +37,3 @@ def write(*args, **kwargs):
     if args[1].endswith('.pdb'):
         return write_pdb(*args, **kwargs)
     raise NotImplementedError('File ending not recognized.')
-    return None

@@ -219,4 +219,3 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
         return 1 / np.sqrt(105) * Gm**3 * Vprj
 
     raise ValueError(f'No projector found for l={l}.')
-    return None
