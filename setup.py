@@ -11,12 +11,12 @@ import re
 
 from setuptools import find_packages, setup
 
-version: str = \
-    re.search(r"__version__ = '(.*?)'",
-              pathlib.Path('eminus/version.py').read_text()).group(1)  # type: ignore[union-attr]
+version: str = re.search(
+    r"__version__ = '(.*?)'", pathlib.Path('eminus/version.py').read_text(encoding='utf-8')
+).group(1)  # type: ignore[union-attr]
 long_description: str = \
-    pathlib.Path('README.md').read_text() + '\n\n' + \
-    pathlib.Path('CHANGELOG.md').read_text().split('\n----\n')[0]
+    pathlib.Path('README.md').read_text(encoding='utf-8') + '\n\n' + \
+    pathlib.Path('CHANGELOG.md').read_text(encoding='utf-8').split('\n----\n')[0]
 
 extras: dict[str, list[str]] = {
     'dispersion': [
