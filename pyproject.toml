@@ -48,9 +48,6 @@ ignore = [
     # E741, E743: Ambiguous variable and function names
     # eminus uses, e.g., l (quantum number) as variables or O (overlap operator) as functions
     "E741", "E743",
-    # S101: Use of `assert` detected
-    # This should not introduce a security issue for us
-    "S101",
     # SIM108: Use ternary operator instead of `if`-`else`-block
     # if-else blocks should be written down explicitly
     "SIM108",
@@ -68,6 +65,10 @@ ignore = [
     "D100", "D103",
     # E501: Line too long
     "E501"
+]
+"tests/*" = [
+    # S101: Use of `assert` detected
+    "S101"
 ]
 
 [tool.ruff.lint.isort]

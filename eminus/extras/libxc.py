@@ -35,7 +35,8 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
         tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
     """
     try:
-        assert config.use_pylibxc
+        if not config.use_pylibxc:
+            raise AssertionError
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
         return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau)

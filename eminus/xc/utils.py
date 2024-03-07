@@ -195,7 +195,8 @@ def parse_xc_libxc(xc_id):
     Returns:
         str: Functional type.
     """
-    assert config.use_pylibxc
+    if not config.use_pylibxc:
+        raise AssertionError
     import pylibxc
     if not xc_id.isdigit():
         xc_id = pylibxc.util.xc_functional_get_number(xc_id)
