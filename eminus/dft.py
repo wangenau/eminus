@@ -27,6 +27,48 @@ def solve_poisson(atoms, n):
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
+@handle_k_gracefully
+@handle_spin_gracefully
+def orth(atoms, W):
+    """Orthogonalize coefficient matrix W.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        atoms: Atoms object.
+        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: Orthogonalized wave functions.
+    """
+    # Y = W (Wdag O(W))^-0.5
+    return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
+
+
+def orth_unocc(atoms, Y, Z):
+    """Orthogonalize unoccupied matrix Z while maintaining orthogonality to Y.
+
+    Reference: Comput. Phys. Commun. 128, 1.
+
+    Args:
+        atoms: Atoms object.
+        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+
+    Returns:
+        ndarray: Orthogonalized wave functions.
+    """
+    D = [np.empty_like(Zk) for Zk in Z]
+    for ik in range(atoms.kpts.Nk):
+        for spin in range(atoms.occ.Nspin):
+            # rhoZ = (I - Y Ydag O) Z
+            Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
+            rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
+            # D = rhoZ (rhoZdag O(rhoZ))^-0.5
+            D[ik][spin] = rhoZ @ inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+    return D
+
+
 def get_n_total(atoms, Y, n_spin=None):
     """Calculate the total electronic density.
 
@@ -95,48 +137,6 @@ def get_n_single(atoms, Y, ik):
     for spin in range(atoms.occ.Nspin):
         n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin])
     return n
-
-
-@handle_k_gracefully
-@handle_spin_gracefully
-def orth(atoms, W):
-    """Orthogonalize coefficient matrix W.
-
-    Reference: Comput. Phys. Commun. 128, 1.
-
-    Args:
-        atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Orthogonalized wave functions.
-    """
-    # Y = W (Wdag O(W))^-0.5
-    return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
-
-
-def orth_unocc(atoms, Y, Z):
-    """Orthogonalize unoccupied matrix Z while maintaining orthogonality to Y.
-
-    Reference: Comput. Phys. Commun. 128, 1.
-
-    Args:
-        atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-
-    Returns:
-        ndarray: Orthogonalized wave functions.
-    """
-    D = [np.empty_like(Zk) for Zk in Z]
-    for ik in range(atoms.kpts.Nk):
-        for spin in range(atoms.occ.Nspin):
-            # rhoZ = (I - Y Ydag O) Z
-            Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
-            rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
-            # D = rhoZ (rhoZdag O(rhoZ))^-0.5
-            D[ik][spin] = rhoZ @ inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
-    return D
 
 
 def get_grad(scf, ik, spin, W, **kwargs):
