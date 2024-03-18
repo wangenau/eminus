@@ -10,6 +10,8 @@ dev
       - Fixed some convergence issues
       - This will change the convergence behavior of some systems!
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
+   - Add an option to plot both spin channels in band structure plots
+   - Add pass-through keyword arguments in the Cell creation
    - Small tests improvements
    - Add an eminus Discord server
 

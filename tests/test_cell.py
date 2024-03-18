@@ -77,6 +77,14 @@ def test_kmesh():
     assert cell.kpts.build().Nk == 6
 
 
+def test_kwargs():
+    """Test the kwargs pass-through setting."""
+    cell = Cell('Si', 'diamond', 30, 0, unrestricted=True, spin=1, charge=1)
+    assert cell.unrestricted
+    assert cell.spin == 1
+    assert cell.charge == 1
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

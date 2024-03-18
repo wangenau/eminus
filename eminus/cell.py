@@ -55,7 +55,8 @@ STRUCTURES = {
 }
 
 
-def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None):
+def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None,
+         **kwargs):
     """Wrapper to create Atoms classes for crystal systems.
 
     Args:
@@ -70,6 +71,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, ve
         kmesh (int | list | tuple | ndarray): k-point mesh.
         smearing (float): Smearing width in Hartree.
         verbose (int | str | None): Level of output.
+        **kwargs: Keyword arguments to pass to the Atoms object.
 
     Returns:
         Atoms object.
@@ -100,7 +102,7 @@ def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, ve
         atom = [atom] * len(basis)
 
     # Build the atoms object
-    atoms = Atoms(atom, basis, ecut=ecut, a=lattice_vectors, verbose=verbose)
+    atoms = Atoms(atom, basis, ecut=ecut, a=lattice_vectors, verbose=verbose, **kwargs)
     # Handle k-points and states
     atoms.kpts.kmesh = kmesh
     if isinstance(lattice, str):
