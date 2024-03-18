@@ -498,7 +498,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         scf: SCF object.
 
     Keyword Args:
-        spin (int): Spin index.
+        spin (int | list | tuple): Spin indices.
         size (tuple): Widget size.
     """
     try:
@@ -513,21 +513,31 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
     Efermi = ha2ev(get_Efermi(scf))
 
-    fig = go.Figure()
-    # Plot occupied bands
-    for i in range(scf.atoms.occ.Nstate):
-        fig.add_trace(go.Scatter(x=k_axis, y=e_occ[:, spin, i] - Efermi,
-                      mode='lines+markers',
-                      name=f'Band {i + 1}'))
+    # If both spin channels are plotted used blue and red colors, use automatic colors otherwise
+    spin = np.atleast_1d(spin)
+    if len(spin) > 1:
+        colors = ('blue', 'red')
+    else:
+        colors = (None, None)
 
-    # Calculate and plot unoccupied bands if available
-    if hasattr(scf, 'Z'):
-        e_unocc = ha2ev(get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed))
-        for i in range(scf.atoms.occ.Nempty):
-            fig.add_trace(go.Scatter(x=k_axis, y=e_unocc[:, spin, i] - Efermi,
+    fig = go.Figure()
+    for s in spin:
+        # Plot occupied bands
+        for i in range(scf.atoms.occ.Nstate):
+            fig.add_trace(go.Scatter(x=k_axis, y=e_occ[:, s, i] - Efermi,
                           mode='lines+markers',
-                          line={'dash': 'dash'},
-                          name=f'Unocc. band {i + 1}'))
+                          name=f'Band {i + 1}',
+                          marker_color=colors[s]))
+
+        # Calculate and plot unoccupied bands if available
+        if hasattr(scf, 'Z'):
+            e_unocc = ha2ev(get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed))
+            for i in range(scf.atoms.occ.Nempty):
+                fig.add_trace(go.Scatter(x=k_axis, y=e_unocc[:, s, i] - Efermi,
+                              mode='lines+markers',
+                              line={'dash': 'dash'},
+                              name=f'Unocc. band {i + 1}',
+                              marker_color=colors[s]))
 
     fig.update_layout(
         width=size[0],
