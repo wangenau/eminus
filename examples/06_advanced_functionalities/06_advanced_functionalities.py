@@ -59,3 +59,7 @@ print(f'\nThreads: {eminus.config.threads}\n')
 # # You can also set them and check the configuration afterwards
 eminus.config.threads = 2
 eminus.config.info()
+
+# # eminus uses the NumPy and SciPy packages
+# # These packages will listen to the OMP_NUM_THREADS and/or MKL_NUM_THREADS flags
+# # Setting these flags will control how many threads eminus uses.
