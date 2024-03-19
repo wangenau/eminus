@@ -275,8 +275,8 @@ def add_maybe_none(a, b):
     """Add a and b together, when one or both can potentially be None.
 
     Args:
-        a (ndarray): Array.
-        b (ndarray): Array.
+        a (ndarray | None): Array or None.
+        b (ndarray | None): Array or None.
 
     Returns:
         ndarray: Sum of a and b.
