@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """Vosko-Wilk-Nusair LDA correlation.
 
 Reference: Phys. Rev. B 22, 3812.

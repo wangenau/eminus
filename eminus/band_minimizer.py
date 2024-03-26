@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """Minimization algorithms for fixed Hamiltonians.
 
 Similar to :mod:`eminus.minimizer` but for a fixed Hamiltonian the implementation can be simplified

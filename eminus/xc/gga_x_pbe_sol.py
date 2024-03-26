@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """Perdew-Burke-Ernzerhof GGA exchange for solids and surfaces.
 
 Reference: Phys. Rev. Lett. 100, 136406.

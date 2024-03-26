@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """Dispersion correction interface."""
 
 # Import the DFT-D3 C extension beforehand, if one doesn't do this the dispersion energies are wrong

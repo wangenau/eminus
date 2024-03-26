@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+SPDX-License-Identifier: Apache-2.0
+-->
 # pade
 
 Files for the Goedecker, Teter, Hutter (GTH) pseudopotential calculation. Phys. Rev. B 54, 1703.

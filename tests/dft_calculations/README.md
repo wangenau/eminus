@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+SPDX-License-Identifier: Apache-2.0
+-->
 # dft_calculations
 
 Test total energies for a small set of systems for spin-paired and spin-polarized DFT calculations for different functionals.

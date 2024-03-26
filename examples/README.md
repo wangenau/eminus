@@ -1,3 +1,7 @@
+<!--
+SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+SPDX-License-Identifier: Apache-2.0
+-->
 # examples
 
 Examples that act as a tutorial for the most important functionalities of the code.

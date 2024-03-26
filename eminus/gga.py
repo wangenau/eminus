@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """DFT functions that are only needed for (meta-)GGA calculations.
 
 Most functions here have been optimized for performance and can be harder to understand than normal.

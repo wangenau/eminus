@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """eminus - A pythonic plane wave density functional theory (DFT) code.
 
 Minimal usage example to do a DFT calculation for helium::

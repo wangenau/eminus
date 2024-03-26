@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 """Collection of constants and unit conversion functions.
 
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
