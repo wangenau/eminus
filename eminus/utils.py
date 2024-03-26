@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Linear algebra calculation utilities."""
+
 import functools
 import re
 
@@ -75,20 +76,20 @@ def Ylm_real(l, m, G):  # noqa: C901
     if l == 1:
         if m == -1:  # py
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.sin(phi)
-        if m == 0:   # pz
+        if m == 0:  # pz
             return 0.5 * np.sqrt(3 / np.pi) * cos_theta
-        if m == 1:   # px
+        if m == 1:  # px
             return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.cos(phi)
     elif l == 2:
         if m == -2:  # dxy
             return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.sin(2 * phi)
         if m == -1:  # dyz
             return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.sin(phi)
-        if m == 0:   # dz2
+        if m == 0:  # dz2
             return 0.25 * np.sqrt(5 / np.pi) * (3 * cos_theta**2 - 1)
-        if m == 1:   # dxz
+        if m == 1:  # dxz
             return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.cos(phi)
-        if m == 2:   # dx2-y2
+        if m == 2:  # dx2-y2
             return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.cos(2 * phi)
     elif l == 3:
         if m == -3:
@@ -128,11 +129,13 @@ def handle_spin_gracefully(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
             return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
         return func(obj, W, *args, **kwargs)
+
     return decorator
 
 
@@ -149,11 +152,13 @@ def handle_k_gracefully(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             return [func(obj, Wk, *args, **kwargs) for Wk in W]
         return func(obj, W, *args, **kwargs)
+
     return decorator
 
 
@@ -171,11 +176,13 @@ def handle_k_indexable(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
         return func(obj, W, *args, **kwargs)
+
     return decorator
 
 
@@ -193,12 +200,14 @@ def handle_k_reducable(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             # The Python sum allows summing single values and NumPy arrays elementwise
             return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
         return func(obj, W, *args, **kwargs)
+
     return decorator
 
 
@@ -213,6 +222,7 @@ def skip_k(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
@@ -222,6 +232,7 @@ def skip_k(func, *args, **kwargs):
                 return [ret]
             return ret
         return func(obj, W, *args, **kwargs)
+
     return decorator
 
 
@@ -236,12 +247,14 @@ def handle_torch(func, *args, **kwargs):
     Returns:
         Callable: Decorator.
     """
+
     @functools.wraps(func)
     def decorator(*args, **kwargs):
         if config.use_torch:
             func_torch = getattr(eminus.extras.torch, func.__name__)
             return func_torch(*args, **kwargs)
         return func(*args, **kwargs)
+
     return decorator
 
 
@@ -365,27 +378,35 @@ def get_lattice(lattice_vectors):
         ndarray: Lattice vertices.
     """
     # Vertices of a cube
-    vertices = np.array([[0, 0, 0],
-                         [0, 0, 1],
-                         [0, 1, 0],
-                         [0, 1, 1],
-                         [1, 0, 0],
-                         [1, 0, 1],
-                         [1, 1, 0],
-                         [1, 1, 1]])
+    vertices = np.array(
+        [
+            [0, 0, 0],
+            [0, 0, 1],
+            [0, 1, 0],
+            [0, 1, 1],
+            [1, 0, 0],
+            [1, 0, 1],
+            [1, 1, 0],
+            [1, 1, 1],
+        ]
+    )
     # Connected vertices of a cube with the above ordering
-    edges = np.array([[0, 1],
-                      [0, 2],
-                      [0, 4],
-                      [1, 3],
-                      [1, 5],
-                      [2, 3],
-                      [2, 6],
-                      [3, 7],
-                      [4, 5],
-                      [4, 6],
-                      [5, 7],
-                      [6, 7]])
+    edges = np.array(
+        [
+            [0, 1],
+            [0, 2],
+            [0, 4],
+            [1, 3],
+            [1, 5],
+            [2, 3],
+            [2, 6],
+            [3, 7],
+            [4, 5],
+            [4, 6],
+            [5, 7],
+            [6, 7],
+        ]
+    )
     # Scale vertices with the lattice vectors
     # Select pairs of vertices to plot them later
     # The resulting return value is similar to the get_brillouin_zone function

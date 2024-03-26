@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test functionality of example scripts."""
+
 import inspect
 import os
 import pathlib
@@ -10,6 +11,7 @@ import pytest
 try:
     # Do not create new plots when executing tests
     import matplotlib.pyplot as plt
+
     plt.savefig = lambda *args, **kwargs: None
 except ModuleNotFoundError:
     pass
@@ -63,8 +65,9 @@ def test_06():  # noqa: D103
 def test_07():  # noqa: D103
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('07_fod_extra')
-    clean_example(['CH4_FLO_1.cube', 'CH4_FLO_2.cube', 'CH4_FLO_3.cube', 'CH4_FLO_4.cube',
-                   'CH4_fods.xyz'])
+    clean_example(
+        ['CH4_FLO_1.cube', 'CH4_FLO_2.cube', 'CH4_FLO_3.cube', 'CH4_FLO_4.cube', 'CH4_fods.xyz']
+    )
 
 
 @pytest.mark.slow()

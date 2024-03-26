@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test tools functions."""
+
 import copy
 
 import numpy as np
@@ -58,9 +59,10 @@ def test_cutoff_and_gridspacing():
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize(('coords', 'masses', 'ref'), [
-    (np.eye(3), None, [1 / 3] * 3),
-    (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])])
+@pytest.mark.parametrize(
+    ('coords', 'masses', 'ref'),
+    [(np.eye(3), None, [1 / 3] * 3), (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])],
+)
 def test_center_of_mass(coords, masses, ref):
     """Test the center of mass calculation."""
     out = center_of_mass(coords, masses)
@@ -78,9 +80,9 @@ def test_pycom(unrestricted):
         assert_allclose(orbital_center(atoms, psi)[0][spin], [[10] * 3] * 2, atol=1e-1)
 
 
-@pytest.mark.parametrize('coords', [np.array([[1, 0, 0]]),
-                                    np.array([[0, 1, 0]]),
-                                    np.array([[0, 0, 1]])])
+@pytest.mark.parametrize(
+    'coords', [np.array([[1, 0, 0]]), np.array([[0, 1, 0]]), np.array([[0, 0, 1]])]
+)
 def test_inertia_tensor(coords):
     """Test the inertia tensor calculation."""
     out = inertia_tensor(coords)
@@ -102,22 +104,19 @@ def test_get_ip():
     assert_allclose(get_ip(scf_pol), 0.39626631)
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
-                                           (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
 def test_check_ortho(ref, func):
     """Test orthogonality check."""
     assert check_ortho(atoms, func) == ref
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
-                                           (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
 def test_check_norm(ref, func):
     """Test normalization check."""
     assert check_norm(atoms, func) == ref
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi),
-                                           (False, np.ones_like(psi))])
+@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
 def test_check_orthonorm(ref, func):
     """Test orthonormalization check."""
     assert check_orthonorm(atoms, func) == ref
@@ -223,5 +222,6 @@ def test_get_bandgap():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

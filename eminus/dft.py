@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Main DFT functions based on the DFT++ formulation."""
+
 import numpy as np
 from numpy.linalg import multi_dot
 from numpy.random import Generator, SFC64
@@ -93,8 +94,12 @@ def get_n_total(atoms, Y, n_spin=None):
     Yrs = atoms.I(Y)
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            n += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
-                        np.real(Yrs[ik][spin].conj() * Yrs[ik][spin]), axis=1)
+            n += np.sum(
+                atoms.occ.f[ik, spin]
+                * atoms.kpts.wk[ik]
+                * np.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
+                axis=1,
+            )
     return n
 
 
@@ -115,8 +120,10 @@ def get_n_spin(atoms, Y, ik):
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] *
-                         np.real(Yrs[spin].conj() * Yrs[spin]), axis=1)
+        n[spin] = np.sum(
+            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]),
+            axis=1,
+        )
     return n
 
 
@@ -169,8 +176,9 @@ def get_grad(scf, ik, spin, W, **kwargs):
     Ht = multi_dot([U12, WHW, U12])
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
     tmp = multi_dot([OW, invU, WHW])
-    return atoms.kpts.wk[ik] * (multi_dot([HW - tmp, U12, F, U12]) +
-                                multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)]))
+    return atoms.kpts.wk[ik] * (
+        multi_dot([HW - tmp, U12, F, U12]) + multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)])
+    )
 
 
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
@@ -216,8 +224,9 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     Vtau_psi = calc_Vtau(scf, ik, spin, W, vtau)
     # H = Vkin + Idag(diag(Veff))I + Vnonloc (+ Vtau)
     # Diag(a) * B can be written as a * B if a is a column vector
-    return Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik][spin], ik), ik) + Vnonloc_psi + \
-        Vtau_psi
+    return (
+        Vkin_psi + atoms.Idag(Veff[:, None] * atoms.I(W[ik][spin], ik), ik) + Vnonloc_psi + Vtau_psi
+    )
 
 
 def H_precompute(scf, W):
@@ -370,12 +379,14 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     W = []
     for ik in range(atoms.kpts.Nk):
         if symmetric:
-            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + \
-                1j * rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
+            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + 1j * rng.standard_normal(
+                (len(atoms.Gk2c[ik]), Nstate)
+            )
             W.append(np.array([W_ik] * atoms.occ.Nspin))
         else:
-            W_ik = rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)) + \
-                1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
+            W_ik = rng.standard_normal(
+                (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
+            ) + 1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
             W.append(W_ik)
     return orth(atoms, W)
 
@@ -404,7 +415,6 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
             W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), Nstate), seed=seed)
             W.append(np.array([W_ik[0]] * atoms.occ.Nspin))
         else:
-            W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate),
-                                  seed=seed)
+            W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate), seed=seed)
             W.append(W_ik)
     return orth(atoms, W)

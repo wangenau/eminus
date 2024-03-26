@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test the Cell generation."""
+
 import numpy as np
 from numpy.testing import assert_equal
 
@@ -90,5 +91,6 @@ if __name__ == '__main__':
     import pathlib
 
     import pytest
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

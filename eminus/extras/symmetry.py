@@ -20,8 +20,10 @@ def symmetrize(atoms, space_group=False, time_reversal=True):
         from pyscf.pbc.gto import Cell
         from pyscf.pbc.lib.kpts import KPoints
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[symmetry]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[symmetry]".\n\n'
+        )
         raise
     if not atoms.kpts.is_built:
         atoms.kpts.build()

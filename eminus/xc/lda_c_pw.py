@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. B 45, 13244.
 """
+
 import numpy as np
 
 
@@ -28,7 +29,7 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
     Returns:
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
     """
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs12 = np.sqrt(rs)
     rs32 = rs * rs12
     rs2 = rs**2
@@ -69,20 +70,21 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **
 
     ec0, vc0, _ = lda_c_pw(n, A[0], a1[0], b1[0], b2[0], b3[0], b4[0])  # Unpolarized
     ec1, vc1, _ = lda_c_pw(n, A[1], a1[1], b1[1], b2[1], b3[1], b4[1])  # Polarized
-    ac, dac, _ = lda_c_pw(n, A[2], a1[2], b1[2], b2[2], b3[2], b4[2])   # Spin stiffness
+    ac, dac, _ = lda_c_pw(n, A[2], a1[2], b1[2], b2[2], b3[2], b4[2])  # Spin stiffness
     ac = -ac  # The PW spin interpolation is parametrized with -ac instead of ac
 
-    fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(4 / 3) - 2)
+    fzeta = ((1 + zeta) ** (4 / 3) + (1 - zeta) ** (4 / 3) - 2) / (2 ** (4 / 3) - 2)
     zeta3 = zeta**3
     zeta4 = zeta3 * zeta
 
     ec = ec0 + ac * fzeta * (1 - zeta4) / fzeta0 + (ec1 - ec0) * fzeta * zeta4
 
     dac = -dac  # Also change the sign for the derivative
-    dfzeta = ((1 + zeta)**(1 / 3) - (1 - zeta)**(1 / 3)) * 4 / (3 * (2**(4 / 3) - 2))
+    dfzeta = ((1 + zeta) ** (1 / 3) - (1 - zeta) ** (1 / 3)) * 4 / (3 * (2 ** (4 / 3) - 2))
     factor1 = vc0 + dac * fzeta * (1 - zeta4) / fzeta0 + (vc1 - vc0) * fzeta * zeta4
-    factor2 = (ac / fzeta0 * (dfzeta * (1 - zeta4) - 4 * fzeta * zeta3) +
-               (ec1 - ec0) * (dfzeta * zeta4 + 4 * fzeta * zeta3))
+    factor2 = ac / fzeta0 * (dfzeta * (1 - zeta4) - 4 * fzeta * zeta3) + (ec1 - ec0) * (
+        dfzeta * zeta4 + 4 * fzeta * zeta3
+    )
 
     vc0p = factor1 + factor2 * (1 - zeta)
     vcdw = factor1 - factor2 * (1 + zeta)

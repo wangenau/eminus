@@ -3,6 +3,7 @@
 
 Reference: Comput. Theor. Chem. 1172, 112669.
 """
+
 from .lda_c_chachiyo import lda_c_chachiyo, lda_c_chachiyo_spin
 
 
@@ -37,10 +38,10 @@ def chachiyo_scaling_mod(zeta):
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     """
-    gzeta = ((1 + zeta)**(2 / 3) + (1 - zeta)**(2 / 3)) / 2
+    gzeta = ((1 + zeta) ** (2 / 3) + (1 - zeta) ** (2 / 3)) / 2
     fzeta = 2 * (1 - gzeta**3)
 
-    dfdzeta = -2 * gzeta**2 * (1 / (1 + zeta)**(1 / 3) - 1 / (1 - zeta)**(1 / 3))
+    dfdzeta = -2 * gzeta**2 * (1 / (1 + zeta) ** (1 / 3) - 1 / (1 - zeta) ** (1 / 3))
     return fzeta, dfdzeta
 
 

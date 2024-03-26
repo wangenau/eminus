@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test the k-points functionalities."""
+
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
@@ -22,18 +23,16 @@ def test_lattice():
     assert kpts.lattice == 'fcc'
 
 
-@pytest.mark.parametrize(('a', 'ref'), [(None, np.eye(3)),
-                                        (2, 2 * np.eye(3)),
-                                        (np.ones((3, 3)), np.ones((3, 3)))])
+@pytest.mark.parametrize(
+    ('a', 'ref'), [(None, np.eye(3)), (2, 2 * np.eye(3)), (np.ones((3, 3)), np.ones((3, 3)))]
+)
 def test_a(a, ref):
     """Test the setting of a."""
     kpts = KPoints('sc', a).build()
     assert_equal(kpts.a, ref)
 
 
-@pytest.mark.parametrize(('kmesh', 'ref'), [(None, None),
-                                            (2, [2] * 3),
-                                            ([1, 2, 3], [1, 2, 3])])
+@pytest.mark.parametrize(('kmesh', 'ref'), [(None, None), (2, [2] * 3), ([1, 2, 3], [1, 2, 3])])
 def test_kmesh(kmesh, ref):
     """Test the setting of kmesh."""
     kpts = KPoints('fcc')
@@ -66,8 +65,7 @@ def test_gamma_centered():
     assert np.any(kpts.k[0] != 0)
 
 
-@pytest.mark.parametrize(('path', 'ref'), [('G', 0),
-                                           ('gX', [[0, 0, 0], [0, 2 * np.pi, 0]])])
+@pytest.mark.parametrize(('path', 'ref'), [('G', 0), ('gX', [[0, 0, 0], [0, 2 * np.pi, 0]])])
 def test_path(path, ref):
     """Test the setting of path."""
     kpts = KPoints('fcc')
@@ -104,9 +102,11 @@ def test_gamma_centered_generation():
 
 def test_bandpath_lgx():
     """Test a simple band path in the FCC lattice."""
-    s_points = [SPECIAL_POINTS['fcc']['L'],
-                SPECIAL_POINTS['fcc']['G'],
-                SPECIAL_POINTS['fcc']['X']]
+    s_points = [
+        SPECIAL_POINTS['fcc']['L'],
+        SPECIAL_POINTS['fcc']['G'],
+        SPECIAL_POINTS['fcc']['X'],
+    ]
 
     kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
     kpts.path = 'LGX'
@@ -128,10 +128,12 @@ def test_bandpath_lgx():
 
 def test_bandpath_xukg():
     """Test a simple band path in the FCC lattice that includes a jump between special points."""
-    s_points = [SPECIAL_POINTS['fcc']['X'],
-                SPECIAL_POINTS['fcc']['U'],
-                SPECIAL_POINTS['fcc']['K'],
-                SPECIAL_POINTS['fcc']['G']]
+    s_points = [
+        SPECIAL_POINTS['fcc']['X'],
+        SPECIAL_POINTS['fcc']['U'],
+        SPECIAL_POINTS['fcc']['K'],
+        SPECIAL_POINTS['fcc']['G'],
+    ]
 
     kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
     kpts.path = 'XU,KG'
@@ -192,5 +194,6 @@ def test_get_brillouin_zone():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

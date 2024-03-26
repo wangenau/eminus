@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Utilities to use Goedecker, Teter, and Hutter pseudopotentials."""
+
 import numpy as np
 
 from .io import read_gth
@@ -12,6 +13,7 @@ class GTH:
     Keyword Args:
         scf: SCF object.
     """
+
     def __init__(self, scf=None):
         """Initialize the GTH object."""
         # Allow creating an empty instance (used when loading GTH objects from JSON files)
@@ -28,9 +30,9 @@ class GTH:
 
             # Initialize the non-local potential
             NbetaNL, prj2beta, betaNL = init_gth_nonloc(atoms, self)
-            self.NbetaNL = NbetaNL    #: Number of projector functions for the non-local potential.
+            self.NbetaNL = NbetaNL  #: Number of projector functions for the non-local potential.
             self.prj2beta = prj2beta  #: Index matrix to map to the correct projector function.
-            self.betaNL = betaNL      #: Atomic-centered projector functions.
+            self.betaNL = betaNL  #: Atomic-centered projector functions.
 
     def __getitem__(self, key):
         """Allow accessing the GTH parameters of an atom by indexing the GTH object."""
@@ -72,13 +74,18 @@ def init_gth_loc(scf):
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide='ignore', invalid='ignore'):
-            Vsp = -4 * np.pi * Zion / omega * exprlocG2 / atoms.G2 + \
-                np.sqrt((2 * np.pi)**3) * rloc**3 / omega * exprlocG2 * \
-                (c1 + c2 * (3 - rlocG2) + c3 * (15 - 10 * rlocG2 + rlocG22) +
-                 c4 * (105 - 105 * rlocG2 + 21 * rlocG22 - rlocG2**3))
+            Vsp = -4 * np.pi * Zion / omega * exprlocG2 / atoms.G2 + np.sqrt(
+                (2 * np.pi) ** 3
+            ) * rloc**3 / omega * exprlocG2 * (
+                c1
+                + c2 * (3 - rlocG2)
+                + c3 * (15 - 10 * rlocG2 + rlocG22)
+                + c4 * (105 - 105 * rlocG2 + 21 * rlocG22 - rlocG2**3)
+            )
         # Special case for G=(0,0,0), same as in QE
-        Vsp[0] = 2 * np.pi * Zion * rloc**2 + \
-            (2 * np.pi)**1.5 * rloc**3 * (c1 + 3 * c2 + 15 * c3 + 105 * c4)
+        Vsp[0] = 2 * np.pi * Zion * rloc**2 + (2 * np.pi) ** 1.5 * rloc**3 * (
+            c1 + 3 * c2 + 15 * c3 + 105 * c4
+        )
 
         # Sum up the structure factor for every species
         Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
@@ -128,8 +135,12 @@ def init_gth_nonloc(atoms, gth):
             for l in range(psp['lmax']):
                 for m in range(-l, l + 1):
                     for iprj in range(psp['Nproj_l'][l]):
-                        betaNL_ik[:, ibeta] = (-1j)**l * Ylm_real(l, m, gk) * \
-                            eval_proj_G(psp, l, iprj + 1, Gkm, atoms.Omega) * Sf
+                        betaNL_ik[:, ibeta] = (
+                            (-1j) ** l
+                            * Ylm_real(l, m, gk)
+                            * eval_proj_G(psp, l, iprj + 1, Gkm, atoms.Omega)
+                            * Sf
+                        )
                         ibeta += 1
         betaNL.append(betaNL_ik)
     return NbetaNL, prj2beta, betaNL
@@ -190,12 +201,12 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
         ndarray: GTH projector.
     """
     rrl = psp['rp'][l]
-    Gr2 = (Gm * rrl)**2
+    Gr2 = (Gm * rrl) ** 2
 
-    prefactor = 4 * np.pi**(5 / 4) * np.sqrt(2**(l + 1) * rrl**(2 * l + 3) / Omega)
+    prefactor = 4 * np.pi ** (5 / 4) * np.sqrt(2 ** (l + 1) * rrl ** (2 * l + 3) / Omega)
     Vprj = prefactor * np.exp(-0.5 * Gr2)
 
-    if l == 0:    # s-channel
+    if l == 0:  # s-channel
         if iprj == 1:
             return Vprj
         if iprj == 2:

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Workflow functions that combine functions to generate orbitals."""
+
 from .dft import get_psi
 from .io import write_cube
 from .localizer import get_FLO, get_FO, get_wannier
@@ -47,6 +48,7 @@ def FO(scf, write_cubes=False, fods=None):
     """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
+
     atoms = scf.atoms
 
     # Calculate eigenfunctions
@@ -79,6 +81,7 @@ def FLO(scf, write_cubes=False, fods=None):
     """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
+
     atoms = scf.atoms
 
     # Calculate eigenfunctions

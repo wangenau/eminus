@@ -32,7 +32,7 @@ print(f'\nOriginal parameter:\nb = {b:.7f}')
 # # All functionals in eminus share the same signature and return types
 # # Define a custom spin-paired functional using said signature based on the Chachiyo functional but with the customizable parameter parameter `b` so we can fit over it
 def custom_functional(n, b, **kwargs):
-    rs = (3 / (4 * np.pi * n))**(1 / 3)  # Wigner-Seitz radius
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)  # Wigner-Seitz radius
     ec = a * np.log(1 + b / rs + c / rs**2)  # Exchange energy
     vc = ec + a * (2 * c + b * rs) / (3 * (c + b * rs + b * rs**2))  # Exchange potential
     return ec, np.array([vc]), None

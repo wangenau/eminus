@@ -3,6 +3,7 @@
 
 Reference: Comput. Theor. Chem. 1172, 112669.
 """
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -32,7 +33,7 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     b = 20.4562557
 
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs2 = rs**2
     ecinner = 1 + b / rs + b / rs2
 
@@ -40,10 +41,10 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     # ### End lda_c_chachiyo_mod ### #
 
     norm_dn = norm(dn_spin[0], axis=1)
-    t = (np.pi / 3)**(1 / 6) / 4 * norm_dn / n**(7 / 6)
+    t = (np.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
     t2 = t**2
     gec = 1 + t2
-    expgec = gec**(h / ec)
+    expgec = gec ** (h / ec)
 
     # ### Start lda_c_chachiyo_mod ### #
     vc = ec + a * b * (2 + rs) / (3 * (b + b * rs + rs2))
@@ -78,12 +79,12 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
 
     # ### Start lda_c_chachiyo_spin_mod ### #
-    a0 = -0.01554535   # (np.log(2) - 1) / (2 * np.pi**2)
+    a0 = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
     b0 = 20.4562557
     b1 = 27.4203609
 
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs2 = rs**2
 
     fzeta, dfdzeta = weight_function(zeta)
@@ -97,10 +98,10 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     # ### End lda_c_chachiyo_spin_mod ### #
 
     norm_dn = norm(dn_spin[0] + dn_spin[1], axis=1)
-    t = (np.pi / 3)**(1 / 6) / 4 * norm_dn / n**(7 / 6)
+    t = (np.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
     t2 = t**2
     gec = 1 + t2
-    expgec = gec**(h / ec)
+    expgec = gec ** (h / ec)
 
     # ### Start lda_c_chachiyo_spin_mod ### #
     factor = -1 / rs2 - 2 / rs**3
@@ -114,9 +115,11 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     # vcdw = prefactor - decdf * (1 + zeta)
     # ### End lda_c_chachiyo_spin_mod ### #
 
-    dn2 = norm(dn_spin[0], axis=1)**2 + \
-        2 * np.sum(dn_spin[0] * dn_spin[1], axis=1) + \
-        norm(dn_spin[1], axis=1)**2
+    dn2 = (
+        norm(dn_spin[0], axis=1) ** 2
+        + 2 * np.sum(dn_spin[0] * dn_spin[1], axis=1)
+        + norm(dn_spin[1], axis=1) ** 2
+    )
     ht2divgecdn2 = (1 - 1 / gec) * h / norm_dn**2
     term1 = -7 / 3 * ht2divgecdn2 * dn2
     term2 = 1 - h * np.log(gec) / ec

@@ -25,6 +25,7 @@ spin individually. The same goes for the handling of k-points, while for k-point
 as a list of arrays. This gives the final indexing for the k-point k, spin s, and state n of
 W[ik][s, :, n].
 """
+
 import copy
 
 import numpy as np
@@ -154,8 +155,9 @@ def I(atoms, W, ik=-1):
         # holding the number of states
         Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
-                     axes=(0, 1, 2)).reshape((n, W.shape[-1]))
+        Finv = ifftn(
+            Wfft, workers=config.threads, overwrite_x=True, norm='forward', axes=(0, 1, 2)
+        ).reshape((n, W.shape[-1]))
     return Finv
 
 
@@ -193,8 +195,9 @@ def J(atoms, W, ik=-1, full=True):
         F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
     else:
         Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
-        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward',
-                 axes=(0, 1, 2)).reshape((n, W.shape[-1]))
+        F = fftn(
+            Wfft, workers=config.threads, overwrite_x=True, norm='forward', axes=(0, 1, 2)
+        ).reshape((n, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space

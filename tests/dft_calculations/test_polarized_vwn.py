@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies using VWN for a small set of spin-polarized and -unpolarized systems."""
+
 import inspect
 import pathlib
 
@@ -16,7 +17,7 @@ E_ref = {
     'Li': -0.243013,
     'LiH': -0.793497,
     'CH4': -7.699509,
-    'Ne': -29.876365
+    'Ne': -29.876365,
 }
 
 

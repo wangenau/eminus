@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Calculate different energy contributions."""
+
 import dataclasses
 
 import numpy as np
@@ -18,15 +19,16 @@ from .xc import get_exc
 @dataclasses.dataclass
 class Energy:
     """Energy class to save energy contributions in one place."""
-    Ekin: float = 0       #: Kinetic energy.
-    Ecoul: float = 0      #: Coulomb energy.
-    Exc: float = 0        #: Exchange-correlation energy.
-    Eloc: float = 0       #: Local energy.
-    Enonloc: float = 0    #: Non-local energy.
-    Eewald: float = 0     #: Ewald energy.
-    Esic: float = 0       #: Self-interaction correction energy.
-    Edisp: float = 0      #: Dispersion correction energy.
-    Eentropy: float = 0   #: Fillings entropic energy.
+
+    Ekin: float = 0  #: Kinetic energy.
+    Ecoul: float = 0  #: Coulomb energy.
+    Exc: float = 0  #: Exchange-correlation energy.
+    Eloc: float = 0  #: Local energy.
+    Enonloc: float = 0  #: Non-local energy.
+    Eewald: float = 0  #: Ewald energy.
+    Esic: float = 0  #: Self-interaction correction energy.
+    Edisp: float = 0  #: Dispersion correction energy.
+    Eentropy: float = 0  #: Fillings entropic energy.
 
     @property
     def Etot(self):
@@ -87,8 +89,11 @@ def get_Ekin(atoms, Y, ik):
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
     for spin in range(atoms.occ.Nspin):
-        Ekin += -0.5 * atoms.kpts.wk[ik] * np.trace(atoms.occ.F[ik][spin] @ Y[spin].conj().T @
-                                                    atoms.L(Y[spin], ik))
+        Ekin += (
+            -0.5
+            * atoms.kpts.wk[ik]
+            * np.trace(atoms.occ.F[ik][spin] @ Y[spin].conj().T @ atoms.L(Y[spin], ik))
+        )
     return np.real(Ekin)
 
 
@@ -210,6 +215,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     Returns:
         float: Ewald energy in Hartree.
     """
+
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
@@ -229,7 +235,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # Start by calculating the self-energy
     Eewald = -nu / np.sqrt(np.pi) * np.sum(atoms.Z**2)
     # Add the electroneutrality term
-    Eewald += -np.pi * np.sum(atoms.Z)**2 / (2 * nu**2 * atoms.Omega)
+    Eewald += -np.pi * np.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
@@ -250,7 +256,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
-    G2 = norm(G, axis=1)**2
+    G2 = norm(G, axis=1) ** 2
     prefactor = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
@@ -259,11 +265,11 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
 
             # Add the real-space contribution
-            rmag = np.sqrt(norm(dpos - T, axis=1)**2)
+            rmag = np.sqrt(norm(dpos - T, axis=1) ** 2)
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = np.sqrt(norm(dpos)**2)
+                rmag = np.sqrt(norm(dpos) ** 2)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
             # Add the reciprocal space contribution
@@ -318,8 +324,9 @@ def get_Esic(scf, Y, n_single=None):
                         Ytmp[ik][0, :, 0] = Y[ik][spin, :, i]
                     taui = np.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Ytmp)[0] / np.sum(atoms.occ.f[:, spin, i] *
-                                                               atoms.kpts.wk)
+                    taui[0] = get_tau(atoms, Ytmp)[0] / np.sum(
+                        atoms.occ.f[:, spin, i] * atoms.kpts.wk
+                    )
                 else:
                     taui = None
 
@@ -363,8 +370,9 @@ def get_Eband(scf, Y, **kwargs):
     Eband = 0
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            Eband += atoms.kpts.wk[ik] * np.trace(Y[ik][spin].conj().T @ H(scf, ik, spin, Y,
-                                                                           **kwargs))
+            Eband += atoms.kpts.wk[ik] * np.trace(
+                Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
+            )
     return np.real(Eband)
 
 
@@ -388,8 +396,11 @@ def get_Eentropy(scf, epsilon, Efermi):
         for spin in range(occ.Nspin):
             for i in range(occ.Nstate):
                 # Beware the sign change, it is handled in the electronic_entropy function
-                Eentropy += occ.wk[ik] * occ.smearing * \
-                    electronic_entropy(epsilon[ik, spin, i], Efermi, occ.smearing)
+                Eentropy += (
+                    occ.wk[ik]
+                    * occ.smearing
+                    * electronic_entropy(epsilon[ik, spin, i], Efermi, occ.smearing)
+                )
 
     Eentropy *= 2 / occ.Nspin
     scf.energies.Eentropy = Eentropy

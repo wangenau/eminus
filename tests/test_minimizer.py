@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test different minimization functions."""
+
 from numpy.testing import assert_allclose
 import pytest
 
@@ -46,5 +47,6 @@ def test_minimizer_pol(minimizer):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

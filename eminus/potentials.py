@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Collection of miscellaneous potentials."""
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -70,17 +71,30 @@ def ge(scf):
     Vps = np.empty_like(atoms.G2)
 
     with np.errstate(divide='ignore', invalid='ignore'):
-        Vps = -2 * np.pi * np.exp(-np.pi * Gm / lamda) * np.cos(rc * Gm) * (Gm / lamda) / \
-            (1 - np.exp(-2 * np.pi * Gm / lamda))
+        Vps = (
+            -2
+            * np.pi
+            * np.exp(-np.pi * Gm / lamda)
+            * np.cos(rc * Gm)
+            * (Gm / lamda)
+            / (1 - np.exp(-2 * np.pi * Gm / lamda))
+        )
         for n in range(5):
-            Vps = Vps + (-1)**n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm)**2)
+            Vps = Vps + (-1) ** n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm) ** 2)
         Vps = Vps * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2
 
     # Special case for G=(0,0,0)
     n = np.arange(1, 5)
-    Vps[0] = 4 * np.pi * Z * (1 + np.exp(-lamda * rc)) * \
-        (rc**2 / 2 + 1 / lamda**2 * (np.pi**2 / 6 +
-         np.sum((-1)**n * np.exp(-lamda * rc * n) / n**2)))
+    Vps[0] = (
+        4
+        * np.pi
+        * Z
+        * (1 + np.exp(-lamda * rc))
+        * (
+            rc**2 / 2
+            + 1 / lamda**2 * (np.pi**2 / 6 + np.sum((-1) ** n * np.exp(-lamda * rc * n) / n**2))
+        )
+    )
 
     Sf = np.sum(atoms.Sf, axis=0)
     return atoms.J(Vps * Sf)
@@ -108,5 +122,5 @@ IMPLEMENTED = {
     'harmonic': harmonic,
     'coulomb': coulomb,
     'ge': ge,
-    'gth': init_gth_loc
+    'gth': init_gth_loc,
 }

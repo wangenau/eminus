@@ -4,6 +4,7 @@
 For a full list of options see the documentation:
 https://www.sphinx-doc.org/en/master/usage/configuration.html
 """
+
 from __future__ import annotations
 
 import datetime
@@ -25,7 +26,7 @@ extensions: list[str] = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx_design',
-    'sphinxcontrib.bibtex'
+    'sphinxcontrib.bibtex',
 ]
 templates_path: list[str] = ['_templates']
 pygments_style: str = 'friendly'
@@ -39,20 +40,20 @@ html_theme_options: dict[str, str | dict[str, str] | list[dict[str, str]]] = {
     'light_logo': 'logo/eminus_logo.png',
     'light_css_variables': {
         'color-brand-primary': '#006700',
-        'color-brand-content': '#1a962b'
+        'color-brand-content': '#1a962b',
     },
     'dark_logo': 'logo/eminus_logo_dark.png',
     'dark_css_variables': {
         'color-brand-primary': '#70a973',
-        'color-brand-content': '#a0dba2'
+        'color-brand-content': '#a0dba2',
     },
     'footer_icons': [
         {
             'name': 'GitLab',
             'url': 'https://gitlab.com/wangenau/eminus',
-            'html': '<svg stroke="currentColor" fill="currentColor" viewBox="0 0 16 16"><g transform="matrix(.083313 0 0 .083313 -7.8292 -8.1245)"><path d="m282.83 170.73-0.27-0.69-26.14-68.22a6.81 6.81 0 0 0-2.69-3.24 7 7 0 0 0-8 0.43 7 7 0 0 0-2.32 3.52l-17.65 54h-71.47l-17.65-54a6.86 6.86 0 0 0-2.32-3.53 7 7 0 0 0-8-0.43 6.87 6.87 0 0 0-2.69 3.24l-26.19 68.19-0.26 0.69a48.54 48.54 0 0 0 16.1 56.1l0.09 0.07 0.24 0.17 39.82 29.82 19.7 14.91 12 9.06a8.07 8.07 0 0 0 9.76 0l12-9.06 19.7-14.91 40.06-30 0.1-0.08a48.56 48.56 0 0 0 16.08-56.04z"></path></g></svg>'  # noqa: E501
+            'html': '<svg stroke="currentColor" fill="currentColor" viewBox="0 0 16 16"><g transform="matrix(.083313 0 0 .083313 -7.8292 -8.1245)"><path d="m282.83 170.73-0.27-0.69-26.14-68.22a6.81 6.81 0 0 0-2.69-3.24 7 7 0 0 0-8 0.43 7 7 0 0 0-2.32 3.52l-17.65 54h-71.47l-17.65-54a6.86 6.86 0 0 0-2.32-3.53 7 7 0 0 0-8-0.43 6.87 6.87 0 0 0-2.69 3.24l-26.19 68.19-0.26 0.69a48.54 48.54 0 0 0 16.1 56.1l0.09 0.07 0.24 0.17 39.82 29.82 19.7 14.91 12 9.06a8.07 8.07 0 0 0 9.76 0l12-9.06 19.7-14.91 40.06-30 0.1-0.08a48.56 48.56 0 0 0 16.08-56.04z"></path></g></svg>',  # noqa: E501
         }
-    ]
+    ],
 }
 html_static_path: list[str] = ['_static']
 html_css_files: list[str] = ['css/custom.css']
@@ -77,6 +78,7 @@ def setup(app: Any) -> None:
     """Customize build process."""
     import pathlib
     import sys
+
     sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
     import examples_builder
 

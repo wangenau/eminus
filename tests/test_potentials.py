@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test energies for the implemented toy potentials."""
+
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF
@@ -68,5 +69,6 @@ if __name__ == '__main__':
     import pathlib
 
     import pytest
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

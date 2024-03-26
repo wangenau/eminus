@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Utilities to localize and analyze orbitals."""
+
 import numpy as np
 from scipy.linalg import eig, expm, norm
 from scipy.stats import unitary_group
@@ -150,7 +151,7 @@ def wannier_cost(atoms, psirs):
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
-    costs = moments - norm(centers, axis=1)**2
+    costs = moments - norm(centers, axis=1) ** 2
     log.debug(f'Centers:\n{centers}\nMoments:\n{moments}')
     log.info(f'Costs:\n{costs}')
     return costs
@@ -173,8 +174,9 @@ def wannier_center(atoms, psirs):
     centers = np.empty((atoms.occ.Nstate, 3))
     for i in range(atoms.occ.Nstate):
         for dim in range(3):
-            centers[i, dim] = atoms.dV * np.real(np.sum(psirs[:, i].conj() * atoms.r[:, dim] *
-                                                 psirs[:, i], axis=0))
+            centers[i, dim] = atoms.dV * np.real(
+                np.sum(psirs[:, i].conj() * atoms.r[:, dim] * psirs[:, i], axis=0)
+            )
     return centers
 
 
@@ -192,7 +194,7 @@ def second_moment(atoms, psirs):
     Returns:
         ndarray: Second moments per orbital.
     """
-    r2 = norm(atoms.r, axis=1)**2
+    r2 = norm(atoms.r, axis=1) ** 2
 
     moments = np.empty(atoms.occ.Nstate)
     for i in range(atoms.occ.Nstate):
@@ -237,9 +239,9 @@ def wannier_supercell_cost(X, Y, Z):
     Returns:
         float: Supercell Wannier cost.
     """
-    X2 = np.abs(np.diagonal(X))**2
-    Y2 = np.abs(np.diagonal(Y))**2
-    Z2 = np.abs(np.diagonal(Z))**2
+    X2 = np.abs(np.diagonal(X)) ** 2
+    Y2 = np.abs(np.diagonal(Y)) ** 2
+    Z2 = np.abs(np.diagonal(Z)) ** 2
     return np.sum(X2 + Y2 + Z2)
 
 
@@ -263,12 +265,15 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     # Just the indexed gradient from the paper, without fancy optimization
     for n in range(atoms.occ.Nstate):
         for m in range(atoms.occ.Nstate):
-            x[m, n] = X[n, m] * (X[n, n].conj() - X[m, m].conj()) \
-                - X[m, n].conj() * (X[m, m] - X[n, n])
-            y[m, n] = Y[n, m] * (Y[n, n].conj() - Y[m, m].conj()) \
-                - Y[m, n].conj() * (Y[m, m] - Y[n, n])
-            z[m, n] = Z[n, m] * (Z[n, n].conj() - Z[m, m].conj()) \
-                - Z[m, n].conj() * (Z[m, m] - Z[n, n])
+            x[m, n] = X[n, m] * (X[n, n].conj() - X[m, m].conj()) - X[m, n].conj() * (
+                X[m, m] - X[n, n]
+            )
+            y[m, n] = Y[n, m] * (Y[n, n].conj() - Y[m, m].conj()) - Y[m, n].conj() * (
+                Y[m, m] - Y[n, n]
+            )
+            z[m, n] = Z[n, m] * (Z[n, n].conj() - Z[m, m].conj()) - Z[m, n].conj() * (
+                Z[m, m] - Z[n, n]
+            )
     return x + y + z
 
 

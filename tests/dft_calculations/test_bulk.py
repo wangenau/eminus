@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies for bulk silicon for different functionals."""
+
 from numpy.testing import assert_allclose
 import pytest
 
@@ -10,7 +11,7 @@ from eminus import Cell, RSCF, USCF
 E_ref = {
     'SVWN': -7.785143,
     'PBE': -7.726629,
-    ':MGGA_X_SCAN,:MGGA_C_SCAN': -7.729585
+    ':MGGA_X_SCAN,:MGGA_C_SCAN': -7.729585,
 }
 
 a = 10.2631
@@ -46,6 +47,7 @@ def test_unpolarized(xc):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
 

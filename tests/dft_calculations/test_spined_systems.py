@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies of helium atoms with different spin states."""
+
 from numpy.testing import assert_allclose
 import pytest
 
@@ -8,7 +9,7 @@ from eminus import Atoms, USCF
 # Total energies from a spin-polarized calculation with JDFTx with (almost) same parameters as below
 E_ref = {
     1: -2.27454774,
-    2: -1.95070509
+    2: -1.95070509,
 }
 
 a = 10
@@ -32,5 +33,6 @@ def test_polarized(spin):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

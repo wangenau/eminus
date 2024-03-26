@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test the Atoms class."""
+
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
@@ -11,12 +12,17 @@ from eminus.tools import center_of_mass
 inp = ('He', (0, 0, 0))
 
 
-@pytest.mark.parametrize(('atom', 'ref', 'Nref'), [('H', ['H'], 1),
-                                                   (['H'], ['H'], 1),
-                                                   ('He-q2', ['He'], 1),
-                                                   (['H', 'He'], ['H', 'He'], 2),
-                                                   ('CH4', ['C', 'H', 'H', 'H', 'H'], 5),
-                                                   ('HeX', ['He', 'X'], 2)])
+@pytest.mark.parametrize(
+    ('atom', 'ref', 'Nref'),
+    [
+        ('H', ['H'], 1),
+        (['H'], ['H'], 1),
+        ('He-q2', ['He'], 1),
+        (['H', 'He'], ['H', 'He'], 2),
+        ('CH4', ['C', 'H', 'H', 'H', 'H'], 5),
+        ('HeX', ['He', 'X'], 2),
+    ],
+)
 def test_atom(atom, ref, Nref):
     """Test initialization of the atom variable."""
     atoms = Atoms(atom, [[0, 0, 0]] * Nref)
@@ -25,23 +31,31 @@ def test_atom(atom, ref, Nref):
     assert len(atoms.Z) == Nref
 
 
-@pytest.mark.parametrize(('pos', 'center', 'ref'), [
-    ([[0, 0, 0]], None, [(0, 0, 0)]),
-    ([[0, 0, 0]], True, [(10, 10, 10)]),
-    ([[0, 0, 0]], 'shift', [(10, 10, 10)]),
-    ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (np.sqrt(3), 0, 0)]),
-    ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
-    ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])])
+@pytest.mark.parametrize(
+    ('pos', 'center', 'ref'),
+    [
+        ([[0, 0, 0]], None, [(0, 0, 0)]),
+        ([[0, 0, 0]], True, [(10, 10, 10)]),
+        ([[0, 0, 0]], 'shift', [(10, 10, 10)]),
+        ([[0] * 3, [1] * 3], 'rotate', [(0, 0, 0), (np.sqrt(3), 0, 0)]),
+        ([[0] * 3, [1] * 3], 'shift', [[9.5] * 3, [10.5] * 3]),
+        ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]]),
+    ],
+)
 def test_pos(pos, center, ref):
     """Test the setting of the atom coordinates."""
     atoms = Atoms(['H'] * len(pos), pos=pos, center=center)
     assert_allclose(np.abs(atoms.pos), ref, atol=1e-15)
 
 
-@pytest.mark.parametrize(('a', 'ref', 'Omega'), [(5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
-                                                 ([2, 3, 4], [[2, 0, 0], [0, 3, 0], [0, 0, 4]], 24),
-                                                 ([[-1, 0, 1], [0, 1, 1], [-1, 1, 0]],
-                                                  [[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], 2)])
+@pytest.mark.parametrize(
+    ('a', 'ref', 'Omega'),
+    [
+        (5, [[5, 0, 0], [0, 5, 0], [0, 0, 5]], 125),
+        ([2, 3, 4], [[2, 0, 0], [0, 3, 0], [0, 0, 4]], 24),
+        ([[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], [[-1, 0, 1], [0, 1, 1], [-1, 1, 0]], 2),
+    ],
+)
 def test_cell(a, ref, Omega):
     """Test the setting of cell size."""
     atoms = Atoms(*inp, a=a).build()
@@ -71,13 +85,18 @@ def test_charge(charge):
     assert atoms.occ.charge == charge
 
 
-@pytest.mark.parametrize(('atom', 'spin', 'unrestricted', 'ref'), [('H', 0, None, 2),
-                                                                   ('He', 0, None, 1),
-                                                                   ('H', 0, True, 2),
-                                                                   ('He', 0, False, 1),
-                                                                   ('He', 1, None, 2),
-                                                                   ('He', 2, None, 2),
-                                                                   ('H', 0, False, 1)])
+@pytest.mark.parametrize(
+    ('atom', 'spin', 'unrestricted', 'ref'),
+    [
+        ('H', 0, None, 2),
+        ('He', 0, None, 1),
+        ('H', 0, True, 2),
+        ('He', 0, False, 1),
+        ('He', 1, None, 2),
+        ('He', 2, None, 2),
+        ('H', 0, False, 1),
+    ],
+)
 def test_unrestricted(atom, spin, unrestricted, ref):
     """Test the spinpol option."""
     atoms = Atoms(atom=atom, pos=(0, 0, 0), spin=spin, unrestricted=unrestricted)
@@ -113,11 +132,15 @@ def test_verbose():
     assert atoms.verbose == level
 
 
-@pytest.mark.parametrize(('f', 'unrestricted', 'fref', 'Nref'), [
-    (None, False, [[[2]]], 1),
-    (None, True, [[[1], [1]]], 1),
-    (2, False, [[[2]]], 1),
-    (1, True, [[[1], [1]]], 1)])
+@pytest.mark.parametrize(
+    ('f', 'unrestricted', 'fref', 'Nref'),
+    [
+        (None, False, [[[2]]], 1),
+        (None, True, [[[1], [1]]], 1),
+        (2, False, [[[2]]], 1),
+        (1, True, [[[1], [1]]], 1),
+    ],
+)
 def test_f(f, unrestricted, fref, Nref):
     """Test the occupation and state options."""
     atoms = Atoms(*inp, unrestricted=unrestricted)
@@ -129,9 +152,7 @@ def test_f(f, unrestricted, fref, Nref):
     assert atoms.occ.Nstate == Nref
 
 
-@pytest.mark.parametrize(('s', 'ref'), [(2, [2] * 3),
-                                        ([2, 3, 4], [2, 3, 4]),
-                                        (None, 99)])
+@pytest.mark.parametrize(('s', 'ref'), [(2, [2] * 3), ([2, 3, 4], [2, 3, 4]), (None, 99)])
 def test_s(s, ref):
     """Test the setting of sampling."""
     atoms = Atoms(*inp)
@@ -140,13 +161,17 @@ def test_s(s, ref):
     assert_equal(atoms.s, ref)
 
 
-@pytest.mark.parametrize(('atom', 'Z', 'ref', 'Nref'), [('H', None, [1], 1),
-                                                        ('Li', 'pade', [1], 1),
-                                                        ('Li', 'pbe', [3], 3),
-                                                        ('Li-q3', None, [3], 3),
-                                                        ('He2', 2, [2, 2], 4),
-                                                        ('CH4', {'C': 3, 'H': 2},
-                                                         [3, 2, 2, 2, 2], 11)])
+@pytest.mark.parametrize(
+    ('atom', 'Z', 'ref', 'Nref'),
+    [
+        ('H', None, [1], 1),
+        ('Li', 'pade', [1], 1),
+        ('Li', 'pbe', [3], 3),
+        ('Li-q3', None, [3], 3),
+        ('He2', 2, [2, 2], 4),
+        ('CH4', {'C': 3, 'H': 2}, [3, 2, 2, 2, 2], 11),
+    ],
+)
 def test_Z(atom, Z, ref, Nref):
     """Test setting of charges."""
     atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
@@ -241,5 +266,6 @@ def test_set_k():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

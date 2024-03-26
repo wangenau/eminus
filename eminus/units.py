@@ -4,6 +4,7 @@
 For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_units
 All values are directly calculated from the CODATA 2018 constants as found in SciPy.
 """
+
 import numpy as np
 
 #: Hartree in electronvolt.

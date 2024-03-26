@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate k-points and sample band paths."""
+
 import numbers
 
 import numpy as np
@@ -17,20 +18,21 @@ class KPoints:
         lattice (str): Lattice system.
         a (float | list | tuple | ndarray | None): Cell size.
     """
+
     def __init__(self, lattice, a=None):
         """Initialize the KPoints object."""
-        self.lattice = lattice       #: Lattice system.
+        self.lattice = lattice  #: Lattice system.
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
             a = a * np.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a                   #: Cell size.
-        self.kmesh = [1, 1, 1]       #: k-point mesh.
-        self.wk = [1]                #: k-point weights.
-        self.k = [[0, 0, 0]]         #: k-point coordinates.
-        self.kshift = [0, 0, 0]      #: k-point shift-vector.
+        self.a = a  #: Cell size.
+        self.kmesh = [1, 1, 1]  #: k-point mesh.
+        self.wk = [1]  #: k-point weights.
+        self.k = [[0, 0, 0]]  #: k-point coordinates.
+        self.kshift = [0, 0, 0]  #: k-point shift-vector.
         self._gamma_centered = True  #: Generate a Gamma-point centered grid.
-        self.is_built = True         #: Determines the KPoints object build status.
+        self.is_built = True  #: Determines the KPoints object build status.
 
     # ### Class properties ###
 
@@ -157,11 +159,13 @@ class KPoints:
 
     def __repr__(self):
         """Print the parameters stored in the KPoints object."""
-        return f'Number of k-points: {self.Nk}\n' \
-               f'k-mesh: {self.kmesh}\n' \
-               f'Band path: {self.path}\n' \
-               f'Shift: {self.kshift}\n' \
-               f'Weights: {self.wk}'
+        return (
+            f'Number of k-points: {self.Nk}\n'
+            f'k-mesh: {self.kmesh}\n'
+            f'Band path: {self.path}\n'
+            f'Shift: {self.kshift}\n'
+            f'Weights: {self.wk}'
+        )
 
 
 def kpoint_convert(k_points, lattice_vectors):
@@ -239,7 +243,7 @@ def bandpath(kpts):
     # Calculate distances between special points
     dists = []
     for i in range(len(path_list) - 1):
-        if ',' not in path_list[i:i + 2]:
+        if ',' not in path_list[i : i + 2]:
             # Use subtract since s_points are lists
             dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
             dists.append(norm(kpoint_convert(dist, kpts.a)))
@@ -259,14 +263,15 @@ def bandpath(kpts):
     k_points = [s_points[path_list[0]]]  # Insert the first special point
     for i in range(len(path_list) - 1):
         # Only do something when not jumping between special points
-        if ',' not in path_list[i:i + 2]:
+        if ',' not in path_list[i : i + 2]:
             s_start = s_points[path_list[i]]
             s_end = s_points[path_list[i + 1]]
             # Get the vector between special points
             k_dist = np.subtract(s_end, s_start)
             # Add scaled vectors to the special point to get the new k-points
-            k_points += [s_start + k_dist * (n + 1) / (samplings[i] + 1)
-                         for n in range(samplings[i])]
+            k_points += [
+                s_start + k_dist * (n + 1) / (samplings[i] + 1) for n in range(samplings[i])
+            ]
             # Append the special point we are ending at
             k_points.append(s_end)
         # If we jump, add the new special point to start from
@@ -299,11 +304,11 @@ def kpoints2axis(kpts):
         if i > 1 and path_list[i - 1] == ',':
             continue
         # Append the special point if no jump happens
-        if ',' not in path_list[i:i + 2]:
+        if ',' not in path_list[i : i + 2]:
             labels.append(path_list[i])
         # When jumping join the special points to one label
         elif path_list[i] == ',':
-            labels.append(''.join(path_list[i - 1:i + 2]))
+            labels.append(''.join(path_list[i - 1 : i + 2]))
 
     # Get the indices of the special points
     special_indices = [0]  # The first special point is trivial

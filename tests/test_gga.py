@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test GGA functions."""
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -59,5 +60,6 @@ def test_get_tau(unrestricted):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

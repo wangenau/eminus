@@ -4,6 +4,7 @@
 For a full list of options see the documentation:
 https://setuptools.pypa.io/en/latest/references/keywords.html
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -14,40 +15,42 @@ from setuptools import find_packages, setup
 version: str = re.search(
     r"__version__ = '(.*?)'", pathlib.Path('eminus/version.py').read_text(encoding='utf-8')
 ).group(1)  # type: ignore[union-attr]
-long_description: str = \
-    pathlib.Path('README.md').read_text(encoding='utf-8') + '\n\n' + \
-    pathlib.Path('CHANGELOG.md').read_text(encoding='utf-8').split('\n----\n')[0]
+long_description: str = (
+    pathlib.Path('README.md').read_text(encoding='utf-8')
+    + '\n\n'
+    + pathlib.Path('CHANGELOG.md').read_text(encoding='utf-8').split('\n----\n')[0]
+)
 
 extras: dict[str, list[str]] = {
     'dispersion': [
-        'dftd3>=0.6'       # Interface for DFT-D3 dispersion corrections
+        'dftd3>=0.6'  # Interface for DFT-D3 dispersion corrections
     ],
     'libxc': [
-        'pyscf>=2.1'       # Libxc interface via PySCF
+        'pyscf>=2.1'  # Libxc interface via PySCF
     ],
     'torch': [
-        'torch>=1.8'       # Faster FFT operators
+        'torch>=1.8'  # Faster FFT operators
     ],
     'viewer': [
         'nglview>=2.6.5',  # Molecule viewer
-        'plotly>=4.5'      # Various visualizations
-    ]
+        'plotly>=4.5',  # Various visualizations
+    ],
 }
-extras['fods'] = extras['libxc']      # PyCOM FOD guessing method uses PySCF
+extras['fods'] = extras['libxc']  # PyCOM FOD guessing method uses PySCF
 extras['symmetry'] = extras['libxc']  # k-point symmetrization uses PySCF
 extras['all'] = [dep for values in extras.values() for dep in values]
 extras['dev'] = [
-    'coverage>=4.4',           # Generate coverage reports
-    'furo>=2022.02.14.1',      # Documentation theme
-    'matplotlib>=1.5',         # Plotting library for examples
-    'mypy>=0.931',             # Static type checker
-    'notebook',                # Run and convert notebooks to HTML
-    'pytest>=5.4',             # Test utilities
-    'pytest-cov>=2.6.1',       # Collect test coverage data
-    'ruff>=0.2',               # Linter
-    'sphinx>=4',               # Documentation builder
-    'sphinx-design>=0.2',      # More directives for Sphinx
-    'sphinxcontrib-bibtex>=2'  # Use bib files for citations in Sphinx
+    'coverage>=4.4',  # Generate coverage reports
+    'furo>=2022.02.14.1',  # Documentation theme
+    'matplotlib>=1.5',  # Plotting library for examples
+    'mypy>=0.931',  # Static type checker
+    'notebook',  # Run and convert notebooks to HTML
+    'pytest>=5.4',  # Test utilities
+    'pytest-cov>=2.6.1',  # Collect test coverage data
+    'ruff>=0.2',  # Linter
+    'sphinx>=4',  # Documentation builder
+    'sphinx-design>=0.2',  # More directives for Sphinx
+    'sphinxcontrib-bibtex>=2',  # Use bib files for citations in Sphinx
 ]
 
 setup(
@@ -84,14 +87,14 @@ setup(
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Scientific/Engineering :: Physics',
-        'Topic :: Software Development'
+        'Topic :: Software Development',
     ],
     license='APACHE2.0',
     keywords=['Python', 'DFT', 'DFT++'],
     include_package_data=True,
     install_requires=[
         'numpy>=1.17',
-        'scipy>=1.6'
+        'scipy>=1.6',
     ],
     extras_require=extras,
     python_requires='>=3.7',
@@ -99,6 +102,6 @@ setup(
         'Bug Tracker': 'https://gitlab.com/wangenau/eminus/-/issues',
         'Changelog': 'https://wangenau.gitlab.io/eminus/changelog.html',
         'Documentation': 'https://wangenau.gitlab.io/eminus',
-        'Source code': 'https://gitlab.com/wangenau/eminus'
-    }
+        'Source code': 'https://gitlab.com/wangenau/eminus',
+    },
 )

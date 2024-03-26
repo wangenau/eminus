@@ -26,9 +26,9 @@ def optimize_fods(scf, fods):
     def x2fods(x):
         """Transform a 1d list back to FODs."""
         nfods = [len(fod) for fod in fods]
-        fod_up = np.reshape(x[:nfods[0] * 3], (nfods[0], 3))
+        fod_up = np.reshape(x[: nfods[0] * 3], (nfods[0], 3))
         if len(nfods) > 1:
-            fod_dn = np.reshape(x[nfods[0] * 3:], (nfods[1], 3))
+            fod_dn = np.reshape(x[nfods[0] * 3 :], (nfods[1], 3))
             return [fod_up, fod_dn]
         return [fod_up]
 
@@ -42,8 +42,7 @@ def optimize_fods(scf, fods):
     x = np.array(fods).flatten()
     # Call the optimizer
     print('\nStart FOD optimization...')
-    result = minimize(get_sic_energy, x0=x, method='nelder-mead', tol=1e-4,
-                      options={'disp': True})
+    result = minimize(get_sic_energy, x0=x, method='nelder-mead', tol=1e-4, options={'disp': True})
     # Print the SIC energies
     print(f'\nInitial SIC energy:   {get_sic_energy(x):.6f} Eh')
     print(f'Optimized SIC energy: {get_sic_energy(result.x):.6f} Eh')

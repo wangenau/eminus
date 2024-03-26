@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test operator identities."""
+
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -20,7 +21,7 @@ W_tests = {
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
     'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
     'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
-    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))]
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
 }
 dr = rng.standard_normal(3)
 
@@ -57,8 +58,19 @@ def test_IJ(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin', 'full_k', 'active_k'])
+@pytest.mark.parametrize(
+    'field',
+    [
+        'full',
+        'active',
+        'full_single',
+        'active_single',
+        'full_spin',
+        'active_spin',
+        'full_k',
+        'active_k',
+    ],
+)
 def test_JI(field):
     """Test forward and backward operator identity."""
     if 'active' in field:
@@ -105,8 +117,19 @@ def test_hermitian_J(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin', 'full_k', 'active_k'])
+@pytest.mark.parametrize(
+    'field',
+    [
+        'full',
+        'active',
+        'full_single',
+        'active_single',
+        'full_spin',
+        'active_spin',
+        'full_k',
+        'active_k',
+    ],
+)
 def test_TT(field):
     """Test translation operator identity."""
     out = atoms.T(atoms.T(W_tests[field], dr), -dr)
@@ -117,5 +140,6 @@ def test_TT(field):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

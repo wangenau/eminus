@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Determine occupations for atomic systems from simple inputs."""
+
 import dataclasses
 import numbers
 
@@ -15,16 +16,17 @@ class Occupations:
 
     The attribute Nelec has to be given first after instantiation.
     """
+
     # Set the private variable for the attributes that are properties.
-    _Nelec: int = 0          #: Number of electrons.
-    _Nspin: int = 0          #: Number of spin states.
-    _spin: int = 0           #: Number of unpaired electrons.
-    _charge: int = 0         #: System charge.
-    _Nstate: int = 0         #: Number of states.
-    _Nempty: int = 0         #: Number of empty states.
-    _Nk: int = 1             #: Number of k-points.
-    _bands: int = 0          #: Number of bands.
-    _smearing: float = 0     #: Smearing width in Hartree.
+    _Nelec: int = 0  #: Number of electrons.
+    _Nspin: int = 0  #: Number of spin states.
+    _spin: int = 0  #: Number of unpaired electrons.
+    _charge: int = 0  #: System charge.
+    _Nstate: int = 0  #: Number of states.
+    _Nempty: int = 0  #: Number of empty states.
+    _Nk: int = 1  #: Number of k-points.
+    _bands: int = 0  #: Number of bands.
+    _smearing: float = 0  #: Smearing width in Hartree.
     is_filled: bool = False  #: Determines the Occupations object fill status.
 
     # ### Class properties ###
@@ -333,16 +335,18 @@ class Occupations:
 
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""
-        return f'Spin handling: {"un" if self.Nspin == 2 else ""}restricted\n' \
-               f'Number of electrons: {self.Nelec}\n' \
-               f'Spin: {self.spin}\n' \
-               f'Charge: {self.charge}\n' \
-               f'Number of bands: {self.bands}\n' \
-               f'Number of states: {self.Nstate}\n' \
-               f'Number of empty states: {self.Nempty}\n' \
-               f'Number of k-points: {self.Nk}\n' \
-               f'Smearing width: {self.smearing} Eh\n' \
-               f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
+        return (
+            f'Spin handling: {"un" if self.Nspin == 2 else ""}restricted\n'
+            f'Number of electrons: {self.Nelec}\n'
+            f'Spin: {self.spin}\n'
+            f'Charge: {self.charge}\n'
+            f'Number of bands: {self.bands}\n'
+            f'Number of states: {self.Nstate}\n'
+            f'Number of empty states: {self.Nempty}\n'
+            f'Number of k-points: {self.Nk}\n'
+            f'Smearing width: {self.smearing} Eh\n'
+            f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
+        )
 
     def smear(self, epsilon):
         """Update fillings according to a Fermi distribution.

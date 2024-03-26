@@ -3,6 +3,7 @@
 
 Reference: J. Chem. Phys. 145, 021101.
 """
+
 import numpy as np
 
 
@@ -25,7 +26,7 @@ def lda_c_chachiyo(n, **kwargs):
     a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     b = 20.4562557
 
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs2 = rs**2
     ecinner = 1 + b / rs + b / rs2
 
@@ -46,9 +47,9 @@ def chachiyo_scaling(zeta):
     Returns:
         tuple[ndarray, ndarray]: Weighting factor and its derivative.
     """
-    fzeta = ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2 * (2**(1 / 3) - 1))
+    fzeta = ((1 + zeta) ** (4 / 3) + (1 - zeta) ** (4 / 3) - 2) / (2 * (2 ** (1 / 3) - 1))
 
-    dfdzeta = (2 * (1 - zeta)**(1 / 3) - 2 * (1 + zeta)**(1 / 3)) / (3 - 3 * 2**(1 / 3))
+    dfdzeta = (2 * (1 - zeta) ** (1 / 3) - 2 * (1 + zeta) ** (1 / 3)) / (3 - 3 * 2 ** (1 / 3))
     return fzeta, dfdzeta
 
 
@@ -70,12 +71,12 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
     """
-    a0 = -0.01554535   # (np.log(2) - 1) / (2 * np.pi**2)
+    a0 = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
     b0 = 20.4562557
     b1 = 27.4203609
 
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs2 = rs**2
 
     fzeta, dfdzeta = weight_function(zeta)

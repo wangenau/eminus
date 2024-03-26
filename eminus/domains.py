@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Functions to restrict real-space fields to domains."""
+
 import numbers
 
 import numpy as np

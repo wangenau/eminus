@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test orbital functions."""
+
 import copy
 import glob
 import os
@@ -66,5 +67,6 @@ def test_cube_writer(unrestricted):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

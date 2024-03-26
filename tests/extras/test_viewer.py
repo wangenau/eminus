@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test viewer extra."""
+
 import inspect
 import os
 import pathlib

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test configuration class."""
+
 import os
 
 import pytest
@@ -24,6 +25,7 @@ def test_torch():
     """Check the Torch initialization."""
     try:
         import torch  # noqa: F401
+
         config.use_torch = True
         assert config.use_torch
     except ImportError:
@@ -34,6 +36,7 @@ def test_libxc():
     """Check the Libxc initialization."""
     try:
         import pylibxc  # noqa: F401
+
         assert config.use_pylibxc
     except ImportError:
         assert not config.use_pylibxc
@@ -46,6 +49,7 @@ def test_threads():
     threads = 2
     if config.use_torch:
         import torch
+
         torch.set_num_threads(threads)
     else:
         os.environ['OMP_NUM_THREADS'] = str(threads)
@@ -66,5 +70,6 @@ def test_info():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

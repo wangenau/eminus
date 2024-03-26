@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test units conversion."""
+
 import pytest
 
 from eminus.units import (
@@ -35,5 +36,6 @@ def test_units(value):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

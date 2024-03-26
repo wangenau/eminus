@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test k-point symmetrization."""
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -14,6 +15,7 @@ def test_symmetrize(space_group, time_reversal):
     """Test the symmetrization of k-points."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import symmetrize
+
     cell = Cell('Si', 'diamond', 1, 10, kmesh=3).build()
     orig_k = cell.kpts.k
     orig_wk = cell.kpts.wk
@@ -37,6 +39,7 @@ def test_unbuilt():
     """Test unbuilt KPoints objects."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import symmetrize
+
     cell = Cell('Si', 'diamond', 1, 10, kmesh=3).build()
     symmetrize(cell)
     orig_k = cell.kpts.k
@@ -50,6 +53,7 @@ def test_energies():
     """Compare the energies of normal and symmetrized k-meshes."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     from eminus.extras import symmetrize
+
     cell = Cell('Si', 'diamond', ecut=5, a=10.2631, kmesh=(3, 2, 1)).build()
     orig_k = cell.kpts.k
     scf = SCF(cell)
@@ -67,5 +71,6 @@ def test_energies():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

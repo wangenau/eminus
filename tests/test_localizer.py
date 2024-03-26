@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test localization functions."""
+
 import copy
 
 import numpy as np
@@ -11,27 +12,47 @@ from eminus.dft import get_psi
 from eminus.localizer import get_FLO, get_wannier, wannier_cost
 from eminus.tools import check_orthonorm
 
-atoms_unpol = Atoms('CH4', ((0, 0, 0),
-                            (1.186, 1.186, 1.186),
-                            (1.186, -1.186, -1.186),
-                            (-1.186, 1.186, -1.186),
-                            (-1.186, -1.186, 1.186)), center=True, ecut=5, unrestricted=False)
+atoms_unpol = Atoms(
+    'CH4',
+    (
+        (0, 0, 0),
+        (1.186, 1.186, 1.186),
+        (1.186, -1.186, -1.186),
+        (-1.186, 1.186, -1.186),
+        (-1.186, -1.186, 1.186),
+    ),
+    center=True,
+    ecut=5,
+    unrestricted=False,
+)
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
 
-atoms_pol = Atoms('CH4', ((0, 0, 0),
-                          (1.186, 1.186, 1.186),
-                          (1.186, -1.186, -1.186),
-                          (-1.186, 1.186, -1.186),
-                          (-1.186, -1.186, 1.186)), center=True, ecut=5, unrestricted=True)
+atoms_pol = Atoms(
+    'CH4',
+    (
+        (0, 0, 0),
+        (1.186, 1.186, 1.186),
+        (1.186, -1.186, -1.186),
+        (-1.186, 1.186, -1.186),
+        (-1.186, -1.186, 1.186),
+    ),
+    center=True,
+    ecut=5,
+    unrestricted=True,
+)
 scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 # FODs that will be used for both spin channels
-fods = np.array([[9.16, 9.16, 10.89],
-                 [10.89, 10.89, 10.89],
-                 [10.73, 9.16, 9.16],
-                 [9.16, 10.73, 9.16]])
+fods = np.array(
+    [
+        [9.16, 9.16, 10.89],
+        [10.89, 10.89, 10.89],
+        [10.73, 9.16, 9.16],
+        [9.16, 10.73, 9.16],
+    ]
+)
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])
@@ -100,5 +121,6 @@ def test_wannier_random_guess():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

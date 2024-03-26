@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Utility functions for exchange-correlation functionals."""
+
 import numpy as np
 
 from .. import config
@@ -56,14 +57,16 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
         # Calculate with the libxc extra...
         if ':' in fxc:
             from ..extras.libxc import libxc_functional
+
             fxc = fxc.split(':')[-1]
             exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau)
         # ...or use an internal functional
         else:
             if Nspin == 2 and fxc != 'mock_xc':
                 fxc += '_spin'
-            exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz,
-                                                         Nspin=Nspin)
+            exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](
+                n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin
+            )
             # Map the non-zero values back to the right dimension
             exc = np.zeros_like(n)
             exc[nz_mask] = exc_nz
@@ -198,6 +201,7 @@ def parse_xc_libxc(xc_id):
     if not config.use_pylibxc:
         raise AssertionError
     import pylibxc
+
     if not xc_id.isdigit():
         xc_id = pylibxc.util.xc_functional_get_number(xc_id)
 
@@ -218,6 +222,7 @@ def parse_xc_pyscf(xc_id):
         str: Functional type.
     """
     from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
+
     if not xc_id.isdigit():
         xc_id = XC_CODES[xc_id.upper()]
 
@@ -268,7 +273,8 @@ def mock_xc(n, Nspin=1, **kwargs):
 
 #: Map functional names with their respective implementation.
 IMPLEMENTED = {
-    i.__name__: i for i in (
+    i.__name__: i
+    for i in (
         mock_xc,
         gga_c_chachiyo,
         gga_c_chachiyo_spin,
@@ -293,7 +299,7 @@ IMPLEMENTED = {
         lda_c_chachiyo,
         lda_c_chachiyo_spin,
         lda_c_chachiyo_mod,
-        lda_c_chachiyo_mod_spin
+        lda_c_chachiyo_mod_spin,
     )
 }
 
@@ -339,7 +345,7 @@ XC_MAP = {
     'chachiyomod': 'lda_c_chachiyo_mod',
     # gga_c_chachiyo
     '309': 'gga_c_chachiyo',
-    'chachiyoc': 'gga_c_chachiyo'
+    'chachiyoc': 'gga_c_chachiyo',
 }
 
 #: Dictionary of common functional aliases.
@@ -349,5 +355,5 @@ ALIAS = {
     'spw92': 'slater,pw92mod',
     'pbe': 'pbex,pbec',
     'pbesol': 'pbesolx,pbesolc',
-    'chachiyo': 'chachiyox,chachiyoc'
+    'chachiyo': 'chachiyox,chachiyoc',
 }

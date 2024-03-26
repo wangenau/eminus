@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Cell wrapper function."""
+
 import numpy as np
 
 from .atoms import Atoms
@@ -10,53 +11,54 @@ from .utils import molecule2list
 STRUCTURES = {
     'sc': {
         'lattice': 'sc',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'fcc': {
         'lattice': 'fcc',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'bcc': {
         'lattice': 'bcc',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'tetragonal': {
         'lattice': 'sc',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'orthorhombic': {
         'lattice': 'sc',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'hexagonal': {
         'lattice': 'hexagonal',
-        'basis': [[0, 0, 0]]
+        'basis': [[0, 0, 0]],
     },
     'diamond': {
         'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]]
+        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
     },
     'zincblende': {
         'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]]
+        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
     },
     'rocksalt': {
         'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 2, 0, 0]]
+        'basis': [[0, 0, 0], [1 / 2, 0, 0]],
     },
     'cesiumchloride': {
         'lattice': 'sc',
-        'basis': [[0, 0, 0], [1 / 2, 1 / 2, 1 / 2]]
+        'basis': [[0, 0, 0], [1 / 2, 1 / 2, 1 / 2]],
     },
     'fluorite': {
         'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4], [3 / 4, 3 / 4, 3 / 4]]
-    }
+        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4], [3 / 4, 3 / 4, 3 / 4]],
+    },
 }
 
 
-def Cell(atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None,
-         **kwargs):
+def Cell(
+    atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None, **kwargs
+):
     """Wrapper to create Atoms classes for crystal systems.
 
     Args:

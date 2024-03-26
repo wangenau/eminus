@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Package version number and version info function."""
+
 import importlib
 import platform
 import sys
@@ -8,7 +9,7 @@ __version__ = '2.7.1'
 #: eminus ASCII logo.
 LOGO = (' ___ _____ _ ___ _ _ ___ \n'
         '| -_|     | |   | | |_ -|\n'
-        '|___|_|_|_|_|_|_|___|___|\n')
+        '|___|_|_|_|_|_|_|___|___|\n')  # fmt: skip
 
 
 def info():
@@ -18,12 +19,14 @@ def info():
     dev = ('matplotlib', 'notebook', 'pylibxc', 'pytest', 'sphinx', 'furo')
 
     print(LOGO)
-    print('--- Platform infos ---'
-          f'\nPlatform   : {platform.system()} {platform.machine()}'
-          f'\nRelease    : {platform.release()} {platform.version()}'
-          '\n\n--- Version infos ---'
-          f'\npython     : {sys.version.split()[0]}'
-          f'\neminus     : {__version__}')
+    print(
+        '--- Platform infos ---'
+        f'\nPlatform   : {platform.system()} {platform.machine()}'
+        f'\nRelease    : {platform.release()} {platform.version()}'
+        '\n\n--- Version infos ---'
+        f'\npython     : {sys.version.split()[0]}'
+        f'\neminus     : {__version__}'
+    )
     for pkg in dependencies + extras + dev:
         try:
             module = importlib.import_module(pkg)

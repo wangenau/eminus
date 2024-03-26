@@ -27,7 +27,7 @@ def lda_c_chachiyo_spin(n, zeta, b0, b1):
     c0 = 20.4562557
     c1 = 27.4203609
 
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     ec0 = a0 * np.log(1 + b0 / rs + c0 / rs**2)
     ec1 = a1 * np.log(1 + b1 / rs + c1 / rs**2)
     return ec0 + (ec1 - ec0) * chachiyo_scaling(zeta)[0]

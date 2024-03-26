@@ -33,8 +33,17 @@ center = True
 verbose = 4
 
 # # Create an `Atoms` object for dinitrogen and display it
-atoms = Atoms(atom=atom, pos=pos, ecut=ecut, a=a, spin=spin, charge=charge,
-              unrestricted=unrestricted, center=center, verbose=verbose)
+atoms = Atoms(
+    atom=atom,
+    pos=pos,
+    ecut=ecut,
+    a=a,
+    spin=spin,
+    charge=charge,
+    unrestricted=unrestricted,
+    center=center,
+    verbose=verbose,
+)
 print(f'New Atoms object:\n{atoms}\n')
 
 # # Albeit discouraged, some properties can be changed after the initialization as seen below

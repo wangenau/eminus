@@ -4,6 +4,7 @@
 Calculate Madelung constants from Ewald energies for different crystal systems.
 Reference: J. Chem. Phys. 28, 164.
 """
+
 import numpy as np
 from numpy.testing import assert_allclose
 
@@ -34,5 +35,6 @@ if __name__ == '__main__':
     import pathlib
 
     import pytest
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

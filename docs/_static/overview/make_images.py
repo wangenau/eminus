@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Create images for the overview documentation page."""
+
 from eminus import Cell, SCF
 from eminus.extras import plot_bandstructure, view
 
 cell = Cell('Si', 'diamond', ecut=10, a=10.2631, bands=8)
 fig = view(cell)
-fig.update_layout(scene_camera={'eye': {'x': 2, 'y': 0, 'z': 1}},
-                  margin={'l': 0, 'r': 0, 'b': 0, 't': 0})
+fig.update_layout(
+    scene_camera={'eye': {'x': 2, 'y': 0, 'z': 1}}, margin={'l': 0, 'r': 0, 'b': 0, 't': 0}
+)
 fig.write_image('cell.png')
 scf = SCF(cell)
 scf.run()

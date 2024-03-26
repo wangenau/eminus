@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """TRAJ file handling."""
+
 import numpy as np
 
 from ..logger import log
@@ -39,7 +40,7 @@ def read_traj(filename):
             atom = []
             pos = []
             # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
-            for line in lines[(2 + Natoms) * frame + 2:(2 + Natoms) * (frame + 1)]:
+            for line in lines[(2 + Natoms) * frame + 2 : (2 + Natoms) * (frame + 1)]:
                 line_split = line.strip().split()
                 atom.append(line_split[0])
                 pos.append(np.float64(line_split[1:4]))

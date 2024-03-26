@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. 81, 385.
 """
+
 import numpy as np
 
 
@@ -22,8 +23,8 @@ def lda_x(n, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Exchange energy density and potential.
     """
-    f = -3 / 4 * (3 / (2 * np.pi))**(2 / 3)
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    f = -3 / 4 * (3 / (2 * np.pi)) ** (2 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     ex = f / rs
 
@@ -48,10 +49,10 @@ def lda_x_spin(n, zeta, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: Exchange energy density and potential.
     """
-    f = -3 / 4 * (3 / np.pi)**(1 / 3)
+    f = -3 / 4 * (3 / np.pi) ** (1 / 3)
 
-    rho13p = ((1 + zeta) * n)**(1 / 3)
-    rho13m = ((1 - zeta) * n)**(1 / 3)
+    rho13p = ((1 + zeta) * n) ** (1 / 3)
+    rho13m = ((1 - zeta) * n) ** (1 / 3)
 
     exup = f * rho13p
     exdw = f * rho13m

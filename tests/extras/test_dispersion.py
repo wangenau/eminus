@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 """Test dispersion corrections."""
+
 from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, SCF
 from eminus.energies import get_Edisp
 
-atoms = Atoms('CH4', ((0, 0, 0),
-                      (1.186, 1.186, 1.186),
-                      (1.186, -1.186, -1.186),
-                      (-1.186, 1.186, -1.186),
-                      (-1.186, -1.186, 1.186)), ecut=1)
+atoms = Atoms(
+    'CH4',
+    (
+        (0, 0, 0),
+        (1.186, 1.186, 1.186),
+        (1.186, -1.186, -1.186),
+        (-1.186, 1.186, -1.186),
+        (-1.186, -1.186, 1.186),
+    ),
+    ecut=1,
+)
 
 
 @pytest.mark.parametrize('xc', ['svwn', 'pbe', 'pbesol', 'chachiyo'])
@@ -56,5 +63,6 @@ def test_scf(disp):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

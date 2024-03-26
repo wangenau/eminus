@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. B 45, 13244.
 """
+
 from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 
 
@@ -43,5 +44,10 @@ def lda_c_pw_mod_spin(n, zeta, **kwargs):
         tuple[ndarray, ndarray]: PW correlation energy density and potential.
     """
     # fzeta0 = 4 / (9 * (2**(1 / 3) - 1))
-    return lda_c_pw_spin(n, zeta, A=(0.0310907, 0.01554535, 0.0168869),
-                         fzeta0=1.709920934161365617563962776245, **kwargs)
+    return lda_c_pw_spin(
+        n,
+        zeta,
+        A=(0.0310907, 0.01554535, 0.0168869),
+        fzeta0=1.709920934161365617563962776245,
+        **kwargs,
+    )

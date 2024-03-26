@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test functionality of example notebooks."""
+
 import inspect
 import os
 import pathlib
@@ -16,13 +17,18 @@ def clean_example(trash):
 
 
 @pytest.mark.slow()
-@pytest.mark.parametrize(('name', 'trash'), [('08_visualizer_extra', []),
-                                             ('10_domain_generation', []),
-                                             ('12_wannier_localization', ['CH4_WO_k0_0.cube',
-                                                                          'CH4_WO_k0_1.cube',
-                                                                          'CH4_WO_k0_2.cube',
-                                                                          'CH4_WO_k0_3.cube']),
-                                             ('19_band_structures', [])])
+@pytest.mark.parametrize(
+    ('name', 'trash'),
+    [
+        ('08_visualizer_extra', []),
+        ('10_domain_generation', []),
+        (
+            '12_wannier_localization',
+            ['CH4_WO_k0_0.cube', 'CH4_WO_k0_1.cube', 'CH4_WO_k0_2.cube', 'CH4_WO_k0_3.cube'],
+        ),
+        ('19_band_structures', []),
+    ],
+)
 def test_notebooks(name, trash):
     """Test the execution of a given Jupyter notebook."""
     pytest.importorskip('nglview', reason='nglview not installed, skip tests')

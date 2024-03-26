@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Viewer functions for Jupyter notebooks."""
+
 import io
 import pathlib
 import uuid
@@ -48,8 +49,10 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     try:
         import plotly.graph_objects as go
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
     atoms = obj._atoms
 
@@ -57,43 +60,65 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
     # Calculate vertices of the Brillouin zone and plot them
     lattice = get_lattice(atoms.a)
     for xx in lattice:
-        bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
-                               name='Unit cell',
-                               showlegend=False,
-                               marker={'size': 0.1, 'color': 'black'})
+        bz_data = go.Scatter3d(
+            x=xx[:, 0],
+            y=xx[:, 1],
+            z=xx[:, 2],
+            name='Unit cell',
+            showlegend=False,
+            marker={'size': 0.1, 'color': 'black'},
+        )
         fig.add_trace(bz_data)
     # Add species one by one to be able to have them named and be selectable in the legend
     # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):
         mask = np.where(np.asarray(atoms.atom) == ia)[0]
-        atom_data = go.Scatter3d(x=atoms.pos[mask, 0], y=atoms.pos[mask, 1], z=atoms.pos[mask, 2],
-                                 name=ia,
-                                 mode='markers',
-                                 marker={'size': 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
-                                         'color': CPK_COLORS[ia],
-                                         'line': {'color': 'black', 'width': 2}})
+        atom_data = go.Scatter3d(
+            x=atoms.pos[mask, 0],
+            y=atoms.pos[mask, 1],
+            z=atoms.pos[mask, 2],
+            name=ia,
+            mode='markers',
+            marker={
+                'size': 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
+                'color': CPK_COLORS[ia],
+                'line': {'color': 'black', 'width': 2},
+            },
+        )
         fig.add_trace(atom_data)
     if extra is not None:
         # If a list has been provided with a length of two it has to be FODs
         if isinstance(extra, list):
             if len(extra[0]) != 0:
-                extra_data = go.Scatter3d(x=extra[0][:, 0], y=extra[0][:, 1], z=extra[0][:, 2],
-                                          name='up-FOD',
-                                          mode='markers',
-                                          marker={'size': np.pi, 'color': 'red'})
+                extra_data = go.Scatter3d(
+                    x=extra[0][:, 0],
+                    y=extra[0][:, 1],
+                    z=extra[0][:, 2],
+                    name='up-FOD',
+                    mode='markers',
+                    marker={'size': np.pi, 'color': 'red'},
+                )
                 fig.add_trace(extra_data)
             if len(extra) > 1 and len(extra[1]) != 0:
-                extra_data = go.Scatter3d(x=extra[1][:, 0], y=extra[1][:, 1], z=extra[1][:, 2],
-                                          name='down-FOD',
-                                          mode='markers',
-                                          marker={'size': np.pi, 'color': 'green'})
+                extra_data = go.Scatter3d(
+                    x=extra[1][:, 0],
+                    y=extra[1][:, 1],
+                    z=extra[1][:, 2],
+                    name='down-FOD',
+                    mode='markers',
+                    marker={'size': np.pi, 'color': 'green'},
+                )
                 fig.add_trace(extra_data)
         # Treat extra as normal coordinates otherwise
         else:
-            extra_data = go.Scatter3d(x=extra[:, 0], y=extra[:, 1], z=extra[:, 2],
-                                      name='Coordinates',
-                                      mode='markers',
-                                      marker={'size': 1, 'color': 'red'})
+            extra_data = go.Scatter3d(
+                x=extra[:, 0],
+                y=extra[:, 1],
+                z=extra[:, 2],
+                name='Coordinates',
+                mode='markers',
+                marker={'size': 1, 'color': 'red'},
+            )
             fig.add_trace(extra_data)
 
     # A density can be plotted for an SCF object
@@ -103,24 +128,31 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
             density = plot_n
         else:
             density = obj.n
-        den_data = go.Volume(x=atoms.r[:, 0], y=atoms.r[:, 1], z=atoms.r[:, 2], value=density,
-                             name='Density',
-                             colorbar_title=f'Density ({percent}%)',
-                             colorscale='Inferno',
-                             isomin=get_isovalue(density, percent=percent),
-                             isomax=np.max(density),
-                             surface_count=surfaces,
-                             opacity=0.1,
-                             showlegend=True)
+        den_data = go.Volume(
+            x=atoms.r[:, 0],
+            y=atoms.r[:, 1],
+            z=atoms.r[:, 2],
+            value=density,
+            name='Density',
+            colorbar_title=f'Density ({percent}%)',
+            colorscale='Inferno',
+            isomin=get_isovalue(density, percent=percent),
+            isomax=np.max(density),
+            surface_count=surfaces,
+            opacity=0.1,
+            showlegend=True,
+        )
         fig.add_trace(den_data)
         # Move colorbar to the left
         fig.data[-1].colorbar.x = -0.15
 
     # Theming
-    scene = {'xaxis': {'title': 'x [a<sub>0</sub>]'},
-             'yaxis': {'title': 'y [a<sub>0</sub>]'},
-             'zaxis': {'title': 'z [a<sub>0</sub>]'},
-             'aspectmode': 'cube'}
+    scene = {
+        'xaxis': {'title': 'x [a<sub>0</sub>]'},
+        'yaxis': {'title': 'y [a<sub>0</sub>]'},
+        'zaxis': {'title': 'z [a<sub>0</sub>]'},
+        'aspectmode': 'cube',
+    }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
     if (np.diag(np.diag(atoms.a)) == atoms.a).all():
         scene['xaxis']['range'] = [0, atoms.a[0, 0]]
@@ -132,14 +164,16 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
         height=size[1],
         legend={'itemsizing': 'constant', 'title': 'Selection'},
         hoverlabel_bgcolor='black',
-        template='none')
+        template='none',
+    )
     if not executed_in_notebook():
         fig.show()
     return fig
 
 
-def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1, linewidth=1,
-                 size=(600, 600)):
+def view_contour(
+    obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1, linewidth=1, size=(600, 600)
+):
     """Display contour lines of field data like electronic densities.
 
     Reference: https://plotly.com/python
@@ -163,8 +197,10 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
     try:
         import plotly.graph_objects as go
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
     atoms = obj._atoms
 
@@ -173,8 +209,9 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
     # Create an index mask to obtain a clean slice through the cell
     # Since the expression is a bit involved it can be understood with the following pseudo-code:
     # mask = |axis_values - slice_value| < axis_value_dist
-    mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < \
-        (atoms.a[axes[2], axes[2]] / atoms.s[axes[2]])
+    mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
+        atoms.a[axes[2], axes[2]] / atoms.s[axes[2]]
+    )
     # Create a copy of the field data to not overwrite the input
     field = np.copy(field)
     # Remove large and small values (similar to VESTA)
@@ -183,10 +220,14 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
 
     # Create the contour lines
     fig = go.Figure()
-    contours = go.Contour(x=atoms.r[:, axes[0]][mask], y=atoms.r[:, axes[1]][mask], z=field[mask],
-                          contours_coloring='none',
-                          ncontours=lines,
-                          line_width=linewidth)
+    contours = go.Contour(
+        x=atoms.r[:, axes[0]][mask],
+        y=atoms.r[:, axes[1]][mask],
+        z=field[mask],
+        contours_coloring='none',
+        ncontours=lines,
+        line_width=linewidth,
+    )
     fig.add_trace(contours)
 
     # Theming
@@ -194,20 +235,30 @@ def view_contour(obj, field, axis=2, value=0.5, lines=10, limits=(-1, 1), zoom=1
         width=size[0],
         height=size[1],
         margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
-        xaxis={'range': [(1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
-                         1 / zoom * atoms.a[axes[0], axes[0]]],
-               'visible': False},
-        yaxis={'range': [(1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
-                         1 / zoom * atoms.a[axes[1], axes[1]]],
-               'visible': False},
-        template='none')
+        xaxis={
+            'range': [
+                (1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
+                1 / zoom * atoms.a[axes[0], axes[0]],
+            ],
+            'visible': False,
+        },
+        yaxis={
+            'range': [
+                (1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
+                1 / zoom * atoms.a[axes[1], axes[1]],
+            ],
+            'visible': False,
+        },
+        template='none',
+    )
     if not executed_in_notebook():
         fig.show()
     return fig
 
 
-def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
-              size=(400, 400), **kwargs):
+def view_file(
+    filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), size=(400, 400), **kwargs
+):
     """Display molecules and orbitals.
 
     Reference: Bioinformatics 34, 1241.
@@ -230,17 +281,22 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
     try:
         from nglview import NGLWidget, write_html
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
 
     # If multiple files are given, try to open them with an interact drop-down menu
     # If all files are XYZ files they will be displayed as a trajectory instead
-    if isinstance(filename, (list, tuple)) and not np.all([f.endswith('.xyz')for f in filename]):
+    if isinstance(filename, (list, tuple)) and not np.all([f.endswith('.xyz') for f in filename]):
         if executed_in_notebook():
             from ipywidgets import interact
-            interact(lambda filename: view_file(filename, isovalue, gui, elec_symbols,
-                                                **kwargs), filename=filename)
+
+            interact(
+                lambda filename: view_file(filename, isovalue, gui, elec_symbols, **kwargs),
+                filename=filename,
+            )
             return None
         # If we are not in a notebook open the files one by one
         for f in filename:
@@ -275,6 +331,7 @@ def view_file(filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'),
     # smart open_html_in_browser function from plotly that automatically opens a new browser tab
     try:
         from plotly.io._base_renderers import open_html_in_browser
+
         # Use StringIO object instead of a temporary file
         with io.StringIO() as html:
             write_html(html, view)
@@ -294,6 +351,7 @@ def executed_in_notebook():
     """
     try:
         from IPython import get_ipython
+
         if 'IPKernelApp' not in get_ipython().config:
             return False
     except (AttributeError, ImportError):
@@ -337,6 +395,7 @@ def _cube_view(view, filename, isovalue, elec_symbols):
         NGLWidget: Viewable object.
     """
     from nglview import TextStructure
+
     # Atoms and cell
     atom, pos, _, a, _, _ = read_cube(filename)
     atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
@@ -348,33 +407,39 @@ def _cube_view(view, filename, isovalue, elec_symbols):
     # Spin up
     view.add_component(filename)
     view[1].clear()
-    view[1].add_surface(negateIsolevel=False,
-                        isolevelType='value',
-                        isolevel=isovalue,
-                        color='lightgreen',
-                        opacity=0.75,
-                        side='front',
-                        depthWrite=False)
+    view[1].add_surface(
+        negateIsolevel=False,
+        isolevelType='value',
+        isolevel=isovalue,
+        color='lightgreen',
+        opacity=0.75,
+        side='front',
+        depthWrite=False,
+    )
     # Spin down
     view.add_component(filename)
     view[2].clear()
-    view[2].add_surface(negateIsolevel=True,
-                        isolevelType='value',
-                        isolevel=isovalue,
-                        color='red',
-                        opacity=0.75,
-                        side='front',
-                        depthWrite=False)
+    view[2].add_surface(
+        negateIsolevel=True,
+        isolevelType='value',
+        isolevel=isovalue,
+        color='red',
+        opacity=0.75,
+        side='front',
+        depthWrite=False,
+    )
     # Spin up FODs
     if len(pos_fod[0]) > 0:
-        view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
-                           pos_fod[0])))
+        view.add_component(
+            TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]), pos_fod[0]))
+        )
         view[3].clear()
         view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
     # Spin down FODs
     if len(pos_fod[1]) > 0:
-        view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
-                           pos_fod[1])))
+        view.add_component(
+            TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]), pos_fod[1]))
+        )
         view[4].clear()
         view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
     return view
@@ -392,6 +457,7 @@ def _xyz_view(view, filename, elec_symbols):
         NGLWidget: Viewable object.
     """
     from nglview import TextStructure
+
     # Atoms
     atom, pos = read_xyz(filename)
     atom, pos, pos_fod = split_fods(atom, pos, elec_symbols)
@@ -400,14 +466,16 @@ def _xyz_view(view, filename, elec_symbols):
     view[0].add_ball_and_stick()
     # Spin up FODs
     if len(pos_fod[0]) > 0:
-        view.add_component(TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]),
-                           pos_fod[0])))
+        view.add_component(
+            TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]), pos_fod[0]))
+        )
         view[1].clear()
         view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
     # Spin down FODs
     if len(pos_fod[1]) > 0:
-        view.add_component(TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]),
-                           pos_fod[1])))
+        view.add_component(
+            TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]), pos_fod[1]))
+        )
         view[2].clear()
         view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
     view.center()
@@ -427,8 +495,10 @@ def _traj_view(view, filename):
     try:
         from nglview.base_adaptor import Structure, Trajectory
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
 
     class eminusTrajectory(Trajectory, Structure):
@@ -440,6 +510,7 @@ def _traj_view(view, filename):
         Args:
             filenames (str | list | tuple): XYZ input file paths/names.
         """
+
         def __init__(self, filenames):
             """Initialize the eminusTrajectory object."""
             self.atoms = []
@@ -504,8 +575,10 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     try:
         import plotly.graph_objects as go
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
     k_axis, special, label = kpoints2axis(scf.kpts)
     # Replace 'G' with the Greek 'Gamma' encoded in unicode
@@ -524,36 +597,60 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     for s in spin:
         # Plot occupied bands
         for i in range(scf.atoms.occ.Nstate):
-            fig.add_trace(go.Scatter(x=k_axis, y=e_occ[:, s, i] - Efermi,
-                          mode='lines+markers',
-                          name=f'Band {i + 1}',
-                          marker_color=colors[s]))
+            fig.add_trace(
+                go.Scatter(
+                    x=k_axis,
+                    y=e_occ[:, s, i] - Efermi,
+                    mode='lines+markers',
+                    name=f'Band {i + 1}',
+                    marker_color=colors[s],
+                )
+            )
 
         # Calculate and plot unoccupied bands if available
         if hasattr(scf, 'Z'):
             e_unocc = ha2ev(get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed))
             for i in range(scf.atoms.occ.Nempty):
-                fig.add_trace(go.Scatter(x=k_axis, y=e_unocc[:, s, i] - Efermi,
-                              mode='lines+markers',
-                              line={'dash': 'dash'},
-                              name=f'Unocc. band {i + 1}',
-                              marker_color=colors[s]))
+                fig.add_trace(
+                    go.Scatter(
+                        x=k_axis,
+                        y=e_unocc[:, s, i] - Efermi,
+                        mode='lines+markers',
+                        line={'dash': 'dash'},
+                        name=f'Unocc. band {i + 1}',
+                        marker_color=colors[s],
+                    )
+                )
 
     fig.update_layout(
         width=size[0],
         height=size[1],
         showlegend=False,
         font={'size': 20},
-        xaxis={'zeroline': False, 'showline': True, 'mirror': True, 'ticks': 'outside',
-               'tickmode': 'array', 'tickvals': special, 'ticktext': label,
-               'gridcolor': 'grey', 'gridwidth': 2},
-        yaxis={'zeroline': False, 'showline': True, 'mirror': True, 'ticks': 'outside',
-               'showgrid': False},
+        xaxis={
+            'zeroline': False,
+            'showline': True,
+            'mirror': True,
+            'ticks': 'outside',
+            'tickmode': 'array',
+            'tickvals': special,
+            'ticktext': label,
+            'gridcolor': 'grey',
+            'gridwidth': 2,
+        },
+        yaxis={
+            'zeroline': False,
+            'showline': True,
+            'mirror': True,
+            'ticks': 'outside',
+            'showgrid': False,
+        },
         xaxis_range=(0, k_axis[-1]),
         xaxis_title='k-path',
         yaxis_title='E - E<sub>F</sub> [eV]',
         hoverlabel_bgcolor='black',
-        template='none')
+        template='none',
+    )
     if not executed_in_notebook():
         fig.show()
     return fig
@@ -579,18 +676,24 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     try:
         import plotly.graph_objects as go
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[viewer]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
         raise
 
     fig = go.Figure()
     # Calculate vertices of the Brillouin zone and plot them
     bz = get_brillouin_zone(kpts.a)
     for xx in bz:
-        bz_data = go.Scatter3d(x=xx[:, 0], y=xx[:, 1], z=xx[:, 2],
-                               name='Brillouin zone',
-                               showlegend=False,
-                               marker={'size': 0.1, 'color': 'black'})
+        bz_data = go.Scatter3d(
+            x=xx[:, 0],
+            y=xx[:, 1],
+            z=xx[:, 2],
+            name='Brillouin zone',
+            showlegend=False,
+            marker={'size': 0.1, 'color': 'black'},
+        )
         fig.add_trace(bz_data)
 
     # Plot special points if desired
@@ -599,10 +702,14 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
             if label == 'G':
                 label = '\u0393'  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
-            extra_data = go.Scatter3d(x=[v[0]], y=[v[1]], z=[v[2]],
-                                      name=label,
-                                      mode='markers',
-                                      marker={'size': 4, 'opacity': 0.9})
+            extra_data = go.Scatter3d(
+                x=[v[0]],
+                y=[v[1]],
+                z=[v[2]],
+                name=label,
+                mode='markers',
+                marker={'size': 4, 'opacity': 0.9},
+            )
             fig.add_trace(extra_data)
 
     # Plot optional k-points
@@ -611,24 +718,31 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     else:
         mode = 'markers'
     if path:
-        extra_data = go.Scatter3d(x=kpts.k[:, 0], y=kpts.k[:, 1], z=kpts.k[:, 2],
-                                  name='k-points',
-                                  mode=mode,
-                                  marker={'size': 2, 'color': '#1a962b', 'opacity': 0.75})
+        extra_data = go.Scatter3d(
+            x=kpts.k[:, 0],
+            y=kpts.k[:, 1],
+            z=kpts.k[:, 2],
+            name='k-points',
+            mode=mode,
+            marker={'size': 2, 'color': '#1a962b', 'opacity': 0.75},
+        )
         fig.add_trace(extra_data)
 
     # Theming
-    scene = {'xaxis': {'title': 'b<sub>1</sub>'},
-             'yaxis': {'title': 'b<sub>2</sub>'},
-             'zaxis': {'title': 'b<sub>3</sub>'},
-             'aspectmode': 'cube'}
+    scene = {
+        'xaxis': {'title': 'b<sub>1</sub>'},
+        'yaxis': {'title': 'b<sub>2</sub>'},
+        'zaxis': {'title': 'b<sub>3</sub>'},
+        'aspectmode': 'cube',
+    }
     fig.update_layout(
         scene=scene,
         width=size[0],
         height=size[1],
         legend={'itemsizing': 'constant', 'title': 'Selection'},
         hoverlabel_bgcolor='black',
-        template='none')
+        template='none',
+    )
     if not executed_in_notebook():
         fig.show()
     return fig

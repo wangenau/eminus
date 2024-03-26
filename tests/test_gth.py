@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test GTH functions."""
+
 import inspect
 import pathlib
 
@@ -61,5 +62,6 @@ def test_custom_files():
 
 if __name__ == '__main__':
     import pytest
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

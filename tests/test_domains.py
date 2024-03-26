@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test domain generation."""
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -8,11 +9,16 @@ from eminus import Atoms
 from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, truncate
 from eminus.tools import center_of_mass
 
-atoms = Atoms('CH4', ((0, 0, 0),
-                      (1.186, 1.186, 1.186),
-                      (1.186, -1.186, -1.186),
-                      (-1.186, 1.186, -1.186),
-                      (-1.186, -1.186, 1.186))).build()
+atoms = Atoms(
+    'CH4',
+    (
+        (0, 0, 0),
+        (1.186, 1.186, 1.186),
+        (1.186, -1.186, -1.186),
+        (-1.186, 1.186, -1.186),
+        (-1.186, -1.186, 1.186),
+    ),
+).build()
 
 
 @pytest.mark.parametrize('length', [0.001, 0.01, 0.1, 1, 10])
@@ -50,5 +56,6 @@ def test_domain_isovalue():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

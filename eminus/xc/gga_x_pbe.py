@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. Lett. 78, 1396.
 """
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -53,7 +54,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """
     # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     zeta = zeta[0]  # Getting the non-zero values from zeta adds an extra dimension, remove it here
-    n_up = zeta * n + n   # 2 * n_up
+    n_up = zeta * n + n  # 2 * n_up
     n_dw = -zeta * n + n  # 2 * n_down
     ex_up, vx_up, vsigma_up = pbe_x_base(n_up, mu, 2 * dn_spin[0], **kwargs)
     ex_dw, vx_dw, vsigma_dw = pbe_x_base(n_dw, mu, 2 * dn_spin[1], **kwargs)
@@ -83,15 +84,13 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     kappa = 0.804
 
     norm_dn = norm(dn, axis=1)
-    kf = (3 * np.pi**2 * n)**(1 / 3)
+    kf = (3 * np.pi**2 * n) ** (1 / 3)
     # Handle divisions by zero
     # divkf = 1 / kf
-    divkf = np.divide(1, kf,
-                      out=np.zeros_like(kf), where=(kf > 0))
+    divkf = np.divide(1, kf, out=np.zeros_like(kf), where=(kf > 0))
     # Handle divisions by zero
     # s = norm_dn * divkf / (2 * n)
-    s = np.divide(norm_dn * divkf, 2 * n,
-                  out=np.zeros_like(n), where=(n > 0))
+    s = np.divide(norm_dn * divkf, 2 * n, out=np.zeros_like(n), where=(n > 0))
     f1 = 1 + mu * s**2 / kappa
     Fx = kappa - kappa / f1
     exunif = -3 * kf / (4 * np.pi)
@@ -106,6 +105,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
 
     # Handle divisions by zero
     # vsigmax = exunifdFx * divkf / (2 * norm_dn)
-    vsigmax = np.divide(exunifdFx * divkf, 2 * norm_dn,
-                        out=np.zeros_like(norm_dn), where=(norm_dn > 0))
+    vsigmax = np.divide(
+        exunifdFx * divkf, 2 * norm_dn, out=np.zeros_like(norm_dn), where=(norm_dn > 0)
+    )
     return sx * n, np.array([vx]), vsigmax

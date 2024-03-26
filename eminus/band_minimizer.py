@@ -4,6 +4,7 @@
 Similar to :mod:`eminus.minimizer` but for a fixed Hamiltonian the implementation can be simplified
 and made more performant.
 """
+
 import copy
 import logging
 
@@ -112,8 +113,16 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
 
 
 @name('steepest descent minimization')
-def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-       **kwargs):
+def sd(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    **kwargs,
+):
     """Steepest descent minimization algorithm for a fixed Hamiltonian.
 
     Args:
@@ -147,8 +156,17 @@ def sd(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('preconditioned line minimization')
-def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-         precondition=True, **kwargs):
+def pclm(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    precondition=True,
+    **kwargs,
+):
     """Preconditioned line minimization algorithm for a fixed Hamiltonian.
 
     Args:
@@ -200,8 +218,16 @@ def pclm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
 
 
 @name('line minimization')
-def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-       **kwargs):
+def lm(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    **kwargs,
+):
     """Line minimization algorithm for a fixed Hamiltonian.
 
     Args:
@@ -223,8 +249,17 @@ def lm(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('preconditioned conjugate-gradient minimization')
-def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-         cgform=1, precondition=True):
+def pccg(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    cgform=1,
+    precondition=True,
+):
     """Preconditioned conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     Args:
@@ -287,8 +322,9 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 if scf.log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g, d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
-                beta, norm_g[ik][spin] = cg_method(scf, ik, cgform, g, g_old[ik][spin],
-                                                   d_old[ik][spin], precondition)
+                beta, norm_g[ik][spin] = cg_method(
+                    scf, ik, cgform, g, g_old[ik][spin], d_old[ik][spin], precondition
+                )
                 if precondition:
                     d[ik][spin] = -atoms.K(g, ik) + beta * d_old[ik][spin]
                 else:
@@ -302,8 +338,16 @@ def pccg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
 
 
 @name('conjugate-gradient minimization')
-def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-       cgform=1):
+def cg(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    cgform=1,
+):
     """Conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     Args:
@@ -325,8 +369,16 @@ def cg(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conver
 
 
 @name('auto minimization')
-def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_convergence, betat=3e-5,
-         cgform=1):
+def auto(
+    scf,
+    W,
+    Nit,
+    cost=scf_step_occ,
+    grad=get_grad_occ,
+    condition=check_convergence,
+    betat=3e-5,
+    cgform=1,
+):
     """Automatic precond. conjugate-gradient minimization algorithm for a fixed Hamiltonian.
 
     This function chooses an sd step over the pccg step if the energy goes up.
@@ -364,8 +416,9 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
             d[ik][spin] = -atoms.K(g[ik][spin], ik)
             W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
             gt = grad(scf, ik, spin, W, **scf._precomputed)
-            beta = abs(betat * dotprod(g[ik][spin], d[ik][spin]) /
-                       dotprod(g[ik][spin] - gt, d[ik][spin]))
+            beta = abs(
+                betat * dotprod(g[ik][spin], d[ik][spin]) / dotprod(g[ik][spin] - gt, d[ik][spin])
+            )
             g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
             W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
@@ -383,13 +436,17 @@ def auto(scf, W, Nit, cost=scf_step_occ, grad=get_grad_occ, condition=check_conv
                 if scf.log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
-                beta, norm_g[ik][spin] = cg_method(scf, ik, cgform, g[ik][spin], g_old[ik][spin],
-                                                   d_old[ik][spin])
+                beta, norm_g[ik][spin] = cg_method(
+                    scf, ik, cgform, g[ik][spin], g_old[ik][spin], d_old[ik][spin]
+                )
                 d[ik][spin] = -atoms.K(g[ik][spin], ik) + beta * d_old[ik][spin]
                 W[ik][spin] = W[ik][spin] + betat * d[ik][spin]
                 gt = grad(scf, ik, spin, W, **scf._precomputed)
-                beta = abs(betat * dotprod(g[ik][spin], d[ik][spin]) /
-                           dotprod(g[ik][spin] - gt, d[ik][spin]))
+                beta = abs(
+                    betat
+                    * dotprod(g[ik][spin], d[ik][spin])
+                    / dotprod(g[ik][spin] - gt, d[ik][spin])
+                )
                 g_old[ik][spin], d_old[ik][spin] = g[ik][spin], d[ik][spin]
                 W[ik][spin] = W[ik][spin] + beta * d[ik][spin]
 
@@ -419,5 +476,5 @@ IMPLEMENTED = {
     'pclm': pclm,
     'cg': cg,
     'pccg': pccg,
-    'auto': auto
+    'auto': auto,
 }

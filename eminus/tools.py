@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Various tools to check physical properties."""
+
 import numpy as np
 from scipy.linalg import norm
 from scipy.optimize import minimize_scalar, root_scalar
@@ -35,7 +36,7 @@ def gridspacing2cutoff(h):
     Returns:
         float: Cut-off in Hartree.
     """
-    return 0.5 * (np.pi / h)**2
+    return 0.5 * (np.pi / h) ** 2
 
 
 def center_of_mass(coords, masses=None):
@@ -101,9 +102,9 @@ def inertia_tensor(coords, masses=None):
     # The inertia tensor for a set of point masses can be calculated with a simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
     I = np.empty((3, 3))
-    I[0, 0] = np.sum(masses * (coords[:, 1]**2 + coords[:, 2]**2))
-    I[1, 1] = np.sum(masses * (coords[:, 0]**2 + coords[:, 2]**2))
-    I[2, 2] = np.sum(masses * (coords[:, 0]**2 + coords[:, 1]**2))
+    I[0, 0] = np.sum(masses * (coords[:, 1] ** 2 + coords[:, 2] ** 2))
+    I[1, 1] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 2] ** 2))
+    I[2, 2] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 1] ** 2))
     I[0, 1] = I[1, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
     I[0, 2] = I[2, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
     I[1, 2] = I[2, 1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
@@ -262,6 +263,7 @@ def get_isovalue(n, percent=85):
     Returns:
         float: Isovalue that contains the specified percentage of the density.
     """
+
     def deviation(isovalue):
         """Wrapper function for finding the isovalue by minimization."""
         n_mask = np.sum(n[n > isovalue])
@@ -288,7 +290,7 @@ def get_tautf(scf):
     """
     atoms = scf.atoms
     # Use the definition with a division by two
-    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2)**(2 / 3) * scf.n_spin**(5 / 3)
+    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
 
     log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
     log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh')
@@ -311,7 +313,7 @@ def get_tauw(scf):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    dn2 = norm(dn_spin, axis=2)**2
+    dn2 = norm(dn_spin, axis=2) ** 2
     # Use the definition with a division by two
     tauw = dn2 / (8 * scf.n_spin)
 
@@ -359,7 +361,7 @@ def get_reduced_gradient(scf, eps=0):
         dn_spin = scf.dn_spin
     norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
 
-    kf = (3 * np.pi**2 * scf.n)**(1 / 3)
+    kf = (3 * np.pi**2 * scf.n) ** (1 / 3)
     with np.errstate(divide='ignore', invalid='ignore'):
         s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0

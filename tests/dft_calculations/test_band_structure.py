@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test eigenenergies for bulk silicon in band structure calculations."""
+
 import numpy as np
 from numpy.testing import assert_allclose
 
@@ -8,12 +9,40 @@ from eminus.dft import get_epsilon, get_epsilon_unocc
 from eminus.tools import get_bandgap
 
 # Eigenenergies from a spin-paired calculation with PWDFT.jl with the same parameters as below
-epsilon_ref = np.array([[-0.1120735697, -0.0223086429, 0.1874096636, 0.1874096657,
-                         0.3024433520, 0.3533744734, 0.3533746945, 0.5029139877],
-                        [-0.1991130675, 0.2336390609, 0.2336390610, 0.2336390730,
-                         0.3236558181, 0.3236558199, 0.3236562389, 0.3723404989],
-                        [-0.0471149116, -0.0471146587, 0.1244731242, 0.1244731242,
-                         0.2552557610, 0.2552561594, 0.5979018826, 0.5979073606]])
+epsilon_ref = np.array(
+    [
+        [
+            -0.1120735697,
+            -0.0223086429,
+            0.1874096636,
+            0.1874096657,
+            0.3024433520,
+            0.3533744734,
+            0.3533746945,
+            0.5029139877,
+        ],
+        [
+            -0.1991130675,
+            0.2336390609,
+            0.2336390610,
+            0.2336390730,
+            0.3236558181,
+            0.3236558199,
+            0.3236562389,
+            0.3723404989,
+        ],
+        [
+            -0.0471149116,
+            -0.0471146587,
+            0.1244731242,
+            0.1244731242,
+            0.2552557610,
+            0.2552561594,
+            0.5979018826,
+            0.5979073606,
+        ],
+    ]
+)
 bandgap_ref = 0.021616688
 
 a = 10.2631
@@ -75,6 +104,7 @@ if __name__ == '__main__':
     import pathlib
 
     import pytest
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Consolidated configuration module."""
+
 from __future__ import annotations
 
 import numbers
@@ -17,13 +18,14 @@ class ConfigClass:
     An instance of this class will be set as the same name as this module. This will effectively
     make this module a singleton data class.
     """
+
     def __init__(self):
         """Initialize the ConfigClass object."""
-        self.use_torch = True     # Use the faster Torch FFTs if available
-        self.use_gpu = False      # Disable GPU by default, since it is slower in my tests
-        self.use_pylibxc = True   # Use Libxc over PySCF if available since it is faster
-        self.threads = None       # Read threads from environment variables by default
-        self.verbose = 'INFO'     # Only display warnings (and worse) by default
+        self.use_torch = True  # Use the faster Torch FFTs if available
+        self.use_gpu = False  # Disable GPU by default, since it is slower in my tests
+        self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
+        self.threads = None  # Read threads from environment variables by default
+        self.verbose = 'INFO'  # Only display warnings (and worse) by default
 
     # ### Class properties ###
 
@@ -35,6 +37,7 @@ class ConfigClass:
         if self._use_torch:
             try:
                 import torch  # noqa: F401
+
                 return True
             except ImportError:
                 pass
@@ -50,6 +53,7 @@ class ConfigClass:
         # Only use GPU if Torch is available
         if self.use_torch and self._use_gpu:
             import torch
+
             return torch.cuda.is_available()
         return False
 
@@ -63,6 +67,7 @@ class ConfigClass:
         if self._use_pylibxc:
             try:
                 import pylibxc  # noqa: F401
+
                 return True
             except ImportError:
                 pass
@@ -79,6 +84,7 @@ class ConfigClass:
             try:
                 if self.use_torch:
                     import torch
+
                     return torch.get_num_threads()
                 # Read the OMP threads for the default operators
                 return int(os.environ['OMP_NUM_THREADS'])
@@ -92,6 +98,7 @@ class ConfigClass:
         if isinstance(value, numbers.Integral):
             if self.use_torch:
                 import torch
+
                 return torch.set_num_threads(value)
             os.environ['OMP_NUM_THREADS'] = str(value)
         return None
@@ -116,6 +123,7 @@ class ConfigClass:
         if not self.use_pylibxc:
             try:
                 import pyscf  # noqa: F401
+
                 print('Libxc backend    : PySCF')
             except ImportError:
                 pass
@@ -130,11 +138,13 @@ class ConfigClass:
             return
         # Check FFT threads
         if self.threads is None:
-            print('FFT threads : 1\n'
-                  'INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve '
-                  'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
-                  'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
-                  'set them in your Python environment with "eminus.config.threads=n".')
+            print(
+                'FFT threads : 1\n'
+                'INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve '
+                'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
+                'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
+                'set them in your Python environment with "eminus.config.threads=n".'
+            )
         else:
             print(f'FFT threads : {self.threads}')
 

@@ -47,8 +47,18 @@ verbose = 4
 
 # # Start a new calculation with new parameters
 print('\nSecond calculation with more output:')
-scf = SCF(atoms=atoms, xc=xc, pot=pot, guess=guess, etol=etol, gradtol=gradtol, opt=opt,
-          sic=sic, disp=disp, verbose=verbose)
+scf = SCF(
+    atoms=atoms,
+    xc=xc,
+    pot=pot,
+    guess=guess,
+    etol=etol,
+    gradtol=gradtol,
+    opt=opt,
+    sic=sic,
+    disp=disp,
+    verbose=verbose,
+)
 
 # # Arguments for the minimizer can be passed through via the run function, e.g., for the conjugated-gradient form
 etot = scf.run(cgform=2)

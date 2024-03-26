@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test input and output functionalities."""
+
 import copy
 import os
 
@@ -40,7 +41,7 @@ def test_xyz(Nspin):
         assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
-    assert_allclose(atoms.pos, pos[:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms.pos, pos[: atoms.Natoms], atol=1e-6)
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])
@@ -55,8 +56,8 @@ def test_cube(Nspin):
         assert atoms.atom + ['X'] * atoms.Natoms == atom
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == atom
-    assert_allclose(atoms.pos, pos[:atoms.Natoms], atol=1e-6)
-    assert_equal(atoms.Z, Z[:atoms.Natoms])
+    assert_allclose(atoms.pos, pos[: atoms.Natoms], atol=1e-6)
+    assert_equal(atoms.Z, Z[: atoms.Natoms])
     assert_equal(atoms.a, a)
     assert_equal(atoms.s, s)
     assert_allclose(scf.n, field, atol=1e-9)
@@ -138,7 +139,7 @@ def test_traj(Nspin):
         assert atoms.atom + ['X'] * atoms.Natoms == trajectory[0][0]
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == trajectory[0][0]
-    assert_allclose(atoms.pos, trajectory[0][1][:atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms.pos, trajectory[0][1][: atoms.Natoms], atol=1e-6)
 
     atoms2 = copy.deepcopy(atoms)
     atoms2.pos += 1
@@ -151,8 +152,8 @@ def test_traj(Nspin):
     else:
         assert atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms == trajectory[0][0]
         assert atoms2.atom + ['X'] * atoms2.Natoms + ['He'] * atoms2.Natoms == trajectory[1][0]
-    assert_allclose(atoms.pos, trajectory[0][1][:atoms.Natoms], atol=1e-6)
-    assert_allclose(atoms2.pos, trajectory[1][1][:atoms2.Natoms], atol=1e-6)
+    assert_allclose(atoms.pos, trajectory[0][1][: atoms.Natoms], atol=1e-6)
+    assert_allclose(atoms2.pos, trajectory[1][1][: atoms2.Natoms], atol=1e-6)
 
 
 @pytest.mark.parametrize('filending', ['pdb', 'xyz'])
@@ -190,5 +191,6 @@ def test_filename_ending():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

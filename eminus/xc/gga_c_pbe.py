@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. Lett. 78, 1396.
 """
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -29,12 +30,12 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     """
     gamma = (1 - np.log(2)) / np.pi**2
 
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 * n**(-1 / 3)
+    pi34 = (3 / (4 * np.pi)) ** (1 / 3)
+    rs = pi34 * n ** (-1 / 3)
     norm_dn = norm(dn_spin[0], axis=1)
     ec, vc, _ = lda_c_pw_mod(n, **kwargs)
 
-    kf = (9 / 4 * np.pi)**(1 / 3) / rs
+    kf = (9 / 4 * np.pi) ** (1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)
     divt = 2 * ks * n
     t = norm_dn / divt
@@ -77,15 +78,15 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     """
     gamma = (1 - np.log(2)) / np.pi**2
 
-    pi34 = (3 / (4 * np.pi))**(1 / 3)
-    rs = pi34 * n**(-1 / 3)
+    pi34 = (3 / (4 * np.pi)) ** (1 / 3)
+    rs = pi34 * n ** (-1 / 3)
     norm_dn = norm(dn_spin[0] + dn_spin[1], axis=1)
     ec, vc, _ = lda_c_pw_mod_spin(n, zeta, **kwargs)
     vcup, vcdw = vc
 
-    kf = (9 / 4 * np.pi)**(1 / 3) / rs
+    kf = (9 / 4 * np.pi) ** (1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)
-    phi = ((1 + zeta)**(2 / 3) + (1 - zeta)**(2 / 3)) / 2
+    phi = ((1 + zeta) ** (2 / 3) + (1 - zeta) ** (2 / 3)) / 2
     phi2 = phi**2
     phi3 = phi2 * phi
     t = norm_dn / (2 * phi * ks * n)
@@ -101,7 +102,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     # Handle divisions by zero
     with np.errstate(divide='ignore', invalid='ignore'):
-        dfz = ((1 + zeta)**(-1 / 3) - (1 - zeta)**(-1 / 3)) / 3
+        dfz = ((1 + zeta) ** (-1 / 3) - (1 - zeta) ** (-1 / 3)) / 3
     dfz = np.nan_to_num(dfz, nan=0, posinf=0, neginf=0)
     factor = A2t4 * (2 + At2) / divsum**2
     bfpre = expec / phi3
@@ -110,8 +111,10 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     dgecpre = beta * t2 * phi3 / nolog
     dgecup = dgecpre * (-7 / 3 * div - factor * (A * bfup / beta - 7 / 3))
     dgecdw = dgecpre * (-7 / 3 * div - factor * (A * bfdw / beta - 7 / 3))
-    dgeczpre = (3 * gec / phi - beta * t2 * phi2 / nolog * (
-                2 * div - factor * (3 * A * expec * ec / phi3 / beta + 2))) * dfz
+    dgeczpre = (
+        3 * gec / phi
+        - beta * t2 * phi2 / nolog * (2 * div - factor * (3 * A * expec * ec / phi3 / beta + 2))
+    ) * dfz
     dgeczup = dgeczpre * (1 - zeta)
     dgeczdw = -dgeczpre * (1 + zeta)
     gvcup = gec + dgecup + dgeczup

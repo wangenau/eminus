@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """CUBE file handling."""
+
 import textwrap
 import time
 
@@ -59,7 +60,7 @@ def read_cube(filename):
 
     # The rest of the data is the field data
     # Split the strings, flatten the lists of lists, and convert to a float numpy array
-    tmp_list = [l.split() for l in lines[6 + _offset:]]
+    tmp_list = [l.split() for l in lines[6 + _offset :]]
     field_list = [item for sublist in tmp_list for item in sublist]
     field = np.asarray(field_list, dtype=float)
     return atom, pos, Z, a, s, field
@@ -90,8 +91,10 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         filename += '.cube'
 
     if 'He' in atoms.atom and atoms.unrestricted:
-        log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
-                    'polarized case.')
+        log.warning(
+            'You need to modify "elec_symbols" to write helium with FODs in the spin-'
+            'polarized case.'
+        )
 
     # Make sure we have real-valued data in the correct order
     field = np.real(field)
@@ -108,26 +111,32 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
             fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}  ')
         fp.write('0.0  0.0  0.0\n')
         # Number of points per axis (int), and vector defining the axis (float)
-        fp.write(f'{atoms.s[0]}  {atoms.a[0, 0] / atoms.s[0]:.6f}  {atoms.a[0, 1] / atoms.s[0]:.6f}'
-                 f'  {atoms.a[0, 2] / atoms.s[0]:.6f}\n'
-                 f'{atoms.s[1]}  {atoms.a[1, 0] / atoms.s[1]:.6f}  {atoms.a[1, 1] / atoms.s[1]:.6f}'
-                 f'  {atoms.a[1, 2] / atoms.s[1]:.6f}\n'
-                 f'{atoms.s[2]}  {atoms.a[2, 0] / atoms.s[2]:.6f}  {atoms.a[2, 1] / atoms.s[2]:.6f}'
-                 f'  {atoms.a[2, 2] / atoms.s[2]:.6f}\n')
+        fp.write(
+            f'{atoms.s[0]}  {atoms.a[0, 0] / atoms.s[0]:.6f}  {atoms.a[0, 1] / atoms.s[0]:.6f}'
+            f'  {atoms.a[0, 2] / atoms.s[0]:.6f}\n'
+            f'{atoms.s[1]}  {atoms.a[1, 0] / atoms.s[1]:.6f}  {atoms.a[1, 1] / atoms.s[1]:.6f}'
+            f'  {atoms.a[1, 2] / atoms.s[1]:.6f}\n'
+            f'{atoms.s[2]}  {atoms.a[2, 0] / atoms.s[2]:.6f}  {atoms.a[2, 1] / atoms.s[2]:.6f}'
+            f'  {atoms.a[2, 2] / atoms.s[2]:.6f}\n'
+        )
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(atoms.Natoms):
-            fp.write(f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
-                     f'{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n')
+            fp.write(
+                f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
+                f'{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n'
+            )
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:
-                    fp.write(f'{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  '
-                             f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
+                    fp.write(
+                        f'{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  '
+                        f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n'
+                    )
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
         for i in range(atoms.s[0] * atoms.s[1]):
             # Print every round of values, so we can add empty lines between them
-            data_str = '%+1.6e  ' * atoms.s[2] % tuple(field[i * atoms.s[2]:(i + 1) * atoms.s[2]])
+            data_str = '%+1.6e  ' * atoms.s[2] % tuple(field[i * atoms.s[2] : (i + 1) * atoms.s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
             fp.write(f'{textwrap.fill(data_str, width=90)}\n\n')

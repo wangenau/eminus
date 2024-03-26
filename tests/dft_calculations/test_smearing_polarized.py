@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies for bulk lithium (spin-polarized) for different smearings."""
+
 from numpy.testing import assert_allclose
 import pytest
 
@@ -8,7 +9,7 @@ from eminus import Cell, USCF
 # Total energies from a spin-polarized calculation with PWDFT.jl with similar parameters as below
 E_ref = {
     1e-4: -5.404468,
-    1e-3: -5.404468
+    1e-3: -5.404468,
 }
 
 a = 3.44
@@ -32,6 +33,7 @@ def test_polarized(smearing):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
 

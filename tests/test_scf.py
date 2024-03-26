@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test the SCF class."""
+
 import numpy as np
 from numpy.testing import assert_allclose
 import pytest
@@ -125,8 +126,11 @@ def test_clear():
     scf.run()
     scf.clear()
     assert not scf.is_converged
-    assert [x for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc,
-            scf.vsigma, scf.vtau) if x is None]
+    assert [
+        x
+        for x in (scf.Y, scf.n_spin, scf.dn_spin, scf.phi, scf.exc, scf.vxc, scf.vsigma, scf.vtau)
+        if x is None
+    ]
 
 
 @pytest.mark.parametrize('center', [None, np.diag(atoms.a) / 2])
@@ -169,5 +173,6 @@ def test_uscf():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

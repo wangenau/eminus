@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies using PBE for a small set of spin-polarized and -unpolarized systems."""
+
 import inspect
 import pathlib
 
@@ -16,7 +17,7 @@ E_ref = {
     'Li': -6.02224,
     'LiH': -6.580019,
     'CH4': -7.745197,
-    'Ne': -29.965354
+    'Ne': -29.965354,
 }
 
 

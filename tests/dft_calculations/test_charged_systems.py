@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies of charged helium atoms."""
+
 from numpy.testing import assert_allclose
 import pytest
 
@@ -10,7 +11,7 @@ E_ref = {
     2: -0.5674595,
     1: -1.86872082,
     -1: -2.63097979,
-    -2: -2.74473214
+    -2: -2.74473214,
 }
 
 a = 10
@@ -43,5 +44,6 @@ def test_unpolarized(charge):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

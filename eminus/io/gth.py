@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """GTH file handling."""
+
 import importlib.resources
 import pathlib
 
@@ -102,5 +103,5 @@ def mock_gth():
         'lmax': 0,
         'rp': np.zeros(4),
         'Nproj_l': np.zeros(4, dtype=int),
-        'h': np.zeros((4, 3, 3))
+        'h': np.zeros((4, 3, 3)),
     }

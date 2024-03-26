@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test total energies for methane using SCAN."""
+
 import inspect
 import pathlib
 
@@ -12,7 +13,7 @@ from eminus import Atoms, read_xyz, RSCF, USCF
 # PWDFT.jl does not support spin-polarized calculations with SCAN
 # Only test methane for faster tests, also SCAN can easily run into convergence issues
 E_ref = {
-    'CH4': -7.75275
+    'CH4': -7.75275,
 }
 
 file_path = pathlib.Path(inspect.stack()[0][1]).parent

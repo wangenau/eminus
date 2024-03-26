@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Fermi-orbital descriptor generation."""
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -29,10 +30,13 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     """
     rng = np.random.default_rng(seed=seed)
     from pyscf.lo import boys, edmiston, pipek
-    loc_dict = {'ER': edmiston.EdmistonRuedenberg,
-                'FB': boys.Boys,
-                'GPM': pipek.PipekMezey,
-                'PM': pipek.PipekMezey}
+
+    loc_dict = {
+        'ER': edmiston.EdmistonRuedenberg,
+        'FB': boys.Boys,
+        'GPM': pipek.PipekMezey,
+        'PM': pipek.PipekMezey,
+    }
 
     loc_orb = []
     # Localize each spin channel separately
@@ -81,8 +85,10 @@ def get_fods(obj, basis='pc-1', loc='FB'):
         from pyscf.gto import Mole
         from pyscf.scf import RKS, UKS
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[fods]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[fods]".\n\n'
+        )
         raise
 
     atoms = obj._atoms
@@ -160,8 +166,11 @@ def remove_core_fods(obj, fods):
     atoms.kpts._assert_gamma_only()
     if not atoms.unrestricted and len(fods[0]) * 2 == np.sum(atoms.occ.f[0]):
         return fods
-    if atoms.unrestricted and len(fods[0]) == np.sum(atoms.occ.f[0, 0]) \
-            and len(fods[1]) == np.sum(atoms.occ.f[0, 1]):
+    if (
+        atoms.unrestricted
+        and len(fods[0]) == np.sum(atoms.occ.f[0, 0])
+        and len(fods[1]) == np.sum(atoms.occ.f[0, 1])
+    ):
         return fods
 
     for s in range(atoms.occ.Nspin):

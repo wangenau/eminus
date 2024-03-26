@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test exchange-correlation functionals."""
+
 import numpy as np
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -12,7 +13,7 @@ from eminus.xc import get_exc, get_vxc, XC_MAP
 rng = default_rng()
 n_tests = {
     1: np.abs(rng.standard_normal((1, 10000))),
-    2: np.abs(rng.standard_normal((2, 10000)))
+    2: np.abs(rng.standard_normal((2, 10000))),
 }
 functionals = [xc for xc in XC_MAP if xc.isdigit()]
 
@@ -25,6 +26,7 @@ def test_get_exc(xc, Nspin):
     from pyscf.dft.libxc import is_gga
 
     from eminus.extras import libxc_functional
+
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -42,6 +44,7 @@ def test_get_vxc(xc, Nspin):
     from pyscf.dft.libxc import is_gga
 
     from eminus.extras import libxc_functional
+
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
@@ -59,6 +62,7 @@ def test_get_vsigmaxc(xc, Nspin):
     from pyscf.dft.libxc import is_gga
 
     from eminus.extras import libxc_functional
+
     if not is_gga(xc):
         return
     n_spin = n_tests[Nspin]
@@ -71,5 +75,6 @@ def test_get_vsigmaxc(xc, Nspin):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

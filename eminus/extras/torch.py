@@ -19,6 +19,7 @@ by default.
 
 Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 """
+
 import numpy as np
 
 from .. import config
@@ -40,6 +41,7 @@ def I(atoms, W, ik=-1):
         ndarray: The operator applied on W.
     """
     import torch
+
     n = atoms._Ns
     s = tuple(atoms._s)
 
@@ -70,8 +72,9 @@ def I(atoms, W, ik=-1):
         Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
-                                                                              W.shape[-1])
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(
+            atoms.occ._Nspin, n, W.shape[-1]
+        )
     return Finv.detach().cpu().numpy()
 
 
@@ -91,6 +94,7 @@ def J(atoms, W, ik=-1, full=True):
         ndarray: The operator applied on W.
     """
     import torch
+
     n = atoms._Ns
     s = tuple(atoms._s)
 
@@ -106,8 +110,9 @@ def J(atoms, W, ik=-1, full=True):
         F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
-                                                                          W.shape[-1])
+        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(
+            atoms.occ._Nspin, n, W.shape[-1]
+        )
     F = F.detach().cpu().numpy()
     if not full:
         if F.ndim < 3:
@@ -132,6 +137,7 @@ def Idag(atoms, W, ik=-1, full=False):
         ndarray: The operator applied on W.
     """
     import torch
+
     n = atoms._Ns
     s = tuple(atoms._s)
 
@@ -147,8 +153,9 @@ def Idag(atoms, W, ik=-1, full=False):
         F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
-                                                                           W.shape[-1])
+        F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(
+            atoms.occ._Nspin, n, W.shape[-1]
+        )
     F = F.detach().cpu().numpy()
     if not full:
         if F.ndim < 3:
@@ -172,6 +179,7 @@ def Jdag(atoms, W, ik=-1):
         ndarray: The operator applied on W.
     """
     import torch
+
     n = atoms._Ns
     s = tuple(atoms._s)
 
@@ -202,6 +210,7 @@ def Jdag(atoms, W, ik=-1):
         Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(atoms.occ._Nspin, n,
-                                                                               W.shape[-1])
+        Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(
+            atoms.occ._Nspin, n, W.shape[-1]
+        )
     return Finv.detach().cpu().numpy()

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Atoms class definition."""
+
 import numbers
 
 import numpy as np
@@ -52,26 +53,37 @@ class Atoms:
             value can be used as well, where larger numbers mean more output, starting from 0.
             None will use the global logger verbosity value.
     """
-    def __init__(self, atom, pos, ecut=30, a=20, spin=None, charge=0, unrestricted=None,
-                 center=False, verbose=None):
+
+    def __init__(
+        self,
+        atom,
+        pos,
+        ecut=30,
+        a=20,
+        spin=None,
+        charge=0,
+        unrestricted=None,
+        center=False,
+        verbose=None,
+    ):
         """Initialize the Atoms object."""
         # Set the input parameters (the ordering is important)
-        self.log = create_logger(self)     #: Logger object.
-        self.verbose = verbose             #: Verbosity level.
-        self.occ = Occupations()           #: Occupations object.
-        self.atom = atom                   #: Atom symbols.
-        self.pos = pos                     #: Atom positions.
-        self.a = a                         #: Cell/Vacuum size.
-        self.ecut = ecut                   #: Cut-off energy.
-        self.center = center               #: Enables centering the system in the cell.
-        self.charge = charge               #: System charge.
-        self.spin = spin                   #: Number of unpaired electrons.
-        self.unrestricted = unrestricted   #: Enables unrestricted spin handling.
+        self.log = create_logger(self)  #: Logger object.
+        self.verbose = verbose  #: Verbosity level.
+        self.occ = Occupations()  #: Occupations object.
+        self.atom = atom  #: Atom symbols.
+        self.pos = pos  #: Atom positions.
+        self.a = a  #: Cell/Vacuum size.
+        self.ecut = ecut  #: Cut-off energy.
+        self.center = center  #: Enables centering the system in the cell.
+        self.charge = charge  #: System charge.
+        self.spin = spin  #: Number of unpaired electrons.
+        self.unrestricted = unrestricted  #: Enables unrestricted spin handling.
         self.kpts = KPoints('sc', self.a)  #: KPoints object.
 
         # Initialize other attributes
-        self.occ.fill()                    #: Fill states from the given input.
-        self.is_built = False              #: Determines the Atoms object build status.
+        self.occ.fill()  #: Fill states from the given input.
+        self.is_built = False  #: Determines the Atoms object build status.
 
     # ### Class properties ###
 
@@ -108,8 +120,10 @@ class Atoms:
         # We need atom positions as a two-dimensional array
         self._pos = np.atleast_2d(value)
         if self.Natoms != len(self._pos):
-            raise ValueError(f'Mismatch between number of atoms ({self.Natoms}) and number of '
-                             f'coordinates ({len(self._pos)}).')
+            raise ValueError(
+                f'Mismatch between number of atoms ({self.Natoms}) and number of '
+                f'coordinates ({len(self._pos)}).'
+            )
         # The structure factor changes when changing pos
         self.is_built = False
 
@@ -269,8 +283,10 @@ class Atoms:
             value = atom2charge(self.atom, value)
         self._Z = np.asarray(value)
         if self.Natoms != len(self._Z):
-            raise ValueError(f'Mismatch between number of atoms ({self.Natoms}) and number of '
-                             f'charges ({len(self._Z)}).')
+            raise ValueError(
+                f'Mismatch between number of atoms ({self.Natoms}) and number of '
+                f'charges ({len(self._Z)}).'
+            )
         # Get the number of calculated electrons and pass it to occ
         self.occ.Nelec = np.sum(self._Z) - self.charge
 
@@ -395,13 +411,13 @@ class Atoms:
 
     def clear(self):
         """Initialize or clear parameters that will be built out of the inputs."""
-        self._r = None          # Sample points in cell
-        self._G = None          # G-vectors
-        self._G2 = None         # Squared magnitudes of G-vectors
-        self._active = None     # Mask for active G-vectors
-        self._G2c = None        # Truncated squared magnitudes of G-vectors
-        self._Sf = None         # Structure factor
-        self.is_built = False   # Flag to determine if the object was built or not
+        self._r = None  # Sample points in cell
+        self._G = None  # G-vectors
+        self._G2 = None  # Squared magnitudes of G-vectors
+        self._active = None  # Mask for active G-vectors
+        self._G2c = None  # Truncated squared magnitudes of G-vectors
+        self._Sf = None  # Structure factor
+        self.is_built = False  # Flag to determine if the object was built or not
         return self
 
     def _get_index_matrices(self):
@@ -432,14 +448,17 @@ class Atoms:
         # Build G-vectors
         self._G = 2 * np.pi * N @ inv(self.a)
         # Calculate squared magnitudes of G-vectors
-        self._G2 = norm(self.G, axis=1)**2
+        self._G2 = norm(self.G, axis=1) ** 2
         # Calculate the G2 restriction
-        self._active = [np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1)**2)
-                        for ik in range(self.kpts.Nk)]
+        self._active = [
+            np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1) ** 2)
+            for ik in range(self.kpts.Nk)
+        ]
         self._G2c = self.G2[np.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
-        self._Gk2 = np.asarray([norm(self.G + self.kpts.k[ik], axis=1)**2
-                               for ik in range(self.kpts.Nk)])
+        self._Gk2 = np.asarray(
+            [norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
+        )
         self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
@@ -463,6 +482,8 @@ class Atoms:
         """Print the parameters stored in the Atoms object."""
         out = 'Atom  Valence  Position'
         for i in range(self.Natoms):
-            out += f'\n{self.atom[i]:>3}   {self.Z[i]:>6}   ' \
-                   f'{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}'
+            out += (
+                f'\n{self.atom[i]:>3}   {self.Z[i]:>6}   '
+                f'{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}'
+            )
         return out

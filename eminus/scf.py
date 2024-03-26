@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """SCF class definition."""
+
 import copy
 import logging
 import time
@@ -67,30 +68,42 @@ class SCF:
             value can be used as well, where larger numbers mean more output, starting from 0.
             Defaults to the verbosity level of the Atoms object.
     """
-    def __init__(self, atoms, xc='lda,vwn', pot='gth', guess='random', etol=1e-7, gradtol=None,
-                 sic=False, disp=False, opt=None, verbose=None):
+
+    def __init__(
+        self,
+        atoms,
+        xc='lda,vwn',
+        pot='gth',
+        guess='random',
+        etol=1e-7,
+        gradtol=None,
+        sic=False,
+        disp=False,
+        opt=None,
+        verbose=None,
+    ):
         """Initialize the SCF object."""
         # Set opt here, better to not use mutable data types in signatures
         if opt is None:
             opt = {'auto': 250}
 
         # Set the input parameters (the ordering is important)
-        self.atoms = atoms              #: Atoms object.
+        self.atoms = atoms  #: Atoms object.
         self.log = create_logger(self)  #: Logger object.
-        self.verbose = verbose          #: Verbosity level.
-        self.xc = xc                    #: Exchange-correlation functional.
-        self.pot = pot                  #: Used potential.
-        self.guess = guess              #: Initial wave functions guess.
-        self.etol = etol                #: Total energy convergence tolerance.
-        self.gradtol = gradtol          #: Gradient norm convergence tolerance.
-        self.sic = sic                  #: Enables the SIC energy calculation.
-        self.disp = disp                #: Enables the dispersion correction calculation.
-        self.opt = opt                  #: Minimization methods.
-        self.smear_update = 2           #: Steps after the smeared occupations are recalculated.
+        self.verbose = verbose  #: Verbosity level.
+        self.xc = xc  #: Exchange-correlation functional.
+        self.pot = pot  #: Used potential.
+        self.guess = guess  #: Initial wave functions guess.
+        self.etol = etol  #: Total energy convergence tolerance.
+        self.gradtol = gradtol  #: Gradient norm convergence tolerance.
+        self.sic = sic  #: Enables the SIC energy calculation.
+        self.disp = disp  #: Enables the dispersion correction calculation.
+        self.opt = opt  #: Minimization methods.
+        self.smear_update = 2  #: Steps after the smeared occupations are recalculated.
 
         # Initialize other attributes
-        self.energies = Energy()        #: Energy object holding energy contributions.
-        self.is_converged = False       #: Determines the SCF object convergence.
+        self.energies = Energy()  #: Energy object holding energy contributions.
+        self.is_converged = False  #: Determines the SCF object convergence.
 
     # ### Class properties ###
 
@@ -223,12 +236,14 @@ class SCF:
         # Print some information about the calculation
         if self.log.level <= logging.DEBUG:
             info()
-        self.log.debug(f'\n--- Atoms information ---\n{self.atoms}\n'
-                       f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
-                       f'Sampling per axis: {self.atoms.s}\n'
-                       f'Cut-off energy: {self.atoms.ecut} Eh\n'
-                       f'\n--- State information ---\n{self.atoms.occ}\n'
-                       f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---')
+        self.log.debug(
+            f'\n--- Atoms information ---\n{self.atoms}\n'
+            f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
+            f'Sampling per axis: {self.atoms.s}\n'
+            f'Cut-off energy: {self.atoms.ecut} Eh\n'
+            f'\n--- State information ---\n{self.atoms.occ}\n'
+            f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---'
+        )
 
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
@@ -277,18 +292,22 @@ class SCF:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(f'Minimizer: {imin}'
-                           f'\nIterations: {N}'
-                           f'\nTime: {t:.5f} s'
-                           f'\nTime/Iteration: {t / N:.5f} s')
+            self.log.debug(
+                f'Minimizer: {imin}'
+                f'\nIterations: {N}'
+                f'\nTime: {t:.5f} s'
+                f'\nTime/Iteration: {t / N:.5f} s'
+            )
         self.log.info(f'Total SCF time: {t_tot:.5f} s')
         # Print the S^2 expectation value for unrestricted calculations
         if self.atoms.unrestricted:
             self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
         if self.log.level <= logging.DEBUG:
-            self.log.debug('\n--- Energy data ---\n'
-                           f'Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}')
+            self.log.debug(
+                '\n--- Energy data ---\n'
+                f'Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}'
+            )
         else:
             self.log.info(f'Etot = {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
@@ -301,8 +320,9 @@ class SCF:
             self.log.warning('The previous calculation has not been converged.')
 
         # If new k-points have been set rebuild the atoms object and the potential
-        if not self.atoms.kpts.is_built or \
-           (hasattr(self, 'W') and len(self.W) != self.atoms.kpts.Nk):
+        if not self.atoms.kpts.is_built or (
+            hasattr(self, 'W') and len(self.W) != self.atoms.kpts.Nk
+        ):
             self.atoms.build()
             self.pot = self.pot
             self.is_converged = False
@@ -343,10 +363,12 @@ class SCF:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(f'Minimizer: {imin}'
-                           f'\nIterations: {N}'
-                           f'\nTime: {t:.5f} s'
-                           f'\nTime/Iteration: {t / N:.5f} s')
+            self.log.debug(
+                f'Minimizer: {imin}'
+                f'\nIterations: {N}'
+                f'\nTime: {t:.5f} s'
+                f'\nTime/Iteration: {t / N:.5f} s'
+            )
         self.log.info(f'Total band minimization time: {t_tot:.5f} s')
 
         # Converge empty bands automatically if desired
@@ -382,8 +404,9 @@ class SCF:
             # Call the minimizer
             self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
-            Elist, self.Z = BAND_MINIMIZER[imin](self, self.Z, self.opt[imin], cost=scf_step_unocc,
-                                                 grad=get_grad_unocc, **kwargs)
+            Elist, self.Z = BAND_MINIMIZER[imin](
+                self, self.Z, self.opt[imin], cost=scf_step_unocc, grad=get_grad_unocc, **kwargs
+            )
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}
@@ -405,10 +428,12 @@ class SCF:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(f'Minimizer: {imin}'
-                           f'\nIterations: {N}'
-                           f'\nTime: {t:.5f} s'
-                           f'\nTime/Iteration: {t / N:.5f} s')
+            self.log.debug(
+                f'Minimizer: {imin}'
+                f'\nIterations: {N}'
+                f'\nTime: {t:.5f} s'
+                f'\nTime/Iteration: {t / N:.5f} s'
+            )
         self.log.info(f'Total band minimization time: {t_tot:.5f} s')
         return self
 
@@ -446,17 +471,17 @@ class SCF:
 
     def clear(self):
         """Initialize or clear intermediate results."""
-        self.Y = None           # Orthogonal wave functions
-        self.n_spin = None      # Electronic densities per spin
-        self.dn_spin = None     # Gradient of electronic densities per spin
-        self.tau = None         # Kinetic energy densities per spin
-        self.phi = None         # Hartree field
-        self.exc = None         # Exchange-correlation energy density
-        self.vxc = None         # Exchange-correlation potential
-        self.vsigma = None      # n times d exc/d |dn|^2
-        self.vtau = None        # d exc/d tau
+        self.Y = None  # Orthogonal wave functions
+        self.n_spin = None  # Electronic densities per spin
+        self.dn_spin = None  # Gradient of electronic densities per spin
+        self.tau = None  # Kinetic energy densities per spin
+        self.phi = None  # Hartree field
+        self.exc = None  # Exchange-correlation energy density
+        self.vxc = None  # Exchange-correlation potential
+        self.vsigma = None  # n times d exc/d |dn|^2
+        self.vtau = None  # d exc/d tau
         self._precomputed = {}  # Dictionary of pre-computed values not to be saved
-        self._opt_log = {}      # Log of the optimization procedure
+        self._opt_log = {}  # Log of the optimization procedure
         return self
 
     def _precompute(self):
@@ -470,25 +495,33 @@ class SCF:
         if self.xc_type == 'meta-gga':
             self.tau = get_tau(atoms, self.Y)
         self.phi = solve_poisson(atoms, self.n)
-        self.exc, self.vxc, self.vsigma, self.vtau = get_xc(self.xc, self.n_spin, atoms.occ.Nspin,
-                                                            self.dn_spin, self.tau)
-        self._precomputed = {'dn_spin': self.dn_spin, 'phi': self.phi, 'vxc': self.vxc,
-                             'vsigma': self.vsigma, 'vtau': self.vtau}
+        self.exc, self.vxc, self.vsigma, self.vtau = get_xc(
+            self.xc, self.n_spin, atoms.occ.Nspin, self.dn_spin, self.tau
+        )
+        self._precomputed = {
+            'dn_spin': self.dn_spin,
+            'phi': self.phi,
+            'vxc': self.vxc,
+            'vsigma': self.vsigma,
+            'vtau': self.vtau,
+        }
         return self
 
     def __repr__(self):
         """Print the most important parameters stored in the SCF object."""
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
-        return f'XC functionals: {self.xc}\n' \
-               f'Potential: {self.pot}\n' \
-               f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}' \
-               f'Starting guess: {self.guess}\n' \
-               f'Symmetric guess: {self.symmetric}\n' \
-               f'Energy convergence tolerance: {self.etol} Eh\n' \
-               f'Gradient convergence tolerance: {self.gradtol}\n' \
-               f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n' \
-               f'Smearing: {self.atoms.occ.smearing > 0}\n' \
-               f'Smearing update cycle: {self.smear_update}'
+        return (
+            f'XC functionals: {self.xc}\n'
+            f'Potential: {self.pot}\n'
+            f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}'
+            f'Starting guess: {self.guess}\n'
+            f'Symmetric guess: {self.symmetric}\n'
+            f'Energy convergence tolerance: {self.etol} Eh\n'
+            f'Gradient convergence tolerance: {self.gradtol}\n'
+            f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n'
+            f'Smearing: {self.atoms.occ.smearing > 0}\n'
+            f'Smearing update cycle: {self.smear_update}'
+        )
 
 
 class RSCF(SCF):
@@ -499,6 +532,7 @@ class RSCF(SCF):
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class. Customized fillings could be overwritten when using this class.
     """
+
     @property
     def atoms(self):
         """Atoms object."""
@@ -521,6 +555,7 @@ class USCF(SCF):
     In difference to the SCF class, this class will not build the original Atoms object, only the
     one attributed to the class. Customized fillings could be overwritten when using this class.
     """
+
     @property
     def atoms(self):
         """Atoms object."""

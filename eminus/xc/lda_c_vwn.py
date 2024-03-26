@@ -3,6 +3,7 @@
 
 Reference: Phys. Rev. B 22, 3812.
 """
+
 import numpy as np
 
 
@@ -26,7 +27,7 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     Returns:
         tuple[ndarray, ndarray]: VWN correlation energy density and potential.
     """
-    rs = (3 / (4 * np.pi * n))**(1 / 3)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     x = np.sqrt(rs)
     X = rs + b * x + c
@@ -36,11 +37,12 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     tx = 2 * x + b
     tanx = np.arctan(Q / tx)
 
-    ec = A * (np.log(rs / X) + 2 * b / Q * tanx - fx0 * (np.log((x - x0)**2 / X) + f3 * tanx))
+    ec = A * (np.log(rs / X) + 2 * b / Q * tanx - fx0 * (np.log((x - x0) ** 2 / X) + f3 * tanx))
 
     tt = tx**2 + Q**2
-    vc = ec - x * A / 6 * (2 / x - tx / X - 4 * b / tt -
-                           fx0 * (2 / (x - x0) - tx / X - 4 * (2 * x0 + b) / tt))
+    vc = ec - x * A / 6 * (
+        2 / x - tx / X - 4 * b / tt - fx0 * (2 / (x - x0) - tx / X - 4 * (2 * x0 + b) / tt)
+    )
     return ec, np.array([vc]), None
 
 
@@ -68,17 +70,17 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
 
     ec0, vc0, _ = lda_c_vwn(n, A[0], b[0], c[0], x0[0])  # Paramagnetic
     ec1, vc1, _ = lda_c_vwn(n, A[1], b[1], c[1], x0[1])  # Ferromagnetic
-    ac, dac, _ = lda_c_vwn(n, A[2], b[2], c[2], x0[2])   # Spin stiffness
+    ac, dac, _ = lda_c_vwn(n, A[2], b[2], c[2], x0[2])  # Spin stiffness
 
-    d2fzeta0 = 4 / 9 / (2**(1 / 3) - 1)
-    fzeta = 0.5 * ((1 + zeta)**(4 / 3) + (1 - zeta)**(4 / 3) - 2) / (2**(1 / 3) - 1)
+    d2fzeta0 = 4 / 9 / (2 ** (1 / 3) - 1)
+    fzeta = 0.5 * ((1 + zeta) ** (4 / 3) + (1 - zeta) ** (4 / 3) - 2) / (2 ** (1 / 3) - 1)
     zeta4 = zeta**4
     fzetaz4 = fzeta * zeta4
     De = ec1 - ec0 - ac / d2fzeta0
 
     ec = ec0 + ac / d2fzeta0 * fzeta + De * fzetaz4
 
-    dfzeta = 4 / 6 * ((1 + zeta)**(1 / 3) - (1 - zeta)**(1 / 3)) / (2**(1 / 3) - 1)
+    dfzeta = 4 / 6 * ((1 + zeta) ** (1 / 3) - (1 - zeta) ** (1 / 3)) / (2 ** (1 / 3) - 1)
     dec1 = vc0 + dac / d2fzeta0 * fzeta + (vc1 - vc0 - dac / d2fzeta0) * fzetaz4
     dec2 = ac / d2fzeta0 * dfzeta + De * (4 * zeta**3 * fzeta + zeta4 * dfzeta)
 

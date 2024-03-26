@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test logging class."""
+
 import pytest
 
 import eminus
@@ -20,12 +21,17 @@ def test_independence():
     assert log.verbose != logger.log.verbose
 
 
-@pytest.mark.parametrize(('level', 'ref'), [('DEBUG', 'DEBUG'),
-                                            ('debug', 'DEBUG'),
-                                            (4, 'DEBUG'),
-                                            (0, 'CRITICAL'),
-                                            (9, 'DEBUG'),
-                                            (None, None)])
+@pytest.mark.parametrize(
+    ('level', 'ref'),
+    [
+        ('DEBUG', 'DEBUG'),
+        ('debug', 'DEBUG'),
+        (4, 'DEBUG'),
+        (0, 'CRITICAL'),
+        (9, 'DEBUG'),
+        (None, None),
+    ],
+)
 def test_level(level, ref):
     """Test logging levels."""
     log = logger.create_logger('tmp')
@@ -42,11 +48,13 @@ def test_name():
     @logger.name(name)
     def tmp():
         pass
+
     assert tmp.__name__ == name
 
 
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

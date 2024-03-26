@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test torch extra."""
+
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
@@ -19,7 +20,7 @@ W_tests = {
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
     'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
     'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
-    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))]
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
 }
 
 
@@ -32,8 +33,19 @@ def test_IJ(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin', 'full_k', 'active_k'])
+@pytest.mark.parametrize(
+    'field',
+    [
+        'full',
+        'active',
+        'full_single',
+        'active_single',
+        'full_spin',
+        'active_spin',
+        'full_k',
+        'active_k',
+    ],
+)
 def test_JI(field):
     """Test forward and backward operator identity."""
     pytest.importorskip('torch', reason='torch not installed, skip tests')
@@ -98,8 +110,19 @@ def test_IJ_gpu(field):
     assert_allclose(out, test)
 
 
-@pytest.mark.parametrize('field', ['full', 'active', 'full_single', 'active_single', 'full_spin',
-                                   'active_spin', 'full_k', 'active_k'])
+@pytest.mark.parametrize(
+    'field',
+    [
+        'full',
+        'active',
+        'full_single',
+        'active_single',
+        'full_spin',
+        'active_spin',
+        'full_k',
+        'active_k',
+    ],
+)
 def test_JI_gpu(field):
     """Test forward and backward GPU operator identity."""
     try:
@@ -174,5 +197,6 @@ def test_hermitian_J_gpu(field):
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

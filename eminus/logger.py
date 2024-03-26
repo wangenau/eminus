@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Logger initialization and configuration."""
+
 import logging
 import numbers
 import sys
@@ -13,6 +14,7 @@ class CustomLogger(logging.Logger):
     Args:
         name (str): Logger name.
     """
+
     def __init__(self, name):
         """Initialize the CustomLogger object."""
         super().__init__(name)
@@ -30,6 +32,7 @@ class CustomLogger(logging.Logger):
 
 class CustomFormatter(logging.Formatter):
     """Custom logger formatter."""
+
     def format(self, record):
         """Use different formatting for different logging levels.
 
@@ -84,7 +87,7 @@ def get_level(verbose):
         1: 'ERROR',
         2: 'WARNING',
         3: 'INFO',
-        4: 'DEBUG'
+        4: 'DEBUG',
     }
     # Use the global logging level for None
     if verbose is None:
@@ -109,7 +112,9 @@ def name(newname):
     Returns:
         Callable: Decorator.
     """
+
     def decorator(f):
         f.__name__ = newname
         return f
+
     return decorator

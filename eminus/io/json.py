@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """JSON file handling."""
+
 import base64
 import copy
 import json
@@ -84,6 +85,7 @@ def write_json(obj, filename):
 
     class CustomEncoder(json.JSONEncoder):
         """Custom JSON encoder class to serialize eminus classes."""
+
         def default(self, obj):
             # ndarrays are not JSON serializable, encode them as base64 to save them
             if isinstance(obj, np.ndarray):
@@ -91,8 +93,17 @@ def write_json(obj, filename):
                 return {'__ndarray__': data, 'dtype': str(obj.dtype), 'shape': obj.shape}
 
             # If obj is an eminus class dump them as a dictionary
-            if isinstance(obj, (eminus.Atoms, eminus.SCF, eminus.energies.Energy, eminus.gth.GTH,
-                                eminus.kpoints.KPoints, eminus.occupations.Occupations)):
+            if isinstance(
+                obj,
+                (
+                    eminus.Atoms,
+                    eminus.SCF,
+                    eminus.energies.Energy,
+                    eminus.gth.GTH,
+                    eminus.kpoints.KPoints,
+                    eminus.occupations.Occupations,
+                ),
+            ):
                 # Only dumping the dict would result in a string, so do one dump and one load
                 data = json.dumps(obj.__dict__, cls=CustomEncoder)
                 return dict(json.loads(data))

@@ -4,6 +4,7 @@ Changelog
 dev
 ---
 - Miscellaneous
+   - Reformat the codebase using Ruff
    - Breaking:
       - Rewritten minimizer
       - Massive speedup for more k-points

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Dispersion correction interface."""
+
 # Import the DFT-D3 C extension beforehand, if one doesn't do this the dispersion energies are wrong
 try:  # noqa: SIM105
     import dftd3._libdftd3  # noqa: F401
@@ -37,8 +38,10 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
             ZeroDampingParam,
         )
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[dispersion]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[dispersion]".\n\n'
+        )
         raise
     # Dictionary of implemented dispersion models
     dispersion_version = {
@@ -46,7 +49,7 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
         'd3bjm': ModifiedRationalDampingParam,
         'd3zero': ZeroDampingParam,
         'd3zerom': ModifiedZeroDampingParam,
-        'd3op': OptimizedPowerDampingParam
+        'd3op': OptimizedPowerDampingParam,
     }
 
     # Set up input parameters
@@ -66,8 +69,10 @@ def get_Edisp(scf, version='d3bj', atm=True, xc=None):
             method = 'pbe'
         else:
             method = 'pbe'
-            log.warning('Functional for the dispersion correction could not be detected, continue'
-                        ' with pbe. You may need to overwrite the functional keyword manually.')
+            log.warning(
+                'Functional for the dispersion correction could not be detected, continue'
+                ' with pbe. You may need to overwrite the functional keyword manually.'
+            )
     else:
         method = xc
 

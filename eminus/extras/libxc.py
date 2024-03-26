@@ -10,6 +10,7 @@ Alternatively, one can use the PySCF Libxc interface with::
 
     pip install eminus[libxc]
 """
+
 import numpy as np
 from scipy.linalg import norm
 
@@ -53,16 +54,22 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     else:
         # The gradients have to be reshaped as well but also squared
         if Nspin == 1:
-            dn2 = norm(dn_spin, axis=2)**2
+            dn2 = norm(dn_spin, axis=2) ** 2
         else:
             # For the spin-polarized case the gradients of spin-up and -down are mixed
-            dn2 = np.vstack((norm(dn_spin[0], axis=1)**2, np.sum(dn_spin[0] * dn_spin[1], axis=1),
-                            norm(dn_spin[1], axis=1)**2))
+            dn2 = np.vstack(
+                (
+                    norm(dn_spin[0], axis=1) ** 2,
+                    np.sum(dn_spin[0] * dn_spin[1], axis=1),
+                    norm(dn_spin[1], axis=1) ** 2,
+                )
+            )
         if tau is None:
             out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()})
         else:
-            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel(),
-                                'tau': tau.T.ravel()})
+            out = func.compute(
+                {'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel(), 'tau': tau.T.ravel()}
+            )
     # zk is a column vector, flatten it to a 1d row vector
     exc = out['zk'].ravel()
 
@@ -97,8 +104,10 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     try:
         from pyscf.dft.libxc import eval_xc
     except ImportError:
-        log.exception('Necessary dependencies not found. To use this module, '
-                      'install them with "pip install eminus[libxc]".\n\n')
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[libxc]".\n\n'
+        )
         raise
 
     if dn_spin is None:
@@ -111,8 +120,12 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
             # For spin-paired systems we have to remove the spin indexing (the outermost shape)
             rho = np.vstack((n_spin[0], dn_spin[0].T))
         else:
-            rho = np.array([np.vstack((n_spin[0], dn_spin[0].T)),
-                            np.vstack((n_spin[1], dn_spin[1].T))])
+            rho = np.array(
+                [
+                    np.vstack((n_spin[0], dn_spin[0].T)),
+                    np.vstack((n_spin[1], dn_spin[1].T)),
+                ]
+            )
     else:
         # For meta-GGAs we have to append the kinetic energy densities as well
         # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n,lapl,tau)
@@ -121,8 +134,12 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
         if Nspin == 1:
             rho = np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
         else:
-            rho = np.array([np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
-                            np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1]))])
+            rho = np.array(
+                [
+                    np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
+                    np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1])),
+                ]
+            )
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)

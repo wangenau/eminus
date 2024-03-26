@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Atomic data collections."""
+
 import math
 
 #: Map atom symbols and atom numbers.
@@ -107,7 +108,7 @@ SYMBOL2NUMBER = {
     'Fm': 100,
     'Md': 101,
     'No': 102,
-    'Lr': 103
+    'Lr': 103,
 }
 
 #: Map atom numbers and atom symbols.
@@ -324,7 +325,7 @@ CPK_COLORS = {
     'Fm': '#ffffff',
     'Md': '#ffffff',
     'No': '#ffffff',
-    'Lr': '#ffffff'
+    'Lr': '#ffffff',
 }
 
 #: Special points in Brillouin zones of different crystal systems.
@@ -334,7 +335,7 @@ SPECIAL_POINTS = {
         'G': [0, 0, 0],
         'M': [1 / 2, 1 / 2, 0],
         'R': [1 / 2, 1 / 2, 1 / 2],
-        'X': [0, 1 / 2, 0]
+        'X': [0, 1 / 2, 0],
     },
     'fcc': {
         'G': [0, 0, 0],
@@ -342,13 +343,13 @@ SPECIAL_POINTS = {
         'L': [1 / 2, 1 / 2, 1 / 2],
         'U': [5 / 8, 1 / 4, 5 / 8],
         'W': [1 / 2, 1 / 4, 3 / 4],
-        'X': [1 / 2, 0, 1 / 2]
+        'X': [1 / 2, 0, 1 / 2],
     },
     'bcc': {
         'G': [0, 0, 0],
         'H': [1 / 2, -1 / 2, 1 / 2],
         'P': [1 / 4, 1 / 4, 1 / 4],
-        'N': [0, 0, 1 / 2]
+        'N': [0, 0, 1 / 2],
     },
     'tetragonal': {
         'G': [0, 0, 0],
@@ -356,7 +357,7 @@ SPECIAL_POINTS = {
         'M': [1 / 2, 1 / 2, 0],
         'R': [0, 1 / 2, 1 / 2],
         'X': [0, 1 / 2, 0],
-        'Z': [0, 0, 1 / 2]
+        'Z': [0, 0, 1 / 2],
     },
     'orthorhombic': {
         'G': [0, 0, 0],
@@ -366,7 +367,7 @@ SPECIAL_POINTS = {
         'U': [1 / 2, 0, 1 / 2],
         'X': [1 / 2, 0, 0],
         'Y': [0, 1 / 2, 0],
-        'Z': [0, 0, 1 / 2]
+        'Z': [0, 0, 1 / 2],
     },
     'hexagonal': {
         'G': [0, 0, 0],
@@ -374,23 +375,31 @@ SPECIAL_POINTS = {
         'H': [1 / 3, 1 / 3, 1 / 2],
         'K': [1 / 3, 1 / 3, 0],
         'L': [1 / 2, 0, 1 / 2],
-        'M': [1 / 2, 0, 0]
-    }
+        'M': [1 / 2, 0, 0],
+    },
 }
 
 #: Primitive lattice vectors of different crystal systems.
 #: Reference: Comput. Mater. Sci. 49, 299.
 LATTICE_VECTORS = {
-    'sc': [[1, 0, 0],
-           [0, 1, 0],
-           [0, 0, 1]],
-    'fcc': [[0, 1 / 2, 1 / 2],
-            [1 / 2, 0, 1 / 2],
-            [1 / 2, 1 / 2, 0]],
-    'bcc': [[-1 / 2, 1 / 2, 1 / 2],
-            [1 / 2, -1 / 2, 1 / 2],
-            [1 / 2, 1 / 2, -1 / 2]],
-    'hexagonal': [[1 / 2, -math.sqrt(3) / 2, 0],
-                  [1 / 2, math.sqrt(3) / 2, 0],
-                  [0, 0, 1]]
+    'sc': [
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    ],
+    'fcc': [
+        [0, 1 / 2, 1 / 2],
+        [1 / 2, 0, 1 / 2],
+        [1 / 2, 1 / 2, 0],
+    ],
+    'bcc': [
+        [-1 / 2, 1 / 2, 1 / 2],
+        [1 / 2, -1 / 2, 1 / 2],
+        [1 / 2, 1 / 2, -1 / 2],
+    ],
+    'hexagonal': [
+        [1 / 2, -math.sqrt(3) / 2, 0],
+        [1 / 2, math.sqrt(3) / 2, 0],
+        [0, 0, 1],
+    ],
 }

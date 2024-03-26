@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test different energy contributions."""
+
 import copy
 
 import numpy as np
@@ -21,7 +22,7 @@ E_ref = {
     'Enonloc': 8.152508709,
     'Eewald': -4.539675967,
     'Esic': -0.397094829,
-    'Etot': -29.685641033
+    'Etot': -29.685641033,
 }
 
 # Run the spin-unpolarized calculation at first
@@ -133,5 +134,6 @@ def test_extrapolate():
 if __name__ == '__main__':
     import inspect
     import pathlib
+
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

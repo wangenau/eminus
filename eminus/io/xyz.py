@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """XYZ file handling."""
+
 import time
 
 import numpy as np
@@ -38,7 +39,7 @@ def read_xyz(filename):
         atom = []
         pos = []
         # Following lines contain atom positions with the format: Atom x-pos y-pos z-pos
-        for line in lines[2:2 + Natoms]:
+        for line in lines[2 : 2 + Natoms]:
             line_split = line.strip().split()
             atom.append(line_split[0])
             pos.append(np.float64(line_split[1:4]))
@@ -78,8 +79,10 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         fods = [bohr2ang(i) for i in fods]
 
     if 'He' in atoms.atom and atoms.unrestricted:
-        log.warning('You need to modify "elec_symbols" to write helium with FODs in the spin-'
-                    'polarized case.')
+        log.warning(
+            'You need to modify "elec_symbols" to write helium with FODs in the spin-'
+            'polarized case.'
+        )
 
     # Append to a file when using the trajectory keyword
     if trajectory:
@@ -98,8 +101,10 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
         for ia in range(atoms.Natoms):
-            fp.write(f'{atoms.atom[ia]:<2s}  '
-                     f'{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n')
+            fp.write(
+                f'{atoms.atom[ia]:<2s}  '
+                f'{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n'
+            )
         # Add FOD coordinates if desired
         # The atom symbol will default to pos (no atom type)
         if fods is not None:
