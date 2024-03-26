@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit

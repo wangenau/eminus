@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
 from eminus import Atoms, read_xyz, SCF, write_cube, write_xyz
 from eminus.dft import get_psi
 from eminus.extras import get_fods, remove_core_fods
