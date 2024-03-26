@@ -14,6 +14,7 @@ dev
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
    - Small tests improvements
+   - Move tox.ini contents to pyproject.toml
    - Add an eminus Discord server
 
 v2.7.1 - Feb 09, 2024

@@ -1,12 +1,32 @@
+### build-system ###
 [build-system]
 requires = ["setuptools>=1.2"]
 build-backend = "setuptools.build_meta"
 
+### Coverage ###
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == '__main__':",
+    "except ImportError:",
+]
+
+[tool.coverage.run]
+include = ["eminus/*"]
+omit = ["eminus/extras/*"]
+
+### Mypy ###
 [tool.mypy]
 python_version = "3.7"
 exclude = ["public"]
 ignore_missing_imports = true
 
+### Pytest ###
+[tool.pytest.ini_options]
+addopts = "-rsxX"
+markers = ["slow: test runs longer than five seconds."]
+norecursedirs = "public/*"
+
+### Ruff ###
 [tool.ruff]
 target-version = "py37"
 extend-include = ["*.ipynb"]
