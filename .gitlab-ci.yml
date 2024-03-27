@@ -251,7 +251,7 @@ dockerhub:
   stage: publish
   services:
     - docker:dind
-#  needs: ["docker"]
+  needs: ["installation"]
   script:
     - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
@@ -259,9 +259,9 @@ dockerhub:
     # Try to pull the build locally, rebuild otherwise
     - docker build --pull -t wangenau/eminus:"${VERSION}"-test .
     - docker push wangenau/eminus:"${VERSION}"-test
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == "main"
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
 
 ##### Publish the package to PyPI #####
 pypi:
@@ -281,4 +281,4 @@ pypi:
     - twine upload -u __token__ -p "${API_TOKEN}" dist/*
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-  when: manual
+      when: manual
