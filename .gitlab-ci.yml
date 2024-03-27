@@ -34,6 +34,34 @@ stages:
 
 ############### test ###############
 
+##### Create coverage reports #####
+coverage:
+  stage: deploy
+  script:
+    - pip install -e .
+    - pip install coverage pyscf pytest pytest-cov
+    - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
+    - coverage report --precision=2
+    - coverage html --precision=2
+    - coverage xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+  artifacts:
+    paths:
+      - htmlcov/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      # Fix: Run coverage even if only the lint or pages job runs to prevent an unknown status badge
+      # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
+      changes:
+      - "*.py"
+      - "**/*.py"
+      - docs/*
+      - docs/**/*
+
 ##### Lint Python files #####
 lint:
   stage: test
@@ -55,6 +83,8 @@ minimal:
 ##### Test using newest dependency versions #####
 newest:
   extends: .pytest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
 
 ##### Type check Python files #####
 typecheck:
@@ -138,34 +168,6 @@ python:
       - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11']
 
 ############### deploy ###############
-
-##### Create coverage reports #####
-coverage:
-  stage: deploy
-  script:
-    - pip install -e .
-    - pip install coverage pyscf pytest pytest-cov
-    - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
-    - coverage report --precision=2
-    - coverage html --precision=2
-    - coverage xml
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
-  artifacts:
-    paths:
-      - htmlcov/
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      # Fix: Run coverage even if only the lint or pages job runs to prevent an unknown status badge
-      # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
-      changes:
-      - "*.py"
-      - "**/*.py"
-      - docs/*
-      - docs/**/*
 
 ##### Build documentation #####
 pages:
