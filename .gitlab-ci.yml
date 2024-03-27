@@ -157,8 +157,7 @@ installation:
 ##### Build documentation #####
 pages:
   stage: deploy
-  dependencies:
-    - coverage
+  needs: ["coverage"]
   script:
     - pip install -e .
     # Build Sphinx documentation
@@ -194,7 +193,7 @@ pages:
 ##### Build the documentation for the dev branch under a different URL #####
 pages:dev:
   extends: pages
-  dependencies:
+  needs: []
   after_script:
     - echo "dev pages available at https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
   only:
