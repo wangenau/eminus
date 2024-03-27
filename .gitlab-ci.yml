@@ -259,9 +259,9 @@ dockerhub:
     # Try to pull the build locally, rebuild otherwise
     - docker build --pull -t wangenau/eminus:"${VERSION}"-test .
     - docker push wangenau/eminus:"${VERSION}"-test
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == "main"
+  #     when: manual
 
 ##### Publish the package to PyPI #####
 pypi:
