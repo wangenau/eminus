@@ -10,6 +10,8 @@ dev
 - Coding style
    - Reformat the codebase using Ruff
    - Add SPDX license identifiers
+   - Modernize CI pipelines
+   - Add CI release pipelines
    - Move tox.ini contents to pyproject.toml
 - Miscellaneous
    - Breaking:
