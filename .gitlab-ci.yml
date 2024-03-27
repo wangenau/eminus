@@ -25,6 +25,7 @@ stages:
   extends: .pytest
   stage: test-pedantic
   when: manual
+  allow_failure: false
 
 ##### Lint Python files #####
 lint:
