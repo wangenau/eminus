@@ -114,7 +114,7 @@ docker:
   script:
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
     - VERSION=$(sed -ne "s/__version__ = '\(\.*\)/'\\1/p" eminus/version.py | sed "s/'//g")
-    - docker build -t wangenau/eminus:"${VERSION}" .
+    - docker build -t wangenau/eminus:"${VERSION}"-test .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
   when: manual
   # Do not allow failures in manual jobs
@@ -244,6 +244,24 @@ pages:dev:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
 
 ############### publish ###############
+
+##### Publish the package to Docker Hub #####
+dockerhub:
+  image: docker:latest
+  stage: publish
+  services:
+    - docker:dind
+  needs: ["docker"]
+  script:
+    - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
+    # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
+    - VERSION=$(sed -ne "s/__version__ = '\(\.*\)/'\\1/p" eminus/version.py | sed "s/'//g")
+    # Try to pull the build locally, rebuild otherwise
+    - docker build --pull -t wangenau/eminus:"${VERSION}"-test .
+    - docker push wangenau/eminus:"${VERSION}"
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "main"
+  when: manual
 
 ##### Publish the package to PyPI #####
 pypi:
