@@ -25,6 +25,7 @@ stages:
   extends: .pytest
   stage: test-pedantic
   when: manual
+  only: null
 
 ##### Lint Python files #####
 lint:
