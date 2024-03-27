@@ -6,6 +6,7 @@ stages:
   - test
   - test-pedantic
   - deploy
+  - publish
 
 .pytest:
   stage: test
@@ -30,7 +31,7 @@ lint:
   stage: test
   script:
     - pip install ruff
-    - ruff check .
+    - ruff check
   only:
     changes:
       - "*.py"
@@ -81,7 +82,7 @@ minimal:
   extends: .pytest
   image: python:3.7-slim
   before_script:
-    - pip install numpy==1.17.0 scipy==1.6.0
+    - pip install numpy==1.17 scipy==1.6
 
 ##### Test code functionality for all Python versions between #####
 python:
@@ -121,7 +122,7 @@ platform:windows:
   tags:
     - windows
   before_script:
-    # https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/-/issues/13
+    # Reference: https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/-/issues/13
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     - choco install python -y --no-progress
     - refreshenv
@@ -138,7 +139,8 @@ installation:
     - twine check dist/*
     # Remove pseudopotential files to check if the installation files work on their own
     - rm -rf eminus/psp/
-    - cd dist/
+    - cp -r dist/ tmp/
+    - cd tmp/
     # Test the source distribution
     - tar -xf eminus-*.tar.gz
     - pip install eminus-*/.
@@ -147,6 +149,9 @@ installation:
     - pip uninstall eminus -y
     - pip install eminus-*.whl
     - python -c "import eminus; eminus.demo()"
+  artifacts:
+    paths:
+      - dist/
 
 ##### Build documentation #####
 pages:
@@ -174,7 +179,7 @@ pages:
     - cp -r htmlcov/ public/ || true
   artifacts:
     paths:
-      - public
+      - public/
   only:
     changes:
       - docs/*
@@ -196,3 +201,25 @@ pages:dev:
       - dev
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
+
+##### Publish the package to PyPI #####
+release:pypi:
+  stage: publish
+  dependencies:
+    - installation
+  id_tokens:
+    PYPI_ID_TOKEN:
+      aud: testpypi
+  script:
+    - apt-get update -y
+    - apt-get install jq -y --no-install-recommends
+    - pip install twine id
+    # Reference: https://github.com/pypi/warehouse/issues/13575#issuecomment-1961187837
+    - OIDC_TOKEN=$(python -m id PYPI)
+    - RESP=$(curl -X POST https://test.pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
+    - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
+    - twine upload -r testpypi -u __token__ -p "${API_TOKEN}" dist/*
+#  only:
+#    refs:
+#      - main
+  when: manual
