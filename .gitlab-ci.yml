@@ -32,6 +32,8 @@ stages:
   # Do not allow failures in manual jobs
   allow_failure: false
 
+############### test ###############
+
 ##### Lint Python files #####
 lint:
   stage: test
@@ -42,6 +44,13 @@ lint:
     - changes:
       - "*.py"
       - "**/*.py"
+
+##### Test the minimally supported versions #####
+minimal:
+  extends: .pytest
+  image: python:3.7-slim
+  before_script:
+    - pip install numpy==1.17 scipy==1.6
 
 ##### Type check Python files #####
 typecheck:
@@ -54,50 +63,35 @@ typecheck:
       - "*.py"
       - "**/*.py"
 
-##### Test and create coverage reports #####
-coverage:
-  stage: test
+############### fulltest ###############
+
+##### Test the code installation after building #####
+installation:
+  extends: .pytest-full
   script:
-    - pip install -e .
-    - pip install coverage pyscf pytest pytest-cov
-    - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
-    - coverage report --precision=2
-    - coverage html --precision=2
-    - coverage xml
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+    - pip install --upgrade pip
+    - pip install build twine
+    - python -m build
+    # Do a check with twine
+    - twine check dist/*
+    # Remove pseudopotential files to check if the installation files work on their own
+    - rm -rf eminus/psp/
+    # Copy the build directory to test the installation
+    - cp -r dist/ tmp/
+    - cd tmp/
+    # Test the source distribution
+    - tar -xf eminus-*.tar.gz
+    - pip install eminus-*/.
+    - python -c "import eminus; eminus.demo()"
+    # Test the wheel
+    - pip uninstall eminus -y
+    - pip install eminus-*.whl
+    - python -c "import eminus; eminus.demo()"
   artifacts:
     paths:
-      - htmlcov/
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage.xml
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-      # Fix: Run coverage even if only the lint or pages job runs to prevent an unknown status badge
-      # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
-      changes:
-      - "*.py"
-      - "**/*.py"
-      - docs/*
-      - docs/**/*
+      - dist/
 
-##### Test the minimally supported versions #####
-minimal:
-  extends: .pytest
-  image: python:3.7-slim
-  before_script:
-    - pip install numpy==1.17 scipy==1.6
-
-##### Test code functionality for all Python versions between #####
-python:
-  extends: .pytest-full
-  image: python:$PYTHON_VERSIONS-slim
-  parallel:
-    matrix:
-      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11']
-
-##### Test code functionality under Linux, macOS, and Windows #####
+##### Test code functionality under Linux, macOS, NixOS, and Windows #####
 platform:linux:
   extends: .pytest-full
   image: ubuntu:latest
@@ -131,31 +125,43 @@ platform:windows:
     - refreshenv
     - Set-Alias -Name python3 -Value python
 
-##### Test the code installation after building #####
-installation:
+##### Test code functionality for all supported Python versions #####
+python:
   extends: .pytest-full
+  image: python:$PYTHON_VERSIONS-slim
+  parallel:
+    matrix:
+      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11']
+
+############### deploy ###############
+
+##### Create coverage reports #####
+coverage:
+  stage: deploy
   script:
-    - pip install --upgrade pip
-    - pip install build twine
-    - python -m build
-    # Do a check with twine
-    - twine check dist/*
-    # Remove pseudopotential files to check if the installation files work on their own
-    - rm -rf eminus/psp/
-    # Copy the build directory to test the installation
-    - cp -r dist/ tmp/
-    - cd tmp/
-    # Test the source distribution
-    - tar -xf eminus-*.tar.gz
-    - pip install eminus-*/.
-    - python -c "import eminus; eminus.demo()"
-    # Test the wheel
-    - pip uninstall eminus -y
-    - pip install eminus-*.whl
-    - python -c "import eminus; eminus.demo()"
+    - pip install -e .
+    - pip install coverage pyscf pytest pytest-cov
+    - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
+    - coverage report --precision=2
+    - coverage html --precision=2
+    - coverage xml
+  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
-      - dist/
+      - htmlcov/
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      # Fix: Run coverage even if only the lint or pages job runs to prevent an unknown status badge
+      # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
+      changes:
+      - "*.py"
+      - "**/*.py"
+      - docs/*
+      - docs/**/*
 
 ##### Build documentation #####
 pages:
@@ -203,6 +209,8 @@ pages:dev:
     - if: $CI_COMMIT_BRANCH == "dev"
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
+
+############### publish ###############
 
 ##### Publish the package to PyPI #####
 pypi:
