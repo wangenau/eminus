@@ -36,7 +36,7 @@ stages:
 
 ##### Create coverage reports #####
 coverage:
-  stage: deploy
+  stage: test
   script:
     - pip install -e .
     - pip install coverage pyscf pytest pytest-cov
@@ -80,11 +80,14 @@ minimal:
   before_script:
     - pip install numpy==1.17 scipy==1.6
 
-##### Test using newest dependency versions #####
+##### Test using the newest dependency versions #####
 newest:
   extends: .pytest
   rules:
+    # Only run in the dev branch since this is just a subset of the coverage test
     - if: $CI_COMMIT_BRANCH == "dev"
+    # rules are listed as arrays but extends do not merge arrays, use reference to use the rules:changes section
+    - !reference [.pytest, rules]
 
 ##### Type check Python files #####
 typecheck:
@@ -177,7 +180,7 @@ pages:
     - pip install -e .
     # Build Sphinx documentation
     - pip install sphinx furo sphinx-design sphinxcontrib-bibtex
-    - sphinx-build -j $(nproc) -b html ./docs ./public
+    - sphinx-build -j "$(nproc)" -b html ./docs ./public
     # Convert notebooks to HTML
     - pip install notebook
     - find examples -name '*.ipynb' -exec jupyter nbconvert --to html {} --template classic --ExecutePreprocessor.store_widget_state=True \;
@@ -213,6 +216,8 @@ pages:dev:
     - echo "dev pages available at https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
   rules:
     - if: $CI_COMMIT_BRANCH == "dev"
+    # rules are listed as arrays but extends do not merge arrays, use reference to use the rules:changes section
+    - !reference [pages, rules]
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
 
