@@ -115,7 +115,7 @@ docker:
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
     - VERSION=$(sed -ne "s/__version__ = '\(\.*\)/'\\1/p" eminus/version.py | sed "s/'//g")
     - docker build -t wangenau/eminus:"${VERSION}" .
-    - docker run -it wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
+    - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
   when: manual
   # Do not allow failures in manual jobs
   allow_failure: false
