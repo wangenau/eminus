@@ -25,7 +25,6 @@ stages:
   extends: .pytest
   stage: test-pedantic
   when: manual
-  allow_failure: false
 
 ##### Lint Python files #####
 lint:
@@ -206,8 +205,7 @@ pages:dev:
 ##### Publish the package to PyPI #####
 release:pypi:
   stage: publish
-  dependencies:
-    - installation
+  needs: ["installation"]
   id_tokens:
     PYPI_ID_TOKEN:
       aud: testpypi
