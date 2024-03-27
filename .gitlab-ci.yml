@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
 # SPDX-License-Identifier: Apache-2.0
-image: python:3.12-slim
+default:
+  image: python:3.12-slim
 
 stages:
   - test
@@ -11,11 +12,12 @@ stages:
 .pytest:
   stage: test
   script:
+    # Use the python3 -m prefix to make the commands work under different OS
     - python3 -m pip install -e .
     - python3 -m pip install pytest
     - python3 -m pytest tests/ -m "not slow"
-  only:
-    changes:
+  rules:
+    - changes:
       - eminus/*.py
       - eminus/**/*.py
       - tests/*.py
@@ -24,8 +26,11 @@ stages:
 .pytest-full:
   extends: .pytest
   stage: fulltest
+  # Reset the rules for manual jobs
+  rules: null
   when: manual
-  only: null
+  # Do not allow failures in manual jobs
+  allow_failure: false
 
 ##### Lint Python files #####
 lint:
@@ -33,8 +38,8 @@ lint:
   script:
     - pip install ruff
     - ruff check
-  only:
-    changes:
+  rules:
+    - changes:
       - "*.py"
       - "**/*.py"
 
@@ -44,8 +49,8 @@ typecheck:
   script:
     - pip install mypy
     - mypy .
-  only:
-    changes:
+  rules:
+    - changes:
       - "*.py"
       - "**/*.py"
 
@@ -53,12 +58,12 @@ typecheck:
 coverage:
   stage: test
   script:
-    - python3 -m pip install -e .
-    - python3 -m pip install coverage pyscf pytest pytest-cov
+    - pip install -e .
+    - pip install coverage pyscf pytest pytest-cov
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
     - coverage report --precision=2
-    - coverage xml
     - coverage html --precision=2
+    - coverage xml
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
@@ -67,12 +72,11 @@ coverage:
       coverage_report:
         coverage_format: cobertura
         path: coverage.xml
-  only:
-    refs:
-      - main
-    # Fix: Run coverage even if only the lint or pages job run to prevent an unknown status badge
-    # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
-    changes:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      # Fix: Run coverage even if only the lint or pages job runs to prevent an unknown status badge
+      # Reference: https://gitlab.com/gitlab-org/gitlab/-/issues/346779
+      changes:
       - "*.py"
       - "**/*.py"
       - docs/*
@@ -113,8 +117,6 @@ platform:nixos:
   script:
     # Remove Torch since the build time takes too long
     - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/  torch-bin/  \# torch-bin/g" flake.nix
-    # Remove Matplotlib since some example scripts will fail in the CI
-    - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/matplotlib/\# matplotlib/g" flake.nix
     # In the CI nix develop will open a shell and close it immediately afterwards, use -c to execute commands
     - nix --extra-experimental-features "nix-command flakes" develop -c pytest tests/ -m "not slow"
 
@@ -140,6 +142,7 @@ installation:
     - twine check dist/*
     # Remove pseudopotential files to check if the installation files work on their own
     - rm -rf eminus/psp/
+    # Copy the build directory to test the installation
     - cp -r dist/ tmp/
     - cd tmp/
     # Test the source distribution
@@ -180,30 +183,29 @@ pages:
   artifacts:
     paths:
       - public/
-  only:
-    changes:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - changes:
       - docs/*
       - docs/**/*
       - examples/*
       - examples/**/*
       - eminus/version.py
-    refs:
-      - main
 
 ##### Build the documentation for the dev branch under a different URL #####
 pages:dev:
   extends: pages
+  # Overwrite the pages needs
   needs: []
   after_script:
     - echo "dev pages available at https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
-  only:
-    refs:
-      - dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
 
 ##### Publish the package to PyPI #####
-release:pypi:
+pypi:
   stage: publish
   needs: ["installation"]
   id_tokens:
@@ -218,7 +220,6 @@ release:pypi:
     - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
     - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
     - twine upload -u __token__ -p "${API_TOKEN}" dist/*
-  only:
-    refs:
-      - main
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
   when: manual
