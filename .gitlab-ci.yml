@@ -212,8 +212,8 @@ release:pypi:
       aud: testpypi
   script:
     - apt-get update -y
-    - apt-get install jq -y --no-install-recommends
-    - pip install twine id
+    - apt-get install curl jq -y --no-install-recommends
+    - pip install id twine
     # Reference: https://github.com/pypi/warehouse/issues/13575#issuecomment-1961187837
     - OIDC_TOKEN=$(python -m id PYPI)
     - RESP=$(curl -X POST https://test.pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
