@@ -26,8 +26,6 @@ stages:
 .pytest-full:
   extends: .pytest
   stage: fulltest
-  # Reset the rules for manual jobs
-  rules: null
   when: manual
   # Do not allow failures in manual jobs
   allow_failure: false
@@ -129,8 +127,6 @@ installation:
     - python -m build
     # Do a check with twine
     - twine check dist/*
-    # Remove pseudopotential files to check if the installation files work on their own
-    - rm -rf eminus/psp/
     # Copy the build directory to test the installation
     - cp -r dist/ tmp/
     - cd tmp/
@@ -164,8 +160,6 @@ platform:nixos:
   extends: .pytest-full
   image: nixpkgs/nix:latest
   script:
-    # Remove Torch since the build time takes too long
-    - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/  torch-bin/  \# torch-bin/g" flake.nix
     # In the CI nix develop will open a shell and close it immediately afterwards, use -c to execute commands
     - nix --extra-experimental-features "nix-command flakes" develop -c pytest tests/ -m "not slow"
 
