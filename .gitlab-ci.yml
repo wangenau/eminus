@@ -105,8 +105,8 @@ typecheck:
 
 ##### Test the docker build #####
 docker:
+  extends: .pytest-full
   image: docker:latest
-  stage: fulltest
   services:
     - docker:dind
   script:
@@ -114,9 +114,6 @@ docker:
     - VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" eminus/version.py)
     - docker build -t wangenau/eminus:"${VERSION}" .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
-  when: manual
-  # Do not allow failures in manual jobs
-  allow_failure: false
 
 ##### Test the code installation after building #####
 installation:
