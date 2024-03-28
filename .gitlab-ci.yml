@@ -13,7 +13,7 @@ stages:
   stage: test
   script:
     # Use the python3 -m prefix to make the commands work under different OS
-    - python3 -m pip install -e .
+    - python3 -m pip install .
     - python3 -m pip install pytest
     - python3 -m pytest tests/ -m "not slow"
   rules:
@@ -38,7 +38,7 @@ stages:
 coverage:
   stage: test
   script:
-    - pip install -e .
+    - pip install .
     - pip install coverage pyscf pytest pytest-cov
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
     - coverage report --precision=2
@@ -195,7 +195,7 @@ pages:
   stage: deploy
   needs: ["coverage"]
   script:
-    - pip install -e .
+    - pip install .
     # Build Sphinx documentation
     - pip install sphinx furo sphinx-design sphinxcontrib-bibtex
     - sphinx-build -j "$(nproc)" -b html ./docs ./public
