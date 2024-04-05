@@ -94,6 +94,19 @@ def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     """Get the exchange-correlation energy density.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
+
+    Args:
+        xc (list | str): Exchange and correlation identifier.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+        Nspin (int): Number of spin states.
+
+    Keyword Args:
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
+        dens_threshold (float): Do not treat densities smaller than the threshold.
+
+    Returns:
+        Exchange-correlation energy potential.
     """
     exc, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
     return exc
@@ -103,6 +116,19 @@ def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     """Get the exchange-correlation potential.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
+
+    Args:
+        xc (list | str): Exchange and correlation identifier.
+        n_spin (ndarray): Real-space electronic densities per spin channel.
+        Nspin (int): Number of spin states.
+
+    Keyword Args:
+        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
+        dens_threshold (float): Do not treat densities smaller than the threshold.
+
+    Returns:
+        Exchange-correlation energy density.
     """
     _, vxc, vsigma, vtau = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
     return vxc, vsigma, vtau
