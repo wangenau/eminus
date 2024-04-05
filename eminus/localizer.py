@@ -204,7 +204,6 @@ def second_moment(atoms, psirs):
     return moments
 
 
-@skip_k
 @handle_spin_gracefully
 def wannier_supercell_matrices(atoms, psirs):
     """Calculate matrices for the supercell Wannier localization.
