@@ -94,7 +94,7 @@ newest:
 typecheck:
   stage: test
   script:
-    - pip install mypy
+    - pip install mypy numpy
     - mypy .
   rules:
     - changes:

@@ -108,4 +108,4 @@ def patched_init(self: Any, app: Any) -> None:
 
 
 # Monkey patch the init function
-AutosummaryRenderer.__init__ = patched_init  # type: ignore[method-assign]
+AutosummaryRenderer.__init__ = patched_init

@@ -55,8 +55,7 @@ scf_band.converge_bands()
 
 def test_cutoff_and_gridspacing():
     """Test the cutoff and grid spacing conversion."""
-    rng = default_rng()
-    test = np.abs(rng.random(100))
+    test = np.pi
     out = cutoff2gridspacing(gridspacing2cutoff(test))
     assert_allclose(out, test)
 
