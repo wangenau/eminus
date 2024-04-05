@@ -131,7 +131,7 @@ def get_dipole(scf, n=None):
     """
     atoms = scf.atoms
     if n is None:
-        if not hasattr(scf, 'n') or scf.n is None:
+        if scf.n is None:
             log.error('There is no density to calculate a dipole moment.')
             return 0
         n = scf.n
@@ -419,7 +419,7 @@ def get_bandgap(scf):
     """
     e_occ = get_epsilon(scf, scf.W, **scf._precomputed)
 
-    if not hasattr(scf, 'Z') or scf.Z is None:
+    if scf.Z is None:
         log.warning("The SCF object has no unoccupied energies, can't calculate band gap.")
         return 0
 
@@ -466,7 +466,7 @@ def get_Efermi(obj, epsilon=None):
     if occ.smearing > 0:
         return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
 
-    if not hasattr(obj, 'Z') or obj.Z is None:
+    if obj.Z is None:
         log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
         return np.max(e_occ)
 

@@ -105,6 +105,7 @@ class SCF:
         self.energies = Energy()  #: Energy object holding energy contributions.
         self.is_converged = False  #: Determines the SCF object convergence.
         self.W = None  #: Unconstrained wave functions
+        self.clear()
 
     # ### Class properties ###
 
