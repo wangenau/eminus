@@ -29,6 +29,7 @@ scf_pol.run()
 def test_minimizer_unpol(minimizer):
     """Check the spin-unpolarized band minimizer functions."""
     scf_unpol.opt = {minimizer: 100}
+    assert scf_unpol.Y is not None
     if minimizer in {'cg', 'pccg', 'auto'}:
         for i in range(1, 5):
             scf_unpol.converge_bands(cgform=i)
@@ -44,6 +45,7 @@ def test_minimizer_unpol(minimizer):
 def test_minimizer_pol(minimizer):
     """Check the spin-polarized band minimizer functions."""
     scf_pol.opt = {minimizer: 100}
+    assert scf_pol.Y is not None
     if minimizer in {'cg', 'pccg', 'auto'}:
         for i in range(1, 5):
             scf_pol.converge_bands(cgform=i)
@@ -58,7 +60,7 @@ def test_minimizer_pol(minimizer):
 def test_empty_W():
     """Test the band minimization for a few edge cases."""
     scf_unpol.is_converged = False
-    del scf_unpol.W
+    scf_unpol.W = None
     scf_unpol.guess = 'pseudo'
     scf_unpol.opt = {'auto': 1}
     scf_unpol.converge_bands()

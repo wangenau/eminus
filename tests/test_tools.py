@@ -149,6 +149,7 @@ def test_get_tauw(unrestricted):
         scf = scf_pol
     else:
         scf = scf_unpol
+        assert scf.n_spin is not None
         scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     tauw = get_tauw(scf)
     T = np.sum(tauw) * scf.atoms.dV
@@ -175,6 +176,7 @@ def test_get_reduced_gradient(unrestricted):
         scf = scf_pol
     else:
         scf = scf_unpol
+        assert scf.n_spin is not None
         scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((s >= 0) & (s < 100)).all()
@@ -211,8 +213,8 @@ def test_get_Efermi():
 
 def test_get_bandgap():
     """Test the band gap calculation."""
-    if hasattr(scf_band, 'Z'):
-        del scf_band.Z
+    if scf_band.Z is not None:
+        scf_band.Z = None
     Eg = get_bandgap(scf_band)
     assert Eg == 0
     scf_band.converge_empty_bands(Nempty=1)

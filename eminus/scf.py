@@ -106,6 +106,7 @@ class SCF:
         # Initialize other attributes
         self.energies = Energy()  #: Energy object holding energy contributions.
         self.is_converged = False  #: Determines the SCF object convergence.
+        self.W = None  #: Unconstrained wave functions
 
     # ### Class properties ###
 
@@ -250,7 +251,7 @@ class SCF:
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
         # Build the initial wave function if there is no W to start from
-        if not hasattr(self, 'W'):
+        if self.W is None:
             if 'random' in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
             elif 'pseudo' in self.guess:
@@ -323,14 +324,14 @@ class SCF:
 
         # If new k-points have been set rebuild the atoms object and the potential
         if not self.atoms.kpts.is_built or (
-            hasattr(self, 'W') and len(self.W) != self.atoms.kpts.Nk
+            self.W is not None and len(self.W) != self.atoms.kpts.Nk
         ):
             self.atoms.build()
             self.pot = self.pot
             self.is_converged = False
 
         # Build the initial wave function if there is no W to start from
-        if not hasattr(self, 'W') or len(self.W) != self.atoms.kpts.Nk:
+        if self.W is None or len(self.W) != self.atoms.kpts.Nk:
             if 'random' in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
             elif 'pseudo' in self.guess:
@@ -393,7 +394,7 @@ class SCF:
             Nempty = self.atoms.occ.Nempty
 
         # Build the initial wave functions
-        if not hasattr(self, 'Z'):
+        if self.Z is None:
             if 'random' in self.guess:
                 self.Z = guess_random(self, Nempty, symmetric=self.symmetric)
             elif 'pseudo' in self.guess:
@@ -457,23 +458,29 @@ class SCF:
             dr = com - center
 
         # Shift orbitals and density
-        if hasattr(self, 'W'):
+        if self.W is not None:
             self.W = atoms.T(self.W, dr=-dr)
         # Transform the density to the reciprocal space, shift, and transform back
-        if hasattr(self, 'n'):
+        n = None
+        if self.n is not None:
             Jn = atoms.J(self.n)
             TJn = atoms.T(Jn, dr=-dr)
-            self.n = np.real(atoms.I(TJn))
+            n = np.real(atoms.I(TJn))
 
         # Recalculate the potential since it depends on the structure factor
         self.pot = self.pot
         # Clear intermediate results to make sure no one uses the unshifted results
         self.clear()
+        # Set the shifted density after calling the clearing function
+        self.n = n
         return self
 
     def clear(self):
         """Initialize or clear intermediate results."""
         self.Y = None  # Orthogonal wave functions
+        self.Z = None  # Unconstrained wave functions of unoccupied states
+        self.D = None  # Orthogonal wave functions of unoccupied states
+        self.n = None  #: Electronic density
         self.n_spin = None  # Electronic densities per spin
         self.dn_spin = None  # Gradient of electronic densities per spin
         self.tau = None  # Kinetic energy densities per spin

@@ -55,7 +55,7 @@ def orth_unocc(atoms, Y, Z):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
         Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:

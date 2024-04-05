@@ -610,7 +610,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             )
 
         # Calculate and plot unoccupied bands if available
-        if hasattr(scf, 'Z'):
+        if hasattr(scf, 'Z') and scf.Z is not None:
             e_unocc = ha2ev(get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed))
             for i in range(scf.atoms.occ.Nempty):
                 fig.add_trace(
