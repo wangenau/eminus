@@ -78,16 +78,22 @@ Coverage
    coverage run -m pytest
    coverage report
 
-Linting
--------
+Linting and formatting
+----------------------
 
-| This code is lint-checked with `Ruff <https://beta.ruff.rs>`_, using a custom `style configuration <https://gitlab.com/wangenau/eminus/-/tree/main/pyproject.toml>`_.
+| This code is lint-checked and formatted with `Ruff <https://beta.ruff.rs>`_, using a custom `style configuration <https://gitlab.com/wangenau/eminus/-/tree/main/pyproject.toml>`_.
 | To install Ruff and do a lint check, use
 
 .. code-block:: console
 
    pip install ruff
    ruff check .
+
+To format the code use
+
+.. code-block:: console
+
+   ruff format .
 
 Type checking
 -------------
