@@ -9,8 +9,7 @@ import time
 
 import numpy as np
 
-from .band_minimizer import get_grad_unocc, scf_step_unocc
-from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
+from .band_minimizer import get_grad_unocc, IMPLEMENTED as BAND_MINIMIZER, scf_step_unocc
 from .dft import (
     get_epsilon,
     get_n_spin,
@@ -25,8 +24,7 @@ from .gga import get_grad_field, get_tau
 from .gth import GTH
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as ALL_MINIMIZER
-from .potentials import IMPLEMENTED as ALL_POTENTIALS
-from .potentials import init_pot
+from .potentials import IMPLEMENTED as ALL_POTENTIALS, init_pot
 from .tools import center_of_mass, get_spin_squared
 from .version import info
 from .xc import get_xc, parse_functionals, parse_xc_type

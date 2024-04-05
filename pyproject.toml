@@ -54,6 +54,7 @@ select = [
     "C4",      # flake8-comprehensions
     "FA",      # flake8-future-annotations
     "ICN",     # flake8-import-conventions
+    "LOG",     # flake8-logging
     "PIE",     # flake8-pie
     "PT",      # flake8-pytest-style
     "RSE",     # flake8-raise
@@ -62,7 +63,6 @@ select = [
     "PL",      # Pylint
     "NPY",     # NumPy-specific rules
     "PERF",    # Perflint
-    "LOG",     # flake8-logging
     "RUF",     # Ruff-specific rules
 ]
 
@@ -92,6 +92,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
+combine-as-imports = true
 force-sort-within-sections = true
 order-by-type = false
 
