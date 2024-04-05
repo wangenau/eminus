@@ -90,21 +90,21 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     return ex + ec, vx + vc, add_maybe_none(vsigmax, vsigmac), add_maybe_none(vtaux, vtauc)
 
 
-def get_exc(*args, **kwargs):
+def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     """Get the exchange-correlation energy density.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     """
-    exc, _, _, _ = get_xc(*args, **kwargs)
+    exc, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
     return exc
 
 
-def get_vxc(*args, **kwargs):
+def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     """Get the exchange-correlation potential.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
     """
-    _, vxc, vsigma, vtau = get_xc(*args, **kwargs)
+    _, vxc, vsigma, vtau = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
     return vxc, vsigma, vtau
 
 

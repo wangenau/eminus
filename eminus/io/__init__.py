@@ -27,29 +27,29 @@ __all__ = [
 ]
 
 
-def read(*args, **kwargs):
+def read(filename, *args, **kwargs):
     """Unified file reader function."""
-    if args[0].endswith('.json'):
-        return read_json(*args, **kwargs)
-    if args[0].endswith('.xyz'):
-        return read_xyz(*args, **kwargs)
-    if args[0].endswith(('.trj', '.traj')):
-        return read_traj(*args, **kwargs)
-    if args[0].endswith(('.cub', '.cube')):
-        return read_cube(*args, **kwargs)
+    if filename.endswith('.json'):
+        return read_json(filename, *args, **kwargs)
+    if filename.endswith('.xyz'):
+        return read_xyz(filename, *args, **kwargs)
+    if filename.endswith(('.trj', '.traj')):
+        return read_traj(filename, *args, **kwargs)
+    if filename.endswith(('.cub', '.cube')):
+        return read_cube(filename, *args, **kwargs)
     raise NotImplementedError('File ending not recognized.')
 
 
-def write(*args, **kwargs):
+def write(obj, filename, *args, **kwargs):
     """Unified file writer function."""
-    if args[1].endswith('.json'):
-        return write_json(*args, **kwargs)
-    if args[1].endswith('.xyz'):
-        return write_xyz(*args, **kwargs)
-    if args[1].endswith(('.trj', '.traj')):
-        return write_traj(*args, **kwargs)
-    if args[1].endswith(('.cub', '.cube')):
-        return write_cube(*args, **kwargs)
-    if args[1].endswith('.pdb'):
-        return write_pdb(*args, **kwargs)
+    if filename.endswith('.json'):
+        return write_json(obj, filename, *args, **kwargs)
+    if filename.endswith('.xyz'):
+        return write_xyz(obj, filename, *args, **kwargs)
+    if filename.endswith(('.trj', '.traj')):
+        return write_traj(obj, filename, *args, **kwargs)
+    if filename.endswith(('.cub', '.cube')):
+        return write_cube(obj, filename, *args, **kwargs)
+    if filename.endswith('.pdb'):
+        return write_pdb(obj, filename, *args, **kwargs)
     raise NotImplementedError('File ending not recognized.')
