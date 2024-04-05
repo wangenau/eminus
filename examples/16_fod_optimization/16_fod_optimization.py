@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
 # SPDX-License-Identifier: Apache-2.0
+# type: ignore
 import numpy as np
 from scipy.optimize import minimize
 
@@ -18,8 +19,8 @@ scf = SCF(atoms)
 scf.run()
 
 # # Generate an initial guess for the FODs and remove the core
-fods = get_fods(atoms, basis='pc-0')
-fods = remove_core_fods(atoms, fods)
+fods_all = get_fods(atoms, basis='pc-0')
+fods = remove_core_fods(atoms, fods_all)
 print(f'\nInitial FODs:\n{fods}')
 
 

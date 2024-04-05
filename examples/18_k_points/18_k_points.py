@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
 # SPDX-License-Identifier: Apache-2.0
+# type: ignore
 from eminus import Cell, SCF
 from eminus.units import ang2bohr
 
@@ -29,5 +30,5 @@ print(f'Shifted points:\n{cell.kpts.k}\n')
 
 # # One can also use custom k-points
 # # The easiest way to set them is the following
-cell.set_k([0, 0, 0])
+cell.set_k([[0, 0, 0]])
 SCF(cell, verbose=3).run()

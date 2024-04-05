@@ -101,6 +101,7 @@ def test_opt():
     assert 'sd' in scf.opt
     assert 'auto' not in scf.opt
     scf.run()
+    assert hasattr(scf, '_opt_log')
     assert 'sd' in scf._opt_log
 
 
@@ -144,6 +145,7 @@ def test_recenter(center):
     assert scf.is_converged
 
     scf.recenter(center)
+    assert scf.W is not None
     W = atoms.I(scf.W[0], 0)
     com = center_of_mass(scf.atoms.pos)
     # Check that the density is centered around the atom

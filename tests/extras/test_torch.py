@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test torch extra."""
 
+import numpy as np  # noqa: F401
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
@@ -21,9 +22,9 @@ W_tests = {
     'active_single': rng.standard_normal(len(atoms.G2c)),
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
     'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
-    'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
-    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
-}
+    'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],  # type: ignore [dict-item]
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],  # type: ignore [dict-item]
+}  # type: dict[str, np.typing.NDArray[np.float64]]
 
 
 @pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin', 'full_k'])
@@ -83,6 +84,7 @@ def test_hermitian_I(field):
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
+    assert not isinstance(a, list)
     out = (a.conj().T @ atoms.I(b)).conj()
     test = b.conj().T @ atoms.Idag(a, full=True)
     assert_allclose(out, test)
@@ -94,6 +96,7 @@ def test_hermitian_J(field):
     pytest.importorskip('torch', reason='torch not installed, skip tests')
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
+    assert not isinstance(a, list)
     out = (a.conj().T @ atoms.J(b)).conj()
     test = b.conj().T @ atoms.Jdag(a)
     assert_allclose(out, test)
@@ -176,6 +179,7 @@ def test_hermitian_I_gpu(field):
         pytest.skip('GPU not available, skip tests')
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
+    assert not isinstance(a, list)
     out = (a.conj().T @ atoms.I(b)).conj()
     test = b.conj().T @ atoms.Idag(a, full=True)
     assert_allclose(out, test)
@@ -191,6 +195,7 @@ def test_hermitian_J_gpu(field):
         pytest.skip('GPU not available, skip tests')
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
+    assert not isinstance(a, list)
     out = (a.conj().T @ atoms.J(b)).conj()
     test = b.conj().T @ atoms.Jdag(a)
     assert_allclose(out, test)

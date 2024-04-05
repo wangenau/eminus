@@ -45,6 +45,8 @@ def test_wavefunction(guess, unrestricted):
 
 def test_unocc_wavefunction():
     """Test the orthonormalization of unoccupied wave functions."""
+    assert scf_unpol.Y is not None
+    assert scf_unpol.D is not None
     for ik in range(scf_unpol.kpts.Nk):
         for s in range(scf_unpol.atoms.occ.Nspin):
             # Test that DOD is the identity
@@ -78,6 +80,7 @@ def test_n_total(unrestricted):
     else:
         scf = scf_unpol
     # Test that the integrated density gives the number of electrons
+    assert scf.Y is not None
     n = get_n_total(scf.atoms, scf.Y)
     n_int = np.sum(n) * scf.atoms.dV
     assert_allclose(n_int, np.sum(scf.atoms.occ.f * scf.kpts.wk[:, None, None]))
@@ -91,6 +94,7 @@ def test_n_spin(unrestricted):
     else:
         scf = scf_unpol
     # Test that the integrated spin densities gives the number of electrons per spin
+    assert scf.Y is not None
     n = get_n_spin(scf.atoms, scf.Y)
     for ik in range(scf.kpts.Nk):
         for s in range(scf.atoms.occ.Nspin):
@@ -106,6 +110,7 @@ def test_n_single(unrestricted):
     else:
         scf = scf_unpol
     # Test that the integrated single orbital densities gives occupation number per orbital
+    assert scf.Y is not None
     n = get_n_single(scf.atoms, scf.Y)
     for ik in range(scf.kpts.Nk):
         for s in range(scf.atoms.occ.Nspin):
@@ -118,6 +123,7 @@ def test_k_point_permutation():
     cell = Cell('C', 'diamond', 10, 6.75, kmesh=(2, 1, 1))
     scf = SCF(cell)
     etot1 = scf.run()
+    assert hasattr(cell.kpts, '_k')
     cell.kpts._k = cell.kpts._k[::-1]
     assert not np.all(cell.kpts.k == scf.kpts.k)
     scf = SCF(cell)

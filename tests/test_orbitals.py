@@ -26,6 +26,7 @@ def test_kso():
     scf_tmp.kpts.Nk = 2
     scf_tmp.kpts.path = 'GX'
     scf_tmp.atoms.build()
+    assert scf.W is not None
     scf_tmp.W = scf_tmp.atoms.J([atoms.I(scf.W)[0], atoms.I(scf.W)[0]], full=False)
     orb = KSO(scf_tmp, write_cubes=True)[0]
     os.remove('He_KSO_k0_0.cube')

@@ -7,6 +7,8 @@ Changelog
 
 dev
 ---
+- New features
+   - Full type hint support!
 - Coding style
    - Reformat the codebase using Ruff
    - Add SPDX license identifiers
@@ -22,6 +24,7 @@ dev
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
+   - Set default values for uninitialized SCF attributes to None
    - Small tests improvements
    - Add an eminus Discord server
 

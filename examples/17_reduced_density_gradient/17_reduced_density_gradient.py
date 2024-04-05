@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
 # SPDX-License-Identifier: Apache-2.0
+# type: ignore
 import matplotlib.pyplot as plt
 
 from eminus import Atoms, SCF
@@ -8,7 +9,7 @@ from eminus.tools import get_reduced_gradient
 from eminus.units import ang2bohr
 
 # # Do an RKS calculation for hydrogen with the given bond distance
-atoms = Atoms('H2', [[0, 0, 0], [0, 0, ang2bohr(0.75)]], center=True)
+atoms = Atoms('H2', [[0.0, 0.0, 0.0], [0.0, 0.0, ang2bohr(0.75)]], center=True)
 scf = SCF(atoms)
 scf.run()
 

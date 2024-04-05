@@ -126,6 +126,7 @@ def test_check_orthonorm(ref, func):
 
 def test_get_isovalue():
     """Test isovalue calculation."""
+    assert scf.n is not None
     assert_allclose(get_isovalue(scf.n), 0.013, atol=1e-3)
 
 
@@ -203,6 +204,7 @@ def test_spin_squared_and_multiplicity():
 def test_get_Efermi():
     """Test the Fermi energy calculation."""
     Ef = get_Efermi(scf_band)
+    assert hasattr(scf_band, '_precomputed')
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     assert_allclose(Ef, np.max(e_occ))
     scf_band.converge_empty_bands(Nempty=1)

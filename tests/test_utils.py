@@ -180,7 +180,7 @@ def test_handle_k_gracefully():
     assert_equal(out, W)
     out = mock(None, W[0])
     assert_equal(out, W[0])
-    out = mock_val(None, W)
+    out = mock_val(None, W)  # type: ignore [no-untyped-call]
     assert_equal(out, 0)
 
 

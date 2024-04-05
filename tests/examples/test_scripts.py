@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test functionality of example scripts."""
 
+from __future__ import annotations
+
 import inspect
 import os
 import pathlib
@@ -19,7 +21,7 @@ except ModuleNotFoundError:
     pass
 
 
-def execute_example(name):
+def execute_example(name: str) -> None:
     """Test the execution of a given Python script."""
     file_path = pathlib.Path(inspect.stack()[0][1]).parent
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
@@ -27,7 +29,7 @@ def execute_example(name):
     runpy.run_path(f'{name}.py')
 
 
-def clean_example(trash):
+def clean_example(trash: list[str]) -> None:
     """Clean the example folder after running the script."""
     for it in trash:
         path = pathlib.Path(it)

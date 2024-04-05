@@ -38,6 +38,7 @@ scf_unpol.run()
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=10, unrestricted=True)
 atoms_pol.s = 20
 scf_pol = SCF(atoms_pol, sic=True)
+assert scf_unpol.W is not None
 scf_pol.W = [np.array([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
 scf_pol.run()
 
@@ -78,12 +79,15 @@ def test_mgga_sic_pol():
 
 def test_get_Eband_unpol():
     """Check the spin-unpolarized band energy."""
+    assert scf_unpol.Y is not None
     Eband = get_Eband(scf_unpol, scf_unpol.Y)
     assert_allclose(Eband, -4.1123, atol=1e-4)
 
 
 def test_get_Eband_pol():
     """Check the spin-polarized band energy."""
+    assert scf_pol.Y is not None
+    assert hasattr(scf_pol, '_precomputed')
     Eband = get_Eband(scf_pol, scf_pol.Y, **scf_pol._precomputed)
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy

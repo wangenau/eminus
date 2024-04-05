@@ -53,6 +53,7 @@ def test_get_tau(unrestricted):
         scf = scf_pol
     else:
         scf = scf_unpol
+    assert scf.Y is not None
     tau = get_tau(scf.atoms, scf.Y)
     T = np.sum(tau) * scf.atoms.dV
     # This integrated KED should be the same as the calculated kinetic energy

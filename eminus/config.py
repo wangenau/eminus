@@ -3,13 +3,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Consolidated configuration module."""
 
-from __future__ import annotations
-
 import numbers
 import os
 import pathlib
 import sys
-from typing import Callable
 
 from .logger import log
 
@@ -151,17 +148,8 @@ class ConfigClass:
             print(f'FFT threads : {self.threads}')
 
 
-# Add type hints for all properties and methods of the ConfigClass to the module
-# This allows type checkers to see that the module has said attribute
-use_torch: bool
-use_gpu: bool
-use_pylibxc: bool
-threads: int
-verbose: int | str
-info: Callable[[], None]
-
 # Do not initialize the class when Sphinx is running
 # Since we set the class instance to the module name Sphinx will only document the main docstring of
 # the class without the properties
 if 'sphinx-build' not in pathlib.Path(sys.argv[0]).name:
-    sys.modules[__name__] = ConfigClass()  # type: ignore[assignment]
+    sys.modules[__name__] = ConfigClass()

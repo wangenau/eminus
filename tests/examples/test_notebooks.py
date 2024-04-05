@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test functionality of example notebooks."""
 
+from __future__ import annotations
+
 import inspect
 import os
 import pathlib
@@ -10,7 +12,7 @@ import pathlib
 import pytest
 
 
-def clean_example(trash):
+def clean_example(trash: list[str]) -> None:
     """Clean the example folder after running the script."""
     for it in trash:
         path = pathlib.Path(it)
@@ -42,8 +44,8 @@ def test_notebooks(name, trash):
     os.chdir(file_path.joinpath(f'../../examples/{name}'))
 
     with open(f'{name}.ipynb', encoding='utf-8') as fh:
-        nb = read(fh, as_version=4)
-        ep = ExecutePreprocessor(timeout=60, kernel_name='python3')
+        nb = read(fh, as_version=4)  # type: ignore [no-untyped-call]
+        ep = ExecutePreprocessor(timeout=60, kernel_name='python3')  # type: ignore [no-untyped-call]
         assert ep.preprocess(nb) is not None
 
     clean_example(trash)

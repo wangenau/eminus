@@ -7,7 +7,7 @@ from eminus import Atoms
 # # `atom` holds the atom symbols, and `pos` holds the atom positions
 # # Please note that atomic units will be used
 atom = 'N2'
-pos = [[0, 0, 0], [2.074, 0, 0]]
+pos = [[-1.037, 0, 0], [1.037, 0, 0]]
 
 # # Create an object for dinitrogen and display it
 atoms = Atoms(atom, pos)

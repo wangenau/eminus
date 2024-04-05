@@ -41,7 +41,7 @@ extras['dev'] = [
     'coverage>=4.4',  # Generate coverage reports
     'furo>=2022.02.14.1',  # Documentation theme
     'matplotlib>=1.5',  # Plotting library for examples
-    'mypy>=0.931',  # Static type checker
+    'mypy>=0.990',  # Static type checker
     'notebook',  # Run and convert notebooks to HTML
     'pytest>=5.4',  # Test utilities
     'pytest-cov>=2.6.1',  # Collect test coverage data

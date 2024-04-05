@@ -62,6 +62,7 @@ def test_cube(Nspin):
     assert_equal(atoms.Z, Z[: atoms.Natoms])
     assert_equal(atoms.a, a)
     assert_equal(atoms.s, s)
+    assert scf.n is not None
     assert_allclose(scf.n, field, atol=1e-9)
 
 
@@ -77,6 +78,7 @@ def test_cube_noncubic():
     os.remove(filename)
     assert_allclose(atoms.a, a, atol=2e-6)
     assert_equal(atoms.s, s)
+    assert scf.n is not None
     assert_allclose(scf.n, field, atol=1e-8)
 
 

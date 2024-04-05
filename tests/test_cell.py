@@ -56,7 +56,7 @@ def test_a():
 
 def test_basis():
     """Test the basis setting."""
-    basis = [[0, 0, 0], [1 / 2, 1 / 3, 1 / 4]]
+    basis = [[0.0, 0.0, 0.0], [1 / 2, 1 / 3, 1 / 4]]
     cell = Cell('Si', 'diamond', 30, 20, basis=basis)
     assert len(cell.pos) == len(basis)
     assert len(basis) == cell.Natoms

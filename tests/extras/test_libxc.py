@@ -30,7 +30,7 @@ def test_libxc_functional_exc(xc, Nspin):
     dn_spin = None
     if is_gga(xc):
         dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    e_out, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
+    e_out, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
 
@@ -49,8 +49,8 @@ def test_libxc_functional_vxc(xc, Nspin):
     dn_spin = None
     if is_gga(xc):
         dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    _, v_out, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
-    v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, v_out, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     assert_allclose(v_out, v_test)
 
 
@@ -63,8 +63,8 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
 
     n_spin = n_tests[Nspin]
     dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    _, _, vsigma_out, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
-    _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, _, vsigma_out, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     assert_allclose(vsigma_out, vsigma_test)
 
 
@@ -81,7 +81,7 @@ def test_pyscf_functional_exc(xc, Nspin):
     dn_spin = None
     if is_gga(xc):
         dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    e_out, _, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
+    e_out, _, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
 
@@ -99,8 +99,8 @@ def test_pyscf_functional_vxc(xc, Nspin):
     dn_spin = None
     if is_gga(xc):
         dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    _, v_out, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
-    v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, v_out, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     assert_allclose(v_out, v_test)
 
 
@@ -113,8 +113,8 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
 
     n_spin = n_tests[Nspin]
     dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
-    _, _, vsigma_out, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
-    _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, _, vsigma_out, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
     assert_allclose(vsigma_out, vsigma_test)
 
 

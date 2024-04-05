@@ -47,13 +47,13 @@ def test_split_fods(unrestricted, elec_symbols):
     assert_equal(atom, atom_split)
     assert_equal(pos, pos_split)
     if unrestricted:
-        fods_split = np.vstack((fods_split[0], fods_split[1]))
+        fods_split_array = np.vstack((fods_split[0], fods_split[1]))
     else:
-        fods_split = fods_split[0]
+        fods_split_array = fods_split[0]
     # Function is not stable, therefore sort arrays before the comparison
     fods = fods[fods[:, 0].argsort()]
-    fods_split = fods_split[fods_split[:, 0].argsort()]
-    assert_equal(fods, fods_split)
+    fods_split_array = fods_split_array[fods_split_array[:, 0].argsort()]
+    assert_equal(fods, fods_split_array)
 
 
 @pytest.mark.parametrize('unrestricted', [True, False])

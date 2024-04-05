@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2021 Wanja Timm Schulze <wangenau@protonmail.com>
+# SPDX-License-Identifier: Apache-2.0
+from typing import Any, Callable
+
+import numpy as np
+from numpy.typing import NDArray
+
+def lda_c_chachiyo(
+    n: NDArray[np.float64],
+    **kwargs: Any,
+) -> tuple[NDArray[np.float64], NDArray[np.float64], None]: ...
+def chachiyo_scaling(
+    zeta: NDArray[np.float64],
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]: ...
+def lda_c_chachiyo_spin(
+    n: NDArray[np.float64],
+    zeta: NDArray[np.float64],
+    weight_function: Callable[
+        [NDArray[np.float64]], tuple[NDArray[np.float64], NDArray[np.float64]]
+    ] = ...,
+    **kwargs: Any,
+) -> tuple[NDArray[np.float64], NDArray[np.float64], None]: ...

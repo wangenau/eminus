@@ -23,8 +23,8 @@ def test_viewer(name):
     file_path = pathlib.Path(inspect.stack()[0][1]).parent
     os.environ['PYTEST_TEST_DIR'] = str(file_path)
     with open(f'{file_path}/{name}.ipynb', encoding='utf-8') as fh:
-        nb = read(fh, as_version=4)
-        ep = ExecutePreprocessor(timeout=60, kernel_name='python3')
+        nb = read(fh, as_version=4)  # type: ignore [no-untyped-call]
+        ep = ExecutePreprocessor(timeout=60, kernel_name='python3')  # type: ignore [no-untyped-call]
         assert ep.preprocess(nb) is not None
 
 

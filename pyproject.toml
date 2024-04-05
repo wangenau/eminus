@@ -20,7 +20,22 @@ omit = ["eminus/extras/*"]
 [tool.mypy]
 python_version = "3.7"
 exclude = ["public"]
+strict = true
 ignore_missing_imports = true
+disable_error_code = [
+    # Incompatible types in assignment  [assignment]
+    # Many setter methods change the variable type, this is not considered by Mypy
+    # Reference: https://github.com/python/mypy/issues/3004
+    "assignment",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = [
+    # Function is missing a type annotation  [no-untyped-def]
+    # The tests folder has functions with missing type annotations
+    "no-untyped-def",
+]
 
 ### Pytest ###
 [tool.pytest.ini_options]
@@ -33,7 +48,6 @@ norecursedirs = "public/*"
 target-version = "py37"
 extend-include = ["*.ipynb"]
 line-length = 100
-output-format = "grouped"
 respect-gitignore = true
 
 [tool.ruff.format]
@@ -56,10 +70,12 @@ select = [
     "ICN",     # flake8-import-conventions
     "LOG",     # flake8-logging
     "PIE",     # flake8-pie
+    "PYI",     # flake8-pyi
     "PT",      # flake8-pytest-style
     "RSE",     # flake8-raise
     "RET",     # flake8-return
     "SIM",     # flake8-simplify
+    "TCH",     # flake8-type-checking
     "PL",      # Pylint
     "NPY",     # NumPy-specific rules
     "PERF",    # Perflint
