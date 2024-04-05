@@ -6,7 +6,6 @@
 import copy
 
 import numpy as np
-from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
