@@ -99,6 +99,9 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         )
 
     # Make sure we have real-valued data in the correct order
+    if field is None:
+        log.warning('The provided field is "None".')
+        return
     field = np.real(field)
 
     with open(filename, 'w', encoding='utf-8') as fp:

@@ -10,6 +10,7 @@ from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
 
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
+from .logger import log
 from .utils import handle_k_gracefully, handle_k_reducable, handle_spin_gracefully, pseudo_uniform
 from .xc import get_vxc
 
@@ -296,6 +297,10 @@ def get_psi(scf, W, **kwargs):
     Returns:
         ndarray: Eigenstates in reciprocal space.
     """
+    if W is None:
+        log.warning('The provided wave function is "None".')
+        return None
+
     atoms = scf.atoms
     Y = orth(atoms, W)
     psi = [np.empty_like(Yk) for Yk in Y]
@@ -322,6 +327,10 @@ def get_epsilon(scf, W, **kwargs):
     Returns:
         ndarray: Eigenvalues.
     """
+    if W is None:
+        log.warning('The provided wave function is "None".')
+        return None
+
     atoms = scf.atoms
     Y = orth(atoms, W)
     epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
@@ -348,6 +357,10 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
     Returns:
         ndarray: Eigenvalues.
     """
+    if W is None or Z is None:
+        log.warning('The provided wave function is "None".')
+        return None
+
     atoms = scf.atoms
     Y = orth(atoms, W)
     D = orth_unocc(atoms, Y, Z)
