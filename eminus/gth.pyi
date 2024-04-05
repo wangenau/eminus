@@ -7,12 +7,12 @@ from .atoms import Atoms
 from .scf import SCF
 
 class GTH:
-    GTH: dict[str, dict[str, int | float | NDArray[np.float64]]]
+    GTH: dict[str, dict[str, float | NDArray[np.float64]]]
     NbetaNL: int
     prj2beta: NDArray[np.int64]
     betaNL: NDArray[np.complex128]
     def __init__(self, scf: SCF | None = ...) -> None: ...
-    def __getitem__(self, key: str) -> dict[str, int | float | NDArray[np.float64]]: ...
+    def __getitem__(self, key: str) -> dict[str, float | NDArray[np.float64]]: ...
 
 def init_gth_loc(scf: SCF) -> NDArray[np.complex128]: ...
 def init_gth_nonloc(
@@ -26,7 +26,7 @@ def calc_Vnonloc(
     W: NDArray[np.complex128],
 ) -> NDArray[np.complex128]: ...
 def eval_proj_G(
-    psp: dict[str, int | float | NDArray[np.float64]],
+    psp: dict[str, float | NDArray[np.float64]],
     l: int,
     iprj: int,
     Gm: NDArray[np.float64],

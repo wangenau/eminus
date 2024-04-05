@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-import dataclasses
+from dataclasses import dataclass
 from typing import Any, overload
 
 import numpy as np
@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-@dataclasses.dataclass
+@dataclass
 class Energy:
     Ekin: float = ...
     Ecoul: float = ...

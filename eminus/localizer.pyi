@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload, Sequence
+from collections.abc import Sequence
+from typing import overload
 
 import numpy as np
 from numpy.typing import NDArray

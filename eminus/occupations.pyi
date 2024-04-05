@@ -1,13 +1,13 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-import dataclasses
+from dataclasses import dataclass
 
 import numpy as np
 from numpy.typing import NDArray
 
 from .typing import Array1D, Array2D, Array3D
 
-@dataclasses.dataclass
+@dataclass
 class Occupations:
     is_filled: bool = ...
     @property

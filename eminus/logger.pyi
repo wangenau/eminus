@@ -1,19 +1,20 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-import logging
-from typing import Any, Callable
+from collections.abc import Callable
+from logging import Formatter, Logger, LogRecord
+from typing import Any
 
 log: CustomLogger
 
-class CustomLogger(logging.Logger):
+class CustomLogger(Logger):
     def __init__(self, name: str) -> None: ...
     @property
     def verbose(self) -> str: ...
     @verbose.setter
     def verbose(self, level: int | str) -> None: ...
 
-class CustomFormatter(logging.Formatter):
-    def format(self, record: logging.LogRecord) -> str: ...
+class CustomFormatter(Formatter):
+    def format(self, record: LogRecord) -> str: ...
 
 def create_logger(obj: object) -> CustomLogger: ...
 def get_level(verbose: int | str | None) -> str: ...

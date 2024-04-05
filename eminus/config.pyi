@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Callable
+from collections.abc import Callable
 
 from .logger import log as log
 
 # Add type hints for all properties and methods of the ConfigClass to the module
-# This allows type checkers to see that the module has said attribute
+# This allows IDEs to see that the module has said attribute
 use_torch: bool
 use_gpu: bool
 use_pylibxc: bool

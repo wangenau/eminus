@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
+from collections.abc import Sequence
 from typing import Any
 
 import numpy as np
@@ -18,7 +19,7 @@ def lda_c_pw(
 def lda_c_pw_spin(
     n: NDArray[np.float64],
     zeta: NDArray[np.float64],
-    A: tuple[float] = ...,
+    A: Sequence[float] = ...,
     fzeta0: float = ...,
     **kwargs: Any,
 ) -> tuple[NDArray[np.float64], NDArray[np.float64], None]: ...
