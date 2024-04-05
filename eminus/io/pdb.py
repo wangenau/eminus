@@ -18,15 +18,12 @@ def write_pdb(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): PDB output file path/name.
+        filename: PDB output file path/name.
 
     Keyword Args:
-        fods (list | None): FOD coordinates to write.
-        elec_symbols (list): Identifier for up and down FODs.
-        trajectory (bool): Allow appending to a file to create trajectories.
-
-    Returns:
-        None.
+        fods: FOD coordinates to write.
+        elec_symbols: Identifier for up and down FODs.
+        trajectory: Allow appending to a file to create trajectories.
     """
     atoms = obj._atoms
 
@@ -68,14 +65,14 @@ def create_pdb_str(atom, pos, a=None):
         ATOM: https://wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM
 
     Args:
-        atom (list): Atom symbols.
-        pos (ndarray): Atom positions.
+        atom: Atom symbols.
+        pos: Atom positions.
 
     Keyword Args:
-        a (float | None): Cell size.
+        a: Cell size.
 
     Returns:
-        str: PDB file format.
+        PDB file format.
     """
     # Convert Bohr to Angstrom
     pos = bohr2ang(pos)

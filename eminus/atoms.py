@@ -21,35 +21,35 @@ class Atoms:
     """Atoms object that holds all system and cell parameters.
 
     Args:
-        atom (str | list | tuple): Atom symbols.
+        atom: Atom symbols.
 
             A string can be given, e.g., with :code:`CH4` that will be parsed to
             :code:`['C', 'H', 'H', 'H', 'H']`. When calculating atoms one can directly provide the
             charge, e.g., with :code:`Li-q3`.
-        pos (list | tuple | ndarray): Atom positions.
+        pos: Atom positions.
 
     Keyword Args:
-        ecut (float | None): Cut-off energy.
+        ecut: Cut-off energy.
 
             Defaults to 30 Eh (ca. 816 eV).
-        a (float | list | tuple | ndarray): Cell size or vacuum size.
+        a: Cell size or vacuum size.
 
             Floats will create a cubic unit cell. Defaults to a 20 a0 (ca. 10.5 A) cubic cell.
             Scaled lattice vectors can be given to build a custom cell.
-        spin (int | None): Number of unpaired electrons.
+        spin: Number of unpaired electrons.
 
             This is the difference between the number of up and down electrons.
-        charge (int): Charge of the system.
-        unrestricted (bool | None): Handling of spin.
+        charge: Charge of the system.
+        unrestricted: Handling of spin.
 
             :code:`False` for restricted, :code:`True` for unrestricted, and :code:`None` for
             automatic detection.
-        center (bool | str): Center the system inside the cell.
+        center: Center the system inside the cell.
 
             Aligns the geometric center of mass with the center of the call and rotates the system,
             such that its geometric moment of inertia aligns with the coordinate axes. Can be one of
             bool, 'shift', and 'rotate'.
-        verbose (int | str | None): Level of output.
+        verbose: Level of output.
 
             Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
             value can be used as well, where larger numbers mean more output, starting from 0.
@@ -377,7 +377,7 @@ class Atoms:
         """Recenter the system inside the cell.
 
         Keyword Args:
-            center (float | list | tuple | ndarray | None): Point to center the system around.
+            center: Point to center the system around.
         """
         com = center_of_mass(self.pos)
         if center is None:
@@ -394,10 +394,10 @@ class Atoms:
         """Interface to set custom k-points.
 
         Args:
-            k (list | tuple | ndarray): k-point coordinates.
+            k: k-point coordinates.
 
         Keyword Args:
-            wk (list | tuple | ndarray | None): k-point weights.
+            wk: k-point weights.
         """
         self.kpts.build()
         self.kpts._k = np.atleast_2d(k)
@@ -428,7 +428,7 @@ class Atoms:
         The matrices are using C ordering (the last index is the fastest).
 
         Returns:
-            tuple[ndarray, ndarray]: Index matrices.
+            Index matrices.
         """
         # Build index matrix M
         # ms = np.arange(self._Ns)

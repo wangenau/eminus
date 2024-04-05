@@ -18,11 +18,11 @@ def KSO(scf, write_cubes=False, **kwargs):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to CUBE files.
+        write_cubes: Write orbitals to CUBE files.
         **kwargs: Throwaway arguments.
 
     Returns:
-        ndarray: Real-space Kohn-Sham orbitals.
+        Real-space Kohn-Sham orbitals.
     """
     atoms = scf.atoms
 
@@ -42,11 +42,11 @@ def FO(scf, write_cubes=False, fods=None):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to CUBE files.
-        fods (list | None): Fermi-orbital descriptors.
+        write_cubes: Write orbitals to CUBE files.
+        fods: Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi orbitals.
+        Real-space Fermi orbitals.
     """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
@@ -75,11 +75,11 @@ def FLO(scf, write_cubes=False, fods=None):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to CUBE files.
-        fods (list | None): Fermi-orbital descriptors.
+        write_cubes: Write orbitals to CUBE files.
+        fods: Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi-Loewdin orbitals.
+        Real-space Fermi-Loewdin orbitals.
     """
     # Lazy import extras
     from .extras.fods import get_fods, remove_core_fods
@@ -108,11 +108,11 @@ def WO(scf, write_cubes=False, precondition=True):
         scf: SCF object.
 
     Keyword Args:
-        write_cubes (bool): Write orbitals to CUBE files.
-        precondition (bool): Precondition by calculating FLOs as the initial guess.
+        write_cubes: Write orbitals to CUBE files.
+        precondition: Precondition by calculating FLOs as the initial guess.
 
     Returns:
-        ndarray: Real-space Wannier orbitals.
+        Real-space Wannier orbitals.
     """
     atoms = scf.atoms
 
@@ -133,8 +133,8 @@ def cube_writer(atoms, orb_type, orbitals):
 
     Args:
         atoms: Atoms object.
-        orb_type (str): Orbital orb_type for the CUBE file names.
-        orbitals (ndarray): Real-space orbitals.
+        orb_type: Orbital orb_type for the CUBE file names.
+        orbitals: Real-space orbitals.
     """
     # Create the system name
     name = ''

@@ -17,14 +17,14 @@ def read_gth(atom, charge=None, psp_path='pbe'):
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        atom (str): Atom name.
+        atom: Atom name.
 
     Keyword Args:
-        charge (int | None): Valence charge.
-        psp_path (str): Path to GTH pseudopotential files. Defaults to installation_path/psp/pbe.
+        charge: Valence charge.
+        psp_path: Path to GTH pseudopotential files. Defaults to installation_path/psp/pbe.
 
     Returns:
-        dict: GTH parameters.
+        GTH parameters.
     """
     if psp_path in {'pade', 'pbe'}:
         # The try-except block can be removed once eminus drops Python 3.7 support
@@ -96,7 +96,7 @@ def mock_gth():
     """Create a mock dictionary with all-zeros for atom species with no pseudopotential file.
 
     Returns:
-        dict: GTH parameters (all zero).
+        GTH parameters (all zero).
     """
     return {
         'Zion': 0,

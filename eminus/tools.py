@@ -19,10 +19,10 @@ def cutoff2gridspacing(E):
     Reference: Phys. Rev. B 54, 14362.
 
     Args:
-        E (float): Energy in Hartree.
+        E: Energy in Hartree.
 
     Returns:
-        float: Grid spacing in Bohr.
+        Grid spacing in Bohr.
     """
     return np.pi / np.sqrt(2 * E)
 
@@ -33,10 +33,10 @@ def gridspacing2cutoff(h):
     Reference: Phys. Rev. B 54, 14362.
 
     Args:
-        h (float): Grid spacing in Bohr.
+        h: Grid spacing in Bohr.
 
     Returns:
-        float: Cut-off in Hartree.
+        Cut-off in Hartree.
     """
     return 0.5 * (np.pi / h) ** 2
 
@@ -45,13 +45,13 @@ def center_of_mass(coords, masses=None):
     """Calculate the center of mass for a set of coordinates and masses.
 
     Args:
-        coords (ndarray): Array of real-space coordinates.
+        coords: Array of real-space coordinates.
 
     Keyword Args:
-        masses (ndarray | None): Mass or weight for each coordinate.
+        masses: Mass or weight for each coordinate.
 
     Returns:
-        ndarray: Center of mass.
+        Center of mass.
     """
     if masses is None:
         masses = np.ones(len(coords))
@@ -64,10 +64,10 @@ def orbital_center(obj, psirs):
 
     Args:
         obj: Atoms or SCF object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        bool: Center of masses.
+        Center of masses.
     """
     atoms = obj._atoms
 
@@ -90,13 +90,13 @@ def inertia_tensor(coords, masses=None):
     Reference: https://en.wikipedia.org/wiki/Moment_of_inertia
 
     Args:
-        coords (ndarray): Array of real-space coordinates.
+        coords: Array of real-space coordinates.
 
     Keyword Args:
-        masses (ndarray | None): Mass or weight for each coordinate.
+        masses: Mass or weight for each coordinate.
 
     Returns:
-        ndarray: Inertia tensor.
+        Inertia tensor.
     """
     if masses is None:
         masses = np.ones(len(coords))
@@ -124,10 +124,10 @@ def get_dipole(scf, n=None):
         scf: SCF object.
 
     Keyword Args:
-        n (float | None): Real-space electronic density.
+        n: Real-space electronic density.
 
     Returns:
-        ndarray: Electric dipole moment in e * Bohr.
+        Electric dipole moment in e * Bohr.
     """
     atoms = scf.atoms
     if n is None:
@@ -155,7 +155,7 @@ def get_ip(scf):
         scf: SCF object.
 
     Returns:
-        float: Ionization potential in Hartree.
+        Ionization potential in Hartree.
     """
     scf.atoms.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
@@ -170,13 +170,13 @@ def check_ortho(obj, func, eps=1e-9):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): A discretized set of functions.
+        func: A discretized set of functions.
 
     Keyword Args:
-        eps (float): Tolerance for the condition.
+        eps: Tolerance for the condition.
 
     Returns:
-        bool: Orthogonality status for the set of functions.
+        Orthogonality status for the set of functions.
     """
     atoms = obj._atoms
     func = np.atleast_3d(func)
@@ -206,13 +206,13 @@ def check_norm(obj, func, eps=1e-9):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): A discretized set of functions.
+        func: A discretized set of functions.
 
     Keyword Args:
-        eps (float): Tolerance for the condition.
+        eps: Tolerance for the condition.
 
     Returns:
-        bool: Normalization status for the set of functions.
+        Normalization status for the set of functions.
     """
     atoms = obj._atoms
     func = np.atleast_3d(func)
@@ -236,13 +236,13 @@ def check_orthonorm(obj, func, eps=1e-9):
 
     Args:
         obj: Atoms or SCF object.
-        func (ndarray): A discretized set of functions.
+        func: A discretized set of functions.
 
     Keyword Args:
-        eps (float): Tolerance for the condition.
+        eps: Tolerance for the condition.
 
     Returns:
-        bool: Orthonormality status for the set of functions.
+        Orthonormality status for the set of functions.
     """
     atoms = obj._atoms
     ortho_bool = check_ortho(atoms, func, eps)
@@ -257,13 +257,13 @@ def get_isovalue(n, percent=85):
     Reference: J. Chem. Phys. 158, 164102.
 
     Args:
-        n (float): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        percent (float): Amount of density that should be contained.
+        percent: Amount of density that should be contained.
 
     Returns:
-        float: Isovalue that contains the specified percentage of the density.
+        Isovalue that contains the specified percentage of the density.
     """
 
     def deviation(isovalue):
@@ -288,7 +288,7 @@ def get_tautf(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real-space Thomas-Fermi kinetic energy density.
+        Real-space Thomas-Fermi kinetic energy density.
     """
     atoms = scf.atoms
     # Use the definition with a division by two
@@ -308,7 +308,7 @@ def get_tauw(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real-space von Weizsaecker kinetic energy density.
+        Real-space von Weizsaecker kinetic energy density.
     """
     atoms = scf.atoms
     if scf.dn_spin is None:
@@ -334,7 +334,7 @@ def get_elf(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Real-space electron localization function.
+        Real-space electron localization function.
     """
     D = get_tau(scf.atoms, scf.Y) - get_tauw(scf)
     D0 = get_tautf(scf)
@@ -351,10 +351,10 @@ def get_reduced_gradient(scf, eps=0):
         scf: SCF object.
 
     Kwargs:
-        eps (float): Threshold of the density where s should be truncated.
+        eps: Threshold of the density where s should be truncated.
 
     Returns:
-        ndarray: Real-space reduced density gradient.
+        Real-space reduced density gradient.
     """
     atoms = scf.atoms
     if scf.dn_spin is None:
@@ -379,7 +379,7 @@ def get_spin_squared(scf):
         scf: SCF object.
 
     Returns:
-        float: The DFT value for <S^2>.
+        The DFT value for <S^2>.
     """
     atoms = scf.atoms
     # <S^2> for a restricted calculation is always zero
@@ -400,7 +400,7 @@ def get_multiplicity(scf):
         scf: SCF object.
 
     Returns:
-        float: Multiplicity 2S+1.
+        Multiplicity 2S+1.
     """
     S2 = get_spin_squared(scf)
     # <S^2> = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(<S^2>+0.25)-0.5
@@ -415,7 +415,7 @@ def get_bandgap(scf):
         scf: SCF object.
 
     Returns:
-        float: Band gap energy.
+        Band gap energy.
     """
     e_occ = get_epsilon(scf, scf.W, **scf._precomputed)
 
@@ -436,10 +436,10 @@ def get_Efermi(obj, epsilon=None):
         obj: SCF or Occupations object.
 
     Keyword Args:
-        epsilon (ndarray): Eigenenergies.
+        epsilon: Eigenenergies.
 
     Returns:
-        float: Fermi energy.
+        Fermi energy.
     """
     # Handle the obj argument
     if hasattr(obj, 'smearing'):
@@ -480,12 +480,12 @@ def fermi_distribution(E, mu, kbT):
     Reference: https://en.wikipedia.org/wiki/Fermi%E2%80%93Dirac_statistics
 
     Args:
-        E (float): State energy.
-        mu (float): Chemical energy or Fermi energy.
-        kbT (float): Thermic energy or smearing width.
+        E: State energy.
+        mu: Chemical energy or Fermi energy.
+        kbT: Thermic energy or smearing width.
 
     Returns:
-        float: Fermi distribution.
+        Fermi distribution.
     """
     x = (E - mu) / kbT
     with np.errstate(over='ignore'):
@@ -498,12 +498,12 @@ def electronic_entropy(E, mu, kbT):
     Reference: J. Phys. Condens. Matter 1, 689.
 
     Args:
-        E (float): State energy.
-        mu (float): Chemical energy or Fermi energy.
-        kbT (float): Thermic energy or smearing width.
+        E: State energy.
+        mu: Chemical energy or Fermi energy.
+        kbT: Thermic energy or smearing width.
 
     Returns:
-        float: Electronic entropic energy.
+        Electronic entropic energy.
     """
     # Condition taken from: https://gitlab.com/QEF/q-e/-/blob/master/Modules/w1gauss.f90
     if abs((E - mu) / kbT) > 36:

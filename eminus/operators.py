@@ -48,10 +48,10 @@ def O(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     return atoms.Omega * W
 
@@ -66,13 +66,13 @@ def L(atoms, W, ik=-1):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     # Gk2 is a normal 1d row vector, reshape it so it can be applied to the column vector W
     if len(W) == len(atoms.Gk2c[ik]):
@@ -92,10 +92,10 @@ def Linv(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     # Ignore the division by zero for the first elements
     with np.errstate(divide='ignore', invalid='ignore'):
@@ -123,13 +123,13 @@ def I(atoms, W, ik=-1):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     n = atoms.Ns
 
@@ -175,14 +175,14 @@ def J(atoms, W, ik=-1, full=True):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
-        full (bool): Whether to transform in the full or in the active space.
+        ik: k-point index.
+        full: Whether to transform in the full or in the active space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     n = atoms.Ns
     Wfft = np.copy(W)
@@ -220,14 +220,14 @@ def Idag(atoms, W, ik=-1, full=False):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
-        full (bool): Whether to transform in the full or in the active space.
+        ik: k-point index.
+        full: Whether to transform in the full or in the active space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     n = atoms.Ns
     F = J(atoms, W, ik, full)
@@ -246,13 +246,13 @@ def Jdag(atoms, W, ik=-1):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     n = atoms.Ns
     Finv = I(atoms, W, ik)
@@ -269,11 +269,11 @@ def K(atoms, W, ik):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik (int): k-point index.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     # Gk2c is a normal 1d row vector, reshape it so it can be applied to the column vector W
     return W / (1 + atoms.Gk2c[ik][:, None])
@@ -288,12 +288,12 @@ def T(atoms, W, dr):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik (int): k-point index.
-        dr (ndarray): Real-space shifting vector.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        dr: Real-space shifting vector.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     # We can not use a fancy decorator for this operator, so handle it here
     if isinstance(W, np.ndarray) and W.ndim == 3:

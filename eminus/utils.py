@@ -22,11 +22,11 @@ def dotprod(a, b):
     denominator in minimizers.
 
     Args:
-        a (ndarray): Array of vectors.
-        b (ndarray): Array of vectors.
+        a: Array of vectors.
+        b: Array of vectors.
 
     Returns:
-        float: The expressions result
+        The expressions result.
     """
     eps = 1e-15  # 2.22e-16 is the range of float64 machine precision
     # The dot product of complex vectors looks like the expression below, but this is slow
@@ -44,12 +44,12 @@ def Ylm_real(l, m, G):  # noqa: C901
     Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics
 
     Args:
-        l (int): Angular momentum number.
-        m (int): Magnetic quantum number.
-        G (ndarray): Reciprocal lattice vector or array of lattice vectors.
+        l: Angular momentum number.
+        m: Magnetic quantum number.
+        G: Reciprocal lattice vector or array of lattice vectors.
 
     Returns:
-        ndarray: Real spherical harmonics.
+        Real spherical harmonics.
     """
     eps = 1e-9
     # Account for single vectors
@@ -124,12 +124,12 @@ def handle_spin_gracefully(func, *args, **kwargs):
     adds the option to act on arrays containing wave functions of all spins and all states as well.
 
     Args:
-        func (Callable): Function that acts on spin-states.
+        func: Function that acts on spin-states.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -147,12 +147,12 @@ def handle_k_gracefully(func, *args, **kwargs):
     This uses the same principle as described in :func:`~eminus.utils.handle_spin_gracefully`.
 
     Args:
-        func (Callable): Function that acts on k-point.
+        func: Function that acts on k-point.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -171,12 +171,12 @@ def handle_k_indexable(func, *args, **kwargs):
     signature.
 
     Args:
-        func (Callable): Function that acts on k-point.
+        func: Function that acts on k-point.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -195,12 +195,12 @@ def handle_k_reducable(func, *args, **kwargs):
     signature and summing up all results in the end.
 
     Args:
-        func (Callable): Function that acts on k-point.
+        func: Function that acts on k-point.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -217,12 +217,12 @@ def skip_k(func, *args, **kwargs):
     """Handle calculations that do not support k-points.
 
     Args:
-        func (Callable): Function that acts on k-point.
+        func: Function that acts on k-point.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -242,12 +242,12 @@ def handle_torch(func, *args, **kwargs):
     """Use a function optimized with Torch if available.
 
     Args:
-        func (Callable): Function with a Torch alternative.
+        func: Function with a Torch alternative.
         args: Pass-through arguments.
         kwargs: Pass-through keyword arguments.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     @functools.wraps(func)
@@ -266,13 +266,13 @@ def pseudo_uniform(size, seed=1234):
     Reference: Commun. ACM. 12, 85.
 
     Args:
-        size (tuple): Dimension of the array to create.
+        size: Dimension of the array to create.
 
     Keyword Args:
-        seed (int): Seed to initialize the random number generator.
+        seed: Seed to initialize the random number generator.
 
     Returns:
-        ndarray: Array with (pseudo) random numbers.
+        Array with (pseudo) random numbers.
     """
     W = np.zeros(size, dtype=complex)
     mult = 48271
@@ -290,11 +290,11 @@ def add_maybe_none(a, b):
     """Add a and b together, when one or both can potentially be None.
 
     Args:
-        a (ndarray | None): Array or None.
-        b (ndarray | None): Array or None.
+        a: Array or None.
+        b: Array or None.
 
     Returns:
-        ndarray: Sum of a and b.
+        Sum of a and b.
     """
     if a is b is None:
         return None
@@ -311,10 +311,10 @@ def molecule2list(molecule):
     No charges or parentheses are allowed, only chemical symbols followed by their amount.
 
     Args:
-        molecule (str): Simplified chemical formula (case sensitive).
+        molecule: Simplified chemical formula (case sensitive).
 
     Returns:
-        list: Atoms of the molecule expanded to a list.
+        Atoms of the molecule expanded to a list.
     """
     # Insert a whitespace before every capital letter, these can appear once or none at all
     # Or insert before digits, these can appear at least once
@@ -334,11 +334,11 @@ def atom2charge(atom, path=None):
     """Get the valence charges for a list of chemical symbols from GTH files.
 
     Args:
-        atom (list): Atom symbols.
-        path (str | None): Directory of GTH files.
+        atom: Atom symbols.
+        path: Directory of GTH files.
 
     Returns:
-        list: Valence charges per atom.
+        Valence charges per atom.
     """
     # Import here to prevent circular imports
     from .io import read_gth
@@ -357,11 +357,11 @@ def vector_angle(a, b):
     """Calculate the angle between two vectors.
 
     Args:
-        a (ndarray): Vector.
-        b (ndarray): Vector.
+        a: Vector.
+        b: Vector.
 
     Returns:
-        float: Angle between a and b in Degree.
+        Angle between a and b in Degree.
     """
     # Normalize vectors first
     a_norm = a / norm(a)
@@ -374,10 +374,10 @@ def get_lattice(lattice_vectors):
     """Generate a cell for given lattice vectors.
 
     Args:
-        lattice_vectors (ndarray): Lattice vectors.
+        lattice_vectors: Lattice vectors.
 
     Returns:
-        ndarray: Lattice vertices.
+        Lattice vertices.
     """
     # Vertices of a cube
     vertices = np.array(

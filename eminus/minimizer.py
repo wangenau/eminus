@@ -23,10 +23,10 @@ def scf_step(scf, step):
 
     Args:
         scf: SCF object.
-        step (int): Optimization step.
+        step: Optimization step.
 
     Returns:
-        float: Total energy.
+        Total energy.
     """
     scf._precompute()
     # Update occupations every smear_update'th cycle
@@ -42,16 +42,16 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
 
     Args:
         scf: SCF object.
-        method (string): Minimization method.
-        Elist (list): Total energies per SCF step.
+        method: Minimization method.
+        Elist: Total energies per SCF step.
 
     Keyword Args:
-        linmin (ndarray | None): Cosine between previous search direction and current gradient.
-        cg (ndarray | None): Conjugate-gradient orthogonality.
-        norm_g (ndarray | None): Gradient norm.
+        linmin: Cosine between previous search direction and current gradient.
+        cg: Conjugate-gradient orthogonality.
+        norm_g: Gradient norm.
 
     Returns:
-        bool: Convergence condition.
+        Convergence condition.
     """
     iteration = len(Elist)
 
@@ -79,11 +79,11 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
 
     Args:
         scf: SCF object.
-        method (string): Minimization method.
-        Elist (list): Total energies per SCF step.
-        linmin (ndarray): Cosine between previous search direction and current gradient.
-        cg (ndarray): Conjugate-gradient orthogonality.
-        norm_g (ndarray): Gradient norm.
+        method: Minimization method.
+        Elist: Total energies per SCF step.
+        linmin: Cosine between previous search direction and current gradient.
+        cg: Conjugate-gradient orthogonality.
+        norm_g: Gradient norm.
     """
     iteration = len(Elist)
 
@@ -135,11 +135,11 @@ def linmin_test(g, d):
     Reference: https://trond.hjorteland.com/thesis/node26.html
 
     Args:
-        g (ndarray): Current gradient.
-        d (ndarray): Previous search direction.
+        g: Current gradient.
+        d: Previous search direction.
 
     Returns:
-        float: Linmin angle.
+        Linmin angle.
     """
     # cos = A B / |A| |B|
     return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
@@ -155,15 +155,15 @@ def cg_test(atoms, ik, g, g_old, precondition=True):
 
     Args:
         atoms: Atoms object.
-        ik (int): k-point index.
-        g (ndarray): Current gradient.
-        g_old (ndarray): Previous gradient.
+        ik: k-point index.
+        g: Current gradient.
+        g_old: Previous gradient.
 
     Keyword Args:
-        precondition (bool): Whether to use a preconditioner.
+        precondition: Whether to use a preconditioner.
 
     Returns:
-        float: CG angle.
+        CG angle.
     """
     if precondition:
         Kg, Kg_old = atoms.K(g, ik), atoms.K(g_old, ik)
@@ -180,17 +180,17 @@ def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        cgform (int): Conjugate gradient form.
-        g (ndarray): Current gradient.
-        g_old (ndarray): Previous gradient.
-        d_old (ndarray): Previous search direction.
+        ik: k-point index.
+        cgform: Conjugate gradient form.
+        g: Current gradient.
+        g_old: Previous gradient.
+        d_old: Previous search direction.
 
     Keyword Args:
-        precondition (bool): Whether to use a preconditioner.
+        precondition: Whether to use a preconditioner.
 
     Returns:
-        tuple[float, float]: Conjugate scalar and gradient norm.
+        Conjugate scalar and gradient norm.
     """
     atoms = scf.atoms
 
@@ -217,17 +217,17 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
         **kwargs: Throwaway arguments.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     atoms = scf.atoms
     costs = []
@@ -259,18 +259,18 @@ def pclm(
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        precondition (bool): Whether to use a preconditioner.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        precondition: Whether to use a preconditioner.
         **kwargs: Throwaway arguments.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     atoms = scf.atoms
     costs = []
@@ -323,17 +323,17 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
         **kwargs: Throwaway arguments.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     return pclm(scf, Nit, cost, grad, condition, betat, precondition=False)
 
@@ -353,18 +353,18 @@ def pccg(
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
-        precondition (bool): Whether to use a preconditioner.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
+        precondition: Whether to use a preconditioner.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     atoms = scf.atoms
     costs = []
@@ -455,17 +455,17 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     return pccg(scf, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
@@ -478,17 +478,17 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
 
     Args:
         scf: SCF object.
-        Nit (int): Maximum number of SCF steps.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
 
     Returns:
-        list: Total energies per SCF cycle.
+        Total energies per SCF cycle.
     """
     atoms = scf.atoms
     costs = []

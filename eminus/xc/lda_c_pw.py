@@ -17,19 +17,19 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        A (float): Functional parameter.
-        a1 (float): Functional parameter.
-        b1 (float): Functional parameter.
-        b2 (float): Functional parameter.
-        b3 (float): Functional parameter.
-        b4 (float): Functional parameter.
+        A: Functional parameter.
+        a1: Functional parameter.
+        b1: Functional parameter.
+        b2: Functional parameter.
+        b3: Functional parameter.
+        b4: Functional parameter.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: PW correlation energy density and potential.
+        PW correlation energy density and potential.
     """
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     rs12 = np.sqrt(rs)
@@ -53,16 +53,16 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        A (tuple): Functional parameters.
-        fzeta0 (float): Functional parameter.
+        A: Functional parameters.
+        fzeta0: Functional parameter.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: PW correlation energy density and potential.
+        PW correlation energy density and potential.
     """
     a1 = (0.2137, 0.20548, 0.11125)
     b1 = (7.5957, 14.1189, 10.357)

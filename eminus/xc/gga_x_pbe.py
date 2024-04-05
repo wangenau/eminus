@@ -20,15 +20,15 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        mu (float): Functional parameter.
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        mu: Functional parameter.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
+        PBE exchange energy density, potential, and vsigma.
     """
     ex, vx, _ = lda_x(n, **kwargs)
     gex, gvx, vsigmax = pbe_x_base(n, mu, dn_spin[0], **kwargs)
@@ -43,16 +43,16 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        mu (float): Functional parameter.
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        mu: Functional parameter.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
+        PBE exchange energy density, potential, and vsigma.
     """
     # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     zeta = zeta[0]  # Getting the non-zero values from zeta adds an extra dimension, remove it here
@@ -73,15 +73,15 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        mu (float): Functional parameter.
-        dn (ndarray | None): Real-space gradient of densities per spin channel.
+        mu: Functional parameter.
+        dn: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE exchange energy density, potential, and vsigma.
+        PBE exchange energy density, potential, and vsigma.
     """
     kappa = 0.804
 

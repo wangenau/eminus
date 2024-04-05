@@ -43,7 +43,7 @@ class Energy:
         Reference: J. Phys.: Condens. Matter 1, 689.
 
         Returns:
-            float: Total energy extrapolated to T=0.
+            Total energy extrapolated to T=0.
         """
         return self.Etot - 0.5 * self.Eentropy
 
@@ -64,7 +64,7 @@ def get_E(scf):
         scf: SCF object.
 
     Returns:
-        float: Total energy.
+        Total energy.
     """
     scf.energies.Ekin = get_Ekin(scf.atoms, scf.Y)
     scf.energies.Ecoul = get_Ecoul(scf.atoms, scf.n, scf.phi)
@@ -82,11 +82,11 @@ def get_Ekin(atoms, Y, ik):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        float: Kinetic energy in Hartree.
+        Kinetic energy in Hartree.
     """
     # Ekin = -0.5 Tr(F Wdag L(W))
     Ekin = 0
@@ -106,13 +106,13 @@ def get_Ecoul(atoms, n, phi=None):
 
     Args:
         atoms: Atoms object.
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        phi (ndarray | None): Hartree field.
+        phi: Hartree field.
 
     Returns:
-        float: Coulomb energy in Hartree.
+        Coulomb energy in Hartree.
     """
     if phi is None:
         phi = solve_poisson(atoms, n)
@@ -127,17 +127,17 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
 
     Args:
         scf: SCF object.
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        exc (ndarray | None): Exchange-correlation energy density.
-        n_spin (ndarray | None): Real-space electronic densities per spin channel.
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
-        Nspin (int): Number of spin states.
+        exc: Exchange-correlation energy density.
+        n_spin: Real-space electronic densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
+        Nspin: Number of spin states.
 
     Returns:
-        float: Exchange-correlation energy in Hartree.
+        Exchange-correlation energy in Hartree.
     """
     atoms = scf.atoms
     if exc is None:
@@ -153,10 +153,10 @@ def get_Eloc(scf, n):
 
     Args:
         scf: SCF object.
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Returns:
-        float: Local energy contribution in Hartree.
+        Local energy contribution in Hartree.
     """
     return np.real(np.vdot(scf.Vloc, n))
 
@@ -171,11 +171,11 @@ def get_Enonloc(scf, Y, ik):
 
     Args:
         scf: SCF object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        float: Non-local GTH energy contribution in Hartree.
+        Non-local GTH energy contribution in Hartree.
     """
     atoms = scf.atoms
 
@@ -211,11 +211,11 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         atoms: Atoms object.
 
     Keyword Args:
-        gcut (float): G-vector cut-off.
-        gamma (float): Error tolerance.
+        gcut: G-vector cut-off.
+        gamma: Error tolerance.
 
     Returns:
-        float: Ewald energy in Hartree.
+        Ewald energy in Hartree.
     """
 
     # For a plane wave code we have multiple contributions for the Ewald energy
@@ -287,13 +287,13 @@ def get_Esic(scf, Y, n_single=None):
 
     Args:
         scf: SCF object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n_single (ndarray | None): Single-electron densities.
+        n_single: Single-electron densities.
 
     Returns:
-        float: PZ self-interaction energy.
+        PZ self-interaction energy.
     """
     atoms = scf.atoms
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
@@ -359,13 +359,13 @@ def get_Eband(scf, Y, **kwargs):
 
     Args:
         scf: SCF object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`eminus.dft.H`.
 
     Returns:
-        float: Band energy in Hartree.
+        Band energy in Hartree.
     """
     atoms = scf.atoms
     # Eband = Tr(Wdag H(W))
@@ -385,11 +385,11 @@ def get_Eentropy(scf, epsilon, Efermi):
 
     Args:
         scf: SCF object.
-        epsilon (ndarray): Eigenenergies.
-        Efermi (float): Fermi energy.
+        epsilon: Eigenenergies.
+        Efermi: Fermi energy.
 
     Returns:
-        float: Entropic energy in Hartree.
+        Entropic energy in Hartree.
     """
     occ = scf.atoms.occ
 

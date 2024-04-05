@@ -64,17 +64,17 @@ def Cell(
     """Wrapper to create Atoms classes for crystal systems.
 
     Args:
-        atom (str | list | tuple): Atom symbols.
-        lattice (str | list | tuple | ndarray): Lattice system.
-        ecut (float):  Cut-off energy.
-        a (float | list | tuple | ndarray | None): Cell size.
+        atom: Atom symbols.
+        lattice: Lattice system.
+        ecut: Cut-off energy.
+        a: Cell size.
 
     Keyword Args:
-        basis (list | tuple | ndarray | None): Lattice basis.
-        bands (int | None): Number of bands (has to be larger or equal than the occupied states).
-        kmesh (int | list | tuple | ndarray): k-point mesh.
-        smearing (float): Smearing width in Hartree.
-        verbose (int | str | None): Level of output.
+        basis: Lattice basis.
+        bands: Number of bands (has to be larger or equal than the occupied states).
+        kmesh: k-point mesh.
+        smearing: Smearing width in Hartree.
+        verbose: Level of output.
         **kwargs: Keyword arguments to pass to the Atoms object.
 
     Returns:

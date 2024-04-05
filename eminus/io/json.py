@@ -14,7 +14,7 @@ def read_json(filename):
     """Load objects from a JSON file.
 
     Args:
-        filename (str): JSON input file path/name.
+        filename: JSON input file path/name.
 
     Returns:
         Class object.
@@ -81,7 +81,7 @@ def write_json(obj, filename):
 
     Args:
         obj: Class object.
-        filename (str): JSON output file path/name.
+        filename: JSON output file path/name.
     """
     import eminus
 

@@ -34,13 +34,13 @@ def I(atoms, W, ik=-1):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     import torch
 
@@ -86,14 +86,14 @@ def J(atoms, W, ik=-1, full=True):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
-        full (bool): Wether to transform in the full or in the active space.
+        ik: k-point index.
+        full: Wether to transform in the full or in the active space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     import torch
 
@@ -129,14 +129,14 @@ def Idag(atoms, W, ik=-1, full=False):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
-        full (bool): Wether to transform in the full or in the active space.
+        ik: k-point index.
+        full: Wether to transform in the full or in the active space.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     import torch
 
@@ -172,13 +172,13 @@ def Jdag(atoms, W, ik=-1):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        ik (int): k-point index.
+        ik: k-point index.
 
     Returns:
-        ndarray: The operator applied on W.
+        The operator applied on W.
     """
     import torch
 

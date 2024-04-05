@@ -37,32 +37,32 @@ class SCF:
         atoms: Atoms object.
 
     Keyword Args:
-        xc (str): Comma-separated exchange-correlation functional description.
+        xc: Comma-separated exchange-correlation functional description.
 
             Adding 'libxc:' before a functional will use the Libxc interface for that functional,
             e.g., with :code:`libxc:mgga_x_scan,libxc:mgga_c_scan`.
-        pot (str): Type of potential.
+        pot: Type of potential.
 
             Can be one of 'GTH' (default), 'Coulomb', 'Harmonic', or 'Ge'. Alternatively, a path to
             a directory containing custom GTH pseudopotential files can be given.
-        guess (str): Initial guess for the wave functions.
+        guess: Initial guess for the wave functions.
 
             Can be one of 'random' (default) or 'pseudo'. Adding 'symm' to the string will use the
             same coefficients for both spin channels, e.g., :code:`symm-rand`.
-        etol (float): Convergence tolerance of the total energy.
-        gradtol (float | None): Convergence tolerance of the gradient norm.
+        etol: Convergence tolerance of the total energy.
+        gradtol: Convergence tolerance of the gradient norm.
 
             This tolerance will only be used in conjugate gradient methods.
-        sic (bool): Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF.
-        disp (bool | dict): Calculate a dispersion correction.
+        sic: Calculate the Kohn-Sham Perdew-Zunger SIC energy at the end of the SCF.
+        disp: Calculate a dispersion correction.
 
             A dictionary can be used to pass arguments to the respective
             function, e.g., with :code:`{'version': 'd3zero', 'atm': False, 'xc': 'scan'}`.
-        opt (dict | None): Dictionary to customize the minimization methods.
+        opt: Dictionary to customize the minimization methods.
 
             The keys can be chosen out of 'sd', 'lm', 'pclm', 'cg', 'pccg', and 'auto'. Defaults to
             :code:`{'auto': 250}`.
-        verbose (int | str | None): Level of output.
+        verbose: Level of output.
 
             Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
             value can be used as well, where larger numbers mean more output, starting from 0.
@@ -234,7 +234,14 @@ class SCF:
     # ### Class methods ###
 
     def run(self, **kwargs):
-        """Run the self-consistent field (SCF) calculation."""
+        """Run the self-consistent field (SCF) calculation.
+
+        Keyword Args:
+            **kwargs: Pass-through keyword arguments.
+
+        Returns:
+            Total energy.
+        """
         # Print some information about the calculation
         if self.log.level <= logging.DEBUG:
             info()
@@ -382,7 +389,7 @@ class SCF:
         """Converge unoccupied bands after converging occ. bands.
 
         Keyword Args:
-            Nempty (int | None): Number of empty states.
+            Nempty: Number of empty states.
             **kwargs: Throwaway arguments.
         """
         if not self.is_converged:
@@ -443,7 +450,7 @@ class SCF:
         """Recenter the system inside the cell.
 
         Keyword Args:
-            center (float | list | tuple | ndarray | None): Point to center the system around.
+            center: Point to center the system around.
         """
         atoms = self.atoms
         # Get the COM before centering the atoms

@@ -54,7 +54,7 @@ def init_gth_loc(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Local GTH potential contribution.
+        Local GTH potential contribution.
     """
     atoms = scf.atoms
     species = set(atoms.atom)
@@ -110,7 +110,7 @@ def init_gth_nonloc(atoms, gth):
         gth: GTH object.
 
     Returns:
-        tuple[int, ndarray, ndarray]: NbetaNL, prj2beta, and betaNL.
+        NbetaNL, prj2beta, and betaNL.
     """
     prj2beta = np.zeros((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta += -1  # Set to an invalid index
@@ -157,12 +157,12 @@ def calc_Vnonloc(scf, ik, spin, W):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        ndarray: Non-local GTH potential contribution.
+        Non-local GTH potential contribution.
     """
     atoms = scf.atoms
 
@@ -193,14 +193,14 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
-        psp (dict): GTH parameters.
-        l (int): Angular momentum number.
-        iprj (int): Nproj_l index.
-        Gm (ndarray): Magnitude of G-vectors.
-        Omega (float): Unit cell volume.
+        psp: GTH parameters.
+        l: Angular momentum number.
+        iprj: Nproj_l index.
+        Gm: Magnitude of G-vectors.
+        Omega: Unit cell volume.
 
     Returns:
-        ndarray: GTH projector.
+        GTH projector.
     """
     rrl = psp['rp'][l]
     Gr2 = (Gm * rrl) ** 2

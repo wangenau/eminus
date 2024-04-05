@@ -17,13 +17,13 @@ def lda_x(n, **kwargs):
     Reference: Phys. Rev. 81, 385.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Exchange energy density and potential.
+        Exchange energy density and potential.
     """
     f = -3 / 4 * (3 / (2 * np.pi)) ** (2 / 3)
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
@@ -42,14 +42,14 @@ def lda_x_spin(n, zeta, **kwargs):
     Reference: Phys. Rev. 81, 385.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Exchange energy density and potential.
+        Exchange energy density and potential.
     """
     f = -3 / 4 * (3 / np.pi) ** (1 / 3)
 

@@ -17,13 +17,13 @@ def lda_c_pw_mod(n, **kwargs):
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: PW correlation energy density and potential.
+        Modified PW correlation energy density and potential.
     """
     return lda_c_pw(n, A=0.0310907, **kwargs)
 
@@ -36,14 +36,14 @@ def lda_c_pw_mod_spin(n, zeta, **kwargs):
     Reference: Phys. Rev. B 45, 13244.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: PW correlation energy density and potential.
+        Modified PW correlation energy density and potential.
     """
     # fzeta0 = 4 / (9 * (2**(1 / 3) - 1))
     return lda_c_pw_spin(

@@ -22,10 +22,10 @@ def solve_poisson(atoms, n):
 
     Args:
         atoms: Atoms object.
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Returns:
-        ndarray: Hartree field.
+        Hartree field.
     """
     # phi = -4 pi Linv(O(J(n)))
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
@@ -40,10 +40,10 @@ def orth(atoms, W):
 
     Args:
         atoms: Atoms object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        ndarray: Orthogonalized wave functions.
+        Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
     return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
@@ -56,11 +56,11 @@ def orth_unocc(atoms, Y, Z):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Z: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        ndarray: Orthogonalized wave functions.
+        Orthogonalized wave functions.
     """
     D = [np.empty_like(Zk) for Zk in Z]
     for ik in range(atoms.kpts.Nk):
@@ -80,13 +80,13 @@ def get_n_total(atoms, Y, n_spin=None):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
 
     Keyword Args:
-        n_spin (ndarray | None): Real-space electronic densities per spin channel.
+        n_spin: Real-space electronic densities per spin channel.
 
     Returns:
-        ndarray: Electronic density.
+        Electronic density.
     """
     # Return the total density in the spin-paired case
     if n_spin is not None:
@@ -114,11 +114,11 @@ def get_n_spin(atoms, Y, ik):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        ndarray: Electronic densities per spin channel.
+        Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns))
@@ -136,11 +136,11 @@ def get_n_single(atoms, Y, ik):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        ndarray: Single-electron densities.
+        Single-electron densities.
     """
     Yrs = atoms.I(Y, ik)
     n = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
@@ -156,15 +156,15 @@ def get_grad(scf, ik, spin, W, **kwargs):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Gradient.
+        Gradient.
     """
     atoms = scf.atoms
     F = atoms.occ.F[ik][spin]
@@ -191,19 +191,19 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        phi (ndarray | None): Hartree field.
-        vxc (ndarray | None): Exchange-correlation potential.
-        vsigma (ndarray | None): Contracted gradient potential derivative.
-        vtau (ndarray | None): Kinetic energy gradient potential derivative.
+        dn_spin: Real-space gradient of densities per spin channel.
+        phi: Hartree field.
+        vxc: Exchange-correlation potential.
+        vsigma: Contracted gradient potential derivative.
+        vtau: Kinetic energy gradient potential derivative.
 
     Returns:
-        ndarray: Hamiltonian applied on W.
+        Hamiltonian applied on W.
     """
     atoms = scf.atoms
 
@@ -237,10 +237,10 @@ def H_precompute(scf, W):
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray, ndarray, ndarray]: dn_spin, phi, vxc, vsigma, and vtau
+        dn_spin, phi, vxc, vsigma, and vtau.
     """
     # We are calculating everything here over both spin channels
     # We would be fine/could improve performance by only calculating the currently used spin channel
@@ -267,11 +267,11 @@ def Q(inp, U):
     Reference: Comput. Phys. Commun. 128, 1.
 
     Args:
-        inp (ndarray): Coefficients input array.
-        U (ndarray): Overlap of wave functions.
+        inp: Coefficients input array.
+        U: Overlap of wave functions.
 
     Returns:
-        ndarray: Q operator result.
+        Q operator result.
     """
     mu, V = eig(U)
     mu = mu[:, None]
@@ -289,13 +289,13 @@ def get_psi(scf, W, **kwargs):
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Eigenstates in reciprocal space.
+        Eigenstates in reciprocal space.
     """
     if W is None:
         log.warning('The provided wave function is "None".')
@@ -319,13 +319,13 @@ def get_epsilon(scf, W, **kwargs):
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Eigenvalues.
+        Eigenvalues.
     """
     if W is None:
         log.warning('The provided wave function is "None".')
@@ -348,14 +348,14 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Eigenvalues.
+        Eigenvalues.
     """
     if W is None or Z is None:
         log.warning('The provided wave function is "None".')
@@ -379,12 +379,12 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
         scf: SCF object.
 
     Keyword Args:
-        Nstate (int | None): Number of states.
-        seed (int): Seed to initialize the random number generator.
-        symmetric (bool): Whether to use the same guess for both spin channels.
+        Nstate: Number of states.
+        seed: Seed to initialize the random number generator.
+        symmetric: Whether to use the same guess for both spin channels.
 
     Returns:
-        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
+        Initial-guess orthogonal wave functions in reciprocal space.
     """
     atoms = scf.atoms
     if Nstate is None:
@@ -413,12 +413,12 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
         scf: SCF object.
 
     Keyword Args:
-        Nstate (int | None): Number of states.
-        seed (int): Seed to initialize the random number generator.
-        symmetric (bool): Whether to use the same guess for both spin channels.
+        Nstate: Number of states.
+        seed: Seed to initialize the random number generator.
+        symmetric: Whether to use the same guess for both spin channels.
 
     Returns:
-        ndarray: Initial-guess orthogonal wave functions in reciprocal space.
+        Initial-guess orthogonal wave functions in reciprocal space.
     """
     atoms = scf.atoms
     if Nstate is None:

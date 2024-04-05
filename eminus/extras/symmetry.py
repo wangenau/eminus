@@ -15,8 +15,8 @@ def symmetrize(atoms, space_group=False, time_reversal=True):
         atoms: Atoms object.
 
     Keyword Args:
-        space_group (bool): Whether to consider space group symmetry.
-        time_reversal (bool): Whether to consider time reversal symmetry.
+        space_group: Whether to consider space group symmetry.
+        time_reversal: Whether to consider time reversal symmetry.
     """
     try:
         from pyscf.pbc.gto import Cell

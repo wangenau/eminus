@@ -20,15 +20,15 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
 
     Args:
         mf: PySCF SCF object.
-        Nspin (int): Number of spin states.
-        loc (str): Localization method.
+        Nspin: Number of spin states.
+        loc: Localization method.
 
     Keyword Args:
-        Nit (int): Number of tries to get a solution with positive eigenvalues.
-        seed (int): Seed to initialize the random number generator.
+        Nit: Number of tries to get a solution with positive eigenvalues.
+        seed: Seed to initialize the random number generator.
 
     Returns:
-        list: Localized occupied orbital coefficients per spin channel.
+        Localized occupied orbital coefficients per spin channel.
     """
     rng = np.random.default_rng(seed=seed)
     from pyscf.lo import boys, edmiston, pipek
@@ -76,12 +76,12 @@ def get_fods(obj, basis='pc-1', loc='FB'):
         obj: Atoms or SCF object.
 
     Keyword Args:
-        basis (str): Basis set for the DFT calculation.
-        loc (str): Localization method.
-        elec_symbols (list): Identifier for up and down FODs.
+        basis: Basis set for the DFT calculation.
+        loc: Localization method.
+        elec_symbols: Identifier for up and down FODs.
 
     Returns:
-        ndarray: FOD positions.
+        FOD positions.
     """
     try:
         from pyscf.gto import Mole
@@ -127,14 +127,14 @@ def split_fods(atom, pos, elec_symbols=('X', 'He')):
     """Split atom and FOD coordinates.
 
     Args:
-        atom (list): Atom symbols.
-        pos (ndarray): Atom positions.
+        atom: Atom symbols.
+        pos: Atom positions.
 
     Keyword Args:
-        elec_symbols (list): Identifier for up and down FODs.
+        elec_symbols: Identifier for up and down FODs.
 
     Returns:
-        tuple[list, ndarray, list]: Atom types, the respective coordinates, and FOD positions.
+        Atom types, the respective coordinates, and FOD positions.
     """
     pos_fod_up = []
     pos_fod_dn = []
@@ -157,10 +157,10 @@ def remove_core_fods(obj, fods):
 
     Args:
         obj: Atoms or SCF object.
-        fods (list): FOD positions.
+        fods: FOD positions.
 
     Returns:
-        ndarray: Valence FOD positions.
+        Valence FOD positions.
     """
     atoms = obj._atoms
 

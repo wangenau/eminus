@@ -17,13 +17,13 @@ def gga_c_pbe_sol(n, **kwargs):
     Reference: Phys. Rev. Lett. 100, 136406.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
+        PBEsol correlation energy density, potential, and vsigma.
     """
     return gga_c_pbe(n, beta=0.046, **kwargs)
 
@@ -36,13 +36,13 @@ def gga_c_pbe_sol_spin(n, zeta, **kwargs):
     Reference: Phys. Rev. Lett. 100, 136406.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
+        PBEsol correlation energy density, potential, and vsigma.
     """
     return gga_c_pbe_spin(n, zeta, beta=0.046, **kwargs)

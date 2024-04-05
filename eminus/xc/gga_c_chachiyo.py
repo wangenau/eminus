@@ -20,14 +20,14 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: Chachiyo correlation energy density, potential and vsigma.
+        Chachiyo correlation energy density, potential and vsigma.
     """
     h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
 
@@ -68,15 +68,15 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: Chachiyo correlation energy density, potential and vsigma.
+        Chachiyo correlation energy density, potential and vsigma.
     """
     h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
 

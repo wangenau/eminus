@@ -19,10 +19,10 @@ def read_xyz(filename):
     https://open-babel.readthedocs.io/en/latest/FileFormats/XYZ_cartesian_coordinates_format.html
 
     Args:
-        filename (str): XYZ input file path/name.
+        filename: XYZ input file path/name.
 
     Returns:
-        tuple[list, ndarray]: Atom species and positions.
+        Atom species and positions.
     """
     if not filename.endswith('.xyz'):
         filename += '.xyz'
@@ -59,15 +59,12 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): XYZ output file path/name.
+        filename: XYZ output file path/name.
 
     Keyword Args:
-        fods (list | None): FOD coordinates to write.
-        elec_symbols (list): Identifier for up and down FODs.
-        trajectory (bool): Allow appending to a file to create trajectories.
-
-    Returns:
-        None.
+        fods: FOD coordinates to write.
+        elec_symbols: Identifier for up and down FODs.
+        trajectory: Allow appending to a file to create trajectories.
     """
     atoms = obj._atoms
 

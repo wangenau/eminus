@@ -17,8 +17,8 @@ class KPoints:
     """KPoints object that holds k-points properties and build methods.
 
     Args:
-        lattice (str): Lattice system.
-        a (float | list | tuple | ndarray | None): Cell size.
+        lattice: Lattice system.
+        a: Cell size.
     """
 
     def __init__(self, lattice, a=None):
@@ -176,11 +176,11 @@ def kpoint_convert(k_points, lattice_vectors):
     Reference: https://gitlab.com/ase/ase/-/blob/master/ase/dft/kpoints.py
 
     Args:
-        k_points (ndarray): k-points.
-        lattice_vectors (ndarray): Lattice vectors.
+        k_points: k-points.
+        lattice_vectors: Lattice vectors.
 
     Returns:
-        ndarray: k-points in cartesian coordinates.
+        k-points in cartesian coordinates.
     """
     inv_cell = 2 * np.pi * inv(lattice_vectors).T
     return k_points @ inv_cell
@@ -192,10 +192,10 @@ def monkhorst_pack(nk):
     Reference: https://gitlab.com/ase/ase/-/blob/master/ase/dft/kpoints.py
 
     Args:
-        nk (list | tuple | ndarray): Number of k-points per axis.
+        nk: Number of k-points per axis.
 
     Returns:
-        ndarray: k-points.
+        k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
     M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
@@ -208,10 +208,10 @@ def gamma_centered(nk):
     Reference: https://github.com/pyscf/pyscf/blob/master/pyscf/pbc/gto/cell.py
 
     Args:
-        nk (list | tuple | ndarray): Number of k-points per axis.
+        nk: Number of k-points per axis.
 
     Returns:
-        ndarray: k-points.
+        k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
     M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
@@ -225,7 +225,7 @@ def bandpath(kpts):
         kpts: KPoints object.
 
     Returns:
-        ndarray: Sampled k-points.
+        Sampled k-points.
     """
     # Convert path to a list and get special points
     path_list = list(kpts.path)
@@ -289,7 +289,7 @@ def kpoints2axis(kpts):
         kpts: KPoints object.
 
     Returns:
-        tuple[ndarray, ndarray, list]: k-point axis, special point coordinates, and labels.
+        k-point axis, special point coordinates, and labels.
     """
     # Convert path to a list and get the special points
     path_list = list(kpts.path)
@@ -339,10 +339,10 @@ def get_brillouin_zone(lattice_vectors):
     Reference: http://staff.ustc.edu.cn/~zqj/posts/howto-plot-brillouin-zone
 
     Args:
-        lattice_vectors (ndarray): Lattice vectors.
+        lattice_vectors: Lattice vectors.
 
     Returns:
-        ndarray: Brillouin zone vertices.
+        Brillouin zone vertices.
     """
     inv_cell = kpoint_convert(np.eye(3), lattice_vectors)
 

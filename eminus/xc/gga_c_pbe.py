@@ -20,15 +20,15 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        beta (float): Functional parameter.
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        beta: Functional parameter.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
+        PBE correlation energy density, potential, and vsigma.
     """
     gamma = (1 - np.log(2)) / np.pi**2
 
@@ -67,16 +67,16 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     Reference: Phys. Rev. Lett. 78, 1396.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        beta (float): Functional parameter.
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        beta: Functional parameter.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: PBE correlation energy density, potential, and vsigma.
+        PBE correlation energy density, potential, and vsigma.
     """
     gamma = (1 - np.log(2)) / np.pi**2
 

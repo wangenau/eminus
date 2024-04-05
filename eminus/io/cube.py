@@ -20,10 +20,9 @@ def read_cube(filename):
     File format definition: https://h5cube-spec.readthedocs.io/en/latest/cubeformat.html
 
     Args:
-        filename (str): CUBE input file path/name.
+        filename: CUBE input file path/name.
 
     Returns:
-        tuple[list, ndarray, float, ndarray, int, ndarray]:
         Species, positions, charges, cell size, sampling, and field array.
     """
     if not filename.endswith(('.cub', '.cube')):
@@ -76,15 +75,12 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
 
     Args:
         obj: Atoms or SCF object.
-        filename (str): CUBE output file path/name.
-        field (ndarray): Real-space field data.
+        filename: CUBE output file path/name.
+        field: Real-space field data.
 
     Keyword Args:
-        fods (list | None): FOD coordinates to write.
-        elec_symbols (list): Identifier for up and down FODs.
-
-    Returns:
-        None.
+        fods: FOD coordinates to write.
+        elec_symbols: Identifier for up and down FODs.
     """
     # Atomic units are assumed, so there is no need for conversion.
     atoms = obj._atoms

@@ -17,13 +17,13 @@ def get_grad_field(atoms, field, real=True):
 
     Args:
         atoms: Atoms object.
-        field (ndarray): Real-space field per spin channel.
+        field: Real-space field per spin channel.
 
     Keyword Args:
-        real (bool): Make the gradient a real array (the gradient of n_spin is real).
+        real: Make the gradient a real array (the gradient of n_spin is real).
 
     Returns:
-        ndarray: Gradients of field per spin channel.
+        Gradients of field per spin channel.
     """
     dfield = np.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
     for spin in range(atoms.occ.Nspin):
@@ -42,12 +42,12 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
     Args:
         atoms: Atoms object.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        dn_spin (ndarray): Real-space gradient of densities per spin channel.
-        vsigma (ndarray): Contracted gradient potential derivative.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        dn_spin: Real-space gradient of densities per spin channel.
+        vsigma: Contracted gradient potential derivative.
 
     Returns:
-        ndarray: Gradient correction in reciprocal space.
+        Gradient correction in reciprocal space.
     """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
     h = np.empty_like(dn_spin)
@@ -78,11 +78,11 @@ def get_tau(atoms, Y, ik):
 
     Args:
         atoms: Atoms object.
-        Y (ndarray): Expansion coefficients of orthogonal wave functions in reciprocal space.
-        ik (int): k-point index.
+        Y: Expansion coefficients of orthogonal wave functions in reciprocal space.
+        ik: k-point index.
 
     Returns:
-        ndarray: Real-space positive-definite kinetic energy density.
+        Real-space positive-definite kinetic energy density.
     """
     # The "intuitive" way is the one commented out below (without k-point dependency)
     # Sadly, this implementation is really slow for various reasons so use the faster one below
@@ -122,13 +122,13 @@ def calc_Vtau(scf, ik, spin, W, vtau):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        vtau (ndarray): Kinetic energy density potential derivative.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        vtau: Kinetic energy density potential derivative.
 
     Returns:
-        ndarray: Tau-dependent potential contribution in reciprocal space.
+        Tau-dependent potential contribution in reciprocal space.
     """
     atoms = scf.atoms
 

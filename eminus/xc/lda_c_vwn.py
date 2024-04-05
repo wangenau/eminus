@@ -17,17 +17,17 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     Reference: Phys. Rev. B 22, 3812.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        A (float): Functional parameter.
-        b (float): Functional parameter.
-        c (float): Functional parameter.
-        x0 (float): Functional parameter.
+        A: Functional parameter.
+        b: Functional parameter.
+        c: Functional parameter.
+        x0: Functional parameter.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: VWN correlation energy density and potential.
+        VWN correlation energy density and potential.
     """
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
@@ -56,14 +56,14 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     Reference: Phys. Rev. B 22, 3812.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: VWN correlation energy density and potential.
+        VWN correlation energy density and potential.
     """
     A = (0.0310907, 0.01554535, -1 / (6 * np.pi**2))
     b = (3.72744, 7.06042, 1.13107)

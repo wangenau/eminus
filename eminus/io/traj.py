@@ -17,10 +17,10 @@ def read_traj(filename):
     See :func:`~eminus.io.xyz.read_xyz` for more information about the XYZ file format.
 
     Args:
-        filename (str): TRAJ input file path/name.
+        filename: TRAJ input file path/name.
 
     Returns:
-        list[tuple[list, ndarray]]: Atom species and positions.
+        Atom species and positions.
     """
     if not filename.endswith(('.trj', '.traj')):
         filename += '.traj'
@@ -60,14 +60,11 @@ def write_traj(obj, filename, fods=None, elec_symbols=('X', 'He')):
 
     Args:
         obj: Atoms or SCF object or list/tuple of these objects.
-        filename (str): TRAJ output file path/name.
+        filename: TRAJ output file path/name.
 
     Keyword Args:
-        fods (list | None): FOD coordinates to write.
-        elec_symbols (list): Identifier for up and down FODs.
-
-    Returns:
-        None.
+        fods: FOD coordinates to write.
+        elec_symbols: Identifier for up and down FODs.
     """
     if not filename.endswith(('.trj', '.traj')):
         filename += '.traj'

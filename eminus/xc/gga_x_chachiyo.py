@@ -20,14 +20,14 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
     Reference: Molecules 25, 3485.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
+        Chachiyo exchange energy density, potential, and vsigma.
     """
     norm_dn = norm(dn_spin[0], axis=1)
     ex, _, _ = lda_x(n, **kwargs)
@@ -56,15 +56,15 @@ def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     Reference: Molecules 25, 3485.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: Chachiyo exchange energy density, potential, and vsigma.
+        Chachiyo exchange energy density, potential, and vsigma.
     """
     # Use the spin-scaling relationship Exc(n_up, n_down)=(Exc(2 n_up)+Exc(2 n_down))/2
     n_up = zeta * n + n  # 2 * n_up

@@ -26,17 +26,17 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     """Handle and get exchange-correlation functionals.
 
     Args:
-        xc (list | str): Exchange and correlation identifier.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        Nspin (int): Number of spin states.
+        xc: Exchange and correlation identifier.
+        n_spin: Real-space electronic densities per spin channel.
+        Nspin: Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
-        dens_threshold (float): Do not treat densities smaller than the threshold.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
+        dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
-        tuple[ndarray, ndarray]: Exchange-correlation energy density and potential.
+        Exchange-correlation energy density and potential.
     """
     if isinstance(xc, str):
         xc = parse_functionals(xc)
@@ -96,14 +96,14 @@ def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
 
     Args:
-        xc (list | str): Exchange and correlation identifier.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        Nspin (int): Number of spin states.
+        xc: Exchange and correlation identifier.
+        n_spin: Real-space electronic densities per spin channel.
+        Nspin: Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
-        dens_threshold (float): Do not treat densities smaller than the threshold.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
+        dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
         Exchange-correlation energy potential.
@@ -118,14 +118,14 @@ def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
 
     Args:
-        xc (list | str): Exchange and correlation identifier.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        Nspin (int): Number of spin states.
+        xc: Exchange and correlation identifier.
+        n_spin: Real-space electronic densities per spin channel.
+        Nspin: Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
-        dens_threshold (float): Do not treat densities smaller than the threshold.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
+        dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
         Exchange-correlation energy density.
@@ -138,10 +138,10 @@ def parse_functionals(xc):
     """Parse exchange-correlation functional strings to the internal format.
 
     Args:
-        xc (str): Exchange and correlation identifier, separated by a comma.
+        xc: Exchange and correlation identifier, separated by a comma.
 
     Returns:
-        list: Exchange and correlation string.
+        Exchange and correlation string.
     """
     # Check for combined aliases
     try:
@@ -177,10 +177,10 @@ def parse_xc_type(xc):
     """Parse functional strings to identify the corresponding functional type.
 
     Args:
-        xc (list): Exchange and correlation identifier, separated by a comma.
+        xc: Exchange and correlation identifier, separated by a comma.
 
     Returns:
-        str: Functional type.
+        Functional type.
     """
     xc_type = []
     for func in xc:
@@ -221,10 +221,10 @@ def parse_xc_libxc(xc_id):
     """Parse functional type by its ID using pylibxc.
 
     Args:
-        xc_id (int | string): Functional ID or identifier.
+        xc_id: Functional ID or identifier.
 
     Returns:
-        str: Functional type.
+        Functional type.
     """
     if not config.use_pylibxc:
         raise AssertionError
@@ -244,10 +244,10 @@ def parse_xc_pyscf(xc_id):
     """Parse functional type by its ID using PySCF.
 
     Args:
-        xc_id (int | string): Functional ID or identifier.
+        xc_id: Functional ID or identifier.
 
     Returns:
-        str: Functional type.
+        Functional type.
     """
     from pyscf.dft.libxc import is_gga, is_lda, is_meta_gga, needs_laplacian, XC_CODES
 
@@ -271,10 +271,10 @@ def get_zeta(n_spin):
     """Calculate the relative spin polarization.
 
     Args:
-        n_spin (ndarray): Real-space electronic densities per spin channel.
+        n_spin: Real-space electronic densities per spin channel.
 
     Returns:
-        ndarray: Relative spin polarization.
+        Relative spin polarization.
     """
     # If only one spin is given return an array of ones as if the density only is in one channel
     if len(n_spin) == 1:
@@ -286,14 +286,14 @@ def mock_xc(n, Nspin=1, **kwargs):
     """Mock exchange-correlation functional with no effect (spin-paired).
 
     Args:
-        n (ndarray): Real-space electronic density.
-        Nspin (int): Number of spin states.
+        n: Real-space electronic density.
+        Nspin: Number of spin states.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Mock exchange-correlation energy density and potential.
+        Mock exchange-correlation energy density and potential.
     """
     zeros = np.zeros_like(n)
     return zeros, np.array([zeros] * Nspin), None

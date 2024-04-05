@@ -17,28 +17,28 @@ def lda_c_chachiyo_mod(n, **kwargs):
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
+        Modified Chachiyo correlation energy density and potential.
     """
     # Same as lda_c_chachiyo
     return lda_c_chachiyo(n, **kwargs)
 
 
 def chachiyo_scaling_mod(zeta):
-    """Modified weighting factor between the paramagnetic and the ferromagnetic case.
+    """Weighting factor between the paramagnetic and the ferromagnetic case.
 
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
-        zeta (ndarray): Relative spin polarization.
+        zeta: Relative spin polarization.
 
     Returns:
-        tuple[ndarray, ndarray]: Weighting factor and its derivative.
+        Weighting factor and its derivative.
     """
     gzeta = ((1 + zeta) ** (2 / 3) + (1 - zeta) ** (2 / 3)) / 2
     fzeta = 2 * (1 - gzeta**3)
@@ -55,13 +55,13 @@ def lda_c_chachiyo_mod_spin(n, zeta, **kwargs):
     Reference: Comput. Theor. Chem. 1172, 112669.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
+        Modified Chachiyo correlation energy density and potential.
     """
     return lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling_mod, **kwargs)

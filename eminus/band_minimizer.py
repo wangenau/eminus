@@ -25,10 +25,10 @@ def scf_step_occ(scf, W):
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        float: Band energy.
+        Band energy.
     """
     atoms = scf.atoms
     scf.Y = orth(atoms, W)
@@ -40,10 +40,10 @@ def scf_step_unocc(scf, Z):
 
     Args:
         scf: SCF object.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Z: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Returns:
-        float: Band energy.
+        Band energy.
     """
     atoms = scf.atoms
     scf.D = orth_unocc(atoms, scf.Y, Z)
@@ -57,15 +57,15 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Gradient.
+        Gradient.
     """
     atoms = scf.atoms
     W = orth(atoms, W)
@@ -86,15 +86,15 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
 
     Args:
         scf: SCF object.
-        ik (int): k-point index.
-        spin (int): Spin variable to track whether to do the calculation for spin up or down.
-        Z (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
+        ik: k-point index.
+        spin: Spin variable to track whether to do the calculation for spin up or down.
+        Z: Expansion coefficients of unconstrained wave functions in reciprocal space.
 
     Keyword Args:
         **kwargs: See :func:`H`.
 
     Returns:
-        ndarray: Gradient.
+        Gradient.
     """
     atoms = scf.atoms
     Y = scf.Y[ik][spin][:, scf.atoms.occ.f[ik][spin] > 0]
@@ -129,18 +129,18 @@ def sd(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -173,19 +173,19 @@ def pclm(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        precondition (bool): Whether to use a preconditioner.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        precondition: Whether to use a preconditioner.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -234,18 +234,18 @@ def lm(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     return pclm(scf, W, Nit, cost, grad, condition, betat, precondition=False)
 
@@ -266,19 +266,19 @@ def pccg(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
-        precondition (bool): Whether to use a preconditioner.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
+        precondition: Whether to use a preconditioner.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []
@@ -354,18 +354,18 @@ def cg(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     return pccg(scf, W, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
@@ -387,18 +387,18 @@ def auto(
 
     Args:
         scf: SCF object.
-        W (ndarray): Expansion coefficients of unconstrained wave functions in reciprocal space.
-        Nit (int): Maximum number of SCF steps.
+        W: Expansion coefficients of unconstrained wave functions in reciprocal space.
+        Nit: Maximum number of SCF steps.
 
     Keyword Args:
-        cost (Callable): Function that will run every SCF step.
-        grad (Callable): Function that calculates the respective gradient.
-        condition (Callable): Function to check and log the convergence condition.
-        betat (float): Step size.
-        cgform (int): Conjugate gradient form.
+        cost: Function that will run every SCF step.
+        grad: Function that calculates the respective gradient.
+        condition: Function to check and log the convergence condition.
+        betat: Step size.
+        cgform: Conjugate gradient form.
 
     Returns:
-        tuple[list, ndarray]: Band energies per SCF cycle and optimized expansion coefficients.
+        Band energies per SCF cycle and optimized expansion coefficients.
     """
     atoms = scf.atoms
     costs = []

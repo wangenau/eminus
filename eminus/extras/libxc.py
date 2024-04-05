@@ -26,16 +26,16 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     Reference: SoftwareX 7, 1.
 
     Args:
-        xc (str | int): Exchange or correlation identifier.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        Nspin (int): Number of spin states.
+        xc: Exchange or correlation identifier.
+        n_spin: Real-space electronic densities per spin channel.
+        Nspin: Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
+        Exchange-correlationenergy density and potentials.
     """
     try:
         if not config.use_pylibxc:
@@ -92,16 +92,16 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     Reference: WIREs Comput. Mol. Sci. 8, e1340.
 
     Args:
-        xc (str | int): Exchange or correlation identifier.
-        n_spin (ndarray): Real-space electronic densities per spin channel.
-        Nspin (int): Number of spin states.
+        xc: Exchange or correlation identifier.
+        n_spin: Real-space electronic densities per spin channel.
+        Nspin: Number of spin states.
 
     Keyword Args:
-        dn_spin (ndarray | None): Real-space gradient of densities per spin channel.
-        tau (ndarray | None): Real-space kinetic energy densities per spin channel.
+        dn_spin: Real-space gradient of densities per spin channel.
+        tau: Real-space kinetic energy densities per spin channel.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray, ndarray]: Exch.-corr. energy density and potentials.
+        Exchange-correlation energy density and potentials.
     """
     try:
         from pyscf.dft.libxc import eval_xc

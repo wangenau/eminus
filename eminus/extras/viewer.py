@@ -22,7 +22,14 @@ from .fods import split_fods
 
 
 def view(*args, **kwargs):
-    """Unified display function."""
+    """Unified display function.
+
+    Args:
+        *args: Pass-through arguments.
+
+    Keyword Args:
+        **kwargs: Pass-through keyword arguments.
+    """
     if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)
     if isinstance(args[0], KPoints):
@@ -39,14 +46,14 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
         obj: Atoms or SCF object.
 
     Keyword Args:
-        extra (ndarray | list | None): Extra coordinates or FODs to display.
-        plot_n (bool): Whether to plot the electronic density (only for executed scf objects).
-        percent (float): Amount of density that should be contained.
-        surfaces (int): Number of surfaces to display in density plots (reduce for performance).
-        size (tuple): Widget size.
+        extra: Extra coordinates or FODs to display.
+        plot_n: Whether to plot the electronic density (only for executed scf objects).
+        percent: Amount of density that should be contained.
+        surfaces: Number of surfaces to display in density plots (reduce for performance).
+        size: Widget size.
 
     Returns:
-        Figure: Viewable object.
+        Viewable object.
     """
     try:
         import plotly.graph_objects as go
@@ -185,16 +192,16 @@ def view_contour(
         field: Real-space field data.
 
     Keyword Args:
-        axis (int): Axis to slice through.
-        value: (float): Slice value scaled by the axis size.
+        axis: Axis to slice through.
+        value:: Slice value scaled by the axis size.
         lines: Number of contour lines.
-        limits (tuple): Minimal and maximal truncation values for the field data.
-        zoom (float): Initial zoom.
-        linewidth (float): Contour line width.
-        size (tuple): Widget size.
+        limits: Minimal and maximal truncation values for the field data.
+        zoom: Initial zoom.
+        linewidth: Contour line width.
+        size: Widget size.
 
     Returns:
-        Figure: Viewable object.
+        Viewable object.
     """
     try:
         import plotly.graph_objects as go
@@ -266,19 +273,19 @@ def view_file(
     Reference: Bioinformatics 34, 1241.
 
     Args:
-        filename (str | list | tuple): Input filename(s). This can be either CUBE or XYZ files.
+        filename: Input filename(s). This can be either CUBE or XYZ files.
 
     Keyword Args:
-        isovalue (float): Isovalue for sizing orbitals.
-        gui (bool): Turn on the NGLView GUI.
-        elec_symbols (list): Identifier for up and down FODs.
-        size (tuple): Widget size.
+        isovalue: Isovalue for sizing orbitals.
+        gui: Turn on the NGLView GUI.
+        elec_symbols: Identifier for up and down FODs.
+        size: Widget size.
 
     Keyword Args:
         **kwargs: NGLWidget keyword arguments.
 
     Returns:
-        NGLWidget: Viewable object.
+        Viewable object.
     """
     try:
         from nglview import NGLWidget, write_html
@@ -349,7 +356,7 @@ def executed_in_notebook():
     Reference: https://stackoverflow.com/a/22424821
 
     Returns:
-        bool: Whether in a notebook or not.
+        Whether in a notebook or not.
     """
     try:
         from IPython import get_ipython
@@ -365,11 +372,11 @@ def _generic_view(view, filename):
     """Modify the view for a generic (probably PDB) file.
 
     Args:
-        view (NGLWidget): Viewable object.
-        filename (str): Input filename.
+        view: Viewable object.
+        filename: Input filename.
 
     Returns:
-        NGLWidget: Viewable object.
+        Viewable object.
     """
     # If no XYZ or CUBE file is used try a more generic file viewer
     ext = pathlib.Path(filename).suffix.replace('.', '')
@@ -388,13 +395,13 @@ def _cube_view(view, filename, isovalue, elec_symbols):
     """Modify the view for a given CUBE file.
 
     Args:
-        view (NGLWidget): Viewable object.
-        filename (str | list | tuple): Input filename(s).
-        isovalue (float): Isovalue for sizing orbitals.
-        elec_symbols (list): Identifier for up and down FODs.
+        view: Viewable object.
+        filename: Input filename(s).
+        isovalue: Isovalue for sizing orbitals.
+        elec_symbols: Identifier for up and down FODs.
 
     Returns:
-        NGLWidget: Viewable object.
+        Viewable object.
     """
     from nglview import TextStructure
 
@@ -451,12 +458,12 @@ def _xyz_view(view, filename, elec_symbols):
     """Modify the view for a given XYZ file.
 
     Args:
-        view (NGLWidget): Viewable object.
-        filename (str | list | tuple): Input filename(s).
-        elec_symbols (list): Identifier for up and down FODs.
+        view: Viewable object.
+        filename: Input filename(s).
+        elec_symbols: Identifier for up and down FODs.
 
     Returns:
-        NGLWidget: Viewable object.
+        Viewable object.
     """
     from nglview import TextStructure
 
@@ -488,11 +495,11 @@ def _traj_view(view, filename):
     """Modify the view for a given TRAJ file.
 
     Args:
-        view (NGLWidget): Viewable object.
-        filename (str | list | tuple): Input filename(s).
+        view: Viewable object.
+        filename: Input filename(s).
 
     Returns:
-        NGLWidget: Viewable object.
+        Viewable object.
     """
     try:
         from nglview.base_adaptor import Structure, Trajectory
@@ -510,7 +517,7 @@ def _traj_view(view, filename):
         https://nglviewer.org/nglview/latest/_modules/nglview/adaptor.html
 
         Args:
-            filenames (str | list | tuple): XYZ input file paths/names.
+            filenames: XYZ input file paths/names.
         """
 
         def __init__(self, filenames):
@@ -533,10 +540,10 @@ def _traj_view(view, filename):
             """Get the atom coordinates for a given frame.
 
             Args:
-                index (int): Frame number.
+                index: Frame number.
 
             Returns:
-                ndarray: Atom positions in Bohr.
+                Atom positions in Bohr.
             """
             return self.atoms[index].pos
 
@@ -549,7 +556,7 @@ def _traj_view(view, filename):
             """Get the structure string per frame in the PDB format.
 
             Keyword Args:
-                index (int): Frame number.
+                index: Frame number.
 
             Returns:
                 str: Structure string.
@@ -571,8 +578,11 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         scf: SCF object.
 
     Keyword Args:
-        spin (int | list | tuple): Spin indices.
-        size (tuple): Widget size.
+        spin: Spin indices.
+        size: Widget size.
+
+    Returns:
+        Viewable object.
     """
     try:
         import plotly.graph_objects as go
@@ -667,13 +677,13 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         kpts: KPoints object.
 
     Keyword Args:
-        path (bool): Determines if k-points should be plotted.
-        special (bool): Determines if special points should be plotted.
-        connect (bool): Determines if k-points should connected.
-        size (tuple): Widget size.
+        path: Determines if k-points should be plotted.
+        special: Determines if special points should be plotted.
+        connect: Determines if k-points should connected.
+        size: Widget size.
 
     Returns:
-        Figure: Viewable object.
+        Viewable object.
     """
     try:
         import plotly.graph_objects as go

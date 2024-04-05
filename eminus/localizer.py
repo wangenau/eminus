@@ -17,11 +17,11 @@ def eval_psi(atoms, psi, r):
 
     Args:
         atoms: Atoms object.
-        psi (ndarray): Set of orbitals in reciprocal space.
-        r (ndarray): Real-space positions.
+        psi: Set of orbitals in reciprocal space.
+        r: Real-space positions.
 
     Returns:
-        ndarray: Values of psi at points r.
+        Values of psi at points r.
     """
     # Shift the evaluation point to (0,0,0) because we always have a lattice point here
     psi_T = atoms.T(psi, -r)
@@ -38,11 +38,11 @@ def get_R(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (ndarray): Set of orbitals in reciprocal space.
-        fods (list): Fermi-orbital descriptors.
+        psi: Set of orbitals in reciprocal space.
+        fods: Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Transformation matrix R.
+        Transformation matrix R.
     """
     # We only calculate occupied orbitals
     R = np.empty((len(fods), len(fods)), dtype=complex)
@@ -64,11 +64,11 @@ def get_FO(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (ndarray): Set of orbitals in reciprocal space.
-        fods (list): Fermi-orbital descriptors.
+        psi: Set of orbitals in reciprocal space.
+        fods: Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi orbitals.
+        Real-space Fermi orbitals.
     """
     fo = np.zeros((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
@@ -92,10 +92,10 @@ def get_S(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        ndarray: Overlap matrix S.
+        Overlap matrix S.
     """
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
     S = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
@@ -114,11 +114,11 @@ def get_FLO(atoms, psi, fods):
 
     Args:
         atoms: Atoms object.
-        psi (ndarray): Set of orbitals in reciprocal space.
-        fods (list): Fermi-orbital descriptors.
+        psi: Set of orbitals in reciprocal space.
+        fods: Fermi-orbital descriptors.
 
     Returns:
-        ndarray: Real-space Fermi-Loewdin orbitals.
+        Real-space Fermi-Loewdin orbitals.
     """
     fo = get_FO(atoms, psi, fods)
     flo = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
@@ -145,10 +145,10 @@ def wannier_cost(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        ndarray: Variance per orbital.
+        Variance per orbital.
     """
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
@@ -168,10 +168,10 @@ def wannier_center(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        ndarray: Wannier centers per orbital.
+        Wannier centers per orbital.
     """
     centers = np.empty((atoms.occ.Nstate, 3))
     for i in range(atoms.occ.Nstate):
@@ -191,10 +191,10 @@ def second_moment(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        ndarray: Second moments per orbital.
+        Second moments per orbital.
     """
     r2 = norm(atoms.r, axis=1) ** 2
 
@@ -212,10 +212,10 @@ def wannier_supercell_matrices(atoms, psirs):
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Returns:
-        tuple[ndarray, ndarray, ndarray]: Matrices X, Y, and Z.
+        Matrices X, Y, and Z.
     """
     # Similar to the expectation value of r, but accounting for periodicity
     X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0, 0])) @ psirs
@@ -233,12 +233,12 @@ def wannier_supercell_cost(X, Y, Z):
     Reference: Phys. Rev. B 59, 9703.
 
     Args:
-        X (ndarray): Calculation specific matrix.
-        Y (ndarray): Calculation specific matrix.
-        Z (ndarray): Calculation specific matrix.
+        X: Calculation specific matrix.
+        Y: Calculation specific matrix.
+        Z: Calculation specific matrix.
 
     Returns:
-        float: Supercell Wannier cost.
+        Supercell Wannier cost.
     """
     X2 = np.abs(np.diagonal(X)) ** 2
     Y2 = np.abs(np.diagonal(Y)) ** 2
@@ -253,12 +253,12 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
     Args:
         atoms: Atoms object.
-        X (ndarray): Calculation specific matrix.
-        Y (ndarray): Calculation specific matrix.
-        Z (ndarray): Calculation specific matrix.
+        X: Calculation specific matrix.
+        Y: Calculation specific matrix.
+        Z: Calculation specific matrix.
 
     Returns:
-        ndarray: Supercell Wannier gradient.
+        Supercell Wannier gradient.
     """
     x = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
     y = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
@@ -293,17 +293,17 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
 
     Args:
         atoms: Atoms object.
-        psirs (ndarray): Set of orbitals in real-space.
+        psirs: Set of orbitals in real-space.
 
     Keyword Args:
-        Nit (int): Number of iterations.
-        conv_tol (float): Convergence tolerance.
-        mu (float): Step size.
-        random_guess (bool): Whether to use a random unitary starting guess or the identity.
-        seed (int | None): Seed to get a reproducible random guess.
+        Nit: Number of iterations.
+        conv_tol: Convergence tolerance.
+        mu: Step size.
+        random_guess: Whether to use a random unitary starting guess or the identity.
+        seed: Seed to get a reproducible random guess.
 
     Returns:
-        ndarray: Localized orbitals.
+        Localized orbitals.
     """
     if not (np.diag(np.diag(atoms.a)) == atoms.a).all():
         log.warning('The Wannier localization needs a cubic unit cell.')

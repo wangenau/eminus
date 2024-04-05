@@ -14,7 +14,7 @@ class CustomLogger(logging.Logger):
     This is just a basic logger but with an added verbose property.
 
     Args:
-        name (str): Logger name.
+        name: Logger name.
     """
 
     def __init__(self, name):
@@ -36,11 +36,7 @@ class CustomFormatter(logging.Formatter):
     """Custom logger formatter."""
 
     def format(self, record):
-        """Use different formatting for different logging levels.
-
-        Args:
-            record: LogRecord object.
-        """
+        """Use different formatting for different logging levels."""
         if record.levelno >= logging.WARNING:
             # Print the level name for errors and warnings
             self._style._fmt = '%(levelname)s: %(msg)s'
@@ -70,6 +66,9 @@ def create_logger(obj):
 
     Args:
         obj: Instance of a class.
+
+    Returns:
+        Logger object.
     """
     # Use the ID of objects to create a unique logger
     # Without this setting the verbosity in one instance would affect other instances
@@ -82,7 +81,10 @@ def get_level(verbose):
     """Validate logging levels.
 
     Args:
-        verbose (int | str): Level of output.
+        verbose: Level of output.
+
+    Returns:
+        Logging level.
     """
     log_levels = {
         0: 'CRITICAL',
@@ -109,10 +111,10 @@ def name(newname):
     """Add a name to functions without evaluating them for better logging.
 
     Args:
-        newname (str): Function name.
+        newname: Function name.
 
     Returns:
-        Callable: Decorator.
+        Decorator.
     """
 
     def decorator(f):

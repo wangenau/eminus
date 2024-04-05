@@ -198,7 +198,7 @@ class Occupations:
         """Fill the states of the object.
 
         Keyword Args:
-            f: (float | ndarray | None): Fillings.
+            f: Fillings.
         """
         # Do nothing if the object is already filled
         if self.is_filled:
@@ -242,7 +242,7 @@ class Occupations:
         """Update fillings while maintaining integer occupations numbers.
 
         Args:
-            f: (int | ndarray): Fillings.
+            f: Fillings.
         """
         # Determine the electrons per spin channel
         Nup = self.Nelec // self.Nspin + self.spin // self.Nspin + self.Nelec % self.Nspin
@@ -290,7 +290,7 @@ class Occupations:
         """Update fillings while allowing fractional occupation numbers.
 
         Args:
-            f: (float | ndarray): Fillings.
+            f: Fillings.
         """
         # Determine the electrons per spin channel
         Nup = self.Nelec / self.Nspin + self.spin / self.Nspin
@@ -354,8 +354,10 @@ class Occupations:
         """Update fillings according to a Fermi distribution.
 
         Args:
-            epsilon (ndarray): Eigenenergies.
-            Efermi (float): Fermi energy.
+            epsilon: Eigenenergies.
+
+        Returns:
+            Efermi: Fermi energy.
         """
         if self.smearing == 0:
             log.info('Smearing is set to zero, nothing to do.')

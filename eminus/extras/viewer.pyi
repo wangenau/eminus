@@ -34,7 +34,7 @@ def view_contour(
     size: IntArray = ...,
 ) -> Any: ...
 def view_file(
-    filename: str,
+    filename: str | Sequence[str],
     isovalue: float = ...,
     gui: bool = ...,
     elec_symbols: Sequence[str] = ...,

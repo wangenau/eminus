@@ -19,7 +19,7 @@ def harmonic(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Harmonic potential in reciprocal space.
+        Harmonic potential in reciprocal space.
     """
     atoms = scf.atoms
     freq = 2
@@ -37,7 +37,7 @@ def coulomb(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Coulomb potential in reciprocal space.
+        Coulomb potential in reciprocal space.
     """
     atoms = scf.atoms
     Z = atoms.Z[0]  # This potential should only be used for same species
@@ -63,7 +63,7 @@ def ge(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Germanium pseudopotential in reciprocal space.
+        Germanium pseudopotential in reciprocal space.
     """
     atoms = scf.atoms
     Z = 4  # This potential should only be used for germanium
@@ -109,7 +109,7 @@ def init_pot(scf):
         scf: SCF object.
 
     Returns:
-        ndarray: Potential in reciprocal space.
+        Potential in reciprocal space.
     """
     try:
         pot = IMPLEMENTED[scf.pot](scf)

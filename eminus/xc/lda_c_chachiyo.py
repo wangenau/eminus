@@ -17,13 +17,13 @@ def lda_c_chachiyo(n, **kwargs):
     Reference: J. Chem. Phys. 145, 021101.
 
     Args:
-        n (ndarray): Real-space electronic density.
+        n: Real-space electronic density.
 
     Keyword Args:
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
+        Chachiyo correlation energy density and potential.
     """
     a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     b = 20.4562557
@@ -44,10 +44,10 @@ def chachiyo_scaling(zeta):
     Reference: J. Chem. Phys. 145, 021101.
 
     Args:
-        zeta (ndarray): Relative spin polarization.
+        zeta: Relative spin polarization.
 
     Returns:
-        tuple[ndarray, ndarray]: Weighting factor and its derivative.
+        Weighting factor and its derivative.
     """
     fzeta = ((1 + zeta) ** (4 / 3) + (1 - zeta) ** (4 / 3) - 2) / (2 * (2 ** (1 / 3) - 1))
 
@@ -63,15 +63,15 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     Reference: J. Chem. Phys. 145, 021101.
 
     Args:
-        n (ndarray): Real-space electronic density.
-        zeta (ndarray): Relative spin polarization.
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
 
     Keyword Args:
-        weight_function (Callable): Functional function.
+        weight_function: Functional function.
         **kwargs: Throwaway arguments.
 
     Returns:
-        tuple[ndarray, ndarray]: Chachiyo correlation energy density and potential.
+        Chachiyo correlation energy density and potential.
     """
     a0 = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
     a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)

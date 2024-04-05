@@ -16,16 +16,16 @@ def domain_cuboid(obj, length, centers=None):
 
     Args:
         obj: Atoms or SCF object.
-        length (int | float | list | ndarray): Side length or lengths of the cuboid.
+        length: Side length or lengths of the cuboid.
 
     Keyword Args:
-        centers (ndarray | None): Center of the cuboid.
+        centers: Center of the cuboid.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.
 
     Returns:
-        ndarray: Boolean mask.
+        Boolean mask.
     """
     atoms = obj._atoms
 
@@ -54,11 +54,11 @@ def domain_isovalue(field, isovalue):
     """Generate a mask for an isovalue real-space domain.
 
     Args:
-        field (ndarray): Real-space field data.
-        isovalue (float): Isovalue for the truncation.
+        field: Real-space field data.
+        isovalue: Isovalue for the truncation.
 
     Returns:
-        ndarray: Boolean mask.
+        Boolean mask.
     """
     return np.abs(field) > isovalue
 
@@ -68,16 +68,16 @@ def domain_sphere(obj, radius, centers=None):
 
     Args:
         obj: Atoms or SCF object.
-        radius (float): Radius of the sphere.
+        radius: Radius of the sphere.
 
     Keyword Args:
-        centers (ndarray | None): Center of the sphere.
+        centers: Center of the sphere.
 
             Defaults to the geometric center of mass of the system. For multiple coordinates,
             multiple domains will be merged.
 
     Returns:
-        ndarray: Boolean mask.
+        Boolean mask.
     """
     atoms = obj._atoms
 
@@ -100,11 +100,11 @@ def truncate(field, mask):
     This will not return a smaller array but set all truncated values to zero.
 
     Args:
-        field (ndarray): Real-space field data.
-        mask (ndarray): Boolean mask.
+        field: Real-space field data.
+        mask: Boolean mask.
 
     Returns:
-        ndarray: Boolean mask.
+        Boolean mask.
     """
     field_trunc = np.copy(field)
     field_trunc[~mask] = 0
