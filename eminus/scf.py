@@ -324,7 +324,11 @@ class SCF:
     kernel = run
 
     def converge_bands(self, **kwargs):
-        """Converge occupied bands after an SCF calculation."""
+        """Converge occupied bands after an SCF calculation.
+
+        Keyword Args:
+            **kwargs: Pass-through keyword arguments.
+        """
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
 
@@ -390,7 +394,7 @@ class SCF:
 
         Keyword Args:
             Nempty: Number of empty states.
-            **kwargs: Throwaway arguments.
+            **kwargs: Pass-through keyword arguments.
         """
         if not self.is_converged:
             self.log.warning('The previous calculation has not been converged.')
