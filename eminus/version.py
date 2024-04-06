@@ -43,6 +43,3 @@ def info():
             elif pkg in extras:
                 print(f'{pkg:<11}: Extra not installed')
 
-
-if __name__ == '__main__':
-    info()
