@@ -8,6 +8,7 @@ import numbers
 import numpy as np
 from scipy.linalg import norm
 
+from .logger import log
 from .tools import center_of_mass
 
 
@@ -60,6 +61,9 @@ def domain_isovalue(field, isovalue):
     Returns:
         Boolean mask.
     """
+    if field is None:
+        log.warning('The provided field is "None".')
+        return None
     return np.abs(field) > isovalue
 
 
@@ -104,7 +108,7 @@ def truncate(field, mask):
         mask: Boolean mask.
 
     Returns:
-        Boolean mask.
+        Truncated field.
     """
     field_trunc = np.copy(field)
     field_trunc[~mask] = 0

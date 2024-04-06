@@ -25,7 +25,7 @@ def view_atoms(
 ) -> Any: ...
 def view_contour(
     obj: Atoms | SCF,
-    field: NDArray[float64],
+    field: NDArray[float64] | None,
     axis: int = ...,
     value: float = ...,
     lines: int = ...,
@@ -45,7 +45,7 @@ def view_file(
 def executed_in_notebook() -> bool: ...
 def plot_bandstructure(
     scf: SCF,
-    spin: int = ...,
+    spin: int | IntArray = ...,
     size: IntArray = ...,
 ) -> Any: ...
 def view_kpts(

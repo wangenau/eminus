@@ -13,7 +13,7 @@ def domain_cuboid(
     centers: Array1D | Array2D | None = ...,
 ) -> NDArray[bool_]: ...
 def domain_isovalue(
-    field: NDArray[float64],
+    field: NDArray[float64] | None,
     isovalue: float,
 ) -> NDArray[bool_]: ...
 def domain_sphere(
@@ -24,4 +24,4 @@ def domain_sphere(
 def truncate(
     field: NDArray[float64],
     mask: NDArray[bool_],
-) -> NDArray[bool_]: ...
+) -> NDArray[float64]: ...

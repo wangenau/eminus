@@ -72,7 +72,7 @@ def get_Eewald(
 ) -> float: ...
 def get_Esic(
     scf: SCF,
-    Y: list[NDArray[complex128]],
+    Y: list[NDArray[complex128]] | None,
     n_single: NDArray[float64] | None = ...,
 ) -> float: ...
 def get_Edisp(

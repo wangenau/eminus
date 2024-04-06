@@ -221,6 +221,10 @@ def view_contour(
     mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
         atoms.a[axes[2], axes[2]] / atoms.s[axes[2]]
     )
+
+    if field is None:
+        log.warning('The provided field is "None".')
+        return None
     # Create a copy of the field data to not overwrite the input
     field = np.copy(field)
     # Remove large and small values (similar to VESTA)

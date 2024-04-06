@@ -295,6 +295,10 @@ def get_Esic(scf, Y, n_single=None):
     Returns:
         PZ self-interaction energy.
     """
+    if Y is None:
+        log.warning('The provided wave function is "None".')
+        return None
+
     atoms = scf.atoms
     # E_PZ-SIC = \sum_i Ecoul[n_i] + Exc[n_i, 0]
     if n_single is None:
