@@ -7,7 +7,7 @@ from numpy import float64
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
-from ..kpts import KPoints
+from ..kpoints import KPoints
 from ..scf import SCF
 from ..typing import Array1D, IntArray
 
