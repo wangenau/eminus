@@ -3,11 +3,11 @@
 from collections.abc import Sequence
 from typing import Any
 
-import numpy as np
+from numpy import float64
 from numpy.typing import NDArray
 
 def lda_c_pw(
-    n: NDArray[np.float64],
+    n: NDArray[float64],
     A: float = ...,
     a1: float = ...,
     b1: float = ...,
@@ -15,11 +15,11 @@ def lda_c_pw(
     b3: float = ...,
     b4: float = ...,
     **kwargs: Any,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], None]: ...
 def lda_c_pw_spin(
-    n: NDArray[np.float64],
-    zeta: NDArray[np.float64],
+    n: NDArray[float64],
+    zeta: NDArray[float64],
     A: Sequence[float] = ...,
     fzeta0: float = ...,
     **kwargs: Any,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], None]: ...

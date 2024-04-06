@@ -3,14 +3,12 @@
 from collections.abc import Sequence
 from typing import TypeAlias
 
-import numpy as np
+from numpy import float64, int64
 from numpy.typing import NDArray
 
-Array1D: TypeAlias = Sequence[float] | NDArray[np.float64]
-Array2D: TypeAlias = Sequence[Sequence[float]] | Sequence[NDArray[np.float64]] | NDArray[np.float64]
+Array1D: TypeAlias = Sequence[float] | NDArray[float64]
+Array2D: TypeAlias = Sequence[Sequence[float]] | Sequence[NDArray[float64]] | NDArray[float64]
 Array3D: TypeAlias = (
-    Sequence[Sequence[Sequence[float]]]
-    | Sequence[Sequence[NDArray[np.float64]]]
-    | NDArray[np.float64]
+    Sequence[Sequence[Sequence[float]]] | Sequence[Sequence[NDArray[float64]]] | NDArray[float64]
 )
-IntArray: TypeAlias = Sequence[int] | NDArray[np.int64]
+IntArray: TypeAlias = Sequence[int] | NDArray[int64]

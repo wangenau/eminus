@@ -3,7 +3,7 @@
 from collections.abc import Callable
 from typing import Any, Protocol
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -24,9 +24,9 @@ class GradType(Protocol):
         scf: SCF,
         ik: int,
         spin: int,
-        W: list[NDArray[np.complex128]],
+        W: list[NDArray[complex128]],
         **kwargs: Any,
-    ) -> NDArray[np.complex128]: ...
+    ) -> NDArray[complex128]: ...
 
 # Create a custom Callable type for condition functions
 class Conditionype(Protocol):
@@ -35,9 +35,9 @@ class Conditionype(Protocol):
         scf: SCF,
         method: str,
         Elist: list[float],
-        linmin: NDArray[np.float64] | None = ...,
-        cg: NDArray[np.float64] | None = ...,
-        norm_g: NDArray[np.float64] | None = ...,
+        linmin: NDArray[float64] | None = ...,
+        cg: NDArray[float64] | None = ...,
+        norm_g: NDArray[float64] | None = ...,
     ) -> bool: ...
 
 def scf_step(
@@ -48,36 +48,36 @@ def check_convergence(
     scf: SCF,
     method: str,
     Elist: list[float],
-    linmin: NDArray[np.float64] | None = ...,
-    cg: NDArray[np.float64] | None = ...,
-    norm_g: NDArray[np.float64] | None = ...,
+    linmin: NDArray[float64] | None = ...,
+    cg: NDArray[float64] | None = ...,
+    norm_g: NDArray[float64] | None = ...,
 ) -> bool: ...
 def print_scf_step(
     scf: SCF,
     method: str,
     Elist: list[float],
-    linmin: NDArray[np.float64] | None,
-    cg: NDArray[np.float64] | None,
-    norm_g: NDArray[np.float64] | None,
+    linmin: NDArray[float64] | None,
+    cg: NDArray[float64] | None,
+    norm_g: NDArray[float64] | None,
 ) -> None: ...
 def linmin_test(
-    g: NDArray[np.complex128],
-    d: NDArray[np.complex128],
+    g: NDArray[complex128],
+    d: NDArray[complex128],
 ) -> float: ...
 def cg_test(
     atoms: Atoms,
     ik: int,
-    g: NDArray[np.complex128],
-    g_old: NDArray[np.complex128],
+    g: NDArray[complex128],
+    g_old: NDArray[complex128],
     precondition: bool = ...,
 ) -> float: ...
 def cg_method(
     scf: SCF,
     ik: int,
     cgform: int,
-    g: NDArray[np.complex128],
-    g_old: NDArray[np.complex128],
-    d_old: NDArray[np.complex128],
+    g: NDArray[complex128],
+    g_old: NDArray[complex128],
+    d_old: NDArray[complex128],
     precondition: bool = ...,
 ) -> tuple[float, float]: ...
 def sd(

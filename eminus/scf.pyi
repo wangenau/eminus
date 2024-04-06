@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -23,20 +23,20 @@ class SCF:
     energies: Energy
     is_converged: bool
     gth: GTH
-    Vloc: NDArray[np.complex128]
-    W: list[NDArray[np.complex128]] | None
-    Y: list[NDArray[np.complex128]] | None
-    Z: list[NDArray[np.complex128]] | None
-    D: list[NDArray[np.complex128]] | None
-    n: NDArray[np.float64] | None
-    n_spin: NDArray[np.float64] | None
-    dn_spin: NDArray[np.float64] | None
-    tau: NDArray[np.float64] | None
-    phi: NDArray[np.float64] | None
-    exc: NDArray[np.float64] | None
-    vxc: NDArray[np.complex128] | None
-    vsigma: NDArray[np.complex128] | None
-    vtau: NDArray[np.complex128] | None
+    Vloc: NDArray[complex128]
+    W: list[NDArray[complex128]] | None
+    Y: list[NDArray[complex128]] | None
+    Z: list[NDArray[complex128]] | None
+    D: list[NDArray[complex128]] | None
+    n: NDArray[float64] | None
+    n_spin: NDArray[float64] | None
+    dn_spin: NDArray[float64] | None
+    tau: NDArray[float64] | None
+    phi: NDArray[float64] | None
+    exc: NDArray[float64] | None
+    vxc: NDArray[complex128] | None
+    vsigma: NDArray[complex128] | None
+    vtau: NDArray[complex128] | None
     def __init__(
         self,
         atoms: Atoms,

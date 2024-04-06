@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-import numpy as np
+from numpy import bool_, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -11,17 +11,17 @@ def domain_cuboid(
     obj: Atoms | SCF,
     length: float | Array1D,
     centers: Array1D | Array2D | None = ...,
-) -> NDArray[np.bool_]: ...
+) -> NDArray[bool_]: ...
 def domain_isovalue(
-    field: NDArray[np.float64],
+    field: NDArray[float64],
     isovalue: float,
-) -> NDArray[np.bool_]: ...
+) -> NDArray[bool_]: ...
 def domain_sphere(
     obj: Atoms | SCF,
     radius: float,
     centers: Array1D | Array2D | None = ...,
-) -> NDArray[np.bool_]: ...
+) -> NDArray[bool_]: ...
 def truncate(
-    field: NDArray[np.float64],
-    mask: NDArray[np.bool_],
-) -> NDArray[np.bool_]: ...
+    field: NDArray[float64],
+    mask: NDArray[bool_],
+) -> NDArray[bool_]: ...

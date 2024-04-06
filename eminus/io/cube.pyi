@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
 
-import numpy as np
+from numpy import complex128, float64, int64
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
@@ -12,16 +12,16 @@ def read_cube(
     filename: str,
 ) -> tuple[
     list[str],
-    NDArray[np.float64],
+    NDArray[float64],
     list[float],
-    NDArray[np.float64],
-    NDArray[np.int64],
-    NDArray[np.float64],
+    NDArray[float64],
+    NDArray[int64],
+    NDArray[float64],
 ]: ...
 def write_cube(
     obj: Atoms | SCF,
     filename: str,
-    field: NDArray[np.float64] | NDArray[np.complex128] | None,
-    fods: NDArray[np.float64] | Sequence[NDArray[np.float64]] | None = ...,
+    field: NDArray[float64] | NDArray[complex128] | None,
+    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
     elec_symbols: Sequence[str] = ...,
 ) -> None: ...

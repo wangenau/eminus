@@ -3,7 +3,7 @@
 from collections.abc import Callable, Sequence
 from typing import Any, Protocol
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .typing import Array2D, IntArray
@@ -19,14 +19,14 @@ class HandleType(Protocol):
     ) -> Any: ...
 
 def dotprod(
-    a: NDArray[np.complex128],
-    b: NDArray[np.complex128],
+    a: NDArray[complex128],
+    b: NDArray[complex128],
 ) -> float: ...
 def Ylm_real(
     l: int,
     m: int,
-    G: NDArray[np.float64],
-) -> NDArray[np.float64]: ...
+    G: NDArray[float64],
+) -> NDArray[float64]: ...
 def handle_spin_gracefully(
     func: HandleType,
     *args: Any,
@@ -60,18 +60,18 @@ def handle_torch(
 def pseudo_uniform(
     size: IntArray,
     seed: int = ...,
-) -> NDArray[np.complex128]: ...
+) -> NDArray[complex128]: ...
 def add_maybe_none(
-    a: NDArray[np.complex128] | None,
-    b: NDArray[np.complex128] | None,
-) -> NDArray[np.complex128] | None: ...
+    a: NDArray[complex128] | None,
+    b: NDArray[complex128] | None,
+) -> NDArray[complex128] | None: ...
 def molecule2list(molecule: str) -> list[str]: ...
 def atom2charge(
     atom: Sequence[str],
     path: str | None = ...,
 ) -> list[int]: ...
 def vector_angle(
-    a: NDArray[np.float64],
-    b: NDArray[np.float64],
-) -> NDArray[np.float64]: ...
-def get_lattice(lattice_vectors: Array2D) -> list[NDArray[np.float64]]: ...
+    a: NDArray[float64],
+    b: NDArray[float64],
+) -> NDArray[float64]: ...
+def get_lattice(lattice_vectors: Array2D) -> list[NDArray[float64]]: ...

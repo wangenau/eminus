@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, overload
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -28,42 +28,42 @@ def get_E(scf: SCF) -> float: ...
 @overload
 def get_Ekin(
     atoms: Atoms,
-    Y: NDArray[np.complex128],
+    Y: NDArray[complex128],
     ik: int,
 ) -> float: ...
 @overload
 def get_Ekin(
     atoms: Atoms,
-    Y: list[NDArray[np.complex128]],
+    Y: list[NDArray[complex128]],
 ) -> float: ...
 def get_Ecoul(
     atoms: Atoms,
-    n: NDArray[np.float64],
-    phi: NDArray[np.float64] | None = ...,
+    n: NDArray[float64],
+    phi: NDArray[float64] | None = ...,
 ) -> float: ...
 def get_Exc(
     scf: SCF,
-    n: NDArray[np.float64],
-    exc: NDArray[np.float64] | None = ...,
-    n_spin: NDArray[np.float64] | None = ...,
-    dn_spin: NDArray[np.float64] | None = ...,
-    tau: NDArray[np.float64] | None = ...,
+    n: NDArray[float64],
+    exc: NDArray[float64] | None = ...,
+    n_spin: NDArray[float64] | None = ...,
+    dn_spin: NDArray[float64] | None = ...,
+    tau: NDArray[float64] | None = ...,
     Nspin: int = ...,
 ) -> float: ...
 def get_Eloc(
     scf: SCF,
-    n: NDArray[np.float64],
+    n: NDArray[float64],
 ) -> float: ...
 @overload
 def get_Enonloc(
     scf: SCF,
-    Y: NDArray[np.complex128],
+    Y: NDArray[complex128],
     ik: int,
 ) -> float: ...
 @overload
 def get_Enonloc(
     scf: SCF,
-    Y: list[NDArray[np.complex128]],
+    Y: list[NDArray[complex128]],
 ) -> float: ...
 def get_Eewald(
     atoms: Atoms,
@@ -72,8 +72,8 @@ def get_Eewald(
 ) -> float: ...
 def get_Esic(
     scf: SCF,
-    Y: list[NDArray[np.complex128]],
-    n_single: NDArray[np.float64] | None = ...,
+    Y: list[NDArray[complex128]],
+    n_single: NDArray[float64] | None = ...,
 ) -> float: ...
 def get_Edisp(
     scf: SCF,
@@ -83,11 +83,11 @@ def get_Edisp(
 ) -> float: ...
 def get_Eband(
     scf: SCF,
-    Y: list[NDArray[np.complex128]],
+    Y: list[NDArray[complex128]],
     **kwargs: Any,
 ) -> float: ...
 def get_Eentropy(
     scf: SCF,
-    epsilon: NDArray[np.float64],
+    epsilon: NDArray[float64],
     Efermi: float,
 ) -> float: ...

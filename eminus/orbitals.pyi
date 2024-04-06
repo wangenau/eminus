@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -13,24 +13,24 @@ def KSO(
     scf: SCF,
     write_cubes: bool = ...,
     **kwargs: Any,
-) -> list[NDArray[np.complex128]]: ...
+) -> list[NDArray[complex128]]: ...
 def FO(
     scf: SCF,
     write_cubes: bool = ...,
-    fods: NDArray[np.float64] | Sequence[NDArray[np.float64]] | None = ...,
-) -> list[NDArray[np.complex128]]: ...
+    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+) -> list[NDArray[complex128]]: ...
 def FLO(
     scf: SCF,
     write_cubes: bool = ...,
-    fods: NDArray[np.float64] | Sequence[NDArray[np.float64]] | None = ...,
-) -> list[NDArray[np.complex128]]: ...
+    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+) -> list[NDArray[complex128]]: ...
 def WO(
     scf: SCF,
     write_cubes: bool = ...,
     precondition: bool = ...,
-) -> list[NDArray[np.complex128]]: ...
+) -> list[NDArray[complex128]]: ...
 def cube_writer(
     atoms: Atoms,
     orb_type: str,
-    orbitals: list[NDArray[np.float64]] | list[NDArray[np.complex128]],
+    orbitals: list[NDArray[float64]] | list[NDArray[complex128]],
 ) -> None: ...

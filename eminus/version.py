@@ -42,4 +42,3 @@ def info():
                 print(f'{pkg:<11}: Dependency not installed')
             elif pkg in extras:
                 print(f'{pkg:<11}: Extra not installed')
-

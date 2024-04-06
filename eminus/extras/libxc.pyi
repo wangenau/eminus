@@ -2,54 +2,54 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload
 
-import numpy as np
+from numpy import float64
 from numpy.typing import NDArray
 
 @overload
 def libxc_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
     dn_spin: None,
     tau: None,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], None, None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], None, None]: ...
 @overload
 def libxc_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: NDArray[np.float64],
+    dn_spin: NDArray[float64],
     tau: None,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], None]: ...
 @overload
 def libxc_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: NDArray[np.float64],
-    tau: NDArray[np.float64],
-) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]: ...
+    dn_spin: NDArray[float64],
+    tau: NDArray[float64],
+) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64]]: ...
 @overload
 def pyscf_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
     dn_spin: None,
     tau: None,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], None, None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], None, None]: ...
 @overload
 def pyscf_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: NDArray[np.float64],
+    dn_spin: NDArray[float64],
     tau: None,
-) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], None]: ...
+) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], None]: ...
 @overload
 def pyscf_functional(
     xc: str,
-    n_spin: NDArray[np.float64],
+    n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: NDArray[np.float64],
-    tau: NDArray[np.float64],
-) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]: ...
+    dn_spin: NDArray[float64],
+    tau: NDArray[float64],
+) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64]]: ...

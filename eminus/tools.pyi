@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload
 
-import numpy as np
+from numpy import complex128, float64
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -13,81 +13,81 @@ from .typing import Array1D
 def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...
 def center_of_mass(
-    coords: NDArray[np.float64],
+    coords: NDArray[float64],
     masses: Array1D | None = ...,
-) -> NDArray[np.float64]: ...
+) -> NDArray[float64]: ...
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: NDArray[np.complex128],
-) -> NDArray[np.float64]: ...
+    psirs: NDArray[complex128],
+) -> NDArray[float64]: ...
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: list[NDArray[np.complex128]],
-) -> list[NDArray[np.float64]]: ...
+    psirs: list[NDArray[complex128]],
+) -> list[NDArray[float64]]: ...
 def inertia_tensor(
-    coords: NDArray[np.float64],
+    coords: NDArray[float64],
     masses: Array1D | None = ...,
-) -> NDArray[np.float64]: ...
+) -> NDArray[float64]: ...
 def get_dipole(
     scf: SCF,
-    n: NDArray[np.float64] | None = ...,
-) -> NDArray[np.float64]: ...
+    n: NDArray[float64] | None = ...,
+) -> NDArray[float64]: ...
 def get_ip(scf: SCF) -> float: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: NDArray[np.complex128],
+    func: NDArray[complex128],
     eps: float = ...,
 ) -> bool: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: list[NDArray[np.complex128]],
+    func: list[NDArray[complex128]],
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
 def check_norm(
     obj: Atoms | SCF,
-    func: NDArray[np.complex128],
+    func: NDArray[complex128],
     eps: float = ...,
 ) -> bool: ...
 @overload
 def check_norm(
     obj: Atoms | SCF,
-    func: list[NDArray[np.complex128]],
+    func: list[NDArray[complex128]],
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
 def check_orthonorm(
     obj: Atoms | SCF,
-    func: NDArray[np.complex128],
+    func: NDArray[complex128],
     eps: float = ...,
 ) -> bool: ...
 @overload
 def check_orthonorm(
     obj: Atoms | SCF,
-    func: list[NDArray[np.complex128]],
+    func: list[NDArray[complex128]],
     eps: float = ...,
 ) -> list[bool]: ...
 def get_isovalue(
-    n: NDArray[np.float64],
+    n: NDArray[float64],
     percent: int = ...,
 ) -> float: ...
-def get_tautf(scf: SCF) -> NDArray[np.float64]: ...
-def get_tauw(scf: SCF) -> NDArray[np.float64]: ...
-def get_elf(scf: SCF) -> NDArray[np.float64]: ...
+def get_tautf(scf: SCF) -> NDArray[float64]: ...
+def get_tauw(scf: SCF) -> NDArray[float64]: ...
+def get_elf(scf: SCF) -> NDArray[float64]: ...
 def get_reduced_gradient(
     scf: SCF,
     eps: float = ...,
-) -> NDArray[np.float64]: ...
+) -> NDArray[float64]: ...
 def get_spin_squared(scf: SCF) -> float: ...
 def get_multiplicity(scf: SCF) -> float: ...
 def get_bandgap(scf: SCF) -> float: ...
 def get_Efermi(
     obj: Occupations | SCF,
-    epsilon: NDArray[np.float64] | None = ...,
+    epsilon: NDArray[float64] | None = ...,
 ) -> float: ...
 @overload
 def fermi_distribution(
@@ -97,10 +97,10 @@ def fermi_distribution(
 ) -> float: ...
 @overload
 def fermi_distribution(
-    E: NDArray[np.float64],
+    E: NDArray[float64],
     mu: float,
     kbT: float,
-) -> NDArray[np.float64]: ...
+) -> NDArray[float64]: ...
 @overload
 def electronic_entropy(
     E: float,
@@ -109,7 +109,7 @@ def electronic_entropy(
 ) -> float: ...
 @overload
 def electronic_entropy(
-    E: NDArray[np.float64],
+    E: NDArray[float64],
     mu: float,
     kbT: float,
-) -> NDArray[np.float64]: ...
+) -> NDArray[float64]: ...
