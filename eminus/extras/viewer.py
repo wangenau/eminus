@@ -37,7 +37,7 @@ def view(*args, **kwargs):
     return view_atoms(*args, **kwargs)
 
 
-def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600, 600)):
+def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600, 600)):
     """Display atoms with optional FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python
@@ -46,7 +46,7 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
         obj: Atoms or SCF object.
 
     Keyword Args:
-        extra: Extra coordinates or FODs to display.
+        fods: FODs or extra coordinates or to display.
         plot_n: Whether to plot the electronic density (only for executed scf objects).
         percent: Amount of density that should be contained.
         surfaces: Number of surfaces to display in density plots (reduce for performance).
@@ -95,40 +95,40 @@ def view_atoms(obj, extra=None, plot_n=False, percent=85, surfaces=20, size=(600
             },
         )
         fig.add_trace(atom_data)
-    if extra is not None:
+    if fods is not None:
         # If a list has been provided with a length of two it has to be FODs
-        if isinstance(extra, list):
-            if len(extra[0]) != 0:
-                extra_data = go.Scatter3d(
-                    x=extra[0][:, 0],
-                    y=extra[0][:, 1],
-                    z=extra[0][:, 2],
+        if isinstance(fods, list):
+            if len(fods[0]) != 0:
+                fods_data = go.Scatter3d(
+                    x=fods[0][:, 0],
+                    y=fods[0][:, 1],
+                    z=fods[0][:, 2],
                     name='up-FOD',
                     mode='markers',
                     marker={'size': np.pi, 'color': 'red'},
                 )
-                fig.add_trace(extra_data)
-            if len(extra) > 1 and len(extra[1]) != 0:
-                extra_data = go.Scatter3d(
-                    x=extra[1][:, 0],
-                    y=extra[1][:, 1],
-                    z=extra[1][:, 2],
+                fig.add_trace(fods_data)
+            if len(fods) > 1 and len(fods[1]) != 0:
+                fods_data = go.Scatter3d(
+                    x=fods[1][:, 0],
+                    y=fods[1][:, 1],
+                    z=fods[1][:, 2],
                     name='down-FOD',
                     mode='markers',
                     marker={'size': np.pi, 'color': 'green'},
                 )
-                fig.add_trace(extra_data)
-        # Treat extra as normal coordinates otherwise
+                fig.add_trace(fods_data)
+        # Treat fods as normal coordinates otherwise
         else:
-            extra_data = go.Scatter3d(
-                x=extra[:, 0],
-                y=extra[:, 1],
-                z=extra[:, 2],
+            fods_data = go.Scatter3d(
+                x=fods[:, 0],
+                y=fods[:, 1],
+                z=fods[:, 2],
                 name='Coordinates',
                 mode='markers',
                 marker={'size': 1, 'color': 'red'},
             )
-            fig.add_trace(extra_data)
+            fig.add_trace(fods_data)
 
     # A density can be plotted for an SCF object
     if isinstance(plot_n, np.ndarray) or plot_n:
@@ -714,7 +714,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
             if label == 'G':
                 label = '\u0393'  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
-            extra_data = go.Scatter3d(
+            special_data = go.Scatter3d(
                 x=[v[0]],
                 y=[v[1]],
                 z=[v[2]],
@@ -722,7 +722,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
                 mode='markers',
                 marker={'size': 4, 'opacity': 0.9},
             )
-            fig.add_trace(extra_data)
+            fig.add_trace(special_data)
 
     # Plot optional k-points
     if connect:
@@ -730,7 +730,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     else:
         mode = 'markers'
     if path:
-        extra_data = go.Scatter3d(
+        path_data = go.Scatter3d(
             x=kpts.k[:, 0],
             y=kpts.k[:, 1],
             z=kpts.k[:, 2],
@@ -738,7 +738,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
             mode=mode,
             marker={'size': 2, 'color': '#1a962b', 'opacity': 0.75},
         )
-        fig.add_trace(extra_data)
+        fig.add_trace(path_data)
 
     # Theming
     scene = {

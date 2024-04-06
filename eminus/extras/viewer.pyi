@@ -17,7 +17,7 @@ def view(
 ) -> Any: ...
 def view_atoms(
     obj: Atoms | SCF,
-    extra: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
     plot_n: bool = ...,
     percent: float = ...,
     surfaces: int = ...,
