@@ -109,7 +109,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         if fods is None:
             fp.write(f'{atoms.Natoms}  ')
         else:
-            fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}  ')
+            fp.write(f'{atoms.Natoms + sum(len(i) for i in fods)}  ')
         fp.write('0.0  0.0  0.0\n')
         # Number of points per axis (int), and vector defining the axis (float)
         fp.write(

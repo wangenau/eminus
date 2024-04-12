@@ -60,7 +60,7 @@ def read_gth(atom, charge=None, psp_path='pbe'):
             # Skip the first line, since we don't need the atom symbol here. If needed, use
             # psp['atom'] = atom.split()[0]  # Atom symbol
             N_all = fh.readline().split()
-            psp['Zion'] = sum([int(N) for N in N_all])  # Ionic charge
+            psp['Zion'] = sum(int(N) for N in N_all)  # Ionic charge
             loc = fh.readline().split()
             psp['rloc'] = float(loc[0])  # Range of local Gaussian charge distribution
             # Skip the number of local coefficients, since we don't need it. If needed, use

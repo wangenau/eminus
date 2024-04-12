@@ -207,7 +207,7 @@ def handle_k_reducable(func, *args, **kwargs):
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             # The Python sum allows summing single values and NumPy arrays elementwise
-            return sum([func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)])
+            return sum(func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W))
         return func(obj, W, *args, **kwargs)
 
     return decorator

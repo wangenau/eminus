@@ -95,7 +95,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=('X', 'He'), trajectory=Fal
         if fods is None:
             fp.write(f'{atoms.Natoms}\n')
         else:
-            fp.write(f'{atoms.Natoms + sum([len(i) for i in fods])}\n')
+            fp.write(f'{atoms.Natoms + sum(len(i) for i in fods)}\n')
         # The second line can contain a comment
         # Print information about the file and program, and the file creation time
         fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
