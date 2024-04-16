@@ -37,7 +37,7 @@ coverage:
   stage: test
   script:
     - pip install .
-    - pip install coverage pyscf pytest pytest-cov
+    - pip install coverage pyscf pytest
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
     - coverage report --precision=2
     - coverage html --precision=2

@@ -62,14 +62,15 @@ Coverage
 
 .. code-block:: console
 
-   pip install coverage pytest pytest-cov
+   pip install coverage pytest
 
 | A detailed coverage report that gives a clear overview of the covered code `is uploaded with every release <https://wangenau.gitlab.io/eminus/htmlcov>`_.
 | To create this webpage, use
 
 .. code-block:: console
 
-   coverage run -m pytest --cov-report html --cov=eminus
+   coverage run -m pytest
+   coverage html --precision=2
 
 | To only create the total coverage percentage value for all files, use
 

@@ -69,8 +69,6 @@ License
      - BSD-3-Clause
    * - pytest
      - MIT
-   * - pytest-cov
-     - MIT
    * - ruff
      - MIT
    * - sphinx

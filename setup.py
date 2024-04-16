@@ -44,7 +44,6 @@ extras['dev'] = [
     'mypy>=0.990',  # Static type checker
     'notebook',  # Run and convert notebooks to HTML
     'pytest>=5.4',  # Test utilities
-    'pytest-cov>=2.6.1',  # Collect test coverage data
     'ruff>=0.2',  # Linter
     'sphinx>=4',  # Documentation builder
     'sphinx-design>=0.2',  # More directives for Sphinx
