@@ -39,6 +39,8 @@ License
      -
    * - pyscf
      - Apache-2.0
+   * - pylibxc
+     - MPL-2.0
    * -
      -
    * -
