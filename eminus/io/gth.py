@@ -39,7 +39,9 @@ def read_gth(atom, charge=None, psp_path='pbe'):
     if charge is not None:
         f_psp = file_path.joinpath(f'{atom}-q{charge}')
     else:
-        files = sorted(file_path.glob(f'{atom}-q*'))
+        # When sorting normally, e.g., Ga-q13 would come before Ga-q3
+        # Fix this by sorting over the charge integer numbers using the sorted key argument
+        files = sorted(file_path.glob(f'{atom}-q*'), key=lambda s: int(str(s).split('-q')[-1]))
         try:
             f_psp = pathlib.Path(files[0])
         except IndexError:

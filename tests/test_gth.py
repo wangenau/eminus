@@ -62,6 +62,12 @@ def test_custom_files():
     assert scf.gth['B']['rloc'] == 0.42188166
 
 
+def test_multiple_files():
+    """Test atoms with multiple GTH files."""
+    cell = Cell('Ga', 'sc', 10, 10)
+    assert cell.Z[0] == 3
+
+
 if __name__ == '__main__':
     import pytest
 
