@@ -211,6 +211,62 @@ def test_smearing(Nspin):
     assert occ.Nempty == 0
 
 
+@pytest.mark.parametrize(
+    ('Nspin', 'spin', 'wk', 'ref'),
+    [
+        (1, 0, [1], 0),
+        (2, 0, [1], 0),
+        (2, 1, [1], 0.5),
+        (2, 2, [1], 1),
+        (2, 2, [0.5, 0.5], 1),
+    ],
+)
+def test_magnetization(Nspin, spin, wk, ref):
+    """Test the magnetization property."""
+    occ = Occupations()
+    occ.Nelec = 2
+    occ.Nspin = Nspin
+    occ.spin = spin
+    occ.wk = wk
+    occ.fill()
+    assert_allclose(occ.magnetization, ref)
+
+
+def test_unfilled_magnetization():
+    """Test the magnetization property for an unfilled object."""
+    occ = Occupations()
+    occ.Nelec = 2
+    occ.Nspin = 2
+    assert occ.magnetization == 0
+    occ.wk = [1]
+    occ.fill()
+    occ.magnetization = 0
+    assert occ.magnetization == 0
+
+
+@pytest.mark.parametrize(
+    ('charge', 'bands', 'magnetization', 'ref'),
+    [
+        (0, 1, 0, [[[1], [1]]]),
+        (0, 2, 1, [[[1, 1], [0, 0]]]),
+        (0, 2, -1, [[[0, 0], [1, 1]]]),
+        (0, 2, 0, [[[1, 0], [1, 0]]]),
+        (0, 3, 0.5, [[[1, 0.5, 0], [0.5, 0, 0]]]),
+    ],
+)
+def test_magnetization_setter(charge, bands, magnetization, ref):
+    """Test the magnetization setter."""
+    occ = Occupations()
+    occ.Nelec = 2
+    occ.Nspin = 2
+    occ.charge = charge
+    occ.wk = [1]
+    occ.bands = bands
+    occ.smearing = 1
+    occ.magnetization = magnetization
+    assert_allclose(occ.f, ref)
+
+
 if __name__ == '__main__':
     import inspect
     import pathlib

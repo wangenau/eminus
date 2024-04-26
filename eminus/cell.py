@@ -59,7 +59,17 @@ STRUCTURES = {
 
 
 def Cell(
-    atom, lattice, ecut, a, basis=None, bands=None, kmesh=1, smearing=0, verbose=None, **kwargs
+    atom,
+    lattice,
+    ecut,
+    a,
+    basis=None,
+    bands=None,
+    kmesh=1,
+    smearing=0,
+    magnetization=None,
+    verbose=None,
+    **kwargs,
 ):
     """Wrapper to create Atoms classes for crystal systems.
 
@@ -74,6 +84,7 @@ def Cell(
         bands: Number of bands (has to be larger or equal than the occupied states).
         kmesh: k-point mesh.
         smearing: Smearing width in Hartree.
+        magnetization: Initial magnetization.
         verbose: Level of output.
         **kwargs: Keyword arguments to pass to the Atoms object.
 
@@ -114,4 +125,6 @@ def Cell(
     atoms.occ.smearing = smearing
     if bands is not None:
         atoms.occ.bands = bands
+    if magnetization is not None:
+        atoms.occ.magnetization = magnetization
     return atoms

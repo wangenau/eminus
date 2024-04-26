@@ -17,6 +17,7 @@ def Cell(
     bands: int | None = ...,
     kmesh: int | IntArray = ...,
     smearing: float = ...,
+    magnetization: float | None = ...,
     verbose: int | str | None = ...,
     **kwargs: Any,
 ) -> Atoms: ...

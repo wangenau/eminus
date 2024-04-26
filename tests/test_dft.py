@@ -9,6 +9,7 @@ import pytest
 
 from eminus import Atoms, Cell, demo, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
+from eminus.tools import get_magnetization
 
 atoms_unpol = Cell('Si', 'diamond', 1, 10, kmesh=(2, 1, 1), bands=5)
 atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, unrestricted=True)
@@ -134,6 +135,20 @@ def test_k_point_permutation():
 def test_demo():
     """Test that the demo function works without problems."""
     demo()
+
+
+def test_magnetization():
+    """Check that the order of k-points does not change the calculation."""
+    magnetization = 0.5
+    cell = Cell('Al', 'fcc', 1, 8, unrestricted=True, magnetization=magnetization)
+    scf = SCF(cell)
+    scf.run()
+    assert_allclose(get_magnetization(scf), cell.occ.magnetization)
+    cell = Cell('Al', 'fcc', 1, 8, unrestricted=True, bands=4, smearing=1, magnetization=1)
+    scf = SCF(cell)
+    scf.run()
+    assert not np.array_equal(cell.occ.f, scf.atoms.occ.f)
+    assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization)
 
 
 if __name__ == '__main__':

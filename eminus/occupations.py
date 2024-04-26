@@ -22,7 +22,7 @@ class Occupations:
     # Set the private variable for the attributes that are properties.
     _Nelec: int = 0  #: Number of electrons.
     _Nspin: int = 0  #: Number of spin states.
-    _spin: int = 0  #: Number of unpaired electrons.
+    _spin: float = 0  #: Number of unpaired electrons.
     _charge: int = 0  #: System charge.
     _Nstate: int = 0  #: Number of states.
     _Nempty: int = 0  #: Number of empty states.
@@ -79,13 +79,13 @@ class Occupations:
                 value = 0
             else:
                 value = 1
-        if self._spin != int(value):
+        if self._spin != value:
             self.is_filled = False
         # We have no spin in the spin-paired case
         if self.Nspin == 1:
             self._spin = 0
         else:
-            self._spin = int(value)
+            self._spin = value
 
     @property
     def charge(self):
@@ -115,20 +115,6 @@ class Occupations:
         # This setter will only be called when explicitly setting f
         # Call the fill function in that case
         self.fill(value)
-
-    @property
-    def Nempty(self):
-        """Number of empty states."""
-        return self._Nempty
-
-    @Nempty.setter
-    def Nempty(self, value):
-        # Do not overwrite the fillings when setting a negative amount of empty states, let the user
-        # handle this
-        if value < 0:
-            value = 0
-            log.warning('Negative empty states are not allowed. Try to set the fillings manually.')
-        self._Nempty = int(value)
 
     @property
     def Nk(self):
@@ -175,6 +161,25 @@ class Occupations:
         if self.Nempty > 0:
             log.warning('Empty states with smearing enabled found.')
 
+    @property
+    def magnetization(self):
+        """Magnetization from occupation numbers."""
+        # There is no magnetization in the spin-paired case
+        if self.Nspin == 1:
+            return 0
+        if not self.is_filled:
+            log.warning('Can not calculate magnetization for unfilled occupations.')
+            return 0
+        return np.sum(self.wk * (self.f[:, 0] - self.f[:, 1])) / np.sum(self.wk * self.f)
+
+    @magnetization.setter
+    def magnetization(self, value):
+        if value is not None:
+            if self.is_filled:
+                log.warning('Reset previously set fillings.')
+                self.is_filled = False
+            self.fill(None, value)
+
     # ### Read-only properties ###
 
     @property
@@ -188,17 +193,23 @@ class Occupations:
         return self._Nstate
 
     @property
+    def Nempty(self):
+        """Number of empty states."""
+        return self._Nempty
+
+    @property
     def F(self):
         """Diagonal matrices of f per k-point and spin."""
         return [[np.diag(f) for f in f_spin] for f_spin in self.f]
 
     # ### Class methods ###
 
-    def fill(self, f=None):
+    def fill(self, f=None, magnetization=None):
         """Fill the states of the object.
 
         Keyword Args:
             f: Fillings.
+            magnetization: Magnetization.
         """
         # Do nothing if the object is already filled
         if self.is_filled:
@@ -206,21 +217,29 @@ class Occupations:
         # If no f is given just use the standard fillings: 2 for restricted and 1 for unrestricted
         if f is None:
             f = 2 / self.Nspin
-        self._update_from_fillings(f)
+        self._update_from_fillings(f, magnetization)
         self.is_filled = True
         return self
 
     kernel = fill
 
-    def _update_from_fillings(self, value):
-        """Update fillings."""
+    def _update_from_fillings(self, value, magnetization):
+        """Update fillings.
+
+        Args:
+            value: Fillings.
+            magnetization: Magnetization.
+        """
         # Do not use the setter methods in this place to not trigger the setter effects
         # If f is a number use this occupation for all states
-        if isinstance(value, numbers.Real):
+        if isinstance(value, numbers.Real) or isinstance(magnetization, numbers.Real):
             # Do not leave the states array empty when no electrons are present
             if self.Nelec <= 0:
                 self._Nstate = 1
                 self._f = np.zeros((self.Nk, self.Nspin, 1))
+            # Always use the fractional fillings method if a magnetization is given
+            elif isinstance(magnetization, numbers.Real):
+                self._fractional_fillings(value, magnetization)
             elif self.Nspin == 1 or self.Nelec % 2 == self.spin % 2:
                 self._integer_fillings(value)
             else:
@@ -262,7 +281,7 @@ class Occupations:
         # Set the number of empty states if no smearing is used
         if self.smearing == 0:
             self._Nstate = Nstate
-            self.Nempty = self.bands - Nstate
+            self._Nempty = self.bands - Nstate
 
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, Nstate), dtype=int)
@@ -286,15 +305,24 @@ class Occupations:
             self._Nstate = self.bands
         self._f = np.vstack([[self._f]] * self.Nk)
 
-    def _fractional_fillings(self, f):
+    def _fractional_fillings(self, f, magnetization=None):
         """Update fillings while allowing fractional occupation numbers.
 
         Args:
             f: Fillings.
+
+        Keyword Args:
+            magnetization: Magnetization.
         """
         # Determine the electrons per spin channel
-        Nup = self.Nelec / self.Nspin + self.spin / self.Nspin
-        Ndw = self.Nelec / self.Nspin - self.spin / self.Nspin
+        if magnetization is None:
+            Nup = self.Nelec / self.Nspin + self.spin / self.Nspin
+            Ndw = self.Nelec / self.Nspin - self.spin / self.Nspin
+        else:
+            # M = (Nup - Ndw) / N = (Nup - N + Nup) / N
+            Nup = (magnetization * self.Nelec + self.Nelec) / 2
+            Ndw = self.Nelec - Nup
+            self.spin = abs(Nup - Ndw)
         elecs = np.array([Nup, Ndw])
 
         # Get the number of states
@@ -310,7 +338,7 @@ class Occupations:
         # Set the number of empty states if no smearing is used
         if self.smearing == 0:
             self._Nstate = Nstate
-            self.Nempty = self.bands - Nstate
+            self._Nempty = self.bands - Nstate
 
         # Simply build the occupations array
         self._f = f * np.ones((self.Nspin, Nstate))

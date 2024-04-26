@@ -148,7 +148,7 @@ def cube_writer(atoms, orb_type, orbitals):
         for spin in range(atoms.occ.Nspin):
             for i in range(atoms.occ.Nstate):
                 if atoms.occ.f[ik, spin, i] > 0:
-                    if atoms.occ.Nspin > 1:
+                    if atoms.unrestricted:
                         n_spin = f'_spin_{spin}'
                     filename = f'{name}_{orb_type}_k{ik}_{i}{n_spin}.cube'
                     log.info(f'Write {filename}...')

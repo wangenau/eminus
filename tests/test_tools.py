@@ -24,6 +24,7 @@ from eminus.tools import (
     get_elf,
     get_ip,
     get_isovalue,
+    get_magnetization,
     get_multiplicity,
     get_reduced_gradient,
     get_spin_squared,
@@ -199,6 +200,18 @@ def test_spin_squared_and_multiplicity():
     assert get_multiplicity(scf) > 2
 
 
+def test_magnetization():
+    """Test the calculation of the total magnetization."""
+    M = get_magnetization(scf_unpol)
+    assert M == 0
+    M = get_magnetization(scf_pol)
+    assert -1 < M < 1
+    atoms = Atoms('H', ((0, 0, 0)), unrestricted=True, ecut=1)
+    scf = SCF(atoms)
+    scf.run()
+    assert_allclose(get_magnetization(scf), 1)
+
+
 def test_get_Efermi():
     """Test the Fermi energy calculation."""
     Ef = get_Efermi(scf_band)
@@ -219,7 +232,6 @@ def test_get_bandgap():
     assert Eg == 0
     scf_band.converge_empty_bands(Nempty=1)
     Eg = get_bandgap(scf_band)
-    print(Eg)
     assert_allclose(Eg, 0.3805155)
 
 

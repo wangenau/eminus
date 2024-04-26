@@ -408,6 +408,22 @@ def get_multiplicity(scf):
     return 2 * S + 1
 
 
+def get_magnetization(scf):
+    """Calculate the total magnetization M.
+
+    Args:
+        scf: SCF object.
+
+    Returns:
+        Total magnetization.
+    """
+    # For a spin paired calculation the total magnetization is just zero
+    if not scf.atoms.unrestricted:
+        return 0
+
+    return np.sum(scf.n_spin[0] - scf.n_spin[1]) / np.sum(scf.n)
+
+
 def get_bandgap(scf):
     """Calculate the band gap.
 
