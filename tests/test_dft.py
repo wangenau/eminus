@@ -147,6 +147,7 @@ def test_magnetization():
     cell = Cell('Al', 'fcc', 1, 8, unrestricted=True, bands=4, smearing=1, magnetization=1)
     scf = SCF(cell)
     scf.run()
+    assert scf.atoms.occ.magnetization < 1
     assert not np.array_equal(cell.occ.f, scf.atoms.occ.f)
     assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization)
 
