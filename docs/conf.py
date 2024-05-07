@@ -43,11 +43,13 @@ html_theme_options: dict[str, str | dict[str, str] | list[dict[str, str]]] = {
     'light_css_variables': {
         'color-brand-primary': '#006700',
         'color-brand-content': '#1a962b',
+        'color-brand-visited': '#1a962b',
     },
     'dark_logo': 'logo/eminus_logo_dark.png',
     'dark_css_variables': {
         'color-brand-primary': '#70a973',
         'color-brand-content': '#a0dba2',
+        'color-brand-visited': '#a0dba2',
     },
     'footer_icons': [
         {
