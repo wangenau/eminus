@@ -446,7 +446,7 @@ class Atoms:
         # Calculate index matrices
         M, N = self._get_index_matrices()
         # Build the real-space sampling
-        self._r = M @ inv(np.diag(self.s)) @ self.a.T
+        self._r = M @ inv(np.diag(self.s)) @ self.a
         # Build G-vectors
         self._G = 2 * np.pi * N @ inv(self.a)
         # Calculate squared magnitudes of G-vectors

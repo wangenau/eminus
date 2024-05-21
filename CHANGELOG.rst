@@ -22,6 +22,7 @@ dev
    - Add CI release pipelines
    - Move tox.ini contents to pyproject.toml
 - Miscellaneous
+   - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
