@@ -23,10 +23,10 @@ def eval_psi(atoms, psi, r):
     Returns:
         Values of psi at points r.
     """
-    # Shift the evaluation point to (0,0,0) because we always have a lattice point here
-    psi_T = atoms.T(psi, -r)
+    # Shift the evaluation point to the zeroth lattice point (normally this is (0,0,0))
+    psi_T = atoms.T(psi, -(r - atoms.r[0]))
     psi_Trs = atoms.I(psi_T, 0)
-    # The zero entry is always the value at point (0,0,0)
+    # Get the value at the zeroth lattice point
     return psi_Trs[0]
 
 
