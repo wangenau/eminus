@@ -49,9 +49,10 @@ def _uniform_density_data(n, r, s):
     Returns:
         Interpolated density and new grid points.
     """
-    x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), s[0])
-    y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), s[1])
-    z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), s[2])
+    # Do not use a super fine grid to display the interpolated data
+    x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), np.min([s[0], 25]))
+    y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), np.min([s[1], 25]))
+    z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), np.min([s[2], 25]))
     r_new = np.array(np.meshgrid(x, y, z)).T.reshape(-1, 3)
     n_new = griddata(r, n, r_new)
     return n_new, r_new
