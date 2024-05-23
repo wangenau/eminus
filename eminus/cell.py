@@ -106,7 +106,7 @@ def Cell(
     # Only scale the lattice vectors with if a is given
     if a is not None:
         lattice_vectors = a * lattice_vectors
-        basis = a * np.asarray(basis)
+        basis = a * np.atleast_2d(basis)
 
     # Account for different atom and basis sizes
     if isinstance(atom, str):

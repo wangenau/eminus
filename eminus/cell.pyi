@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from .atoms import Atoms
-from .typing import Array2D, IntArray
+from .typing import Array1D, Array2D, IntArray
 
 STRUCTURES: dict[str, dict[str, str | list[list[float]]]]
 
@@ -13,7 +13,7 @@ def Cell(
     lattice: str | Array2D,
     ecut: float,
     a: float | Array2D | None,
-    basis: Array2D | None = ...,
+    basis: Array1D | Array2D | None = ...,
     bands: int | None = ...,
     kmesh: int | IntArray = ...,
     smearing: float = ...,
