@@ -448,7 +448,7 @@ class Atoms:
         # Build the real-space sampling
         self._r = M @ inv(np.diag(self.s)) @ self.a
         # Build G-vectors
-        self._G = 2 * np.pi * N @ inv(self.a)
+        self._G = 2 * np.pi * N @ inv(self.a.T)
         # Calculate squared magnitudes of G-vectors
         self._G2 = norm(self.G, axis=1) ** 2
         # Calculate the G2 restriction

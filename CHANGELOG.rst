@@ -24,6 +24,7 @@ dev
 - Miscellaneous
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
+   - Allow plotting densities in viewer functions for all unit cell types
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
    - Set default values for uninitialized SCF attributes to None

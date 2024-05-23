@@ -8,6 +8,7 @@ import pathlib
 import uuid
 
 import numpy as np
+from scipy.interpolate import griddata
 
 from ..atoms import Atoms
 from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
@@ -35,6 +36,25 @@ def view(*args, **kwargs):
     if isinstance(args[0], KPoints):
         return view_kpts(*args, **kwargs)
     return view_atoms(*args, **kwargs)
+
+
+def _uniform_density_data(n, r, s):
+    """Interpolate a density on an orthogonal grid.
+
+    Args:
+        n: Real-space electronic density.
+        r: Real-space sampling points.
+        s: Real-space sampling of the cell.
+
+    Returns:
+        Interpolated density and new grid points.
+    """
+    x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), s[0])
+    y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), s[1])
+    z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), s[2])
+    r_new = np.array(np.meshgrid(x, y, z)).T.reshape(-1, 3)
+    n_new = griddata(r, n, r_new)
+    return n_new, r_new
 
 
 def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600, 600)):
@@ -137,16 +157,34 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             density = plot_n
         else:
             density = obj.n
+
+        # If the unit cell is not diagonal we have to interpolate the density data
+        # Plotly will not display volumes that are represented on non-orthogonal grids, which is
+        # normally the case for non-diagonal unit cells
+        if (np.diag(np.diag(atoms.a)) != atoms.a).any():
+            density, r = _uniform_density_data(density, atoms.r, atoms.s)
+            # We will get data points outside of the unit cell that can contain NaNs
+            # Do not use the get_isovalue function here but simply use the minimum value
+            percent = 100
+            isomin = np.nanmin(density)
+            log.warning(
+                'The density data for non-orthogonal grids will be interpolated. The '
+                '"percent" keyword has no effect and all of the density data will be displayed.'
+            )
+        else:
+            r = atoms.r
+            isomin = get_isovalue(density, percent=percent)
+
         den_data = go.Volume(
-            x=atoms.r[:, 0],
-            y=atoms.r[:, 1],
-            z=atoms.r[:, 2],
+            x=r[:, 0],
+            y=r[:, 1],
+            z=r[:, 2],
             value=density,
             name='Density',
             colorbar_title=f'Density ({percent}%)',
             colorscale='Inferno',
-            isomin=get_isovalue(density, percent=percent),
-            isomax=np.max(density),
+            isomin=isomin,
+            isomax=np.nanmax(density),
             surface_count=surfaces,
             opacity=0.1,
             showlegend=True,
