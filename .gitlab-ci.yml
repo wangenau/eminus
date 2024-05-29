@@ -157,6 +157,8 @@ platform:nixos:
   extends: .pytest-full
   image: nixpkgs/nix:latest
   script:
+    # Remove Torch since the build time takes too long
+    - nix --extra-experimental-features "nix-command flakes" shell nixpkgs#gnused -c sed -i "s/  torch-bin/  \# torch-bin/g" flake.nix
     # In the CI nix develop will open a shell and close it immediately afterwards, use -c to execute commands
     - nix --extra-experimental-features "nix-command flakes" develop -c pytest tests/ -m "not slow"
 
