@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from eminus import Atoms, read_xyz, SCF, write_cube, write_xyz
+from eminus import Atoms, read, SCF
 from eminus.dft import get_psi
 from eminus.extras import get_fods, remove_core_fods
 from eminus.localizer import get_FLO
 
 # # Start by with a DFT calculation for methane
-atom, pos = read_xyz('CH4.xyz')
+atom, pos = read('CH4.xyz')
 atoms = Atoms(atom, pos, ecut=10, center=True)
 scf = SCF(atoms)
 scf.run()
@@ -29,7 +29,7 @@ print(f'\nCore FODs:\n{fods}')
 #         np.array([])]
 
 # # Write the FODs to an XYZ file to view them
-write_xyz(atoms, 'CH4_fods.xyz', fods)
+atoms.write('CH4_fods.xyz', fods)
 
 # # Generate the Kohn-Sham orbitals
 psi = get_psi(scf, scf.W)
@@ -41,7 +41,7 @@ FLO = get_FLO(atoms, psi, fods)
 print('\nWrite cube files:')
 for i in range(atoms.occ.Nstate):
     print(f'{i + 1} of {atoms.occ.Nstate}')
-    write_cube(atoms, f'CH4_FLO_{i + 1}.cube', FLO[0][0, :, i])
+    atoms.write(f'CH4_FLO_{i + 1}.cube', FLO[0][0, :, i])
 
 # # All of the functionality above can be achieved with the following workflow function
 # from eminus.orbitals import FLO

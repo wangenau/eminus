@@ -9,7 +9,7 @@ import pathlib
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, read_xyz, USCF
+from eminus import Atoms, read, USCF
 
 # Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 E_ref = {
@@ -35,7 +35,7 @@ def test_polarized(system):
     etol = 1e-6
     opt = {'auto': 21}
 
-    atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
+    atom, X = read(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)
     atoms.Z = 'pade'
     atoms.s = s

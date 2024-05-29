@@ -9,7 +9,7 @@ import pathlib
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, read_xyz, RSCF, USCF
+from eminus import Atoms, read, RSCF, USCF
 
 # Total energies from a spin-paired calculation with PWDFT.jl with the same parameters as below
 # PWDFT.jl does not support spin-polarized calculations with SCAN
@@ -32,7 +32,7 @@ opt = {'auto': 19}
 def test_polarized(system):
     """Compare total energies for a test system with a reference value (spin-polarized)."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
+    atom, X = read(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)
     atoms.s = s
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
@@ -43,7 +43,7 @@ def test_polarized(system):
 def test_unpolarized(system):
     """Compare total energies for a test system with a reference value (spin-paired)."""
     pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
-    atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
+    atom, X = read(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)
     atoms.s = s
     E = RSCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()

@@ -4,7 +4,7 @@
 import numpy as np
 
 import eminus
-from eminus import Atoms, SCF, write_cube
+from eminus import Atoms, SCF
 from eminus.dft import get_psi
 from eminus.localizer import wannier_cost
 from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_ip
@@ -54,7 +54,7 @@ print(f'Neon position = {atoms.pos[0]} a0')
 print('\nWrite cube files:')
 for i in range(atoms.occ.Nstate):
     print(f'{i + 1} of {atoms.occ.Nstate}')
-    write_cube(atoms, f'Ne_{i + 1}.cube', psi[0][0, :, i])
+    atoms.write(f'Ne_{i + 1}.cube', psi[0][0, :, i])
 
 # # Another useful setting is the number of threads
 print(f'\nThreads: {eminus.config.threads}\n')

@@ -9,15 +9,13 @@ import os
 from numpy.testing import assert_allclose, assert_equal
 import pytest
 
-from eminus import (
-    Atoms,
-    Cell,
+from eminus import Atoms, Cell, SCF
+from eminus.io import (
     read,
     read_cube,
     read_json,
     read_traj,
     read_xyz,
-    SCF,
     write,
     write_cube,
     write_json,

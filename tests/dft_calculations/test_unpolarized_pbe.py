@@ -9,7 +9,7 @@ import pathlib
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus import Atoms, read_xyz, RSCF
+from eminus import Atoms, read, RSCF
 
 # Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 # Closed-shell systems have the same energy for spin-paired and -polarized calculations
@@ -34,7 +34,7 @@ def test_unpolarized(system):
     etol = 1e-6
     opt = {'auto': 25}
 
-    atom, X = read_xyz(str(file_path.joinpath(f'{system}.xyz')))
+    atom, X = read(str(file_path.joinpath(f'{system}.xyz')))
     atoms = Atoms(atom, X, a=a, ecut=ecut)
     atoms.s = s
     E = RSCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()

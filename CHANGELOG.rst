@@ -12,6 +12,7 @@ dev
    - Add magnetization functions
    - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Breaking:
+      - Cleanup main namespace by only including unified read and write functions
       - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
