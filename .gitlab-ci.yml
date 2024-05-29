@@ -146,6 +146,8 @@ platform:linux:
   before_script:
     - apt-get update -y
     - apt-get install python3 python3-pip -y --no-install-recommends
+    - python3 -m venv .venv
+    - source .venv/bin/activate
 
 platform:macos:
   extends: .pytest-full

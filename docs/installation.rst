@@ -25,6 +25,15 @@ The `package <https://pypi.org/project/eminus>`_ and all necessary dependencies 
 
    pip install eminus
 
+Depending on your operating system you may have to create a virtual environment.
+This can be done, e.g., with
+
+.. code-block:: console
+
+   python3 -m venv .venv
+   source .venv/bin/activate
+   python3 -m pip install eminus
+
 Alternatively, you can create an installation by downloading the source code
 
 .. code-block:: console
