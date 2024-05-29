@@ -167,7 +167,7 @@ platform:nixos:
 platform:windows:
   extends: .pytest-full
   tags:
-    - windows
+    - saas-windows-medium-amd64
   before_script:
     # Reference: https://gitlab.com/gitlab-org/ci-cd/shared-runners/images/gcp/windows-containers/-/issues/13
     - Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
