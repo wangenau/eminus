@@ -178,18 +178,33 @@ def test_filename_ending():
     filename = 'test'
     write_xyz(atoms, filename)
     read_xyz(filename)
-    os.remove(filename + '.xyz')
+    os.remove(f'{filename}.xyz')
     write_cube(atoms, filename, scf.n)
     read_cube(filename)
-    os.remove(filename + '.cube')
+    os.remove(f'{filename}.cube')
     write_json(atoms, filename)
     read_json(filename)
-    os.remove(filename + '.json')
+    os.remove(f'{filename}.json')
     write_pdb(atoms, filename)
-    os.remove(filename + '.pdb')
+    os.remove(f'{filename}.pdb')
     write_traj(atoms, filename)
     read_traj(filename)
-    os.remove(filename + '.traj')
+    os.remove(f'{filename}.traj')
+
+
+def test_write_method():
+    """Test the file writing using the write method."""
+    filename = 'test'
+    atoms.write(filename)
+    os.remove(f'{filename}.json')
+    atoms.write(filename + '.xyz')
+    os.remove(f'{filename}.xyz')
+    scf.write(filename + '.json')
+    os.remove(f'{filename}.json')
+    scf.write(filename + '.cube', scf.n)
+    os.remove(f'{filename}.cube')
+    atoms.kpts.write(filename)
+    os.remove(f'{filename}.json')
 
 
 if __name__ == '__main__':

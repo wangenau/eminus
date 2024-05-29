@@ -34,3 +34,7 @@ print(f'\nMethane coordinates in Angstrom:\n{bohr2ang(pos)}')
 # # `read` and `write` are unified functions that determine the corresponding function using the file ending
 write(atoms, 'CH4.json')
 atoms = read('CH4.json')
+
+# # Objects like `Atoms` or `SCF` also have a write method that can be utilized similarly without importing the respective `write` function
+# atoms.write('CH4')
+# scf.write('CH4_density.cube', scf.n)

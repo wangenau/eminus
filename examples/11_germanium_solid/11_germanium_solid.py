@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import numpy as np
 
-from eminus import Atoms, SCF, write
+from eminus import Atoms, SCF
 from eminus.units import ang2bohr, ev2ha
 
 # # Create a germanium crystal with an FCC crystal structure
@@ -34,8 +34,7 @@ scf = SCF(atoms, pot='Ge', etol=1e-4)
 scf.run()
 
 # # Save the density as a CUBE file
-write(atoms, 'Ge_solid_density.cube', scf.n)
+atoms.write('Ge_solid_density.cube', scf.n)
 
-# # If you have the viewer extra installed, the following lines will plot the unit cell and 20 isosurfaces of the density, such that 50% of the density is contained
-# from eminus.extras import view
-# view(scf, plot_n=True, surfaces=20, percent=50)
+# # If you have the viewer extra installed, the following line will plot the unit cell and 20 isosurfaces of the density, such that 50% of the density is contained
+# scf.view(plot_n=True, surfaces=20, percent=50)

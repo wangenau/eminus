@@ -18,9 +18,8 @@ s = get_reduced_gradient(scf, eps=1e-5)
 
 # # Write n and s to CUBE files
 # # One can view them, e.g., with the `eminus.extras.view` function in a notebook
-# from eminus import write
-# write(scf, 'density.cube', scf.n)
-# write(scf, 'reduced_density_gradient.cube', s)
+# scf.write('density.cube', scf.n)
+# scf.write('reduced_density_gradient.cube', s)
 
 # # Plot s over n
 # # Compare with figure 2 of the supplemental material

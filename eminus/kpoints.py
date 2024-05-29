@@ -11,9 +11,10 @@ from scipy.spatial import Voronoi
 
 from .data import LATTICE_VECTORS, SPECIAL_POINTS
 from .logger import log
+from .utils import BaseObject
 
 
-class KPoints:
+class KPoints(BaseObject):
     """KPoints object that holds k-points properties and build methods.
 
     Args:

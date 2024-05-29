@@ -4,6 +4,7 @@
 """Linear algebra calculation utilities."""
 
 import functools
+import os
 import re
 
 import numpy as np
@@ -13,6 +14,36 @@ import eminus
 
 from . import config
 from .units import rad2deg
+
+
+class BaseObject:
+    """Base eminus class that implements some shared functionalities."""
+
+    def view(self, *args, **kwargs):
+        """Unified display function.
+
+        Args:
+            args: Pass-through arguments.
+
+        Keyword Args:
+            kwargs: Pass-through keyword arguments.
+        """
+        return eminus.extras.view(self, *args, **kwargs)
+
+    def write(self, filename, *args, **kwargs):
+        """Unified file writer function.
+
+        Args:
+            filename: Input file path/name.
+            args: Pass-through arguments.
+
+        Keyword Args:
+            kwargs: Pass-through keyword arguments.
+        """
+        # Save the object as a JSON file if no extension is given
+        if not os.path.splitext(filename)[1]:
+            filename += '.json'
+        return eminus.io.write(self, filename, *args, **kwargs)
 
 
 def dotprod(a, b):
@@ -126,6 +157,8 @@ def handle_spin_gracefully(func, *args, **kwargs):
     Args:
         func: Function that acts on spin-states.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:
@@ -149,6 +182,8 @@ def handle_k_gracefully(func, *args, **kwargs):
     Args:
         func: Function that acts on k-point.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:
@@ -173,6 +208,8 @@ def handle_k_indexable(func, *args, **kwargs):
     Args:
         func: Function that acts on k-point.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:
@@ -197,6 +234,8 @@ def handle_k_reducable(func, *args, **kwargs):
     Args:
         func: Function that acts on k-point.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:
@@ -219,6 +258,8 @@ def skip_k(func, *args, **kwargs):
     Args:
         func: Function that acts on k-point.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:
@@ -244,6 +285,8 @@ def handle_torch(func, *args, **kwargs):
     Args:
         func: Function with a Torch alternative.
         args: Pass-through arguments.
+
+    Keyword Args:
         kwargs: Pass-through keyword arguments.
 
     Returns:

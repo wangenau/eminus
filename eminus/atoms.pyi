@@ -10,8 +10,9 @@ from .kpoints import KPoints
 from .logger import CustomLogger
 from .occupations import Occupations
 from .typing import Array1D, Array2D, Array3D, IntArray
+from .utils import BaseObject
 
-class Atoms:
+class Atoms(BaseObject):
     log: CustomLogger
     occ: Occupations
     kpts: KPoints

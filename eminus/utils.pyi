@@ -18,6 +18,19 @@ class HandleType(Protocol):
         **kwargs: Any,
     ) -> Any: ...
 
+class BaseObject:
+    def view(
+        self,
+        *args: Any,
+        **kwargs: Any,
+    ) -> Any: ...
+    def write(
+        self,
+        filename: str,
+        *args: Any,
+        **kwargs: Any,
+    ) -> None: ...
+
 def dotprod(
     a: NDArray[complex128],
     b: NDArray[complex128],

@@ -5,7 +5,7 @@
 import numpy as np
 from scipy.optimize import minimize
 
-from eminus import Atoms, read, SCF, write
+from eminus import Atoms, read, SCF
 from eminus.energies import get_Esic
 from eminus.extras import get_fods, remove_core_fods
 from eminus.orbitals import FLO
@@ -60,4 +60,4 @@ fods = optimize_fods(scf, fods)
 print(f'\nOptimized FODs:\n{fods}')
 
 # # Write the optimized FODs to a file
-write(atoms, 'CH4_fods.xyz', fods=fods)
+atoms.write('CH4_fods.xyz', fods=fods)

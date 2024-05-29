@@ -53,7 +53,7 @@ def write(obj, filename, *args, **kwargs):
 
     Args:
         obj: Class object.
-        filename: JSON input file path/name.
+        filename: Input file path/name.
         *args: Pass-through arguments.
 
     Keyword Args:

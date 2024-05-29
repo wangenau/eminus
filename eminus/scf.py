@@ -26,11 +26,12 @@ from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as ALL_MINIMIZER
 from .potentials import IMPLEMENTED as ALL_POTENTIALS, init_pot
 from .tools import center_of_mass, get_spin_squared
+from .utils import BaseObject
 from .version import info
 from .xc import get_xc, parse_functionals, parse_xc_type
 
 
-class SCF:
+class SCF(BaseObject):
     """Perform direct minimizations.
 
     Args:

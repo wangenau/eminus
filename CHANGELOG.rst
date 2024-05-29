@@ -10,6 +10,7 @@ dev
 - New features
    - Full type hint support!
    - Add magnetization functions
+   - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Breaking:
       - Rewritten minimizer
       - Massive speedup for more k-points

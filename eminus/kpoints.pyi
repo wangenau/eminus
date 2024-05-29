@@ -4,8 +4,9 @@ from numpy import float64, int64
 from numpy.typing import NDArray
 
 from .typing import Array1D, Array2D, IntArray
+from .utils import BaseObject
 
-class KPoints:
+class KPoints(BaseObject):
     lattice: str
     a: float | Array2D | None
     is_built: bool

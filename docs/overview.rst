@@ -122,10 +122,10 @@ Create the unit cell and display it.
 .. code-block:: python
 
    from eminus import Cell, SCF
-   from eminus.extras import plot_bandstructure, view
+   from eminus.extras import plot_bandstructure
 
    cell = Cell('Si', 'diamond', ecut=10, a=10.2631, bands=8)
-   view(cell)
+   cell.view()
 
 .. image:: /_static/overview/cell.png
    :align: center
@@ -144,7 +144,7 @@ Define the band path and display the Brillouin zone.
 
    scf.kpts.path = 'LGXU,KG'
    scf.kpts.Nk = 25
-   view(scf.kpts.build())
+   scf.kpts.build().view()
 
 .. image:: /_static/overview/bz.png
    :align: center

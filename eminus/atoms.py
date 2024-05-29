@@ -14,10 +14,10 @@ from .kpoints import KPoints
 from .logger import create_logger, get_level, log
 from .occupations import Occupations
 from .tools import center_of_mass, cutoff2gridspacing, inertia_tensor
-from .utils import atom2charge, molecule2list
+from .utils import atom2charge, BaseObject, molecule2list
 
 
-class Atoms:
+class Atoms(BaseObject):
     """Atoms object that holds all system and cell parameters.
 
     Args:
