@@ -10,7 +10,7 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
-        config.allowUnfree = true; # Required for torch-bin
+        # config.allowUnfree = true;
       };
 
       pyEnv = pkgs.python3.withPackages (p:
@@ -24,8 +24,7 @@
           ### fods and libxc ###
           pyscf
           ### torch ###
-          torch-bin
-          # torch if allowUnfree = true is undesired
+          # torch-bin
           ### viewer ###
           # nglview is missing
           plotly
