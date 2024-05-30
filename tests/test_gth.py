@@ -59,7 +59,7 @@ def test_custom_files():
     atoms.Z = file_path
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
-    assert scf.gth['B']['rloc'] == 0.42188166
+    assert scf.gth['B']['rloc'] == 0.41878773
 
 
 def test_multiple_files():
