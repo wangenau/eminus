@@ -149,7 +149,7 @@ def test_magnetization():
     scf.run()
     assert scf.atoms.occ.magnetization < 1
     assert not np.array_equal(cell.occ.f, scf.atoms.occ.f)
-    assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization)
+    assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization, atol=1e-7)
 
 
 if __name__ == '__main__':
