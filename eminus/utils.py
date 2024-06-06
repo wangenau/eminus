@@ -279,8 +279,8 @@ def skip_k(func, *args, **kwargs):
     return decorator
 
 
-def handle_torch(func, *args, **kwargs):
-    """Use a function optimized with Torch if available.
+def handle_backend(func, *args, **kwargs):
+    """Use a function optimized with a different backend if available.
 
     Args:
         func: Function with a Torch alternative.
@@ -295,7 +295,10 @@ def handle_torch(func, *args, **kwargs):
 
     @functools.wraps(func)
     def decorator(*args, **kwargs):
-        if config.use_torch:
+        if config.backend == 'jax':
+            func_jax = getattr(eminus.extras.jax, func.__name__)
+            return func_jax(*args, **kwargs)
+        if config.backend == 'torch':
             func_torch = getattr(eminus.extras.torch, func.__name__)
             return func_torch(*args, **kwargs)
         return func(*args, **kwargs)
