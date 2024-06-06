@@ -11,6 +11,7 @@ dev
    - Full type hint support!
    - Add magnetization functions
    - Add view and write class methods to Atoms, SCF, and KPoints objects
+   - Add Jax powered FFT operators as an extra
    - Breaking:
       - Cleanup main namespace by only including unified read and write functions
       - Rewritten minimizer
@@ -24,6 +25,7 @@ dev
    - Add CI release pipelines
    - Move tox.ini contents to pyproject.toml
 - Miscellaneous
+   - Rename use_torch to backend in config
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
    - Allow plotting densities in viewer functions for all unit cell types

@@ -23,6 +23,9 @@
           simple-dftd3
           ### fods and libxc ###
           pyscf
+          ### jax ###
+          # jax
+          # jaxlib-bin
           ### torch ###
           # torch-bin
           ### viewer ###

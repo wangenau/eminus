@@ -14,7 +14,8 @@ RUN apt-get update -y \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
-# Install Torch manually since we only want to compute on the CPU
+# Install Jax and Torch manually since we only want to compute on the CPU
+RUN pip install jax[cpu] --no-cache-dir
 RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
 # Install eminus with all extras available
