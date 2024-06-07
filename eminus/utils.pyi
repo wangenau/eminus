@@ -65,7 +65,7 @@ def skip_k(
     *args: Any,
     **kwargs: Any,
 ) -> HandleType: ...
-def handle_torch(
+def handle_backend(
     func: Callable[..., Any],
     *args: Any,
     **kwargs: Any,
