@@ -15,11 +15,11 @@ from eminus.utils import (
     add_maybe_none,
     atom2charge,
     get_lattice,
+    handle_backend,
     handle_k_gracefully,
     handle_k_indexable,
     handle_k_reducable,
     handle_spin_gracefully,
-    handle_torch,
     molecule2list,
     pseudo_uniform,
     skip_k,
@@ -212,18 +212,18 @@ def test_handle_k_reducable():
     assert_equal(out, W[0])
 
 
-def test_handle_torch():
-    """Test the handle_torch decorator."""
+def test_handle_backend():
+    """Test the handle_backend decorator."""
 
-    @handle_torch
+    @handle_backend
     def mock(x):
         return x
 
-    config.use_torch = False
+    config.backend = 'scipy'
     out = mock(np.pi)
     assert_equal(out, np.pi)
-    config.use_torch = True
-    if config.use_torch:
+    config.backend = 'torch'
+    if config.backend == 'torch':
         with pytest.raises(AttributeError):
             mock(np.pi)
 
