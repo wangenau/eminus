@@ -35,7 +35,10 @@ class ConfigClass:
         # Torch is rather slow
         if self._backend == 'jax':
             try:
-                import jax.numpy  # noqa: F401
+                import jax
+                import jax.numpy
+                # Jax uses singles instead of doubles by default
+                jax.config.update('jax_enable_x64', True)
 
                 return 'jax'
             except ImportError:
