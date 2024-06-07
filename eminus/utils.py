@@ -283,7 +283,7 @@ def handle_backend(func, *args, **kwargs):
     """Use a function optimized with a different backend if available.
 
     Args:
-        func: Function with a Torch alternative.
+        func: Function with an alternative implementation.
         args: Pass-through arguments.
 
     Keyword Args:

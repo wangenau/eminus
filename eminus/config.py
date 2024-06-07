@@ -37,6 +37,7 @@ class ConfigClass:
             try:
                 import jax
                 import jax.numpy
+
                 # Jax uses singles instead of doubles by default
                 jax.config.update('jax_enable_x64', True)
 
