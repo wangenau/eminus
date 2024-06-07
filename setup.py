@@ -27,7 +27,7 @@ extras: dict[str, list[str]] = {
         'pyscf>=2.1'  # Libxc interface via PySCF
     ],
     'jax': [
-        'jax'  # Faster FFT operators
+        'jax>=0.4.8'  # Faster FFT operators
     ],
     'torch': [
         'torch>=1.8'  # Faster FFT operators
