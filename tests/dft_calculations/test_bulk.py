@@ -24,7 +24,6 @@ etol = 1e-6
 opt = {'auto': 25}
 
 
-@pytest.mark.slow()
 @pytest.mark.parametrize('xc', E_ref.keys())
 def test_polarized(xc):
     """Compare total energies for a test system with a reference value (spin-paired)."""
