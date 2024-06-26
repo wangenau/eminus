@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
-FROM python:3.11-slim as build
+FROM python:3.11-slim AS build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
