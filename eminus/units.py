@@ -6,7 +6,7 @@ For more about atomic units, see: https://en.wikipedia.org/wiki/Hartree_atomic_u
 All values are directly calculated from the CODATA 2018 constants as found in SciPy.
 """
 
-import numpy as np
+import math
 
 #: Hartree in electronvolt.
 # scipy.constants.value('Hartree energy in eV')
@@ -179,7 +179,7 @@ def rad2deg(a):
     Returns:
         Angle in Degree.
     """
-    return a * 180 / np.pi
+    return a * 180 / math.pi
 
 
 def deg2rad(a):
@@ -191,4 +191,4 @@ def deg2rad(a):
     Returns:
         Angle in Radians.
     """
-    return a * np.pi / 180
+    return a * math.pi / 180
