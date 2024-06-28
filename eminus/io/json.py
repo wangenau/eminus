@@ -28,7 +28,7 @@ def read_json(filename):
             setattr(obj, attr, copy.deepcopy(dct[attr]))
         return obj
 
-    def custom_object_hook(dct):
+    def custom_object_hook(dct):  # noqa: PLR0911
         """Custom JSON object hook to create eminus classes after deserialization."""
         # ndarrays are base64 encoded, decode and recreate
         if isinstance(dct, dict) and '__ndarray__' in dct:

@@ -68,7 +68,7 @@ def dotprod(a, b):
     return np.real(res)
 
 
-def Ylm_real(l, m, G):  # noqa: C901
+def Ylm_real(l, m, G):  # noqa: C901, PLR0911
     """Calculate real spherical harmonics from cartesian coordinates.
 
     Reference: https://scipython.com/blog/visualizing-the-real-forms-of-the-spherical-harmonics

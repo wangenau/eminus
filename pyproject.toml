@@ -67,6 +67,7 @@ select = [
     "A",       # flake8-builtins
     "C4",      # flake8-comprehensions
     "FA",      # flake8-future-annotations
+    "ISC",     # flake8-implicit-str-concat
     "ICN",     # flake8-import-conventions
     "LOG",     # flake8-logging
     "PIE",     # flake8-pie
@@ -92,7 +93,7 @@ ignore = [
     # PLR0911, PLR0912, PLR0913: Too many return statements, branches, or arguments to function call
     # PLR2004: Magic value used in comparison
     # These rules feel too restrictive for now
-    "PLR0911", "PLR0912", "PLR0913", "PLR2004",
+    "PLR0912", "PLR0913", "PLR2004",
 ]
 
 [tool.ruff.lint.per-file-ignores]

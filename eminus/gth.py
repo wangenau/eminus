@@ -184,7 +184,7 @@ def calc_Vnonloc(scf, ik, spin, W):
     return atoms.O(Vpsi)
 
 
-def eval_proj_G(psp, l, iprj, Gm, Omega):
+def eval_proj_G(psp, l, iprj, Gm, Omega):  # noqa: PLR0911
     """Evaluate GTH projector functions in G-space.
 
     Adapted from https://github.com/f-fathurrahman/PWDFT.jl/blob/master/src/PsPot_GTH.jl
