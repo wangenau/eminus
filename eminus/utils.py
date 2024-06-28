@@ -3,7 +3,7 @@
 """Linear algebra calculation utilities."""
 
 import functools
-import os
+import pathlib
 import re
 
 import numpy as np
@@ -40,7 +40,7 @@ class BaseObject:
             kwargs: Pass-through keyword arguments.
         """
         # Save the object as a JSON file if no extension is given
-        if not os.path.splitext(filename)[1]:
+        if not pathlib.Path(filename).suffix:
             filename += '.json'
         return eminus.io.write(self, filename, *args, **kwargs)
 

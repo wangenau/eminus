@@ -23,18 +23,16 @@ exclude = ["public"]
 strict = true
 ignore_missing_imports = true
 disable_error_code = [
-    # Incompatible types in assignment  [assignment]
     # Many setter methods change the variable type, this is not considered by Mypy
     # Reference: https://github.com/python/mypy/issues/3004
-    "assignment",
+    "assignment",  # Incompatible types in assignment  [assignment]
 ]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
 disable_error_code = [
-    # Function is missing a type annotation  [no-untyped-def]
     # The tests folder has functions with missing type annotations
-    "no-untyped-def",
+    "no-untyped-def",  # Function is missing a type annotation  [no-untyped-def]
 ]
 
 ### Pytest ###
@@ -54,58 +52,39 @@ respect-gitignore = true
 quote-style = "single"
 
 [tool.ruff.lint]
-select = [
-    "F",       # Pyflakes
-    "E", "W",  # pycodestyle
-    "C90",     # mccabe
-    "I",       # isort
-    "D",       # pydocstyle
-    "UP",      # pyupgrade
-    "S",       # flake8-bandit
-    "BLE",     # flake8-blind-except
-    "B",       # flake8-bugbear
-    "A",       # flake8-builtins
-    "C4",      # flake8-comprehensions
-    "FA",      # flake8-future-annotations
-    "ISC",     # flake8-implicit-str-concat
-    "ICN",     # flake8-import-conventions
-    "LOG",     # flake8-logging
-    "PIE",     # flake8-pie
-    "PYI",     # flake8-pyi
-    "PT",      # flake8-pytest-style
-    "RSE",     # flake8-raise
-    "RET",     # flake8-return
-    "SIM",     # flake8-simplify
-    "TCH",     # flake8-type-checking
-    "PL",      # Pylint
-    "NPY",     # NumPy-specific rules
-    "PERF",    # Perflint
-    "RUF",     # Ruff-specific rules
-]
-
+select = ["ALL"]
 ignore = [
-    # E741, E743: Ambiguous variable and function names
-    # eminus uses, e.g., l (quantum number) as variables or O (overlap operator) as functions
-    "E741", "E743",
-    # SIM108: Use ternary operator instead of `if`-`else`-block
-    # if-else blocks should be written down explicitly
-    "SIM108",
-    # PLR0911, PLR0912, PLR0913: Too many return statements, branches, or arguments to function call
-    # PLR2004: Magic value used in comparison
-    # These rules feel too restrictive for now
-    "PLR0912", "PLR0913", "PLR2004",
+    "E741", "E743",  # Ambiguous variable or function names
+    "N",  # pep8-naming
+    "ANN",  # flake8-annotations
+    "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
+    "COM812",  # Trailing comma missing
+    "EM101", "EM102",  # Assign literal in exception to variable first
+    "ISC001",  # Implicitly concatenated string literals on one line
+    "G004",  # Logging statement uses f-string
+    "INP001",  # File is part of an implicit namespace package
+    "T201",  # print found
+    "Q000", "Q003",  # Double quotes preferred, Change outer quotes to avoid escaping inner quotes
+    "SLF001",  # Private member accessed
+    "SIM108",  # Use ternary operator instead of if-else-block
+    "TID252",  # Prefer absolute imports over relative imports from parent modules
+    "ARG001",  # Unused function argument
+    "PTH123",  # open() should be replaced by Path.open()
+    "ERA001",  # Found commented-out code
+    "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
+    "TRY003",  # Avoid specifying long messages outside the exception class
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "examples/*" = [
-    # D100, D103: Missing docstring in public module, or function
-    "D100", "D103",
-    # E501: Line too long
-    "E501",
+    "D100", "D103",  # Missing docstring in public module or function
+    "E501",  # Line too long
+    "PTH207",  # Replace glob with Path.glob or Path.rglob
+    "PGH003",  # Use specific rule codes when ignoring type issues
 ]
 "tests/*" = [
-    # S101: Use of `assert` detected
-    "S101",
+    "S101",  # Use of assert detected
+    "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
 
 [tool.ruff.lint.isort]

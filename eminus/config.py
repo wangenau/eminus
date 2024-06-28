@@ -36,7 +36,7 @@ class ConfigClass:
             try:
                 import torch  # noqa: F401
 
-                return True
+                return True  # noqa: TRY300
             except ImportError:
                 pass
         return False
@@ -66,7 +66,7 @@ class ConfigClass:
             try:
                 import pylibxc  # noqa: F401
 
-                return True
+                return True  # noqa: TRY300
             except ImportError:
                 pass
         return False

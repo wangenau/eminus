@@ -15,7 +15,7 @@ try:
     # Do not create new plots when executing tests
     import matplotlib.pyplot as plt
 
-    plt.savefig = lambda *args, **kwargs: None
+    plt.savefig = lambda *args, **kwargs: None  # noqa: ARG005
 except ModuleNotFoundError:
     pass
 

@@ -38,7 +38,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     """
     try:
         if not config.use_pylibxc:
-            raise AssertionError
+            raise AssertionError  # noqa: TRY301
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
         return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau)

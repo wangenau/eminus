@@ -4,6 +4,7 @@
 
 import copy
 import os
+import pathlib
 
 from numpy.testing import assert_allclose, assert_equal
 import pytest
@@ -162,9 +163,9 @@ def test_trajectory(filending):
     """Test the trajectory keyword that append geometries to a file."""
     filename = f'test.{filending}'
     write(atoms, filename, trajectory=False)
-    old_size = os.stat(filename).st_size
+    old_size = pathlib.Path(filename).stat().st_size
     write(atoms, filename, trajectory=True)
-    new_size = os.stat(filename).st_size
+    new_size = pathlib.Path(filename).stat().st_size
     os.remove(filename)
     # The trajectory file has to be larger than the original one
     assert old_size < new_size

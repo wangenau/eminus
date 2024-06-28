@@ -3,8 +3,8 @@
 """Test orbital functions."""
 
 import copy
-import glob
 import os
+import pathlib
 
 import numpy as np
 from numpy.random import default_rng
@@ -62,13 +62,12 @@ def test_cube_writer(unrestricted):
     rng = default_rng()
     Iorbital = [rng.standard_normal((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))]
     cube_writer(atoms, 'TMP', Iorbital)
-    for f in glob.glob('He_TMP_k0_*.cube'):
+    for f in pathlib.Path().glob('He_TMP_k0_*.cube'):
         os.remove(f)
 
 
 if __name__ == '__main__':
     import inspect
-    import pathlib
 
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
