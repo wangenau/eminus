@@ -10,7 +10,7 @@ class GTH:
     GTH: dict[str, dict[str, float | NDArray[float64]]]
     NbetaNL: int
     prj2beta: NDArray[int64]
-    betaNL: NDArray[complex128]
+    betaNL: NDArray[complex128]  # noqa: N815
     def __init__(self, scf: SCF | None = ...) -> None: ...
     def __getitem__(self, key: str) -> dict[str, float | NDArray[float64]]: ...
 

@@ -6,7 +6,7 @@ from numpy import float64
 from numpy.typing import NDArray
 
 electronvolt: float
-eV: float
+eV: float  # noqa: N816
 kcalmol: float
 Angstrom: float
 A: float

@@ -10,7 +10,7 @@ import math
 
 #: Hartree in electronvolt.
 # scipy.constants.value('Hartree energy in eV')
-electronvolt = eV = 27.211386245988
+electronvolt = eV = 27.211386245988  # noqa: N816
 #: Hartree in kcal per mol.
 # scipy.constants.value('Hartree energy') * scipy.constants.value('Avogadro constant') / 4.184 / 1e3
 kcalmol = 627.5094740630557

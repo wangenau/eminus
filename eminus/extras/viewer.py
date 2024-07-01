@@ -552,8 +552,8 @@ def _traj_view(view, filename):
         )
         raise
 
-    class eminusTrajectory(Trajectory, Structure):
-        """eminusTrajectory object to handle trajectory files.
+    class EminusTrajectory(Trajectory, Structure):
+        """EminusTrajectory object to handle trajectory files.
 
         The interface replicates the Trajectory classes in
         https://nglviewer.org/nglview/latest/_modules/nglview/adaptor.html
@@ -563,7 +563,7 @@ def _traj_view(view, filename):
         """
 
         def __init__(self, filenames):
-            """Initialize the eminusTrajectory object."""
+            """Initialize the EminusTrajectory object."""
             self.atoms = []
             if isinstance(filenames, str) and filenames.endswith(('.trj', '.traj')):
                 trajectory = read_traj(filenames)
@@ -605,7 +605,7 @@ def _traj_view(view, filename):
             """
             return create_pdb_str(self.atoms[index].atom, self.atoms[index].pos)
 
-    trajectory = eminusTrajectory(filename)
+    trajectory = EminusTrajectory(filename)
     view.add_trajectory(trajectory)
     view.center()
     return view

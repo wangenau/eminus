@@ -55,7 +55,7 @@ quote-style = "single"
 select = ["ALL"]
 ignore = [
     "E741", "E743",  # Ambiguous variable or function names
-    "N",  # pep8-naming
+    "N802", "N803", "N806",  # Function, argument, or variable names in function should be lowercase
     "ANN",  # flake8-annotations
     "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
     "COM812",  # Trailing comma missing
