@@ -136,7 +136,7 @@ def test_handle_spin_gracefully():
     """Test the test_handle_spin_gracefully decorator."""
 
     @handle_spin_gracefully
-    def mock(obj, W):
+    def mock(obj, W):  # noqa: ARG001
         return W
 
     W = np.ones((1, 1, 1))
@@ -150,7 +150,7 @@ def test_skip_k():
     """Test the skip_k decorator."""
 
     @skip_k
-    def mock(obj, W):
+    def mock(obj, W):  # noqa: ARG001
         assert isinstance(W, np.ndarray)
         return W
 
@@ -168,10 +168,10 @@ def test_handle_k_gracefully():
     """Test the handle_k_gracefully decorator."""
 
     @handle_k_gracefully
-    def mock(obj, W):
+    def mock(obj, W):  # noqa: ARG001
         return W
 
-    def mock_val(obj, W):
+    def mock_val(obj, W):  # noqa: ARG001
         return 0
 
     W = [np.ones((1, 1, 1))]
@@ -187,7 +187,7 @@ def test_handle_k_indexable():
     """Test the handle_k_indexable decorator."""
 
     @handle_k_indexable
-    def mock(obj, W, ik=0):
+    def mock(obj, W, ik=0):  # noqa: ARG001
         return W
 
     W = [np.ones((1, 1, 1))] * 2
@@ -201,7 +201,7 @@ def test_handle_k_reducable():
     """Test the handle_k_reducable decorator."""
 
     @handle_k_reducable
-    def mock(obj, W, ik=0):
+    def mock(obj, W, ik=0):  # noqa: ARG001
         return W
 
     W = [np.ones((1, 1, 1))] * 2

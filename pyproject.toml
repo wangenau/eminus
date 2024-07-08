@@ -63,7 +63,7 @@ ignore = [
     "G004",  # Logging statement uses f-string
     "INP001",  # File is part of an implicit namespace package
     "T201",  # print found
-    "Q000", "Q003",  # Double quotes preferred, Change outer quotes to avoid escaping inner quotes
+    "Q000", "Q003",  # Double quotes preferred, change outer quotes to avoid escaping inner quotes
     "SLF001",  # Private member accessed
     "SIM108",  # Use ternary operator instead of if-else-block
     "TID252",  # Prefer absolute imports over relative imports from parent modules
@@ -82,7 +82,6 @@ ignore = [
 ]
 "tests/*" = [
     "S101",  # Use of assert detected
-    "ARG001",  # Unused function argument
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
 
