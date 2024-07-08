@@ -8,7 +8,7 @@ import shutil
 from typing import Any
 
 
-def generate(app: Any) -> None:
+def generate(*args: Any, **kwargs: Any) -> None:
     """Automatically generate examples page from examples folder."""
     # Copy template file and create examples folder
     pathlib.Path('docs/_examples').mkdir(exist_ok=True)
@@ -85,6 +85,6 @@ def parse(script: str) -> str:
     return comp.sub(r':code:`\1`', rst)
 
 
-def clean(app: Any, exception: Any) -> None:
+def clean(*args: Any, **kwargs: Any) -> None:
     """Remove generated examples after build."""
     shutil.rmtree('docs/_examples')

@@ -70,7 +70,7 @@ bibtex_bibfiles = ['references.bib']
 bibtex_default_style = 'unsrt'
 
 
-def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:
+def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:  # noqa: ARG001
     """Exclude all dunder methods."""
     if name.startswith('_'):
         return True

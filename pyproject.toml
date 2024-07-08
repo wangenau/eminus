@@ -68,7 +68,6 @@ ignore = [
     "SLF001",  # Private member accessed
     "SIM108",  # Use ternary operator instead of if-else-block
     "TID252",  # Prefer absolute imports over relative imports from parent modules
-    "ARG001",  # Unused function argument
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
     "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
@@ -84,8 +83,12 @@ ignore = [
 ]
 "tests/*" = [
     "S101",  # Use of assert detected
+    "ARG001",  # Unused function argument
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
+
+[tool.ruff.lint.flake8-unused-arguments]
+ignore-variadic-names = true
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
