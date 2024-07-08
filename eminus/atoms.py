@@ -121,10 +121,11 @@ class Atoms(BaseObject):
         # We need atom positions as a two-dimensional array
         self._pos = np.atleast_2d(value)
         if self.Natoms != len(self._pos):
-            raise ValueError(
+            msg = (
                 f'Mismatch between number of atoms ({self.Natoms}) and number of '
                 f'coordinates ({len(self._pos)}).'
             )
+            raise ValueError(msg)
         # The structure factor changes when changing pos
         self.is_built = False
 
@@ -284,10 +285,11 @@ class Atoms(BaseObject):
             value = atom2charge(self.atom, value)
         self._Z = np.asarray(value)
         if self.Natoms != len(self._Z):
-            raise ValueError(
+            msg = (
                 f'Mismatch between number of atoms ({self.Natoms}) and number of '
                 f'charges ({len(self._Z)}).'
             )
+            raise ValueError(msg)
         # Get the number of calculated electrons and pass it to occ
         self.occ.Nelec = np.sum(self._Z) - self.charge
 

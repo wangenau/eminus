@@ -44,7 +44,8 @@ def read(filename, *args, **kwargs):
         return read_traj(filename, *args, **kwargs)
     if filename.endswith(('.cub', '.cube')):
         return read_cube(filename, *args, **kwargs)
-    raise NotImplementedError('File ending not recognized.')
+    msg = 'File ending not recognized.'
+    raise NotImplementedError(msg)
 
 
 def write(obj, filename, *args, **kwargs):
@@ -68,4 +69,5 @@ def write(obj, filename, *args, **kwargs):
         return write_cube(obj, filename, *args, **kwargs)
     if filename.endswith('.pdb'):
         return write_pdb(obj, filename, *args, **kwargs)
-    raise NotImplementedError('File ending not recognized.')
+    msg = 'File ending not recognized.'
+    raise NotImplementedError(msg)

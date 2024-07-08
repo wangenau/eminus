@@ -59,7 +59,6 @@ ignore = [
     "ANN",  # flake8-annotations
     "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
     "COM812",  # Trailing comma missing
-    "EM101", "EM102",  # Assign literal in exception to variable first
     "ISC001",  # Implicitly concatenated string literals on one line
     "G004",  # Logging statement uses f-string
     "INP001",  # File is part of an implicit namespace package

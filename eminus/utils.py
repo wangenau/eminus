@@ -139,7 +139,8 @@ def Ylm_real(l, m, G):  # noqa: C901, PLR0911
         if m == 3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
-    raise ValueError(f'No definition found for Ylm({l}, {m}).')
+    msg = f'No definition found for Ylm({l}, {m}).'
+    raise ValueError(msg)
 
 
 def handle_spin_gracefully(func, *args, **kwargs):

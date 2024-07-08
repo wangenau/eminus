@@ -240,7 +240,8 @@ def bandpath(kpts):
         N = N_special
     for p in path_list:
         if p not in {*s_points, ','}:
-            raise KeyError(f'{p} is not a special point for the {kpts.lattice} lattice.')
+            msg = f'{p} is not a special point for the {kpts.lattice} lattice.'
+            raise KeyError(msg)
 
     # Calculate distances between special points
     dists = []
