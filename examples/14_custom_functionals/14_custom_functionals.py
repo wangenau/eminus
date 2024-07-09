@@ -74,7 +74,7 @@ plt.savefig('correlation_energy_error.png')
 # # Some modules of eminus have an `IMPLEMENTED` lookup dictionary for functions that can be extended
 # # These are available in the `xc`, `potentials`, and `minimizer` modules and can be used as seen below
 # # Plug the fitted parameters into the custom functional
-eminus.xc.IMPLEMENTED['custom'] = lambda n: custom_functional(n, *fitted_b)
+eminus.xc.IMPLEMENTED['custom'] = lambda n, **kwargs: custom_functional(n, *fitted_b)
 # # If the signature of the custom functional matches the signature from eminus it is sufficient to write
 # eminus.xc.IMPLEMENTED['custom'] = custom_functional
 
