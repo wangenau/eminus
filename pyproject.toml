@@ -1,9 +1,89 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-### build-system ###
+### Build backend ###
 [build-system]
-requires = ["setuptools>=1.2"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "eminus.version.__version__"}
+
+### Metadata ###
+[project]
+name = "eminus"
+dynamic = ["version"]
+dependencies = [
+    "numpy>=1.17",
+    "scipy>=1.6"
+]
+requires-python = ">=3.7"
+authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
+description = "A pythonic plane wave density functional theory (DFT) code."
+readme = "README.md"
+keywords = ["Python", "DFT", "DFT++"]
+classifiers = [
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: MacOS",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX",
+        "Operating System :: Unix",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Topic :: Education",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Chemistry",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Software Development",
+]
+
+[project.optional-dependencies]
+dispersion = [
+    "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
+]
+libxc = [
+    "pyscf>=2.1",  # Libxc interface via PySCF
+]
+torch = [
+    "torch>=1.8",  # Faster FFT operators
+]
+viewer = [
+    "nglview>=2.6.5",  # Molecule viewer
+    "plotly>=4.5",  # Various visualizations
+]
+fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
+symmetry = ["eminus[libxc]"]  # k-point symmetrization uses PySCF
+all = ["eminus[dispersion]", "eminus[libxc]", "eminus[torch]", "eminus[viewer]"]
+dev = [
+    "coverage>=4.4",  # Generate coverage reports
+    "furo>=2022.02.14.1",  # Documentation theme
+    "matplotlib>=1.5",  # Plotting library for examples
+    "mypy>=0.990",  # Static type checker
+    "notebook",  # Run and convert notebooks to HTML
+    "pytest>=5.4",  # Test utilities
+    "ruff>=0.2",  # Linter
+    "sphinx>=4",  # Documentation builder
+    "sphinx-design>=0.2",  # More directives for Sphinx
+    "sphinxcontrib-bibtex>=2",  # Use bib files for citations in Sphinx
+]
+
+[project.urls]
+Homepage = "https://github.com/wangenau/eminus"
+Documentation = "https://wangenau.gitlab.io/eminus"
+Repository = "https://gitlab.com/wangenau/eminus"
+Issues = "https://gitlab.com/wangenau/eminus/-/issues"
+Changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
 
 ### Coverage ###
 [tool.coverage.report]
