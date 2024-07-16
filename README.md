@@ -17,7 +17,7 @@ It is built upon the [DFT++](https://arxiv.org/abs/cond-mat/9909130) pragmas pro
 This can be shown by, e.g., solving the Poisson equation. In the operator notation of DFT++ the equation reads
 
 $$
-\boldsymbol \phi = 4\pi\hat L^{-1}\hat O\hat J \boldsymbol n.
+\boldsymbol \phi = -4\pi\hat L^{-1}\hat O\hat J \boldsymbol n.
 $$
 
 The corresponding Python code (implying that the operators have been implemented properly) reads
