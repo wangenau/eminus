@@ -1,19 +1,19 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload
+from typing import Final, overload
 
 from numpy import float64
 from numpy.typing import NDArray
 
-electronvolt: float
-eV: float  # noqa: N816
-kcalmol: float
-Angstrom: float
-A: float
-Debye: float
-D: float
-Kelvin: float
-K: float
+electronvolt: Final[float]
+eV: Final[float]  # noqa: N816
+kcalmol: Final[float]
+Angstrom: Final[float]
+A: Final[float]
+Debye: Final[float]
+D: Final[float]
+Kelvin: Final[float]
+K: Final[float]
 
 @overload
 def ha2ev(E: float) -> float: ...

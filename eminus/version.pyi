@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-__version__: str
-LOGO: str
+from typing import Final
+
+__version__: Final[str]
+LOGO: Final[str]
 
 def info() -> None: ...
