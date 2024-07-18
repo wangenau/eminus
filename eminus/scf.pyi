@@ -10,12 +10,10 @@ from .atoms import Atoms
 from .energies import Energy
 from .gth import GTH
 from .kpoints import KPoints
-from .logger import CustomLogger
 from .typing import Array1D
 from .utils import BaseObject
 
 class SCF(BaseObject):
-    log: CustomLogger
     etol: float
     gradtol: float | None
     sic: bool

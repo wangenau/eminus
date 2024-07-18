@@ -69,7 +69,7 @@ class Atoms(BaseObject):
     ):
         """Initialize the Atoms object."""
         # Set the input parameters (the ordering is important)
-        self.log = create_logger(self)  #: Logger object.
+        self._log = create_logger(self)  #: Logger object.
         self.verbose = verbose  #: Verbosity level.
         self.occ = Occupations()  #: Occupations object.
         self.atom = atom  #: Atom symbols.
@@ -239,7 +239,7 @@ class Atoms(BaseObject):
         if value is None:
             value = log.verbose
         self._verbose = get_level(value)
-        self.log.verbose = self._verbose
+        self._log.verbose = self._verbose
 
     # ### Class properties with a setter outside of the init method ###
 

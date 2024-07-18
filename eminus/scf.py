@@ -89,7 +89,7 @@ class SCF(BaseObject):
 
         # Set the input parameters (the ordering is important)
         self.atoms = atoms  #: Atoms object.
-        self.log = create_logger(self)  #: Logger object.
+        self._log = create_logger(self)  #: Logger object.
         self.verbose = verbose  #: Verbosity level.
         self.xc = xc  #: Exchange-correlation functional.
         self.pot = pot  #: Used potential.
@@ -134,7 +134,7 @@ class SCF(BaseObject):
         # Determine the type of functional combinations
         self._xc_type = parse_xc_type(self._xc)
         if 'mock_xc' in self._xc:
-            self.log.warning('Usage of mock functional detected.')
+            self._log.warning('Usage of mock functional detected.')
 
     @property
     def pot(self):
@@ -153,7 +153,7 @@ class SCF(BaseObject):
                     self._psp = 'pade'
         # If pot is no supported potential treat it as a path to a directory containing GTH files
         else:
-            self.log.info(f'Use the path "{value}" to search for GTH pseudopotential files.')
+            self._log.info(f'Use the path "{value}" to search for GTH pseudopotential files.')
             self._psp = value
             self._pot = 'gth'
         # Build the potential
@@ -209,7 +209,7 @@ class SCF(BaseObject):
         if value is None:
             value = self.atoms.verbose
         self._verbose = get_level(value)
-        self.log.verbose = self._verbose
+        self._log.verbose = self._verbose
 
     # ### Read-only properties ###
 
@@ -245,9 +245,9 @@ class SCF(BaseObject):
             Total energy.
         """
         # Print some information about the calculation
-        if self.log.level <= logging.DEBUG:
+        if self._log.level <= logging.DEBUG:
             info()
-        self.log.debug(
+        self._log.debug(
             f'\n--- Atoms information ---\n{self.atoms}\n'
             f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
             f'Sampling per axis: {self.atoms.s}\n'
@@ -270,7 +270,7 @@ class SCF(BaseObject):
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self.log.info(f'Start {ALL_MINIMIZER[imin].__name__}...')
+            self._log.info(f'Start {ALL_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
             Elist = ALL_MINIMIZER[imin](self, self.opt[imin], **kwargs)
             end = time.perf_counter()
@@ -283,9 +283,9 @@ class SCF(BaseObject):
             if self.is_converged:
                 break
         if self.is_converged:
-            self.log.info(f'SCF converged after {len(Etots)} iterations.')
+            self._log.info(f'SCF converged after {len(Etots)} iterations.')
         else:
-            self.log.warning('SCF not converged!')
+            self._log.warning('SCF not converged!')
 
         # Calculate SIC energy if desired
         if self.sic:
@@ -297,30 +297,30 @@ class SCF(BaseObject):
             self.energies.Edisp = get_Edisp(self)
 
         # Print minimizer timings
-        self.log.debug('\n--- SCF results ---')
+        self._log.debug('\n--- SCF results ---')
         t_tot = 0
         for imin in self._opt_log:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(
+            self._log.debug(
                 f'Minimizer: {imin}'
                 f'\nIterations: {N}'
                 f'\nTime: {t:.5f} s'
                 f'\nTime/Iteration: {t / N:.5f} s'
             )
-        self.log.info(f'Total SCF time: {t_tot:.5f} s')
+        self._log.info(f'Total SCF time: {t_tot:.5f} s')
         # Print the S^2 expectation value for unrestricted calculations
         if self.atoms.unrestricted:
-            self.log.info(f'<S^2> = {get_spin_squared(self):.6e}')
+            self._log.info(f'<S^2> = {get_spin_squared(self):.6e}')
         # Print energy data
-        if self.log.level <= logging.DEBUG:
-            self.log.debug(
+        if self._log.level <= logging.DEBUG:
+            self._log.debug(
                 '\n--- Energy data ---\n'
                 f'Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}'
             )
         else:
-            self.log.info(f'Etot = {self.energies.Etot:.9f} Eh')
+            self._log.info(f'Etot = {self.energies.Etot:.9f} Eh')
         return self.energies.Etot
 
     kernel = run
@@ -332,7 +332,7 @@ class SCF(BaseObject):
             **kwargs: Pass-through keyword arguments.
         """
         if not self.is_converged:
-            self.log.warning('The previous calculation has not been converged.')
+            self._log.warning('The previous calculation has not been converged.')
 
         # If new k-points have been set rebuild the atoms object and the potential
         if not self.atoms.kpts.is_built or (
@@ -349,12 +349,12 @@ class SCF(BaseObject):
             elif 'pseudo' in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
-        self.log.info('Minimize occupied band energies...')
+        self._log.info('Minimize occupied band energies...')
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            self._log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
             Elist, self.W = BAND_MINIMIZER[imin](self, self.W, self.opt[imin], **kwargs)
             end = time.perf_counter()
@@ -367,24 +367,24 @@ class SCF(BaseObject):
             if self.is_converged:
                 break
         if self.is_converged:
-            self.log.info(f'Band minimization converged after {len(Etots)} iterations.')
+            self._log.info(f'Band minimization converged after {len(Etots)} iterations.')
         else:
-            self.log.warning('Band minimization not converged!')
+            self._log.warning('Band minimization not converged!')
 
         # Print minimizer timings
-        self.log.debug('\n--- Band minimization results ---')
+        self._log.debug('\n--- Band minimization results ---')
         t_tot = 0
         for imin in self._opt_log:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(
+            self._log.debug(
                 f'Minimizer: {imin}'
                 f'\nIterations: {N}'
                 f'\nTime: {t:.5f} s'
                 f'\nTime/Iteration: {t / N:.5f} s'
             )
-        self.log.info(f'Total band minimization time: {t_tot:.5f} s')
+        self._log.info(f'Total band minimization time: {t_tot:.5f} s')
 
         # Converge empty bands automatically if desired
         if self.atoms.occ.Nempty > 0:
@@ -399,7 +399,7 @@ class SCF(BaseObject):
             **kwargs: Pass-through keyword arguments.
         """
         if not self.is_converged:
-            self.log.warning('The previous calculation has not been converged.')
+            self._log.warning('The previous calculation has not been converged.')
         self.is_converged = False
 
         if Nempty is None:
@@ -412,12 +412,12 @@ class SCF(BaseObject):
             elif 'pseudo' in self.guess:
                 self.Z = guess_pseudo(self, Nempty, symmetric=self.symmetric)
 
-        self.log.info('Minimize unoccupied band energies...')
+        self._log.info('Minimize unoccupied band energies...')
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self.log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            self._log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
             start = time.perf_counter()
             Elist, self.Z = BAND_MINIMIZER[imin](
                 self, self.Z, self.opt[imin], cost=scf_step_unocc, grad=get_grad_unocc, **kwargs
@@ -432,24 +432,24 @@ class SCF(BaseObject):
             if self.is_converged:
                 break
         if self.is_converged:
-            self.log.info(f'Band minimization converged after {len(Etots)} iterations.')
+            self._log.info(f'Band minimization converged after {len(Etots)} iterations.')
         else:
-            self.log.warning('Band minimization not converged!')
+            self._log.warning('Band minimization not converged!')
 
         # Print minimizer timings
-        self.log.debug('\n--- Band minimization results ---')
+        self._log.debug('\n--- Band minimization results ---')
         t_tot = 0
         for imin in self._opt_log:
             N = self._opt_log[imin]['iter']
             t = self._opt_log[imin]['time']
             t_tot += t
-            self.log.debug(
+            self._log.debug(
                 f'Minimizer: {imin}'
                 f'\nIterations: {N}'
                 f'\nTime: {t:.5f} s'
                 f'\nTime/Iteration: {t / N:.5f} s'
             )
-        self.log.info(f'Total band minimization time: {t_tot:.5f} s')
+        self._log.info(f'Total band minimization time: {t_tot:.5f} s')
         return self
 
     def recenter(self, center=None):

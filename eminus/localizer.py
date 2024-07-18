@@ -316,12 +316,12 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         U = np.eye(atoms.occ.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
-    atoms.log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"dCost [a0^2]":<13}')
+    atoms._log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"dCost [a0^2]":<13}')
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
         if abs(costs[-2] - costs[-1]) < conv_tol:
-            atoms.log.info(f'Wannier localizer converged after {i} iterations.')
+            atoms._log.info(f'Wannier localizer converged after {i} iterations.')
             break
         # If the cost function gets smaller, change the direction
         if costs[-2] - costs[-1] < 0:
@@ -340,9 +340,9 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=Fa
         Y = expA_neg @ Y @ expA_pos
         Z = expA_neg @ Z @ expA_pos
 
-        atoms.log.debug(f'{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}')
+        atoms._log.debug(f'{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}')
 
     if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
-        atoms.log.warning('Wannier localizer not converged!')
+        atoms._log.warning('Wannier localizer not converged!')
     # Return the localized orbitals by rotating them
     return psirs @ U

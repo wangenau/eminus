@@ -108,12 +108,12 @@ def test_verbose():
     """Test the verbosity level."""
     scf = SCF(atoms)
     assert scf.verbose == atoms.verbose
-    assert scf.log.verbose == atoms.log.verbose
+    assert scf._log.verbose == atoms._log.verbose  # type: ignore[attr-defined]
 
     level = 'DEBUG'
     scf.verbose = level
     assert scf.verbose == level
-    assert scf.log.verbose == level
+    assert scf._log.verbose == level  # type: ignore[attr-defined]
 
 
 def test_kpts():

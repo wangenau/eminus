@@ -30,6 +30,7 @@ dev
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
    - Set default values for uninitialized SCF attributes to None
+   - Mark the log attribute as private in Atoms and SCF classes
    - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
    - Add an eminus Discord server

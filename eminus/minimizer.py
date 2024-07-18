@@ -69,7 +69,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
             return True
         # Check if the current energy is higher than the last two values
         if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
-            scf.log.warning('Total energy is not decreasing.')
+            scf._log.warning('Total energy is not decreasing.')
     return False
 
 
@@ -97,14 +97,14 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         if method not in {'sd', 'lm', 'pclm'}:
             header += '|Gradient|'.ljust(10 * scf.atoms.occ.Nspin + 3)
         # Print extra debugging information if available
-        if scf.log.level <= logging.DEBUG:
+        if scf._log.level <= logging.DEBUG:
             if method != 'sd':
                 header += 'linmin-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
             if method not in {'sd', 'lm', 'pclm'}:
                 header += 'cg-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
-            scf.log.debug(header)
+            scf._log.debug(header)
         else:
-            scf.log.info(header)
+            scf._log.info(header)
 
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
@@ -115,15 +115,15 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
             info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
             if norm_g is not None:
                 info += str(np.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-            if scf.log.level <= logging.DEBUG:
+            if scf._log.level <= logging.DEBUG:
                 if method != 'sd' and linmin is not None:
                     info += str(np.sum(linmin, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
                 if method not in {'sd', 'lm', 'pclm'} and cg is not None:
                     info += str(np.sum(cg, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-    if scf.log.level <= logging.DEBUG:
-        scf.log.debug(info)
+    if scf._log.level <= logging.DEBUG:
+        scf._log.debug(info)
     else:
-        scf.log.info(info)
+        scf._log.info(info)
 
 
 def linmin_test(g, d):
@@ -292,7 +292,7 @@ def pclm(
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
                 # Calculate linmin each spin separately
-                if scf.log.level <= logging.DEBUG and i > 0:
+                if scf._log.level <= logging.DEBUG and i > 0:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                 if precondition:
                     d[ik][spin] = -atoms.K(g[ik][spin], ik)
@@ -418,7 +418,7 @@ def pccg(
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
                 # Calculate linmin and cg for each spin and k-point separately if desired
-                if scf.log.level <= logging.DEBUG:
+                if scf._log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin], precondition)
                 beta, norm_g[ik][spin] = cg_method(
@@ -535,7 +535,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
-                if scf.log.level <= logging.DEBUG:
+                if scf._log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
                 beta, norm_g[ik][spin] = cg_method(

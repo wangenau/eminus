@@ -205,7 +205,7 @@ def pclm(
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, W, **scf._precomputed)
-                if scf.log.level <= logging.DEBUG and i > 0:
+                if scf._log.level <= logging.DEBUG and i > 0:
                     linmin[ik][spin] = linmin_test(g, d[ik][spin])
                 if precondition:
                     d[ik][spin] = -atoms.K(g, ik)
@@ -320,7 +320,7 @@ def pccg(
             for spin in range(atoms.occ.Nspin):
                 g = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
-                if scf.log.level <= logging.DEBUG:
+                if scf._log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g, d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g, g_old[ik][spin], precondition)
                 beta, norm_g[ik][spin] = cg_method(
@@ -434,7 +434,7 @@ def auto(
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, W, **scf._precomputed)
                 # Calculate linmin and cg for each spin separately
-                if scf.log.level <= logging.DEBUG:
+                if scf._log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin])
                 beta, norm_g[ik][spin] = cg_method(

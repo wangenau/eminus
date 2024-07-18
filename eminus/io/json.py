@@ -23,7 +23,7 @@ def read_json(filename):
     def set_attrs(obj, dct):
         """Set attributes of an object using a given dictionary."""
         for attr in dct:
-            if attr == 'log':
+            if attr == '_log':
                 continue
             setattr(obj, attr, copy.deepcopy(dct[attr]))
         return obj

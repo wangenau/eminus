@@ -89,7 +89,7 @@ def test_json(obj):
     os.remove(filename)
     for attr in test.__dict__:
         # Skip objects and dictionaries
-        if attr in {'_atoms', 'gth', 'kpts', 'log', '_precomputed'}:
+        if attr in {'_atoms', 'gth', 'kpts', '_log', '_precomputed'}:
             continue
         if attr == 'GTH':
             assert getattr(obj, attr).keys() == getattr(test, attr).keys()
