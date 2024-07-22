@@ -562,6 +562,8 @@ def _traj_view(view, filename):
             filenames: XYZ input file paths/names.
         """
 
+        __slots__ = ('atoms', 'ext', 'id', 'params')
+
         def __init__(self, filenames):
             """Initialize the EminusTrajectory object."""
             self.atoms = []
