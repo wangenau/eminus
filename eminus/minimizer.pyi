@@ -10,7 +10,7 @@ from .atoms import Atoms
 from .scf import SCF
 
 # Create a custom Callable type for cost functions
-class CostType(Protocol):
+class _CostType(Protocol):
     def __call__(
         self,
         scf: SCF,
@@ -18,7 +18,7 @@ class CostType(Protocol):
     ) -> float: ...
 
 # Create a custom Callable type for gradient functions
-class GradType(Protocol):
+class _GradType(Protocol):
     def __call__(
         self,
         scf: SCF,
@@ -29,7 +29,7 @@ class GradType(Protocol):
     ) -> NDArray[complex128]: ...
 
 # Create a custom Callable type for condition functions
-class Conditionype(Protocol):
+class _Conditionype(Protocol):
     def __call__(
         self,
         scf: SCF,
@@ -83,18 +83,18 @@ def cg_method(
 def sd(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     **kwargs: Any,
 ) -> list[float]: ...
 def pclm(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     precondition: bool = ...,
     **kwargs: Any,
@@ -102,18 +102,18 @@ def pclm(
 def lm(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     **kwargs: Any,
 ) -> list[float]: ...
 def pccg(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
     precondition: bool = ...,
@@ -121,18 +121,18 @@ def pccg(
 def cg(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
 ) -> list[float]: ...
 def auto(
     scf: SCF,
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
 ) -> list[float]: ...

@@ -6,11 +6,11 @@ from typing import Any, Protocol
 from numpy import complex128
 from numpy.typing import NDArray
 
-from .minimizer import Conditionype
+from .minimizer import _Conditionype
 from .scf import SCF
 
 # Create a custom Callable type for cost functions
-class CostType(Protocol):
+class _CostType(Protocol):
     def __call__(
         self,
         scf: SCF,
@@ -18,7 +18,7 @@ class CostType(Protocol):
     ) -> float: ...
 
 # Create a custom Callable type for gradient functions
-class GradType(Protocol):
+class _GradType(Protocol):
     def __call__(
         self,
         scf: SCF,
@@ -54,9 +54,9 @@ def sd(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     **kwargs: Any,
 ) -> tuple[list[float], list[NDArray[complex128]]]: ...
@@ -64,9 +64,9 @@ def pclm(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     precondition: bool = ...,
     **kwargs: Any,
@@ -75,9 +75,9 @@ def lm(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     **kwargs: Any,
 ) -> tuple[list[float], list[NDArray[complex128]]]: ...
@@ -85,9 +85,9 @@ def pccg(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
     precondition: bool = ...,
@@ -96,9 +96,9 @@ def cg(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
 ) -> tuple[list[float], list[NDArray[complex128]]]: ...
@@ -106,9 +106,9 @@ def auto(
     scf: SCF,
     W: list[NDArray[complex128]],
     Nit: int,
-    cost: CostType = ...,
-    grad: GradType = ...,
-    condition: Conditionype = ...,
+    cost: _CostType = ...,
+    grad: _GradType = ...,
+    condition: _Conditionype = ...,
     betat: float = ...,
     cgform: int = ...,
 ) -> tuple[list[float], list[NDArray[complex128]]]: ...

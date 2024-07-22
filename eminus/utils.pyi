@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from .typing import Array2D, IntArray
 
 # Create a custom Callable type for some decorators
-class HandleType(Protocol):
+class _HandleType(Protocol):
     def __call__(
         self,
         obj: Any,
@@ -41,30 +41,30 @@ def Ylm_real(
     G: NDArray[float64],
 ) -> NDArray[float64]: ...
 def handle_spin_gracefully(
-    func: HandleType,
+    func: _HandleType,
     *args: Any,
     **kwargs: Any,
-) -> HandleType: ...
+) -> _HandleType: ...
 def handle_k_gracefully(
-    func: HandleType,
+    func: _HandleType,
     *args: Any,
     **kwargs: Any,
-) -> HandleType: ...
+) -> _HandleType: ...
 def handle_k_indexable(
-    func: HandleType,
+    func: _HandleType,
     *args: Any,
     **kwargs: Any,
-) -> HandleType: ...
+) -> _HandleType: ...
 def handle_k_reducable(
-    func: HandleType,
+    func: _HandleType,
     *args: Any,
     **kwargs: Any,
-) -> HandleType: ...
+) -> _HandleType: ...
 def skip_k(
-    func: HandleType,
+    func: _HandleType,
     *args: Any,
     **kwargs: Any,
-) -> HandleType: ...
+) -> _HandleType: ...
 def handle_torch(
     func: Callable[..., Any],
     *args: Any,

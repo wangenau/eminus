@@ -7,7 +7,7 @@ from numpy import float64
 from numpy.typing import NDArray
 
 # Create a custom Callable type for functionals
-class FunctionalType(Protocol):
+class _FunctionalType(Protocol):
     def __call__(
         self,
         n: NDArray[float64],
@@ -91,6 +91,6 @@ def mock_xc(
     **kwargs: Any,
 ) -> tuple[NDArray[float64], NDArray[float64], None]: ...
 
-IMPLEMENTED: dict[str, FunctionalType]
+IMPLEMENTED: dict[str, _FunctionalType]
 XC_MAP: dict[str, str]
 ALIAS: dict[str, str]
