@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
-from .typing import Array1D
+from .typing import _AnyFloat, Array1D
 
 def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...
@@ -90,27 +90,13 @@ def get_Efermi(
     obj: Occupations | SCF,
     epsilon: NDArray[float64] | None = ...,
 ) -> float: ...
-@overload
 def fermi_distribution(
-    E: float,
+    E: _AnyFloat,
     mu: float,
     kbT: float,
-) -> float: ...
-@overload
-def fermi_distribution(
-    E: NDArray[float64],
-    mu: float,
-    kbT: float,
-) -> NDArray[float64]: ...
-@overload
+) -> _AnyFloat: ...
 def electronic_entropy(
-    E: float,
+    E: _AnyFloat,
     mu: float,
     kbT: float,
-) -> float: ...
-@overload
-def electronic_entropy(
-    E: NDArray[float64],
-    mu: float,
-    kbT: float,
-) -> NDArray[float64]: ...
+) -> _AnyFloat: ...
