@@ -1,8 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Final
+from typing import Final, TypeVar
 
-from .typing import _AnyFloat
+from numpy import float64
+from numpy.typing import NDArray
+
+_AnyFloat = TypeVar('_AnyFloat', float, float64, NDArray[float64])
 
 electronvolt: Final[float]
 eV: Final[float]  # noqa: N816

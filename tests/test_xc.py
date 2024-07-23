@@ -33,7 +33,7 @@ def test_get_exc(xc, Nspin):
     if is_gga(xc):
         dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
     e_out = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
-    e_test, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    e_test, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
 
 
@@ -50,8 +50,8 @@ def test_get_vxc(xc, Nspin):
     dn_spin = None
     if is_gga(xc):
         dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
-    v_out, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
-    _, v_test, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    v_out, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, v_test, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
 
 
@@ -68,8 +68,8 @@ def test_get_vsigmaxc(xc, Nspin):
         return
     n_spin = n_tests[Nspin]
     dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
-    _, vsigma_out, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
-    _, _, vsigma_test, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)  # type: ignore [call-overload]
+    _, vsigma_out, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    _, _, vsigma_test, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
 
 

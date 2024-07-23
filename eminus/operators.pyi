@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload
+from typing import overload, TypeVar
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -8,55 +8,28 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-@overload
+_AnyWorN = TypeVar('_AnyWorN', NDArray[float64], NDArray[complex128], list[NDArray[complex128]])
+_ArrRealorComplex = TypeVar('_ArrRealorComplex', NDArray[float64], NDArray[complex128])
+
 def O(
     atoms: Atoms,
-    W: NDArray[float64],
-) -> NDArray[float64]: ...
-@overload
-def O(
-    atoms: Atoms,
-    W: NDArray[complex128],
-) -> NDArray[complex128]: ...
-@overload
-def O(
-    atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
-@overload
+    W: _AnyWorN,
+) -> _AnyWorN: ...
 def L(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
-) -> NDArray[float64]: ...
-@overload
-def L(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-) -> NDArray[complex128]: ...
-@overload
+) -> _ArrRealorComplex: ...
 def Linv(
     atoms: Atoms,
-    W: NDArray[float64],
-) -> NDArray[float64]: ...
-@overload
-def Linv(
-    atoms: Atoms,
-    W: NDArray[complex128],
-) -> NDArray[complex128]: ...
+    W: _ArrRealorComplex,
+) -> _ArrRealorComplex: ...
 @overload
 def I(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
-) -> NDArray[float64]: ...
-@overload
-def I(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def I(
     atoms: Atoms,
@@ -65,17 +38,10 @@ def I(
 @overload
 def J(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
     full: bool = ...,
-) -> NDArray[float64]: ...
-@overload
-def J(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-    full: bool = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def J(
     atoms: Atoms,
@@ -85,17 +51,10 @@ def J(
 @overload
 def Idag(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
     full: bool = ...,
-) -> NDArray[float64]: ...
-@overload
-def Idag(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-    full: bool = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def Idag(
     atoms: Atoms,
@@ -105,15 +64,9 @@ def Idag(
 @overload
 def Jdag(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
-) -> NDArray[float64]: ...
-@overload
-def Jdag(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def Jdag(
     atoms: Atoms,
@@ -124,21 +77,8 @@ def K(
     W: NDArray[complex128],
     ik: int,
 ) -> NDArray[complex128]: ...
-@overload
 def T(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _AnyWorN,
     dr: Array1D | Array2D,
-) -> NDArray[float64]: ...
-@overload
-def T(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    dr: Array1D | Array2D,
-) -> NDArray[complex128]: ...
-@overload
-def T(
-    atoms: Atoms,
-    W: list[NDArray[complex128]],
-    dr: Array1D | Array2D,
-) -> list[NDArray[complex128]]: ...
+) -> _AnyWorN: ...

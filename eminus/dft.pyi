@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any, overload
+from typing import Any, overload, TypeVar
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -8,32 +8,21 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
+_AnyW = TypeVar('_AnyW', NDArray[complex128], list[NDArray[complex128]])
+
 def solve_poisson(
     atoms: Atoms,
     n: NDArray[float64],
 ) -> NDArray[float64]: ...
-@overload
 def orth(
     atoms: Atoms,
-    W: NDArray[complex128],
-) -> NDArray[complex128]: ...
-@overload
-def orth(
-    atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
-@overload
+    W: _AnyW,
+) -> _AnyW: ...
 def orth_unocc(
     atoms: Atoms,
-    Y: NDArray[complex128],
-    Z: NDArray[complex128],
-) -> NDArray[complex128]: ...
-@overload
-def orth_unocc(
-    atoms: Atoms,
-    Y: list[NDArray[complex128]],
-    Z: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
+    Y: _AnyW,
+    Z: _AnyW,
+) -> _AnyW: ...
 def get_n_total(
     atoms: Atoms,
     Y: list[NDArray[complex128]],

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import overload
+from typing import overload, TypeVar
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -9,58 +9,32 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-@overload
+_AnyW = TypeVar('_AnyW', NDArray[complex128], list[NDArray[complex128]])
+
 def eval_psi(
     atoms: Atoms,
-    psi: NDArray[complex128],
+    psi: _AnyW,
     r: Array1D | Array2D,
-) -> NDArray[complex128]: ...
-@overload
-def eval_psi(
-    atoms: Atoms,
-    psi: list[NDArray[complex128]],
-    r: Array1D | Array2D,
-) -> list[NDArray[complex128]]: ...
-@overload
+) -> _AnyW: ...
 def get_R(
     atoms: Atoms,
-    psi: NDArray[complex128],
+    psi: _AnyW,
     fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> NDArray[complex128]: ...
-@overload
-def get_R(
-    atoms: Atoms,
-    psi: list[NDArray[complex128]],
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> list[NDArray[complex128]]: ...
-@overload
+) -> _AnyW: ...
 def get_FO(
     atoms: Atoms,
-    psi: NDArray[complex128],
+    psi: _AnyW,
     fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> NDArray[complex128]: ...
-@overload
-def get_FO(
-    atoms: Atoms,
-    psi: list[NDArray[complex128]],
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> list[NDArray[complex128]]: ...
+) -> _AnyW: ...
 def get_S(
     atoms: Atoms,
     psirs: NDArray[complex128],
 ) -> NDArray[complex128]: ...
-@overload
 def get_FLO(
     atoms: Atoms,
-    psi: NDArray[complex128],
+    psi: _AnyW,
     fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> NDArray[complex128]: ...
-@overload
-def get_FLO(
-    atoms: Atoms,
-    psi: list[NDArray[complex128]],
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> list[NDArray[complex128]]: ...
+) -> _AnyW: ...
 @overload
 def wannier_cost(
     atoms: Atoms,
@@ -106,23 +80,12 @@ def wannier_supercell_grad(
     Y: NDArray[float64],
     Z: NDArray[float64],
 ) -> NDArray[complex128]: ...
-@overload
 def get_wannier(
     atoms: Atoms,
-    psirs: NDArray[complex128],
+    psirs: _AnyW,
     Nit: int = ...,
     conv_tol: float = ...,
     mu: float = ...,
     random_guess: bool = ...,
     seed: int | None = ...,
-) -> NDArray[complex128]: ...
-@overload
-def get_wannier(
-    atoms: Atoms,
-    psirs: list[NDArray[complex128]],
-    Nit: int = ...,
-    conv_tol: float = ...,
-    mu: float = ...,
-    random_guess: bool = ...,
-    seed: int | None = ...,
-) -> list[NDArray[complex128]]: ...
+) -> _AnyW: ...

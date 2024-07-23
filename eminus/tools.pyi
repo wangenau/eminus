@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload
+from typing import overload, TypeVar
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -8,7 +8,9 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
-from .typing import _AnyFloat, Array1D
+from .typing import Array1D
+
+_AnyFloat = TypeVar('_AnyFloat', float, float64, NDArray[float64])
 
 def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...

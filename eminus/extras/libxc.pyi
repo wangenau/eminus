@@ -1,55 +1,21 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload
-
 from numpy import float64
 from numpy.typing import NDArray
 
-@overload
+from ..xc.utils import _DnOrNone, _TauOrNone
+
 def libxc_functional(
     xc: str,
     n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: None,
-    tau: None,
-) -> tuple[NDArray[float64], NDArray[float64], None, None]: ...
-@overload
-def libxc_functional(
-    xc: str,
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: None,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], None]: ...
-@overload
-def libxc_functional(
-    xc: str,
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: NDArray[float64],
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64]]: ...
-@overload
+    dn_spin: _DnOrNone = ...,
+    tau: _TauOrNone = ...,
+) -> tuple[NDArray[float64], NDArray[float64], _DnOrNone, _TauOrNone]: ...
 def pyscf_functional(
     xc: str,
     n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: None,
-    tau: None,
-) -> tuple[NDArray[float64], NDArray[float64], None, None]: ...
-@overload
-def pyscf_functional(
-    xc: str,
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: None,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], None]: ...
-@overload
-def pyscf_functional(
-    xc: str,
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: NDArray[float64],
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+    dn_spin: _DnOrNone = ...,
+    tau: _TauOrNone = ...,
+) -> tuple[NDArray[float64], NDArray[float64], _DnOrNone, _TauOrNone]: ...

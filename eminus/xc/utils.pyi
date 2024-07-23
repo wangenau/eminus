@@ -1,10 +1,13 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, Protocol
+from typing import Any, Protocol, TypeVar
 
 from numpy import float64
 from numpy.typing import NDArray
+
+_DnOrNone = TypeVar('_DnOrNone', NDArray[float64], None)
+_TauOrNone = TypeVar('_TauOrNone', NDArray[float64], None)
 
 # Create a custom Callable type for functionals
 class _FunctionalType(Protocol):
@@ -18,68 +21,30 @@ class _FunctionalType(Protocol):
         | tuple[NDArray[float64], NDArray[float64], NDArray[float64]]
     ): ...
 
-@overload
 def get_xc(
     xc: str | Sequence[str],
     n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: None,
-    tau: None,
+    dn_spin: _DnOrNone = ...,
+    tau: _TauOrNone = ...,
     dens_threshold: float = ...,
-) -> tuple[NDArray[float64], NDArray[float64], None, None]: ...
-@overload
-def get_xc(
-    xc: str | Sequence[str],
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: None,
-    dens_threshold: float = ...,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], None]: ...
-@overload
-def get_xc(
-    xc: str | Sequence[str],
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: NDArray[float64],
-    dens_threshold: float = ...,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+) -> tuple[NDArray[float64], NDArray[float64], _DnOrNone, _TauOrNone]: ...
 def get_exc(
     xc: str | Sequence[str],
     n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: NDArray[float64] | None = ...,
-    tau: NDArray[float64] | None = ...,
+    dn_spin: _DnOrNone = ...,
+    tau: _TauOrNone = ...,
     dens_threshold: float = ...,
 ) -> NDArray[float64]: ...
-@overload
 def get_vxc(
     xc: str | Sequence[str],
     n_spin: NDArray[float64],
     Nspin: int,
-    dn_spin: None,
-    tau: None,
+    dn_spin: _DnOrNone = ...,
+    tau: _TauOrNone = ...,
     dens_threshold: float = ...,
-) -> tuple[NDArray[float64], None, None]: ...
-@overload
-def get_vxc(
-    xc: str | Sequence[str],
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: None,
-    dens_threshold: float = ...,
-) -> tuple[NDArray[float64], NDArray[float64], None]: ...
-@overload
-def get_vxc(
-    xc: str | Sequence[str],
-    n_spin: NDArray[float64],
-    Nspin: int,
-    dn_spin: NDArray[float64],
-    tau: NDArray[float64],
-    dens_threshold: float = ...,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+) -> tuple[NDArray[float64], _DnOrNone, _TauOrNone]: ...
 def parse_functionals(xc: str) -> list[str]: ...
 def parse_xc_type(xc: str) -> str: ...
 def parse_xc_libxc(xc_id: int | str) -> str: ...

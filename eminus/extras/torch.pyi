@@ -2,23 +2,18 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload
 
-from numpy import complex128, float64
+from numpy import complex128
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
+from ..operators import _ArrRealorComplex
 
 @overload
 def I(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
-) -> NDArray[float64]: ...
-@overload
-def I(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def I(
     atoms: Atoms,
@@ -27,17 +22,10 @@ def I(
 @overload
 def J(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
     full: bool = ...,
-) -> NDArray[float64]: ...
-@overload
-def J(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-    full: bool = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def J(
     atoms: Atoms,
@@ -47,17 +35,10 @@ def J(
 @overload
 def Idag(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
     full: bool = ...,
-) -> NDArray[float64]: ...
-@overload
-def Idag(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-    full: bool = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def Idag(
     atoms: Atoms,
@@ -67,15 +48,9 @@ def Idag(
 @overload
 def Jdag(
     atoms: Atoms,
-    W: NDArray[float64],
+    W: _ArrRealorComplex,
     ik: int = ...,
-) -> NDArray[float64]: ...
-@overload
-def Jdag(
-    atoms: Atoms,
-    W: NDArray[complex128],
-    ik: int = ...,
-) -> NDArray[complex128]: ...
+) -> _ArrRealorComplex: ...
 @overload
 def Jdag(
     atoms: Atoms,
