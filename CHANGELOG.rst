@@ -10,35 +10,36 @@ dev
 - New features
    - Full type hint support!
    - Add magnetization functions
-   - Add view and write class methods to Atoms, SCF, and KPoints objects
-   - Breaking:
-      - Cleanup main namespace by only including unified read and write functions
-      - Rewritten minimizer
+   - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
-      - This will change the convergence behavior of some systems!
 - Coding style
    - Reformat the codebase using Ruff
+   - Activate more linting rules
    - Add SPDX license identifiers
    - Modernize CI pipelines
    - Add CI release pipelines
-   - Move tox.ini contents to pyproject.toml
+   - Move tox.ini and setup.py contents to pyproject.toml
 - Miscellaneous
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
+   - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Allow plotting densities in viewer functions for all unit cell types
    - Add an option to plot both spin channels in band structure plots
    - Add pass-through keyword arguments in the Cell creation
+   - Sync GTH files (this changes values for Na-q9)
    - Set default values for uninitialized SCF attributes to None
    - Mark the log attribute as private in Atoms and SCF classes
-   - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
    - Add an eminus Discord server
+- Breaking:
+   - Cleanup main namespace by only including unified read and write functions
+   - The rewritten minimizer will change the convergence behavior of some systems!
 
 v2.7.1 - Feb 09, 2024
 ---------------------
 - New features
-   - Stabilized Fermi smearing!
+   - Stabilize Fermi smearing!
 - Updated docs
    - Restyle many documentation pages
    - Add a citation page
@@ -153,14 +154,14 @@ v2.5.0 - Jul 10, 2023
 - New features
    - Add meta-GGA functionals!
       - Use all meta-GGAs that don't need a Laplacian from Libxc using pylibxc or PySCF
-   - Improved minimizer
+   - Improve minimizer
       - Add new auto minimizer that functions like pccg but can fallback to sd steps
       - Add Dai-Yuan conjugate-gradient form
       - Fancier-looking output from the minimizer
       - Option to converge the gradient norm
       - Print <S^2> after an unrestricted calculation
       - Add eigenenergies to the debug output
-   - Improved file viewer
+   - Improve file viewer
       - Support PDB files
       - Allow usage outside of notebooks
 - Updated docs
