@@ -141,7 +141,7 @@ def WO(scf, write_cubes=False, precondition=True):
 def SCDMO(scf, write_cubes=False):
     """Generate SCDM orbitals and optionally save them as CUBE files.
 
-    Reference: J. Comput. Phys. 334, 1.
+    Reference: J. Chem. Theory Comput. 11, 1463.
 
     Args:
         scf: SCF object.
