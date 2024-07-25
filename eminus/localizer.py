@@ -3,7 +3,7 @@
 """Utilities to localize and analyze orbitals."""
 
 import numpy as np
-from scipy.linalg import eig, expm, norm
+from scipy.linalg import eig, expm, norm, qr
 from scipy.stats import unitary_group
 
 from .logger import log
@@ -131,6 +131,31 @@ def get_FLO(atoms, psi, fods):
         Q12 = np.diag(1 / np.sqrt(Q))
         flo[spin] = fo[spin] @ (T @ Q12 @ T.T)
     return flo
+
+
+@skip_k
+def get_scdm(atoms, psi):
+    """Calculate localized orbitals via QR decomposition, as given in the SCDM method.
+
+    Reference: J. Comput. Phys. 334, 1.
+
+    Args:
+        atoms: Atoms object.
+        psi: Set of orbitals in reciprocal space.
+
+    Returns:
+        Real-space SCDM orbitals.
+    """
+    # Transform psi to real-space
+    psi_rs = atoms.I(psi, 0)
+
+    scdmo = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
+    for spin in range(atoms.occ.Nspin):
+        # Do the QR factorization
+        Q, _, _ = qr(psi_rs[spin].T.conj(), pivoting=True)
+        # Apply the transformation
+        scdmo[spin] = psi_rs[spin] @ Q
+    return scdmo
 
 
 @skip_k
@@ -279,7 +304,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
 
 @skip_k
 @handle_spin_gracefully
-def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=0.25, random_guess=False, seed=None):
+def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False, seed=None):
     """Steepest descent supercell Wannier localization.
 
     This function is rather sensitive to the starting point, thus it is a good idea to start from

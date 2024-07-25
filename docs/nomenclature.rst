@@ -143,6 +143,9 @@ Field variables
    * - :code:`wo`
      - Real-space Wannier orbitals
      - :code:`list [(Nspin, Ns, Nstate)]`
+   * - :code:`scdmo`
+     - Real-space orbitals localized via the SCDM method
+     - :code:`list [(Nspin, Ns, Nstate)]`
 
 | The variables of the SCF object are explained here: :class:`~eminus.scf.SCF`.
 | The variables of the Energy object are documented here: :class:`~eminus.energies.Energy`.

@@ -6,20 +6,20 @@ from scipy.optimize import minimize
 
 from eminus import Atoms, read, SCF
 from eminus.energies import get_Esic
-from eminus.extras import get_fods, remove_core_fods
-from eminus.orbitals import FLO
+from eminus.orbitals import FLO, WO
+from eminus.tools import orbital_center
 
 # # Do a simple calculation for methane
 # # Use a very small cutoff energy for a small grid
 # # The optimization function will be called hundreds of times, so we are interested in speed for this simple example
 atom, pos = read('CH4.xyz')
-atoms = Atoms(atom, pos, ecut=1, center=True)
+atoms = Atoms(atom, pos, ecut=5, center=True)
 scf = SCF(atoms)
 scf.run()
 
-# # Generate an initial guess for the FODs and remove the core
-fods_all = get_fods(atoms, basis='pc-0')
-fods = remove_core_fods(atoms, fods_all)
+# # Generate an initial guess by calculating the center of mass of Wannier orbitals
+wo = WO(scf)
+fods = orbital_center(atoms, wo[0])
 print(f'\nInitial FODs:\n{fods}')
 
 
@@ -30,7 +30,7 @@ def optimize_fods(scf, fods):
         """Transform a 1d list back to FODs."""
         nfods = [len(fod) for fod in fods]
         fod_up = np.reshape(x[: nfods[0] * 3], (nfods[0], 3))
-        if len(nfods) > 1:
+        if len(nfods) > 1 or nfods[1] > 0:
             fod_dn = np.reshape(x[nfods[0] * 3 :], (nfods[1], 3))
             return [fod_up, fod_dn]
         return [fod_up]
@@ -42,7 +42,7 @@ def optimize_fods(scf, fods):
         return get_Esic(scf, scf.atoms.J(flo, full=False))
 
     # Convert FODs to a list such that SciPy's minimize function can work with them
-    x = np.array(fods).flatten()
+    x = np.concatenate([fod.flatten() for fod in fods])
     # Call the optimizer
     print('\nStart FOD optimization...')
     result = minimize(get_sic_energy, x0=x, method='nelder-mead', tol=1e-4, options={'disp': True})

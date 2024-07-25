@@ -18,16 +18,22 @@ def FO(
     scf: SCF,
     write_cubes: bool = ...,
     fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+    guess: str = ...,
 ) -> list[NDArray[complex128]]: ...
 def FLO(
     scf: SCF,
     write_cubes: bool = ...,
     fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+    guess: str = ...,
 ) -> list[NDArray[complex128]]: ...
 def WO(
     scf: SCF,
     write_cubes: bool = ...,
     precondition: bool = ...,
+) -> list[NDArray[complex128]]: ...
+def SCDMO(
+    scf: SCF,
+    write_cubes: bool = ...,
 ) -> list[NDArray[complex128]]: ...
 def cube_writer(
     atoms: Atoms,

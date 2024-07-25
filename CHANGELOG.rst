@@ -13,6 +13,9 @@ dev
    - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
+   - Add non-iterative SCDM localization
+      - Use them as the initial guess for Wannier localizations
+      - Use Wannier orbital COMs for FLO generations if no FODs are given
 - Coding style
    - Reformat the codebase using Ruff
    - Activate more linting rules

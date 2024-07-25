@@ -12,7 +12,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, RSCF
-from eminus.orbitals import cube_writer, FLO, FO, KSO, WO
+from eminus.orbitals import cube_writer, FLO, FO, KSO, SCDMO, WO
 
 atoms = Atoms('He', (0, 0, 0), ecut=1, center=True).build()
 scf = RSCF(atoms)
@@ -47,10 +47,26 @@ def test_flo():
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
-def test_wo():
+@pytest.mark.parametrize('guess', ['wannier', 'pycom'])
+def test_flo_guess(guess):
+    """Test the Fermi-Loewdin orbital function starting from different guesses."""
+    orb = FLO(scf, write_cubes=True, guess=guess)[0]
+    os.remove('He_FLO_k0_0.cube')
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
+
+
+@pytest.mark.parametrize('precondition', [True, False])
+def test_wo(precondition):
     """Test the Wannier orbital function."""
-    orb = WO(scf, write_cubes=True, precondition=False)[0]
+    orb = WO(scf, write_cubes=True, precondition=precondition)[0]
     os.remove('He_WO_k0_0.cube')
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
+
+
+def test_scdmo():
+    """Test the SCDMO orbital function."""
+    orb = SCDMO(scf, write_cubes=True)[0]
+    os.remove('He_SCDMO_k0_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 

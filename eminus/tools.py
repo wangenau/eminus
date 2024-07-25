@@ -70,7 +70,7 @@ def orbital_center(obj, psirs):
     """
     atoms = obj._atoms
 
-    coms = [np.array([])] * 2
+    coms = [np.empty((0, 3))] * 2
     Ncom = psirs.shape[2]
     for spin in range(atoms.occ.Nspin):
         coms_spin = np.empty((Ncom, 3))

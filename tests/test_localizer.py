@@ -10,7 +10,7 @@ import pytest
 
 from eminus import Atoms, SCF
 from eminus.dft import get_psi
-from eminus.localizer import get_FLO, get_wannier, wannier_cost
+from eminus.localizer import get_FLO, get_scdm, get_wannier, wannier_cost
 from eminus.tools import check_orthonorm
 
 atoms_unpol = Atoms(
@@ -97,16 +97,16 @@ def test_wannier(unrestricted):
     else:
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    # Throw in the flo to prelocalize the orbitals
-    flo = get_FLO(scf.atoms, psi, [fods] * scf.atoms.occ.Nspin)
-    wo = get_wannier(scf.atoms, flo)[0]
+    # Throw in the SCDMOs to prelocalize the orbitals
+    scdm = get_scdm(scf.atoms, psi)
+    wo = get_wannier(scf.atoms, scdm)[0]
     assert check_orthonorm(scf, wo)
     costs = wannier_cost(scf.atoms, wo)
     # Check that all transformed orbitals have a similar spread
-    assert_allclose(costs, costs[0, 0], atol=0.0025)
+    assert_allclose(costs, costs[0, 0], atol=0.001)
     scf_tmp = copy.deepcopy(scf)
     scf_tmp.atoms.a = [[1, 1, 0], [1, 0, 1], [0, 1, 1]]
-    assert_allclose(get_wannier(scf_tmp.atoms, flo), flo)
+    assert_allclose(get_wannier(scf_tmp.atoms, scdm), scdm)
 
 
 def test_wannier_random_guess():
@@ -117,6 +117,23 @@ def test_wannier_random_guess():
     wo = get_wannier(scf.atoms, psi, Nit=100, random_guess=True, seed=1234)
     assert check_orthonorm(scf, wo)
     assert np.sum(wannier_cost(scf.atoms, wo)) < np.sum(costs)
+
+
+@pytest.mark.parametrize('unrestricted', [True, False])
+def test_scdm(unrestricted):
+    """Test the generation of SCDM localized orbitals."""
+    if unrestricted:
+        scf = scf_pol
+    else:
+        scf = scf_unpol
+    psi = get_psi(scf, scf.W)
+    scdmo = get_scdm(scf.atoms, psi)[0]
+    assert check_orthonorm(scf, scdmo)
+    costs = wannier_cost(scf.atoms, scdmo)
+    # Check that all transformed orbitals roughly a similar spread
+    assert_allclose(costs, costs[0, 0], atol=0.2)
+    # Check that the SCDM orbitals have a lower spread than the KS orbitals
+    assert np.sum(costs) < np.sum(wannier_cost(scf.atoms, scf.atoms.I(psi)))
 
 
 if __name__ == '__main__':

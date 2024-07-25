@@ -65,6 +65,7 @@ Features
       <li style="background:#c5b0d5">Fermi</li>
       <li style="background:#c5b0d5">Fermi-Löwdin</li>
       <li style="background:#c5b0d5">Wannier</li>
+      <li style="background:#c5b0d5">SCDM</li>
    </ul>
 
    <div class="colored-heading" style="background:#a8786e">Properties</div>

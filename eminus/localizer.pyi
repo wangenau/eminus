@@ -35,6 +35,10 @@ def get_FLO(
     psi: _AnyW,
     fods: NDArray[float64] | Sequence[NDArray[float64]],
 ) -> _AnyW: ...
+def get_scdm(
+    atoms: Atoms,
+    psi: _AnyW,
+) -> _AnyW: ...
 @overload
 def wannier_cost(
     atoms: Atoms,

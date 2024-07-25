@@ -75,7 +75,6 @@ def test_07():  # noqa: D103
 
 @pytest.mark.slow()
 def test_09():  # noqa: D103
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('09_sic_calculations')
 
 
@@ -103,7 +102,6 @@ def test_15():  # noqa: D103
 
 @pytest.mark.slow()
 def test_16():  # noqa: D103
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
     execute_example('16_fod_optimization')
     clean_example(['CH4_fods.xyz'])
 
