@@ -119,7 +119,7 @@ def WO(scf, write_cubes=False, precondition=True):
 
     Keyword Args:
         write_cubes: Write orbitals to CUBE files.
-        precondition: Precondition by calculating SCDMOs as the initial guess.
+        precondition: Precondition by calculating SCDMs as the initial guess.
 
     Returns:
         Real-space Wannier orbitals.
@@ -128,7 +128,7 @@ def WO(scf, write_cubes=False, precondition=True):
 
     # Calculate eigenfunctions/initial guess orbitals and transform to real-space
     if precondition:
-        psi = SCDMO(scf)
+        psi = SCDM(scf)
     else:
         psi = atoms.I(get_psi(scf, scf.W))
 
@@ -138,7 +138,7 @@ def WO(scf, write_cubes=False, precondition=True):
     return wo
 
 
-def SCDMO(scf, write_cubes=False):
+def SCDM(scf, write_cubes=False):
     """Generate SCDM orbitals and optionally save them as CUBE files.
 
     Reference: J. Chem. Theory Comput. 11, 1463.
@@ -156,10 +156,10 @@ def SCDMO(scf, write_cubes=False):
 
     # Calculate eigenfunctions
     kso = get_psi(scf, scf.W)
-    scdmo = get_scdm(atoms, kso)
+    scdm = get_scdm(atoms, kso)
     if write_cubes:
-        cube_writer(atoms, 'SCDMO', scdmo)
-    return scdmo
+        cube_writer(atoms, 'SCDM', scdm)
+    return scdm
 
 
 def cube_writer(atoms, orb_type, orbitals):

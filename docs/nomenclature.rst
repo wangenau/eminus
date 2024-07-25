@@ -143,7 +143,7 @@ Field variables
    * - :code:`wo`
      - Real-space Wannier orbitals
      - :code:`list [(Nspin, Ns, Nstate)]`
-   * - :code:`scdmo`
+   * - :code:`scdm`
      - Real-space orbitals localized via the SCDM method
      - :code:`list [(Nspin, Ns, Nstate)]`
 

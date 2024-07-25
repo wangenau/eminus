@@ -97,7 +97,7 @@ def test_wannier(unrestricted):
     else:
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    # Throw in the SCDMOs to prelocalize the orbitals
+    # Throw in the SCDMs to prelocalize the orbitals
     scdm = get_scdm(scf.atoms, psi)
     wo = get_wannier(scf.atoms, scdm)[0]
     assert check_orthonorm(scf, wo)
@@ -127,9 +127,9 @@ def test_scdm(unrestricted):
     else:
         scf = scf_unpol
     psi = get_psi(scf, scf.W)
-    scdmo = get_scdm(scf.atoms, psi)[0]
-    assert check_orthonorm(scf, scdmo)
-    costs = wannier_cost(scf.atoms, scdmo)
+    scdm = get_scdm(scf.atoms, psi)[0]
+    assert check_orthonorm(scf, scdm)
+    costs = wannier_cost(scf.atoms, scdm)
     # Check that all transformed orbitals roughly a similar spread
     assert_allclose(costs, costs[0, 0], atol=0.2)
     # Check that the SCDM orbitals have a lower spread than the KS orbitals

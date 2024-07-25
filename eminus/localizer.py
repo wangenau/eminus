@@ -149,13 +149,13 @@ def get_scdm(atoms, psi):
     # Transform psi to real-space
     psi_rs = atoms.I(psi, 0)
 
-    scdmo = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
+    scdm = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
     for spin in range(atoms.occ.Nspin):
         # Do the QR factorization
         Q, _, _ = qr(psi_rs[spin].T.conj(), pivoting=True)
         # Apply the transformation
-        scdmo[spin] = psi_rs[spin] @ Q
-    return scdmo
+        scdm[spin] = psi_rs[spin] @ Q
+    return scdm
 
 
 @skip_k

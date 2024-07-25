@@ -31,7 +31,7 @@ def WO(
     write_cubes: bool = ...,
     precondition: bool = ...,
 ) -> list[NDArray[complex128]]: ...
-def SCDMO(
+def SCDM(
     scf: SCF,
     write_cubes: bool = ...,
 ) -> list[NDArray[complex128]]: ...

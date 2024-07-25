@@ -12,7 +12,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import Atoms, RSCF
-from eminus.orbitals import cube_writer, FLO, FO, KSO, SCDMO, WO
+from eminus.orbitals import cube_writer, FLO, FO, KSO, SCDM, WO
 
 atoms = Atoms('He', (0, 0, 0), ecut=1, center=True).build()
 scf = RSCF(atoms)
@@ -70,10 +70,10 @@ def test_wo(precondition):
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
-def test_scdmo():
-    """Test the SCDMO orbital function."""
-    orb = SCDMO(scf, write_cubes=True)[0]
-    os.remove('He_SCDMO_k0_0.cube')
+def test_scdm():
+    """Test the SCDM orbital function."""
+    orb = SCDM(scf, write_cubes=True)[0]
+    os.remove('He_SCDM_k0_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
