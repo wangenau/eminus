@@ -47,10 +47,17 @@ def test_flo():
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
 
-@pytest.mark.parametrize('guess', ['wannier', 'pycom'])
-def test_flo_guess(guess):
-    """Test the Fermi-Loewdin orbital function starting from different guesses."""
-    orb = FLO(scf, write_cubes=True, guess=guess)[0]
+def test_flo_from_wannier():
+    """Test the Fermi-Loewdin orbital function starting from COMs of Wannier orbitals."""
+    orb = FLO(scf, write_cubes=True)[0]
+    os.remove('He_FLO_k0_0.cube')
+    assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
+
+
+def test_flo_from_pycom():
+    """Test the Fermi-Loewdin orbital function starting from a PyCOM guess calculated with PySCF."""
+    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    orb = FLO(scf, write_cubes=True, guess='pycom')[0]
     os.remove('He_FLO_k0_0.cube')
     assert_allclose(atoms.dV * np.sum(orb.conj() * orb), 1)
 
