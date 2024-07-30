@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Perdew-Burke-Ernzerhof GGA exchange.
 
-Reference: Phys. Rev. Lett. 78, 1396.
+Reference: Phys. Rev. Lett. 77, 3865.
 """
 
 import numpy as np
@@ -16,7 +16,7 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.
@@ -39,7 +39,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.
@@ -69,7 +69,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     """Base PBE exchange functional to be used in the spin-paired and -polarized case.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Perdew-Burke-Ernzerhof GGA correlation.
 
-Reference: Phys. Rev. Lett. 78, 1396.
+Reference: Phys. Rev. Lett. 77, 3865.
 """
 
 import numpy as np
@@ -16,7 +16,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.
@@ -63,7 +63,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.

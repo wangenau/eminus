@@ -344,7 +344,7 @@ def get_elf(scf):
 def get_reduced_gradient(scf, eps=0):
     """Calculate the reduced density gradient s.
 
-    Reference: Phys. Rev. Lett. 78, 1396.
+    Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         scf: SCF object.
