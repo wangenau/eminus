@@ -10,7 +10,7 @@ This implementation is focused on speed, rather than readability since these ope
 most time in most calculations. Notable differences to the default operators are:
 
 * Use Torch FFTs (we need to cast atoms.s to tuples for this)
-* No handle_spin_gracefully decorator to reduce function calls and casts
+* No handle_spin decorator to reduce function calls and casts
 * Call properties directly using their private attribute
 * Explicitly implement Idag and Jdag for one function call less and direct normalization
 * Optional GPU calculations
@@ -24,10 +24,10 @@ Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 import numpy as np
 
 from .. import config
-from ..utils import handle_k_indexable
+from ..utils import handle_k
 
 
-@handle_k_indexable
+@handle_k(mode='index')
 def I(atoms, W, ik=-1):
     """Backwards transformation from reciprocal space to real-space.
 
@@ -79,7 +79,7 @@ def I(atoms, W, ik=-1):
     return Finv.detach().cpu().numpy()
 
 
-@handle_k_indexable
+@handle_k(mode='index')
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
@@ -122,7 +122,7 @@ def J(atoms, W, ik=-1, full=True):
     return F
 
 
-@handle_k_indexable
+@handle_k(mode='index')
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backwards transformation from real-space to reciprocal space.
 
@@ -165,7 +165,7 @@ def Idag(atoms, W, ik=-1, full=False):
     return F
 
 
-@handle_k_indexable
+@handle_k(mode='index')
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 

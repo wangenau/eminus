@@ -10,7 +10,7 @@ from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
 from .logger import log
-from .utils import handle_k_gracefully, handle_k_reducable, handle_spin_gracefully, pseudo_uniform
+from .utils import handle_k, handle_spin, pseudo_uniform
 from .xc import get_vxc
 
 
@@ -30,8 +30,8 @@ def solve_poisson(atoms, n):
     return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
-@handle_k_gracefully
-@handle_spin_gracefully
+@handle_k
+@handle_spin
 def orth(atoms, W):
     """Orthogonalize coefficient matrix W.
 
@@ -105,7 +105,7 @@ def get_n_total(atoms, Y, n_spin=None):
     return n
 
 
-@handle_k_reducable
+@handle_k(mode='reduce')
 def get_n_spin(atoms, Y, ik):
     """Calculate the electronic density per spin channel.
 
@@ -129,7 +129,7 @@ def get_n_spin(atoms, Y, ik):
     return n
 
 
-@handle_k_reducable
+@handle_k(mode='reduce')
 def get_n_single(atoms, Y, ik):
     """Calculate the single-electron densities.
 

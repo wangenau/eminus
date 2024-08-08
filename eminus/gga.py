@@ -8,7 +8,7 @@ To mitigate this, easier (but slower) implementations have been added as comment
 
 import numpy as np
 
-from .utils import handle_k_reducable
+from .utils import handle_k
 
 
 def get_grad_field(atoms, field, real=True):
@@ -69,7 +69,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     return 1j * np.einsum('ir,ir->i', atoms.G, Gh)
 
 
-@handle_k_reducable
+@handle_k(mode='reduce')
 def get_tau(atoms, Y, ik):
     """Calculate the positive-definite kinetic energy densities per spin.
 

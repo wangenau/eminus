@@ -21,7 +21,7 @@ These operators can act on six different options, namely
 
 The active space is the truncated reciprocal space by restricting it with a sphere given by ecut.
 
-Every spin dependence will be handled with handle_spin_gracefully by calling the operators for each
+Every spin dependence will be handled with handle_spin by calling the operators for each
 spin individually. The same goes for the handling of k-points, while for k-points W is represented
 as a list of arrays. This gives the final indexing for the k-point k, spin s, and state n of
 W[ik][s, :, n].
@@ -33,11 +33,11 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_k_gracefully, handle_k_indexable, handle_spin_gracefully, handle_torch
+from .utils import handle_k, handle_spin, handle_torch
 
 
 # Spin handling is trivial for this operator
-@handle_k_gracefully
+@handle_k
 def O(atoms, W):
     """Overlap operator.
 
@@ -55,7 +55,7 @@ def O(atoms, W):
     return atoms.Omega * W
 
 
-@handle_spin_gracefully
+@handle_spin
 def L(atoms, W, ik=-1):
     """Laplacian operator with k-point dependency.
 
@@ -81,7 +81,7 @@ def L(atoms, W, ik=-1):
     return -atoms.Omega * Gk2 * W
 
 
-@handle_spin_gracefully
+@handle_spin
 def Linv(atoms, W):
     """Inverse Laplacian operator.
 
@@ -111,8 +111,8 @@ def Linv(atoms, W):
 
 
 @handle_torch
-@handle_k_indexable
-@handle_spin_gracefully
+@handle_k(mode='index')
+@handle_spin
 def I(atoms, W, ik=-1):
     """Backward transformation from reciprocal space to real-space.
 
@@ -163,8 +163,8 @@ def I(atoms, W, ik=-1):
 
 
 @handle_torch
-@handle_k_indexable
-@handle_spin_gracefully
+@handle_k(mode='index')
+@handle_spin
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
@@ -208,8 +208,8 @@ def J(atoms, W, ik=-1, full=True):
 
 
 @handle_torch
-@handle_k_indexable
-@handle_spin_gracefully
+@handle_k(mode='index')
+@handle_spin
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
@@ -234,8 +234,8 @@ def Idag(atoms, W, ik=-1, full=False):
 
 
 @handle_torch
-@handle_k_indexable
-@handle_spin_gracefully
+@handle_k(mode='index')
+@handle_spin
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -258,7 +258,7 @@ def Jdag(atoms, W, ik=-1):
     return Finv / n
 
 
-@handle_spin_gracefully
+@handle_spin
 def K(atoms, W, ik):
     """Preconditioning operator with k-point dependency.
 

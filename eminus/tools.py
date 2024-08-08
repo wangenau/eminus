@@ -9,7 +9,7 @@ from scipy.optimize import minimize_scalar, root_scalar
 from .dft import get_epsilon, get_epsilon_unocc
 from .gga import get_grad_field, get_tau
 from .logger import log
-from .utils import handle_k_gracefully, skip_k
+from .utils import handle_k
 
 
 def cutoff2gridspacing(E):
@@ -57,7 +57,7 @@ def center_of_mass(coords, masses=None):
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
 
 
-@handle_k_gracefully
+@handle_k
 def orbital_center(obj, psirs):
     """Calculate the orbital center of masses, e.g., from localized orbitals.
 
@@ -163,7 +163,7 @@ def get_ip(scf):
     return -epsilon[-1]
 
 
-@skip_k
+@handle_k(mode='skip')
 def check_ortho(obj, func, eps=1e-9):
     """Check the orthogonality condition for a set of functions.
 
@@ -199,7 +199,7 @@ def check_ortho(obj, func, eps=1e-9):
     return ortho_bool
 
 
-@skip_k
+@handle_k(mode='skip')
 def check_norm(obj, func, eps=1e-9):
     """Check the normalization condition for a set of functions.
 
@@ -229,7 +229,7 @@ def check_norm(obj, func, eps=1e-9):
     return norm_bool
 
 
-@skip_k
+@handle_k(mode='skip')
 def check_orthonorm(obj, func, eps=1e-9):
     """Check the orthonormality conditions for a set of functions.
 

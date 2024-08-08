@@ -143,7 +143,7 @@ def Ylm_real(l, m, G):  # noqa: C901, PLR0911
     raise ValueError(msg)
 
 
-def handle_spin_gracefully(func, *args, **kwargs):
+def handle_spin(func):
     """Handle spin calculating the function for each channel separately.
 
     This can only be applied if the only spin-dependent indexing is the wave function W.
@@ -156,10 +156,6 @@ def handle_spin_gracefully(func, *args, **kwargs):
 
     Args:
         func: Function that acts on spin-states.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        kwargs: Pass-through keyword arguments.
 
     Returns:
         Decorator.
@@ -174,106 +170,41 @@ def handle_spin_gracefully(func, *args, **kwargs):
     return decorator
 
 
-def handle_k_gracefully(func, *args, **kwargs):
-    """Handle k-points calculating the function for each channel separately.
+def handle_k(func=None, *, mode='gracefully'):
+    """Handle k-points calculating the function for each channel with different modes.
 
-    This uses the same principle as described in :func:`~eminus.utils.handle_spin_gracefully`.
-
-    Args:
-        func: Function that acts on k-point.
-        args: Pass-through arguments.
+    This uses the same principle as described in :func:`~eminus.utils.handle_spin`.
 
     Keyword Args:
-        kwargs: Pass-through keyword arguments.
+        func: Function that acts on k-points.
+        mode: How to handle the k-point dependency.
 
     Returns:
         Decorator.
     """
+    if func is None:
+        return functools.partial(handle_k, mode=mode)
 
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
-            return [func(obj, Wk, *args, **kwargs) for Wk in W]
-        return func(obj, W, *args, **kwargs)
-
-    return decorator
-
-
-def handle_k_indexable(func, *args, **kwargs):
-    """Handle k-points calculating the function for each channel with an index.
-
-    Similar to :func:`~eminus.utils.handle_k_gracefully`, but with using an explicit index in the
-    signature.
-
-    Args:
-        func: Function that acts on k-point.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Decorator.
-    """
-
-    @functools.wraps(func)
-    def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
-            return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
-        return func(obj, W, *args, **kwargs)
-
-    return decorator
-
-
-def handle_k_reducable(func, *args, **kwargs):
-    """Handle k-points calculating the function for each channel and reducing it.
-
-    Similar to :func:`~eminus.utils.handle_k_gracefully`, but with using an explicit index in the
-    signature and summing up all results in the end.
-
-    Args:
-        func: Function that acts on k-point.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Decorator.
-    """
-
-    @functools.wraps(func)
-    def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
-            # The Python sum allows summing single values and NumPy arrays elementwise
-            return sum(func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W))
-        return func(obj, W, *args, **kwargs)
-
-    return decorator
-
-
-def skip_k(func, *args, **kwargs):
-    """Handle calculations that do not support k-points.
-
-    Args:
-        func: Function that acts on k-point.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Decorator.
-    """
-
-    @functools.wraps(func)
-    def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
-            obj._atoms.kpts._assert_gamma_only()
-            ret = func(obj, W[0], *args, **kwargs)
-            if isinstance(ret, np.ndarray) and ret.ndim == 3:
-                return [ret]
-            return ret
+            # No explicit k-point indexing is needed
+            if mode == 'gracefully':
+                return [func(obj, Wk, *args, **kwargs) for Wk in W]
+            # Explicit k-point indexing is needed
+            if mode == 'index':
+                return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
+            # Explicit k-point indexing is needed and the result has to be summed up
+            if mode == 'reduce':
+                # The Python sum allows summing single values and NumPy arrays elementwise
+                return sum(func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W))
+            # No k-point dependency has been implemented, so skip it
+            if mode == 'skip':
+                obj._atoms.kpts._assert_gamma_only()
+                ret = func(obj, W[0], *args, **kwargs)
+                if isinstance(ret, np.ndarray) and ret.ndim == 3:
+                    return [ret]
+                return ret
         return func(obj, W, *args, **kwargs)
 
     return decorator

@@ -14,14 +14,11 @@ from eminus.utils import (
     add_maybe_none,
     atom2charge,
     get_lattice,
-    handle_k_gracefully,
-    handle_k_indexable,
-    handle_k_reducable,
-    handle_spin_gracefully,
+    handle_k,
+    handle_spin,
     handle_torch,
     molecule2list,
     pseudo_uniform,
-    skip_k,
     vector_angle,
     Ylm_real,
 )
@@ -132,83 +129,48 @@ def test_get_lattice():
         assert_equal(norm(vert[0] - vert[1]), np.sqrt(2))
 
 
-def test_handle_spin_gracefully():
-    """Test the test_handle_spin_gracefully decorator."""
+def test_handle_spin():
+    """Test the test_handle_spin decorator."""
 
-    @handle_spin_gracefully
-    def mock(obj, W):  # noqa: ARG001
+    @handle_spin
+    def mock(obj, W, kwarg=None):  # noqa: ARG001
+        assert kwarg is not None
         return W
 
     W = np.ones((1, 1, 1))
-    out = mock(None, W)
+    out = mock(None, W, kwarg='kwarg')
     assert_equal(out, W)
-    out = mock(None, W[0])
+    out = mock(None, W[0], kwarg='kwarg')
     assert_equal(out, W[0])
 
 
-def test_skip_k():
-    """Test the skip_k decorator."""
+@pytest.mark.parametrize('mode', ['gracefully', 'index', 'reduce', 'skip'])
+def test_handle_k(mode):
+    """Test the handle_k decorator."""
 
-    @skip_k
-    def mock(obj, W):  # noqa: ARG001
-        assert isinstance(W, np.ndarray)
+    @handle_k(mode=mode)
+    def mock(obj, W, ik=0, kwarg=None):  # noqa: ARG001
+        if mode == 'skip':  # skip should remove the outer list
+            assert isinstance(W, np.ndarray)
+        assert kwarg is not None
         return W
 
     atoms = Atoms('He', (0, 0, 0))
-    W = [np.ones((1, 1, 1))]
-    out = mock(atoms, W)
-    assert_equal(out, W)
-    out = mock(atoms, W[0])
+    if mode == 'skip':
+        W = [np.ones((1, 1, 1))]
+    else:
+        W = [np.ones((1, 1, 1))] * 2
+
+    out = mock(atoms, W, kwarg='kwarg')
+    if mode == 'reduce':
+        assert_equal(out, np.ones((1, 1, 1)) * 2)
+    else:
+        assert_equal(out, W)
+
+    out = mock(atoms, W[0], kwarg='kwarg')
     assert_equal(out, W[0])
-    out = mock(atoms, W[0][0])
+    out = mock(atoms, W[0][0], kwarg='kwarg')
     assert_equal(out, W[0][0])
-
-
-def test_handle_k_gracefully():
-    """Test the handle_k_gracefully decorator."""
-
-    @handle_k_gracefully
-    def mock(obj, W):  # noqa: ARG001
-        return W
-
-    def mock_val(obj, W):  # noqa: ARG001
-        return 0
-
-    W = [np.ones((1, 1, 1))]
-    out = mock(None, W)
-    assert_equal(out, W)
-    out = mock(None, W[0])
-    assert_equal(out, W[0])
-    out = mock_val(None, W)  # type: ignore [no-untyped-call]
-    assert_equal(out, 0)
-
-
-def test_handle_k_indexable():
-    """Test the handle_k_indexable decorator."""
-
-    @handle_k_indexable
-    def mock(obj, W, ik=0):  # noqa: ARG001
-        return W
-
-    W = [np.ones((1, 1, 1))] * 2
-    out = mock(None, W)
-    assert_equal(out, W)
-    out = mock(None, W[0])
-    assert_equal(out, W[0])
-
-
-def test_handle_k_reducable():
-    """Test the handle_k_reducable decorator."""
-
-    @handle_k_reducable
-    def mock(obj, W, ik=0):  # noqa: ARG001
-        return W
-
-    W = [np.ones((1, 1, 1))] * 2
-    out = mock(None, W)
-    assert_equal(out, np.ones((1, 1, 1)) * 2)
-    out = mock(None, W[0])
-    assert_equal(out, W[0])
 
 
 def test_handle_torch():

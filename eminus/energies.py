@@ -13,7 +13,7 @@ from .extras import dispersion
 from .gga import get_grad_field, get_tau
 from .logger import log
 from .tools import electronic_entropy
-from .utils import handle_k_reducable
+from .utils import handle_k
 from .xc import get_exc
 
 
@@ -73,7 +73,7 @@ def get_E(scf):
     return scf.energies.Etot
 
 
-@handle_k_reducable
+@handle_k(mode='reduce')
 def get_Ekin(atoms, Y, ik):
     """Calculate the kinetic energy.
 
@@ -160,7 +160,7 @@ def get_Eloc(scf, n):
     return np.real(np.vdot(scf.Vloc, n))
 
 
-@handle_k_reducable
+@handle_k(mode='reduce')
 def get_Enonloc(scf, Y, ik):
     """Calculate the non-local GTH energy contribution.
 

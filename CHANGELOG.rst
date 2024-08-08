@@ -23,6 +23,7 @@ dev
    - Modernize CI pipelines
    - Add CI release pipelines
    - Move tox.ini and setup.py contents to pyproject.toml
+   - Merge all handle_k decorators into one
 - Miscellaneous
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer

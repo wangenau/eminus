@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable, Sequence
-from typing import Any, overload, Protocol
+from typing import Any, Literal, overload, Protocol
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -40,31 +40,14 @@ def Ylm_real(
     m: int,
     G: NDArray[float64],
 ) -> NDArray[float64]: ...
-def handle_spin_gracefully(
+def handle_spin(
     func: _HandleType,
-    *args: Any,
-    **kwargs: Any,
 ) -> _HandleType: ...
-def handle_k_gracefully(
-    func: _HandleType,
-    *args: Any,
-    **kwargs: Any,
-) -> _HandleType: ...
-def handle_k_indexable(
-    func: _HandleType,
-    *args: Any,
-    **kwargs: Any,
-) -> _HandleType: ...
-def handle_k_reducable(
-    func: _HandleType,
-    *args: Any,
-    **kwargs: Any,
-) -> _HandleType: ...
-def skip_k(
-    func: _HandleType,
-    *args: Any,
-    **kwargs: Any,
-) -> _HandleType: ...
+def handle_k(
+    func: _HandleType | None = ...,
+    *,
+    mode: Literal['gracefully', 'index', 'reduce', 'skip'] = ...,
+) -> Any: ...
 def handle_torch(
     func: Callable[..., Any],
     *args: Any,

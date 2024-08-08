@@ -7,10 +7,10 @@ from scipy.linalg import eig, expm, norm, qr
 from scipy.stats import unitary_group
 
 from .logger import log
-from .utils import handle_spin_gracefully, skip_k
+from .utils import handle_k, handle_spin
 
 
-@skip_k
+@handle_k(mode='skip')
 def eval_psi(atoms, psi, r):
     """Evaluate orbitals at given coordinate points.
 
@@ -29,7 +29,7 @@ def eval_psi(atoms, psi, r):
     return psi_Trs[0]
 
 
-@skip_k
+@handle_k(mode='skip')
 def get_R(atoms, psi, fods):
     """Calculate transformation matrix to build Fermi orbitals.
 
@@ -55,7 +55,7 @@ def get_R(atoms, psi, fods):
     return R
 
 
-@skip_k
+@handle_k(mode='skip')
 def get_FO(atoms, psi, fods):
     """Calculate Fermi orbitals from Kohn-Sham orbitals.
 
@@ -83,7 +83,7 @@ def get_FO(atoms, psi, fods):
     return fo
 
 
-@handle_spin_gracefully
+@handle_spin
 def get_S(atoms, psirs):
     """Calculate overlap matrix between orbitals.
 
@@ -105,7 +105,7 @@ def get_S(atoms, psirs):
     return S
 
 
-@skip_k
+@handle_k(mode='skip')
 def get_FLO(atoms, psi, fods):
     """Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
 
@@ -133,7 +133,7 @@ def get_FLO(atoms, psi, fods):
     return flo
 
 
-@skip_k
+@handle_k(mode='skip')
 def get_scdm(atoms, psi):
     """Calculate localized orbitals via QR decomposition, as given in the SCDM method.
 
@@ -158,8 +158,8 @@ def get_scdm(atoms, psi):
     return scdm
 
 
-@skip_k
-@handle_spin_gracefully
+@handle_k(mode='skip')
+@handle_spin
 def wannier_cost(atoms, psirs):
     """Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
 
@@ -183,8 +183,8 @@ def wannier_cost(atoms, psirs):
     return costs
 
 
-@skip_k
-@handle_spin_gracefully
+@handle_k(mode='skip')
+@handle_spin
 def wannier_center(atoms, psirs):
     """Calculate Wannier centers, i.e., the expectation values of r.
 
@@ -206,8 +206,8 @@ def wannier_center(atoms, psirs):
     return centers
 
 
-@skip_k
-@handle_spin_gracefully
+@handle_k(mode='skip')
+@handle_spin
 def second_moment(atoms, psirs):
     """Calculate the second moments, i.e., the expectation values of r^2.
 
@@ -228,7 +228,7 @@ def second_moment(atoms, psirs):
     return moments
 
 
-@handle_spin_gracefully
+@handle_spin
 def wannier_supercell_matrices(atoms, psirs):
     """Calculate matrices for the supercell Wannier localization.
 
@@ -302,8 +302,8 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     return x + y + z
 
 
-@skip_k
-@handle_spin_gracefully
+@handle_k(mode='skip')
+@handle_spin
 def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False, seed=None):
     """Steepest descent supercell Wannier localization.
 
