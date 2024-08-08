@@ -134,6 +134,7 @@ def get_FLO(atoms, psi, fods):
 
 
 @handle_k(mode='skip')
+@handle_spin
 def get_scdm(atoms, psi):
     """Calculate localized orbitals via QR decomposition, as given in the SCDM method.
 
@@ -149,13 +150,10 @@ def get_scdm(atoms, psi):
     # Transform psi to real-space
     psi_rs = atoms.I(psi, 0)
 
-    scdm = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
-    for spin in range(atoms.occ.Nspin):
-        # Do the QR factorization
-        Q, _, _ = qr(psi_rs[spin].T.conj(), pivoting=True)
-        # Apply the transformation
-        scdm[spin] = psi_rs[spin] @ Q
-    return scdm
+    # Do the QR factorization
+    Q, _, _ = qr(psi_rs.T.conj(), pivoting=True)
+    # Apply the transformation
+    return psi_rs @ Q
 
 
 @handle_k(mode='skip')

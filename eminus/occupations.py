@@ -344,16 +344,16 @@ class Occupations:
         # If we have filled too much correct it in both spin channels
         # The following procedure ensures that we have no negative fillings
         rest = np.sum(self._f, axis=1) - elecs
-        for s in range(self.Nspin):
+        for spin in range(self.Nspin):
             i = 1
-            while rest[s] > 0:
+            while rest[spin] > 0:
                 # If the occupation is greater than the rest we are done with removing electrons
-                if self._f[s, -i] >= rest[s]:
-                    self._f[s, -i] -= rest[s]
+                if self._f[spin, -i] >= rest[spin]:
+                    self._f[spin, -i] -= rest[spin]
                     break
                 # Otherwise zero out the state, update the rest, and move to the next state
-                rest[s] -= self._f[s, -i]
-                self._f[s, -i] = 0
+                rest[spin] -= self._f[spin, -i]
+                self._f[spin, -i] = 0
                 i += 1
 
         if self.smearing > 0:
