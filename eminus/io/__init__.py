@@ -6,6 +6,7 @@ from .cube import read_cube, write_cube
 from .gth import read_gth
 from .json import read_json, write_json
 from .pdb import create_pdb_str, write_pdb
+from .poscar import read_poscar, write_poscar
 from .traj import read_traj, write_traj
 from .xyz import read_xyz, write_xyz
 
@@ -15,12 +16,14 @@ __all__ = [
     'read_cube',
     'read_gth',
     'read_json',
+    'read_poscar',
     'read_traj',
     'read_xyz',
     'write',
     'write_cube',
     'write_json',
     'write_pdb',
+    'write_poscar',
     'write_traj',
     'write_xyz',
 ]
@@ -40,6 +43,8 @@ def read(filename, *args, **kwargs):
         return read_json(filename, *args, **kwargs)
     if filename.endswith('.xyz'):
         return read_xyz(filename, *args, **kwargs)
+    if 'POSCAR' in filename:
+        return read_poscar(filename, *args, **kwargs)
     if filename.endswith(('.trj', '.traj')):
         return read_traj(filename, *args, **kwargs)
     if filename.endswith(('.cub', '.cube')):
@@ -63,6 +68,8 @@ def write(obj, filename, *args, **kwargs):
         return write_json(obj, filename, *args, **kwargs)
     if filename.endswith('.xyz'):
         return write_xyz(obj, filename, *args, **kwargs)
+    if 'POSCAR' in filename:
+        return write_poscar(obj, filename, *args, **kwargs)
     if filename.endswith(('.trj', '.traj')):
         return write_traj(obj, filename, *args, **kwargs)
     if filename.endswith(('.cub', '.cube')):

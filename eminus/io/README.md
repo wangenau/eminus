@@ -6,11 +6,12 @@ SPDX-License-Identifier: Apache-2.0
 
 File input and output functionalities.
 
-| File    | Description |
-| :-----: | :---------: |
-| cube.py | CUBE file handling |
-| gth.py  | GTH file handling |
-| json.py | JSON file handling |
-| pdb.py  | PDB file handling |
-| traj.py | TRAJ file handling |
-| xyz.py  | XYZ file handling |
+| File      | Description |
+| :-------: | :---------: |
+| cube.py   | CUBE file handling |
+| gth.py    | GTH file handling |
+| json.py   | JSON file handling |
+| pdb.py    | PDB file handling |
+| poscar.py | POSCAR file handling |
+| traj.py   | TRAJ file handling |
+| xyz.py    | XYZ file handling |

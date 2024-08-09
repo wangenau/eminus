@@ -40,7 +40,7 @@ class BaseObject:
             kwargs: Pass-through keyword arguments.
         """
         # Save the object as a JSON file if no extension is given
-        if not pathlib.Path(filename).suffix:
+        if not pathlib.Path(filename).suffix and 'POSCAR' not in filename:
             filename += '.json'
         return eminus.io.write(self, filename, *args, **kwargs)
 

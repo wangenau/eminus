@@ -6,6 +6,7 @@ import copy
 import os
 import pathlib
 
+import numpy as np
 from numpy.testing import assert_allclose, assert_equal
 import pytest
 
@@ -14,12 +15,14 @@ from eminus.io import (
     read,
     read_cube,
     read_json,
+    read_poscar,
     read_traj,
     read_xyz,
     write,
     write_cube,
     write_json,
     write_pdb,
+    write_poscar,
     write_traj,
     write_xyz,
 )
@@ -130,6 +133,24 @@ def test_pdb(Nspin):
 
 
 @pytest.mark.parametrize('Nspin', [1, 2])
+def test_poscar(Nspin):
+    """Test POSCAR file output and input."""
+    filename = 'POSCAR'
+    fods = [atoms.pos] * Nspin
+    write(atoms, filename, fods=fods)
+    atom, pos, a = read(filename)
+    os.remove(filename)
+    # Atoms get sorted in the write function
+    if Nspin == 1:
+        assert sorted(atoms.atom + ['X'] * atoms.Natoms) == sorted(atom)
+    else:
+        assert sorted(atoms.atom + ['X'] * atoms.Natoms + ['He'] * atoms.Natoms) == sorted(atom)
+    assert_allclose(atoms.a, a)
+    # Also coordinates get sorted, stick with the sum of coordinate contributions
+    assert_allclose(np.sum(atoms.pos, axis=0), np.sum(pos[: atoms.Natoms], axis=0), atol=1e-6)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
 def test_traj(Nspin):
     """Test TRAJ file output and input."""
     filename = 'test.traj'
@@ -185,6 +206,9 @@ def test_filename_ending():
     os.remove(f'{filename}.json')
     write_pdb(atoms, filename)
     os.remove(f'{filename}.pdb')
+    write_poscar(atoms, filename)
+    read_poscar(filename)
+    os.remove(f'{filename}.POSCAR')
     write_traj(atoms, filename)
     read_traj(filename)
     os.remove(f'{filename}.traj')
@@ -197,6 +221,8 @@ def test_write_method():
     os.remove(f'{filename}.json')
     atoms.write(filename + '.xyz')
     os.remove(f'{filename}.xyz')
+    atoms.write(filename + '.POSCAR')
+    os.remove(f'{filename}.POSCAR')
     scf.write(filename + '.json')
     os.remove(f'{filename}.json')
     scf.write(filename + '.cube', scf.n)

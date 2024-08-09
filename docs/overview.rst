@@ -102,6 +102,7 @@ Features
       <li style="background:#dbdb8d">XYZ</li>
       <li style="background:#dbdb8d">TRAJ</li>
       <li style="background:#dbdb8d">CUBE</li>
+      <li style="background:#dbdb8d">POSCAR</li>
       <li style="background:#dbdb8d">PDB</li>
       <li style="background:#dbdb8d">JSON</li>
    </ul>

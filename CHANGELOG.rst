@@ -16,6 +16,7 @@ dev
    - Add non-iterative SCDM localization
       - Use them as the initial guess for Wannier localizations
       - Use Wannier orbital COMs for FLO generations if no FODs are given
+   - Add POSCAR read and write functions
 - Coding style
    - Reformat the codebase using Ruff
    - Activate more linting rules

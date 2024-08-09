@@ -41,6 +41,7 @@ Modules
    eminus.io.gth
    eminus.io.json
    eminus.io.pdb
+   eminus.io.poscar
    eminus.io.traj
    eminus.io.xyz
    eminus.xc
