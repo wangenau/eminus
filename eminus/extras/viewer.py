@@ -15,7 +15,7 @@ from ..dft import get_epsilon, get_epsilon_unocc
 from ..io import create_pdb_str, read_cube, read_traj, read_xyz
 from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
 from ..logger import log
-from ..tools import get_Efermi, get_isovalue
+from ..tools import get_dos, get_Efermi, get_isovalue
 from ..units import ha2ev
 from ..utils import get_lattice
 from .fods import split_fods
@@ -622,7 +622,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         scf: SCF object.
 
     Keyword Args:
-        spin: Spin indices.
+        spin: Spin channel.
         size: Widget size.
 
     Returns:
@@ -704,6 +704,74 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         xaxis_range=(0, k_axis[-1]),
         xaxis_title='k-path',
         yaxis_title='E - E<sub>F</sub> [eV]',
+        hoverlabel_bgcolor='black',
+        template='none',
+    )
+    if not executed_in_notebook():
+        fig.show()
+    return fig
+
+
+def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
+    """Plot density of states.
+
+    Reference: https://plotly.com/python
+
+    Args:
+        scf: SCF object.
+
+    Keyword Args:
+        spin: Spin channel.
+        size: Widget size.
+        kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Viewable object.
+    """
+    try:
+        import plotly.graph_objects as go
+    except ImportError:
+        log.exception(
+            'Necessary dependencies not found. To use this module, '
+            'install them with "pip install eminus[viewer]".\n\n'
+        )
+        raise
+    e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
+    Efermi = ha2ev(get_Efermi(scf))
+
+    spin = np.atleast_1d(spin)
+    colors = ('blue', 'red')
+
+    fig = go.Figure()
+    for s in spin:
+        e, dos_e = get_dos(e_occ, scf.kpts.wk, spin=s, **kwargs)
+        fig.add_trace(
+            go.Scatter(
+                x=e - Efermi,
+                y=dos_e,
+                mode='lines+markers',
+                name=f'Spin {s + 1}',
+                marker_color=colors[s],
+            )
+        )
+
+    fig.update_layout(
+        width=size[0],
+        height=size[1],
+        font={'size': 20},
+        xaxis={
+            'zeroline': False,
+            'showline': True,
+            'mirror': True,
+            'ticks': 'outside',
+        },
+        yaxis={
+            'showline': True,
+            'mirror': True,
+            'ticks': 'outside',
+        },
+        xaxis_title='E - E<sub>F</sub> [eV]',
+        yaxis_title='DOS',
         hoverlabel_bgcolor='black',
         template='none',
     )

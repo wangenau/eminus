@@ -102,3 +102,10 @@ def electronic_entropy(
     mu: float,
     kbT: float,
 ) -> _AnyFloat: ...
+def get_dos(
+    epsilon: NDArray[float64],
+    wk: NDArray[float64],
+    spin: int = ...,
+    npts: int = ...,
+    width: float = ...,
+) -> tuple[NDArray[float64], NDArray[float64]]: ...

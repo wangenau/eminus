@@ -24,6 +24,7 @@ from .symmetry import symmetrize
 from .viewer import (
     executed_in_notebook,
     plot_bandstructure,
+    plot_dos,
     view,
     view_atoms,
     view_contour,
@@ -37,6 +38,7 @@ __all__ = [
     'get_fods',
     'libxc_functional',
     'plot_bandstructure',
+    'plot_dos',
     'remove_core_fods',
     'split_fods',
     'symmetrize',

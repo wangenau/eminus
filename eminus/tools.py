@@ -156,7 +156,7 @@ def get_ip(scf):
     Returns:
         Ionization potential in Hartree.
     """
-    scf.atoms.kpts._assert_gamma_only()
+    scf.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
     # Account for spin-polarized calculations
     epsilon = np.sort(np.ravel(epsilon))
@@ -525,3 +525,35 @@ def electronic_entropy(E, mu, kbT):
         return 0
     f = fermi_distribution(E, mu, kbT)
     return f * np.log(f) + (1 - f) * np.log(1 - f)
+
+
+def get_dos(epsilon, wk, spin=0, npts=500, width=0.1):
+    """Calculate the total density of states.
+
+    Reference: https://gitlab.com/gpaw/gpaw/-/blob/master/gpaw/calculator.py
+
+    Args:
+        epsilon: Eigenenergies.
+        wk: Chemical energy or Fermi energy.
+
+    Keyword Args:
+        spin: Spin channel.
+        npts: Number of energy discretizations.
+        width: Gaussian width.
+
+    Returns:
+        Eigenenergies and DOS.
+    """
+
+    def delta(x, x0, width):
+        """Gaussian of given width centered at x0."""
+        return np.exp(-(((x - x0) / width) ** 2)) / (np.sqrt(np.pi) * width)
+
+    energies = epsilon[:, spin].flatten()
+    emin = np.min(energies) - 5 * width
+    emax = np.max(energies) + 5 * width
+    e = np.linspace(emin, emax, npts)
+    dos_e = np.zeros(npts)
+    for e0, w in zip(energies, wk):
+        dos_e += w * delta(e, e0, width)
+    return e, dos_e

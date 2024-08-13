@@ -19,6 +19,7 @@ from eminus.tools import (
     cutoff2gridspacing,
     get_bandgap,
     get_dipole,
+    get_dos,
     get_Efermi,
     get_elf,
     get_ip,
@@ -232,6 +233,17 @@ def test_get_bandgap():
     scf_band.converge_empty_bands(Nempty=1)
     Eg = get_bandgap(scf_band)
     assert_allclose(Eg, 0.3805155)
+
+
+def test_get_dos():
+    """Test the DOS calculation."""
+    assert hasattr(scf_band, '_precomputed')
+    e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
+    e, e_dos = get_dos(e_occ, scf_band.kpts.wk, spin=0, npts=500, width=0.1)
+    # The maximum of the DOS should be close to the maximum eigenvalue in this case
+    assert_allclose(np.max(e_occ), e[np.argmax(e_dos)], atol=1e-2)
+    assert np.min(e) < np.min(e_occ)
+    assert np.max(e) > np.max(e_occ)
 
 
 if __name__ == '__main__':

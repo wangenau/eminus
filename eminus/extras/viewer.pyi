@@ -48,6 +48,12 @@ def plot_bandstructure(
     spin: int | IntArray = ...,
     size: IntArray = ...,
 ) -> Any: ...
+def plot_dos(
+    scf: SCF,
+    spin: int | IntArray = ...,
+    size: IntArray = ...,
+    **kwargs: Any,
+) -> Any: ...
 def view_kpts(
     kpts: KPoints,
     path: bool = ...,

@@ -31,6 +31,7 @@ dev
    - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Allow plotting densities in viewer functions for all unit cell types
    - Add an option to plot both spin channels in band structure plots
+   - Add DOS calculation and plot functions
    - Add pass-through keyword arguments in the Cell creation
    - Sync GTH files (this changes values for Na-q9)
    - Set default values for uninitialized SCF attributes to None

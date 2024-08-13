@@ -397,7 +397,7 @@ def get_Eentropy(scf, epsilon, Efermi):
     occ = scf.atoms.occ
 
     Eentropy = 0
-    for ik in range(scf.atoms.kpts.Nk):
+    for ik in range(scf.kpts.Nk):
         for spin in range(occ.Nspin):
             for i in range(occ.Nstate):
                 # Beware the sign change, it is handled in the electronic_entropy function
