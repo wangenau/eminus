@@ -23,12 +23,36 @@ def test_xc():
     scf = SCF(atoms, xc='LDA,VWN')
     assert scf.xc == ['lda_x', 'lda_c_vwn']
     assert scf.xc_type == 'lda'
+    assert scf.xc_params_defaults == {'A': 0.0310907, 'b': 3.72744, 'c': 12.9352, 'x0': -0.10498}
 
     scf.xc = 'PBE'
     assert scf.xc_type == 'gga'
+    assert scf.xc_params_defaults == {'beta': 0.06672455060314922, 'mu': 0.2195149727645171}
 
     scf = SCF(atoms, xc=',')
     assert scf.xc == ['mock_xc', 'mock_xc']
+    assert scf.xc_params_defaults == {}
+
+
+def test_xc_params():
+    """Test the custom xc parameters."""
+    scf = SCF(atoms, xc='pbesol', opt={'sd': 1})
+    scf.run()
+    ref = scf.energies.Etot
+    scf = SCF(atoms, xc='pbe', opt={'sd': 1})
+    scf.xc_params = {
+        'beta': 0.046,  # PBEsol parameter
+        'mu': 10 / 81,  # PBEsol parameter
+        'mock': None,  # This should print a warning
+    }
+    scf.run()
+    assert scf.energies.Etot == ref
+
+    # Make sure default parameters are viable
+    scf.xc_params = None
+    scf.run()
+    scf.xc_params = {}
+    scf.run()
 
 
 def test_pot():

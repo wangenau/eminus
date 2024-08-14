@@ -8,7 +8,7 @@ from numpy.testing import assert_allclose
 import pytest
 
 from eminus import config
-from eminus.xc import get_xc, parse_functionals, parse_xc_type
+from eminus.xc import get_xc, get_xc_defaults, parse_functionals, parse_xc_type
 
 
 @pytest.mark.parametrize(
@@ -104,6 +104,11 @@ def test_libxc_str():
     e_test, v_test, _, _ = get_xc('l:1,l:7', n_spin, 1)
     assert_allclose(e_out, e_test)
     assert_allclose(v_out, v_test)
+
+
+def test_get_xc_defaults():
+    """Test that the xc defaults are correctly parsed."""
+    assert get_xc_defaults('svwn5') == {'A': 0.0310907, 'b': 3.72744, 'c': 12.9352, 'x0': -0.10498}
 
 
 if __name__ == '__main__':

@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 """Utility functions for exchange-correlation functionals."""
 
+import inspect
+import sys
+
 import numpy as np
 
 from .. import config
@@ -21,7 +24,7 @@ from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
 
 
-def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
+def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
     """Handle and get exchange-correlation functionals.
 
     Args:
@@ -32,6 +35,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     Keyword Args:
         dn_spin: Real-space gradient of densities per spin channel.
         tau: Real-space kinetic energy densities per spin channel.
+        xc_params: Exchange-correlation functional parameters.
         dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
@@ -40,6 +44,8 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     if isinstance(xc, str):
         xc = parse_functionals(xc)
     f_exch, f_corr = xc
+    if xc_params is None:
+        xc_params = {}
 
     # Only use non-zero values of the density
     n = np.sum(n_spin, axis=0)
@@ -60,13 +66,13 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
             from ..extras.libxc import libxc_functional
 
             fxc = fxc.split(':')[-1]
-            exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau)
+            exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau, xc_params)
         # ...or use an internal functional
         else:
             if Nspin == 2 and fxc != 'mock_xc':
                 fxc += '_spin'
             exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](
-                n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin
+                n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params
             )
             # Map the non-zero values back to the right dimension
             exc = np.zeros_like(n)
@@ -89,7 +95,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     return ex + ec, vx + vc, add_maybe_none(vsigmax, vsigmac), add_maybe_none(vtaux, vtauc)
 
 
-def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
+def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
     """Get the exchange-correlation energy density.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
@@ -102,16 +108,17 @@ def get_exc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     Keyword Args:
         dn_spin: Real-space gradient of densities per spin channel.
         tau: Real-space kinetic energy densities per spin channel.
+        xc_params: Exchange-correlation functional parameters.
         dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
         Exchange-correlation energy potential.
     """
-    exc, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
+    exc, _, _, _ = get_xc(xc, n_spin, Nspin, dn_spin, tau, xc_params, dens_threshold)
     return exc
 
 
-def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
+def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
     """Get the exchange-correlation potential.
 
     This is a convenience function to interface :func:`~eminus.xc.utils.get_xc`.
@@ -124,12 +131,13 @@ def get_vxc(xc, n_spin, Nspin, dn_spin=None, tau=None, dens_threshold=0):
     Keyword Args:
         dn_spin: Real-space gradient of densities per spin channel.
         tau: Real-space kinetic energy densities per spin channel.
+        xc_params: Exchange-correlation functional parameters.
         dens_threshold: Do not treat densities smaller than the threshold.
 
     Returns:
         Exchange-correlation energy density.
     """
-    _, vxc, vsigma, vtau = get_xc(xc, n_spin, Nspin, dn_spin, tau, dens_threshold)
+    _, vxc, vsigma, vtau = get_xc(xc, n_spin, Nspin, dn_spin, tau, xc_params, dens_threshold)
     return vxc, vsigma, vtau
 
 
@@ -264,6 +272,63 @@ def parse_xc_pyscf(xc_id):
     if is_meta_gga(xc_id):
         return 4
     return -1
+
+
+def get_xc_defaults(xc):
+    """Get the default parameters and values for a given set of functionals.
+
+    Args:
+        xc: Exchange and correlation identifier, separated by a comma.
+
+    Returns:
+        Default parameters and values.
+    """
+    if isinstance(xc, str):
+        xc = parse_functionals(xc)
+
+    # Names of special kewyword arguments that should not be used in xc_params
+    SPECIAL_NAMES = ['dn_spin', 'Nspin']
+
+    params = {}
+    for func in xc:
+        # If pylibxc functionals are used determine the default values from it
+        if ':' in func:
+            # This only works for pylibxc, not with PySCF
+            if not config.use_pylibxc or 'pylibxc' not in sys.modules:
+                msg = 'ext_params only work with pylibxc as the libxc backend, not with pyscf.'
+                raise NotImplementedError(msg)
+            from pylibxc import LibXCFunctional
+
+            fxc = func.split(':')[-1]
+            try:
+                f_xc = LibXCFunctional(int(fxc), 1)
+            except ValueError:
+                f_xc = LibXCFunctional(fxc, 1)
+            fxc_params = dict(zip(f_xc.get_ext_param_names(), f_xc.get_ext_param_default_values()))
+
+        # Analyze the signature for implemented functionals
+        if func in IMPLEMENTED:
+            sig = inspect.signature(IMPLEMENTED[func])
+            fxc_params = {
+                param.name: param.default
+                for param in sig.parameters.values()
+                if param.default is not inspect.Parameter.empty
+            }
+
+        # Remove special names from the parsed parameters
+        for special in SPECIAL_NAMES:
+            if special in fxc_params:
+                del fxc_params[special]
+
+        # Append all parameters, warn if a parameter has been used before
+        for name in fxc_params:
+            if name in params:
+                log.warning(
+                    f'External parameter "{name}" is used in the exchange AND correlation part. '
+                    'It will be passed to both functionals if used in xc_params.'
+                )
+            params[name] = fxc_params[name]
+    return params
 
 
 def get_zeta(n_spin):

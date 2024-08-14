@@ -256,7 +256,7 @@ def H_precompute(scf, W):
     else:
         tau = None
     phi = solve_poisson(atoms, n)
-    vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.occ.Nspin, dn_spin, tau)
+    vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.occ.Nspin, dn_spin, tau, scf.xc_params)
     return dn_spin, phi, vxc, vsigma, vtau
 
 

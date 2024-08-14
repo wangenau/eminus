@@ -140,7 +140,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     """
     atoms = scf.atoms
     if exc is None:
-        exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau)
+        exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
     return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
 

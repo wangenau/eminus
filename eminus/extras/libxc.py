@@ -19,7 +19,7 @@ from .. import config
 from ..logger import log
 
 
-def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
+def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
     """Handle Libxc exchange-correlation functionals via pylibxc.
 
     Reference: SoftwareX 7, 1.
@@ -32,6 +32,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     Keyword Args:
         dn_spin: Real-space gradient of densities per spin channel.
         tau: Real-space kinetic energy densities per spin channel.
+        xc_params: Exchange-correlation functional parameters.
 
     Returns:
         Exchange-correlationenergy density and potentials.
@@ -41,13 +42,27 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
             raise AssertionError  # noqa: TRY301
         from pylibxc import LibXCFunctional
     except (ImportError, AssertionError):
-        return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau)
+        return pyscf_functional(xc, n_spin, Nspin, dn_spin, tau, xc_params)
 
     # Libxc functionals have one integer and one string identifier
     try:
         func = LibXCFunctional(int(xc), Nspin)
     except ValueError:
         func = LibXCFunctional(xc, Nspin)
+
+    # Set the external Libxc parameters
+    if xc_params is not None and xc_params != {}:
+        param_names = func.get_ext_param_names()
+        param_defaults = func.get_ext_param_default_values()
+        params = []
+        for i, name in enumerate(param_names):
+            if name in xc_params:
+                # pylibxc uses lists as parameters, unravel the parameters from our dictionary
+                params.append(xc_params[name])
+            else:
+                # If parameters are not given use the defaults since selections are not allowed
+                params.append(param_defaults[i])
+        func.set_ext_params(params)
 
     if dn_spin is None:
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
@@ -85,7 +100,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     return exc, vxc, None, None
 
 
-def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
+def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
     """Handle Libxc exchange-correlation functionals via PySCF.
 
     Reference: WIREs Comput. Mol. Sci. 8, e1340.
@@ -98,6 +113,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
     Keyword Args:
         dn_spin: Real-space gradient of densities per spin channel.
         tau: Real-space kinetic energy densities per spin channel.
+        xc_params: Exchange-correlation functional parameters.
 
     Returns:
         Exchange-correlation energy density and potentials.
@@ -110,6 +126,9 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None):
             'install them with "pip install eminus[libxc]".\n\n'
         )
         raise
+
+    if xc_params is not None:
+        log.warning('xc_params are not supported when using PySCF as the Libxc backend.')
 
     if dn_spin is None:
         # For LDAs we only need the spin densities that are already in the needed shape

@@ -26,6 +26,7 @@ dev
    - Move tox.ini and setup.py contents to pyproject.toml
    - Merge all handle_k decorators into one
 - Miscellaneous
+   - Allow setting of external functional parameters (internal and in pylibxc)
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
    - Add view and write class methods to Atoms, SCF, and KPoints objects

@@ -27,6 +27,7 @@ def get_xc(
     Nspin: int,
     dn_spin: _DnOrNone = ...,
     tau: _TauOrNone = ...,
+    xc_params: dict[str, Any] | None = ...,
     dens_threshold: float = ...,
 ) -> tuple[NDArray[float64], NDArray[float64], _DnOrNone, _TauOrNone]: ...
 def get_exc(
@@ -35,6 +36,7 @@ def get_exc(
     Nspin: int,
     dn_spin: _DnOrNone = ...,
     tau: _TauOrNone = ...,
+    xc_params: dict[str, Any] | None = ...,
     dens_threshold: float = ...,
 ) -> NDArray[float64]: ...
 def get_vxc(
@@ -43,12 +45,14 @@ def get_vxc(
     Nspin: int,
     dn_spin: _DnOrNone = ...,
     tau: _TauOrNone = ...,
+    xc_params: dict[str, Any] | None = ...,
     dens_threshold: float = ...,
 ) -> tuple[NDArray[float64], _DnOrNone, _TauOrNone]: ...
 def parse_functionals(xc: str) -> list[str]: ...
 def parse_xc_type(xc: str) -> str: ...
 def parse_xc_libxc(xc_id: int | str) -> str: ...
 def parse_xc_pyscf(xc_id: int | str) -> str: ...
+def get_xc_defaults(xc: str | Sequence[str]) -> dict[str, Any]: ...
 def get_zeta(n_spin: NDArray[float64]) -> NDArray[float64]: ...
 def mock_xc(
     n: NDArray[float64],

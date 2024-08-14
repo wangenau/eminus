@@ -7,7 +7,7 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose
 import pytest
 
-from eminus.xc import get_exc, get_vxc
+from eminus.xc import get_exc, get_vxc, get_xc_defaults
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
@@ -64,6 +64,43 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
     dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
     _, _, vsigma_out, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
+    assert_allclose(vsigma_out, vsigma_test)
+
+
+@pytest.mark.parametrize('Nspin', [1, 2])
+def test_libxc_ext_params(Nspin):
+    """Test the custom xc parameters in libxc."""
+    pytest.importorskip('pylibxc', reason='pylibxc not installed, skip tests')
+    from eminus.extras import libxc_functional
+
+    assert get_xc_defaults(':577') == {'T': 0}
+    get_xc_defaults(':18,:21')  # This should print a warning
+
+    n_spin = n_tests[Nspin]
+    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    xc_params = {
+        '_beta': 0.046,  # PBEsol parameter
+        '_mu': 10 / 81,  # PBEsol parameter
+    }
+
+    # Make sure default parameters are viable
+    libxc_functional('GGA_X_PBE_SOL', n_spin, Nspin, dn_spin=dn_spin, xc_params=None)
+    libxc_functional('GGA_X_PBE_SOL', n_spin, Nspin, dn_spin=dn_spin, xc_params={})
+
+    e_out, v_out, vsigma_out, _ = libxc_functional('GGA_X_PBE_SOL', n_spin, Nspin, dn_spin=dn_spin)
+    e_test, v_test, vsigma_test, _ = libxc_functional(
+        'GGA_X_PBE', n_spin, Nspin, dn_spin=dn_spin, xc_params=xc_params
+    )
+    assert_allclose(e_out, e_test)
+    assert_allclose(v_out, v_test)
+    assert_allclose(vsigma_out, vsigma_test)
+
+    e_out, v_out, vsigma_out, _ = libxc_functional('GGA_C_PBE_SOL', n_spin, Nspin, dn_spin=dn_spin)
+    e_test, v_test, vsigma_test, _ = libxc_functional(
+        'GGA_C_PBE', n_spin, Nspin, dn_spin=dn_spin, xc_params=xc_params
+    )
+    assert_allclose(e_out, e_test)
+    assert_allclose(v_out, v_test)
     assert_allclose(vsigma_out, vsigma_test)
 
 

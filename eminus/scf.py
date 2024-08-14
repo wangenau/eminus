@@ -27,7 +27,7 @@ from .potentials import IMPLEMENTED as ALL_POTENTIALS, init_pot
 from .tools import center_of_mass, get_spin_squared
 from .utils import BaseObject
 from .version import info
-from .xc import get_xc, parse_functionals, parse_xc_type
+from .xc import get_xc, get_xc_defaults, parse_functionals, parse_xc_type
 
 
 class SCF(BaseObject):
@@ -104,7 +104,8 @@ class SCF(BaseObject):
         # Initialize other attributes
         self.energies = Energy()  #: Energy object holding energy contributions.
         self.is_converged = False  #: Determines the SCF object convergence.
-        self.W = None  #: Unconstrained wave functions
+        self.W = None  #: Unconstrained wave functions.
+        self.xc_params = {}  #: Exchange-correlation functional parameters.
         self.clear()
 
     # ### Class properties ###
@@ -133,8 +134,23 @@ class SCF(BaseObject):
         self._xc = parse_functionals(value.lower())
         # Determine the type of functional combinations
         self._xc_type = parse_xc_type(self._xc)
-        if 'mock_xc' in self._xc:
+        if 'mock_xc' in self._xc and '_xc_' not in ''.join(self._xc).lower():
             self._log.warning('Usage of mock functional detected.')
+
+    @property
+    def xc_params(self):
+        """Exchange-correlation functional parameters."""
+        return self._xc_params
+
+    @xc_params.setter
+    def xc_params(self, value):
+        # Check if some parameters are unused in the functionals
+        # This also ensures that we print a warning in case of overlapping parameters in x and c
+        if value is not None:
+            not_used = value.keys() - self.xc_params_defaults.keys()
+            if len(not_used) > 0:
+                self._log.warning(f'Some xc_params are unused, namely: {", ".join(not_used)}.')
+        self._xc_params = value
 
     @property
     def pot(self):
@@ -232,6 +248,11 @@ class SCF(BaseObject):
     def xc_type(self):
         """Determines the exchange-correlation family."""
         return self._xc_type
+
+    @property
+    def xc_params_defaults(self):
+        """Get the default exchange-correlation functional parameters."""
+        return get_xc_defaults(self.xc)
 
     # ### Class methods ###
 
@@ -517,7 +538,7 @@ class SCF(BaseObject):
             self.tau = get_tau(atoms, self.Y)
         self.phi = solve_poisson(atoms, self.n)
         self.exc, self.vxc, self.vsigma, self.vtau = get_xc(
-            self.xc, self.n_spin, atoms.occ.Nspin, self.dn_spin, self.tau
+            self.xc, self.n_spin, atoms.occ.Nspin, self.dn_spin, self.tau, self.xc_params
         )
         self._precomputed = {
             'dn_spin': self.dn_spin,
