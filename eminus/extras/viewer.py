@@ -1,6 +1,13 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Viewer functions for Jupyter notebooks."""
+"""Viewer functions for Jupyter notebooks.
+
+All necessary dependencies to use this extra can be installed with::
+
+    pip install eminus[viewer]
+
+Note that if one wants to use Jupyter one has to install it separately.
+"""
 
 import io
 import pathlib

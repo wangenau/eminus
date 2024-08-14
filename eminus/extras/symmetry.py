@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Symmetrize k-points."""
+"""Symmetrize k-points.
+
+All necessary dependencies to use this extra can be installed with::
+
+    pip install eminus[symmetry]
+"""
 
 from ..logger import log
 

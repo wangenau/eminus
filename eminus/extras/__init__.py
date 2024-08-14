@@ -14,6 +14,13 @@ Alternatively, you can only install selected extras using the respective name:
 * :mod:`~eminus.extras.symmetry`
 * :mod:`~eminus.extras.torch`
 * :mod:`~eminus.extras.viewer`
+
+Note that the :mod:`~eminus.extras.libxc` extra will install PySCF by default. pylibxc is also
+supported and will be preferred if it is found in the environment. See :mod:`~eminus.extras.libxc`
+for more information.
+
+Additionally, :mod:`~eminus.extras.torch` has different installation flavors. See
+:mod:`~eminus.extras.torch` for more information.
 """
 
 from . import torch

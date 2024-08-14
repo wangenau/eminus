@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Interface to use Libxc functionals.
 
-For a list of available functionals, see: https://tddft.org/programs/libxc/functionals
+For a list of available functionals, see: https://libxc.gitlab.io/functionals
 
 One can install pylibxc by compiling Libxc according to
-https://tddft.org/programs/libxc/installation/#python-library
+https://libxc.gitlab.io/installation/#python-library
 
 Alternatively, one can use the PySCF Libxc interface with::
 

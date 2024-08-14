@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Fermi-orbital descriptor generation."""
+"""Fermi-orbital descriptor generation.
+
+All necessary dependencies to use this extra can be installed with::
+
+    pip install eminus[fods]
+"""
 
 import numpy as np
 from scipy.linalg import norm

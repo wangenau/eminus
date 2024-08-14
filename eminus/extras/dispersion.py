@@ -1,6 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Dispersion correction interface."""
+"""Dispersion correction interface.
+
+All necessary dependencies to use this extra can be installed with::
+
+    pip install eminus[dispersion]
+"""
 
 # Import the DFT-D3 C extension beforehand, if one doesn't do this the dispersion energies are wrong
 try:  # noqa: SIM105
