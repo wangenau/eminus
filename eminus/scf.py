@@ -146,7 +146,7 @@ class SCF(BaseObject):
     def xc_params(self, value):
         # Check if some parameters are unused in the functionals
         # This also ensures that we print a warning in case of overlapping parameters in x and c
-        if value is not None:
+        if value != {} and value is not None:
             not_used = value.keys() - self.xc_params_defaults.keys()
             if len(not_used) > 0:
                 self._log.warning(f'Some xc_params are unused, namely: {", ".join(not_used)}.')
