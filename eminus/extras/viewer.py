@@ -36,6 +36,9 @@ def view(*args, **kwargs):
 
     Keyword Args:
         **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Viewable object.
     """
     if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)

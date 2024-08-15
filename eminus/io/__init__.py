@@ -38,6 +38,9 @@ def read(filename, *args, **kwargs):
 
     Keyword Args:
         **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Read file information.
     """
     if filename.endswith('.json'):
         return read_json(filename, *args, **kwargs)
@@ -63,6 +66,9 @@ def write(obj, filename, *args, **kwargs):
 
     Keyword Args:
         **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        None.
     """
     if filename.endswith('.json'):
         return write_json(obj, filename, *args, **kwargs)

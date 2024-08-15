@@ -19,7 +19,7 @@ def clean_example(trash: list[str]) -> None:
             path.unlink()
 
 
-@pytest.mark.slow()
+@pytest.mark.slow
 @pytest.mark.parametrize(
     ('name', 'trash'),
     [

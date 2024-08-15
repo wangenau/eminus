@@ -35,7 +35,14 @@ class CustomFormatter(logging.Formatter):
     """Custom logger formatter."""
 
     def format(self, record):
-        """Use different formatting for different logging levels."""
+        """Use different formatting for different logging levels.
+
+        Args:
+            record: LogRecord object.
+
+        Returns:
+            Formatted log text.
+        """
         if record.levelno >= logging.WARNING:
             # Print the level name for errors and warnings
             self._style._fmt = '%(levelname)s: %(msg)s'

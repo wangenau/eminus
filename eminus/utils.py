@@ -26,6 +26,9 @@ class BaseObject:
 
         Keyword Args:
             kwargs: Pass-through keyword arguments.
+
+        Returns:
+            Viewable object.
         """
         return eminus.extras.view(self, *args, **kwargs)
 
@@ -38,6 +41,9 @@ class BaseObject:
 
         Keyword Args:
             kwargs: Pass-through keyword arguments.
+
+        Returns:
+            None.
         """
         # Save the object as a JSON file if no extension is given
         if not pathlib.Path(filename).suffix and 'POSCAR' not in filename:
