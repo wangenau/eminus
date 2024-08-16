@@ -355,13 +355,13 @@ def view_file(
             from ipywidgets import interact
 
             interact(
-                lambda filename: view_file(filename, isovalue, gui, elec_symbols, **kwargs),
+                lambda filename: view_file(filename, isovalue, gui, elec_symbols, size, **kwargs),
                 filename=filename,
             )
             return None
         # If we are not in a notebook open the files one by one
         for f in filename:
-            view_file(f, isovalue, gui, elec_symbols, **kwargs)
+            view_file(f, isovalue, gui, elec_symbols, size, **kwargs)
             return None
 
     view = NGLWidget(**kwargs)
