@@ -156,8 +156,8 @@ class KPoints(BaseObject):
     def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
         if not np.all(self.k == 0):
-            log.exception('The k-points object does not contain only the Gamma point.')
-            raise NotImplementedError
+            msg = 'The k-points object does not contain only the Gamma point.'
+            raise NotImplementedError(msg)
 
     def __repr__(self):
         """Print the parameters stored in the KPoints object."""

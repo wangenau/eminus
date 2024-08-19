@@ -207,8 +207,8 @@ def parse_xc_type(xc):
             elif family == 4:
                 xc_type.append('meta-gga')
             else:
-                log.exception('Unsupported functional family.')
-                raise NotImplementedError
+                msg = 'Unsupported functional family.'
+                raise NotImplementedError(msg)
         # Fall back to internal xc functionals
         elif 'gga' in func:
             xc_type.append('gga')
@@ -242,8 +242,8 @@ def parse_xc_libxc(xc_id):
 
     func = pylibxc.LibXCFunctional(int(xc_id), 1)
     if func._needs_laplacian:
-        log.exception('meta-GGAs that need a laplacian are not supported.')
-        raise NotImplementedError
+        msg = 'meta-GGAs that need a laplacian are not supported.'
+        raise NotImplementedError(msg)
     return func.get_family()
 
 
@@ -262,8 +262,8 @@ def parse_xc_pyscf(xc_id):
         xc_id = XC_CODES[xc_id.upper()]
 
     if needs_laplacian(int(xc_id)):
-        log.exception('meta-GGAs that need a laplacian are not supported.')
-        raise NotImplementedError
+        msg = 'meta-GGAs that need a laplacian are not supported.'
+        raise NotImplementedError(msg)
     # Use the same values as in parse_xc_libxc
     if is_lda(xc_id):
         return 1
