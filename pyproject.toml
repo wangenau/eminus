@@ -138,19 +138,18 @@ ignore = [
     "N802", "N803", "N806",  # Function, argument, or variable names in function should be lowercase
     "ANN",  # flake8-annotations
     "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
-    "COM812",  # Trailing comma missing
-    "ISC001",  # Implicitly concatenated string literals on one line
-    "G004",  # Logging statement uses f-string
     "INP001",  # File is part of an implicit namespace package
     "T201",  # print found
-    "Q000", "Q003",  # Double quotes preferred, change outer quotes to avoid escaping inner quotes
     "SLF001",  # Private member accessed
     "SIM108",  # Use ternary operator instead of if-else-block
     "TID252",  # Prefer absolute imports over relative imports from parent modules
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
     "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
-    "TRY003",  # Avoid specifying long messages outside the exception class
+    # The following rules are disabled due to possible conflicts with the formatter
+    "Q000", "Q003",  # Double quotes preferred, change outer quotes to avoid escaping inner quotes
+    "COM812",  # Trailing comma missing
+    "ISC001",  # Implicitly concatenated string literals on one line
 ]
 
 [tool.ruff.lint.per-file-ignores]
