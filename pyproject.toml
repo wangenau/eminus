@@ -87,10 +87,7 @@ Changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
 
 ### Coverage ###
 [tool.coverage.report]
-exclude_lines = [
-    "if __name__ == '__main__':",
-    "except ImportError:",
-]
+exclude_lines = ["if __name__ == '__main__':"]
 
 [tool.coverage.run]
 include = ["eminus/*"]

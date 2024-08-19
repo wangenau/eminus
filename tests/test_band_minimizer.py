@@ -66,6 +66,8 @@ def test_empty_W():
     scf_unpol.opt = {'auto': 1}
     scf_unpol.converge_bands()
     scf_unpol.converge_empty_bands(1)
+    scf_unpol.opt = {'pccg': 2}
+    scf_unpol.converge_bands()
 
 
 if __name__ == '__main__':

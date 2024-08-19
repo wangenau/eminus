@@ -3,6 +3,7 @@
 """Test input and output functionalities."""
 
 import copy
+import inspect
 import os
 import pathlib
 
@@ -152,7 +153,8 @@ def test_poscar(Nspin):
 
 def test_poscar_file():
     """Test POSCAR file reading with special cases."""
-    atom, pos, a = read('POSCAR.test')
+    file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
+    atom, pos, a = read(f'{file_path}/POSCAR.test')
     assert atom == ['B', 'N']
     assert_allclose(pos, [[0] * 3, [1.68658057] * 3])
     assert_allclose(a, 3.37316113 * (np.ones((3, 3)) - np.eye(3)))
@@ -240,7 +242,5 @@ def test_write_method():
 
 
 if __name__ == '__main__':
-    import inspect
-
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
