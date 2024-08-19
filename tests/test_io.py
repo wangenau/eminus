@@ -150,6 +150,14 @@ def test_poscar(Nspin):
     assert_allclose(np.sum(atoms.pos, axis=0), np.sum(pos[: atoms.Natoms], axis=0), atol=1e-6)
 
 
+def test_poscar_file():
+    """Test POSCAR file reading with special cases."""
+    atom, pos, a = read('POSCAR.test')
+    assert atom == ['B', 'N']
+    assert_allclose(pos, [[0] * 3, [1.68658057] * 3])
+    assert_allclose(a, 3.37316113 * (np.ones((3, 3)) - np.eye(3)))
+
+
 @pytest.mark.parametrize('Nspin', [1, 2])
 def test_traj(Nspin):
     """Test TRAJ file output and input."""
