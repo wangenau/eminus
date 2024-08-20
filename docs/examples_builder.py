@@ -57,7 +57,7 @@ def parse(script: str) -> str:
     with open(script, encoding='utf-8') as fh:
         for line in fh:
             # Ignore shebang lines and license identifiers
-            if '#!/usr/bin/env' in line or 'SPDX' in line:
+            if '#!/usr/bin/env' in line or 'SPDX' in line or '# type: ignore' in line:
                 continue
             # Text blocks start with "# # "
             if line.startswith('# # '):
