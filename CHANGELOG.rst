@@ -9,14 +9,15 @@ dev
 ---
 - New features
    - Full type hint support!
-   - Add magnetization functions
    - Rewritten minimizer
       - Massive speedup for more k-points
       - Fixed some convergence issues
    - Add non-iterative SCDM localization
       - Use them as the initial guess for Wannier localizations
       - Use Wannier orbital COMs for FLO generations if no FODs are given
+   - Add magnetization functions
    - Add POSCAR read and write functions
+   - Allow setting of external functional parameters (internal and in pylibxc)
 - Coding style
    - Reformat the codebase using Ruff
    - Activate more linting rules
@@ -26,18 +27,18 @@ dev
    - Move tox.ini and setup.py contents to pyproject.toml
    - Merge all handle_k decorators into one
 - Miscellaneous
-   - Allow setting of external functional parameters (internal and in pylibxc)
    - Fix hexagonal grid generation
    - Fix gradient convergence check, get_ip, and Efermi in extras/viewer
-   - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Allow plotting densities in viewer functions for all unit cell types
    - Add an option to plot both spin channels in band structure plots
    - Add DOS calculation and plot functions
    - Add pass-through keyword arguments in the Cell creation
-   - Sync GTH files (this changes values for Na-q9)
+   - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Set default values for uninitialized SCF attributes to None
    - Mark the log attribute as private in Atoms and SCF classes
+   - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
+   - Indicate Python 3.13 support
    - Add an eminus Discord server
 - Breaking:
    - Cleanup main namespace by only including unified read and write functions
