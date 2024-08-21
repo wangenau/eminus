@@ -179,7 +179,7 @@ python:
   image: python:$PYTHON_VERSIONS-slim
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11']
+      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.13-rc']
 
 ############### deploy ###############
 
