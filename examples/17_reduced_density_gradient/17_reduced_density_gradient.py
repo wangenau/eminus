@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-# type: ignore
+# mypy: disable-error-code="arg-type"
 import matplotlib.pyplot as plt
 
 from eminus import Atoms, SCF

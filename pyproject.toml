@@ -155,7 +155,6 @@ ignore = [
     "D100", "D103",  # Missing docstring in public module or function
     "E501",  # Line too long
     "PTH207",  # Replace glob with Path.glob or Path.rglob
-    "PGH003",  # Use specific rule codes when ignoring type issues
 ]
 "tests/*" = [
     "S101",  # Use of assert detected

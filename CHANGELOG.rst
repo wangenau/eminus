@@ -40,7 +40,7 @@ dev
    - Small tests improvements
    - Indicate Python 3.13 support
    - Add an eminus Discord server
-- Breaking:
+- Breaking
    - Cleanup main namespace by only including unified read and write functions
    - The rewritten minimizer will change the convergence behavior of some systems!
 
@@ -101,7 +101,7 @@ v2.6.1 - Oct 04, 2023
    - Add a FOD optimization and a reduced density gradient example
    - Add references to data
 - Miscellaneous
-   - Breaking:
+   - Breaking
       - Rename X to pos in Atoms
       - Merge R into a in Atoms
    - Indicate Python 3.12 support
@@ -123,7 +123,7 @@ v2.6.0 - Aug 07, 2023
       - Use a GTH object to store GTH data in SCF
       - Add some properties to the objects, e.g., the volume element dV in Atoms
       - Indicate non-input arguments and non-results as private or read-only
-      - Breaking:
+      - Breaking
          - Use unrestricted instead of Nspin
          - Use spin and charge instead of Nstate and f
          - Remove f and s as keyword arguments, can be set after initialization
