@@ -165,8 +165,10 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
         # Plot a given array or use the density from an SCF object
         if isinstance(plot_n, np.ndarray):
             density = plot_n
+            name = 'Quantity'
         else:
             density = obj.n
+            name = 'Density'
 
         # If the unit cell is not diagonal we have to interpolate the density data
         # Plotly will not display volumes that are represented on non-orthogonal grids, which is
@@ -190,8 +192,8 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             y=r[:, 1],
             z=r[:, 2],
             value=density,
-            name='Density',
-            colorbar_title=f'Density ({percent}%)',
+            name=name,
+            colorbar_title=f'{name} ({percent}%)',
             colorscale='Inferno',
             isomin=isomin,
             isomax=np.nanmax(density),
