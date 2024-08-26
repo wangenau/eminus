@@ -47,6 +47,7 @@ classifiers = [
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Software Development",
+        "Typing :: Typed",
 ]
 
 [project.optional-dependencies]
