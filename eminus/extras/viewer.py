@@ -162,13 +162,13 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
 
     # A density can be plotted for an SCF object
     if isinstance(plot_n, np.ndarray) or plot_n:
-        # Plot a given array or use the density from an SCF object
+        # Use the density from an SCF object...
+        density = obj.n
+        name = 'Density'
+        # ...or use the quantity if an array is given
         if isinstance(plot_n, np.ndarray):
             density = plot_n
             name = 'Quantity'
-        else:
-            density = obj.n
-            name = 'Density'
 
         # If the unit cell is not diagonal we have to interpolate the density data
         # Plotly will not display volumes that are represented on non-orthogonal grids, which is
