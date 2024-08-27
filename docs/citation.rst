@@ -25,6 +25,11 @@ Publications
 
 The following publications have benefitted from eminus.
 
+.. card:: Ensemble Generalization of the Perdew–Zunger Self-Interaction Correction: A Way Out of Multiple Minima and Symmetry Breaking
+    :link: https://pubs.acs.org/doi/full/10.1021/acs.jctc.4c00694
+
+    | S. Schwalbe, W. T. Schulze, K. Trepte, and S. Lehtola, J. Chem. Theory Comput. 20, 7144 (2024). doi:10.1021/acs.jctc.4c00694
+
 .. card:: Bound-State Breaking and the Importance of Thermal Exchange–Correlation Effects in Warm Dense Hydrogen
     :link: https://pubs.acs.org/doi/full/10.1021/acs.jctc.3c00934
 
