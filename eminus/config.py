@@ -115,36 +115,38 @@ class ConfigClass:
 
     def info(self):
         """Print configuration and performance information."""
-        print('--- Configuration infos ---')
-        print(f'Global verbosity : {self.verbose}')
+        sys.stdout.write('--- Configuration infos ---\n')
+        sys.stdout.write(f'Global verbosity : {self.verbose}\n')
         # Only print if PySCF or pylibxc is installed
         if not self.use_pylibxc:
             try:
                 import pyscf  # noqa: F401
 
-                print('Libxc backend    : PySCF')
+                sys.stdout.write('Libxc backend    : PySCF\n')
             except ImportError:
                 pass
         else:
-            print('Libxc backend    : pylibxc')
+            sys.stdout.write('Libxc backend    : pylibxc\n')
 
-        print('\n--- Performance infos ---')
-        print(f'FFT backend : {"Torch" if self.use_torch else "SciPy"}')
-        print(f'FFT device  : {"GPU" if self.use_gpu else "CPU"}')
+        sys.stdout.write(
+            '\n--- Performance infos ---\n'
+            f'FFT backend : {"Torch" if self.use_torch else "SciPy"}\n'
+            f'FFT device  : {"GPU" if self.use_gpu else "CPU"}\n'
+        )
         # Do not print threading information when using GPU
         if self.use_gpu:
             return
         # Check FFT threads
         if self.threads is None:
-            print(
+            sys.stdout.write(
                 'FFT threads : 1\n'
                 'INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve '
                 'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
                 'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
-                'set them in your Python environment with "eminus.config.threads=n".'
+                'set them in your Python environment with "eminus.config.threads=n".\n'
             )
         else:
-            print(f'FFT threads : {self.threads}')
+            sys.stdout.write(f'FFT threads : {self.threads}\n')
 
 
 # Do not initialize the class when Sphinx is running

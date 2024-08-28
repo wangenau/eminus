@@ -19,25 +19,25 @@ def info():
     extras = ('torch', 'pyscf', 'dftd3', 'plotly', 'nglview')
     dev = ('matplotlib', 'notebook', 'pylibxc', 'pytest', 'sphinx', 'furo')
 
-    print(LOGO)
-    print(
-        '--- Platform infos ---'
+    sys.stdout.write(LOGO)
+    sys.stdout.write(
+        '\n--- Platform infos ---'
         f'\nPlatform   : {platform.system()} {platform.machine()}'
         f'\nRelease    : {platform.release()} {platform.version()}'
         '\n\n--- Version infos ---'
         f'\npython     : {sys.version.split()[0]}'
-        f'\neminus     : {__version__}'
+        f'\neminus     : {__version__}\n'
     )
     for pkg in dependencies + extras + dev:
         try:
             module = importlib.import_module(pkg)
             try:
-                print(f'{pkg:<11}: {module.__version__}')
+                sys.stdout.write(f'{pkg:<11}: {module.__version__}\n')
             except AttributeError:
                 # pylibxc does not use the standard version identifier
-                print(f'{pkg:<11}: {module.version.__version__}')
+                sys.stdout.write(f'{pkg:<11}: {module.version.__version__}\n')
         except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
-                print(f'{pkg:<11}: Dependency not installed')
+                sys.stdout.write(f'{pkg:<11}: Dependency not installed\n')
             elif pkg in extras:
-                print(f'{pkg:<11}: Extra not installed')
+                sys.stdout.write(f'{pkg:<11}: Extra not installed\n')
