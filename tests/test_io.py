@@ -203,7 +203,7 @@ def test_trajectory(filending):
 
 
 def test_filename_ending():
-    """Test if the functions still work when omiting the filename ending."""
+    """Test if the functions still work when omitting the filename ending."""
     filename = 'test'
     write_xyz(atoms, filename)
     read_xyz(filename)

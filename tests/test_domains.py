@@ -37,7 +37,7 @@ def test_domain_cuboid(length):
 
 @pytest.mark.parametrize('radius', [0.001, 0.01, 0.1, 1, 10])
 def test_domain_sphere(radius):
-    """Test sperical domain generation by ensuring that the grid points are close to the center."""
+    """Test spherical domain generation by ensuring that the grid points are close to the center."""
     out = truncate(atoms.r, domain_sphere(atoms, radius))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=radius)

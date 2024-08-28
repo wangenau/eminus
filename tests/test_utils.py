@@ -61,7 +61,7 @@ def test_Ylm(l):
     ],
 )
 def test_pseudo_uniform(seed, ref):
-    """Test the reproduciblity of the pseudo random number generator."""
+    """Test the reproducibility of the pseudo random number generator."""
     out = pseudo_uniform((1, 1, 3), seed=seed)
     assert_allclose(out, ref)
 
