@@ -48,6 +48,7 @@ def read_cube(filename):
         pos = []
         Z = []
         # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
+        _offset = 0
         for _offset, line in enumerate(lines[6:]):
             line_split = line.strip().split()
             # If the first value is not a (positive) integer, we have reached the field data
