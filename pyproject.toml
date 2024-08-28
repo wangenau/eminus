@@ -137,7 +137,6 @@ ignore = [
     "N802", "N803", "N806",  # Function, argument, or variable names in function should be lowercase
     "ANN",  # flake8-annotations
     "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
-    "INP001",  # File is part of an implicit namespace package
     "SLF001",  # Private member accessed
     "SIM108",  # Use ternary operator instead of if-else-block
     "TID252",  # Prefer absolute imports over relative imports from parent modules
@@ -151,14 +150,19 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"docs/*" = [
+    "INP001",  # File is part of an implicit namespace package
+]
 "examples/*" = [
     "D100", "D103",  # Missing docstring in public module or function
     "E501",  # Line too long
+    "INP001",  # File is part of an implicit namespace package
     "T201",  # print found
     "PTH207",  # Replace glob with Path.glob or Path.rglob
 ]
 "tests/*" = [
     "S101",  # Use of assert detected
+    "INP001",  # File is part of an implicit namespace package
     "T201",  # print found
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
