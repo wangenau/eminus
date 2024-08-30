@@ -1,0 +1,13 @@
+authors:
+- given-names: Wanja Timm
+  family-names: Schulze
+  orcid: "https://orcid.org/0000-0002-4025-1790"
+cff-version: 1.2.0
+doi: 10.5281/zenodo.5720635
+license: Apache-2.0
+message: "If you use this software, please cite it using the metadata from this file."
+repository-code: "https://gitlab.com/wangenau/eminus"
+title: "eminus"
+url: "https://wangenau.gitlab.io/eminus"
+version: 2.7.1
+date-released: "2024-02-09"

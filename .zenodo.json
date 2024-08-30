@@ -1,0 +1,32 @@
+{
+    "creators": [
+        {
+            "affiliation": "Friedrich Schiller University Jena",
+            "name": "Schulze, Wanja Timm",
+            "orcid": "0000-0002-4025-1790"
+        },
+        {
+            "affiliation": "Center for Advanced Systems Understanding",
+            "name": "Schwalbe, Sebastian",
+            "orcid": "0000-0002-4561-0158"
+        },
+        {
+            "affiliation": "Taiwan Semiconductor Manufacturing Company",
+            "name": "Trepte, Kai",
+            "orcid": "0000-0003-2214-2467"
+        }
+    ],
+    "keywords": [
+        "Python",
+        "DFT",
+        "DFT++"
+    ],
+    "related_identifiers": [
+        {
+            "identifier": "https://gitlab.com/wangenau/eminus",
+            "relation": "isIdenticalTo",
+            "resource_type": "software",
+            "scheme": "url"
+        }
+    ]
+}
