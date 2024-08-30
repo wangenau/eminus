@@ -40,6 +40,7 @@ dev
    - Small tests improvements
    - Indicate Python 3.13 support
    - Add an eminus Discord server
+   - Add citation information
 - Breaking
    - Cleanup main namespace by only including unified read and write functions
    - The rewritten minimizer will change the convergence behavior of some systems!
