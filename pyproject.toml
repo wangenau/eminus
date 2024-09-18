@@ -122,7 +122,6 @@ norecursedirs = "public/*"
 
 ### Ruff ###
 [tool.ruff]
-target-version = "py37"
 extend-include = ["*.ipynb"]
 line-length = 100
 respect-gitignore = true
