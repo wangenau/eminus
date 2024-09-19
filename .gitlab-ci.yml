@@ -262,14 +262,16 @@ pypi:
   needs: ["installation"]
   id_tokens:
     PYPI_ID_TOKEN:
-      aud: testpypi
+      aud: pypi
   script:
     - apt-get update -y
     - apt-get install curl jq -y --no-install-recommends
     - pip install id twine
     # Reference: https://github.com/pypi/warehouse/issues/13575#issuecomment-1961187837
     - OIDC_TOKEN=$(python -m id PYPI)
-    - RESP=$(curl -X POST https://test.pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
+    - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
     - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
-    - twine upload --repository testpypi -u __token__ -p "${API_TOKEN}" dist/* --verbose
-  when: manual
+    - twine upload -u __token__ -p "${API_TOKEN}" dist/*
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
