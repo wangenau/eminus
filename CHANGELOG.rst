@@ -38,6 +38,7 @@ dev
    - Mark the log attribute as private in Atoms and SCF classes
    - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
+   - Update Docker image to Python 3.12
    - Indicate Python 3.13 support
    - Add an eminus Discord server
    - Add citation information

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
-FROM python:3.11-slim AS build
+FROM python:3.12-slim AS build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
@@ -23,7 +23,7 @@ RUN git clone https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[all,dev] --no-cache-dir
 
 # Set up the application stage
-FROM python:3.11-slim
+FROM python:3.12-slim
 LABEL maintainer="wangenau"
 
 # Ensure that no root rights are being used, copy the environment and eminus source
