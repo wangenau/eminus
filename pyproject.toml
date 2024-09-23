@@ -74,14 +74,13 @@ dev = [
     "mypy>=0.990",  # Static type checker
     "notebook",  # Run and convert notebooks to HTML
     "pytest>=5.4",  # Test utilities
-    "ruff>=0.2",  # Linter
+    "ruff>=0.2",  # Linter and formatter
     "sphinx>=4",  # Documentation builder
     "sphinx-design>=0.2",  # More directives for Sphinx
     "sphinxcontrib-bibtex>=2",  # Use bib files for citations in Sphinx
 ]
 
 [project.urls]
-Homepage = "https://github.com/wangenau/eminus"
 Documentation = "https://wangenau.gitlab.io/eminus"
 Repository = "https://gitlab.com/wangenau/eminus"
 Issues = "https://gitlab.com/wangenau/eminus/-/issues"
