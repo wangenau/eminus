@@ -3,6 +3,7 @@
 """Test GTH functions."""
 
 import inspect
+import numbers
 import pathlib
 
 import numpy as np
@@ -56,7 +57,7 @@ def test_custom_files():
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atoms = Atoms('B', (0, 0, 0)).build()
     atoms.Z = file_path
-    assert isinstance(atoms.Z[0], int)
+    assert isinstance(atoms.Z[0], numbers.Real)
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
     assert scf.gth['B']['rloc'] == 0.41878773
