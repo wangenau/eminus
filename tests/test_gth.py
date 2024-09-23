@@ -34,7 +34,7 @@ def test_norm():
     scf = SCF(atoms)
     for ik in range(scf.kpts.Nk):
         for i in range(scf.gth.NbetaNL):
-            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])  # type: float
+            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])
             assert_allclose(abs(norm), 1, atol=1e-1)
 
 
