@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test torch extra."""
 
+import typing  # noqa: F401
+
 import numpy as np  # noqa: F401
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
@@ -21,9 +23,9 @@ W_tests = {
     'active_single': rng.standard_normal(len(atoms.G2c)),
     'full_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
     'active_spin': rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
-    'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],  # type: ignore [dict-item]
-    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],  # type: ignore [dict-item]
-}  # type: dict[str, np.typing.NDArray[np.float64]]
+    'full_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
+    'active_k': [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
+}  # type: dict[str, typing.Any]
 
 
 @pytest.mark.parametrize('field', ['full', 'full_single', 'full_spin', 'full_k'])

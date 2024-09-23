@@ -99,11 +99,11 @@ omit = ["eminus/extras/*"]
 python_version = "3.7"
 exclude = ["public"]
 strict = true
-ignore_missing_imports = true
 disable_error_code = [
     # Many setter methods change the variable type, this is not considered by Mypy
     # Reference: https://github.com/python/mypy/issues/3004
     "assignment",  # Incompatible types in assignment  [assignment]
+    "import-untyped",  # Module is missing library stubs or py.typed marker  [import-untyped]
 ]
 
 [[tool.mypy.overrides]]

@@ -33,7 +33,7 @@ def test_norm():
     scf = SCF(atoms)
     for ik in range(scf.kpts.Nk):
         for i in range(scf.gth.NbetaNL):
-            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])
+            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])  # type: float
             assert_allclose(abs(norm), 1, atol=1e-1)
 
 
@@ -56,6 +56,7 @@ def test_custom_files():
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atoms = Atoms('B', (0, 0, 0)).build()
     atoms.Z = file_path
+    assert isinstance(atoms.Z[0], int)
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
     assert scf.gth['B']['rloc'] == 0.41878773
