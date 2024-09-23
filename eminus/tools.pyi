@@ -21,13 +21,13 @@ def center_of_mass(
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: NDArray[complex128],
-) -> NDArray[float64]: ...
+    psirs: list[NDArray[complex128]],
+) -> list[NDArray[float64]]: ...
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: list[NDArray[complex128]],
-) -> list[NDArray[float64]]: ...
+    psirs: NDArray[complex128],
+) -> NDArray[float64]: ...
 def inertia_tensor(
     coords: NDArray[float64],
     masses: Array1D | None = ...,
@@ -40,18 +40,12 @@ def get_ip(scf: SCF) -> float: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: NDArray[complex128],
+    func: list[NDArray[complex128]],
     eps: float = ...,
-) -> bool: ...
+) -> list[bool]: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: list[NDArray[complex128]],
-    eps: float = ...,
-) -> list[bool]: ...
-@overload
-def check_norm(
-    obj: Atoms | SCF,
     func: NDArray[complex128],
     eps: float = ...,
 ) -> bool: ...
@@ -62,7 +56,7 @@ def check_norm(
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
-def check_orthonorm(
+def check_norm(
     obj: Atoms | SCF,
     func: NDArray[complex128],
     eps: float = ...,
@@ -73,6 +67,12 @@ def check_orthonorm(
     func: list[NDArray[complex128]],
     eps: float = ...,
 ) -> list[bool]: ...
+@overload
+def check_orthonorm(
+    obj: Atoms | SCF,
+    func: NDArray[complex128],
+    eps: float = ...,
+) -> bool: ...
 def get_isovalue(
     n: NDArray[float64],
     percent: int = ...,

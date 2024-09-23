@@ -42,16 +42,11 @@ def get_scdm(
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> NDArray[float64]: ...
+    psirs: list[NDArray[complex128]],
+) -> list[NDArray[float64]]: ...
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: list[NDArray[complex128]],
-) -> list[NDArray[float64]]: ...
-@overload
-def wannier_center(
-    atoms: Atoms,
     psirs: NDArray[complex128],
 ) -> NDArray[float64]: ...
 @overload
@@ -60,7 +55,7 @@ def wannier_center(
     psirs: list[NDArray[complex128]],
 ) -> list[NDArray[float64]]: ...
 @overload
-def second_moment(
+def wannier_center(
     atoms: Atoms,
     psirs: NDArray[complex128],
 ) -> NDArray[float64]: ...
@@ -69,6 +64,11 @@ def second_moment(
     atoms: Atoms,
     psirs: list[NDArray[complex128]],
 ) -> list[NDArray[float64]]: ...
+@overload
+def second_moment(
+    atoms: Atoms,
+    psirs: NDArray[complex128],
+) -> NDArray[float64]: ...
 def wannier_supercell_matrices(
     atoms: Atoms,
     psirs: NDArray[complex128],

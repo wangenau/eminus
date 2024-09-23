@@ -8,16 +8,9 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-@overload
 def get_grad_field(
     atoms: Atoms,
-    field: NDArray[float64],
-    real: bool = ...,
-) -> NDArray[float64]: ...
-@overload
-def get_grad_field(
-    atoms: Atoms,
-    field: NDArray[complex128],
+    field: NDArray[float64] | NDArray[complex128],
     real: bool = ...,
 ) -> NDArray[float64] | NDArray[complex128]: ...
 def gradient_correction(

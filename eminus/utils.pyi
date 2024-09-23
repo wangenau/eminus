@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable, Sequence
-from typing import Any, Literal, overload, Protocol
+from typing import Any, Literal, Protocol
 
 from numpy import complex128, float64
 from numpy.typing import NDArray
@@ -57,20 +57,9 @@ def pseudo_uniform(
     size: IntArray,
     seed: int = ...,
 ) -> NDArray[complex128]: ...
-@overload
-def add_maybe_none(
-    a: None,
-    b: None,
-) -> None: ...
-@overload
-def add_maybe_none(
-    a: NDArray[complex128],
-    b: NDArray[complex128] | None,
-) -> NDArray[complex128]: ...
-@overload
 def add_maybe_none(
     a: NDArray[complex128] | None,
-    b: NDArray[complex128],
+    b: NDArray[complex128] | None,
 ) -> NDArray[complex128]: ...
 def molecule2list(molecule: str) -> list[str]: ...
 def atom2charge(
