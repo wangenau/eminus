@@ -22,7 +22,7 @@ from eminus.units import (
 )
 
 
-@pytest.mark.parametrize('value', [-0.125, 0, 1.337])
+@pytest.mark.parametrize("value", [-0.125, 0, 1.337])
 def test_units(value):
     """Check that the identities are satisfied."""
     assert value == ha2ev(ev2ha(value))
@@ -34,7 +34,7 @@ def test_units(value):
     assert value == rad2deg(deg2rad(value))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

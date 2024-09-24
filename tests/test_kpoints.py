@@ -19,24 +19,24 @@ from eminus.kpoints import (
 
 def test_lattice():
     """Test the setting of lattice."""
-    kpts = KPoints('fcc')
+    kpts = KPoints("fcc")
     print(kpts)  # Test that the object can be printed
-    assert kpts.lattice == 'fcc'
+    assert kpts.lattice == "fcc"
 
 
 @pytest.mark.parametrize(
-    ('a', 'ref'), [(None, np.eye(3)), (2, 2 * np.eye(3)), (np.ones((3, 3)), np.ones((3, 3)))]
+    ("a", "ref"), [(None, np.eye(3)), (2, 2 * np.eye(3)), (np.ones((3, 3)), np.ones((3, 3)))]
 )
 def test_a(a, ref):
     """Test the setting of a."""
-    kpts = KPoints('sc', a).build()
+    kpts = KPoints("sc", a).build()
     assert_equal(kpts.a, ref)
 
 
-@pytest.mark.parametrize(('kmesh', 'ref'), [(None, None), (2, [2] * 3), ([1, 2, 3], [1, 2, 3])])
+@pytest.mark.parametrize(("kmesh", "ref"), [(None, None), (2, [2] * 3), ([1, 2, 3], [1, 2, 3])])
 def test_kmesh(kmesh, ref):
     """Test the setting of kmesh."""
-    kpts = KPoints('fcc')
+    kpts = KPoints("fcc")
     kpts.kmesh = kmesh
     kpts.build()
     assert kpts.path is None
@@ -48,7 +48,7 @@ def test_kmesh(kmesh, ref):
 
 def test_kshift():
     """Test the setting of kshift."""
-    kpts = KPoints('fcc')
+    kpts = KPoints("fcc")
     kpts.kshift = [1] * 3
     kpts.build()
     assert_equal(kpts.k, 1)
@@ -56,7 +56,7 @@ def test_kshift():
 
 def test_gamma_centered():
     """Test the setting of gamma_centered."""
-    kpts = KPoints('fcc')
+    kpts = KPoints("fcc")
     kpts.gamma_centered = True
     kpts.kmesh = 2
     kpts.build()
@@ -66,10 +66,10 @@ def test_gamma_centered():
     assert np.any(kpts.k[0] != 0)
 
 
-@pytest.mark.parametrize(('path', 'ref'), [('G', 0), ('gX', [[0, 0, 0], [0, 2 * np.pi, 0]])])
+@pytest.mark.parametrize(("path", "ref"), [("G", 0), ("gX", [[0, 0, 0], [0, 2 * np.pi, 0]])])
 def test_path(path, ref):
     """Test the setting of path."""
-    kpts = KPoints('fcc')
+    kpts = KPoints("fcc")
     kpts.path = path
     kpts.build()
     assert kpts.kmesh is None
@@ -78,7 +78,7 @@ def test_path(path, ref):
 
 def test_k_scaled():
     """Test the setting of k_scaled."""
-    kpts = KPoints('sc')
+    kpts = KPoints("sc")
     kpts.kmesh = 2
     kpts.build()
     assert_allclose(np.abs(kpts.k_scaled - 1 / 4), 1 / 4)
@@ -104,13 +104,13 @@ def test_gamma_centered_generation():
 def test_bandpath_lgx():
     """Test a simple band path in the FCC lattice."""
     s_points = [
-        SPECIAL_POINTS['fcc']['L'],
-        SPECIAL_POINTS['fcc']['G'],
-        SPECIAL_POINTS['fcc']['X'],
+        SPECIAL_POINTS["fcc"]["L"],
+        SPECIAL_POINTS["fcc"]["G"],
+        SPECIAL_POINTS["fcc"]["X"],
     ]
 
-    kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
-    kpts.path = 'LGX'
+    kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
+    kpts.path = "LGX"
     kpts.Nk = 2  # Test that that Nk gets set to 3, since 3 special points are set
     k_points = bandpath(kpts.build())
     assert len(k_points) == 3
@@ -130,14 +130,14 @@ def test_bandpath_lgx():
 def test_bandpath_xukg():
     """Test a simple band path in the FCC lattice that includes a jump between special points."""
     s_points = [
-        SPECIAL_POINTS['fcc']['X'],
-        SPECIAL_POINTS['fcc']['U'],
-        SPECIAL_POINTS['fcc']['K'],
-        SPECIAL_POINTS['fcc']['G'],
+        SPECIAL_POINTS["fcc"]["X"],
+        SPECIAL_POINTS["fcc"]["U"],
+        SPECIAL_POINTS["fcc"]["K"],
+        SPECIAL_POINTS["fcc"]["G"],
     ]
 
-    kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
-    kpts.path = 'XU,KG'
+    kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
+    kpts.path = "XU,KG"
     kpts.Nk = 4
     k_points = bandpath(kpts.build())
     assert len(k_points) == 4
@@ -156,12 +156,12 @@ def test_bandpath_xukg():
 
 def test_kpoints2axis_lgx():
     """Test the k-point axis calculation for a simple band path in the FCC lattice."""
-    kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
-    kpts.path = 'LGX'
+    kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
+    kpts.path = "LGX"
     kpts.Nk = 20
     kpts.build()
     k_axis, s_axis, labels = kpoints2axis(kpts)
-    assert labels == ['L', 'G', 'X']
+    assert labels == ["L", "G", "X"]
     assert len(s_axis) == 3
     assert len(k_axis) == 20
     assert k_axis[0] == 0
@@ -171,12 +171,12 @@ def test_kpoints2axis_lgx():
 
 def test_kpoints2axis_xukg():
     """Test the k-point axis calculation for a simple band path that includes a jump between."""
-    kpts = KPoints('fcc', LATTICE_VECTORS['fcc'])
-    kpts.path = 'XU,KG'
+    kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
+    kpts.path = "XU,KG"
     kpts.Nk = 25
     kpts.build()
     k_axis, s_axis, labels = kpoints2axis(kpts)
-    assert labels == ['X', 'U,K', 'G']
+    assert labels == ["X", "U,K", "G"]
     assert len(s_axis) == 3
     assert len(k_axis) == 25
     assert k_axis[0] == 0
@@ -192,7 +192,7 @@ def test_get_brillouin_zone():
     assert_allclose(np.abs(ridges), np.pi)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

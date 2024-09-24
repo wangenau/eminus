@@ -113,7 +113,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     return atoms.kpts.wk[ik] * ((I - atoms.O(Y) @ Ydag) @ (HD - atoms.O(D) @ DHD) @ X12)
 
 
-@name('steepest descent minimization')
+@name("steepest descent minimization")
 def sd(
     scf,
     W,
@@ -147,7 +147,7 @@ def sd(
     for _ in range(Nit):
         c = cost(scf, W)
         costs.append(c)
-        if condition(scf, 'sd', costs):
+        if condition(scf, "sd", costs):
             break
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
@@ -156,7 +156,7 @@ def sd(
     return costs, W
 
 
-@name('preconditioned line minimization')
+@name("preconditioned line minimization")
 def pclm(
     scf,
     W,
@@ -193,9 +193,9 @@ def pclm(
     d = [np.empty_like(Wk) for Wk in W]
 
     if precondition:
-        method = 'pclm'
+        method = "pclm"
     else:
-        method = 'lm'
+        method = "lm"
 
     for i in range(Nit):
         c = cost(scf, W)
@@ -218,7 +218,7 @@ def pclm(
     return costs, W
 
 
-@name('line minimization')
+@name("line minimization")
 def lm(
     scf,
     W,
@@ -249,7 +249,7 @@ def lm(
     return pclm(scf, W, Nit, cost, grad, condition, betat, precondition=False)
 
 
-@name('preconditioned conjugate-gradient minimization')
+@name("preconditioned conjugate-gradient minimization")
 def pccg(
     scf,
     W,
@@ -290,9 +290,9 @@ def pccg(
     g_old = [np.empty_like(Wk) for Wk in W]
 
     if precondition:
-        method = 'pccg'
+        method = "pccg"
     else:
-        method = 'cg'
+        method = "cg"
 
     c = cost(scf, W)
     costs.append(c)
@@ -338,7 +338,7 @@ def pccg(
     return costs, W
 
 
-@name('conjugate-gradient minimization')
+@name("conjugate-gradient minimization")
 def cg(
     scf,
     W,
@@ -369,7 +369,7 @@ def cg(
     return pccg(scf, W, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
 
-@name('auto minimization')
+@name("auto minimization")
 def auto(
     scf,
     W,
@@ -425,7 +425,7 @@ def auto(
 
     c = cost(scf, W)
     costs.append(c)
-    if condition(scf, 'pccg', costs):
+    if condition(scf, "pccg", costs):
         return costs
 
     for _ in range(1, Nit):
@@ -461,21 +461,21 @@ def auto(
             c = cost(scf, W)
             costs.append(c)
             # Do not print cg and linmin if we do the sd step
-            if condition(scf, 'sd', costs, norm_g=norm_g):
+            if condition(scf, "sd", costs, norm_g=norm_g):
                 break
         else:
             costs.append(c)
-            if condition(scf, 'pccg', costs, linmin, cg, norm_g):
+            if condition(scf, "pccg", costs, linmin, cg, norm_g):
                 break
     return costs, W
 
 
 #: Map minimizer names with their respective implementation.
 IMPLEMENTED = {
-    'sd': sd,
-    'lm': lm,
-    'pclm': pclm,
-    'cg': cg,
-    'pccg': pccg,
-    'auto': auto,
+    "sd": sd,
+    "lm": lm,
+    "pclm": pclm,
+    "cg": cg,
+    "pccg": pccg,
+    "auto": auto,
 }

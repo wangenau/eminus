@@ -10,14 +10,14 @@ from scipy.linalg import norm
 from eminus import Cell, SCF
 
 
-@pytest.mark.parametrize('space_group', [True, False])
-@pytest.mark.parametrize('time_reversal', [True, False])
+@pytest.mark.parametrize("space_group", [True, False])
+@pytest.mark.parametrize("time_reversal", [True, False])
 def test_symmetrize(space_group, time_reversal):
     """Test the symmetrization of k-points."""
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from eminus.extras import symmetrize
 
-    cell = Cell('Si', 'diamond', 1, 10, kmesh=3).build()
+    cell = Cell("Si", "diamond", 1, 10, kmesh=3).build()
     orig_k = cell.kpts.k
     orig_wk = cell.kpts.wk
     symmetrize(cell, space_group=space_group, time_reversal=time_reversal)
@@ -38,10 +38,10 @@ def test_symmetrize(space_group, time_reversal):
 
 def test_unbuilt():
     """Test unbuilt KPoints objects."""
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from eminus.extras import symmetrize
 
-    cell = Cell('Si', 'diamond', 1, 10, kmesh=3).build()
+    cell = Cell("Si", "diamond", 1, 10, kmesh=3).build()
     symmetrize(cell)
     orig_k = cell.kpts.k
     cell.kpts.is_built = False
@@ -52,10 +52,10 @@ def test_unbuilt():
 
 def test_energies():
     """Compare the energies of normal and symmetrized k-meshes."""
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from eminus.extras import symmetrize
 
-    cell = Cell('Si', 'diamond', ecut=5, a=10.2631, kmesh=(3, 2, 1)).build()
+    cell = Cell("Si", "diamond", ecut=5, a=10.2631, kmesh=(3, 2, 1)).build()
     orig_k = cell.kpts.k
     scf = SCF(cell)
     orig_etot = scf.run()
@@ -69,7 +69,7 @@ def test_energies():
     assert_allclose(orig_etot, symm_etot, atol=1e-7)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

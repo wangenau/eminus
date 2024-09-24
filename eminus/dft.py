@@ -105,7 +105,7 @@ def get_n_total(atoms, Y, n_spin=None):
     return n
 
 
-@handle_k(mode='reduce')
+@handle_k(mode="reduce")
 def get_n_spin(atoms, Y, ik):
     """Calculate the electronic density per spin channel.
 
@@ -129,7 +129,7 @@ def get_n_spin(atoms, Y, ik):
     return n
 
 
-@handle_k(mode='reduce')
+@handle_k(mode="reduce")
 def get_n_single(atoms, Y, ik):
     """Calculate the single-electron densities.
 
@@ -214,7 +214,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     # This calculates the XC potential in the reciprocal space
     Gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a (meta-)GGA functional is used
-    if 'gga' in scf.xc_type:
+    if "gga" in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
     # Vkin = -0.5 L(W)
     Vkin_psi = -0.5 * atoms.L(W[ik][spin], ik)
@@ -247,11 +247,11 @@ def H_precompute(scf, W):
     Y = orth(atoms, W)
     n_spin = get_n_spin(atoms, Y)
     n = get_n_total(atoms, Y, n_spin)
-    if 'gga' in scf.xc_type:
+    if "gga" in scf.xc_type:
         dn_spin = get_grad_field(atoms, n_spin)
     else:
         dn_spin = None
-    if scf.xc_type == 'meta-gga':
+    if scf.xc_type == "meta-gga":
         tau = get_tau(atoms, Y)
     else:
         tau = None

@@ -46,8 +46,8 @@ class BaseObject:
             None.
         """
         # Save the object as a JSON file if no extension is given
-        if not pathlib.Path(filename).suffix and 'POSCAR' not in filename:
-            filename += '.json'
+        if not pathlib.Path(filename).suffix and "POSCAR" not in filename:
+            filename += ".json"
         return eminus.io.write(self, filename, *args, **kwargs)
 
 
@@ -97,7 +97,7 @@ def Ylm_real(l, m, G):  # noqa: C901, PLR0911
 
     # cos(theta)=Gz/|G|
     Gm = norm(G, axis=1)
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         cos_theta = G[:, 2] / Gm
     # Account for small magnitudes, if norm(G) < eps: cos_theta=0
     cos_theta[Gm < eps] = 0
@@ -145,7 +145,7 @@ def Ylm_real(l, m, G):  # noqa: C901, PLR0911
         if m == 3:
             return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
 
-    msg = f'No definition found for Ylm({l}, {m}).'
+    msg = f"No definition found for Ylm({l}, {m})."
     raise ValueError(msg)
 
 
@@ -176,7 +176,7 @@ def handle_spin(func):
     return decorator
 
 
-def handle_k(func=None, *, mode='gracefully'):
+def handle_k(func=None, *, mode="gracefully"):
     """Handle k-points calculating the function for each channel with different modes.
 
     This uses the same principle as described in :func:`~eminus.utils.handle_spin`.
@@ -195,17 +195,17 @@ def handle_k(func=None, *, mode='gracefully'):
     def decorator(obj, W, *args, **kwargs):
         if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
             # No explicit k-point indexing is needed
-            if mode == 'gracefully':
+            if mode == "gracefully":
                 return [func(obj, Wk, *args, **kwargs) for Wk in W]
             # Explicit k-point indexing is needed
-            if mode == 'index':
+            if mode == "index":
                 return [func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W)]
             # Explicit k-point indexing is needed and the result has to be summed up
-            if mode == 'reduce':
+            if mode == "reduce":
                 # The Python sum allows summing single values and NumPy arrays elementwise
                 return sum(func(obj, Wk, ik, *args, **kwargs) for ik, Wk in enumerate(W))
             # No k-point dependency has been implemented, so skip it
-            if mode == 'skip':
+            if mode == "skip":
                 obj._atoms.kpts._assert_gamma_only()
                 ret = func(obj, W[0], *args, **kwargs)
                 if isinstance(ret, np.ndarray) and ret.ndim == 3:
@@ -298,7 +298,7 @@ def molecule2list(molecule):
     """
     # Insert a whitespace before every capital letter, these can appear once or none at all
     # Or insert before digits, these can appear at least once
-    tmp_list = re.sub(r'([A-Z?]|\d+)', r' \1', molecule).split()
+    tmp_list = re.sub(r"([A-Z?]|\d+)", r" \1", molecule).split()
     atom_list = []
     for ia in tmp_list:
         if ia.isdigit():
@@ -324,13 +324,13 @@ def atom2charge(atom, path=None):
     from .io import read_gth
 
     if path is not None:
-        if path.lower() in {'pade', 'pbe'}:
+        if path.lower() in {"pade", "pbe"}:
             psp_path = path.lower()
         else:
             psp_path = path
     else:
-        psp_path = 'pbe'
-    return [read_gth(ia, psp_path=psp_path)['Zion'] for ia in atom]
+        psp_path = "pbe"
+    return [read_gth(ia, psp_path=psp_path)["Zion"] for ia in atom]
 
 
 def vector_angle(a, b):

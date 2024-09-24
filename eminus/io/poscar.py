@@ -22,10 +22,10 @@ def read_poscar(filename):
     Returns:
         Atom species, positions, and cell vectors.
     """
-    if 'POSCAR' not in filename:
-        filename += '.POSCAR'
+    if "POSCAR" not in filename:
+        filename += ".POSCAR"
 
-    with open(filename, encoding='utf-8') as fh:
+    with open(filename, encoding="utf-8") as fh:
         lines = fh.readlines()
 
         # The first line contains a comment, print it if available
@@ -43,7 +43,7 @@ def read_poscar(filename):
 
         # If line number six contains numbers a POTCAR file is required
         if lines[5].strip().split()[0].isnumeric():
-            msg = 'POTCAR files are not supported, provide species in the POSCAR file'
+            msg = "POTCAR files are not supported, provide species in the POSCAR file"
             raise NotImplementedError(msg)
         # Otherwise the atom species are given with their amount
         atom = lines[5].strip().split()
@@ -53,16 +53,16 @@ def read_poscar(filename):
 
         # Ignore the dynamics line if available
         skip = 0
-        if 'dynamics' in lines[7]:
+        if "dynamics" in lines[7]:
             skip += 1
         mode = lines[7 + skip].strip().lower()
 
         pos = np.empty((np.sum(Natom), 3))
         # Following lines contain atom positions
         for i, line in enumerate(lines[8 + skip : 8 + skip + np.sum(Natom)]):
-            if mode == 'direct':
+            if mode == "direct":
                 pos[i] = np.sum(a * np.float64(line.strip().split()[:3]), axis=0)
-            if mode == 'cartesian':
+            if mode == "cartesian":
                 pos[i] = scaling * np.float64(line.strip().split()[:3])
         # Skip all the properties afterwards
 
@@ -72,7 +72,7 @@ def read_poscar(filename):
     return atom, pos, a
 
 
-def write_poscar(obj, filename, fods=None, elec_symbols=('X', 'He')):
+def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate POSCAR files from atoms objects.
 
     File format definition: https://www.vasp.at/wiki/index.php/POSCAR
@@ -87,8 +87,8 @@ def write_poscar(obj, filename, fods=None, elec_symbols=('X', 'He')):
     """
     atoms = obj._atoms
 
-    if 'POSCAR' not in filename:
-        filename += '.POSCAR'
+    if "POSCAR" not in filename:
+        filename += ".POSCAR"
 
     # Convert the coordinates from atomic units to Angstrom
     pos = bohr2ang(atoms.pos)
@@ -96,24 +96,24 @@ def write_poscar(obj, filename, fods=None, elec_symbols=('X', 'He')):
     if fods is not None:
         fods = [bohr2ang(i) for i in fods]
 
-    if 'He' in atoms.atom and atoms.unrestricted:
+    if "He" in atoms.atom and atoms.unrestricted:
         log.warning(
             'You need to modify "elec_symbols" to write helium with FODs in the spin-'
-            'polarized case.'
+            "polarized case."
         )
 
-    with open(filename, 'w', encoding='utf-8') as fp:
+    with open(filename, "w", encoding="utf-8") as fp:
         # Print information about the file and program, and the file creation time
-        fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n')
+        fp.write(f"File generated with eminus {__version__} on {time.ctime()}\n")
 
         # We have scaled vectors and coordinates
-        fp.write('1.0\n')
+        fp.write("1.0\n")
 
         # Write lattice
         fp.write(
-            f'{a[0, 0]:.6f} {a[0, 1]:.6f} {a[0, 2]:.6f}\n'
-            f'{a[1, 0]:.6f} {a[1, 1]:.6f} {a[1, 2]:.6f}\n'
-            f'{a[2, 0]:.6f} {a[2, 1]:.6f} {a[2, 2]:.6f}\n'
+            f"{a[0, 0]:.6f} {a[0, 1]:.6f} {a[0, 2]:.6f}\n"
+            f"{a[1, 0]:.6f} {a[1, 1]:.6f} {a[1, 2]:.6f}\n"
+            f"{a[2, 0]:.6f} {a[2, 1]:.6f} {a[2, 2]:.6f}\n"
         )
 
         # We need to sort the atoms in the POSCAR file
@@ -126,8 +126,8 @@ def write_poscar(obj, filename, fods=None, elec_symbols=('X', 'He')):
         if fods is not None:
             for s in range(len(fods)):
                 if len(fods[s]) > 0:
-                    fp.write(f' {elec_symbols[s]}')
-        fp.write('\n')
+                    fp.write(f" {elec_symbols[s]}")
+        fp.write("\n")
 
         # Write the number per (sorted) species
         _, counts = np.unique(atom, return_counts=True)
@@ -135,15 +135,15 @@ def write_poscar(obj, filename, fods=None, elec_symbols=('X', 'He')):
         if fods is not None:
             for s in range(len(fods)):
                 if len(fods[s]) > 0:
-                    fp.write(f' {len(fods[s])}')
-        fp.write('\nCartesian\n')
+                    fp.write(f" {len(fods[s])}")
+        fp.write("\nCartesian\n")
 
         # Write the coordinates
         for ia in range(atoms.Natoms):
-            fp.write(f'{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n')
+            fp.write(f"{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n")
 
         # Add FOD coordinates if desired
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:
-                    fp.write(f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n')
+                    fp.write(f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n")

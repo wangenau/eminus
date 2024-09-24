@@ -31,7 +31,7 @@ from .. import config
 from ..utils import handle_k
 
 
-@handle_k(mode='index')
+@handle_k(mode="index")
 def I(atoms, W, ik=-1):
     """Backwards transformation from reciprocal space to real-space.
 
@@ -71,19 +71,19 @@ def I(atoms, W, ik=-1):
 
     if W.ndim == 1:
         Wfft = Wfft.view(s)
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward').view(n)
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="forward").view(n)
     elif W.ndim == 2:
         Wfft = Wfft.view((*s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, W.shape[-1])
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="forward", dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="forward", dim=(1, 2, 3)).view(
             atoms.occ._Nspin, n, W.shape[-1]
         )
     return Finv.detach().cpu().numpy()
 
 
-@handle_k(mode='index')
+@handle_k(mode="index")
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
@@ -109,13 +109,13 @@ def J(atoms, W, ik=-1, full=True):
 
     if W.ndim == 1:
         Wfft = Wfft.view(s)
-        F = torch.fft.fftn(Wfft, s=s, norm='forward').view(n)
+        F = torch.fft.fftn(Wfft, s=s, norm="forward").view(n)
     elif W.ndim == 2:
         Wfft = Wfft.view((*s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(0, 1, 2)).view(n, W.shape[-1])
+        F = torch.fft.fftn(Wfft, s=s, norm="forward", dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='forward', dim=(1, 2, 3)).view(
+        F = torch.fft.fftn(Wfft, s=s, norm="forward", dim=(1, 2, 3)).view(
             atoms.occ._Nspin, n, W.shape[-1]
         )
     F = F.detach().cpu().numpy()
@@ -126,7 +126,7 @@ def J(atoms, W, ik=-1, full=True):
     return F
 
 
-@handle_k(mode='index')
+@handle_k(mode="index")
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backwards transformation from real-space to reciprocal space.
 
@@ -152,13 +152,13 @@ def Idag(atoms, W, ik=-1, full=False):
 
     if W.ndim == 1:
         Wfft = Wfft.view(s)
-        F = torch.fft.fftn(Wfft, s=s, norm='backward').view(n)
+        F = torch.fft.fftn(Wfft, s=s, norm="backward").view(n)
     elif W.ndim == 2:
         Wfft = Wfft.view((*s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, W.shape[-1])
+        F = torch.fft.fftn(Wfft, s=s, norm="backward", dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        F = torch.fft.fftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(
+        F = torch.fft.fftn(Wfft, s=s, norm="backward", dim=(1, 2, 3)).view(
             atoms.occ._Nspin, n, W.shape[-1]
         )
     F = F.detach().cpu().numpy()
@@ -169,7 +169,7 @@ def Idag(atoms, W, ik=-1, full=False):
     return F
 
 
-@handle_k(mode='index')
+@handle_k(mode="index")
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -209,13 +209,13 @@ def Jdag(atoms, W, ik=-1):
 
     if W.ndim == 1:
         Wfft = Wfft.view(s)
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='backward').view(n)
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="backward").view(n)
     elif W.ndim == 2:
         Wfft = Wfft.view((*s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(0, 1, 2)).view(n, W.shape[-1])
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="backward", dim=(0, 1, 2)).view(n, W.shape[-1])
     else:
         Wfft = Wfft.view((atoms.occ._Nspin, *s, W.shape[-1]))
-        Finv = torch.fft.ifftn(Wfft, s=s, norm='backward', dim=(1, 2, 3)).view(
+        Finv = torch.fft.ifftn(Wfft, s=s, norm="backward", dim=(1, 2, 3)).view(
             atoms.occ._Nspin, n, W.shape[-1]
         )
     return Finv.detach().cpu().numpy()

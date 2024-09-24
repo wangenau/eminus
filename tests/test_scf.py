@@ -9,7 +9,7 @@ import pytest
 from eminus import Atoms, RSCF, SCF, USCF
 from eminus.tools import center_of_mass
 
-atoms = Atoms('He', (0, 0, 0), ecut=2, unrestricted=True)
+atoms = Atoms("He", (0, 0, 0), ecut=2, unrestricted=True)
 
 
 def test_atoms():
@@ -20,30 +20,30 @@ def test_atoms():
 
 def test_xc():
     """Test that xc functionals are correctly parsed."""
-    scf = SCF(atoms, xc='LDA,VWN')
-    assert scf.xc == ['lda_x', 'lda_c_vwn']
-    assert scf.xc_type == 'lda'
-    assert scf.xc_params_defaults == {'A': 0.0310907, 'b': 3.72744, 'c': 12.9352, 'x0': -0.10498}
+    scf = SCF(atoms, xc="LDA,VWN")
+    assert scf.xc == ["lda_x", "lda_c_vwn"]
+    assert scf.xc_type == "lda"
+    assert scf.xc_params_defaults == {"A": 0.0310907, "b": 3.72744, "c": 12.9352, "x0": -0.10498}
 
-    scf.xc = 'PBE'
-    assert scf.xc_type == 'gga'
-    assert scf.xc_params_defaults == {'beta': 0.06672455060314922, 'mu': 0.2195149727645171}
+    scf.xc = "PBE"
+    assert scf.xc_type == "gga"
+    assert scf.xc_params_defaults == {"beta": 0.06672455060314922, "mu": 0.2195149727645171}
 
-    scf = SCF(atoms, xc=',')
-    assert scf.xc == ['mock_xc', 'mock_xc']
+    scf = SCF(atoms, xc=",")
+    assert scf.xc == ["mock_xc", "mock_xc"]
     assert scf.xc_params_defaults == {}
 
 
 def test_xc_params():
     """Test the custom xc parameters."""
-    scf = SCF(atoms, xc='pbesol', opt={'sd': 1})
+    scf = SCF(atoms, xc="pbesol", opt={"sd": 1})
     scf.run()
     ref = scf.energies.Etot
-    scf = SCF(atoms, xc='pbe', opt={'sd': 1})
+    scf = SCF(atoms, xc="pbe", opt={"sd": 1})
     scf.xc_params = {
-        'beta': 0.046,  # PBEsol parameter
-        'mu': 10 / 81,  # PBEsol parameter
-        'mock': None,  # This should print a warning
+        "beta": 0.046,  # PBEsol parameter
+        "mu": 10 / 81,  # PBEsol parameter
+        "mock": None,  # This should print a warning
     }
     scf.run()
     assert scf.energies.Etot == ref
@@ -57,31 +57,31 @@ def test_xc_params():
 
 def test_pot():
     """Test that potentials are correctly parsed and initialized."""
-    scf = SCF(atoms, pot='GTH')
-    assert scf.pot == 'gth'
-    assert scf.psp == 'pade'
-    assert hasattr(scf, 'gth')
+    scf = SCF(atoms, pot="GTH")
+    assert scf.pot == "gth"
+    assert scf.psp == "pade"
+    assert hasattr(scf, "gth")
 
-    scf = SCF(atoms, pot='GTH', xc='pbe')
-    assert scf.psp == 'pbe'
+    scf = SCF(atoms, pot="GTH", xc="pbe")
+    assert scf.psp == "pbe"
 
-    scf.pot = 'test'
-    assert scf.pot == 'gth'
-    assert scf.psp == 'test'
+    scf.pot = "test"
+    assert scf.pot == "gth"
+    assert scf.psp == "test"
 
-    scf = SCF(atoms, pot='GE')
-    assert scf.pot == 'ge'
-    assert not hasattr(scf, 'gth')
+    scf = SCF(atoms, pot="GE")
+    assert scf.pot == "ge"
+    assert not hasattr(scf, "gth")
 
 
 def test_guess():
     """Test initialization of the guess method."""
-    scf = SCF(atoms, guess='RAND')
-    assert scf.guess == 'random'
+    scf = SCF(atoms, guess="RAND")
+    assert scf.guess == "random"
     assert not scf.symmetric
 
-    scf = SCF(atoms, guess='sym-pseudo')
-    assert scf.guess == 'pseudo'
+    scf = SCF(atoms, guess="sym-pseudo")
+    assert scf.guess == "pseudo"
     assert scf.symmetric
 
 
@@ -93,50 +93,50 @@ def test_gradtol():
 
 def test_sic():
     """Test that the SIC routine runs."""
-    scf = SCF(atoms, xc='pbe', opt={'sd': 1}, sic=True)
+    scf = SCF(atoms, xc="pbe", opt={"sd": 1}, sic=True)
     scf.run()
     assert scf.energies.Esic != 0
 
 
-@pytest.mark.parametrize('disp', [True, {'atm': False}])
+@pytest.mark.parametrize("disp", [True, {"atm": False}])
 def test_disp(disp):
     """Test that the dispersion correction routine runs."""
-    pytest.importorskip('dftd3', reason='dftd3 not installed, skip tests')
-    scf = SCF(atoms, opt={'sd': 1}, disp=disp)
+    pytest.importorskip("dftd3", reason="dftd3 not installed, skip tests")
+    scf = SCF(atoms, opt={"sd": 1}, disp=disp)
     scf.run()
     assert scf.energies.Edisp != 0
 
 
 def test_symmetric():
     """Test the symmetry option for H2 dissociation."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 6)), ecut=1, unrestricted=True)
-    scf_symm = SCF(atoms, guess='symm-rand')
-    scf_unsymm = SCF(atoms, guess='unsymm-rand')
+    atoms = Atoms("H2", ((0, 0, 0), (0, 0, 6)), ecut=1, unrestricted=True)
+    scf_symm = SCF(atoms, guess="symm-rand")
+    scf_unsymm = SCF(atoms, guess="unsymm-rand")
     assert scf_symm.run() > scf_unsymm.run()
 
 
 def test_opt():
     """Test the optimizer option."""
-    atoms = Atoms('He', (0, 0, 0), ecut=1)
-    scf = SCF(atoms, opt={'AUTO': 1})
-    assert 'auto' in scf.opt
-    scf.opt = {'sd': 1}
-    assert 'sd' in scf.opt
-    assert 'auto' not in scf.opt
+    atoms = Atoms("He", (0, 0, 0), ecut=1)
+    scf = SCF(atoms, opt={"AUTO": 1})
+    assert "auto" in scf.opt
+    scf.opt = {"sd": 1}
+    assert "sd" in scf.opt
+    assert "auto" not in scf.opt
     scf.run()
-    assert hasattr(scf, '_opt_log')
-    assert 'sd' in scf._opt_log
+    assert hasattr(scf, "_opt_log")
+    assert "sd" in scf._opt_log
 
 
 def test_verbose():
     """Test the verbosity level."""
     scf = SCF(atoms)
     assert scf.verbose == atoms.verbose
-    assert hasattr(atoms, '_log')
-    assert hasattr(scf, '_log')
+    assert hasattr(atoms, "_log")
+    assert hasattr(scf, "_log")
     assert scf._log.verbose == atoms._log.verbose
 
-    level = 'DEBUG'
+    level = "DEBUG"
     scf.verbose = level
     assert scf.verbose == level
     assert scf._log.verbose == level
@@ -150,7 +150,7 @@ def test_kpts():
 
 def test_clear():
     """Test the clear function."""
-    scf = SCF(atoms, opt={'sd': 1})
+    scf = SCF(atoms, opt={"sd": 1})
     scf.run()
     scf.clear()
     assert not scf.is_converged
@@ -161,7 +161,7 @@ def test_clear():
     ]
 
 
-@pytest.mark.parametrize('center', [None, np.diag(atoms.a) / 2])
+@pytest.mark.parametrize("center", [None, np.diag(atoms.a) / 2])
 def test_recenter(center):
     """Test the recenter function."""
     scf = SCF(atoms)
@@ -180,7 +180,7 @@ def test_recenter(center):
     assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.005)
     # Test that the local potential has been rebuild
     assert not np.array_equal(scf.Vloc, Vloc)
-    assert scf.atoms.center == 'recentered'
+    assert scf.atoms.center == "recentered"
 
 
 def test_rscf():
@@ -199,7 +199,7 @@ def test_uscf():
     assert id(scf.atoms) != id(atoms)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

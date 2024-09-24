@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-_AnyW = TypeVar('_AnyW', NDArray[complex128], list[NDArray[complex128]])
+_AnyW = TypeVar("_AnyW", NDArray[complex128], list[NDArray[complex128]])
 
 def solve_poisson(
     atoms: Atoms,

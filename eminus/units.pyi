@@ -5,7 +5,7 @@ from typing import Final, TypeVar
 from numpy import float64
 from numpy.typing import NDArray
 
-_AnyFloat = TypeVar('_AnyFloat', float, float64, NDArray[float64])
+_AnyFloat = TypeVar("_AnyFloat", float, float64, NDArray[float64])
 
 electronvolt: Final[float]
 eV: Final[float]  # noqa: N816

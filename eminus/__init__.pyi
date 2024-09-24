@@ -9,17 +9,17 @@ from .scf import RSCF, SCF, USCF
 from .version import __version__, info
 
 __all__: list[str] = [
-    'RSCF',
-    'SCF',
-    'USCF',
-    'Atoms',
-    'Cell',
-    '__version__',
-    'config',
-    'info',
-    'log',
-    'read',
-    'write',
+    "RSCF",
+    "SCF",
+    "USCF",
+    "Atoms",
+    "Cell",
+    "__version__",
+    "config",
+    "info",
+    "log",
+    "read",
+    "write",
 ]
 
 def demo() -> None: ...

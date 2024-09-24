@@ -10,7 +10,7 @@ from .occupations import Occupations
 from .scf import SCF
 from .typing import Array1D
 
-_AnyFloat = TypeVar('_AnyFloat', float, float64, NDArray[float64])
+_AnyFloat = TypeVar("_AnyFloat", float, float64, NDArray[float64])
 
 def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...

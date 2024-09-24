@@ -35,20 +35,20 @@ from eminus.tools import (
     orbital_center,
 )
 
-atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
+atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
 scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))[0]
 
-atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
-atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
+atoms_unpol = Atoms("He", (0, 0, 0), ecut=1, unrestricted=False)
+atoms_pol = Atoms("He", (0, 0, 0), ecut=1, unrestricted=True)
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
-scf_pol = SCF(atoms_pol, guess='sym-rand')
+scf_pol = SCF(atoms_pol, guess="sym-rand")
 scf_pol.run()
 
 scf_band = copy.deepcopy(scf_unpol)
-scf_band.kpts.path = 'GX'
+scf_band.kpts.path = "GX"
 scf_band.kpts.Nk = 2
 scf_band.converge_bands()
 
@@ -61,7 +61,7 @@ def test_cutoff_and_gridspacing():
 
 
 @pytest.mark.parametrize(
-    ('coords', 'masses', 'ref'),
+    ("coords", "masses", "ref"),
     [(np.eye(3), None, [1 / 3] * 3), (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])],
 )
 def test_center_of_mass(coords, masses, ref):
@@ -70,10 +70,10 @@ def test_center_of_mass(coords, masses, ref):
     assert_allclose(out, ref)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_pycom(unrestricted):
     """Test PyCOM routine."""
-    atoms = Atoms('He2', ((0, 0, 0), (10, 0, 0)), ecut=2, unrestricted=unrestricted, center=True)
+    atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=2, unrestricted=unrestricted, center=True)
     scf = SCF(atoms)
     scf.run()
     psi = atoms.I(get_psi(scf, scf.W))
@@ -82,7 +82,7 @@ def test_pycom(unrestricted):
 
 
 @pytest.mark.parametrize(
-    'coords', [np.array([[1, 0, 0]]), np.array([[0, 1, 0]]), np.array([[0, 0, 1]])]
+    "coords", [np.array([[1, 0, 0]]), np.array([[0, 1, 0]]), np.array([[0, 0, 1]])]
 )
 def test_inertia_tensor(coords):
     """Test the inertia tensor calculation."""
@@ -105,19 +105,19 @@ def test_get_ip():
     assert_allclose(get_ip(scf_pol), 0.39626631)
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
 def test_check_ortho(ref, func):
     """Test orthogonality check."""
     assert check_ortho(atoms, func) == ref
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
 def test_check_norm(ref, func):
     """Test normalization check."""
     assert check_norm(atoms, func) == ref
 
 
-@pytest.mark.parametrize(('ref', 'func'), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
 def test_check_orthonorm(ref, func):
     """Test orthonormalization check."""
     assert check_orthonorm(atoms, func) == ref
@@ -129,7 +129,7 @@ def test_get_isovalue():
     assert_allclose(get_isovalue(scf.n), 0.013, atol=1e-3)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_tautf(unrestricted):
     """Test Thomas-Fermi kinetic energy density."""
     if unrestricted:
@@ -142,7 +142,7 @@ def test_get_tautf(unrestricted):
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_tauw(unrestricted):
     """Test von Weizsaecker kinetic energy density."""
     if unrestricted:
@@ -157,7 +157,7 @@ def test_get_tauw(unrestricted):
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_elf(unrestricted):
     """Test electron localization function."""
     if unrestricted:
@@ -169,7 +169,7 @@ def test_get_elf(unrestricted):
     assert ((elf >= 0) & (elf <= 1)).all()
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_reduced_gradient(unrestricted):
     """Test reduced density gradient."""
     if unrestricted:
@@ -184,17 +184,17 @@ def test_get_reduced_gradient(unrestricted):
 
 def test_spin_squared_and_multiplicity():
     """Test the calculation of <S^2> and the multiplicity."""
-    atoms = Atoms('H2', ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=1)
+    atoms = Atoms("H2", ((0, 0, 0), (0, 0, 10)), unrestricted=True, ecut=1)
     rscf = RSCF(atoms)
     assert get_spin_squared(rscf) == 0
     assert get_multiplicity(rscf) == 1
 
-    scf = SCF(atoms, guess='symm-rand')
+    scf = SCF(atoms, guess="symm-rand")
     scf.run()
     assert_allclose(get_spin_squared(scf), 0, atol=1e-2)
     assert_allclose(get_multiplicity(scf), 1, atol=1e-2)
 
-    scf = SCF(atoms, guess='unsymm-rand')
+    scf = SCF(atoms, guess="unsymm-rand")
     scf.run()
     assert_allclose(get_spin_squared(scf), 1, atol=1e-2)
     assert get_multiplicity(scf) > 2
@@ -206,7 +206,7 @@ def test_magnetization():
     assert M == 0
     M = get_magnetization(scf_pol)
     assert -1 < M < 1
-    atoms = Atoms('H', ((0, 0, 0)), unrestricted=True, ecut=1)
+    atoms = Atoms("H", ((0, 0, 0)), unrestricted=True, ecut=1)
     scf = SCF(atoms)
     scf.run()
     assert_allclose(get_magnetization(scf), 1)
@@ -215,7 +215,7 @@ def test_magnetization():
 def test_get_Efermi():
     """Test the Fermi energy calculation."""
     Ef = get_Efermi(scf_band)
-    assert hasattr(scf_band, '_precomputed')
+    assert hasattr(scf_band, "_precomputed")
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     assert_allclose(Ef, np.max(e_occ))
     scf_band.converge_empty_bands(Nempty=1)
@@ -237,7 +237,7 @@ def test_get_bandgap():
 
 def test_get_dos():
     """Test the DOS calculation."""
-    assert hasattr(scf_band, '_precomputed')
+    assert hasattr(scf_band, "_precomputed")
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     e, e_dos = get_dos(e_occ, scf_band.kpts.wk, spin=0, npts=500, width=0.1)
     # The maximum of the DOS should be close to the maximum eigenvalue in this case
@@ -246,7 +246,7 @@ def test_get_dos():
     assert np.max(e) > np.max(e_occ)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

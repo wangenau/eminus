@@ -50,16 +50,16 @@ a = 10.2631
 ecut = 5
 s = 15
 kmesh = 2
-guess = 'sym-random'
+guess = "sym-random"
 etol = 1e-6
-path = 'LGX'
+path = "LGX"
 
 
 def test_polarized():
     """Compare band energies for a test system with reference values (spin-polarized)."""
-    opt = {'auto': 27}
+    opt = {"auto": 27}
 
-    cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
+    cell = Cell("Si", "diamond", ecut=ecut, a=a, kmesh=kmesh, bands=8)
     cell.s = s
     scf = USCF(cell, guess=guess, etol=etol, opt=opt)
     scf.run()
@@ -68,7 +68,7 @@ def test_polarized():
     scf.kpts.Nk = len(path)
     scf.converge_bands()
 
-    assert hasattr(scf, '_precomputed')
+    assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
@@ -81,9 +81,9 @@ def test_polarized():
 
 def test_unpolarized():
     """Compare band energies for a test system with reference values (spin-paired)."""
-    opt = {'auto': 26}
+    opt = {"auto": 26}
 
-    cell = Cell('Si', 'diamond', ecut=ecut, a=a, kmesh=kmesh, bands=8)
+    cell = Cell("Si", "diamond", ecut=ecut, a=a, kmesh=kmesh, bands=8)
     cell.s = s
     scf = RSCF(cell, guess=guess, etol=etol, opt=opt)
     scf.run()
@@ -92,7 +92,7 @@ def test_unpolarized():
     scf.kpts.Nk = len(path)
     scf.converge_bands()
 
-    assert hasattr(scf, '_precomputed')
+    assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
@@ -102,7 +102,7 @@ def test_unpolarized():
     assert_allclose(bandgap, bandgap_ref, atol=etol)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

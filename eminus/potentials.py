@@ -43,7 +43,7 @@ def coulomb(scf):
 
     # Ignore the division by zero for the first elements
     # One could do some proper indexing with [1:] but indexing is slow
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         Vcoul = -4 * np.pi * Z / atoms.G2
     Vcoul[0] = 0
 
@@ -71,7 +71,7 @@ def ge(scf):
     Gm = np.sqrt(atoms.G2)
     Vps = np.empty_like(atoms.G2)
 
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         Vps = (
             -2
             * np.pi
@@ -120,8 +120,8 @@ def init_pot(scf):
 
 #: Map potential names with their respective implementation.
 IMPLEMENTED = {
-    'harmonic': harmonic,
-    'coulomb': coulomb,
-    'ge': ge,
-    'gth': init_gth_loc,
+    "harmonic": harmonic,
+    "coulomb": coulomb,
+    "ge": ge,
+    "gth": init_gth_loc,
 }

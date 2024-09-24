@@ -48,12 +48,12 @@ class Energy:
 
     def __repr__(self):
         """Print the energies stored in the Energy object."""
-        out = ''
+        out = ""
         for ie in dataclasses.fields(self):
             energy = getattr(self, ie.name)
             if energy != 0:
-                out += f'{ie.name:<9}: {energy:+.9f} Eh\n'
-        return f'{out}{"-" * 26}\nEtot     : {self.Etot:+.9f} Eh'
+                out += f"{ie.name:<9}: {energy:+.9f} Eh\n"
+        return f"{out}{'-' * 26}\nEtot     : {self.Etot:+.9f} Eh"
 
 
 def get_E(scf):
@@ -73,7 +73,7 @@ def get_E(scf):
     return scf.energies.Etot
 
 
-@handle_k(mode='reduce')
+@handle_k(mode="reduce")
 def get_Ekin(atoms, Y, ik):
     """Calculate the kinetic energy.
 
@@ -160,7 +160,7 @@ def get_Eloc(scf, n):
     return np.real(np.vdot(scf.Vloc, n))
 
 
-@handle_k(mode='reduce')
+@handle_k(mode="reduce")
 def get_Enonloc(scf, Y, ik):
     """Calculate the non-local GTH energy contribution.
 
@@ -179,7 +179,7 @@ def get_Enonloc(scf, Y, ik):
     atoms = scf.atoms
 
     Enonloc = 0
-    if scf.pot != 'gth' or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
+    if scf.pot != "gth" or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
         return Enonloc
 
     for spin in range(atoms.occ.Nspin):
@@ -188,13 +188,13 @@ def get_Enonloc(scf, Y, ik):
         enl = np.zeros(Y.shape[-1], dtype=complex)
         for ia in range(atoms.Natoms):
             psp = scf.gth[atoms.atom[ia]]
-            for l in range(psp['lmax']):
+            for l in range(psp["lmax"]):
                 for m in range(-l, l + 1):
-                    for iprj in range(psp['Nproj_l'][l]):
-                        ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp['lmax'] - 1] - 1
-                        for jprj in range(psp['Nproj_l'][l]):
-                            jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp['lmax'] - 1] - 1
-                            hij = psp['h'][l, iprj, jprj]
+                    for iprj in range(psp["Nproj_l"][l]):
+                        ibeta = scf.gth.prj2beta[iprj, ia, l, m + psp["lmax"] - 1] - 1
+                        for jprj in range(psp["Nproj_l"][l]):
+                            jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp["lmax"] - 1] - 1
+                            hij = psp["h"][l, iprj, jprj]
                             enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
         Enonloc += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
@@ -314,14 +314,14 @@ def get_Esic(scf, Y, n_single=None):
                 ni[0] = n_single[spin, :, i] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
 
                 # Get the gradient of the single-particle density
-                if 'gga' in scf.xc_type:
+                if "gga" in scf.xc_type:
                     dni = np.zeros((2, atoms.Ns, 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
 
                 # Get the kinetic energy density of the corresponding orbital
-                if scf.xc_type == 'meta-gga':
+                if scf.xc_type == "meta-gga":
                     # Use only one orbital for the calculation
                     Ytmp = []
                     for ik in range(atoms.kpts.Nk):
@@ -344,11 +344,11 @@ def get_Esic(scf, Y, n_single=None):
     return Esic
 
 
-def get_Edisp(scf, version='d3bj', atm=True, xc=None):  # noqa: D103
+def get_Edisp(scf, version="d3bj", atm=True, xc=None):  # noqa: D103
     try:
         return dispersion.get_Edisp(scf, version, atm, xc)
     except ImportError:
-        log.warning('You have to install the dispersion extra to use this function.')
+        log.warning("You have to install the dispersion extra to use this function.")
         return 0
 
 

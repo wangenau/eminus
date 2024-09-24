@@ -66,10 +66,10 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     for dim in range(3):
         Gh[:, dim] = atoms.J(h[spin, :, dim])
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * np.einsum('ir,ir->i', atoms.G, Gh)
+    return 1j * np.einsum("ir,ir->i", atoms.G, Gh)
 
 
-@handle_k(mode='reduce')
+@handle_k(mode="reduce")
 def get_tau(atoms, Y, ik):
     """Calculate the positive-definite kinetic energy densities per spin.
 
@@ -109,7 +109,7 @@ def get_tau(atoms, Y, ik):
         0.5
         * atoms.kpts.wk[ik]
         * np.real(
-            np.einsum('sj,sijr,sijr->si', atoms.occ.f[ik], dYrs.conj(), dYrs, optimize='greedy')
+            np.einsum("sj,sijr,sijr->si", atoms.occ.f[ik], dYrs.conj(), dYrs, optimize="greedy")
         )
     )
 
@@ -132,7 +132,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     atoms = scf.atoms
 
     Vpsi = np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
-    if scf.xc_type != 'meta-gga':  # Only calculate the contribution for meta-GGAs
+    if scf.xc_type != "meta-gga":  # Only calculate the contribution for meta-GGAs
         return Vpsi
 
     # The "intuitive" way is the one commented out below (without k-point dependency)
@@ -162,5 +162,5 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     # Sum over dimensions
     # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
     # Vpsi = -0.5 * 1j * np.sum(Gkc * GVpsi, axis=2)
-    Vpsi = -0.5 * 1j * np.einsum('ior,ijr->ij', Gkc, GVpsi)
+    Vpsi = -0.5 * 1j * np.einsum("ior,ijr->ij", Gkc, GVpsi)
     return atoms.O(Vpsi)

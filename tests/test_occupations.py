@@ -9,7 +9,7 @@ import pytest
 from eminus.occupations import Occupations
 
 
-@pytest.mark.parametrize(('Nelec', 'Nspin', 'ref'), [(1, None, 2), (2, None, 1), (2, 2, 2)])
+@pytest.mark.parametrize(("Nelec", "Nspin", "ref"), [(1, None, 2), (2, None, 1), (2, 2, 2)])
 def test_Nspin(Nelec, Nspin, ref):
     """Test the setting of Nspin."""
     occ = Occupations()
@@ -42,7 +42,7 @@ def test_Nspin_change_after_fill():
 
 
 @pytest.mark.parametrize(
-    ('Nelec', 'Nspin', 'spin', 'ref'),
+    ("Nelec", "Nspin", "spin", "ref"),
     [(1, 1, None, 0), (1, 2, None, 1), (2, 2, None, 0), (2, 2, 2, 2), (1, 2, 1, 1), (1, 1, 2, 0)],
 )
 def test_spin(Nelec, Nspin, spin, ref):
@@ -71,7 +71,7 @@ def test_charge_change():
 
 
 @pytest.mark.parametrize(
-    ('Nelec', 'Nspin', 'spin', 'charge', 'ref'),
+    ("Nelec", "Nspin", "spin", "charge", "ref"),
     [
         (1, 1, 1, 0, np.array([[[1]]])),
         (2, 1, 0, 0, np.array([[[2]]])),
@@ -104,7 +104,7 @@ def test_fill(Nelec, Nspin, spin, charge, ref):
 
 
 @pytest.mark.parametrize(
-    ('f', 'Nelec', 'Nspin', 'spin', 'ref'),
+    ("f", "Nelec", "Nspin", "spin", "ref"),
     [
         (2, 2, 1, 3, np.array([[[2]]])),
         (2, 2, 2, 2, np.array([[[2], [0]]])),
@@ -127,7 +127,7 @@ def test_f_change(f, Nelec, Nspin, spin, ref):
 
 
 @pytest.mark.parametrize(
-    ('f', 'Nelec_init', 'Nelec', 'Nspin', 'Nstate', 'spin', 'charge'),
+    ("f", "Nelec_init", "Nelec", "Nspin", "Nstate", "spin", "charge"),
     [
         (np.array([3]), 3, 3, 1, 1, 0, 0),
         (np.array([2, 2]), 3, 4, 1, 2, 0, -1),
@@ -174,7 +174,7 @@ def test_wk():
 
 
 @pytest.mark.parametrize(
-    ('Nelec', 'Nspin', 'spin', 'bands', 'ref'),
+    ("Nelec", "Nspin", "spin", "bands", "ref"),
     [
         (2, 1, 0, 2, np.array([[[2, 0]]])),
         (2, 2, 0, 2, np.array([[[1, 0], [1, 0]]])),
@@ -196,7 +196,7 @@ def test_bands(Nelec, Nspin, spin, bands, ref):
     assert_allclose(occ.f, ref)
 
 
-@pytest.mark.parametrize('Nspin', [1, 2])
+@pytest.mark.parametrize("Nspin", [1, 2])
 def test_smearing(Nspin):
     """Test the smearing property."""
     occ = Occupations()
@@ -211,7 +211,7 @@ def test_smearing(Nspin):
 
 
 @pytest.mark.parametrize(
-    ('Nspin', 'spin', 'wk', 'ref'),
+    ("Nspin", "spin", "wk", "ref"),
     [
         (1, 0, [1], 0),
         (2, 0, [1], 0),
@@ -244,7 +244,7 @@ def test_unfilled_magnetization():
 
 
 @pytest.mark.parametrize(
-    ('charge', 'bands', 'magnetization', 'ref'),
+    ("charge", "bands", "magnetization", "ref"),
     [
         (0, 1, 0, [[[1], [1]]]),
         (0, 2, 1, [[[1, 1], [0, 0]]]),
@@ -266,7 +266,7 @@ def test_magnetization_setter(charge, bands, magnetization, ref):
     assert_allclose(occ.f, ref)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

@@ -45,10 +45,10 @@ class CustomFormatter(logging.Formatter):
         """
         if record.levelno >= logging.WARNING:
             # Print the level name for errors and warnings
-            self._style._fmt = '%(levelname)s: %(msg)s'
+            self._style._fmt = "%(levelname)s: %(msg)s"
         else:
             # But not for info and debug messages
-            self._style._fmt = '%(msg)s'
+            self._style._fmt = "%(msg)s"
         return super().format(record)
 
 
@@ -58,7 +58,7 @@ class CustomFormatter(logging.Formatter):
 # Create a base logger that can be used outside of classes
 logging.setLoggerClass(CustomLogger)
 #: Global logging object.
-log = logging.getLogger('eminus')
+log = logging.getLogger("eminus")
 
 # Basic logger setup
 __formatter = CustomFormatter()
@@ -93,23 +93,23 @@ def get_level(verbose):
         Logging level.
     """
     log_levels = {
-        0: 'CRITICAL',
-        1: 'ERROR',
-        2: 'WARNING',
-        3: 'INFO',
-        4: 'DEBUG',
+        0: "CRITICAL",
+        1: "ERROR",
+        2: "WARNING",
+        3: "INFO",
+        4: "DEBUG",
     }
     # Use the global logging level for None
     if verbose is None:
         level = log.verbose
     # Fall back to DEBUG if the level is not available
     elif isinstance(verbose, numbers.Number):
-        level = log_levels.get(verbose, 'DEBUG')
+        level = log_levels.get(verbose, "DEBUG")
     else:
         level = verbose
     level = level.upper()
     if level not in log_levels.values():
-        msg = f'{level} is no recognized logging level.'
+        msg = f"{level} is no recognized logging level."
         raise ValueError(msg)
     return level
 

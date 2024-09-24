@@ -134,8 +134,8 @@ class KPoints(BaseObject):
 
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == 'sc' and not (self.a == np.diag(np.diag(self.a))).all():
-            log.warning('Lattice system and lattice vectors do not match.')
+        if self.lattice == "sc" and not (self.a == np.diag(np.diag(self.a))).all():
+            log.warning("Lattice system and lattice vectors do not match.")
         if self.is_built:
             return self
         if self.kmesh is not None:
@@ -156,17 +156,17 @@ class KPoints(BaseObject):
     def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
         if not np.all(self.k == 0):
-            msg = 'The k-points object does not contain only the Gamma point.'
+            msg = "The k-points object does not contain only the Gamma point."
             raise NotImplementedError(msg)
 
     def __repr__(self):
         """Print the parameters stored in the KPoints object."""
         return (
-            f'Number of k-points: {self.Nk}\n'
-            f'k-mesh: {self.kmesh}\n'
-            f'Band path: {self.path}\n'
-            f'Shift: {self.kshift}\n'
-            f'Weights: {self.wk}'
+            f"Number of k-points: {self.Nk}\n"
+            f"k-mesh: {self.kmesh}\n"
+            f"Band path: {self.path}\n"
+            f"Shift: {self.kshift}\n"
+            f"Weights: {self.wk}"
         )
 
 
@@ -231,22 +231,22 @@ def bandpath(kpts):
     path_list = list(kpts.path)
     s_points = SPECIAL_POINTS[kpts.lattice]
     # Commas indicate jumps and are no special points
-    N_special = len([p for p in path_list if p != ','])
+    N_special = len([p for p in path_list if p != ","])
 
     # Input handling
     N = kpts.Nk
     if N_special > N:
-        log.warning('Sampling is smaller than the number of special points.')
+        log.warning("Sampling is smaller than the number of special points.")
         N = N_special
     for p in path_list:
-        if p not in {*s_points, ','}:
-            msg = f'{p} is not a special point for the {kpts.lattice} lattice.'
+        if p not in {*s_points, ","}:
+            msg = f"{p} is not a special point for the {kpts.lattice} lattice."
             raise KeyError(msg)
 
     # Calculate distances between special points
     dists = []
     for i in range(len(path_list) - 1):
-        if ',' not in path_list[i : i + 2]:
+        if "," not in path_list[i : i + 2]:
             # Use subtract since s_points are lists
             dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
             dists.append(norm(kpoint_convert(dist, kpts.a)))
@@ -266,7 +266,7 @@ def bandpath(kpts):
     k_points = [s_points[path_list[0]]]  # Insert the first special point
     for i in range(len(path_list) - 1):
         # Only do something when not jumping between special points
-        if ',' not in path_list[i : i + 2]:
+        if "," not in path_list[i : i + 2]:
             s_start = s_points[path_list[i]]
             s_end = s_points[path_list[i + 1]]
             # Get the vector between special points
@@ -278,7 +278,7 @@ def bandpath(kpts):
             # Append the special point we are ending at
             k_points.append(s_end)
         # If we jump, add the new special point to start from
-        elif path_list[i] == ',':
+        elif path_list[i] == ",":
             k_points.append(s_points[path_list[i + 1]])
     return np.asarray(k_points)
 
@@ -304,14 +304,14 @@ def kpoints2axis(kpts):
     labels = []
     for i in range(len(path_list)):
         # If a jump happened before the current step the special point is already included
-        if i > 1 and path_list[i - 1] == ',':
+        if i > 1 and path_list[i - 1] == ",":
             continue
         # Append the special point if no jump happens
-        if ',' not in path_list[i : i + 2]:
+        if "," not in path_list[i : i + 2]:
             labels.append(path_list[i])
         # When jumping join the special points to one label
-        elif path_list[i] == ',':
-            labels.append(''.join(path_list[i - 1 : i + 2]))
+        elif path_list[i] == ",":
+            labels.append("".join(path_list[i - 1 : i + 2]))
 
     # Get the indices of the special points
     special_indices = [0]  # The first special point is trivial
@@ -324,7 +324,7 @@ def kpoints2axis(kpts):
         index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
         special_indices.append(index)
         # Set the distance between special points to zero if we have a jump
-        if ',' in p:
+        if "," in p:
             dists[index] = 0
 
     # Insert a zero at the beginning and add up the lengths to create the k-axis

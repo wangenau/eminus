@@ -9,20 +9,20 @@ All values are directly calculated from the CODATA 2018 constants as found in Sc
 import math
 
 #: Hartree in electronvolt.
-# scipy.constants.value('Hartree energy in eV')
+# scipy.constants.value("Hartree energy in eV")
 electronvolt = eV = 27.211386245988  # noqa: N816
 #: Hartree in kcal per mol.
-# scipy.constants.value('Hartree energy') * scipy.constants.value('Avogadro constant') / 4.184 / 1e3
+# scipy.constants.value("Hartree energy") * scipy.constants.value("Avogadro constant") / 4.184 / 1e3
 kcalmol = 627.5094740630557
 #: Bohr radius in Angstrom.
-# scipy.constants.value('Bohr radius') * 1e10
+# scipy.constants.value("Bohr radius") * 1e10
 Angstrom = A = 0.529177210903
 #: Elementary charge times bohr radius in Debye.
-# scipy.constants.value('atomic unit of electric dipole mom.') / \
-# scipy.constants.value('hertz-inverse meter relationship') * 1e21
+# scipy.constants.value("atomic unit of electric dipole mom.") / \
+# scipy.constants.value("hertz-inverse meter relationship") * 1e21
 Debye = D = 2.5417464731818566
 #: Hartree in kb times Kelvin.
-# scipy.constants.value('kelvin-hartree relationship')
+# scipy.constants.value("kelvin-hartree relationship")
 Kelvin = K = 3.1668115634556e-06
 
 

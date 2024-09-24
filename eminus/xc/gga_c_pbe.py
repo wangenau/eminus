@@ -102,7 +102,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     gec = gamma * phi3 * np.log(nolog)
 
     # Handle divisions by zero
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         dfz = ((1 + zeta) ** (-1 / 3) - (1 - zeta) ** (-1 / 3)) / 3
     dfz = np.nan_to_num(dfz, nan=0, posinf=0, neginf=0)
     factor = A2t4 * (2 + At2) / divsum**2

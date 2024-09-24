@@ -14,16 +14,16 @@ E_ref = -7.493530216
 a = 10.2631
 ecut = 5
 s = 15
-guess = 'random'
+guess = "random"
 etol = 1e-6
-opt = {'auto': 27}
+opt = {"auto": 27}
 wk = [0.4, 0.6]
 k = [[0.1, 0.2, 0.3], [0.1, 0.1, 0.1]]
 
 
 def test_polarized():
     """Compare total energies for a test system with a reference value (spin-paired)."""
-    cell = Cell('Si', 'diamond', ecut=ecut, a=a)
+    cell = Cell("Si", "diamond", ecut=ecut, a=a)
     cell.s = s
     cell.set_k(kpoint_convert(k, cell.a), wk)
     E = USCF(cell, guess=guess, etol=etol, opt=opt).run()
@@ -32,14 +32,14 @@ def test_polarized():
 
 def test_unpolarized():
     """Compare total energies for a test system with a reference value (spin-paired)."""
-    cell = Cell('Si', 'diamond', ecut=ecut, a=a)
+    cell = Cell("Si", "diamond", ecut=ecut, a=a)
     cell.s = s
     cell.set_k(kpoint_convert(k, cell.a), wk)
     E = RSCF(cell, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref, atol=etol)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

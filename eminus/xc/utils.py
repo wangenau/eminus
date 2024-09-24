@@ -62,15 +62,15 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
     def handle_functional(fxc):
         """Calculate a given functional fxc, same for exchange and correlation."""
         # Calculate with the libxc extra...
-        if ':' in fxc:
+        if ":" in fxc:
             from ..extras.libxc import libxc_functional
 
-            fxc = fxc.split(':')[-1]
+            fxc = fxc.split(":")[-1]
             exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau, xc_params)
         # ...or use an internal functional
         else:
-            if Nspin == 2 and fxc != 'mock_xc':
-                fxc += '_spin'
+            if Nspin == 2 and fxc != "mock_xc":
+                fxc += "_spin"
             exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](
                 n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params
             )
@@ -153,22 +153,22 @@ def parse_functionals(xc):
     # Check for combined aliases
     try:
         # Remove underscores when looking up in the dictionary
-        xc_ = xc.replace('_', '')
+        xc_ = xc.replace("_", "")
         xc = ALIAS[xc_]
     except KeyError:
         pass
 
     # Parse functionals
     functionals = []
-    for f in xc.split(','):
-        if ':' in f or f in IMPLEMENTED:
+    for f in xc.split(","):
+        if ":" in f or f in IMPLEMENTED:
             f_xc = f
         elif not f:
-            f_xc = 'mock_xc'
+            f_xc = "mock_xc"
         else:
             try:
                 # Remove underscores when looking up in the dictionary
-                f_ = f.replace('_', '')
+                f_ = f.replace("_", "")
                 f_xc = XC_MAP[f_]
             except KeyError:
                 log.exception(f'No functional found for "{f}".')
@@ -176,7 +176,7 @@ def parse_functionals(xc):
         functionals.append(f_xc)
 
     # If only one or no functional has been parsed append with mock functionals
-    functionals.extend('mock_xc' for _ in range(2 - len(functionals)))
+    functionals.extend("mock_xc" for _ in range(2 - len(functionals)))
     return functionals
 
 
@@ -191,8 +191,8 @@ def parse_xc_type(xc):
     """
     xc_type = []
     for func in xc:
-        if ':' in func:
-            xc_id = func.split(':')[-1]
+        if ":" in func:
+            xc_id = func.split(":")[-1]
             # Try to parse the functional using pylibxc at first
             try:
                 family = parse_xc_libxc(xc_id)
@@ -201,26 +201,26 @@ def parse_xc_type(xc):
                 family = parse_xc_pyscf(xc_id)
 
             if family == 1:
-                xc_type.append('lda')
+                xc_type.append("lda")
             elif family == 2:
-                xc_type.append('gga')
+                xc_type.append("gga")
             elif family == 4:
-                xc_type.append('meta-gga')
+                xc_type.append("meta-gga")
             else:
-                msg = 'Unsupported functional family.'
+                msg = "Unsupported functional family."
                 raise NotImplementedError(msg)
         # Fall back to internal xc functionals
-        elif 'gga' in func:
-            xc_type.append('gga')
+        elif "gga" in func:
+            xc_type.append("gga")
         else:
-            xc_type.append('lda')
+            xc_type.append("lda")
 
     # When mixing functional types use the higher level of theory
     if xc_type[0] != xc_type[1]:
-        log.warning('Detected mixing of different functional types.')
-        if 'meta-gga' in xc_type:
-            return 'meta-gga'
-        return 'gga'
+        log.warning("Detected mixing of different functional types.")
+        if "meta-gga" in xc_type:
+            return "meta-gga"
+        return "gga"
     return xc_type[0]
 
 
@@ -242,7 +242,7 @@ def parse_xc_libxc(xc_id):
 
     func = pylibxc.LibXCFunctional(int(xc_id), 1)
     if func._needs_laplacian:
-        msg = 'meta-GGAs that need a laplacian are not supported.'
+        msg = "meta-GGAs that need a laplacian are not supported."
         raise NotImplementedError(msg)
     return func.get_family()
 
@@ -262,7 +262,7 @@ def parse_xc_pyscf(xc_id):
         xc_id = XC_CODES[xc_id.upper()]
 
     if needs_laplacian(int(xc_id)):
-        msg = 'meta-GGAs that need a laplacian are not supported.'
+        msg = "meta-GGAs that need a laplacian are not supported."
         raise NotImplementedError(msg)
     # Use the same values as in parse_xc_libxc
     if is_lda(xc_id):
@@ -287,19 +287,19 @@ def get_xc_defaults(xc):
         xc = parse_functionals(xc)
 
     # Names of special kewyword arguments that should not be used in xc_params
-    SPECIAL_NAMES = ['dn_spin', 'Nspin']
+    SPECIAL_NAMES = ["dn_spin", "Nspin"]
 
     params = {}
     for func in xc:
         # If pylibxc functionals are used determine the default values from it
-        if ':' in func:
+        if ":" in func:
             # This only works for pylibxc, not with PySCF
-            if not config.use_pylibxc or 'pylibxc' not in sys.modules:
-                msg = 'ext_params only work with pylibxc as the libxc backend, not with pyscf.'
+            if not config.use_pylibxc or "pylibxc" not in sys.modules:
+                msg = "ext_params only work with pylibxc as the libxc backend, not with pyscf."
                 raise NotImplementedError(msg)
             from pylibxc import LibXCFunctional
 
-            fxc = func.split(':')[-1]
+            fxc = func.split(":")[-1]
             try:
                 f_xc = LibXCFunctional(int(fxc), 1)
             except ValueError:
@@ -325,7 +325,7 @@ def get_xc_defaults(xc):
             if name in params:
                 log.warning(
                     f'External parameter "{name}" is used in the exchange AND correlation part. '
-                    'It will be passed to both functionals if used in xc_params.'
+                    "It will be passed to both functionals if used in xc_params."
                 )
             params[name] = fxc_params[name]
     return params
@@ -398,54 +398,54 @@ IMPLEMENTED = {
 #: Map functional shorthands to the actual functional names.
 XC_MAP = {
     # lda_x
-    '1': 'lda_x',
-    's': 'lda_x',
-    'lda': 'lda_x',
-    'slater': 'lda_x',
+    "1": "lda_x",
+    "s": "lda_x",
+    "lda": "lda_x",
+    "slater": "lda_x",
     # lda_c_vwn
-    '7': 'lda_c_vwn',
-    'vwn': 'lda_c_vwn',
-    'vwn5': 'lda_c_vwn',
+    "7": "lda_c_vwn",
+    "vwn": "lda_c_vwn",
+    "vwn5": "lda_c_vwn",
     # lda_c_pw
-    '12': 'lda_c_pw',
-    'pw': 'lda_c_pw',
-    'pw92': 'lda_c_pw',
+    "12": "lda_c_pw",
+    "pw": "lda_c_pw",
+    "pw92": "lda_c_pw",
     # lda_c_pw_mod
-    '13': 'lda_c_pw_mod',
-    'pwmod': 'lda_c_pw_mod',
-    'pw92mod': 'lda_c_pw_mod',
+    "13": "lda_c_pw_mod",
+    "pwmod": "lda_c_pw_mod",
+    "pw92mod": "lda_c_pw_mod",
     # gga_x_pbe
-    '101': 'gga_x_pbe',
-    'pbex': 'gga_x_pbe',
+    "101": "gga_x_pbe",
+    "pbex": "gga_x_pbe",
     # gga_x_pbe_sol
-    '116': 'gga_x_pbe_sol',
-    'pbesolx': 'gga_x_pbe_sol',
+    "116": "gga_x_pbe_sol",
+    "pbesolx": "gga_x_pbe_sol",
     # gga_c_pbe
-    '130': 'gga_c_pbe',
-    'pbec': 'gga_c_pbe',
+    "130": "gga_c_pbe",
+    "pbec": "gga_c_pbe",
     # gga_c_pbe_sol
-    '133': 'gga_c_pbe_sol',
-    'pbesolc': 'gga_c_pbe_sol',
+    "133": "gga_c_pbe_sol",
+    "pbesolc": "gga_c_pbe_sol",
     # lda_c_chachiyo
-    '287': 'lda_c_chachiyo',
-    'chachiyo': 'lda_c_chachiyo',
+    "287": "lda_c_chachiyo",
+    "chachiyo": "lda_c_chachiyo",
     # gga_x_chachiyo
-    '298': 'gga_x_chachiyo',
-    'chachiyox': 'gga_x_chachiyo',
+    "298": "gga_x_chachiyo",
+    "chachiyox": "gga_x_chachiyo",
     # lda_c_chachiyo_mod
-    '307': 'lda_c_chachiyo_mod',
-    'chachiyomod': 'lda_c_chachiyo_mod',
+    "307": "lda_c_chachiyo_mod",
+    "chachiyomod": "lda_c_chachiyo_mod",
     # gga_c_chachiyo
-    '309': 'gga_c_chachiyo',
-    'chachiyoc': 'gga_c_chachiyo',
+    "309": "gga_c_chachiyo",
+    "chachiyoc": "gga_c_chachiyo",
 }
 
 #: Dictionary of common functional aliases.
 ALIAS = {
-    'svwn': 'slater,vwn5',
-    'svwn5': 'slater,vwn5',
-    'spw92': 'slater,pw92mod',
-    'pbe': 'pbex,pbec',
-    'pbesol': 'pbesolx,pbesolc',
-    'chachiyo': 'chachiyox,chachiyoc',
+    "svwn": "slater,vwn5",
+    "svwn5": "slater,vwn5",
+    "spw92": "slater,pw92mod",
+    "pbe": "pbex,pbec",
+    "pbesol": "pbesolx,pbesolc",
+    "chachiyo": "chachiyox,chachiyoc",
 }

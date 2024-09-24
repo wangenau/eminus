@@ -23,7 +23,7 @@ class ConfigClass:
         self.use_gpu = False  # Disable GPU by default, since it is slower in my tests
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.threads = None  # Read threads from environment variables by default
-        self.verbose = 'INFO'  # Only display warnings (and worse) by default
+        self.verbose = "INFO"  # Only display warnings (and worse) by default
 
     # ### Class properties ###
 
@@ -85,7 +85,7 @@ class ConfigClass:
 
                     return torch.get_num_threads()
                 # Read the OMP threads for the default operators
-                return int(os.environ['OMP_NUM_THREADS'])
+                return int(os.environ["OMP_NUM_THREADS"])
             except KeyError:
                 return None
         return int(self._threads)
@@ -98,7 +98,7 @@ class ConfigClass:
                 import torch
 
                 return torch.set_num_threads(value)
-            os.environ['OMP_NUM_THREADS'] = str(value)
+            os.environ["OMP_NUM_THREADS"] = str(value)
         return None
 
     @property
@@ -115,23 +115,23 @@ class ConfigClass:
 
     def info(self):
         """Print configuration and performance information."""
-        sys.stdout.write('--- Configuration infos ---\n')
-        sys.stdout.write(f'Global verbosity : {self.verbose}\n')
+        sys.stdout.write("--- Configuration infos ---\n")
+        sys.stdout.write(f"Global verbosity : {self.verbose}\n")
         # Only print if PySCF or pylibxc is installed
         if not self.use_pylibxc:
             try:
                 import pyscf  # noqa: F401
 
-                sys.stdout.write('Libxc backend    : PySCF\n')
+                sys.stdout.write("Libxc backend    : PySCF\n")
             except ImportError:
                 pass
         else:
-            sys.stdout.write('Libxc backend    : pylibxc\n')
+            sys.stdout.write("Libxc backend    : pylibxc\n")
 
         sys.stdout.write(
-            '\n--- Performance infos ---\n'
-            f'FFT backend : {"Torch" if self.use_torch else "SciPy"}\n'
-            f'FFT device  : {"GPU" if self.use_gpu else "CPU"}\n'
+            "\n--- Performance infos ---\n"
+            f"FFT backend : {'Torch' if self.use_torch else 'SciPy'}\n"
+            f"FFT device  : {'GPU' if self.use_gpu else 'CPU'}\n"
         )
         # Do not print threading information when using GPU
         if self.use_gpu:
@@ -139,18 +139,18 @@ class ConfigClass:
         # Check FFT threads
         if self.threads is None:
             sys.stdout.write(
-                'FFT threads : 1\n'
-                'INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve '
+                "FFT threads : 1\n"
+                "INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve "
                 'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
                 'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
                 'set them in your Python environment with "eminus.config.threads=n".\n'
             )
         else:
-            sys.stdout.write(f'FFT threads : {self.threads}\n')
+            sys.stdout.write(f"FFT threads : {self.threads}\n")
 
 
 # Do not initialize the class when Sphinx is running
 # Since we set the class instance to the module name Sphinx will only document the main docstring of
 # the class without the properties
-if 'sphinx-build' not in pathlib.Path(sys.argv[0]).name:
+if "sphinx-build" not in pathlib.Path(sys.argv[0]).name:
     sys.modules[__name__] = ConfigClass()

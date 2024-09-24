@@ -23,7 +23,7 @@ class Atoms(BaseObject):
         atom: Atom symbols.
 
             A string can be given, e.g., with :code:`CH4` that will be parsed to
-            :code:`['C', 'H', 'H', 'H', 'H']`. When calculating atoms one can directly provide the
+            :code:`["C", "H", "H", "H", "H"]`. When calculating atoms one can directly provide the
             charge, e.g., with :code:`Li-q3`.
         pos: Atom positions.
 
@@ -47,10 +47,10 @@ class Atoms(BaseObject):
 
             Aligns the geometric center of mass with the center of the call and rotates the system,
             such that its geometric moment of inertia aligns with the coordinate axes. Can be one of
-            bool, 'shift', and 'rotate'.
+            bool, "shift", and "rotate".
         verbose: Level of output.
 
-            Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
+            Can be one of "critical", "error", "warning", "info" (default), or "debug". An integer
             value can be used as well, where larger numbers mean more output, starting from 0.
             None will use the global logger verbosity value.
     """
@@ -80,7 +80,7 @@ class Atoms(BaseObject):
         self.charge = charge  #: System charge.
         self.spin = spin  #: Number of unpaired electrons.
         self.unrestricted = unrestricted  #: Enables unrestricted spin handling.
-        self.kpts = KPoints('sc', self.a)  #: KPoints object.
+        self.kpts = KPoints("sc", self.a)  #: KPoints object.
 
         # Initialize other attributes
         self.occ.fill()  #: Fill states from the given input.
@@ -96,8 +96,8 @@ class Atoms(BaseObject):
     @atom.setter
     def atom(self, value):
         # Quick option to set the charge for single atoms
-        if isinstance(value, str) and '-q' in value:
-            atom, Z = value.split('-q')
+        if isinstance(value, str) and "-q" in value:
+            atom, Z = value.split("-q")
             self._atom = [atom]
             self._Natoms = 1
             self.Z = int(Z)
@@ -122,8 +122,8 @@ class Atoms(BaseObject):
         self._pos = np.atleast_2d(value)
         if self.Natoms != len(self._pos):
             msg = (
-                f'Mismatch between number of atoms ({self.Natoms}) and number of '
-                f'coordinates ({len(self._pos)}).'
+                f"Mismatch between number of atoms ({self.Natoms}) and number of "
+                f"coordinates ({len(self._pos)})."
             )
             raise ValueError(msg)
         # The structure factor changes when changing pos
@@ -160,11 +160,11 @@ class Atoms(BaseObject):
         else:
             self._a = np.asarray(value)
         # Update ecut and s if it has been set before
-        if hasattr(self, 'ecut'):
+        if hasattr(self, "ecut"):
             self.ecut = self.ecut
         # Calculate the unit cell volume
         self._Omega = abs(det(self._a))
-        if hasattr(self, 'kpts'):
+        if hasattr(self, "kpts"):
             self.kpts.a = self._a
         # The cell changes when changing a
         self.is_built = False
@@ -208,21 +208,21 @@ class Atoms(BaseObject):
     def center(self, value):
         if isinstance(value, str):
             self._center = value.lower()
-            if self._center not in {'rotate', 'shift', 'recentered'}:
-                log.error(f'{self._center} is not a recognized center method.')
+            if self._center not in {"rotate", "shift", "recentered"}:
+                log.error(f"{self._center} is not a recognized center method.")
         else:
             self._center = value
         # Do nothing when recentering
-        if self._center == 'recentered':
+        if self._center == "recentered":
             return
         # Center system such that the geometric inertia tensor will be diagonal
         # Rotate before shifting!
-        if self._center is True or self._center == 'rotate':
+        if self._center is True or self._center == "rotate":
             I = inertia_tensor(self.pos)
             _, eigvecs = eigh(I)
             self.pos = (inv(eigvecs) @ self.pos.T).T
         # Shift system such that its geometric center of mass is in the center of the cell
-        if self._center is True or self._center == 'shift':
+        if self._center is True or self._center == "shift":
             com = center_of_mass(self.pos)
             self.pos = self.pos - (com - np.sum(self.a, axis=0) / 2)
         # The structure factor changes when changing pos
@@ -286,8 +286,8 @@ class Atoms(BaseObject):
         self._Z = np.asarray(value)
         if self.Natoms != len(self._Z):
             msg = (
-                f'Mismatch between number of atoms ({self.Natoms}) and number of '
-                f'charges ({len(self._Z)}).'
+                f"Mismatch between number of atoms ({self.Natoms}) and number of "
+                f"charges ({len(self._Z)})."
             )
             raise ValueError(msg)
         # Get the number of calculated electrons and pass it to occ
@@ -388,7 +388,7 @@ class Atoms(BaseObject):
             self.pos = self.pos - (com - center)
         # Recalculate the structure factor since it depends on the atom positions
         self._Sf = np.exp(1j * self.G @ self.pos.T).T
-        self._center = 'recentered'
+        self._center = "recentered"
         return self
 
     def set_k(self, k, wk=None):
@@ -483,10 +483,10 @@ class Atoms(BaseObject):
 
     def __repr__(self):
         """Print the parameters stored in the Atoms object."""
-        out = 'Atom  Valence  Position'
+        out = "Atom  Valence  Position"
         for i in range(self.Natoms):
             out += (
-                f'\n{self.atom[i]:>3}   {self.Z[i]:>6}   '
-                f'{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}'
+                f"\n{self.atom[i]:>3}   {self.Z[i]:>6}   "
+                f"{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}"
             )
         return out

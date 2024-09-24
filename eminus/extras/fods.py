@@ -38,10 +38,10 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     from pyscf.lo import boys, edmiston, pipek
 
     loc_dict = {
-        'ER': edmiston.EdmistonRuedenberg,
-        'FB': boys.Boys,
-        'GPM': pipek.PipekMezey,
-        'PM': pipek.PipekMezey,
+        "ER": edmiston.EdmistonRuedenberg,
+        "FB": boys.Boys,
+        "GPM": pipek.PipekMezey,
+        "PM": pipek.PipekMezey,
     }
 
     loc_orb = []
@@ -54,8 +54,8 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
             localizer = loc_dict[loc](mf.mol, mf.mo_coeff[:, mf.mo_occ > 0])
 
         # Set the population method in generalized PM to Becke charges
-        if loc == 'GPM':
-            localizer.pop_method = 'becke'
+        if loc == "GPM":
+            localizer.pop_method = "becke"
 
         for _ in range(Nit):
             tmp_orb = localizer.kernel()
@@ -64,14 +64,14 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
             # If there are no eigenvalues or all of them are positive break the loop
             if len(h_diag) == 0 or np.min(h_diag) > 0:
                 break
-            # If not continue with randomly 'displaced' orbitals
+            # If not continue with randomly "displaced" orbitals
             noise = rng.normal(scale=5e-4, size=tmp_orb.shape)
             localizer.mo_coeff = tmp_orb + noise
         loc_orb.append(tmp_orb)
     return loc_orb
 
 
-def get_fods(obj, basis='pc-1', loc='FB'):
+def get_fods(obj, basis="pc-1", loc="FB"):
     """Generate FOD positions using the PyCOM method.
 
     Reference: J. Comput. Chem. 40, 2843.
@@ -92,7 +92,7 @@ def get_fods(obj, basis='pc-1', loc='FB'):
         from pyscf.scf import RKS, UKS
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[fods]".\n\n'
         )
         raise
@@ -127,7 +127,7 @@ def get_fods(obj, basis='pc-1', loc='FB'):
     return loc_com
 
 
-def split_fods(atom, pos, elec_symbols=('X', 'He')):
+def split_fods(atom, pos, elec_symbols=("X", "He")):
     """Split atom and FOD coordinates.
 
     Args:

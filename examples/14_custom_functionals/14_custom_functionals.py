@@ -10,10 +10,10 @@ from eminus.units import ry2ha
 import eminus.xc
 
 # # Start with a normal SCF calculation for helium with the original LDA Chachiyo functional
-atoms = Atoms('He', (0, 0, 0), ecut=10, verbose=0)
-scf = SCF(atoms, xc='lda,chachiyo')
+atoms = Atoms("He", (0, 0, 0), ecut=10, verbose=0)
+scf = SCF(atoms, xc="lda,chachiyo")
 scf.run()
-print(f'Energies with the Chachiyo functional:\n{scf.energies}')
+print(f"Energies with the Chachiyo functional:\n{scf.energies}")
 
 # # Define arrays for the Quantum Monte Carlo (QMC) results from Ceperley and Alder for the homogeneous electron gas
 # # The values are the paramagnetic correlation energies from Tab. 5 in Can. J. Phys. 58, 1200
@@ -29,7 +29,7 @@ ecp = -ry2ha(np.array([90.2, 56.3, 37.22, 23.00, 11.40, 6.379])) / 1000
 a = (np.log(2) - 1) / (2 * np.pi**2)
 c = 20.4562557
 b = c
-print(f'\nOriginal parameter:\nb = {b:.7f}')
+print(f"\nOriginal parameter:\nb = {b:.7f}")
 
 
 # # All functionals in eminus share the same signature and return types
@@ -54,33 +54,33 @@ def functional_wrapper(rs, b):
 # # The resulting parameter still recovers the limits of the original functional but can be more accurate in the mid-density regimes
 # # One can see that our fitted value is similar to the one derived by Karasiev with `b=21.7392245`
 fitted_b, _ = curve_fit(functional_wrapper, rs, ecp)
-print(f'\nFitted parameter:\nb = {fitted_b[0]:.7f}')
+print(f"\nFitted parameter:\nb = {fitted_b[0]:.7f}")
 # Fitted parameter:
 # b = 21.9469106
 
 # # Plot the error of the correlation energies compared to the QMC data for Chachiyo, Karasiev, and our functional
 # # Find the plot named `correlation_energy_error.png`
-plt.style.use('../eminus.mplstyle')
+plt.style.use("../eminus.mplstyle")
 plt.figure()
-plt.axhline(c='dimgrey', ls='--', marker='')
-plt.plot(rs, 1000 * (functional_wrapper(rs, b) - ecp), label='Chachiyo')
-plt.plot(rs, 1000 * (functional_wrapper(rs, 21.7392245) - ecp), label='Karasiev')
-plt.plot(rs, 1000 * (functional_wrapper(rs, *fitted_b) - ecp), label='mod. Chachiyo')
-plt.xlabel(r'$r_s$')
-plt.ylabel(r'$E_c^\mathrm{P} - E_c^{\mathrm{P,QMC}}$ [m$E_\mathrm{h}$]')
+plt.axhline(c="dimgrey", ls="--", marker="")
+plt.plot(rs, 1000 * (functional_wrapper(rs, b) - ecp), label="Chachiyo")
+plt.plot(rs, 1000 * (functional_wrapper(rs, 21.7392245) - ecp), label="Karasiev")
+plt.plot(rs, 1000 * (functional_wrapper(rs, *fitted_b) - ecp), label="mod. Chachiyo")
+plt.xlabel(r"$r_s$")
+plt.ylabel(r"$E_c^\mathrm{P} - E_c^{\mathrm{P,QMC}}$ [m$E_\mathrm{h}$]")
 plt.legend()
-plt.savefig('correlation_energy_error.png')
+plt.savefig("correlation_energy_error.png")
 
 # # Some modules of eminus have an `IMPLEMENTED` lookup dictionary for functions that can be extended
 # # These are available in the `xc`, `potentials`, and `minimizer` modules and can be used as seen below
 # # Plug the fitted parameters into the custom functional
-eminus.xc.IMPLEMENTED['custom'] = lambda n, **kwargs: custom_functional(n, *fitted_b)
+eminus.xc.IMPLEMENTED["custom"] = lambda n, **kwargs: custom_functional(n, *fitted_b)
 # # If the signature of the custom functional matches the signature from eminus it is sufficient to write
-# eminus.xc.IMPLEMENTED['custom'] = custom_functional
+# eminus.xc.IMPLEMENTED["custom"] = custom_functional
 
 # # Start an SCF calculation with our custom functional
-scf = SCF(atoms, xc='lda,custom')
+scf = SCF(atoms, xc="lda,custom")
 scf.run()
-print(f'\nEnergies with the fitted Chachiyo functional:\n{scf.energies}')
+print(f"\nEnergies with the fitted Chachiyo functional:\n{scf.energies}")
 
 # # An extension of this example for the spin-polarized case can be found in the next example

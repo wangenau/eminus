@@ -6,8 +6,8 @@ from typing import Any, Protocol, TypeVar
 from numpy import float64
 from numpy.typing import NDArray
 
-_DnOrNone = TypeVar('_DnOrNone', NDArray[float64], None)
-_TauOrNone = TypeVar('_TauOrNone', NDArray[float64], None)
+_DnOrNone = TypeVar("_DnOrNone", NDArray[float64], None)
+_TauOrNone = TypeVar("_TauOrNone", NDArray[float64], None)
 
 # Create a custom Callable type for functionals
 class _FunctionalType(Protocol):

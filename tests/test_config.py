@@ -15,7 +15,7 @@ def test_singleton():
     assert id(config) == id(eminus.config)
 
 
-@pytest.mark.parametrize('level', ['debug', 0, 9])
+@pytest.mark.parametrize("level", ["debug", 0, 9])
 def test_logger(level):
     """Check that the logger gets properly updated."""
     config.verbose = level
@@ -53,7 +53,7 @@ def test_threads():
 
         torch.set_num_threads(threads)
     else:
-        os.environ['OMP_NUM_THREADS'] = str(threads)
+        os.environ["OMP_NUM_THREADS"] = str(threads)
     assert config.threads == threads
     assert isinstance(config.threads, int)
 
@@ -68,7 +68,7 @@ def test_info():
     config.info()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

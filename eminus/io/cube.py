@@ -24,15 +24,15 @@ def read_cube(filename):
     Returns:
         Species, positions, charges, cell size, sampling, and field array.
     """
-    if not filename.endswith(('.cub', '.cube')):
-        filename += '.cube'
+    if not filename.endswith((".cub", ".cube")):
+        filename += ".cube"
 
     # Atomic units and a cell that starts at (0,0,0) are assumed.
-    with open(filename, encoding='utf-8') as fh:
+    with open(filename, encoding="utf-8") as fh:
         lines = fh.readlines()
 
         # The first and second lines can contain comments, print them if available
-        comment = f'{lines[0].strip()}\n{lines[1].strip()}'
+        comment = f"{lines[0].strip()}\n{lines[1].strip()}"
         if comment:
             log.info(f'CUBE file comment: "{comment}"')
 
@@ -67,7 +67,7 @@ def read_cube(filename):
     return atom, pos, Z, a, s, field
 
 
-def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
+def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
     """Generate CUBE files from given field data.
 
     There is no standard for CUBE files. The following format has been used to work with VESTA.
@@ -85,13 +85,13 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
     # Atomic units are assumed, so there is no need for conversion.
     atoms = obj._atoms
 
-    if not filename.endswith(('.cub', '.cube')):
-        filename += '.cube'
+    if not filename.endswith((".cub", ".cube")):
+        filename += ".cube"
 
-    if 'He' in atoms.atom and atoms.unrestricted:
+    if "He" in atoms.atom and atoms.unrestricted:
         log.warning(
             'You need to modify "elec_symbols" to write helium with FODs in the spin-'
-            'polarized case.'
+            "polarized case."
         )
 
     # Make sure we have real-valued data in the correct order
@@ -100,44 +100,44 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=('X', 'He')):
         return
     field = np.real(field)
 
-    with open(filename, 'w', encoding='utf-8') as fp:
+    with open(filename, "w", encoding="utf-8") as fp:
         # The first two lines have to be a comment
         # Print information about the file and program, and the file creation time
-        fp.write(f'File generated with eminus {__version__} on {time.ctime()}\n\n')
+        fp.write(f"File generated with eminus {__version__} on {time.ctime()}\n\n")
         # Number of atoms (int), and origin of the coordinate system (float)
         # The origin is normally at 0,0,0 but we could move our box, so take the minimum
         if fods is None:
-            fp.write(f'{atoms.Natoms}  ')
+            fp.write(f"{atoms.Natoms}  ")
         else:
-            fp.write(f'{atoms.Natoms + sum(len(i) for i in fods)}  ')
-        fp.write('0.0  0.0  0.0\n')
+            fp.write(f"{atoms.Natoms + sum(len(i) for i in fods)}  ")
+        fp.write("0.0  0.0  0.0\n")
         # Number of points per axis (int), and vector defining the axis (float)
         fp.write(
-            f'{atoms.s[0]}  {atoms.a[0, 0] / atoms.s[0]:.6f}  {atoms.a[0, 1] / atoms.s[0]:.6f}'
-            f'  {atoms.a[0, 2] / atoms.s[0]:.6f}\n'
-            f'{atoms.s[1]}  {atoms.a[1, 0] / atoms.s[1]:.6f}  {atoms.a[1, 1] / atoms.s[1]:.6f}'
-            f'  {atoms.a[1, 2] / atoms.s[1]:.6f}\n'
-            f'{atoms.s[2]}  {atoms.a[2, 0] / atoms.s[2]:.6f}  {atoms.a[2, 1] / atoms.s[2]:.6f}'
-            f'  {atoms.a[2, 2] / atoms.s[2]:.6f}\n'
+            f"{atoms.s[0]}  {atoms.a[0, 0] / atoms.s[0]:.6f}  {atoms.a[0, 1] / atoms.s[0]:.6f}"
+            f"  {atoms.a[0, 2] / atoms.s[0]:.6f}\n"
+            f"{atoms.s[1]}  {atoms.a[1, 0] / atoms.s[1]:.6f}  {atoms.a[1, 1] / atoms.s[1]:.6f}"
+            f"  {atoms.a[1, 2] / atoms.s[1]:.6f}\n"
+            f"{atoms.s[2]}  {atoms.a[2, 0] / atoms.s[2]:.6f}  {atoms.a[2, 1] / atoms.s[2]:.6f}"
+            f"  {atoms.a[2, 2] / atoms.s[2]:.6f}\n"
         )
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
         for ia in range(atoms.Natoms):
             fp.write(
-                f'{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  '
-                f'{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n'
+                f"{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  "
+                f"{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n"
             )
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:
                     fp.write(
-                        f'{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  '
-                        f'{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n'
+                        f"{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  "
+                        f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n"
                     )
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
         for i in range(atoms.s[0] * atoms.s[1]):
             # Print every round of values, so we can add empty lines between them
-            data_str = '%+1.6e  ' * atoms.s[2] % tuple(field[i * atoms.s[2] : (i + 1) * atoms.s[2]])
+            data_str = "%+1.6e  " * atoms.s[2] % tuple(field[i * atoms.s[2] : (i + 1) * atoms.s[2]])
             # Print a maximum of 6 values per row
-            # Max width for this formatting is 90, since 6*len('+1.00000e-000  ')=90
-            fp.write(f'{textwrap.fill(data_str, width=90)}\n\n')
+            # Max width for this formatting is 90, since 6*len("+1.00000e-000  ")=90
+            fp.write(f"{textwrap.fill(data_str, width=90)}\n\n")

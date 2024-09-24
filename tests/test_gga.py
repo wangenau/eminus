@@ -9,7 +9,7 @@ import pytest
 from eminus import Atoms, SCF
 from eminus.gga import get_grad_field, get_tau
 
-atoms_unpol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=False)
+atoms_unpol = Atoms("He", (0, 0, 0), ecut=1, unrestricted=False)
 atoms_unpol.kpts.Nk = 2
 atoms_unpol.kpts.k = [[0, 0, 0], [0, 0, 0]]
 atoms_unpol.kpts.wk = [0.5, 0.5]
@@ -17,12 +17,12 @@ atoms_unpol.kpts.is_built = True
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run(betat=1e-4)
 
-atoms_pol = Atoms('He', (0, 0, 0), ecut=1, unrestricted=True)
+atoms_pol = Atoms("He", (0, 0, 0), ecut=1, unrestricted=True)
 scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_grad_field(unrestricted):
     """Test the gradient field calculations."""
     if unrestricted:
@@ -41,12 +41,12 @@ def test_get_grad_field_type():
     scf = scf_unpol
     n_mock = np.zeros_like(scf.n_spin)
     dn_mock = get_grad_field(scf.atoms, n_mock)
-    assert dn_mock.dtype == 'float64'
+    assert dn_mock.dtype == "float64"
     dn_mock = get_grad_field(scf.atoms, n_mock, real=False)
-    assert dn_mock.dtype == 'complex128'
+    assert dn_mock.dtype == "complex128"
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_get_tau(unrestricted):
     """Test positive-definite kinetic energy density."""
     if unrestricted:
@@ -60,7 +60,7 @@ def test_get_tau(unrestricted):
     assert_allclose(T, scf.energies.Ekin)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

@@ -8,8 +8,8 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-_AnyWorN = TypeVar('_AnyWorN', NDArray[float64], NDArray[complex128], list[NDArray[complex128]])
-_ArrRealorComplex = TypeVar('_ArrRealorComplex', NDArray[float64], NDArray[complex128])
+_AnyWorN = TypeVar("_AnyWorN", NDArray[float64], NDArray[complex128], list[NDArray[complex128]])
+_ArrRealorComplex = TypeVar("_ArrRealorComplex", NDArray[float64], NDArray[complex128])
 
 def O(
     atoms: Atoms,

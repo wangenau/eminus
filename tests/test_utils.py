@@ -24,7 +24,7 @@ from eminus.utils import (
 )
 
 
-@pytest.mark.parametrize('l', [0, 1, 2, 3])
+@pytest.mark.parametrize("l", [0, 1, 2, 3])
 def test_Ylm(l):
     """Test the spherical harmonics."""
     # Generate random G
@@ -54,7 +54,7 @@ def test_Ylm(l):
 
 
 @pytest.mark.parametrize(
-    ('seed', 'ref'),
+    ("seed", "ref"),
     [
         (1234, np.array([[[0.93006472, 0.15416989, 0.93472344]]])),
         (42, np.array([[[0.57138534, 0.34186435, 0.13408117]]])),
@@ -67,7 +67,7 @@ def test_pseudo_uniform(seed, ref):
 
 
 @pytest.mark.parametrize(
-    ('a', 'b', 'ref'), [(1, 2, 3), (1, None, 1), (None, 2, 2), (None, None, None)]
+    ("a", "b", "ref"), [(1, 2, 3), (1, None, 1), (None, 2, 2), (None, None, None)]
 )
 def test_add_maybe_none(a, b, ref):
     """Test the function to add two variables that can be None."""
@@ -76,11 +76,11 @@ def test_add_maybe_none(a, b, ref):
 
 
 @pytest.mark.parametrize(
-    ('molecule', 'ref'),
+    ("molecule", "ref"),
     [
-        ('CH4', ['C', 'H', 'H', 'H', 'H']),
-        ('HeX', ['He', 'X']),
-        ('CH2O2', ['C', 'H', 'H', 'O', 'O']),
+        ("CH4", ["C", "H", "H", "H", "H"]),
+        ("HeX", ["He", "X"]),
+        ("CH2O2", ["C", "H", "H", "O", "O"]),
     ],
 )
 def test_molecule2list(molecule, ref):
@@ -90,12 +90,12 @@ def test_molecule2list(molecule, ref):
 
 
 @pytest.mark.parametrize(
-    ('atom', 'ref'),
+    ("atom", "ref"),
     [
-        (['H'], [1]),
-        (['Li'], [3]),
-        (['He', 'He'], [2, 2]),
-        (['C', 'H', 'H', 'H', 'H'], [4, 1, 1, 1, 1]),
+        (["H"], [1]),
+        (["Li"], [3]),
+        (["He", "He"], [2, 2]),
+        (["C", "H", "H", "H", "H"], [4, 1, 1, 1, 1]),
     ],
 )
 def test_atom2charge(atom, ref):
@@ -105,7 +105,7 @@ def test_atom2charge(atom, ref):
 
 
 @pytest.mark.parametrize(
-    ('a', 'b', 'ref'),
+    ("a", "b", "ref"),
     [
         ([1, 0], [0, 1], 90),
         ([1, 0, 0], [0, 1, 0], 90),
@@ -138,38 +138,38 @@ def test_handle_spin():
         return W
 
     W = np.ones((1, 1, 1))
-    out = mock(None, W, kwarg='kwarg')
+    out = mock(None, W, kwarg="kwarg")
     assert_equal(out, W)
-    out = mock(None, W[0], kwarg='kwarg')
+    out = mock(None, W[0], kwarg="kwarg")
     assert_equal(out, W[0])
 
 
-@pytest.mark.parametrize('mode', ['gracefully', 'index', 'reduce', 'skip'])
+@pytest.mark.parametrize("mode", ["gracefully", "index", "reduce", "skip"])
 def test_handle_k(mode):
     """Test the handle_k decorator."""
 
     @handle_k(mode=mode)
     def mock(obj, W, ik=0, kwarg=None):  # noqa: ARG001
-        if mode == 'skip':  # skip should remove the outer list
+        if mode == "skip":  # skip should remove the outer list
             assert isinstance(W, np.ndarray)
         assert kwarg is not None
         return W
 
-    atoms = Atoms('He', (0, 0, 0))
-    if mode == 'skip':
+    atoms = Atoms("He", (0, 0, 0))
+    if mode == "skip":
         W = [np.ones((1, 1, 1))]
     else:
         W = [np.ones((1, 1, 1))] * 2
 
-    out = mock(atoms, W, kwarg='kwarg')
-    if mode == 'reduce':
+    out = mock(atoms, W, kwarg="kwarg")
+    if mode == "reduce":
         assert_equal(out, np.ones((1, 1, 1)) * 2)
     else:
         assert_equal(out, W)
 
-    out = mock(atoms, W[0], kwarg='kwarg')
+    out = mock(atoms, W[0], kwarg="kwarg")
     assert_equal(out, W[0])
-    out = mock(atoms, W[0][0], kwarg='kwarg')
+    out = mock(atoms, W[0][0], kwarg="kwarg")
     assert_equal(out, W[0][0])
 
 
@@ -189,7 +189,7 @@ def test_handle_torch():
             mock(np.pi)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

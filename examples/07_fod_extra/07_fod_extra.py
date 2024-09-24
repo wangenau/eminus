@@ -6,18 +6,18 @@ from eminus.extras import get_fods, remove_core_fods
 from eminus.localizer import get_FLO
 
 # # Start by with a DFT calculation for methane
-atom, pos = read('CH4.xyz')
+atom, pos = read("CH4.xyz")
 atoms = Atoms(atom, pos, ecut=10, center=True)
 scf = SCF(atoms)
 scf.run()
 
 # # Calculate all FODs
 fods_all = get_fods(atoms)
-print(f'\nAll FODs:\n{fods_all}')
+print(f"\nAll FODs:\n{fods_all}")
 
 # # Remove core FODs, since the calculation uses a GTH pseudopotential
 fods = remove_core_fods(atoms, fods_all)
-print(f'\nCore FODs:\n{fods}')
+print(f"\nCore FODs:\n{fods}")
 
 # # The quality from the FOD guess can vary, but you can use these as a decent guess
 # import numpy as np
@@ -28,7 +28,7 @@ print(f'\nCore FODs:\n{fods}')
 #         np.array([])]
 
 # # Write the FODs to an XYZ file to view them
-atoms.write('CH4_fods.xyz', fods)
+atoms.write("CH4_fods.xyz", fods)
 
 # # Generate the Kohn-Sham orbitals
 psi = get_psi(scf, scf.W)
@@ -37,10 +37,10 @@ psi = get_psi(scf, scf.W)
 FLO = get_FLO(atoms, psi, fods)
 
 # # Write all FLOs to CUBE files
-print('\nWrite cube files:')
+print("\nWrite cube files:")
 for i in range(atoms.occ.Nstate):
-    print(f'{i + 1} of {atoms.occ.Nstate}')
-    atoms.write(f'CH4_FLO_{i + 1}.cube', FLO[0][0, :, i])
+    print(f"{i + 1} of {atoms.occ.Nstate}")
+    atoms.write(f"CH4_FLO_{i + 1}.cube", FLO[0][0, :, i])
 
 # # All of the functionality above can be achieved with the following workflow function
 # from eminus.orbitals import FLO

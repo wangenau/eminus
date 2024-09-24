@@ -10,8 +10,8 @@ from eminus import Atoms, Cell, demo, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
 from eminus.tools import get_magnetization
 
-atoms_unpol = Cell('Si', 'diamond', 1, 10, kmesh=(2, 1, 1), bands=5)
-atoms_pol = Atoms('Ne', (0, 0, 0), ecut=1, unrestricted=True)
+atoms_unpol = Cell("Si", "diamond", 1, 10, kmesh=(2, 1, 1), bands=5)
+atoms_pol = Atoms("Ne", (0, 0, 0), ecut=1, unrestricted=True)
 
 scf_unpol = SCF(atoms_unpol)
 scf_unpol.run(betat=1e-4)
@@ -20,17 +20,17 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run(betat=1e-4)
 
 
-@pytest.mark.parametrize('guess', ['random', 'pseudo'])
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("guess", ["random", "pseudo"])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_wavefunction(guess, unrestricted):
     """Test the orthonormalization of wave functions."""
     if unrestricted:
         scf = SCF(atoms_pol, guess=guess)
     else:
         scf = SCF(atoms_unpol, guess=guess)
-    if guess == 'random':
+    if guess == "random":
         W = guess_random(scf)
-    elif guess == 'pseudo':
+    elif guess == "pseudo":
         W = guess_pseudo(scf)
     psi = get_psi(scf, W)
     for ik in range(scf.kpts.Nk):
@@ -56,7 +56,7 @@ def test_unocc_wavefunction():
             assert_allclose(scf_unpol.D[ik][s].conj().T @ scf_unpol.Y[ik][s], 0, atol=1e-15)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_H(unrestricted):
     """Test the Hamiltonian."""
     if unrestricted:
@@ -72,7 +72,7 @@ def test_H(unrestricted):
             assert_allclose(WHW, np.diag(np.diag(WHW)), atol=1e-12)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_n_total(unrestricted):
     """Test the total density."""
     if unrestricted:
@@ -86,7 +86,7 @@ def test_n_total(unrestricted):
     assert_allclose(n_int, np.sum(scf.atoms.occ.f * scf.kpts.wk[:, None, None]))
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_n_spin(unrestricted):
     """Test the spin densities."""
     if unrestricted:
@@ -102,7 +102,7 @@ def test_n_spin(unrestricted):
             assert_allclose(n_int, np.sum(scf.atoms.occ.f[ik, s]))
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_n_single(unrestricted):
     """Test the single orbital densities."""
     if unrestricted:
@@ -120,10 +120,10 @@ def test_n_single(unrestricted):
 
 def test_k_point_permutation():
     """Check that the order of k-points does not change the calculation."""
-    cell = Cell('C', 'diamond', 10, 6.75, kmesh=(2, 1, 1))
+    cell = Cell("C", "diamond", 10, 6.75, kmesh=(2, 1, 1))
     scf = SCF(cell)
     etot1 = scf.run()
-    assert hasattr(cell.kpts, '_k')
+    assert hasattr(cell.kpts, "_k")
     cell.kpts._k = cell.kpts._k[::-1]
     assert not np.all(cell.kpts.k == scf.kpts.k)
     scf = SCF(cell)
@@ -139,11 +139,11 @@ def test_demo():
 def test_magnetization():
     """Check that the order of k-points does not change the calculation."""
     magnetization = 0.5
-    cell = Cell('Al', 'fcc', 1, 8, unrestricted=True, magnetization=magnetization)
+    cell = Cell("Al", "fcc", 1, 8, unrestricted=True, magnetization=magnetization)
     scf = SCF(cell)
     scf.run()
     assert_allclose(get_magnetization(scf), cell.occ.magnetization)
-    cell = Cell('Al', 'fcc', 1, 8, unrestricted=True, bands=4, smearing=1, magnetization=1)
+    cell = Cell("Al", "fcc", 1, 8, unrestricted=True, bands=4, smearing=1, magnetization=1)
     scf = SCF(cell)
     scf.run()
     assert scf.atoms.occ.magnetization < 1
@@ -151,7 +151,7 @@ def test_magnetization():
     assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization, atol=1e-7)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

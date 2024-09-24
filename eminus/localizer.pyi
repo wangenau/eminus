@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-_AnyW = TypeVar('_AnyW', NDArray[complex128], list[NDArray[complex128]])
+_AnyW = TypeVar("_AnyW", NDArray[complex128], list[NDArray[complex128]])
 
 def eval_psi(
     atoms: Atoms,

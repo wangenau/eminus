@@ -131,7 +131,7 @@ def get_dipole(scf, n=None):
     atoms = scf.atoms
     if n is None:
         if scf.n is None:
-            log.error('There is no density to calculate a dipole moment.')
+            log.error("There is no density to calculate a dipole moment.")
             return 0
         n = scf.n
 
@@ -163,7 +163,7 @@ def get_ip(scf):
     return -epsilon[-1]
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def check_ortho(obj, func, eps=1e-9):
     """Check the orthogonality condition for a set of functions.
 
@@ -182,7 +182,7 @@ def check_ortho(obj, func, eps=1e-9):
 
     # It makes no sense to calculate anything for only one function
     if atoms.occ.Nstate == 1:
-        log.warning('Need at least two functions to check their orthogonality.')
+        log.warning("Need at least two functions to check their orthogonality.")
         return True
 
     ortho_bool = True
@@ -194,12 +194,12 @@ def check_ortho(obj, func, eps=1e-9):
                 res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
-                log.debug(f'Function {i} and {j}:\nValue: {res:.7f}\nOrthogonal: {tmp_bool}')
-    log.info(f'Orthogonal: {ortho_bool}')
+                log.debug(f"Function {i} and {j}:\nValue: {res:.7f}\nOrthogonal: {tmp_bool}")
+    log.info(f"Orthogonal: {ortho_bool}")
     return ortho_bool
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def check_norm(obj, func, eps=1e-9):
     """Check the normalization condition for a set of functions.
 
@@ -224,12 +224,12 @@ def check_norm(obj, func, eps=1e-9):
             res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
-            log.debug(f'Function {i}:\nValue: {res:.7f}\nNormalized: {tmp_bool}')
-    log.info(f'Normalized: {norm_bool}')
+            log.debug(f"Function {i}:\nValue: {res:.7f}\nNormalized: {tmp_bool}")
+    log.info(f"Normalized: {norm_bool}")
     return norm_bool
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def check_orthonorm(obj, func, eps=1e-9):
     """Check the orthonormality conditions for a set of functions.
 
@@ -246,7 +246,7 @@ def check_orthonorm(obj, func, eps=1e-9):
     atoms = obj._atoms
     ortho_bool = check_ortho(atoms, func, eps)
     norm_bool = check_norm(atoms, func, eps)
-    log.info(f'Orthonormal: {ortho_bool * norm_bool}')
+    log.info(f"Orthonormal: {ortho_bool * norm_bool}")
     return ortho_bool * norm_bool
 
 
@@ -274,7 +274,7 @@ def get_isovalue(n, percent=85):
     n_ref = np.sum(n)
     # Finding the isovalue is an optimization problem, minimizing the deviation above
     # The problem is bound by zero (no density) and the maximum value in n
-    res = minimize_scalar(deviation, bounds=(0, np.max(n)), method='bounded')
+    res = minimize_scalar(deviation, bounds=(0, np.max(n)), method="bounded")
     return res.x
 
 
@@ -293,8 +293,8 @@ def get_tautf(scf):
     # Use the definition with a division by two
     tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
 
-    log.debug(f'Calculated Ekin:  {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh')
+    log.debug(f"Calculated Ekin:  {scf.energies.Ekin:.6f} Eh")
+    log.debug(f"Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh")
     return tautf
 
 
@@ -319,8 +319,8 @@ def get_tauw(scf):
     tauw = dn2 / (8 * scf.n_spin)
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
-    log.debug(f'Calculated Ekin: {scf.energies.Ekin:.6f} Eh')
-    log.debug(f'Integrated tauw: {np.sum(tauw) * atoms.dV:.6f} Eh')
+    log.debug(f"Calculated Ekin: {scf.energies.Ekin:.6f} Eh")
+    log.debug(f"Integrated tauw: {np.sum(tauw) * atoms.dV:.6f} Eh")
     return tauw
 
 
@@ -363,7 +363,7 @@ def get_reduced_gradient(scf, eps=0):
     norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
 
     kf = (3 * np.pi**2 * scf.n) ** (1 / 3)
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0
     return s
@@ -457,9 +457,9 @@ def get_Efermi(obj, epsilon=None):
         Fermi energy.
     """
     # Handle the obj argument
-    if hasattr(obj, 'smearing'):
+    if hasattr(obj, "smearing"):
         if epsilon is None:
-            log.error('When passing an Occupations object the eigenenergies have to be given.')
+            log.error("When passing an Occupations object the eigenenergies have to be given.")
         occ = obj
     else:
         occ = obj.atoms.occ
@@ -482,7 +482,7 @@ def get_Efermi(obj, epsilon=None):
         return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
 
     if obj.Z is None:
-        log.warning('The SCF object has no unoccupied energies, return the maximum energy instead.')
+        log.warning("The SCF object has no unoccupied energies, return the maximum energy instead.")
         return np.max(e_occ)
 
     e_unocc = get_epsilon_unocc(obj, obj.W, obj.Z, **obj._precomputed)
@@ -503,7 +503,7 @@ def fermi_distribution(E, mu, kbT):
         Fermi distribution.
     """
     x = (E - mu) / kbT
-    with np.errstate(over='ignore'):
+    with np.errstate(over="ignore"):
         return 1 / (np.exp(x) + 1)
 
 

@@ -29,11 +29,11 @@ def KSO(scf, write_cubes=False, **kwargs):
     # Calculate eigenfunctions and transform to real-space
     kso = atoms.I(get_psi(scf, scf.W))
     if write_cubes:
-        cube_writer(atoms, 'KSO', kso)
+        cube_writer(atoms, "KSO", kso)
     return kso
 
 
-def FO(scf, write_cubes=False, fods=None, guess='wannier'):
+def FO(scf, write_cubes=False, fods=None, guess="wannier"):
     """Generate Fermi orbitals and optionally save them as CUBE files.
 
     Reference: J. Chem. Phys. 153, 084104.
@@ -44,7 +44,7 @@ def FO(scf, write_cubes=False, fods=None, guess='wannier'):
     Keyword Args:
         write_cubes: Write orbitals to CUBE files.
         fods: Fermi-orbital descriptors.
-        guess: Guess to generate FODs if none are given. Can be 'Wannier' (default) or 'PyCOM'.
+        guess: Guess to generate FODs if none are given. Can be "Wannier" (default) or "PyCOM".
 
     Returns:
         Real-space Fermi orbitals.
@@ -56,21 +56,21 @@ def FO(scf, write_cubes=False, fods=None, guess='wannier'):
 
     # Calculate eigenfunctions
     kso = get_psi(scf, scf.W)
-    if fods is None and guess == 'wannier':
+    if fods is None and guess == "wannier":
         wo = WO(scf)
         fods = orbital_center(atoms, wo[0])
-    if fods is None and guess == 'pycom':
+    if fods is None and guess == "pycom":
         fods = get_fods(atoms)
         fods = remove_core_fods(atoms, fods)
 
     # The FO functions need orbitals in reciprocal space as input
     fo = get_FO(atoms, kso, fods)
     if write_cubes:
-        cube_writer(atoms, 'FO', fo)
+        cube_writer(atoms, "FO", fo)
     return fo
 
 
-def FLO(scf, write_cubes=False, fods=None, guess='wannier'):
+def FLO(scf, write_cubes=False, fods=None, guess="wannier"):
     """Generate Fermi-Loewdin orbitals and optionally save them as CUBE files.
 
     Reference: J. Chem. Phys. 153, 084104.
@@ -81,7 +81,7 @@ def FLO(scf, write_cubes=False, fods=None, guess='wannier'):
     Keyword Args:
         write_cubes: Write orbitals to CUBE files.
         fods: Fermi-orbital descriptors.
-        guess: Guess to generate FODs if none are given. Can be 'Wannier' (default) or 'PyCOM'.
+        guess: Guess to generate FODs if none are given. Can be "Wannier" (default) or "PyCOM".
 
     Returns:
         Real-space Fermi-Loewdin orbitals.
@@ -95,17 +95,17 @@ def FLO(scf, write_cubes=False, fods=None, guess='wannier'):
     kso = get_psi(scf, scf.W)
 
     guess = guess.lower()
-    if fods is None and guess == 'wannier':
+    if fods is None and guess == "wannier":
         wo = WO(scf)
         fods = orbital_center(atoms, wo[0])
-    if fods is None and guess == 'pycom':
+    if fods is None and guess == "pycom":
         fods = get_fods(atoms)
         fods = remove_core_fods(atoms, fods)
 
     # The FLO functions need orbitals in reciprocal space as input
     flo = get_FLO(atoms, kso, fods)
     if write_cubes:
-        cube_writer(atoms, 'FLO', flo)
+        cube_writer(atoms, "FLO", flo)
     return flo
 
 
@@ -134,7 +134,7 @@ def WO(scf, write_cubes=False, precondition=True):
 
     wo = get_wannier(atoms, psi)
     if write_cubes:
-        cube_writer(atoms, 'WO', wo)
+        cube_writer(atoms, "WO", wo)
     return wo
 
 
@@ -158,7 +158,7 @@ def SCDM(scf, write_cubes=False):
     kso = get_psi(scf, scf.W)
     scdm = get_scdm(atoms, kso)
     if write_cubes:
-        cube_writer(atoms, 'SCDM', scdm)
+        cube_writer(atoms, "SCDM", scdm)
     return scdm
 
 
@@ -171,19 +171,19 @@ def cube_writer(atoms, orb_type, orbitals):
         orbitals: Real-space orbitals.
     """
     # Create the system name
-    name = ''
+    name = ""
     for ia in sorted(set(atoms.atom)):
         # Skip the number of atoms if it is equal to one
         na = atoms.atom.count(ia)
-        name += f'{ia}{na if na > 1 else ""}'
+        name += f"{ia}{na if na > 1 else ''}"
 
-    n_spin = ''
+    n_spin = ""
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             for i in range(atoms.occ.Nstate):
                 if atoms.occ.f[ik, spin, i] > 0:
                     if atoms.unrestricted:
-                        n_spin = f'_spin_{spin}'
-                    filename = f'{name}_{orb_type}_k{ik}_{i}{n_spin}.cube'
-                    log.info(f'Write {filename}...')
+                        n_spin = f"_spin_{spin}"
+                    filename = f"{name}_{orb_type}_k{ik}_{i}{n_spin}.cube"
+                    log.info(f"Write {filename}...")
                     write_cube(atoms, filename, orbitals[ik][spin, :, i])

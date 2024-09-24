@@ -21,10 +21,10 @@ def read_traj(filename):
     Returns:
         Atom species and positions.
     """
-    if not filename.endswith(('.trj', '.traj')):
-        filename += '.traj'
+    if not filename.endswith((".trj", ".traj")):
+        filename += ".traj"
 
-    with open(filename, encoding='utf-8') as fh:
+    with open(filename, encoding="utf-8") as fh:
         lines = fh.readlines()
         Nlines = len(lines)
 
@@ -51,7 +51,7 @@ def read_traj(filename):
     return traj
 
 
-def write_traj(obj, filename, fods=None, elec_symbols=('X', 'He')):
+def write_traj(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate TRAJ files from atoms objects.
 
     TRAJ files are just multiple XYZ files appended to one file.
@@ -65,8 +65,8 @@ def write_traj(obj, filename, fods=None, elec_symbols=('X', 'He')):
         fods: FOD coordinates to write.
         elec_symbols: Identifier for up and down FODs.
     """
-    if not filename.endswith(('.trj', '.traj')):
-        filename += '.traj'
+    if not filename.endswith((".trj", ".traj")):
+        filename += ".traj"
 
     if isinstance(obj, (list, tuple)):
         for iobj in obj:

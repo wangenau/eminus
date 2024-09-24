@@ -15,7 +15,7 @@ from eminus.energies import get_Eewald
 
 def test_NaCl():
     """Calculate Madelung constant for NaCl."""
-    cell = Cell('NaCl', 'fcc', ecut=1, a=1, basis=[[0.0, 0.0, 0.0], [1 / 2, 1 / 2, 1 / 2]])
+    cell = Cell("NaCl", "fcc", ecut=1, a=1, basis=[[0.0, 0.0, 0.0], [1 / 2, 1 / 2, 1 / 2]])
     cell.Z = [1, -1]
     madelung = -0.5 * get_Eewald(cell, gcut=15)
     madelung_ref = 1.7475645946331822
@@ -24,14 +24,14 @@ def test_NaCl():
 
 def test_CsCl():
     """Calculate Madelung constant for CsCl."""
-    cell = Cell('CsCl', 'sc', ecut=1, a=1, basis=[[0.0, 0.0, 0.0], [1 / 2, 1 / 2, 1 / 2]])
+    cell = Cell("CsCl", "sc", ecut=1, a=1, basis=[[0.0, 0.0, 0.0], [1 / 2, 1 / 2, 1 / 2]])
     cell.Z = [1, -1]
     madelung = -0.5 * np.sqrt(3) * get_Eewald(cell, gcut=15)
     madelung_ref = 1.76267477307099
     assert_allclose(madelung, madelung_ref)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

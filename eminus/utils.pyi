@@ -46,7 +46,7 @@ def handle_spin(
 def handle_k(
     func: _HandleType | None = ...,
     *,
-    mode: Literal['gracefully', 'index', 'reduce', 'skip'] = ...,
+    mode: Literal["gracefully", "index", "reduce", "skip"] = ...,
 ) -> Any: ...
 def handle_torch(
     func: Callable[..., Any],

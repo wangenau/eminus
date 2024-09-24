@@ -89,7 +89,7 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
         import plotly.graph_objects as go
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
@@ -103,9 +103,9 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             x=xx[:, 0],
             y=xx[:, 1],
             z=xx[:, 2],
-            name='Unit cell',
+            name="Unit cell",
             showlegend=False,
-            marker={'size': 0.1, 'color': 'black'},
+            marker={"size": 0.1, "color": "black"},
         )
         fig.add_trace(bz_data)
     # Add species one by one to be able to have them named and be selectable in the legend
@@ -117,11 +117,11 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             y=atoms.pos[mask, 1],
             z=atoms.pos[mask, 2],
             name=ia,
-            mode='markers',
+            mode="markers",
             marker={
-                'size': 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
-                'color': CPK_COLORS[ia],
-                'line': {'color': 'black', 'width': 2},
+                "size": 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
+                "color": CPK_COLORS[ia],
+                "line": {"color": "black", "width": 2},
             },
         )
         fig.add_trace(atom_data)
@@ -133,9 +133,9 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
                     x=fods[0][:, 0],
                     y=fods[0][:, 1],
                     z=fods[0][:, 2],
-                    name='up-FOD',
-                    mode='markers',
-                    marker={'size': np.pi, 'color': 'red'},
+                    name="up-FOD",
+                    mode="markers",
+                    marker={"size": np.pi, "color": "red"},
                 )
                 fig.add_trace(fods_data)
             if len(fods) > 1 and len(fods[1]) != 0:
@@ -143,9 +143,9 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
                     x=fods[1][:, 0],
                     y=fods[1][:, 1],
                     z=fods[1][:, 2],
-                    name='down-FOD',
-                    mode='markers',
-                    marker={'size': np.pi, 'color': 'green'},
+                    name="down-FOD",
+                    mode="markers",
+                    marker={"size": np.pi, "color": "green"},
                 )
                 fig.add_trace(fods_data)
         # Treat fods as normal coordinates otherwise
@@ -154,9 +154,9 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
                 x=fods[:, 0],
                 y=fods[:, 1],
                 z=fods[:, 2],
-                name='Coordinates',
-                mode='markers',
-                marker={'size': 1, 'color': 'red'},
+                name="Coordinates",
+                mode="markers",
+                marker={"size": 1, "color": "red"},
             )
             fig.add_trace(fods_data)
 
@@ -164,11 +164,11 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
     if isinstance(plot_n, np.ndarray) or plot_n:
         # Use the density from an SCF object...
         density = obj.n
-        name = 'Density'
+        name = "Density"
         # ...or use the quantity if an array is given
         if isinstance(plot_n, np.ndarray):
             density = plot_n
-            name = 'Quantity'
+            name = "Quantity"
 
         # If the unit cell is not diagonal we have to interpolate the density data
         # Plotly will not display volumes that are represented on non-orthogonal grids, which is
@@ -180,7 +180,7 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             percent = 100
             isomin = np.nanmin(density)
             log.warning(
-                'The density data for non-orthogonal grids will be interpolated. The '
+                "The density data for non-orthogonal grids will be interpolated. The "
                 '"percent" keyword has no effect and all of the density data will be displayed.'
             )
         else:
@@ -193,8 +193,8 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             z=r[:, 2],
             value=density,
             name=name,
-            colorbar_title=f'{name} ({percent}%)',
-            colorscale='Inferno',
+            colorbar_title=f"{name} ({percent}%)",
+            colorscale="Inferno",
             isomin=isomin,
             isomax=np.nanmax(density),
             surface_count=surfaces,
@@ -207,23 +207,23 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
 
     # Theming
     scene = {
-        'xaxis': {'title': 'x [a<sub>0</sub>]'},
-        'yaxis': {'title': 'y [a<sub>0</sub>]'},
-        'zaxis': {'title': 'z [a<sub>0</sub>]'},
-        'aspectmode': 'cube',
+        "xaxis": {"title": "x [a<sub>0</sub>]"},
+        "yaxis": {"title": "y [a<sub>0</sub>]"},
+        "zaxis": {"title": "z [a<sub>0</sub>]"},
+        "aspectmode": "cube",
     }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
     if (np.diag(np.diag(atoms.a)) == atoms.a).all():
-        scene['xaxis']['range'] = [0, atoms.a[0, 0]]
-        scene['yaxis']['range'] = [0, atoms.a[1, 1]]
-        scene['zaxis']['range'] = [0, atoms.a[2, 2]]
+        scene["xaxis"]["range"] = [0, atoms.a[0, 0]]
+        scene["yaxis"]["range"] = [0, atoms.a[1, 1]]
+        scene["zaxis"]["range"] = [0, atoms.a[2, 2]]
     fig.update_layout(
         scene=scene,
         width=size[0],
         height=size[1],
-        legend={'itemsizing': 'constant', 'title': 'Selection'},
-        hoverlabel_bgcolor='black',
-        template='none',
+        legend={"itemsizing": "constant", "title": "Selection"},
+        hoverlabel_bgcolor="black",
+        template="none",
     )
     if not executed_in_notebook():
         fig.show()
@@ -257,7 +257,7 @@ def view_contour(
         import plotly.graph_objects as go
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
@@ -287,7 +287,7 @@ def view_contour(
         x=atoms.r[:, axes[0]][mask],
         y=atoms.r[:, axes[1]][mask],
         z=field[mask],
-        contours_coloring='none',
+        contours_coloring="none",
         ncontours=lines,
         line_width=linewidth,
     )
@@ -297,22 +297,22 @@ def view_contour(
     fig.update_layout(
         width=size[0],
         height=size[1],
-        margin={'b': 0, 'l': 0, 'r': 0, 't': 0},
+        margin={"b": 0, "l": 0, "r": 0, "t": 0},
         xaxis={
-            'range': [
+            "range": [
                 (1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
                 1 / zoom * atoms.a[axes[0], axes[0]],
             ],
-            'visible': False,
+            "visible": False,
         },
         yaxis={
-            'range': [
+            "range": [
                 (1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
                 1 / zoom * atoms.a[axes[1], axes[1]],
             ],
-            'visible': False,
+            "visible": False,
         },
-        template='none',
+        template="none",
     )
     if not executed_in_notebook():
         fig.show()
@@ -320,7 +320,7 @@ def view_contour(
 
 
 def view_file(
-    filename, isovalue=0.01, gui=False, elec_symbols=('X', 'He'), size=(400, 400), **kwargs
+    filename, isovalue=0.01, gui=False, elec_symbols=("X", "He"), size=(400, 400), **kwargs
 ):
     """Display molecules and orbitals.
 
@@ -345,14 +345,14 @@ def view_file(
         from nglview import NGLWidget, write_html
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
 
     # If multiple files are given, try to open them with an interact drop-down menu
     # If all files are XYZ files they will be displayed as a trajectory instead
-    if isinstance(filename, (list, tuple)) and not np.all([f.endswith('.xyz') for f in filename]):
+    if isinstance(filename, (list, tuple)) and not np.all([f.endswith(".xyz") for f in filename]):
         if executed_in_notebook():
             from ipywidgets import interact
 
@@ -367,19 +367,19 @@ def view_file(
             return None
 
     view = NGLWidget(**kwargs)
-    view._set_size(f'{size[0]}px', f'{size[1]}px')
+    view._set_size(f"{size[0]}px", f"{size[1]}px")
     # Set the gui to the view
     if gui:
-        view.gui_style = 'ngl'
+        view.gui_style = "ngl"
 
     # Handle TRAJ files (or multiple XYZ files)
-    if isinstance(filename, (list, tuple)) or filename.endswith(('.trj', '.traj')):
+    if isinstance(filename, (list, tuple)) or filename.endswith((".trj", ".traj")):
         view = _traj_view(view, filename)
     # Handle XYZ files
-    elif filename.endswith('.xyz'):
+    elif filename.endswith(".xyz"):
         view = _xyz_view(view, filename, elec_symbols)
     # Handle CUBE files
-    elif filename.endswith(('.cub', '.cube')):
+    elif filename.endswith((".cub", ".cube")):
         view = _cube_view(view, filename, isovalue, elec_symbols)
     # Handle other files (mainly for PDBs)
     else:
@@ -400,7 +400,7 @@ def view_file(
             write_html(html, view)
             open_html_in_browser(html.getvalue())
     except ImportError:
-        log.error('This function only works in notebooks or with Plotly installed.')
+        log.error("This function only works in notebooks or with Plotly installed.")
     return None
 
 
@@ -415,7 +415,7 @@ def executed_in_notebook():
     try:
         from IPython import get_ipython
 
-        if 'IPKernelApp' not in get_ipython().config:
+        if "IPKernelApp" not in get_ipython().config:
             return False
     except (AttributeError, ImportError):
         return False
@@ -433,11 +433,11 @@ def _generic_view(view, filename):
         Viewable object.
     """
     # If no XYZ or CUBE file is used try a more generic file viewer
-    ext = pathlib.Path(filename).suffix.replace('.', '')
+    ext = pathlib.Path(filename).suffix.replace(".", "")
     # It seems that only PDB works with this method
-    if ext != 'pdb':
-        log.warning('Only XYZ, CUBE, and PDB files are support, but others might work.')
-    with open(filename, encoding='utf-8') as fh:
+    if ext != "pdb":
+        log.warning("Only XYZ, CUBE, and PDB files are support, but others might work.")
+    with open(filename, encoding="utf-8") as fh:
         view.add_component(fh, ext=ext)
     view[0].clear()
     view[0].add_ball_and_stick()
@@ -472,11 +472,11 @@ def _cube_view(view, filename, isovalue, elec_symbols):
     view[1].clear()
     view[1].add_surface(
         negateIsolevel=False,
-        isolevelType='value',
+        isolevelType="value",
         isolevel=isovalue,
-        color='lightgreen',
+        color="lightgreen",
         opacity=0.75,
-        side='front',
+        side="front",
         depthWrite=False,
     )
     # Spin down
@@ -484,11 +484,11 @@ def _cube_view(view, filename, isovalue, elec_symbols):
     view[2].clear()
     view[2].add_surface(
         negateIsolevel=True,
-        isolevelType='value',
+        isolevelType="value",
         isolevel=isovalue,
-        color='red',
+        color="red",
         opacity=0.75,
-        side='front',
+        side="front",
         depthWrite=False,
     )
     # Spin up FODs
@@ -497,14 +497,14 @@ def _cube_view(view, filename, isovalue, elec_symbols):
             TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]), pos_fod[0]))
         )
         view[3].clear()
-        view[3].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+        view[3].add_ball_and_stick(f"_{elec_symbols[0]}", color="red", radius=0.1)
     # Spin down FODs
     if len(pos_fod[1]) > 0:
         view.add_component(
             TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]), pos_fod[1]))
         )
         view[4].clear()
-        view[4].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
+        view[4].add_ball_and_stick(f"_{elec_symbols[1]}", color="green", radius=0.1)
     return view
 
 
@@ -533,14 +533,14 @@ def _xyz_view(view, filename, elec_symbols):
             TextStructure(create_pdb_str([elec_symbols[0]] * len(pos_fod[0]), pos_fod[0]))
         )
         view[1].clear()
-        view[1].add_ball_and_stick(f'_{elec_symbols[0]}', color='red', radius=0.1)
+        view[1].add_ball_and_stick(f"_{elec_symbols[0]}", color="red", radius=0.1)
     # Spin down FODs
     if len(pos_fod[1]) > 0:
         view.add_component(
             TextStructure(create_pdb_str([elec_symbols[1]] * len(pos_fod[1]), pos_fod[1]))
         )
         view[2].clear()
-        view[2].add_ball_and_stick(f'_{elec_symbols[1]}', color='green', radius=0.1)
+        view[2].add_ball_and_stick(f"_{elec_symbols[1]}", color="green", radius=0.1)
     view.center()
     return view
 
@@ -559,7 +559,7 @@ def _traj_view(view, filename):
         from nglview.base_adaptor import Structure, Trajectory
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
@@ -574,21 +574,21 @@ def _traj_view(view, filename):
             filenames: XYZ input file paths/names.
         """
 
-        __slots__ = ('atoms', 'ext', 'id', 'params')
+        __slots__ = ("atoms", "ext", "id", "params")
 
         def __init__(self, filenames):
             """Initialize the EminusTrajectory object."""
             self.atoms = []
-            if isinstance(filenames, str) and filenames.endswith(('.trj', '.traj')):
+            if isinstance(filenames, str) and filenames.endswith((".trj", ".traj")):
                 trajectory = read_traj(filenames)
                 for frame in trajectory:
                     self.atoms.append(Atoms(*frame))
             else:
-                if isinstance(filenames, str) and filenames.endswith('.xyz'):
+                if isinstance(filenames, str) and filenames.endswith(".xyz"):
                     filenames = [filenames]
                 for f in filenames:
                     self.atoms.append(Atoms(*read_xyz(f)))
-            self.ext = 'pdb'
+            self.ext = "pdb"
             self.params = {}
             self.id = str(uuid.uuid4())
 
@@ -644,20 +644,20 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         import plotly.graph_objects as go
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
     k_axis, special, label = kpoints2axis(scf.kpts)
-    # Replace 'G' with the Greek 'Gamma' encoded in unicode
-    label = ['\u0393' if l == 'G' else l for l in label]
+    # Replace "G" with the Greek "Gamma" encoded in unicode
+    label = ["\u0393" if l == "G" else l for l in label]
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
     Efermi = ha2ev(get_Efermi(scf))
 
     # If both spin channels are plotted used blue and red colors, use automatic colors otherwise
     spin = np.atleast_1d(spin)
     if len(spin) > 1:
-        colors = ('blue', 'red')
+        colors = ("blue", "red")
     else:
         colors = (None, None)
 
@@ -669,8 +669,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
                 go.Scatter(
                     x=k_axis,
                     y=e_occ[:, s, i] - Efermi,
-                    mode='lines+markers',
-                    name=f'Band {i + 1}',
+                    mode="lines+markers",
+                    name=f"Band {i + 1}",
                     marker_color=colors[s],
                 )
             )
@@ -683,9 +683,9 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
                     go.Scatter(
                         x=k_axis,
                         y=e_unocc[:, s, i] - Efermi,
-                        mode='lines+markers',
-                        line={'dash': 'dash'},
-                        name=f'Unocc. band {i + 1}',
+                        mode="lines+markers",
+                        line={"dash": "dash"},
+                        name=f"Unocc. band {i + 1}",
                         marker_color=colors[s],
                     )
                 )
@@ -694,30 +694,30 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         width=size[0],
         height=size[1],
         showlegend=False,
-        font={'size': 20},
+        font={"size": 20},
         xaxis={
-            'zeroline': False,
-            'showline': True,
-            'mirror': True,
-            'ticks': 'outside',
-            'tickmode': 'array',
-            'tickvals': special,
-            'ticktext': label,
-            'gridcolor': 'grey',
-            'gridwidth': 2,
+            "zeroline": False,
+            "showline": True,
+            "mirror": True,
+            "ticks": "outside",
+            "tickmode": "array",
+            "tickvals": special,
+            "ticktext": label,
+            "gridcolor": "grey",
+            "gridwidth": 2,
         },
         yaxis={
-            'zeroline': False,
-            'showline': True,
-            'mirror': True,
-            'ticks': 'outside',
-            'showgrid': False,
+            "zeroline": False,
+            "showline": True,
+            "mirror": True,
+            "ticks": "outside",
+            "showgrid": False,
         },
         xaxis_range=(0, k_axis[-1]),
-        xaxis_title='k-path',
-        yaxis_title='E - E<sub>F</sub> [eV]',
-        hoverlabel_bgcolor='black',
-        template='none',
+        xaxis_title="k-path",
+        yaxis_title="E - E<sub>F</sub> [eV]",
+        hoverlabel_bgcolor="black",
+        template="none",
     )
     if not executed_in_notebook():
         fig.show()
@@ -744,7 +744,7 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
         import plotly.graph_objects as go
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
@@ -752,7 +752,7 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
     Efermi = ha2ev(get_Efermi(scf))
 
     spin = np.atleast_1d(spin)
-    colors = ('blue', 'red')
+    colors = ("blue", "red")
 
     fig = go.Figure()
     for s in spin:
@@ -761,8 +761,8 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
             go.Scatter(
                 x=e - Efermi,
                 y=dos_e,
-                mode='lines+markers',
-                name=f'Spin {s + 1}',
+                mode="lines+markers",
+                name=f"Spin {s + 1}",
                 marker_color=colors[s],
             )
         )
@@ -770,22 +770,22 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
     fig.update_layout(
         width=size[0],
         height=size[1],
-        font={'size': 20},
+        font={"size": 20},
         xaxis={
-            'zeroline': False,
-            'showline': True,
-            'mirror': True,
-            'ticks': 'outside',
+            "zeroline": False,
+            "showline": True,
+            "mirror": True,
+            "ticks": "outside",
         },
         yaxis={
-            'showline': True,
-            'mirror': True,
-            'ticks': 'outside',
+            "showline": True,
+            "mirror": True,
+            "ticks": "outside",
         },
-        xaxis_title='E - E<sub>F</sub> [eV]',
-        yaxis_title='DOS',
-        hoverlabel_bgcolor='black',
-        template='none',
+        xaxis_title="E - E<sub>F</sub> [eV]",
+        yaxis_title="DOS",
+        hoverlabel_bgcolor="black",
+        template="none",
     )
     if not executed_in_notebook():
         fig.show()
@@ -813,7 +813,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         import plotly.graph_objects as go
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[viewer]".\n\n'
         )
         raise
@@ -826,58 +826,58 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
             x=xx[:, 0],
             y=xx[:, 1],
             z=xx[:, 2],
-            name='Brillouin zone',
+            name="Brillouin zone",
             showlegend=False,
-            marker={'size': 0.1, 'color': 'black'},
+            marker={"size": 0.1, "color": "black"},
         )
         fig.add_trace(bz_data)
 
     # Plot special points if desired
     if special:
         for label, k_scaled in SPECIAL_POINTS[kpts.lattice].items():
-            if label == 'G':
-                label = '\u0393'  # noqa: PLW2901
+            if label == "G":
+                label = "\u0393"  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
             special_data = go.Scatter3d(
                 x=[v[0]],
                 y=[v[1]],
                 z=[v[2]],
                 name=label,
-                mode='markers',
-                marker={'size': 4, 'opacity': 0.9},
+                mode="markers",
+                marker={"size": 4, "opacity": 0.9},
             )
             fig.add_trace(special_data)
 
     # Plot optional k-points
     if connect:
-        mode = 'lines+markers'
+        mode = "lines+markers"
     else:
-        mode = 'markers'
+        mode = "markers"
     if path:
         path_data = go.Scatter3d(
             x=kpts.k[:, 0],
             y=kpts.k[:, 1],
             z=kpts.k[:, 2],
-            name='k-points',
+            name="k-points",
             mode=mode,
-            marker={'size': 2, 'color': '#1a962b', 'opacity': 0.75},
+            marker={"size": 2, "color": "#1a962b", "opacity": 0.75},
         )
         fig.add_trace(path_data)
 
     # Theming
     scene = {
-        'xaxis': {'title': 'b<sub>1</sub>'},
-        'yaxis': {'title': 'b<sub>2</sub>'},
-        'zaxis': {'title': 'b<sub>3</sub>'},
-        'aspectmode': 'cube',
+        "xaxis": {"title": "b<sub>1</sub>"},
+        "yaxis": {"title": "b<sub>2</sub>"},
+        "zaxis": {"title": "b<sub>3</sub>"},
+        "aspectmode": "cube",
     }
     fig.update_layout(
         scene=scene,
         width=size[0],
         height=size[1],
-        legend={'itemsizing': 'constant', 'title': 'Selection'},
-        hoverlabel_bgcolor='black',
-        template='none',
+        legend={"itemsizing": "constant", "title": "Selection"},
+        hoverlabel_bgcolor="black",
+        template="none",
     )
     if not executed_in_notebook():
         fig.show()

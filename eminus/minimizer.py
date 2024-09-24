@@ -69,7 +69,7 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
             return True
         # Check if the current energy is higher than the last two values
         if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
-            scf._log.warning('Total energy is not decreasing.')
+            scf._log.warning("Total energy is not decreasing.")
     return False
 
 
@@ -89,36 +89,36 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
     # Print a column header at the beginning
     # The ljust values just have been chosen such that the output looks decent
     if iteration == 1:
-        header = 'Method'.ljust(8)
-        header += 'Iteration'.ljust(11)
-        header += 'Etot [Eh]'.ljust(13)
-        header += 'dEtot [Eh]'.ljust(13)
+        header = "Method".ljust(8)
+        header += "Iteration".ljust(11)
+        header += "Etot [Eh]".ljust(13)
+        header += "dEtot [Eh]".ljust(13)
         # Print the gradient norm for cg methods
-        if method not in {'sd', 'lm', 'pclm'}:
-            header += '|Gradient|'.ljust(10 * scf.atoms.occ.Nspin + 3)
+        if method not in {"sd", "lm", "pclm"}:
+            header += "|Gradient|".ljust(10 * scf.atoms.occ.Nspin + 3)
         # Print extra debugging information if available
         if scf._log.level <= logging.DEBUG:
-            if method != 'sd':
-                header += 'linmin-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
-            if method not in {'sd', 'lm', 'pclm'}:
-                header += 'cg-test'.ljust(10 * scf.atoms.occ.Nspin + 3)
+            if method != "sd":
+                header += "linmin-test".ljust(10 * scf.atoms.occ.Nspin + 3)
+            if method not in {"sd", "lm", "pclm"}:
+                header += "cg-test".ljust(10 * scf.atoms.occ.Nspin + 3)
             scf._log.debug(header)
         else:
             scf._log.info(header)
 
     # Print the information for every cycle
     # Context manager for printing norm_g, linmin, and cg
-    with np.printoptions(formatter={'float': '{:+0.2e}'.format}):
-        info = f'{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}'
+    with np.printoptions(formatter={"float": "{:+0.2e}".format}):
+        info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
         # In the first step we do not have all information yet
         if iteration > 1:
-            info += f'{Elist[-2] - Elist[-1]:<+13,.4e}'
+            info += f"{Elist[-2] - Elist[-1]:<+13,.4e}"
             if norm_g is not None:
                 info += str(np.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf._log.level <= logging.DEBUG:
-                if method != 'sd' and linmin is not None:
+                if method != "sd" and linmin is not None:
                     info += str(np.sum(linmin, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-                if method not in {'sd', 'lm', 'pclm'} and cg is not None:
+                if method not in {"sd", "lm", "pclm"} and cg is not None:
                     info += str(np.sum(cg, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf._log.level <= logging.DEBUG:
         scf._log.debug(info)
@@ -211,7 +211,7 @@ def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
     raise ValueError(msg)
 
 
-@name('steepest descent minimization')
+@name("steepest descent minimization")
 def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, **kwargs):
     """Steepest descent minimization algorithm.
 
@@ -235,7 +235,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     for i in range(Nit):
         c = cost(scf, i)
         costs.append(c)
-        if condition(scf, 'sd', costs):
+        if condition(scf, "sd", costs):
             break
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
@@ -244,7 +244,7 @@ def sd(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     return costs
 
 
-@name('preconditioned line minimization')
+@name("preconditioned line minimization")
 def pclm(
     scf,
     Nit,
@@ -276,9 +276,9 @@ def pclm(
     costs = []
 
     if precondition:
-        method = 'pclm'
+        method = "pclm"
     else:
-        method = 'lm'
+        method = "lm"
 
     # Scalars that need to be saved for each spin
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
@@ -317,7 +317,7 @@ def pclm(
     return costs
 
 
-@name('line minimization')
+@name("line minimization")
 def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, **kwargs):
     """Line minimization algorithm.
 
@@ -338,7 +338,7 @@ def lm(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     return pclm(scf, Nit, cost, grad, condition, betat, precondition=False)
 
 
-@name('preconditioned conjugate-gradient minimization')
+@name("preconditioned conjugate-gradient minimization")
 def pccg(
     scf,
     Nit,
@@ -370,9 +370,9 @@ def pccg(
     costs = []
 
     if precondition:
-        method = 'pccg'
+        method = "pccg"
     else:
-        method = 'cg'
+        method = "cg"
 
     # Scalars that need to be saved for each spin and k-point
     linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
@@ -449,7 +449,7 @@ def pccg(
     return costs
 
 
-@name('conjugate-gradient minimization')
+@name("conjugate-gradient minimization")
 def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, cgform=1):
     """Conjugate-gradient minimization algorithm.
 
@@ -470,7 +470,7 @@ def cg(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, beta
     return pccg(scf, Nit, cost, grad, condition, betat, cgform, precondition=False)
 
 
-@name('auto minimization')
+@name("auto minimization")
 def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, betat=3e-5, cgform=1):  # noqa: C901
     """Automatic preconditioned conjugate-gradient minimization algorithm.
 
@@ -525,7 +525,7 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     # Evaluate the cost function
     c = cost(scf, -1)
     costs.append(c)
-    if condition(scf, 'pccg', costs):
+    if condition(scf, "pccg", costs):
         return costs
 
     # Start the iteration
@@ -564,21 +564,21 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
             c = cost(scf, -1)
             costs.append(c)
             # Do not print cg and linmin if we do the sd step
-            if condition(scf, 'sd', costs, norm_g=norm_g):
+            if condition(scf, "sd", costs, norm_g=norm_g):
                 break
         else:
             costs.append(c)
-            if condition(scf, 'pccg', costs, linmin, cg, norm_g):
+            if condition(scf, "pccg", costs, linmin, cg, norm_g):
                 break
     return costs
 
 
 #: Map minimizer names with their respective implementation.
 IMPLEMENTED = {
-    'sd': sd,
-    'lm': lm,
-    'pclm': pclm,
-    'cg': cg,
-    'pccg': pccg,
-    'auto': auto,
+    "sd": sd,
+    "lm": lm,
+    "pclm": pclm,
+    "cg": cg,
+    "pccg": pccg,
+    "auto": auto,
 }

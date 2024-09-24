@@ -14,7 +14,7 @@ from eminus.localizer import get_FLO, get_scdm, get_wannier, wannier_cost
 from eminus.tools import check_orthonorm
 
 atoms_unpol = Atoms(
-    'CH4',
+    "CH4",
     (
         (0, 0, 0),
         (1.186, 1.186, 1.186),
@@ -30,7 +30,7 @@ scf_unpol = SCF(atoms_unpol)
 scf_unpol.run()
 
 atoms_pol = Atoms(
-    'CH4',
+    "CH4",
     (
         (0, 0, 0),
         (1.186, 1.186, 1.186),
@@ -56,7 +56,7 @@ fods = np.array(
 )
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_spread(unrestricted):
     """Test the spread calculation."""
     if unrestricted:
@@ -73,7 +73,7 @@ def test_spread(unrestricted):
     assert_allclose(costs[:, 1:], 5, atol=0.25)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_flo(unrestricted):
     """Test the generation of FLOs."""
     if unrestricted:
@@ -89,7 +89,7 @@ def test_flo(unrestricted):
     assert_allclose(costs, costs[0, 0], atol=0.05)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_wannier(unrestricted):
     """Test the generation of Wannier functions."""
     if unrestricted:
@@ -119,7 +119,7 @@ def test_wannier_random_guess():
     assert np.sum(wannier_cost(scf.atoms, wo)) < np.sum(costs)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_scdm(unrestricted):
     """Test the generation of SCDM localized orbitals."""
     if unrestricted:
@@ -136,7 +136,7 @@ def test_scdm(unrestricted):
     assert np.sum(costs) < np.sum(wannier_cost(scf.atoms, scf.atoms.I(psi)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

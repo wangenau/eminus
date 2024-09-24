@@ -62,8 +62,8 @@ class Occupations:
             self._Nspin = int(value)
             self.spin = self.spin
             self.is_filled = False
-            if hasattr(self, 'f'):
-                log.warning('Reset previously set fillings.')
+            if hasattr(self, "f"):
+                log.warning("Reset previously set fillings.")
 
     @property
     def spin(self):
@@ -94,7 +94,7 @@ class Occupations:
     @charge.setter
     def charge(self, value):
         # If we set a charge via this setter update the number of electrons
-        if hasattr(self, 'Nelec'):
+        if hasattr(self, "Nelec"):
             self.Nelec += self._charge - int(value)
         if self._charge != int(value):
             self._charge = int(value)
@@ -154,11 +154,11 @@ class Occupations:
     @smearing.setter
     def smearing(self, value):
         if value < 0:
-            log.error('The smearing width can not be negative.')
+            log.error("The smearing width can not be negative.")
         self._smearing = value
         self.is_filled = False
         if self.Nempty > 0:
-            log.warning('Empty states with smearing enabled found.')
+            log.warning("Empty states with smearing enabled found.")
 
     @property
     def magnetization(self):
@@ -167,7 +167,7 @@ class Occupations:
         if self.Nspin == 1:
             return 0
         if not self.is_filled:
-            log.warning('Can not calculate magnetization for unfilled occupations.')
+            log.warning("Can not calculate magnetization for unfilled occupations.")
             return 0
         return np.sum(self.wk * (self.f[:, 0] - self.f[:, 1])) / np.sum(self.wk * self.f)
 
@@ -175,7 +175,7 @@ class Occupations:
     def magnetization(self, value):
         if value is not None:
             if self.is_filled:
-                log.warning('Reset previously set fillings.')
+                log.warning("Reset previously set fillings.")
                 self.is_filled = False
             self.fill(None, value)
 
@@ -242,7 +242,7 @@ class Occupations:
             elif self.Nspin == 1 or self.Nelec % 2 == self.spin % 2:
                 self._integer_fillings(value)
             else:
-                log.warning('Using fractional occupations.')
+                log.warning("Using fractional occupations.")
                 self._fractional_fillings(value)
         # If f is an array redetermine all attributes from it
         else:
@@ -274,9 +274,9 @@ class Occupations:
             self.bands = Nstate
             self._Nstate = Nstate
         if self.bands < Nstate:
-            log.error('Number of bands is smaller than the number of valence electrons.')
+            log.error("Number of bands is smaller than the number of valence electrons.")
         if self.bands == Nstate and self.smearing > 0:
-            log.warning('Smearing has been enabled but no extra bands have been set.')
+            log.warning("Smearing has been enabled but no extra bands have been set.")
         # Set the number of empty states if no smearing is used
         if self.smearing == 0:
             self._Nstate = Nstate
@@ -331,9 +331,9 @@ class Occupations:
             self.bands = Nstate
             self._Nstate = Nstate
         if self.bands < Nstate:
-            log.error('Number of bands is smaller than the number of valence electrons.')
+            log.error("Number of bands is smaller than the number of valence electrons.")
         if self.bands == Nstate and self.smearing > 0:
-            log.warning('Smearing has been enabled but no extra bands have been set.')
+            log.warning("Smearing has been enabled but no extra bands have been set.")
         # Set the number of empty states if no smearing is used
         if self.smearing == 0:
             self._Nstate = Nstate
@@ -365,16 +365,16 @@ class Occupations:
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""
         return (
-            f'Spin handling: {"un" if self.Nspin == 2 else ""}restricted\n'
-            f'Number of electrons: {self.Nelec}\n'
-            f'Spin: {self.spin}\n'
-            f'Charge: {self.charge}\n'
-            f'Number of bands: {self.bands}\n'
-            f'Number of states: {self.Nstate}\n'
-            f'Number of empty states: {self.Nempty}\n'
-            f'Number of k-points: {self.Nk}\n'
-            f'Smearing width: {self.smearing} Eh\n'
-            f'Fillings: \n{self.f if self.is_filled else "Not filled"}'
+            f"Spin handling: {'un' if self.Nspin == 2 else ''}restricted\n"
+            f"Number of electrons: {self.Nelec}\n"
+            f"Spin: {self.spin}\n"
+            f"Charge: {self.charge}\n"
+            f"Number of bands: {self.bands}\n"
+            f"Number of states: {self.Nstate}\n"
+            f"Number of empty states: {self.Nempty}\n"
+            f"Number of k-points: {self.Nk}\n"
+            f"Smearing width: {self.smearing} Eh\n"
+            f"Fillings: \n{self.f if self.is_filled else 'Not filled'}"
         )
 
     def smear(self, epsilon):
@@ -387,7 +387,7 @@ class Occupations:
             Efermi: Fermi energy.
         """
         if self.smearing == 0:
-            log.info('Smearing is set to zero, nothing to do.')
+            log.info("Smearing is set to zero, nothing to do.")
             return 0
 
         Efermi = get_Efermi(self, epsilon)

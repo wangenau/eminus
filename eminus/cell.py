@@ -10,49 +10,49 @@ from .utils import molecule2list
 
 #: Crystal structures with their respective lattice and basis.
 STRUCTURES = {
-    'sc': {
-        'lattice': 'sc',
-        'basis': [[0, 0, 0]],
+    "sc": {
+        "lattice": "sc",
+        "basis": [[0, 0, 0]],
     },
-    'fcc': {
-        'lattice': 'fcc',
-        'basis': [[0, 0, 0]],
+    "fcc": {
+        "lattice": "fcc",
+        "basis": [[0, 0, 0]],
     },
-    'bcc': {
-        'lattice': 'bcc',
-        'basis': [[0, 0, 0]],
+    "bcc": {
+        "lattice": "bcc",
+        "basis": [[0, 0, 0]],
     },
-    'tetragonal': {
-        'lattice': 'sc',
-        'basis': [[0, 0, 0]],
+    "tetragonal": {
+        "lattice": "sc",
+        "basis": [[0, 0, 0]],
     },
-    'orthorhombic': {
-        'lattice': 'sc',
-        'basis': [[0, 0, 0]],
+    "orthorhombic": {
+        "lattice": "sc",
+        "basis": [[0, 0, 0]],
     },
-    'hexagonal': {
-        'lattice': 'hexagonal',
-        'basis': [[0, 0, 0]],
+    "hexagonal": {
+        "lattice": "hexagonal",
+        "basis": [[0, 0, 0]],
     },
-    'diamond': {
-        'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
+    "diamond": {
+        "lattice": "fcc",
+        "basis": [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
     },
-    'zincblende': {
-        'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
+    "zincblende": {
+        "lattice": "fcc",
+        "basis": [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4]],
     },
-    'rocksalt': {
-        'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 2, 0, 0]],
+    "rocksalt": {
+        "lattice": "fcc",
+        "basis": [[0, 0, 0], [1 / 2, 0, 0]],
     },
-    'cesiumchloride': {
-        'lattice': 'sc',
-        'basis': [[0, 0, 0], [1 / 2, 1 / 2, 1 / 2]],
+    "cesiumchloride": {
+        "lattice": "sc",
+        "basis": [[0, 0, 0], [1 / 2, 1 / 2, 1 / 2]],
     },
-    'fluorite': {
-        'lattice': 'fcc',
-        'basis': [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4], [3 / 4, 3 / 4, 3 / 4]],
+    "fluorite": {
+        "lattice": "fcc",
+        "basis": [[0, 0, 0], [1 / 4, 1 / 4, 1 / 4], [3 / 4, 3 / 4, 3 / 4]],
     },
 }
 
@@ -94,8 +94,8 @@ def Cell(
     if isinstance(lattice, str):
         lattice = lattice.lower()
         if basis is None:
-            basis = STRUCTURES[lattice]['basis']
-        lattice = STRUCTURES[lattice]['lattice']
+            basis = STRUCTURES[lattice]["basis"]
+        lattice = STRUCTURES[lattice]["lattice"]
         lattice_vectors = np.asarray(LATTICE_VECTORS[lattice])
     else:
         if basis is None:

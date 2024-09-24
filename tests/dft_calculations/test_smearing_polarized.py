@@ -16,22 +16,22 @@ E_ref = {
 a = 3.44
 ecut = 10
 s = 9
-xc = 'LDA,VWN'
-guess = 'random'
+xc = "LDA,VWN"
+guess = "random"
 etol = 1e-6
-opt = {'auto': 21}
+opt = {"auto": 21}
 
 
-@pytest.mark.parametrize('smearing', E_ref.keys())
+@pytest.mark.parametrize("smearing", E_ref.keys())
 def test_polarized(smearing):
     """Compare total energies for a test system with a reference value (spin-polarized)."""
-    cell = Cell('Li', 'bcc', ecut=ecut, a=a, smearing=smearing)
+    cell = Cell("Li", "bcc", ecut=ecut, a=a, smearing=smearing)
     cell.s = s
     E = USCF(cell, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[smearing], atol=etol)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

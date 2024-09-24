@@ -39,15 +39,15 @@ class SCF(BaseObject):
     Keyword Args:
         xc: Comma-separated exchange-correlation functional description.
 
-            Adding 'libxc:' before a functional will use the Libxc interface for that functional,
+            Adding "libxc:" before a functional will use the Libxc interface for that functional,
             e.g., with :code:`libxc:mgga_x_scan,libxc:mgga_c_scan`.
         pot: Type of potential.
 
-            Can be one of 'GTH' (default), 'Coulomb', 'Harmonic', or 'Ge'. Alternatively, a path to
+            Can be one of "GTH" (default), "Coulomb", "Harmonic", or "Ge". Alternatively, a path to
             a directory containing custom GTH pseudopotential files can be given.
         guess: Initial guess for the wave functions.
 
-            Can be one of 'random' (default) or 'pseudo'. Adding 'symm' to the string will use the
+            Can be one of "random" (default) or "pseudo". Adding "symm" to the string will use the
             same coefficients for both spin channels, e.g., :code:`symm-rand`.
         etol: Convergence tolerance of the total energy.
         gradtol: Convergence tolerance of the gradient norm.
@@ -57,14 +57,14 @@ class SCF(BaseObject):
         disp: Calculate a dispersion correction.
 
             A dictionary can be used to pass arguments to the respective
-            function, e.g., with :code:`{'version': 'd3zero', 'atm': False, 'xc': 'scan'}`.
+            function, e.g., with :code:`{"version": "d3zero", "atm": False, "xc": "scan"}`.
         opt: Dictionary to customize the minimization methods.
 
-            The keys can be chosen out of 'sd', 'lm', 'pclm', 'cg', 'pccg', and 'auto'. Defaults to
-            :code:`{'auto': 250}`.
+            The keys can be chosen out of "sd", "lm", "pclm", "cg", "pccg", and "auto". Defaults to
+            :code:`{"auto": 250}`.
         verbose: Level of output.
 
-            Can be one of 'critical', 'error', 'warning', 'info' (default), or 'debug'. An integer
+            Can be one of "critical", "error", "warning", "info" (default), or "debug". An integer
             value can be used as well, where larger numbers mean more output, starting from 0.
             Defaults to the verbosity level of the Atoms object.
     """
@@ -72,9 +72,9 @@ class SCF(BaseObject):
     def __init__(
         self,
         atoms,
-        xc='lda,vwn',
-        pot='gth',
-        guess='random',
+        xc="lda,vwn",
+        pot="gth",
+        guess="random",
         etol=1e-7,
         gradtol=None,
         sic=False,
@@ -85,7 +85,7 @@ class SCF(BaseObject):
         """Initialize the SCF object."""
         # Set opt here, better to not use mutable data types in signatures
         if opt is None:
-            opt = {'auto': 250}
+            opt = {"auto": 250}
 
         # Set the input parameters (the ordering is important)
         self.atoms = atoms  #: Atoms object.
@@ -134,8 +134,8 @@ class SCF(BaseObject):
         self._xc = parse_functionals(value.lower())
         # Determine the type of functional combinations
         self._xc_type = parse_xc_type(self._xc)
-        if 'mock_xc' in self._xc and '_xc_' not in ''.join(self._xc).lower():
-            self._log.warning('Usage of mock functional detected.')
+        if "mock_xc" in self._xc and "_xc_" not in "".join(self._xc).lower():
+            self._log.warning("Usage of mock functional detected.")
 
     @property
     def xc_params(self):
@@ -149,7 +149,7 @@ class SCF(BaseObject):
         if value != {} and value is not None:
             not_used = value.keys() - self.xc_params_defaults.keys()
             if len(not_used) > 0:
-                self._log.warning(f'Some xc_params are unused, namely: {", ".join(not_used)}.')
+                self._log.warning(f"Some xc_params are unused, namely: {', '.join(not_used)}.")
         self._xc_params = value
 
     @property
@@ -162,18 +162,18 @@ class SCF(BaseObject):
         if value.lower() in ALL_POTENTIALS:
             self._pot = value.lower()
             # Only set the pseudopotential type for GTH pseudopotentials
-            if self._pot == 'gth':
-                if 'gga' in self._xc_type:
-                    self._psp = 'pbe'
+            if self._pot == "gth":
+                if "gga" in self._xc_type:
+                    self._psp = "pbe"
                 else:
-                    self._psp = 'pade'
+                    self._psp = "pade"
         # If pot is no supported potential treat it as a path to a directory containing GTH files
         else:
             self._log.info(f'Use the path "{value}" to search for GTH pseudopotential files.')
             self._psp = value
-            self._pot = 'gth'
+            self._pot = "gth"
         # Build the potential
-        if self._pot == 'gth':
+        if self._pot == "gth":
             self.gth = GTH(self)
         self.Vloc = init_pot(self)
 
@@ -186,15 +186,15 @@ class SCF(BaseObject):
     def guess(self, value):
         # Set the guess method
         value = value.lower()
-        if 'rand' in value:
-            self._guess = 'random'
-        elif 'pseudo' in value:
-            self._guess = 'pseudo'
+        if "rand" in value:
+            self._guess = "random"
+        elif "pseudo" in value:
+            self._guess = "pseudo"
         else:
-            msg = f'{value} is no valid initial guess.'
+            msg = f"{value} is no valid initial guess."
             raise ValueError(msg)
         # Check if a symmetric or unsymmetric guess is selected
-        if 'sym' in value and 'unsym' not in value:
+        if "sym" in value and "unsym" not in value:
             self._symmetric = True
         else:
             self._symmetric = False
@@ -269,21 +269,21 @@ class SCF(BaseObject):
         if self._log.level <= logging.DEBUG:
             info()
         self._log.debug(
-            f'\n--- Atoms information ---\n{self.atoms}\n'
-            f'\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n'
-            f'Sampling per axis: {self.atoms.s}\n'
-            f'Cut-off energy: {self.atoms.ecut} Eh\n'
-            f'\n--- State information ---\n{self.atoms.occ}\n'
-            f'\n--- Calculation information ---\n{self}\n\n--- SCF data ---'
+            f"\n--- Atoms information ---\n{self.atoms}\n"
+            f"\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n"
+            f"Sampling per axis: {self.atoms.s}\n"
+            f"Cut-off energy: {self.atoms.ecut} Eh\n"
+            f"\n--- State information ---\n{self.atoms.occ}\n"
+            f"\n--- Calculation information ---\n{self}\n\n--- SCF data ---"
         )
 
         # Calculate Ewald energy that only depends on the system geometry
         self.energies.Eewald = get_Eewald(self.atoms)
         # Build the initial wave function if there is no W to start from
         if self.W is None:
-            if 'random' in self.guess:
+            if "random" in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
-            elif 'pseudo' in self.guess:
+            elif "pseudo" in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
         # Start the minimization procedures
@@ -291,22 +291,22 @@ class SCF(BaseObject):
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self._log.info(f'Start {ALL_MINIMIZER[imin].__name__}...')
+            self._log.info(f"Start {ALL_MINIMIZER[imin].__name__}...")
             start = time.perf_counter()
             Elist = ALL_MINIMIZER[imin](self, self.opt[imin], **kwargs)
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}
-            self._opt_log[imin]['iter'] = len(Elist)
-            self._opt_log[imin]['time'] = end - start
+            self._opt_log[imin]["iter"] = len(Elist)
+            self._opt_log[imin]["time"] = end - start
             Etots += Elist
             # Do not start other minimizations if one converged
             if self.is_converged:
                 break
         if self.is_converged:
-            self._log.info(f'SCF converged after {len(Etots)} iterations.')
+            self._log.info(f"SCF converged after {len(Etots)} iterations.")
         else:
-            self._log.warning('SCF not converged!')
+            self._log.warning("SCF not converged!")
 
         # Calculate SIC energy if desired
         if self.sic:
@@ -318,30 +318,30 @@ class SCF(BaseObject):
             self.energies.Edisp = get_Edisp(self)
 
         # Print minimizer timings
-        self._log.debug('\n--- SCF results ---')
+        self._log.debug("\n--- SCF results ---")
         t_tot = 0
         for imin in self._opt_log:
-            N = self._opt_log[imin]['iter']
-            t = self._opt_log[imin]['time']
+            N = self._opt_log[imin]["iter"]
+            t = self._opt_log[imin]["time"]
             t_tot += t
             self._log.debug(
-                f'Minimizer: {imin}'
-                f'\nIterations: {N}'
-                f'\nTime: {t:.5f} s'
-                f'\nTime/Iteration: {t / N:.5f} s'
+                f"Minimizer: {imin}"
+                f"\nIterations: {N}"
+                f"\nTime: {t:.5f} s"
+                f"\nTime/Iteration: {t / N:.5f} s"
             )
-        self._log.info(f'Total SCF time: {t_tot:.5f} s')
+        self._log.info(f"Total SCF time: {t_tot:.5f} s")
         # Print the S^2 expectation value for unrestricted calculations
         if self.atoms.unrestricted:
-            self._log.info(f'<S^2> = {get_spin_squared(self):.6e}')
+            self._log.info(f"<S^2> = {get_spin_squared(self):.6e}")
         # Print energy data
         if self._log.level <= logging.DEBUG:
             self._log.debug(
-                '\n--- Energy data ---\n'
-                f'Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}'
+                "\n--- Energy data ---\n"
+                f"Eigenenergies:\n{get_epsilon(self, self.W)}\n\n{self.energies}"
             )
         else:
-            self._log.info(f'Etot = {self.energies.Etot:.9f} Eh')
+            self._log.info(f"Etot = {self.energies.Etot:.9f} Eh")
         return self.energies.Etot
 
     kernel = run
@@ -353,7 +353,7 @@ class SCF(BaseObject):
             **kwargs: Pass-through keyword arguments.
         """
         if not self.is_converged:
-            self._log.warning('The previous calculation has not been converged.')
+            self._log.warning("The previous calculation has not been converged.")
 
         # If new k-points have been set rebuild the atoms object and the potential
         if not self.atoms.kpts.is_built or (
@@ -365,47 +365,47 @@ class SCF(BaseObject):
 
         # Build the initial wave function if there is no W to start from
         if self.W is None or len(self.W) != self.atoms.kpts.Nk:
-            if 'random' in self.guess:
+            if "random" in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
-            elif 'pseudo' in self.guess:
+            elif "pseudo" in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
-        self._log.info('Minimize occupied band energies...')
+        self._log.info("Minimize occupied band energies...")
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self._log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            self._log.info(f"Start {BAND_MINIMIZER[imin].__name__}...")
             start = time.perf_counter()
             Elist, self.W = BAND_MINIMIZER[imin](self, self.W, self.opt[imin], **kwargs)
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}
-            self._opt_log[imin]['iter'] = len(Elist)
-            self._opt_log[imin]['time'] = end - start
+            self._opt_log[imin]["iter"] = len(Elist)
+            self._opt_log[imin]["time"] = end - start
             Etots += Elist
             # Do not start other minimizations if one converged
             if self.is_converged:
                 break
         if self.is_converged:
-            self._log.info(f'Band minimization converged after {len(Etots)} iterations.')
+            self._log.info(f"Band minimization converged after {len(Etots)} iterations.")
         else:
-            self._log.warning('Band minimization not converged!')
+            self._log.warning("Band minimization not converged!")
 
         # Print minimizer timings
-        self._log.debug('\n--- Band minimization results ---')
+        self._log.debug("\n--- Band minimization results ---")
         t_tot = 0
         for imin in self._opt_log:
-            N = self._opt_log[imin]['iter']
-            t = self._opt_log[imin]['time']
+            N = self._opt_log[imin]["iter"]
+            t = self._opt_log[imin]["time"]
             t_tot += t
             self._log.debug(
-                f'Minimizer: {imin}'
-                f'\nIterations: {N}'
-                f'\nTime: {t:.5f} s'
-                f'\nTime/Iteration: {t / N:.5f} s'
+                f"Minimizer: {imin}"
+                f"\nIterations: {N}"
+                f"\nTime: {t:.5f} s"
+                f"\nTime/Iteration: {t / N:.5f} s"
             )
-        self._log.info(f'Total band minimization time: {t_tot:.5f} s')
+        self._log.info(f"Total band minimization time: {t_tot:.5f} s")
 
         # Converge empty bands automatically if desired
         if self.atoms.occ.Nempty > 0:
@@ -420,7 +420,7 @@ class SCF(BaseObject):
             **kwargs: Pass-through keyword arguments.
         """
         if not self.is_converged:
-            self._log.warning('The previous calculation has not been converged.')
+            self._log.warning("The previous calculation has not been converged.")
         self.is_converged = False
 
         if Nempty is None:
@@ -428,17 +428,17 @@ class SCF(BaseObject):
 
         # Build the initial wave functions
         if self.Z is None:
-            if 'random' in self.guess:
+            if "random" in self.guess:
                 self.Z = guess_random(self, Nempty, symmetric=self.symmetric)
-            elif 'pseudo' in self.guess:
+            elif "pseudo" in self.guess:
                 self.Z = guess_pseudo(self, Nempty, symmetric=self.symmetric)
 
-        self._log.info('Minimize unoccupied band energies...')
+        self._log.info("Minimize unoccupied band energies...")
         # Start the minimization procedures
         Etots = []
         for imin in self.opt:
             # Call the minimizer
-            self._log.info(f'Start {BAND_MINIMIZER[imin].__name__}...')
+            self._log.info(f"Start {BAND_MINIMIZER[imin].__name__}...")
             start = time.perf_counter()
             Elist, self.Z = BAND_MINIMIZER[imin](
                 self, self.Z, self.opt[imin], cost=scf_step_unocc, grad=get_grad_unocc, **kwargs
@@ -446,31 +446,31 @@ class SCF(BaseObject):
             end = time.perf_counter()
             # Save the minimizer results
             self._opt_log[imin] = {}
-            self._opt_log[imin]['iter'] = len(Elist)
-            self._opt_log[imin]['time'] = end - start
+            self._opt_log[imin]["iter"] = len(Elist)
+            self._opt_log[imin]["time"] = end - start
             Etots += Elist
             # Do not start other minimizations if one converged
             if self.is_converged:
                 break
         if self.is_converged:
-            self._log.info(f'Band minimization converged after {len(Etots)} iterations.')
+            self._log.info(f"Band minimization converged after {len(Etots)} iterations.")
         else:
-            self._log.warning('Band minimization not converged!')
+            self._log.warning("Band minimization not converged!")
 
         # Print minimizer timings
-        self._log.debug('\n--- Band minimization results ---')
+        self._log.debug("\n--- Band minimization results ---")
         t_tot = 0
         for imin in self._opt_log:
-            N = self._opt_log[imin]['iter']
-            t = self._opt_log[imin]['time']
+            N = self._opt_log[imin]["iter"]
+            t = self._opt_log[imin]["time"]
             t_tot += t
             self._log.debug(
-                f'Minimizer: {imin}'
-                f'\nIterations: {N}'
-                f'\nTime: {t:.5f} s'
-                f'\nTime/Iteration: {t / N:.5f} s'
+                f"Minimizer: {imin}"
+                f"\nIterations: {N}"
+                f"\nTime: {t:.5f} s"
+                f"\nTime/Iteration: {t / N:.5f} s"
             )
-        self._log.info(f'Total band minimization time: {t_tot:.5f} s')
+        self._log.info(f"Total band minimization time: {t_tot:.5f} s")
         return self
 
     def recenter(self, center=None):
@@ -532,20 +532,20 @@ class SCF(BaseObject):
         self.Y = orth(atoms, self.W)
         self.n_spin = get_n_spin(atoms, self.Y)
         self.n = get_n_total(atoms, self.Y, self.n_spin)
-        if 'gga' in self.xc_type:
+        if "gga" in self.xc_type:
             self.dn_spin = get_grad_field(atoms, self.n_spin)
-        if self.xc_type == 'meta-gga':
+        if self.xc_type == "meta-gga":
             self.tau = get_tau(atoms, self.Y)
         self.phi = solve_poisson(atoms, self.n)
         self.exc, self.vxc, self.vsigma, self.vtau = get_xc(
             self.xc, self.n_spin, atoms.occ.Nspin, self.dn_spin, self.tau, self.xc_params
         )
         self._precomputed = {
-            'dn_spin': self.dn_spin,
-            'phi': self.phi,
-            'vxc': self.vxc,
-            'vsigma': self.vsigma,
-            'vtau': self.vtau,
+            "dn_spin": self.dn_spin,
+            "phi": self.phi,
+            "vxc": self.vxc,
+            "vsigma": self.vsigma,
+            "vtau": self.vtau,
         }
         return self
 
@@ -553,16 +553,16 @@ class SCF(BaseObject):
         """Print the most important parameters stored in the SCF object."""
         # Use chr(10) to create a linebreak since backslashes are not allowed in f-strings
         return (
-            f'XC functionals: {self.xc}\n'
-            f'Potential: {self.pot}\n'
-            f'{f"GTH files: {self.psp}" + chr(10) if self.pot == "gth" else ""}'
-            f'Starting guess: {self.guess}\n'
-            f'Symmetric guess: {self.symmetric}\n'
-            f'Energy convergence tolerance: {self.etol} Eh\n'
-            f'Gradient convergence tolerance: {self.gradtol}\n'
-            f'Non-local potential: {self.gth.NbetaNL > 0 if self.pot == "gth" else "false"}\n'
-            f'Smearing: {self.atoms.occ.smearing > 0}\n'
-            f'Smearing update cycle: {self.smear_update}'
+            f"XC functionals: {self.xc}\n"
+            f"Potential: {self.pot}\n"
+            f"{f'GTH files: {self.psp}' + chr(10) if self.pot == 'gth' else ''}"
+            f"Starting guess: {self.guess}\n"
+            f"Symmetric guess: {self.symmetric}\n"
+            f"Energy convergence tolerance: {self.etol} Eh\n"
+            f"Gradient convergence tolerance: {self.gradtol}\n"
+            f"Non-local potential: {self.gth.NbetaNL > 0 if self.pot == 'gth' else 'false'}\n"
+            f"Smearing: {self.atoms.occ.smearing > 0}\n"
+            f"Smearing update cycle: {self.smear_update}"
         )
 
 

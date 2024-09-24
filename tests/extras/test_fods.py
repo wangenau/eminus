@@ -13,27 +13,27 @@ from eminus.extras import remove_core_fods, split_fods
 rng = default_rng()
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 @pytest.mark.parametrize(
-    ('basis', 'loc'), [('pc-1', 'fb'), ('pc-0', 'er'), ('pc-0', 'pm'), ('pc-0', 'gpm')]
+    ("basis", "loc"), [("pc-1", "fb"), ("pc-0", "er"), ("pc-0", "pm"), ("pc-0", "gpm")]
 )
 def test_get_fods_unpol(unrestricted, basis, loc):
     """Test FOD generator."""
-    pytest.importorskip('pyscf', reason='pyscf not installed, skip tests')
+    pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from eminus.extras import get_fods
 
-    atoms = Atoms('He', (0, 0, 0), unrestricted=unrestricted).build()
+    atoms = Atoms("He", (0, 0, 0), unrestricted=unrestricted).build()
     fods = get_fods(atoms, basis=basis, loc=loc)
     # For He all FODs are core FODs and therefore should be close to the atom
     assert_allclose(atoms.pos, fods[0], atol=1e-6)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
-@pytest.mark.parametrize('elec_symbols', [('X', 'He'), ('He', 'Ne')])
+@pytest.mark.parametrize("unrestricted", [True, False])
+@pytest.mark.parametrize("elec_symbols", [("X", "He"), ("He", "Ne")])
 def test_split_fods(unrestricted, elec_symbols):
     """Test splitting FODs from atoms."""
     pos = rng.standard_normal((5, 3))
-    atom = ['H'] * len(pos)
+    atom = ["H"] * len(pos)
     fods = rng.standard_normal((10, 3))
     atom_fods = [elec_symbols[0]] * len(fods)
     if unrestricted:
@@ -55,10 +55,10 @@ def test_split_fods(unrestricted, elec_symbols):
     assert_equal(fods, fods_split_array)
 
 
-@pytest.mark.parametrize('unrestricted', [True, False])
+@pytest.mark.parametrize("unrestricted", [True, False])
 def test_remove_core_fods(unrestricted):
     """Test core FOD removal function."""
-    atoms = Atoms('Li5', rng.standard_normal((5, 3)), unrestricted=unrestricted).build()
+    atoms = Atoms("Li5", rng.standard_normal((5, 3)), unrestricted=unrestricted).build()
     atoms.Z = 1
     core = atoms.pos
     valence = rng.standard_normal((10, 3))
@@ -68,7 +68,7 @@ def test_remove_core_fods(unrestricted):
     assert_equal([valence] * atoms.occ.Nspin, fods_valence)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

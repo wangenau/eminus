@@ -22,9 +22,9 @@ def test_pade_data():
     """Check that every atom has at least one PADE pseudopotential file."""
     psp_path = pathlib.Path(inspect.getfile(pade)).parent
     for atom in SYMBOL2NUMBER:
-        if atom == 'X':
+        if atom == "X":
             continue
-        f_psp = sorted(psp_path.glob(f'{atom}-q*'))
+        f_psp = sorted(psp_path.glob(f"{atom}-q*"))
         assert len(f_psp) > 0
 
 
@@ -32,12 +32,12 @@ def test_pbe_data():
     """Check that every atom has at least one PBE pseudopotential file."""
     psp_path = pathlib.Path(inspect.getfile(pbe)).parent
     for atom in SYMBOL2NUMBER:
-        if atom == 'X':
+        if atom == "X":
             continue
-        f_psp = sorted(psp_path.glob(f'{atom}-q*'))
+        f_psp = sorted(psp_path.glob(f"{atom}-q*"))
         assert len(f_psp) > 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)

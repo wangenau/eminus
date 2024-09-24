@@ -97,7 +97,7 @@ def Linv(atoms, W):
         The operator applied on W.
     """
     # Ignore the division by zero for the first elements
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         if W.ndim == 1:
             # One could do some proper indexing with [1:] but indexing is slow
             out = W / (atoms.G2 * -atoms.Omega)
@@ -111,7 +111,7 @@ def Linv(atoms, W):
 
 
 @handle_torch
-@handle_k(mode='index')
+@handle_k(mode="index")
 @handle_spin
 def I(atoms, W, ik=-1):
     """Backward transformation from reciprocal space to real-space.
@@ -150,20 +150,20 @@ def I(atoms, W, ik=-1):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(atoms.s)
-        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
+        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm="forward").ravel()
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
         Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
         # Tell the function that the FFT only has to act on the first 3 axes
         Finv = ifftn(
-            Wfft, workers=config.threads, overwrite_x=True, norm='forward', axes=(0, 1, 2)
+            Wfft, workers=config.threads, overwrite_x=True, norm="forward", axes=(0, 1, 2)
         ).reshape((n, W.shape[-1]))
     return Finv
 
 
 @handle_torch
-@handle_k(mode='index')
+@handle_k(mode="index")
 @handle_spin
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
@@ -193,11 +193,11 @@ def J(atoms, W, ik=-1, full=True):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(atoms.s)
-        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm='forward').ravel()
+        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm="forward").ravel()
     else:
         Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
         F = fftn(
-            Wfft, workers=config.threads, overwrite_x=True, norm='forward', axes=(0, 1, 2)
+            Wfft, workers=config.threads, overwrite_x=True, norm="forward", axes=(0, 1, 2)
         ).reshape((n, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space
@@ -208,7 +208,7 @@ def J(atoms, W, ik=-1, full=True):
 
 
 @handle_torch
-@handle_k(mode='index')
+@handle_k(mode="index")
 @handle_spin
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
@@ -234,7 +234,7 @@ def Idag(atoms, W, ik=-1, full=False):
 
 
 @handle_torch
-@handle_k(mode='index')
+@handle_k(mode="index")
 @handle_spin
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.

@@ -95,7 +95,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     f1 = 1 + mu * s**2 / kappa
     Fx = kappa - kappa / f1
     exunif = -3 * kf / (4 * np.pi)
-    # In Fx a '1 + ' is missing, since n * exunif is the Slater exchange that is added later
+    # In Fx a "1 + " is missing, since n * exunif is the Slater exchange that is added later
     sx = exunif * Fx
 
     dsdn = -4 / 3 * s

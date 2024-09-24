@@ -65,8 +65,8 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         func.set_ext_params(params)
 
     if dn_spin is None:
-        # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order='F'))
-        out = func.compute({'rho': n_spin.T.ravel()})
+        # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order="F"))
+        out = func.compute({"rho": n_spin.T.ravel()})
     else:
         # The gradients have to be reshaped as well but also squared
         if Nspin == 1:
@@ -81,20 +81,20 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                 )
             )
         if tau is None:
-            out = func.compute({'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel()})
+            out = func.compute({"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel()})
         else:
             out = func.compute(
-                {'rho': n_spin.T.ravel(), 'sigma': dn2.T.ravel(), 'tau': tau.T.ravel()}
+                {"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel(), "tau": tau.T.ravel()}
             )
     # zk is a column vector, flatten it to a 1d row vector
-    exc = out['zk'].ravel()
+    exc = out["zk"].ravel()
 
     # vrho (and vsigma) is exactly transposed from what we need
-    vxc = out['vrho'].T
+    vxc = out["vrho"].T
     if dn_spin is not None:
-        vsigma = np.atleast_2d(out['vsigma'].T)
+        vsigma = np.atleast_2d(out["vsigma"].T)
         if tau is not None:
-            vtau = out['vtau'].T
+            vtau = out["vtau"].T
             return exc, vxc, vsigma, vtau
         return exc, vxc, vsigma, None
     return exc, vxc, None, None
@@ -122,13 +122,13 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         from pyscf.dft.libxc import eval_xc
     except ImportError:
         log.exception(
-            'Necessary dependencies not found. To use this module, '
+            "Necessary dependencies not found. To use this module, "
             'install them with "pip install eminus[libxc]".\n\n'
         )
         raise
 
     if xc_params is not None:
-        log.warning('xc_params are not supported when using PySCF as the Libxc backend.')
+        log.warning("xc_params are not supported when using PySCF as the Libxc backend.")
 
     if dn_spin is None:
         # For LDAs we only need the spin densities that are already in the needed shape

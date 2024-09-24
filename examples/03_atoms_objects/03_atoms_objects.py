@@ -5,12 +5,12 @@ from eminus import Atoms
 # # The only necessary parameters are `atom` and `pos`
 # # `atom` holds the atom symbols, and `pos` holds the atom positions
 # # Please note that atomic units will be used
-atom = 'N2'
+atom = "N2"
 pos = [[-1.037, 0, 0], [1.037, 0, 0]]
 
 # # Create an object for dinitrogen and display it
 atoms = Atoms(atom, pos)
-print(f'Atoms object:\n{atoms}\n')
+print(f"Atoms object:\n{atoms}\n")
 
 # # Cut-off energy
 ecut = 20
@@ -46,7 +46,7 @@ atoms = Atoms(
     center=center,
     verbose=verbose,
 )
-print(f'New Atoms object:\n{atoms}\n')
+print(f"New Atoms object:\n{atoms}\n")
 
 # # Albeit discouraged, some properties can be changed after the initialization as seen below
 # # Valence charge per atom, the charges should not differ for the same species
@@ -63,19 +63,19 @@ atoms.f = [2, 2, 2, 2, 2]
 
 # # You can manipulate the object by displaying or editing most properties
 # # To display the calculated cell volume
-print(f'Cell volume = {atoms.Omega} a0^3')
+print(f"Cell volume = {atoms.Omega} a0^3")
 
 # # If you edit properties of an existing object dependent properties can be updated by rebuilding the `Atoms` object
 # # The `atoms.build` function is used to generate cell parameters for an SCF calculation, but an SCF object will call the function if necessary
 # # Edit the cell size, rebuild the object, and display the new cell volume
 atoms.a = 3
 atoms.build()
-print(f'New cell volume = {atoms.Omega} a0^3')
+print(f"New cell volume = {atoms.Omega} a0^3")
 
 # # To display all relevant electronic information regarding the occupations, one can display the `Occupations` object every `Atoms` object has
-print(f'\nOccupations object:\n{atoms.occ}')
+print(f"\nOccupations object:\n{atoms.occ}")
 
 # # More information is always available in the respective docstring
-# print(f'\nAtoms docstring:\n{Atoms.__doc__}')
+# print(f"\nAtoms docstring:\n{Atoms.__doc__}")
 # # or:
 # help(Atoms)

@@ -88,7 +88,7 @@ Changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
 
 ### Coverage ###
 [tool.coverage.report]
-exclude_lines = ["if __name__ == '__main__':"]
+exclude_lines = ['if __name__ == "__main__":']
 
 [tool.coverage.run]
 include = ["eminus/*"]
@@ -125,9 +125,6 @@ extend-include = ["*.ipynb"]
 line-length = 100
 respect-gitignore = true
 
-[tool.ruff.format]
-quote-style = "single"
-
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
@@ -142,7 +139,6 @@ ignore = [
     "ERA001",  # Found commented-out code
     "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
     # The following rules are disabled due to possible conflicts with the formatter
-    "Q000", "Q003",  # Double quotes preferred, change outer quotes to avoid escaping inner quotes
     "COM812",  # Trailing comma missing
     "ISC001",  # Implicitly concatenated string literals on one line
 ]

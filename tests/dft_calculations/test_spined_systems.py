@@ -16,22 +16,22 @@ E_ref = {
 a = 10
 ecut = 10
 s = 32
-xc = 'svwn'
-guess = 'random'
+xc = "svwn"
+guess = "random"
 etol = 1e-6
-opt = {'auto': 22}
+opt = {"auto": 22}
 
 
-@pytest.mark.parametrize('spin', [1, 2])
+@pytest.mark.parametrize("spin", [1, 2])
 def test_polarized(spin):
     """Compare total energies for a test system with a reference value (spin-polarized)."""
-    atoms = Atoms('He', (0, 0, 0), a=a, ecut=ecut, spin=spin)
+    atoms = Atoms("He", (0, 0, 0), a=a, ecut=ecut, spin=spin)
     atoms.s = s
     E = USCF(atoms, xc=xc, guess=guess, etol=etol, opt=opt).run()
     assert_allclose(E, E_ref[spin], rtol=etol)  # Use rtol for a looser comparison with JDFTx
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

@@ -16,14 +16,14 @@ from .utils import (
 )
 
 __all__ = [
-    'ALIAS',
-    'IMPLEMENTED',
-    'XC_MAP',
-    'get_exc',
-    'get_vxc',
-    'get_xc',
-    'get_xc_defaults',
-    'get_zeta',
-    'parse_functionals',
-    'parse_xc_type',
+    "ALIAS",
+    "IMPLEMENTED",
+    "XC_MAP",
+    "get_exc",
+    "get_vxc",
+    "get_xc",
+    "get_xc_defaults",
+    "get_zeta",
+    "parse_functionals",
+    "parse_xc_type",
 ]

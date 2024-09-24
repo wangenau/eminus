@@ -15,27 +15,27 @@ def test_singleton():
 
 def test_independence():
     """Check that loggers do not influence each other."""
-    log = logger.create_logger('tmp')
+    log = logger.create_logger("tmp")
     assert id(log) != id(logger.log)
     assert log.verbose == logger.log.verbose
-    log.verbose = 'critical'
+    log.verbose = "critical"
     assert log.verbose != logger.log.verbose
 
 
 @pytest.mark.parametrize(
-    ('level', 'ref'),
+    ("level", "ref"),
     [
-        ('DEBUG', 'DEBUG'),
-        ('debug', 'DEBUG'),
-        (4, 'DEBUG'),
-        (0, 'CRITICAL'),
-        (9, 'DEBUG'),
+        ("DEBUG", "DEBUG"),
+        ("debug", "DEBUG"),
+        (4, "DEBUG"),
+        (0, "CRITICAL"),
+        (9, "DEBUG"),
         (None, None),
     ],
 )
 def test_level(level, ref):
     """Test logging levels."""
-    log = logger.create_logger('tmp')
+    log = logger.create_logger("tmp")
     log.verbose = level
     if ref is None:
         ref = logger.log.verbose
@@ -44,7 +44,7 @@ def test_level(level, ref):
 
 def test_name():
     """Test the name changing decorator."""
-    name = 'newname'
+    name = "newname"
 
     @logger.name(name)
     def tmp():
@@ -53,7 +53,7 @@ def test_name():
     assert tmp.__name__ == name
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 

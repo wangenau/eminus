@@ -12,7 +12,7 @@ from eminus.tools import orbital_center
 # # Do a simple calculation for methane
 # # Use a very small cutoff energy for a small grid
 # # The optimization function will be called hundreds of times, so we are interested in speed for this simple example
-atom, pos = read('CH4.xyz')
+atom, pos = read("CH4.xyz")
 atoms = Atoms(atom, pos, ecut=5, center=True)
 scf = SCF(atoms)
 scf.run()
@@ -20,7 +20,7 @@ scf.run()
 # # Generate an initial guess by calculating the center of mass of Wannier orbitals
 wo = WO(scf)
 fods = orbital_center(atoms, wo[0])
-print(f'\nInitial FODs:\n{fods}')
+print(f"\nInitial FODs:\n{fods}")
 
 
 # # Example implementation for a FOD optimization
@@ -44,11 +44,11 @@ def optimize_fods(scf, fods):
     # Convert FODs to a list such that SciPy's minimize function can work with them
     x = np.concatenate([fod.flatten() for fod in fods])
     # Call the optimizer
-    print('\nStart FOD optimization...')
-    result = minimize(get_sic_energy, x0=x, method='nelder-mead', tol=1e-4, options={'disp': True})
+    print("\nStart FOD optimization...")
+    result = minimize(get_sic_energy, x0=x, method="nelder-mead", tol=1e-4, options={"disp": True})
     # Print the SIC energies
-    print(f'\nInitial SIC energy:   {get_sic_energy(x):.6f} Eh')
-    print(f'Optimized SIC energy: {get_sic_energy(result.x):.6f} Eh')
+    print(f"\nInitial SIC energy:   {get_sic_energy(x):.6f} Eh")
+    print(f"Optimized SIC energy: {get_sic_energy(result.x):.6f} Eh")
     # Return the FODs in a usable format
     return x2fods(result.x)
 
@@ -56,7 +56,7 @@ def optimize_fods(scf, fods):
 # # Optimize the FODs
 # # You may have to run this a few times since the optimizer can sometimes run into an unphysical solution
 fods = optimize_fods(scf, fods)
-print(f'\nOptimized FODs:\n{fods}')
+print(f"\nOptimized FODs:\n{fods}")
 
 # # Write the optimized FODs to a file
-atoms.write('CH4_fods.xyz', fods=fods)
+atoms.write("CH4_fods.xyz", fods=fods)

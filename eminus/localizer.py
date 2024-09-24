@@ -10,7 +10,7 @@ from .logger import log
 from .utils import handle_k, handle_spin
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def eval_psi(atoms, psi, r):
     """Evaluate orbitals at given coordinate points.
 
@@ -29,7 +29,7 @@ def eval_psi(atoms, psi, r):
     return psi_Trs[0]
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def get_R(atoms, psi, fods):
     """Calculate transformation matrix to build Fermi orbitals.
 
@@ -55,7 +55,7 @@ def get_R(atoms, psi, fods):
     return R
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def get_FO(atoms, psi, fods):
     """Calculate Fermi orbitals from Kohn-Sham orbitals.
 
@@ -105,7 +105,7 @@ def get_S(atoms, psirs):
     return S
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 def get_FLO(atoms, psi, fods):
     """Calculate Fermi-Loewdin orbitals by orthonormalizing Fermi orbitals.
 
@@ -133,7 +133,7 @@ def get_FLO(atoms, psi, fods):
     return flo
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 @handle_spin
 def get_scdm(atoms, psi):
     """Calculate localized orbitals via QR decomposition, as given in the SCDM method.
@@ -156,7 +156,7 @@ def get_scdm(atoms, psi):
     return psi_rs @ Q
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 @handle_spin
 def wannier_cost(atoms, psirs):
     """Calculate the Wannier cost function, namely the orbital variance. Equivalent to Foster-Boys.
@@ -176,12 +176,12 @@ def wannier_cost(atoms, psirs):
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
     costs = moments - norm(centers, axis=1) ** 2
-    log.debug(f'Centers:\n{centers}\nMoments:\n{moments}')
-    log.info(f'Costs:\n{costs}')
+    log.debug(f"Centers:\n{centers}\nMoments:\n{moments}")
+    log.info(f"Costs:\n{costs}")
     return costs
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 @handle_spin
 def wannier_center(atoms, psirs):
     """Calculate Wannier centers, i.e., the expectation values of r.
@@ -204,7 +204,7 @@ def wannier_center(atoms, psirs):
     return centers
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 @handle_spin
 def second_moment(atoms, psirs):
     """Calculate the second moments, i.e., the expectation values of r^2.
@@ -300,7 +300,7 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     return x + y + z
 
 
-@handle_k(mode='skip')
+@handle_k(mode="skip")
 @handle_spin
 def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False, seed=None):
     """Steepest descent supercell Wannier localization.
@@ -328,7 +328,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         Localized orbitals.
     """
     if not (np.diag(np.diag(atoms.a)) == atoms.a).all():
-        log.warning('The Wannier localization needs a cubic unit cell.')
+        log.warning("The Wannier localization needs a cubic unit cell.")
         return psirs
 
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
@@ -339,12 +339,12 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         U = np.eye(atoms.occ.Nstate)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
-    atoms._log.debug(f'{"Iteration":<11}{"Cost [a0^2]":<13}{"dCost [a0^2]":<13}')
+    atoms._log.debug(f"{'Iteration':<11}{'Cost [a0^2]':<13}{'dCost [a0^2]':<13}")
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
         if abs(costs[-2] - costs[-1]) < conv_tol:
-            atoms._log.info(f'Wannier localizer converged after {i} iterations.')
+            atoms._log.info(f"Wannier localizer converged after {i} iterations.")
             break
         # If the cost function gets smaller, change the direction
         if costs[-2] - costs[-1] < 0:
@@ -363,9 +363,9 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         Y = expA_neg @ Y @ expA_pos
         Z = expA_neg @ Z @ expA_pos
 
-        atoms._log.debug(f'{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}')
+        atoms._log.debug(f"{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}")
 
     if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
-        atoms._log.warning('Wannier localizer not converged!')
+        atoms._log.warning("Wannier localizer not converged!")
     # Return the localized orbitals by rotating them
     return psirs @ U

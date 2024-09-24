@@ -19,7 +19,7 @@ ecf = -ry2ha(np.array([48.0, 31.2, 21.0, 13.55, 7.09, 4.146])) / 1000
 b0 = 20.4562557
 b1 = 27.4203609
 fitted_b0 = 21.9469106
-print(f'Original parameter:\nb1 = {b1:.7f}')
+print(f"Original parameter:\nb1 = {b1:.7f}")
 
 
 # # Spin-polarized Chachiyo functional with additional fit parameters
@@ -46,22 +46,22 @@ def functional_wrapper(rs, b1):
 # # Do the fit over the QMC data
 # # One can see that our fitted value is vastly different from the one derived by Karasiev with `b1=28.3559732`
 fitted_b1, _ = curve_fit(functional_wrapper, rs, ecf)
-print(f'\nFitted parameter:\nb1 = {fitted_b1[0]:.7f}')
+print(f"\nFitted parameter:\nb1 = {fitted_b1[0]:.7f}")
 # Fitted parameter:
 # b1 = 26.9515208
 
 # # Plot the error of the correlation energies compared to the QMC data for Chachiyo, Karasiev, and our functional
 # # Find the plot named `correlation_energy_error_spin.png`
-plt.style.use('../eminus.mplstyle')
+plt.style.use("../eminus.mplstyle")
 plt.figure()
-plt.axhline(c='dimgrey', ls='--', marker='')
-plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, b0, b1) - ecf), label='Chachiyo')
-plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, 21.7392245, 28.3559732) - ecf), label='Karasiev')
-plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, fitted_b0, *fitted_b1) - ecf), label='mod. Chachiyo')
-plt.xlabel(r'$r_s$')
-plt.ylabel(r'$E_c^\mathrm{F} - E_c^{\mathrm{F,QMC}}$ [m$E_\mathrm{h}$]')
+plt.axhline(c="dimgrey", ls="--", marker="")
+plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, b0, b1) - ecf), label="Chachiyo")
+plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, 21.7392245, 28.3559732) - ecf), label="Karasiev")
+plt.plot(rs, 1000 * (lda_c_chachiyo_spin(n, 1, fitted_b0, *fitted_b1) - ecf), label="mod. Chachiyo")
+plt.xlabel(r"$r_s$")
+plt.ylabel(r"$E_c^\mathrm{F} - E_c^{\mathrm{F,QMC}}$ [m$E_\mathrm{h}$]")
 plt.legend()
-plt.savefig('correlation_energy_error_spin.png')
+plt.savefig("correlation_energy_error_spin.png")
 
 
 # # Lastly, let us compare the mean absolute errors (MAE) of these functional variants
@@ -71,20 +71,20 @@ def mae(data, ref):
 
 
 # # Begin with the spin-paired case...
-print('\nMAE (spin-paired) [mEh]:')
-print(f'Chachiyo: {mae(lda_c_chachiyo_spin(n, 0, b0, b1), ecp):.3f}')
-print(f'Karasiev: {mae(lda_c_chachiyo_spin(n, 0, 21.7392245, 28.3559732), ecp):.3f}')
-print(f'Modified: {mae(lda_c_chachiyo_spin(n, 0, fitted_b0, *fitted_b1), ecp):.3f}')
+print("\nMAE (spin-paired) [mEh]:")
+print(f"Chachiyo: {mae(lda_c_chachiyo_spin(n, 0, b0, b1), ecp):.3f}")
+print(f"Karasiev: {mae(lda_c_chachiyo_spin(n, 0, 21.7392245, 28.3559732), ecp):.3f}")
+print(f"Modified: {mae(lda_c_chachiyo_spin(n, 0, fitted_b0, *fitted_b1), ecp):.3f}")
 # MAE (spin-paired) [mEh]:
 # Chachiyo: 0.533
 # Karasiev: 0.322
 # Modified: 0.355
 
 # # ...and end with the spin-polarized case
-print('\nMAE (spin-polarized) [mEh]:')
-print(f'Chachiyo: {mae(lda_c_chachiyo_spin(n, 1, b0, b1), ecf):.3f}')
-print(f'Karasiev: {mae(lda_c_chachiyo_spin(n, 1, 21.7392245, 28.3559732), ecf):.3f}')
-print(f'Modified: {mae(lda_c_chachiyo_spin(n, 1, fitted_b0, *fitted_b1), ecf):.3f}')
+print("\nMAE (spin-polarized) [mEh]:")
+print(f"Chachiyo: {mae(lda_c_chachiyo_spin(n, 1, b0, b1), ecf):.3f}")
+print(f"Karasiev: {mae(lda_c_chachiyo_spin(n, 1, 21.7392245, 28.3559732), ecf):.3f}")
+print(f"Modified: {mae(lda_c_chachiyo_spin(n, 1, fitted_b0, *fitted_b1), ecf):.3f}")
 # MAE (spin-polarized) [mEh]:
 # Chachiyo: 0.167
 # Karasiev: 0.213

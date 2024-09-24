@@ -11,7 +11,7 @@ from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, trunca
 from eminus.tools import center_of_mass
 
 atoms = Atoms(
-    'CH4',
+    "CH4",
     (
         (0, 0, 0),
         (1.186, 1.186, 1.186),
@@ -22,7 +22,7 @@ atoms = Atoms(
 ).build()
 
 
-@pytest.mark.parametrize('length', [0.001, 0.01, 0.1, 1, 10])
+@pytest.mark.parametrize("length", [0.001, 0.01, 0.1, 1, 10])
 def test_domain_cuboid(length):
     """Test cuboidal domain generation by ensuring that the grid points are close to the center."""
     out = truncate(atoms.r, domain_cuboid(atoms, length))
@@ -35,7 +35,7 @@ def test_domain_cuboid(length):
     assert_allclose(out, ref, atol=length)
 
 
-@pytest.mark.parametrize('radius', [0.001, 0.01, 0.1, 1, 10])
+@pytest.mark.parametrize("radius", [0.001, 0.01, 0.1, 1, 10])
 def test_domain_sphere(radius):
     """Test spherical domain generation by ensuring that the grid points are close to the center."""
     out = truncate(atoms.r, domain_sphere(atoms, radius))
@@ -54,7 +54,7 @@ def test_domain_isovalue():
     assert not (out == atoms.G2).all()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import inspect
     import pathlib
 
