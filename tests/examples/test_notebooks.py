@@ -44,7 +44,7 @@ def test_notebooks(name, trash):
 
     with open(f"{name}.ipynb", encoding="utf-8") as fh:
         nb = read(fh, as_version=4)
-        ep = ExecutePreprocessor(timeout=60, kernel_name="python3")
+        ep = ExecutePreprocessor(timeout=60)
         assert ep.preprocess(nb) is not None
 
     clean_example(trash)

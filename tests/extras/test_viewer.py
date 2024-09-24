@@ -11,7 +11,17 @@ import pytest
 from eminus.extras.viewer import executed_in_notebook
 
 
-@pytest.mark.parametrize("name", ["test_view_atoms", "test_view_file"])
+@pytest.mark.slow
+@pytest.mark.parametrize(
+    "name",
+    [
+        "test_plot_bandstructure_dos",
+        "test_view_atoms",
+        "test_view_contour",
+        "test_view_file",
+        "test_view_kpts",
+    ],
+)
 def test_viewer(name):
     """Test the execution of a given Jupyter notebook."""
     pytest.importorskip("nglview", reason="nglview not installed, skip tests")
@@ -23,7 +33,7 @@ def test_viewer(name):
     os.environ["PYTEST_TEST_DIR"] = str(file_path)
     with open(f"{file_path}/{name}.ipynb", encoding="utf-8") as fh:
         nb = read(fh, as_version=4)
-        ep = ExecutePreprocessor(timeout=60, kernel_name="python3")
+        ep = ExecutePreprocessor(timeout=60)
         assert ep.preprocess(nb) is not None
 
 
