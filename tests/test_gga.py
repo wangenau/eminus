@@ -3,8 +3,8 @@
 """Test GGA functions."""
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus.gga import get_grad_field, get_tau

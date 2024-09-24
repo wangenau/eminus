@@ -5,9 +5,9 @@
 import typing  # noqa: F401
 
 import numpy as np  # noqa: F401
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
-import pytest
 
 from eminus import Atoms, config
 

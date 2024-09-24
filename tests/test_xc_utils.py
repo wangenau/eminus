@@ -3,9 +3,9 @@
 """Test exchange-correlation functional utilities."""
 
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
-import pytest
 
 from eminus import config
 from eminus.xc import get_xc, get_xc_defaults, parse_functionals, parse_xc_type

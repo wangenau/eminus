@@ -3,9 +3,9 @@
 """Test libxc extra."""
 
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
-import pytest
 
 from eminus.xc import get_exc, get_vxc, get_xc_defaults
 

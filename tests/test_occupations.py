@@ -3,8 +3,8 @@
 """Test the Occupations object."""
 
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
 import pytest
+from numpy.testing import assert_allclose, assert_equal
 
 from eminus.occupations import Occupations
 

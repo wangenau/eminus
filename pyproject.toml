@@ -165,8 +165,6 @@ ignore = [
 ignore-variadic-names = true
 
 [tool.ruff.lint.isort]
-combine-as-imports = true
-force-sort-within-sections = true
 order-by-type = false
 
 [tool.ruff.lint.mccabe]

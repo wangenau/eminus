@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test total energies for bulk silicon with custom k-points."""
 
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Cell, RSCF, USCF
 from eminus.kpoints import kpoint_convert

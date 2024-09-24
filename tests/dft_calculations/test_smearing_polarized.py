@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test total energies for bulk lithium (spin-polarized) for different smearings."""
 
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Cell, USCF
 

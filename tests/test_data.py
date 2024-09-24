@@ -5,8 +5,8 @@
 import inspect
 import pathlib
 
-from numpy.testing import assert_equal
 import pytest
+from numpy.testing import assert_equal
 
 from eminus.data import COVALENT_RADII, CPK_COLORS, SYMBOL2NUMBER
 from eminus.psp import pade, pbe

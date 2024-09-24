@@ -3,8 +3,8 @@
 """Test domain generation."""
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms
 from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, truncate

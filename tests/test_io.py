@@ -8,8 +8,8 @@ import os
 import pathlib
 
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
 import pytest
+from numpy.testing import assert_allclose, assert_equal
 
 from eminus import Atoms, Cell, SCF
 from eminus.io import (

@@ -3,8 +3,8 @@
 """Test DFT functions."""
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, demo, SCF
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H

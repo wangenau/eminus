@@ -3,8 +3,8 @@
 """Test the k-points functionalities."""
 
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
 import pytest
+from numpy.testing import assert_allclose, assert_equal
 
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
 from eminus.kpoints import (

@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test total energies of charged helium atoms."""
 
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF, USCF
 

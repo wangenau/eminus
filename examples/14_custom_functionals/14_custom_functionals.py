@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
+import eminus.xc
 from eminus import Atoms, SCF
 from eminus.units import ry2ha
-import eminus.xc
 
 # # Start with a normal SCF calculation for helium with the original LDA Chachiyo functional
 atoms = Atoms("He", (0, 0, 0), ecut=10, verbose=0)

@@ -7,9 +7,9 @@ import os
 import pathlib
 
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
-import pytest
 
 from eminus import Atoms, RSCF
 from eminus.orbitals import cube_writer, FLO, FO, KSO, SCDM, WO

@@ -3,9 +3,9 @@
 """Test fods identities."""
 
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
-import pytest
 
 from eminus import Atoms
 from eminus.extras import remove_core_fods, split_fods

@@ -5,8 +5,8 @@
 import copy
 
 import numpy as np
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF, SCF
 from eminus.dft import get_epsilon, get_psi

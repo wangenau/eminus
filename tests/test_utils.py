@@ -3,9 +3,9 @@
 """Test utility functions."""
 
 import numpy as np
+import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
-import pytest
 from scipy.linalg import norm
 from scipy.special import sph_harm
 

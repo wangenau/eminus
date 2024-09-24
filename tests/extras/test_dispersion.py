@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test dispersion corrections."""
 
-from numpy.testing import assert_allclose
 import pytest
+from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus.energies import get_Edisp
