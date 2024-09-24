@@ -103,6 +103,7 @@ disable_error_code = [
     # Many setter methods change the variable type, this is not considered by Mypy
     # Reference: https://github.com/python/mypy/issues/3004
     "assignment",  # Incompatible types in assignment  [assignment]
+    # Do not complain about imported modules that are untyped
     "import-untyped",  # Module is missing library stubs or py.typed marker  [import-untyped]
 ]
 
@@ -121,7 +122,6 @@ norecursedirs = "public/*"
 
 ### Ruff ###
 [tool.ruff]
-extend-include = ["*.ipynb"]
 line-length = 100
 respect-gitignore = true
 
