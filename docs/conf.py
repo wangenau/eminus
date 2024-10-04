@@ -66,8 +66,8 @@ autodoc_member_order: str = "groupwise"
 autodoc_preserve_defaults: bool = True
 napoleon_use_rtype: bool = False
 
-bibtex_bibfiles = ["references.bib"]
-bibtex_default_style = "unsrt"
+bibtex_bibfiles: list[str] = ["references.bib"]
+bibtex_default_style: str = "unsrt"
 
 
 def dunder_skip(app: Any, what: Any, name: str, obj: Any, would_skip: bool, options: Any) -> bool:  # noqa: ARG001
