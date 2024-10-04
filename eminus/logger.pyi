@@ -4,8 +4,6 @@ from collections.abc import Callable
 from logging import Formatter, Logger, LogRecord
 from typing import Any
 
-log: CustomLogger
-
 class CustomLogger(Logger):
     def __init__(self, name: str) -> None: ...
     @property
@@ -19,3 +17,5 @@ class CustomFormatter(Formatter):
 def create_logger(obj: object) -> CustomLogger: ...
 def get_level(verbose: int | str | None) -> str: ...
 def name(newname: str) -> Callable[..., Any]: ...
+
+log: CustomLogger

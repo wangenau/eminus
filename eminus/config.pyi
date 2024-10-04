@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable
 
-from .logger import log as log
-
 # Add type hints for all properties and methods of the ConfigClass to the module
 # This allows IDEs to see that the module has said attribute
 use_torch: bool
