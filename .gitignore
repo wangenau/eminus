@@ -25,3 +25,6 @@ bibtex.json
 
 # Jupyter Notebook
 .ipynb_checkpoints
+
+# Environments
+.envrc
