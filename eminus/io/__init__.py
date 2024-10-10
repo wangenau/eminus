@@ -33,7 +33,7 @@ def read(filename, *args, **kwargs):
     """Unified file reader function.
 
     Args:
-        filename: JSON input file path/name.
+        filename: Input file path/name.
         *args: Pass-through arguments.
 
     Keyword Args:
@@ -44,6 +44,10 @@ def read(filename, *args, **kwargs):
     """
     if filename.endswith(".json"):
         return read_json(filename, *args, **kwargs)
+    if filename.endswith(".hdf5"):
+        from ..extras import read_hdf5
+
+        return read_hdf5(filename, *args, **kwargs)
     if filename.endswith(".xyz"):
         return read_xyz(filename, *args, **kwargs)
     if "POSCAR" in filename:
@@ -56,7 +60,7 @@ def read(filename, *args, **kwargs):
     raise NotImplementedError(msg)
 
 
-def write(obj, filename, *args, **kwargs):
+def write(obj, filename, *args, **kwargs):  # noqa: PLR0911
     """Unified file writer function.
 
     Args:
@@ -72,6 +76,10 @@ def write(obj, filename, *args, **kwargs):
     """
     if filename.endswith(".json"):
         return write_json(obj, filename, *args, **kwargs)
+    if filename.endswith(".hdf5"):
+        from ..extras import write_hdf5
+
+        return write_hdf5(obj, filename, *args, **kwargs)
     if filename.endswith(".xyz"):
         return write_xyz(obj, filename, *args, **kwargs)
     if "POSCAR" in filename:

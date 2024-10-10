@@ -17,6 +17,7 @@ dev
       - Use Wannier orbital COMs for FLO generations if no FODs are given
    - Add magnetization functions
    - Add POSCAR read and write functions
+   - Add a simple HDF5 file extra
    - Allow setting of external functional parameters (internal and in pylibxc)
 - Coding style
    - Reformat the codebase using Ruff

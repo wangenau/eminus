@@ -37,6 +37,12 @@ License
      -
    * -
      -
+   * - h5py
+     - BSD-3-Clause
+   * -
+     -
+   * -
+     -
    * - pyscf
      - Apache-2.0
    * - pylibxc

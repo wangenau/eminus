@@ -10,6 +10,7 @@ Alternatively, you can only install selected extras using the respective name:
 
 * :mod:`~eminus.extras.dispersion`
 * :mod:`~eminus.extras.fods`
+* :mod:`~eminus.extras.hdf5`
 * :mod:`~eminus.extras.libxc`
 * :mod:`~eminus.extras.symmetry`
 * :mod:`~eminus.extras.torch`
@@ -26,6 +27,7 @@ Additionally, :mod:`~eminus.extras.torch` has different installation flavors. Se
 from . import torch
 from .dispersion import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
+from .hdf5 import read_hdf5, write_hdf5
 from .libxc import libxc_functional
 from .symmetry import symmetrize
 from .viewer import (
@@ -46,6 +48,7 @@ __all__ = [
     "libxc_functional",
     "plot_bandstructure",
     "plot_dos",
+    "read_hdf5",
     "remove_core_fods",
     "split_fods",
     "symmetrize",
@@ -55,4 +58,5 @@ __all__ = [
     "view_contour",
     "view_file",
     "view_kpts",
+    "write_hdf5",
 ]

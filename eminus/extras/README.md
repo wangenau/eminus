@@ -10,6 +10,7 @@ Extras directory that contains functions that need additional dependencies to wo
 | :-----------: | :---------: |
 | dispersion.py | Dispersion correction |
 | fods.py       | FOD generation |
+| hdf5.py       | HDF5 file handling |
 | libxc.py      | Use Libxc functionals |
 | symmetry.py   | Symmetrize k-points |
 | torch.py      | Faster FFT operators using Torch |

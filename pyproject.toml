@@ -54,6 +54,9 @@ classifiers = [
 dispersion = [
     "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
 ]
+hdf5 = [
+    "h5py",  # HDF5 file reading and writing
+]
 libxc = [
     "pyscf>=2.1",  # Libxc interface via PySCF
 ]
@@ -66,7 +69,13 @@ viewer = [
 ]
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
 symmetry = ["eminus[libxc]"]  # k-point symmetrization uses PySCF
-all = ["eminus[dispersion]", "eminus[libxc]", "eminus[torch]", "eminus[viewer]"]
+all = [
+    "eminus[dispersion]",
+    "eminus[hdf5]",
+    "eminus[libxc]",
+    "eminus[torch]",
+    "eminus[viewer]",
+]
 dev = [
     "coverage>=4.4",  # Generate coverage reports
     "furo>=2022.02.14.1",  # Documentation theme
