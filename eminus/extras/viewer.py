@@ -67,7 +67,9 @@ def _uniform_density_data(n, r, s):
     return n_new, r_new
 
 
-def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600, 600)):
+def view_atoms(  # noqa: PLR0915
+    obj, fods=None, plot_n=False, percent=85, isovalue=None, surfaces=20, size=(600, 600)
+):
     """Display atoms with optional FODs or grid points, or even densities.
 
     Reference: https://plotly.com/python
@@ -79,7 +81,8 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
         fods: FODs or extra coordinates or to display.
         plot_n: Whether to plot the electronic density (only for executed scf objects).
         percent: Amount of density that should be contained.
-        surfaces: Number of surfaces to display in density plots (reduce for performance).
+        isovalue: Isovalue for sizing densities.
+        surfaces: Number of surfaces to display in density plots (reduce for better performance).
         size: Widget size.
 
     Returns:
@@ -187,13 +190,17 @@ def view_atoms(obj, fods=None, plot_n=False, percent=85, surfaces=20, size=(600,
             r = atoms.r
             isomin = get_isovalue(density, percent=percent)
 
+        if isovalue is not None:
+            isomin = isovalue
+            log.warning('The "density" keyword will be ignored when setting "isovalue".')
+
         den_data = go.Volume(
             x=r[:, 0],
             y=r[:, 1],
             z=r[:, 2],
             value=density,
             name=name,
-            colorbar_title=f"{name} ({percent}%)",
+            colorbar_title=name,
             colorscale="Inferno",
             isomin=isomin,
             isomax=np.nanmax(density),

@@ -20,6 +20,7 @@ def view_atoms(
     fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
     plot_n: bool = ...,
     percent: float = ...,
+    isovalue: float | None = ...,
     surfaces: int = ...,
     size: IntArray = ...,
 ) -> Any: ...
