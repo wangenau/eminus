@@ -55,7 +55,7 @@ dispersion = [
     "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
 ]
 hdf5 = [
-    "h5py",  # HDF5 file reading and writing
+    "h5py>=2.8",  # HDF5 file reading and writing
 ]
 libxc = [
     "pyscf>=2.1",  # Libxc interface via PySCF

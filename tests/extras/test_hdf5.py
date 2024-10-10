@@ -21,6 +21,7 @@ scf.run()
 @pytest.mark.parametrize("obj", [atoms, atoms.kpts, atoms.occ, scf, scf.energies, scf.gth])
 def test_hdf5(obj):
     """Test HDF5 file output and input."""
+    pytest.importorskip("h5py", reason="h5py not installed, skip tests")
     filename = "test.hdf5"
     write_hdf5(obj, filename)
     test = read(filename)
@@ -43,6 +44,7 @@ def test_hdf5(obj):
 
 def test_hdf5_restart():
     """Test the SCF restart from HDF5 files."""
+    pytest.importorskip("h5py", reason="h5py not installed, skip tests")
     filename = "test.hdf5"
     write(scf, filename)
     test_scf = read(filename)
@@ -60,6 +62,7 @@ def test_hdf5_restart():
 
 def test_filename_ending():
     """Test if the HDF5 functions still work when omitting the filename ending."""
+    pytest.importorskip("h5py", reason="h5py not installed, skip tests")
     filename = "test"
     write_hdf5(atoms, filename)
     read_hdf5(filename)
@@ -68,6 +71,7 @@ def test_filename_ending():
 
 def test_write_method():
     """Test the HDF5 file writing using the write method."""
+    pytest.importorskip("h5py", reason="h5py not installed, skip tests")
     filename = "test"
     scf.write(filename + ".hdf5")
     os.remove(f"{filename}.hdf5")
