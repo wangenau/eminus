@@ -8,7 +8,6 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 from __future__ import annotations
 
-import datetime
 from typing import Any, Callable
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
@@ -17,7 +16,7 @@ import eminus
 
 project: str = "eminus"
 author: str = "Wanja Timm Schulze"
-copyright: str = f"2021-{datetime.datetime.now(datetime.timezone.utc).year}, Wanja Timm Schulze"  # noqa: A001
+copyright: str = "2021-%Y, The eminus developers"  # noqa: A001
 version: str = eminus.__version__
 release: str = version
 
