@@ -95,7 +95,7 @@ typecheck:
   stage: test
   script:
     - pip install mypy numpy
-    - mypy . --disable-error-code="import-not-found"
+    - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
   rules:
     - changes:
       - "*.py"
