@@ -105,7 +105,7 @@ omit = ["eminus/extras/*"]
 
 ### Mypy ###
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.13"
 exclude = ["public"]
 strict = true
 disable_error_code = [
