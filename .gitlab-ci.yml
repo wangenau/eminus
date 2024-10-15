@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 default:
-  image: python:3.12-slim
+  image: python:3.13-slim
 
 stages:
   - test
@@ -180,7 +180,7 @@ python:
   image: python:$PYTHON_VERSIONS-slim
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.13']
+      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
 ############### deploy ###############
 

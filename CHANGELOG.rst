@@ -41,6 +41,7 @@ dev
    - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
    - Update Docker image to Python 3.12
+   - Use Python 3.13 as the CI base image
    - Indicate Python 3.13 support
    - Add an eminus Discord server
    - Add citation information
