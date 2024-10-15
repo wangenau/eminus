@@ -18,5 +18,8 @@ figure.figsize: 6.4, 4
 figure.dpi: 200
 figure.autolayout: True
 
+## IMAGES
+image.cmap: inferno
+
 ## SAVING FIGURES
 savefig.bbox: tight

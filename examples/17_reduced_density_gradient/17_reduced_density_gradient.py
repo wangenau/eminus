@@ -25,7 +25,7 @@ s = get_reduced_gradient(scf, eps=1e-5)
 # # Find the plot named `density_finger.png`
 plt.style.use("../eminus.mplstyle")
 plt.figure()
-plt.scatter(scf.n, s, c=s, cmap="inferno")
+plt.scatter(scf.n, s, c=s)
 plt.xlabel("$n$")
 plt.ylabel("$s$[$n$]")
 plt.savefig("density_finger.png")
