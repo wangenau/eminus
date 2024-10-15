@@ -53,7 +53,6 @@
           shellHook = ''
             pip install -e . --prefix "$TMPDIR"
             export PYTHONPATH="$(pwd):$PYTHONPATH"
-            export MPLBACKEND="TKAgg"
           '';
         };
     };
