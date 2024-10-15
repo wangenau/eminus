@@ -111,7 +111,7 @@ docker:
     - docker:dind
   script:
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
-    - VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" eminus/version.py)
+    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
     - docker build -t wangenau/eminus:"${VERSION}" .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
 
@@ -248,7 +248,7 @@ dockerhub:
   script:
     - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
-    - VERSION=$(sed -n "s/^__version__ = '\(.*\)'/\1/p" eminus/version.py)
+    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
     # Try to pull the build locally, rebuild otherwise
     - docker build --pull -t wangenau/eminus:"${VERSION}" .
     - docker push wangenau/eminus:"${VERSION}"
