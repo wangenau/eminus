@@ -19,7 +19,9 @@ RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cach
 
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
-RUN git clone https://gitlab.com/wangenau/eminus.git \
+# We can pass the branch name when building the image but default to the main branch
+ARG BRANCH=main
+RUN git clone -b ${BRANCH} https://gitlab.com/wangenau/eminus.git \
 && pip install -e eminus/[all,dev] --no-cache-dir
 
 # Set up the application stage
