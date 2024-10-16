@@ -15,10 +15,10 @@ from .dft import (
     get_epsilon,
     get_n_spin,
     get_n_total,
+    get_phi,
     guess_pseudo,
     guess_random,
     orth,
-    solve_poisson,
 )
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gga import get_grad_field, get_tau
@@ -544,7 +544,7 @@ class SCF(BaseObject):
             self.dn_spin = get_grad_field(atoms, self.n_spin)
         if self.xc_type == "meta-gga":
             self.tau = get_tau(atoms, self.Y)
-        self.phi = solve_poisson(atoms, self.n)
+        self.phi = get_phi(atoms, self.n)
         self.exc, self.vxc, self.vsigma, self.vtau = get_xc(
             self.xc, self.n_spin, atoms.occ.Nspin, self.dn_spin, self.tau, self.xc_params
         )

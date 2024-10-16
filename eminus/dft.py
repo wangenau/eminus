@@ -14,7 +14,7 @@ from .utils import handle_k, handle_spin, pseudo_uniform
 from .xc import get_vxc
 
 
-def solve_poisson(atoms, n):
+def get_phi(atoms, n):
     """Solve the Poisson equation.
 
     Reference: Comput. Phys. Commun. 128, 1.
@@ -255,7 +255,7 @@ def H_precompute(scf, W):
         tau = get_tau(atoms, Y)
     else:
         tau = None
-    phi = solve_poisson(atoms, n)
+    phi = get_phi(atoms, n)
     vxc, vsigma, vtau = get_vxc(scf.xc, n_spin, atoms.occ.Nspin, dn_spin, tau, scf.xc_params)
     return dn_spin, phi, vxc, vsigma, vtau
 

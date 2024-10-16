@@ -10,7 +10,7 @@ from .scf import SCF
 
 _AnyW = TypeVar("_AnyW", NDArray[complex128], list[NDArray[complex128]])
 
-def solve_poisson(
+def get_phi(
     atoms: Atoms,
     n: NDArray[float64],
 ) -> NDArray[float64]: ...

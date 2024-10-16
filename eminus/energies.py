@@ -8,7 +8,7 @@ import numpy as np
 from scipy.linalg import inv, norm
 from scipy.special import erfc
 
-from .dft import get_n_single, H, solve_poisson
+from .dft import get_n_single, get_phi, H
 from .extras import dispersion
 from .gga import get_grad_field, get_tau
 from .logger import log
@@ -114,7 +114,7 @@ def get_Ecoul(atoms, n, phi=None):
         Coulomb energy in Hartree.
     """
     if phi is None:
-        phi = solve_poisson(atoms, n)
+        phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
     return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
 
