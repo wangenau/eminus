@@ -8,6 +8,7 @@ import time
 
 import numpy as np
 
+from . import config
 from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
 from .dft import (
@@ -270,6 +271,11 @@ class SCF(BaseObject):
         # Print some information about the calculation
         if self._log.level <= logging.DEBUG:
             info()
+        if ":" in "".join(self._xc) and config.use_pylibxc:
+            self._log.info(
+                "This calculation employs Libxc to evaluate density functionals. When using Libxc,"
+                "\nplease cite SoftwareX 7, 1 (2018) (doi:10.1016/j.softx.2017.11.002)."
+            )
         self._log.debug(
             f"\n--- Atoms information ---\n{self.atoms}\n"
             f"\n--- Cell information ---\nCell vectors:\n{self.atoms.a} a0\n"
