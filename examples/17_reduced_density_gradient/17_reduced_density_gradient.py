@@ -12,6 +12,13 @@ atoms = Atoms("H2", [[0.0, 0.0, 0.0], [0.0, 0.0, ang2bohr(0.75)]], center=True)
 scf = SCF(atoms)
 scf.run()
 
+# # One can even use thermal exchange-correlation functionals using Libxc
+# # One example would be the following, where the temperature parameter of the functional gets modified (in Hartree)
+# scf = SCF(atoms, xc=":LDA_XC_GDSMFB")
+# print(scf.xc_params_defaults)
+# scf.xc_params = {"T": 0.1}
+# scf.run()
+
 # # Calculate the truncated reduced density gradient
 s = get_reduced_gradient(scf, eps=1e-5)
 
