@@ -13,7 +13,7 @@ dev
       - Massive speedup for more k-points
       - Fixed some convergence issues
    - Add non-iterative SCDM localization
-      - Use them as the initial guess for Wannier localizations
+      - Use them as the initial guess for Wannier localization
       - Use Wannier orbital COMs for FLO generations if no FODs are given
    - Add magnetization functions
    - Add POSCAR read and write functions
@@ -34,6 +34,7 @@ dev
    - Add an option to plot both spin channels in band structure plots
    - Add DOS calculation and plot functions
    - Add an isovalue keyword to the density viewer
+   - Reduce the default surfaces from 20 to 10 in the density viewer to improve performance
    - Add pass-through keyword arguments in the Cell creation
    - Add view and write class methods to Atoms, SCF, and KPoints objects
    - Set default values for uninitialized SCF attributes to None
@@ -41,8 +42,8 @@ dev
    - Sync GTH files (this changes values for Na-q9)
    - Small tests improvements
    - Update Docker image to Python 3.12
-   - Use Python 3.13 as the CI base image
    - Indicate Python 3.13 support
+   - Use Python 3.13 as the CI base image
    - Add an eminus Discord server
    - Add citation information
 - Breaking
