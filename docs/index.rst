@@ -23,8 +23,8 @@ Home
    theory.rst
    _examples/examples.rst
    modules.rst
-   changelog.rst
    citation.rst
+   changelog.rst
    license.rst
    nomenclature.rst
    further.rst
