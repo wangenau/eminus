@@ -14,7 +14,7 @@ name = "eminus"
 dynamic = ["version"]
 dependencies = [
     "numpy>=1.17",
-    "scipy>=1.6"
+    "scipy>=1.6",
 ]
 requires-python = ">=3.7"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
@@ -80,9 +80,9 @@ dev = [
     "coverage>=4.4",  # Generate coverage reports
     "furo>=2022.02.14.1",  # Documentation theme
     "matplotlib>=1.5",  # Plotting library for examples
-    "mypy>=0.990",  # Static type checker
+    "mypy>=1.7",  # Static type checker
     "notebook",  # Run and convert notebooks to HTML
-    "pytest>=5.4",  # Test utilities
+    "pytest>=6",  # Test utilities
     "ruff>=0.2",  # Linter and formatter
     "sphinx>=4",  # Documentation builder
     "sphinx-design>=0.2",  # More directives for Sphinx

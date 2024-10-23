@@ -70,7 +70,7 @@ Coverage
 .. code-block:: console
 
    coverage run -m pytest
-   coverage html --precision=2
+   coverage html
 
 | To only create the total coverage percentage value for all files, use
 
