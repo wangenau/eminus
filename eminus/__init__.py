@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""eminus - A pythonic plane wave density functional theory (DFT) code.
+"""eminus - Pythonic electronic structure theory.
 
 Minimal usage example to do a DFT calculation for helium::
 

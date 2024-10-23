@@ -11,19 +11,21 @@ SPDX-License-Identifier: Apache-2.0
 [![Coverage](https://img.shields.io/gitlab/pipeline-coverage/wangenau%2Feminus?branch=main&color=1a962b&logo=gitlab&logoColor=a0dba2&label=Coverage)](https://wangenau.gitlab.io/eminus/htmlcov)
 [![Chat](https://img.shields.io/badge/Chat-Discord-1a962b?logo=discord&logoColor=a0dba2)](https://discord.gg/k2XwdMtVec)
 
-eminus is a pythonic plane wave density functional theory (DFT) code with self-interaction correction (SIC) functionalities.
+eminus is a pythonic electronic structure theory code.
+It implements plane wave density functional theory (DFT) with self-interaction correction (SIC) functionalities.
 The goal is to create a simple code that is easy to read and easy to extend while using minimal dependencies.
 It is built upon the [DFT++](https://arxiv.org/abs/cond-mat/9909130) pragmas proposed by Tomas Arias et al. that aim to let programming languages and theory coincide.
 This can be shown by, e.g., solving the Poisson equation. In the operator notation of DFT++ the equation reads
 
 $$
-\boldsymbol \phi = -4\pi\hat L^{-1}\hat O\hat J \boldsymbol n.
+\phi(\boldsymbol r) = -4\pi\mathcal L^{-1}\mathcal O\mathcal J n(\boldsymbol r).
 $$
 
 The corresponding Python code (implying that the operators have been implemented properly) reads
 
 ```python
-phi = -4 * np.pi * Linv(O(J(n)))
+def get_phi(atoms, n):
+    return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
 ```
 
 ## Installation

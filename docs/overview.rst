@@ -28,12 +28,11 @@ Features
    <link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
    <div class="colored-heading" style="background:#729ece">Main</div>
 
-* Plane wave DFT code
-* Minimal dependencies
-* Modular extension system
-* Well-documented Python3 code following pep8
-* Well-tested with automated tests and coverage above 95%
-* Many supported platforms: Linux, macOS, Windows, Nix, Docker, ...
+* Pythonic implementation of density functional theory
+* Customizable workflows and developer-friendly code
+* Minimal dependencies and large platform support
+* Comparable and reproducible calculations
+* Example notebooks showcasing educational usage
 
 .. raw:: html
 

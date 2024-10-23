@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 {
-  description = "eminus - A pythonic plane wave density functional theory (DFT) code.";
+  description = "eminus - Pythonic electronic structure theory.";
 
   inputs = { nixpkgs.url = "nixpkgs/nixos-unstable"; };
 

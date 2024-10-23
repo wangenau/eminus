@@ -18,9 +18,9 @@ dependencies = [
 ]
 requires-python = ">=3.7"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
-description = "A pythonic plane wave density functional theory (DFT) code."
+description = "Pythonic electronic structure theory."
 readme = "README.md"
-keywords = ["Python", "DFT", "DFT++"]
+keywords = ["density-functional-theory", "electronic-structure", "education", "python"]
 classifiers = [
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
