@@ -100,8 +100,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
         fp.write(f"File generated with eminus {__version__} on {time.ctime()}\n")
         for ia in range(atoms.Natoms):
             fp.write(
-                f"{atoms.atom[ia]:<2s}  "
-                f"{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
+                f"{atoms.atom[ia]:<2s}  {pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
             )
         # Add FOD coordinates if desired
         # The atom symbol will default to pos (no atom type)
