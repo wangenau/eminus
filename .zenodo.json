@@ -14,12 +14,18 @@
             "affiliation": "Taiwan Semiconductor Manufacturing Company",
             "name": "Trepte, Kai",
             "orcid": "0000-0003-2214-2467"
+        },
+        {
+            "affiliation": "Friedrich Schiller University Jena",
+            "name": "Gräfe, Stefanie",
+            "orcid": "0000-0002-1747-5809"
         }
     ],
     "keywords": [
-        "Python",
-        "DFT",
-        "DFT++"
+        "density-functional-theory",
+        "electronic-structure",
+        "education",
+        "python"
     ],
     "related_identifiers": [
         {
