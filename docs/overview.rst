@@ -7,6 +7,10 @@
 Overview
 ********
 
+.. image:: /_static/overview/graphical_abstract.webp
+   :align: center
+   :width: 100%
+
 Features
 ========
 
