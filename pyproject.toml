@@ -9,7 +9,7 @@ build-backend = "setuptools.build_meta"
 version = {attr = "eminus.version.__version__"}
 
 [tool.setuptools.package-data]
-"eminus.psp" = ["*-q*"]
+"eminus.psp" = ["**/*-q*"]
 
 ### Metadata ###
 [project]
