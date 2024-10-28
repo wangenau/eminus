@@ -37,4 +37,5 @@ __all__ = [
 def demo():
     """Fast demo calculation for helium."""
     atoms = Atoms("He", (0, 0, 0), ecut=5)
-    SCF(atoms).run()
+    etot = SCF(atoms).run()
+    return etot != 0

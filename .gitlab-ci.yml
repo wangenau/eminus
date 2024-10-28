@@ -130,11 +130,11 @@ installation:
     # Test the source distribution
     - tar -xf eminus-*.tar.gz
     - pip install eminus-*/.
-    - python -c "import eminus; eminus.demo()"
+    - python -c "import eminus; assert eminus.demo()"
     # Test the wheel
     - pip uninstall eminus -y
     - pip install eminus-*.whl
-    - python -c "import eminus; eminus.demo()"
+    - python -c "import eminus; assert eminus.demo()"
   artifacts:
     paths:
       - dist/
