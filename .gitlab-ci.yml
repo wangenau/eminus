@@ -62,9 +62,9 @@ coverage:
 
 ##### Lint Python files #####
 lint:
+  image: ghcr.io/astral-sh/ruff:alpine
   stage: test
   script:
-    - pip install ruff
     - ruff check
   rules:
     - changes:
@@ -94,7 +94,7 @@ newest:
 typecheck:
   stage: test
   script:
-    - pip install mypy numpy
+    - pip install mypy[faster-cache] numpy
     - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
   rules:
     - changes:
