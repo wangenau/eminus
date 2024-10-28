@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.0.0 - Oct 28, 2024
+---------------------
 - New features
    - eminus preprint release!
    - Full type hint support!
