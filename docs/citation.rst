@@ -7,18 +7,19 @@
 Citation
 ********
 
-The project has been published with `Zenodo <https://doi.org/10.5281/zenodo.5720635>`_ and has an assigned DOI. The following BibTeX key can be used
+A supplementary paper is available on `arXiv <https://arxiv.org/abs/2410.19438>`_. The following BibTeX key can be used
 
 .. code-block:: TeX
 
   @Misc{Schulze2021,
-   author    = {Wanja Timm Schulze and Kai Trepte and Sebastian Schwalbe},
-   title     = {eminus},
-   year      = {2021},
-   month     = nov,
-   doi       = {10.5281/zenodo.5720635},
-   publisher = {Zenodo},
+   author    = {Schulze, Wanja T. and Schwalbe, Sebastian and Trepte, Kai and Gr{\"a}fe, Stefanie},
+   title     = {eminus -- Pythonic electronic structure theory},
+   year      = {2024},
+   doi       = {10.48550/arXiv.2410.19438},
+   publisher = {arXiv},
   }
+
+To cite a specific version one can select and cite it with `Zenodo <https://doi.org/10.5281/zenodo.5720635>`_.
 
 Publications
 ============

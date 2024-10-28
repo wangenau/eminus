@@ -21,6 +21,7 @@ def info():
 
     sys.stdout.write(LOGO)
     sys.stdout.write(
+        "\nhttps://arxiv.org/abs/2410.19438\n"
         "\n--- Platform infos ---"
         f"\nPlatform   : {platform.system()} {platform.machine()}"
         f"\nRelease    : {platform.release()} {platform.version()}"

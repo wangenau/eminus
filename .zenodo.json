@@ -27,12 +27,20 @@
         "education",
         "python"
     ],
+    "license": "Apache-2.0",
     "related_identifiers": [
+        {
+            "identifier": "10.48550/arXiv.2410.19438",
+            "relation": "isPublishedIn",
+            "resource_type": "publication-preprint",
+            "scheme": "arxiv"
+        },
         {
             "identifier": "https://gitlab.com/wangenau/eminus",
             "relation": "isIdenticalTo",
             "resource_type": "software",
             "scheme": "url"
         }
-    ]
+    ],
+    "upload_type": "software"
 }

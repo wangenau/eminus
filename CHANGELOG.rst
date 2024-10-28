@@ -8,6 +8,7 @@ Changelog
 dev
 ---
 - New features
+   - eminus preprint release!
    - Full type hint support!
    - Rewritten minimizer
       - Massive speedup for more k-points

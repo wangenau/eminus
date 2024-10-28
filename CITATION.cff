@@ -1,15 +1,33 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
 authors:
 - given-names: Wanja Timm
   family-names: Schulze
   orcid: "https://orcid.org/0000-0002-4025-1790"
-cff-version: 1.2.0
 doi: 10.5281/zenodo.5720635
 license: Apache-2.0
-message: "If you use this software, please cite it using the metadata from this file."
-repository-code: "https://gitlab.com/wangenau/eminus"
 title: "eminus"
 url: "https://wangenau.gitlab.io/eminus"
 version: 2.7.1
 date-released: "2024-02-09"
+preferred-citation:
+  type: article
+  authors:
+  - given-names: Wanja Timm
+    family-names: Schulze
+    orcid: "https://orcid.org/0000-0002-4025-1790"
+  - given-names: Sebastian
+    family-names: Schwalbe
+    orcid: "https://orcid.org/0000-0002-4561-0158"
+  - given-names: Kai
+    family-names: Trepte
+    orcid: "https://orcid.org/0000-0003-2214-2467"
+  - given-names: Stefanie
+    family-names: Gräfe
+    orcid: "https://orcid.org/0000-0002-1747-5809"
+  doi: "10.48550/arXiv.2410.19438"
+  journal: "arXiv"
+  title: "eminus – Pythonic electronic structure theory"
+  year: 2024
