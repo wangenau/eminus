@@ -113,7 +113,7 @@ docker:
   script:
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
     - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
-    - docker build -t wangenau/eminus:"${VERSION}" --build-arg BRANCH=${CI_COMMIT_BRANCH:-main} .
+    - docker buildx build -t wangenau/eminus:"${VERSION}" --build-arg BRANCH=${CI_COMMIT_BRANCH:-main} .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
 
 ##### Test the code installation after building #####
@@ -251,9 +251,9 @@ dockerhub:
     - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
     - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
-    # Try to pull the build locally, rebuild otherwise
-    - docker build -t wangenau/eminus:"${VERSION}" --pull .
-    - docker push wangenau/eminus:"${VERSION}"
+    # Build the image with full attestations and push it directly
+    - docker buildx create --driver=docker-container --name container default
+    - docker buildx build -t wangenau/eminus:"${VERSION}" --builder=container --sbom=true --provenance=true --push .
   rules:
     - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
       when: manual

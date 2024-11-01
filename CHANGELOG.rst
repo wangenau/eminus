@@ -5,6 +5,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Build Docker image with supply chain attestations
+
 v3.0.0 - Oct 28, 2024
 ---------------------
 - New features
