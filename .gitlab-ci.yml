@@ -39,10 +39,10 @@ coverage:
     - pip install .
     - pip install coverage pyscf pytest
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
-    - coverage report --precision=2
-    - coverage html --precision=2
+    - coverage report
     - coverage xml
-  coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
+    - coverage html --precision=2
+  coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
       - htmlcov/
