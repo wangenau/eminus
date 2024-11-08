@@ -27,6 +27,9 @@ stages:
   extends: .pytest
   stage: fulltest
   when: manual
+  # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
+  # This would, e.g., block the creation of coverage reports
+  allow_failure: true
 
 ############### test ###############
 
@@ -37,9 +40,9 @@ coverage:
     - pip install .
     - pip install coverage pyscf pytest
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
-    - coverage report
-    - coverage xml
+    - coverage report --precision=2
     - coverage html --precision=2
+    - coverage xml
   coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:
@@ -257,6 +260,7 @@ dockerhub:
   rules:
     - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
       when: manual
+      allow_failure: true
 
 ##### Publish the package to PyPI #####
 pypi:
@@ -279,3 +283,4 @@ pypi:
   rules:
     - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
       when: manual
+      allow_failure: true

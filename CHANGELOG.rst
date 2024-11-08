@@ -9,6 +9,7 @@ dev
 ---
 - Miscellaneous
    - Build Docker image with supply chain attestations
+   - Miscellaneous CI improvements
 
 v3.0.0 - Oct 28, 2024
 ---------------------
