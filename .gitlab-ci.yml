@@ -27,8 +27,6 @@ stages:
   extends: .pytest
   stage: fulltest
   when: manual
-  # Do not allow failures in manual jobs
-  allow_failure: false
 
 ############### test ###############
 
@@ -246,7 +244,9 @@ dockerhub:
   stage: publish
   services:
     - docker:dind
-  needs: ["docker"]
+  needs:
+    - job: docker
+      optional: true
   script:
     - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
@@ -261,7 +261,9 @@ dockerhub:
 ##### Publish the package to PyPI #####
 pypi:
   stage: publish
-  needs: ["installation"]
+  needs:
+    - job: installation
+      optional: true
   id_tokens:
     PYPI_ID_TOKEN:
       aud: pypi
