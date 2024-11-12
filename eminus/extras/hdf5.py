@@ -31,7 +31,7 @@ def read_hdf5(filename):
         )
         raise
 
-    if not filename.endswith(".hdf5"):
+    if not filename.endswith((".h5", ".hdf", ".hdf5")):
         filename += ".hdf5"
 
     with File(filename) as fh:
@@ -54,7 +54,7 @@ def write_hdf5(obj, filename):
         )
         raise
 
-    if not filename.endswith(".hdf5"):
+    if not filename.endswith((".h5", ".hdf", ".hdf5")):
         filename += ".hdf5"
 
     with File(filename, "w") as fp:
