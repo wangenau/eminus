@@ -77,6 +77,18 @@ def test_write_method():
     os.remove(f"{filename}.hdf5")
 
 
+@pytest.mark.parametrize(
+    ("compression", "compression_opts"), [("gzip", 0), ("gzip", 9), ("lzf", None)]
+)
+def test_compression(compression, compression_opts):
+    """Test the HDF5 compression filters."""
+    pytest.importorskip("h5py", reason="h5py not installed, skip tests")
+    filename = "test"
+    write_hdf5(atoms, filename, compression=compression, compression_opts=compression_opts)
+    read_hdf5(filename)
+    os.remove(f"{filename}.hdf5")
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib

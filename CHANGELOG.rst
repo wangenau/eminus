@@ -8,6 +8,10 @@ Changelog
 dev
 ---
 - Miscellaneous
+   - Improve HDF5 extra
+      - Proper dataset and group creation
+      - Support compression
+      - Recognize more file types
    - Build Docker image with supply chain attestations
    - Miscellaneous CI improvements
 

@@ -34,7 +34,7 @@ def _custom_object_hook(dct):  # noqa: PLR0911
         atoms = eminus.Atoms(dct["_atom"], dct["_pos"], verbose=dct["_verbose"])
         atoms = set_attrs(atoms, dct)
         # The tuple type is not preserved when serializing, manually cast the only important one
-        if isinstance(atoms._active, list):
+        if not isinstance(atoms._active, tuple):
             atoms._active = [tuple(i) for i in atoms._active]
         return atoms
     # SCF objects
@@ -76,39 +76,6 @@ def read_json(filename):
         return json.load(fh, object_hook=_custom_object_hook)
 
 
-class _CustomEncoder(json.JSONEncoder):
-    """Custom JSON encoder class to serialize eminus classes."""
-
-    def default(self, obj):
-        """Overwrite the default function to handle eminus objects."""
-        import eminus
-
-        # ndarrays are not JSON serializable, encode them as base64 to save them
-        if isinstance(obj, np.ndarray):
-            data = base64.b64encode(obj.copy(order="C")).decode("utf-8")
-            return {"__ndarray__": data, "dtype": str(obj.dtype), "shape": obj.shape}
-
-        # If obj is an eminus class dump them as a dictionary
-        if isinstance(
-            obj,
-            (
-                eminus.Atoms,
-                eminus.SCF,
-                eminus.energies.Energy,
-                eminus.gth.GTH,
-                eminus.kpoints.KPoints,
-                eminus.occupations.Occupations,
-            ),
-        ):
-            # Only dumping the dict would result in a string, so do one dump and one load
-            data = json.dumps(obj.__dict__, cls=_CustomEncoder)
-            return dict(json.loads(data))
-        # The logger class is not serializable, just ignore it
-        if isinstance(obj, eminus.logger.CustomLogger):
-            return None
-        return json.JSONEncoder.default(self, obj)
-
-
 def write_json(obj, filename):
     """Save objects in a JSON file.
 
@@ -116,6 +83,38 @@ def write_json(obj, filename):
         obj: Class object.
         filename: JSON output file path/name.
     """
+    import eminus
+
+    class _CustomEncoder(json.JSONEncoder):
+        """Custom JSON encoder class to serialize eminus classes."""
+
+        def default(self, obj):
+            """Overwrite the default function to handle eminus objects."""
+            # ndarrays are not JSON serializable, encode them as base64 to save them
+            if isinstance(obj, np.ndarray):
+                data = base64.b64encode(obj.copy(order="C")).decode("utf-8")
+                return {"__ndarray__": data, "dtype": str(obj.dtype), "shape": obj.shape}
+
+            # If obj is an eminus class dump them as a dictionary
+            if isinstance(
+                obj,
+                (
+                    eminus.Atoms,
+                    eminus.SCF,
+                    eminus.energies.Energy,
+                    eminus.gth.GTH,
+                    eminus.kpoints.KPoints,
+                    eminus.occupations.Occupations,
+                ),
+            ):
+                # Only dumping the dict would result in a string, so do one dump and one load
+                data = json.dumps(obj.__dict__, cls=_CustomEncoder)
+                return dict(json.loads(data))
+            # The logger class is not serializable, just ignore it
+            if isinstance(obj, eminus.logger.CustomLogger):
+                return None
+            return json.JSONEncoder.default(self, obj)
+
     if not filename.endswith(".json"):
         filename += ".json"
 
