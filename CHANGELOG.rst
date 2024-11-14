@@ -63,6 +63,8 @@ v3.0.0 - Oct 28, 2024
    - Cleanup main namespace by only including unified read and write functions
    - The rewritten minimizer will change the convergence behavior of some systems!
 
+----
+
 v2.7.1 - Feb 09, 2024
 ---------------------
 - New features
