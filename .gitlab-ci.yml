@@ -17,7 +17,8 @@ stages:
     - python3 -m pip install pytest
     - python3 -m pytest tests/ -m "not slow"
   rules:
-    - changes:
+    - if: $CI_PIPELINE_SOURCE != "schedule"
+      changes:
       - eminus/*.py
       - eminus/**/*.py
       - tests/*.py
@@ -69,7 +70,8 @@ lint:
   script:
     - ruff check
   rules:
-    - changes:
+    - if: $CI_PIPELINE_SOURCE != "schedule"
+      changes:
       - "*.py"
       - "**/*.py"
 
@@ -85,7 +87,7 @@ newest:
   extends: .pytest
   rules:
     # Only run in the dev branch since this is just a subset of the coverage test
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "dev" && $CI_PIPELINE_SOURCE != "schedule"
       changes:
       - eminus/*.py
       - eminus/**/*.py
@@ -99,7 +101,8 @@ typecheck:
     - pip install mypy[faster-cache] numpy
     - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
   rules:
-    - changes:
+    - if: $CI_PIPELINE_SOURCE != "schedule"
+      changes:
       - "*.py"
       - "**/*.py"
 
@@ -229,7 +232,7 @@ pages:dev:
   after_script:
     - echo "dev pages available at https://$CI_PROJECT_NAMESPACE.gitlab.io/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public/index.html"
   rules:
-    - if: $CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "dev" && $CI_PIPELINE_SOURCE != "schedule"
       changes:
       - docs/*
       - docs/**/*
@@ -284,3 +287,19 @@ pypi:
     - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
       when: manual
       allow_failure: true
+
+##### Create a weekly build and push it to the GitLab package registry #####
+weekly:
+  stage: publish
+  script:
+    # Tag the version with a valid dev tag (VERSION.devYYYYMMDD)
+    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
+    - WEEKLY_VERSION="${VERSION}.dev$(date +\%Y\%m\%d)"
+    - sed -i 's/__version__ = "'${VERSION}'"/__version__ = "'${WEEKLY_VERSION}'"/' eminus/version.py
+    - pip install build twine
+    - python -m build
+    - twine check dist/*
+    - python -m twine upload -u gitlab-ci-token -p $CI_JOB_TOKEN --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+  rules:
+    # Only run this stage on scheduled pipelines
+    - if: $CI_PIPELINE_SOURCE == "schedule"

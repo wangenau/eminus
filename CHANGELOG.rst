@@ -7,6 +7,8 @@ Changelog
 
 dev
 ---
+- New features
+   - Weekly builds
 - Miscellaneous
    - Improve HDF5 extra
       - Proper dataset and group creation

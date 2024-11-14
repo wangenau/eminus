@@ -56,6 +56,26 @@ or for an installation after downloading the source code, use
 
 To install only selected extras, follow the instructions given in :mod:`~eminus.extras`.
 
+Weekly builds
+=============
+
+Weekly builds of the eminus :code:`dev` branch are created every Monday morning at 08:00 (UTC) and are uploaded to the `GitLab package registry <https://gitlab.com/wangenau/eminus/-/packages>`_.
+The builds use the following version scheme: :code:`version.devYYYMMDD`, e.g., :code:`3.0.0.dev20241114`.
+To install the weekly build, use the following command
+
+.. code-block:: console
+
+   pip install eminus -U --index-url https://gitlab.com/api/v4/projects/31610189/packages/pypi/simple
+
+:code:`-U` will upgrade you to the latest eminus pre-release version, while :code:`--index-url` connects you to the eminus package registry.
+
+If the current stable version is already installed, please uninstall it before switching to weekly builds, since the stable version will be preferred when upgrading.
+You can uninstall eminus with
+
+.. code-block:: console
+
+   pip uninstall eminus
+
 Docker image
 ============
 
