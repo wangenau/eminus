@@ -154,12 +154,12 @@ platform:linux:
     - python3 -m venv .venv
     - source .venv/bin/activate
 
-# Disabled due to removed image: https://github.com/sickcodes/Docker-OSX/issues/799
-# platform:macos:
-#   extends: .pytest-full
-#   image: sickcodes/docker-osx:latest
-#   before_script:
-#     - python3 -m ensurepip
+platform:macos:
+  extends: .pytest-full
+  image: sickcodes/docker-osx:latest
+  before_script:
+    - python3 -m venv .venv
+    - source .venv/bin/activate
 
 platform:nixos:
   extends: .pytest-full
