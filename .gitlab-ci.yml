@@ -6,7 +6,7 @@ default:
 stages:
   - test
   - fulltest
-  - deploy
+  - build
   - publish
 
 .pytest:
@@ -33,6 +33,10 @@ stages:
       # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
       # This would, e.g., block the creation of coverage reports
       allow_failure: true
+
+.build:
+  extends: .pytest-full
+  stage: build
 
 ############### test ###############
 
@@ -122,30 +126,6 @@ docker:
     - docker buildx build -t wangenau/eminus:"${VERSION}" --build-arg BRANCH=${CI_COMMIT_BRANCH:-main} .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
 
-##### Test the code installation after building #####
-installation:
-  extends: .pytest-full
-  script:
-    - pip install --upgrade pip
-    - pip install build twine
-    - python -m build
-    # Do a check with twine
-    - twine check dist/*
-    # Copy the build directory to test the installation
-    - cp -r dist/ tmp/
-    - cd tmp/
-    # Test the source distribution
-    - tar -xf eminus-*.tar.gz
-    - pip install eminus-*/.
-    - python -c "import eminus; assert eminus.demo()"
-    # Test the wheel
-    - pip uninstall eminus -y
-    - pip install eminus-*.whl
-    - python -c "import eminus; assert eminus.demo()"
-  artifacts:
-    paths:
-      - dist/
-
 ##### Test code functionality under Linux, macOS, NixOS, and Windows #####
 platform:linux:
   extends: .pytest-full
@@ -189,11 +169,11 @@ python:
     matrix:
       - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
-############### deploy ###############
+############### build ###############
 
 ##### Build documentation #####
 pages:
-  stage: deploy
+  stage: build
   needs: ["coverage"]
   script:
     - pip install .
@@ -244,6 +224,56 @@ pages:dev:
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
 
+##### Build wheel and source distributions #####
+build:
+  extends: .build
+  script:
+    - pip install build twine
+    - python -m build
+    - twine check dist/*
+  artifacts:
+    paths:
+      - dist/
+
+##### Produce digital attestations #####
+attestate:
+  extends: .build
+  needs:
+    - job: build
+  id_tokens:
+    SIGSTORE_ID_TOKEN:
+      aud: sigstore
+  script:
+    # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
+    - pip install pypi-attestations
+    - python -m pypi_attestations sign dist/*
+  artifacts:
+    paths:
+      - dist/
+
+##### Test the code installation after building #####
+install:
+  extends: .build
+  needs:
+    - job: attestate
+  script:
+    # Use the latest pip version
+    - pip install --upgrade pip
+    # Copy the build directory to test the installation
+    - cp -r dist/ tmp/
+    - cd tmp/
+    # Test the source distribution
+    - tar -xf eminus-*.tar.gz
+    - pip install eminus-*/.
+    - python -c "import eminus; assert eminus.demo()"
+    # Test the wheel
+    - pip uninstall eminus -y
+    - pip install eminus-*.whl
+    - python -c "import eminus; assert eminus.demo()"
+  artifacts:
+    paths:
+      - dist/
+
 ############### publish ###############
 
 ##### Publish the package to Docker Hub #####
@@ -272,7 +302,7 @@ dockerhub:
 pypi:
   stage: publish
   needs:
-    - job: installation
+    - job: install
       optional: true
   id_tokens:
     PYPI_ID_TOKEN:
@@ -281,11 +311,11 @@ pypi:
     - apt-get update -y
     - apt-get install curl jq -y --no-install-recommends
     - pip install id twine
-    # Reference: https://github.com/pypi/warehouse/issues/13575#issuecomment-1961187837
+    # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
     - OIDC_TOKEN=$(python -m id PYPI)
     - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
     - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
-    - twine upload -u __token__ -p "${API_TOKEN}" dist/*
+    - twine upload -u __token__ -p "${API_TOKEN}" --attestations dist/*
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "main"

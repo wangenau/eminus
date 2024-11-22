@@ -9,12 +9,12 @@ dev
 ---
 - New features
    - Weekly builds
+   - Produce PyPI and Docker build attestations
 - Miscellaneous
    - Improve HDF5 extra
       - Proper dataset and group creation
       - Support compression
       - Recognize more file types
-   - Build Docker image with supply chain attestations
    - Miscellaneous CI improvements
 
 v3.0.0 - Oct 28, 2024
