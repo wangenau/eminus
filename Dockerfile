@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
-FROM python:3.12-slim AS build
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
@@ -15,17 +15,17 @@ RUN apt-get update -y \
 && rm -rf /var/lib/apt/lists/*
 
 # Install Torch manually since we only want to compute on the CPU
-RUN pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
+RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
 # We can pass the branch name when building the image but default to the main branch
 ARG BRANCH=main
 RUN git clone -b ${BRANCH} https://gitlab.com/wangenau/eminus.git \
-&& pip install -e eminus/[all,dev] --no-cache-dir
+&& uv pip install -e eminus/[all,dev] --no-cache-dir
 
 # Set up the application stage
-FROM python:3.12-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 LABEL maintainer="wangenau"
 
 # Ensure that no root rights are being used, copy the environment and eminus source
