@@ -16,6 +16,7 @@ dev
       - Support compression
       - Recognize more file types
    - Miscellaneous CI improvements
+   - Migrate from pip to uv in Docker and CI
 
 v3.0.0 - Oct 28, 2024
 ---------------------

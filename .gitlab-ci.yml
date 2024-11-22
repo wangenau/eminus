@@ -1,7 +1,9 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 default:
-  image: python:3.13-slim
+  image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+variables:
+  UV_SYSTEM_PYTHON: 1
 
 stages:
   - test
@@ -44,8 +46,8 @@ stages:
 coverage:
   stage: test
   script:
-    - pip install .
-    - pip install coverage pyscf pytest
+    - uv pip install .
+    - uv pip install coverage pyscf pytest
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
     - coverage report --precision=2
     - coverage html --precision=2
@@ -91,6 +93,10 @@ minimal:
 ##### Test using the newest dependency versions #####
 newest:
   extends: .pytest
+  script:
+    - uv pip install .
+    - uv pip install pytest
+    - pytest tests/ -m "not slow"
   rules:
     # Only run in the dev branch since this is just a subset of the coverage test
     - if: $CI_COMMIT_BRANCH == "dev" && $CI_PIPELINE_SOURCE != "schedule"
@@ -104,7 +110,7 @@ newest:
 typecheck:
   stage: test
   script:
-    - pip install mypy[faster-cache] numpy
+    - uv pip install mypy[faster-cache] numpy
     - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
   rules:
     - if: $CI_PIPELINE_SOURCE != "schedule"
@@ -164,7 +170,11 @@ platform:windows:
 ##### Test code functionality for all supported Python versions #####
 python:
   extends: .pytest-full
-  image: python:$PYTHON_VERSIONS-slim
+  image: ghcr.io/astral-sh/uv:python$PYTHON_VERSIONS-bookworm-slim
+  script:
+    - uv pip install .
+    - uv pip install pytest
+    - pytest tests/ -m "not slow"
   parallel:
     matrix:
       - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.12']
@@ -176,8 +186,8 @@ pages:
   stage: build
   needs: ["coverage"]
   script:
-    - pip install .
-    - pip install furo notebook sphinx sphinx-design sphinxcontrib-bibtex
+    - uv pip install .
+    - uv pip install furo notebook sphinx sphinx-design sphinxcontrib-bibtex
     # Build Sphinx documentation
     - sphinx-build -j "$(nproc)" -b html ./docs ./public
     # Convert notebooks to HTML
@@ -228,8 +238,8 @@ pages:dev:
 build:
   extends: .build
   script:
-    - pip install build twine
-    - python -m build
+    - uv pip install twine
+    - uv build
     - twine check dist/*
   artifacts:
     paths:
@@ -245,7 +255,7 @@ attestate:
       aud: sigstore
   script:
     # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
-    - pip install pypi-attestations
+    - uv pip install pypi-attestations
     - python -m pypi_attestations sign dist/*
   artifacts:
     paths:
@@ -257,18 +267,16 @@ install:
   needs:
     - job: attestate
   script:
-    # Use the latest pip version
-    - pip install --upgrade pip
     # Copy the build directory to test the installation
     - cp -r dist/ tmp/
     - cd tmp/
     # Test the source distribution
     - tar -xf eminus-*.tar.gz
-    - pip install eminus-*/.
+    - uv pip install eminus-*/.
     - python -c "import eminus; assert eminus.demo()"
     # Test the wheel
-    - pip uninstall eminus -y
-    - pip install eminus-*.whl
+    - uv pip uninstall eminus -y
+    - uv pip install eminus-*.whl
     - python -c "import eminus; assert eminus.demo()"
   artifacts:
     paths:
@@ -310,7 +318,7 @@ pypi:
   script:
     - apt-get update -y
     - apt-get install curl jq -y --no-install-recommends
-    - pip install id twine
+    - uv pip install id twine
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
     - OIDC_TOKEN=$(python -m id PYPI)
     - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
@@ -330,8 +338,8 @@ weekly:
     - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
     - WEEKLY_VERSION="${VERSION}.dev$(date +\%Y\%m\%d)"
     - sed -i 's/__version__ = "'${VERSION}'"/__version__ = "'${WEEKLY_VERSION}'"/' eminus/version.py
-    - pip install build twine
-    - python -m build
+    - uv pip install twine
+    - uv build
     - twine check dist/*
     - python -m twine upload -u gitlab-ci-token -p $CI_JOB_TOKEN --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
   rules:
