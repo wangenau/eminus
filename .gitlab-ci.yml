@@ -27,10 +27,12 @@ stages:
 .pytest-full:
   extends: .pytest
   stage: fulltest
-  when: manual
-  # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
-  # This would, e.g., block the creation of coverage reports
-  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_TAG
+    - when: manual
+      # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
+      # This would, e.g., block the creation of coverage reports
+      allow_failure: true
 
 ############### test ###############
 
@@ -261,7 +263,8 @@ dockerhub:
     - docker buildx create --driver=docker-container --name container default
     - docker buildx build -t wangenau/eminus:"${VERSION}" --builder=container --sbom=true --provenance=true --push .
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
       when: manual
       allow_failure: true
 
@@ -284,7 +287,8 @@ pypi:
     - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
     - twine upload -u __token__ -p "${API_TOKEN}" dist/*
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == "main"
       when: manual
       allow_failure: true
 
