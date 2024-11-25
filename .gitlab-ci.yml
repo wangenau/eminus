@@ -8,6 +8,7 @@ variables:
 stages:
   - test
   - fulltest
+  - experiments
   - build
   - publish
 
@@ -34,6 +35,12 @@ stages:
     - when: manual
       # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
       # This would, e.g., block the creation of coverage reports
+      allow_failure: true
+
+.experiments:
+  stage: experiments
+  rules:
+    - when: manual
       allow_failure: true
 
 .build:
@@ -179,9 +186,11 @@ python:
     matrix:
       - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
+############### experiments ###############
+
 ##### Test eminus for free-threaded Python a.k.a. no-GIL #####
-experiments:nogil:
-  extends: .pytest-full
+nogil:
+  extends: .experiments
   script:
     - uv venv --python 3.13t
     - source .venv/bin/activate
@@ -189,6 +198,11 @@ experiments:nogil:
     - uv pip install . --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
     - uv pip install pytest
     - pytest tests/ -m "not slow"
+  rules:
+    - when: manual
+      # Allow failure in manual jobs, otherwise the pipeline status will be manual instead of passed
+      # This would, e.g., block the creation of coverage reports
+      allow_failure: true
 
 ############### build ###############
 
