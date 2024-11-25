@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS build
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
-RUN python -m venv /usr/app/venv/
+RUN uv venv /usr/app/venv/
 ARG PATH="/usr/app/venv/bin:$PATH"
 
 # Install Git to clone repositories and clean up afterwards
@@ -15,7 +15,9 @@ RUN apt-get update -y \
 && rm -rf /var/lib/apt/lists/*
 
 # Install Torch manually since we only want to compute on the CPU
-RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
+RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir \
+# Needed to get Torch to work (for now)
+&& uv pip install typing-extensions --upgrade --no-cache-dir
 
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly
@@ -25,7 +27,7 @@ RUN git clone -b ${BRANCH} https://gitlab.com/wangenau/eminus.git \
 && uv pip install -e eminus/[all,dev] --no-cache-dir
 
 # Set up the application stage
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 LABEL maintainer="wangenau"
 
 # Ensure that no root rights are being used, copy the environment and eminus source
@@ -46,4 +48,4 @@ ENV JUPYTER_PLATFORM_DIRS=1
 # Set user, expose port, and run Jupyter
 USER eminus
 EXPOSE 8888
-CMD ["sh", "-c", "jupyter notebook . --no-browser --ip 0.0.0.0 --port 8888"]
+CMD ["sh", "-c", "jupyter lab . --no-browser --ip 0.0.0.0 --port 8888"]

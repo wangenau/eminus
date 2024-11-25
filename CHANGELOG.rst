@@ -8,15 +8,17 @@ Changelog
 dev
 ---
 - New features
-   - Weekly builds
-   - Produce PyPI and Docker build attestations
-- Miscellaneous
    - Improve HDF5 extra
       - Proper dataset and group creation
       - Support compression
       - Recognize more file types
+   - Weekly builds
+   - Produce PyPI and Docker build attestations
+- Miscellaneous
    - Miscellaneous CI improvements
    - Migrate from pip to uv in Docker and CI
+   - Update Docker image to Python 3.13
+      - Use Jupyter lab instead of notebook
 
 v3.0.0 - Oct 28, 2024
 ---------------------
