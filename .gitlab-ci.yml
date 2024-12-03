@@ -345,7 +345,7 @@ pypi:
     - apt-get install curl jq -y --no-install-recommends
     - uv pip install id twine
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
-    - OIDC_TOKEN=$(python -m id PYPI)
+    - OIDC_TOKEN=$(python -m id pypi)
     - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
     - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
     - twine upload -u __token__ -p "${API_TOKEN}" --attestations dist/*
