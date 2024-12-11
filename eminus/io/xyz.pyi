@@ -2,17 +2,17 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
 from ..scf import SCF
 
-def read_xyz(filename: str) -> tuple[list[str], NDArray[float64]]: ...
+def read_xyz(filename: str) -> tuple[list[str], NDArray[floating]]: ...
 def write_xyz(
     obj: Atoms | SCF,
     filename: str,
-    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+    fods: NDArray[floating] | Sequence[NDArray[floating]] | None = ...,
     elec_symbols: Sequence[str] = ...,
     trajectory: bool = ...,
 ) -> None: ...

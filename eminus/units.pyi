@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Final, TypeVar
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
-_AnyFloat = TypeVar("_AnyFloat", float, float64, NDArray[float64])
+_AnyFloat = TypeVar("_AnyFloat", float, floating, NDArray[floating])
 
 electronvolt: Final[float]
 eV: Final[float]  # noqa: N816

@@ -3,19 +3,21 @@
 from collections.abc import Callable
 from typing import Any
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
 def lda_c_chachiyo(
-    n: NDArray[float64],
+    n: NDArray[floating],
     **kwargs: Any,
-) -> tuple[NDArray[float64], NDArray[float64], None]: ...
+) -> tuple[NDArray[floating], NDArray[floating], None]: ...
 def chachiyo_scaling(
-    zeta: NDArray[float64],
-) -> tuple[NDArray[float64], NDArray[float64]]: ...
+    zeta: NDArray[floating],
+) -> tuple[NDArray[floating], NDArray[floating]]: ...
 def lda_c_chachiyo_spin(
-    n: NDArray[float64],
-    zeta: NDArray[float64],
-    weight_function: Callable[[NDArray[float64]], tuple[NDArray[float64], NDArray[float64]]] = ...,
+    n: NDArray[floating],
+    zeta: NDArray[floating],
+    weight_function: Callable[
+        [NDArray[floating]], tuple[NDArray[floating], NDArray[floating]]
+    ] = ...,
     **kwargs: Any,
-) -> tuple[NDArray[float64], NDArray[float64], None]: ...
+) -> tuple[NDArray[floating], NDArray[floating], None]: ...

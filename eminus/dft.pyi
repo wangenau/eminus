@@ -2,18 +2,18 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Any, overload, TypeVar
 
-from numpy import complex128, float64
+from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .scf import SCF
 
-_AnyW = TypeVar("_AnyW", NDArray[complex128], list[NDArray[complex128]])
+_AnyW = TypeVar("_AnyW", NDArray[complexfloating], list[NDArray[complexfloating]])
 
 def get_phi(
     atoms: Atoms,
-    n: NDArray[float64],
-) -> NDArray[float64]: ...
+    n: NDArray[floating],
+) -> NDArray[floating]: ...
 def orth(
     atoms: Atoms,
     W: _AnyW,
@@ -25,88 +25,88 @@ def orth_unocc(
 ) -> _AnyW: ...
 def get_n_total(
     atoms: Atoms,
-    Y: list[NDArray[complex128]],
-    n_spin: NDArray[float64] | None = ...,
-) -> NDArray[float64]: ...
+    Y: list[NDArray[complexfloating]],
+    n_spin: NDArray[floating] | None = ...,
+) -> NDArray[floating]: ...
 @overload
 def get_n_spin(
     atoms: Atoms,
-    Y: list[NDArray[complex128]],
-) -> NDArray[float64]: ...
+    Y: list[NDArray[complexfloating]],
+) -> NDArray[floating]: ...
 @overload
 def get_n_spin(
     atoms: Atoms,
-    Y: NDArray[complex128],
+    Y: NDArray[complexfloating],
     ik: int,
-) -> NDArray[float64]: ...
+) -> NDArray[floating]: ...
 @overload
 def get_n_single(
     atoms: Atoms,
-    Y: list[NDArray[complex128]],
-) -> NDArray[float64]: ...
+    Y: list[NDArray[complexfloating]],
+) -> NDArray[floating]: ...
 @overload
 def get_n_single(
     atoms: Atoms,
-    Y: NDArray[complex128],
+    Y: NDArray[complexfloating],
     ik: int,
-) -> NDArray[float64]: ...
+) -> NDArray[floating]: ...
 def get_grad(
     scf: SCF,
     ik: int,
     spin: int,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
     **kwargs: Any,
-) -> NDArray[complex128]: ...
+) -> NDArray[complexfloating]: ...
 def H(
     scf: SCF,
     ik: int,
     spin: int,
-    W: list[NDArray[complex128]],
-    dn_spin: NDArray[float64] | None = ...,
-    phi: NDArray[float64] | None = ...,
-    vxc: NDArray[complex128] | None = ...,
-    vsigma: NDArray[complex128] | None = ...,
-    vtau: NDArray[complex128] | None = ...,
-) -> NDArray[complex128]: ...
+    W: list[NDArray[complexfloating]],
+    dn_spin: NDArray[floating] | None = ...,
+    phi: NDArray[floating] | None = ...,
+    vxc: NDArray[complexfloating] | None = ...,
+    vsigma: NDArray[complexfloating] | None = ...,
+    vtau: NDArray[complexfloating] | None = ...,
+) -> NDArray[complexfloating]: ...
 def H_precompute(
     scf: SCF,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
 ) -> tuple[
-    NDArray[float64],
-    NDArray[complex128],
-    NDArray[complex128],
-    NDArray[complex128],
-    NDArray[complex128],
+    NDArray[floating],
+    NDArray[complexfloating],
+    NDArray[complexfloating],
+    NDArray[complexfloating],
+    NDArray[complexfloating],
 ]: ...
 def Q(
-    inp: NDArray[complex128],
-    U: NDArray[complex128],
-) -> NDArray[complex128]: ...
+    inp: NDArray[complexfloating],
+    U: NDArray[complexfloating],
+) -> NDArray[complexfloating]: ...
 def get_psi(
     scf: SCF,
-    W: list[NDArray[complex128]] | None,
+    W: list[NDArray[complexfloating]] | None,
     **kwargs: Any,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 def get_epsilon(
     scf: SCF,
-    W: list[NDArray[complex128]] | None,
+    W: list[NDArray[complexfloating]] | None,
     **kwargs: Any,
-) -> NDArray[float64]: ...
+) -> NDArray[floating]: ...
 def get_epsilon_unocc(
     scf: SCF,
-    W: list[NDArray[complex128]] | None,
-    Z: list[NDArray[complex128]] | None,
+    W: list[NDArray[complexfloating]] | None,
+    Z: list[NDArray[complexfloating]] | None,
     **kwargs: Any,
-) -> NDArray[float64]: ...
+) -> NDArray[floating]: ...
 def guess_random(
     scf: SCF,
     Nstate: int | None = ...,
     seed: int = ...,
     symmetric: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 def guess_pseudo(
     scf: SCF,
     Nstate: int | None = ...,
     seed: int = ...,
     symmetric: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload
 
-from numpy import complex128
+from numpy import complexfloating
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
@@ -11,8 +11,8 @@ from ..operators import _ArrRealorComplex
 @overload
 def I(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
+    W: list[NDArray[complexfloating]],
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def I(
     atoms: Atoms,
@@ -22,9 +22,9 @@ def I(
 @overload
 def J(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
     full: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def J(
     atoms: Atoms,
@@ -35,9 +35,9 @@ def J(
 @overload
 def Idag(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
     full: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def Idag(
     atoms: Atoms,
@@ -48,8 +48,8 @@ def Idag(
 @overload
 def Jdag(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
+    W: list[NDArray[complexfloating]],
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def Jdag(
     atoms: Atoms,

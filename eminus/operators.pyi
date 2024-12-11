@@ -2,14 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload, TypeVar
 
-from numpy import complex128, float64
+from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-_AnyWorN = TypeVar("_AnyWorN", NDArray[float64], NDArray[complex128], list[NDArray[complex128]])
-_ArrRealorComplex = TypeVar("_ArrRealorComplex", NDArray[float64], NDArray[complex128])
+_AnyWorN = TypeVar(
+    "_AnyWorN", NDArray[floating], NDArray[complexfloating], list[NDArray[complexfloating]]
+)
+_ArrRealorComplex = TypeVar("_ArrRealorComplex", NDArray[floating], NDArray[complexfloating])
 
 def O(
     atoms: Atoms,
@@ -27,8 +29,8 @@ def Linv(
 @overload
 def I(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
+    W: list[NDArray[complexfloating]],
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def I(
     atoms: Atoms,
@@ -38,9 +40,9 @@ def I(
 @overload
 def J(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
     full: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def J(
     atoms: Atoms,
@@ -51,9 +53,9 @@ def J(
 @overload
 def Idag(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
+    W: list[NDArray[complexfloating]],
     full: bool = ...,
-) -> list[NDArray[complex128]]: ...
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def Idag(
     atoms: Atoms,
@@ -64,8 +66,8 @@ def Idag(
 @overload
 def Jdag(
     atoms: Atoms,
-    W: list[NDArray[complex128]],
-) -> list[NDArray[complex128]]: ...
+    W: list[NDArray[complexfloating]],
+) -> list[NDArray[complexfloating]]: ...
 @overload
 def Jdag(
     atoms: Atoms,
@@ -74,9 +76,9 @@ def Jdag(
 ) -> _ArrRealorComplex: ...
 def K(
     atoms: Atoms,
-    W: NDArray[complex128],
+    W: NDArray[complexfloating],
     ik: int,
-) -> NDArray[complex128]: ...
+) -> NDArray[complexfloating]: ...
 def T(
     atoms: Atoms,
     W: _AnyWorN,

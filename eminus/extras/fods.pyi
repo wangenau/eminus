@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
@@ -15,18 +15,18 @@ def get_localized_orbitals(
     loc: str,
     Nit: int = ...,
     seed: int = ...,
-) -> list[NDArray[float64]]: ...
+) -> list[NDArray[floating]]: ...
 def get_fods(
     obj: Atoms | SCF,
     basis: str = ...,
     loc: str = ...,
-) -> list[NDArray[float64]]: ...
+) -> list[NDArray[floating]]: ...
 def split_fods(
     atom: Sequence[str],
-    pos: NDArray[float64],
+    pos: NDArray[floating],
     elec_symbols: Sequence[str] = ...,
-) -> tuple[list[str], NDArray[float64], list[NDArray[float64]]]: ...
+) -> tuple[list[str], NDArray[floating], list[NDArray[floating]]]: ...
 def remove_core_fods(
     obj: Atoms | SCF,
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
-) -> list[NDArray[float64]]: ...
+    fods: NDArray[floating] | Sequence[NDArray[floating]],
+) -> list[NDArray[floating]]: ...

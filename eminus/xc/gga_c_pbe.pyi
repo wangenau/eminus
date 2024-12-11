@@ -2,19 +2,19 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Any
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
 def gga_c_pbe(
-    n: NDArray[float64],
+    n: NDArray[floating],
     beta: float = ...,
-    dn_spin: NDArray[float64] | None = ...,
+    dn_spin: NDArray[floating] | None = ...,
     **kwargs: Any,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...
 def gga_c_pbe_spin(
-    n: NDArray[float64],
-    zeta: NDArray[float64],
+    n: NDArray[floating],
+    zeta: NDArray[floating],
     beta: float = ...,
-    dn_spin: NDArray[float64] | None = ...,
+    dn_spin: NDArray[floating] | None = ...,
     **kwargs: Any,
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...

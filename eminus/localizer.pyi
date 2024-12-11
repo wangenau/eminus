@@ -3,13 +3,13 @@
 from collections.abc import Sequence
 from typing import overload, TypeVar
 
-from numpy import complex128, float64
+from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .typing import Array1D, Array2D
 
-_AnyW = TypeVar("_AnyW", NDArray[complex128], list[NDArray[complex128]])
+_AnyW = TypeVar("_AnyW", NDArray[complexfloating], list[NDArray[complexfloating]])
 
 def eval_psi(
     atoms: Atoms,
@@ -19,21 +19,21 @@ def eval_psi(
 def get_R(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
+    fods: NDArray[floating] | Sequence[NDArray[floating]],
 ) -> _AnyW: ...
 def get_FO(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
+    fods: NDArray[floating] | Sequence[NDArray[floating]],
 ) -> _AnyW: ...
 def get_S(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> NDArray[complex128]: ...
+    psirs: NDArray[complexfloating],
+) -> NDArray[complexfloating]: ...
 def get_FLO(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[float64] | Sequence[NDArray[float64]],
+    fods: NDArray[floating] | Sequence[NDArray[floating]],
 ) -> _AnyW: ...
 def get_scdm(
     atoms: Atoms,
@@ -42,48 +42,48 @@ def get_scdm(
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: list[NDArray[complex128]],
-) -> list[NDArray[float64]]: ...
+    psirs: list[NDArray[complexfloating]],
+) -> list[NDArray[floating]]: ...
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> NDArray[float64]: ...
+    psirs: NDArray[complexfloating],
+) -> NDArray[floating]: ...
 @overload
 def wannier_center(
     atoms: Atoms,
-    psirs: list[NDArray[complex128]],
-) -> list[NDArray[float64]]: ...
+    psirs: list[NDArray[complexfloating]],
+) -> list[NDArray[floating]]: ...
 @overload
 def wannier_center(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> NDArray[float64]: ...
+    psirs: NDArray[complexfloating],
+) -> NDArray[floating]: ...
 @overload
 def second_moment(
     atoms: Atoms,
-    psirs: list[NDArray[complex128]],
-) -> list[NDArray[float64]]: ...
+    psirs: list[NDArray[complexfloating]],
+) -> list[NDArray[floating]]: ...
 @overload
 def second_moment(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> NDArray[float64]: ...
+    psirs: NDArray[complexfloating],
+) -> NDArray[floating]: ...
 def wannier_supercell_matrices(
     atoms: Atoms,
-    psirs: NDArray[complex128],
-) -> tuple[NDArray[float64], NDArray[float64], NDArray[float64]]: ...
+    psirs: NDArray[complexfloating],
+) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...
 def wannier_supercell_cost(
-    X: NDArray[float64],
-    Y: NDArray[float64],
-    Z: NDArray[float64],
+    X: NDArray[floating],
+    Y: NDArray[floating],
+    Z: NDArray[floating],
 ) -> float: ...
 def wannier_supercell_grad(
     atoms: Atoms,
-    X: NDArray[float64],
-    Y: NDArray[float64],
-    Z: NDArray[float64],
-) -> NDArray[complex128]: ...
+    X: NDArray[floating],
+    Y: NDArray[floating],
+    Z: NDArray[floating],
+) -> NDArray[complexfloating]: ...
 def get_wannier(
     atoms: Atoms,
     psirs: _AnyW,

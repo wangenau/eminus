@@ -3,7 +3,7 @@
 from collections.abc import Sequence
 from typing import Any
 
-from numpy import float64
+from numpy import floating
 from numpy.typing import NDArray
 
 from ..atoms import Atoms
@@ -17,7 +17,7 @@ def view(
 ) -> Any: ...
 def view_atoms(
     obj: Atoms | SCF,
-    fods: NDArray[float64] | Sequence[NDArray[float64]] | None = ...,
+    fods: NDArray[floating] | Sequence[NDArray[floating]] | None = ...,
     plot_n: bool = ...,
     percent: float = ...,
     isovalue: float | None = ...,
@@ -26,7 +26,7 @@ def view_atoms(
 ) -> Any: ...
 def view_contour(
     obj: Atoms | SCF,
-    field: NDArray[float64] | None,
+    field: NDArray[floating] | None,
     axis: int = ...,
     value: float = ...,
     lines: int = ...,

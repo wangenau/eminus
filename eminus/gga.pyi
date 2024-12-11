@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import overload
 
-from numpy import complex128, float64
+from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
@@ -10,30 +10,30 @@ from .scf import SCF
 
 def get_grad_field(
     atoms: Atoms,
-    field: NDArray[float64] | NDArray[complex128],
+    field: NDArray[floating] | NDArray[complexfloating],
     real: bool = ...,
-) -> NDArray[float64] | NDArray[complex128]: ...
+) -> NDArray[floating] | NDArray[complexfloating]: ...
 def gradient_correction(
     atoms: Atoms,
     spin: int,
-    dn_spin: NDArray[float64],
-    vsigma: NDArray[complex128],
-) -> NDArray[complex128]: ...
+    dn_spin: NDArray[floating],
+    vsigma: NDArray[complexfloating],
+) -> NDArray[complexfloating]: ...
 @overload
 def get_tau(
     atoms: Atoms,
-    Y: NDArray[complex128],
+    Y: NDArray[complexfloating],
     ik: int,
-) -> NDArray[float64]: ...
+) -> NDArray[floating]: ...
 @overload
 def get_tau(
     atoms: Atoms,
-    Y: list[NDArray[complex128]],
-) -> NDArray[float64]: ...
+    Y: list[NDArray[complexfloating]],
+) -> NDArray[floating]: ...
 def calc_Vtau(
     scf: SCF,
     ik: int,
     spin: int,
-    W: NDArray[complex128],
-    vtau: NDArray[complex128],
-) -> NDArray[complex128]: ...
+    W: NDArray[complexfloating],
+    vtau: NDArray[complexfloating],
+) -> NDArray[complexfloating]: ...
