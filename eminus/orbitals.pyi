@@ -38,5 +38,5 @@ def SCDM(
 def cube_writer(
     atoms: Atoms,
     orb_type: str,
-    orbitals: list[NDArray[floating]] | list[NDArray[complexfloating]],
+    orbitals: Sequence[NDArray[floating]] | Sequence[NDArray[complexfloating]],
 ) -> None: ...

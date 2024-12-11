@@ -176,8 +176,12 @@ def test_recenter(center):
     # Check that the density is centered around the atom
     assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=0.005)
     # Check that the orbitals are centered around the atom
-    assert_allclose(center_of_mass(atoms.r, W[0, :, 0].conj() * W[0, :, 0]), com, atol=0.005)
-    assert_allclose(center_of_mass(atoms.r, W[1, :, 0].conj() * W[1, :, 0]), com, atol=0.005)
+    assert_allclose(
+        center_of_mass(atoms.r, np.real(W[0, :, 0].conj() * W[0, :, 0])), com, atol=0.005
+    )
+    assert_allclose(
+        center_of_mass(atoms.r, np.real(W[1, :, 0].conj() * W[1, :, 0])), com, atol=0.005
+    )
     # Test that the local potential has been rebuild
     assert not np.array_equal(scf.Vloc, Vloc)
     assert scf.atoms.center == "recentered"
