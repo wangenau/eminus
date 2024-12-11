@@ -55,10 +55,10 @@ def lda_x_spin(n, zeta, **kwargs):
     rho13p = ((1 + zeta) * n) ** (1 / 3)
     rho13m = ((1 - zeta) * n) ** (1 / 3)
 
-    exup = f * rho13p
-    exdw = f * rho13m
-    ex = 0.5 * ((1 + zeta) * exup + (1 - zeta) * exdw)
+    ex_up = f * rho13p
+    ex_dw = f * rho13m
+    ex = 0.5 * ((1 + zeta) * ex_up + (1 - zeta) * ex_dw)
 
-    vxup = 4 / 3 * exup
-    vxdw = 4 / 3 * exdw
-    return ex, np.array([vxup, vxdw]), None
+    vx_up = 4 / 3 * ex_up
+    vx_dw = 4 / 3 * ex_dw
+    return ex, np.array([vx_up, vx_dw]), None

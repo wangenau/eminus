@@ -112,8 +112,8 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     # prefactor = ec - rs / 3 * decdrs
     decdf = (ec1 - ec0) * dfdzeta
 
-    # vcup = prefactor + decdf * (1 - zeta)
-    # vcdw = prefactor - decdf * (1 + zeta)
+    # vc_up = prefactor + decdf * (1 - zeta)
+    # vc_dw = prefactor - decdf * (1 + zeta)
     # ### End lda_c_chachiyo_spin_mod ### #
 
     dn2 = (
@@ -126,9 +126,9 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     term2 = 1 - h * np.log(gec) / ec
     prefactor = -decdrs * rs / 3
     gvc = ec + term1 + term2 * prefactor
-    gvcup = gvc + term2 * decdf * (1 - zeta)
-    gvcdw = gvc - term2 * decdf * (1 + zeta)
+    gvc_up = gvc + term2 * decdf * (1 - zeta)
+    gvc_dw = gvc - term2 * decdf * (1 + zeta)
 
     vsigma = n * expgec * 2 * ht2divgecdn2
     vsigmac = np.array([0.5 * vsigma, vsigma, 0.5 * vsigma])
-    return ec * expgec, np.array([gvcup, gvcdw]) * expgec, vsigmac
+    return ec * expgec, np.array([gvc_up, gvc_dw]) * expgec, vsigmac

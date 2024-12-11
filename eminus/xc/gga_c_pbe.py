@@ -83,7 +83,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     rs = pi34 * n ** (-1 / 3)
     norm_dn = norm(dn_spin[0] + dn_spin[1], axis=1)
     ec, vc, _ = lda_c_pw_mod_spin(n, zeta, **kwargs)
-    vcup, vcdw = vc
+    vc_up, vc_dw = vc
 
     kf = (9 / 4 * np.pi) ** (1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)
@@ -107,20 +107,20 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     dfz = np.nan_to_num(dfz, nan=0, posinf=0, neginf=0)
     factor = A2t4 * (2 + At2) / divsum**2
     bfpre = expec / phi3
-    bfup = bfpre * (vcup - ec)
-    bfdw = bfpre * (vcdw - ec)
+    bf_up = bfpre * (vc_up - ec)
+    bf_dw = bfpre * (vc_dw - ec)
     dgecpre = beta * t2 * phi3 / nolog
-    dgecup = dgecpre * (-7 / 3 * div - factor * (A * bfup / beta - 7 / 3))
-    dgecdw = dgecpre * (-7 / 3 * div - factor * (A * bfdw / beta - 7 / 3))
+    dgec_up = dgecpre * (-7 / 3 * div - factor * (A * bf_up / beta - 7 / 3))
+    dgec_dw = dgecpre * (-7 / 3 * div - factor * (A * bf_dw / beta - 7 / 3))
     dgeczpre = (
         3 * gec / phi
         - beta * t2 * phi2 / nolog * (2 * div - factor * (3 * A * expec * ec / phi3 / beta + 2))
     ) * dfz
-    dgeczup = dgeczpre * (1 - zeta)
-    dgeczdw = -dgeczpre * (1 + zeta)
-    gvcup = gec + dgecup + dgeczup
-    gvcdw = gec + dgecdw + dgeczdw
+    dgecz_up = dgeczpre * (1 - zeta)
+    dgecz_dw = -dgeczpre * (1 + zeta)
+    gvc_up = gec + dgec_up + dgecz_up
+    gvc_dw = gec + dgec_dw + dgecz_dw
 
     vsigma = beta * phi / (2 * ks * ks * n) * (div - factor) / nolog
     vsigmac = np.array([0.5 * vsigma, vsigma, 0.5 * vsigma])
-    return ec + gec, np.array([vcup + gvcup, vcdw + gvcdw]), vsigmac
+    return ec + gec, np.array([vc_up + gvc_up, vc_dw + gvc_dw]), vsigmac

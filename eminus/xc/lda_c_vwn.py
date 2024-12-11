@@ -85,6 +85,6 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     dec1 = vc0 + dac / d2fzeta0 * fzeta + (vc1 - vc0 - dac / d2fzeta0) * fzetaz4
     dec2 = ac / d2fzeta0 * dfzeta + De * (4 * zeta**3 * fzeta + zeta4 * dfzeta)
 
-    vcup = dec1 + (1 - zeta) * dec2
-    vcdw = dec1 - (1 + zeta) * dec2
-    return ec, np.array([vcup, vcdw]), None
+    vc_up = dec1 + (1 - zeta) * dec2
+    vc_dw = dec1 - (1 + zeta) * dec2
+    return ec, np.array([vc_up, vc_dw]), None

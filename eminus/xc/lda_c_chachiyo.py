@@ -96,6 +96,6 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     prefactor = ec - rs / 3 * decdrs
     decdf = (ec1 - ec0) * dfdzeta
 
-    vcup = prefactor + decdf * (1 - zeta)
-    vcdw = prefactor - decdf * (1 + zeta)
-    return ec, np.array([vcup, vcdw]), None
+    vc_up = prefactor + decdf * (1 - zeta)
+    vc_dw = prefactor - decdf * (1 + zeta)
+    return ec, np.array([vc_up, vc_dw]), None

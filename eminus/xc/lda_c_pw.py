@@ -87,6 +87,6 @@ def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **
         dfzeta * zeta4 + 4 * fzeta * zeta3
     )
 
-    vc0p = factor1 + factor2 * (1 - zeta)
-    vcdw = factor1 - factor2 * (1 + zeta)
-    return ec, np.array([vc0p, vcdw]), None
+    vc_up = factor1 + factor2 * (1 - zeta)
+    vc_dw = factor1 - factor2 * (1 + zeta)
+    return ec, np.array([vc_up, vc_dw]), None
