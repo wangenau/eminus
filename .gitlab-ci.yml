@@ -195,6 +195,7 @@ nogil:
     - uv venv --python 3.13t
     - source .venv/bin/activate
     # SciPy has no nogil builds for now, use a nightly build instead
+    # TODO: Use official builds once scipy 1.15 is released with free-threading builds: https://github.com/scipy/scipy/releases
     - uv pip install . --extra-index-url https://pypi.anaconda.org/scientific-python-nightly-wheels/simple
     - uv pip install pytest
     - pytest tests/ -m "not slow"
@@ -263,6 +264,7 @@ pages:dev:
 build:
   extends: .build
   script:
+    # TODO: Remove twine once uv implements a check equivalent: https://github.com/astral-sh/uv/issues/8641
     - uv pip install twine
     - uv build
     - twine check dist/*
@@ -280,7 +282,8 @@ attestate:
       aud: sigstore
   script:
     # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
-    - uv pip install pypi-attestations
+    # TODO: Remove prerelease flag once betterproto 2.0 is released: https://github.com/danielgtaylor/python-betterproto/releases
+    - uv pip install pypi-attestations --prerelease=allow
     - python -m pypi_attestations sign dist/*
   artifacts:
     paths:
@@ -292,6 +295,7 @@ install:
   needs:
     - job: attestate
   script:
+    # TODO: Rewrite once uv implements something equivalent: https://github.com/astral-sh/uv/issues/8774
     # Copy the build directory to test the installation
     - cp -r dist/ tmp/
     - cd tmp/
@@ -300,7 +304,7 @@ install:
     - uv pip install eminus-*/.
     - python -c "import eminus; assert eminus.demo()"
     # Test the wheel
-    - uv pip uninstall eminus -y
+    - uv pip uninstall eminus
     - uv pip install eminus-*.whl
     - python -c "import eminus; assert eminus.demo()"
   artifacts:
@@ -343,6 +347,7 @@ pypi:
   script:
     - apt-get update -y
     - apt-get install curl jq -y --no-install-recommends
+    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
     - uv pip install id twine
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
     - OIDC_TOKEN=$(python -m id pypi)
@@ -363,6 +368,7 @@ weekly:
     - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
     - WEEKLY_VERSION="${VERSION}.dev$(date +\%Y\%m\%d)"
     - sed -i 's/__version__ = "'${VERSION}'"/__version__ = "'${WEEKLY_VERSION}'"/' eminus/version.py
+    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
     - uv pip install twine
     - uv build
     - twine check dist/*
