@@ -393,7 +393,7 @@ IMPLEMENTED = {
         lda_c_chachiyo_spin,
         lda_c_chachiyo_mod,
         lda_c_chachiyo_mod_spin,
-        lda_xc_gdsmfb_spin
+        lda_xc_gdsmfb_spin,
     )
 }
 
@@ -441,7 +441,7 @@ XC_MAP = {
     "309": "gga_c_chachiyo",
     "chachiyoc": "gga_c_chachiyo",
     # lda_xc_gdsmfb_spin
-    "ldaxcgdsmfb": "lda_xc_gdsmfb_spin"
+    "ldaxcgdsmfb": "lda_xc_gdsmfb_spin",
 }
 
 #: Dictionary of common functional aliases.

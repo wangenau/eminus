@@ -20,7 +20,7 @@ from eminus.xc.lda_xc_gdsmfb import (
 )
 
 
-def grad(idx,eps=1e-4,shift=False):
+def grad(idx, eps=1e-4, shift=False):
     """Central difference gradient to perform finte difference calculations.
 
     df / dargs[idx]
@@ -32,6 +32,7 @@ def grad(idx,eps=1e-4,shift=False):
     Notes:
     - Nested decorator.
     """
+
     def wrap(f):
         def wrapped_f(*args):
             # central difference stencil
@@ -53,18 +54,21 @@ def grad(idx,eps=1e-4,shift=False):
                 e1 = r1
                 e2 = r2
             # central
-            d = (e1-e2)/(2*eps)
+            d = (e1 - e2) / (2 * eps)
             # forward
-            #d = (e1-e0)/(eps)
+            # d = (e1-e0)/(eps)
             # backward
-            #d = (e0-e2)/(eps)
+            # d = (e0-e2)/(eps)
             if shift is False:
                 res = d
             if shift is True:
                 res = e0 + d
             return res
+
         return wrapped_f
+
     return wrap
+
 
 def test_derivative_lda_xc_gdsmfb_spin():
     """Compare analytical derivatives with finite difference derivatives."""
@@ -72,7 +76,7 @@ def test_derivative_lda_xc_gdsmfb_spin():
     nup = 0.9
     ndn = 0.1
     n = nup + ndn
-    zeta = (nup - ndn)/n
+    zeta = (nup - ndn) / n
     # T is limited to 1e-3 b/c of np.coth
     T = 0.1
 
@@ -80,51 +84,52 @@ def test_derivative_lda_xc_gdsmfb_spin():
     fxc, vxc, _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
 
     # Get finite difference derivatives.
-    theta = get_theta(T,n,zeta)
+    theta = get_theta(T, n, zeta)
     rs = get_rs_from_n(n)
 
     # parameters
     p0, p1, p2 = get_gdsmfb_parameters()
 
     # fxc
-    fxc = get_fxc(rs,theta,zeta,p0,p1,p2)
+    fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
 
-    @grad(idx=0,eps=1e-5,shift=False)
-    def get_fd1(nup,ndn,T,p0,p1,p2):
+    @grad(idx=0, eps=1e-5, shift=False)
+    def get_fd1(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dnup."""
-        return get_fxc_nupndn(nup,ndn,T,p0,p1,p2)
+        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
 
-    @grad(idx=1,eps=1e-5,shift=False)
-    def get_fd2(nup,ndn,T,p0,p1,p2):
+    @grad(idx=1, eps=1e-5, shift=False)
+    def get_fd2(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dndn."""
-        return get_fxc_nupndn(nup,ndn,T,p0,p1,p2)
+        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
 
-    fd1 = get_fd1(nup,ndn,T,p0,p1,p2)
-    fd2 = get_fd2(nup,ndn,T,p0,p1,p2)
-    vxc_fd = np.array([fd1,fd2])*n+fxc
+    fd1 = get_fd1(nup, ndn, T, p0, p1, p2)
+    fd2 = get_fd2(nup, ndn, T, p0, p1, p2)
+    vxc_fd = np.array([fd1, fd2]) * n + fxc
 
-    assert_allclose(vxc_fd,vxc,rtol=1e-03)
+    assert_allclose(vxc_fd, vxc, rtol=1e-03)
+
 
 def test_energy_lda_xc_gdsmfb_spin():
     """Validate the energy expression of GDSMFB.
 
     Comparison with reference values from the original implementation.
     """
-    RS= np.array([0.4,0.8,1,2,3])
-    TEMP = np.array([1e-8,1e-6,1e-3,3,10])
-    ZETA = np.array([0,0.4,0.8,0.9,1])
+    RS = np.array([0.4, 0.8, 1, 2, 3])
+    TEMP = np.array([1e-8, 1e-6, 1e-3, 3, 10])
+    ZETA = np.array([0, 0.4, 0.8, 0.9, 1])
     # Reference values generated with fxc.py
     # from https://github.com/agbonitz/xc_functional.git
     REF = np.array([-1.22407997, -0.65378099, -0.57261495, -0.12552032, -0.03624066])
     CAL = np.zeros_like(REF)
-    for idx, (rs,zeta,T) in enumerate(zip(RS,ZETA,TEMP)):
+    for idx, (rs, zeta, T) in enumerate(zip(RS, ZETA, TEMP)):
         n = get_n(rs)
-        fxc, _ , _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
+        fxc, _, _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
         CAL[idx] = fxc
 
-    assert_allclose(CAL,REF,rtol=1e-07)
+    assert_allclose(CAL, REF, rtol=1e-07)
+
 
 if __name__ == "__main__":
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
-
