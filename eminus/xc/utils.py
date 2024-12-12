@@ -441,6 +441,7 @@ XC_MAP = {
     "309": "gga_c_chachiyo",
     "chachiyoc": "gga_c_chachiyo",
     # lda_xc_gdsmfb_spin
+    "577": "lda_xc_gdsmfb_spin",
     "ldaxcgdsmfb": "lda_xc_gdsmfb_spin",
 }
 
