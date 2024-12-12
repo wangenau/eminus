@@ -22,7 +22,7 @@ from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
-from .lda_xc_gdsmfb import lda_xc_gdsmfb_spin
+from .lda_xc_gdsmfb import lda_xc_gdsmfb, lda_xc_gdsmfb_spin
 
 
 def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
@@ -393,6 +393,7 @@ IMPLEMENTED = {
         lda_c_chachiyo_spin,
         lda_c_chachiyo_mod,
         lda_c_chachiyo_mod_spin,
+        lda_xc_gdsmfb,
         lda_xc_gdsmfb_spin,
     )
 }
@@ -440,9 +441,9 @@ XC_MAP = {
     # gga_c_chachiyo
     "309": "gga_c_chachiyo",
     "chachiyoc": "gga_c_chachiyo",
-    # lda_xc_gdsmfb_spin
-    "577": "lda_xc_gdsmfb_spin",
-    "ldaxcgdsmfb": "lda_xc_gdsmfb_spin",
+    # lda_xc_gdsmfb
+    "577": "lda_xc_gdsmfb",
+    "ldaxcgdsmfb": "lda_xc_gdsmfb",
 }
 
 #: Dictionary of common functional aliases.

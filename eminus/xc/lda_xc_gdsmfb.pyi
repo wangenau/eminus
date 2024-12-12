@@ -254,6 +254,10 @@ def get_theta1(
     theta: NDArray[floating],
     zeta: NDArray[floating],
 ) -> NDArray[floating]: ...
+def lda_xc_gdsmfb(
+    n: NDArray[floating],
+    **kwargs: Any,
+) -> tuple[NDArray[floating], NDArray[floating], None]: ...
 def lda_xc_gdsmfb_spin(
     n: NDArray[floating],
     zeta: NDArray[floating],

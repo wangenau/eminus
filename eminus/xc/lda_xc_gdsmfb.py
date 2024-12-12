@@ -643,6 +643,28 @@ def get_T(theta, n, zeta):
     return theta * T_fermi
 
 
+def lda_xc_gdsmfb(n, **kwargs):
+    """GDSMFB exchange-correlation functional (spin-paired).
+
+    Exchange and correlation connot be separated.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+
+    Args:
+        n: Real-space electronic density.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
+        T: Temperature.
+
+    Returns:
+        GDSMFB exchange-correlation energy density and potential.
+    """
+    kwargs["zeta"] = np.zeros_like(n)
+    exc, vxc, _ = lda_xc_gdsmfb_spin(n, **kwargs)
+    return exc, np.array([vxc[0]]), None
+
+
 def lda_xc_gdsmfb_spin(n, zeta, **kwargs):
     """GDSMFB exchange-correlation functional (spin-polarized).
 
