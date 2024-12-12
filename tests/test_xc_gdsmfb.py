@@ -39,10 +39,10 @@ def grad(idx, eps=1e-4, shift=False):
             x0 = args[idx]
             args = list(args)
             r0 = f(*args)
-            args[idx] = x0 + eps
+            args[idx] = x0 + eps  # type: ignore[index]
             # assume 1st argument is the energy
             r1 = f(*args)
-            args[idx] = x0 - eps
+            args[idx] = x0 - eps  # type: ignore[index]
             # assume 1st argument is the energy
             r2 = f(*args)
             if isinstance(r0, (list, tuple)):
@@ -73,8 +73,8 @@ def grad(idx, eps=1e-4, shift=False):
 def test_derivative_lda_xc_gdsmfb_spin():
     """Compare analytical derivatives with finite difference derivatives."""
     # input
-    nup = 0.9
-    ndn = 0.1
+    nup = np.array([0.9])
+    ndn = np.array([0.1])
     n = nup + ndn
     zeta = (nup - ndn) / n
     # T is limited to 1e-3 b/c of np.coth
@@ -93,12 +93,12 @@ def test_derivative_lda_xc_gdsmfb_spin():
     # fxc
     fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
 
-    @grad(idx=0, eps=1e-5, shift=False)
+    @grad(idx=0, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
     def get_fd1(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dnup."""
         return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
 
-    @grad(idx=1, eps=1e-5, shift=False)
+    @grad(idx=1, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
     def get_fd2(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dndn."""
         return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
