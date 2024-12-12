@@ -1,13 +1,8 @@
+
 from numpy import (
     float64,
     ndarray,
 )
-from typing import (
-    Dict,
-    Tuple,
-    Union,
-)
-
 
 def get_a(theta: ndarray) -> ndarray: ...
 
@@ -18,7 +13,7 @@ def get_alpha(rs: ndarray, theta: ndarray, p: Parameters) -> ndarray: ...
 def get_b(theta: ndarray, b1: float, b2: float, b3: float, b4: float, b5: float64) -> ndarray: ...
 
 
-def get_b5(omega: Union[int, float], b3: float) -> float64: ...
+def get_b5(omega: float, b3: float) -> float64: ...
 
 
 def get_c(
@@ -33,7 +28,13 @@ def get_c(
 ) -> ndarray: ...
 
 
-def get_d(theta: ndarray, d1: float, d2: float, d3: float, d4: float, d5: float) -> ndarray: ...
+def get_d(theta:
+        ndarray,
+        d1: float,
+        d2: float,
+        d3: float,
+        d4: float,
+        d5: float) -> ndarray: ...
 
 
 def get_dadtheta(theta: ndarray) -> ndarray: ...
@@ -45,7 +46,12 @@ def get_dalphadrs(rs: ndarray, theta: ndarray, p: Parameters) -> ndarray: ...
 def get_dalphadtheta(rs: ndarray, theta: ndarray, p: Parameters) -> ndarray: ...
 
 
-def get_dbdtheta(theta: ndarray, b1: float, b2: float, b3: float, b4: float, b5: float64) -> ndarray: ...
+def get_dbdtheta(theta: ndarray,
+        b1: float,
+        b2: float,
+        b3: float,
+        b4: float,
+        b5: float64) -> ndarray: ...
 
 
 def get_dcdtheta(
@@ -60,15 +66,25 @@ def get_dcdtheta(
 ) -> ndarray: ...
 
 
-def get_dddtheta(theta: ndarray, d1: float, d2: float, d3: float, d4: float, d5: float) -> ndarray: ...
+def get_dddtheta(theta: ndarray,
+        d1: float,
+        d2: float,
+        d3: float,
+        d4: float,
+        d5: float) -> ndarray: ...
 
 
-def get_dedtheta(theta: ndarray, e1: float, e2: float, e3: float, e4: float, e5: float) -> ndarray: ...
+def get_dedtheta(theta: ndarray,
+        e1: float,
+        e2: float,
+        e3: float,
+        e4: float,
+        e5: float) -> ndarray: ...
 
 
 def get_dfxc_zeta_paramsdrs(
     rs: ndarray,
-    omega: Union[int, float],
+    omega: float,
     a: ndarray,
     b: ndarray,
     c: ndarray,
@@ -79,7 +95,7 @@ def get_dfxc_zeta_paramsdrs(
 
 def get_dfxc_zeta_paramsdtheta(
     rs: ndarray,
-    omega: Union[int, float],
+    omega: float,
     a: ndarray,
     b: ndarray,
     c: ndarray,
@@ -198,7 +214,7 @@ def get_fxc_zeta(rs: ndarray, theta: ndarray, p: Parameters) -> ndarray: ...
 
 def get_fxc_zeta_params(
     rs: ndarray,
-    omega: Union[int, float],
+    omega: float,
     a: ndarray,
     b: ndarray,
     c: ndarray,
@@ -208,7 +224,7 @@ def get_fxc_zeta_params(
 
 
 def get_gdsmfb_parameters(
-) -> Tuple[Parameters, Parameters, Parameters]: ...
+) -> tuple[Parameters, Parameters, Parameters]: ...
 
 
 def get_h(rs: ndarray, p: Parameters) -> ndarray: ...
@@ -240,8 +256,8 @@ def get_theta0(theta: ndarray, zeta: ndarray) -> ndarray: ...
 def get_theta1(theta: ndarray, zeta: ndarray) -> ndarray: ...
 
 
-def lda_xc_gdsmfb_spin(n: ndarray, zeta: ndarray, **kwargs) -> Tuple[ndarray, ndarray, None]: ...
+def lda_xc_gdsmfb_spin(n: ndarray, zeta: ndarray, **kwargs) -> tuple[ndarray, ndarray, None]: ...
 
 
 class Parameters:
-    def __init__(self, params: Dict[str, Union[int, float, float64]]) -> None: ...
+    def __init__(self, params: dict[str, int | float | float64]) -> None: ...
