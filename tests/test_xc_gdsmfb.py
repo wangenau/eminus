@@ -5,24 +5,32 @@
 import inspect
 import pathlib
 
-import pytest
 import numpy as np
+import pytest
 from numpy.testing import assert_allclose
 
-from eminus.xc.lda_xc_gdsmfb import lda_xc_gdsmfb_spin, get_fxc, get_fxc_nupndn, get_gdsmfb_parameters, get_theta, get_rs_from_n, get_n
+from eminus.xc.lda_xc_gdsmfb import (
+    get_fxc,
+    get_fxc_nupndn,
+    get_gdsmfb_parameters,
+    get_n,
+    get_rs_from_n,
+    get_theta,
+    lda_xc_gdsmfb_spin,
+)
+
 
 def grad(idx,eps=1e-4,shift=False):
-    """
-        Central difference gradient to perform finte difference calculations. 
+    """Central difference gradient to perform finte difference calculations.
 
-        df / dargs[idx] 
+    df / dargs[idx]
 
-        idx:   integer, index of the parameter which should be differentiate against 
-        eps:   finite difference epsilion/h 
-        shift: shift for Fxc 
+    idx:   integer, index of the parameter which should be differentiate against
+    eps:   finite difference epsilion/h
+    shift: shift for Fxc
 
-        Notes: 
-            - Nested decorator. 
+    Notes:
+    - Nested decorator.
     """
     def wrap(f):
         def wrapped_f(*args):
@@ -31,12 +39,12 @@ def grad(idx,eps=1e-4,shift=False):
             args = list(args)
             r0 = f(*args)
             args[idx] = x0 + eps
-            # assume 1st argument is the energy 
+            # assume 1st argument is the energy
             r1 = f(*args)
             args[idx] = x0 - eps
-            # assume 1st argument is the energy 
+            # assume 1st argument is the energy
             r2 = f(*args)
-            if isinstance(r0,list) or isinstance(r0,tuple):
+            if isinstance(r0, (list, tuple)):
                 e0 = r0[0]
                 e1 = r1[0]
                 e2 = r2[0]
@@ -44,34 +52,34 @@ def grad(idx,eps=1e-4,shift=False):
                 e0 = r0
                 e1 = r1
                 e2 = r2
-            # central 
+            # central
             d = (e1-e2)/(2*eps)
-            # forward 
+            # forward
             #d = (e1-e0)/(eps)
-            # backward 
+            # backward
             #d = (e0-e2)/(eps)
-            if shift == False:
+            if shift is False:
                 res = d
-            if shift == True:
+            if shift is True:
                 res = e0 + d
             return res
         return wrapped_f
     return wrap
 
 def test_derivative_lda_xc_gdsmfb_spin():
-    """ Compare analytical derivatives with finite difference derivatives."""
+    """Compare analytical derivatives with finite difference derivatives."""
     # input
-    nup = 0.9 
-    ndn = 0.1 
+    nup = 0.9
+    ndn = 0.1
     n = nup + ndn
     zeta = (nup - ndn)/n
     # T is limited to 1e-3 b/c of np.coth
     T = 0.1
 
-    # Analytical derivatives 
+    # Analytical derivatives
     fxc, vxc, _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
-    
-    # Get finite difference derivatives. 
+
+    # Get finite difference derivatives.
     theta = get_theta(T,n,zeta)
     rs = get_rs_from_n(n)
 
@@ -83,26 +91,29 @@ def test_derivative_lda_xc_gdsmfb_spin():
 
     @grad(idx=0,eps=1e-5,shift=False)
     def get_fd1(nup,ndn,T,p0,p1,p2):
-        """ Finite difference derivative dfxc / dnup """
+        """Finite difference derivative dfxc / dnup."""
         return get_fxc_nupndn(nup,ndn,T,p0,p1,p2)
 
     @grad(idx=1,eps=1e-5,shift=False)
     def get_fd2(nup,ndn,T,p0,p1,p2):
-        """ Finite difference derivative dfxc / dndn """
+        """Finite difference derivative dfxc / dndn."""
         return get_fxc_nupndn(nup,ndn,T,p0,p1,p2)
 
     fd1 = get_fd1(nup,ndn,T,p0,p1,p2)
     fd2 = get_fd2(nup,ndn,T,p0,p1,p2)
     vxc_fd = np.array([fd1,fd2])*n+fxc
-    
+
     assert_allclose(vxc_fd,vxc,rtol=1e-03)
 
-def test_energy_lda_xc_gdsmfb_spin(): 
-    """ Validate the energy expression of GDSMFB with reference values from the original implementation."""
+def test_energy_lda_xc_gdsmfb_spin():
+    """Validate the energy expression of GDSMFB.
+
+    Comparison with reference values from the original implementation.
+    """
     RS= np.array([0.4,0.8,1,2,3])
     TEMP = np.array([1e-8,1e-6,1e-3,3,10])
     ZETA = np.array([0,0.4,0.8,0.9,1])
-    # Reference values generated with fxc.py 
+    # Reference values generated with fxc.py
     # from https://github.com/agbonitz/xc_functional.git
     REF = np.array([-1.22407997, -0.65378099, -0.57261495, -0.12552032, -0.03624066])
     CAL = np.zeros_like(REF)
@@ -113,7 +124,7 @@ def test_energy_lda_xc_gdsmfb_spin():
 
     assert_allclose(CAL,REF,rtol=1e-07)
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     file_path = pathlib.Path(inspect.stack()[0][1])
     pytest.main(file_path)
 
