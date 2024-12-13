@@ -12,6 +12,7 @@ dev
       - Proper dataset and group creation
       - Support compression
       - Recognize more file types
+   - Add the GDSMFB thermal functional (thanks to @theonov13)
    - Weekly builds
    - Produce PyPI and Docker build attestations
 - Miscellaneous
