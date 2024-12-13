@@ -146,37 +146,6 @@ def get_dbdtheta(theta, b1, b2, b3, b4, b5):
     return tmp1 - tmp2 - tmp3
 
 
-def get_e(theta, e1, e2, e3, e4, e5):
-    """Get e."""
-    return (
-        np.tanh(1 / theta)
-        * (e1 + e2 * theta**2 + e3 * theta**4)
-        / (1 + e4 * theta**2 + e5 * theta**4)
-    )
-
-
-def get_dedtheta(theta, e1, e2, e3, e4, e5):
-    """Get de / dtheta."""
-    tmp1 = (
-        (2 * e2 * theta + 4 * e3 * theta**3)
-        * np.tanh(1 / theta)
-        / (e4 * theta**2 + e5 * theta**4 + 1)
-    )
-    tmp11 = (
-        (2 * e4 * theta + 4 * e5 * theta**3)
-        * (e1 + e2 * theta**2 + e3 * theta**4)
-        * np.tanh(1 / theta)
-    )
-    tmp12 = (e4 * theta**2 + e5 * theta**4 + 1) ** 2
-    tmp2 = tmp11 / tmp12
-    with np.errstate(over="ignore"):
-        tmp21 = e1 + e2 * theta**2 + e3 * theta**4
-        tmp22 = (e4 * theta**2 + e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
-        tmp23 = tmp21 / tmp22
-        tmp3 = np.where(theta < 0.0025, 0, tmp23)
-    return tmp1 - tmp2 - tmp3
-
-
 def get_c(theta, c1, c2, e1, e2, e3, e4, e5):
     """Get c."""
     thres = 1e-6
@@ -240,6 +209,37 @@ def get_dddtheta(theta, d1, d2, d3, d4, d5):
         )
         tmp23 = tmp21 / tmp22
         tmp3 = np.where(theta < 0.001, 0, tmp23)
+    return tmp1 - tmp2 - tmp3
+
+
+def get_e(theta, e1, e2, e3, e4, e5):
+    """Get e."""
+    return (
+        np.tanh(1 / theta)
+        * (e1 + e2 * theta**2 + e3 * theta**4)
+        / (1 + e4 * theta**2 + e5 * theta**4)
+    )
+
+
+def get_dedtheta(theta, e1, e2, e3, e4, e5):
+    """Get de / dtheta."""
+    tmp1 = (
+        (2 * e2 * theta + 4 * e3 * theta**3)
+        * np.tanh(1 / theta)
+        / (e4 * theta**2 + e5 * theta**4 + 1)
+    )
+    tmp11 = (
+        (2 * e4 * theta + 4 * e5 * theta**3)
+        * (e1 + e2 * theta**2 + e3 * theta**4)
+        * np.tanh(1 / theta)
+    )
+    tmp12 = (e4 * theta**2 + e5 * theta**4 + 1) ** 2
+    tmp2 = tmp11 / tmp12
+    with np.errstate(over="ignore"):
+        tmp21 = e1 + e2 * theta**2 + e3 * theta**4
+        tmp22 = (e4 * theta**2 + e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
+        tmp23 = tmp21 / tmp22
+        tmp3 = np.where(theta < 0.0025, 0, tmp23)
     return tmp1 - tmp2 - tmp3
 
 
@@ -320,28 +320,6 @@ def get_phi(rs, theta, zeta, p):
     return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
 
 
-def get_phi_T(rs, T, zeta, p):
-    """Get phi from rs, T, and zeta."""
-    n = get_n(rs)
-    theta = get_theta(T, n, zeta)
-    alpha = get_alpha(rs, theta, p)
-    return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
-
-
-def get_fxc0(rs, theta, zeta):
-    """Get fxc0."""
-    p0, _, _ = get_gdsmfb_parameters()
-    theta0 = get_theta0(theta, zeta)
-    return get_fxc_zeta(rs, theta0, p0)
-
-
-def get_fxc1(rs, theta, zeta):
-    """Get fxc1."""
-    _, p1, _ = get_gdsmfb_parameters()
-    theta1 = get_theta1(theta, zeta)
-    return get_fxc_zeta(rs, theta1, p1)
-
-
 def get_fxc(rs, theta, zeta, p0, p1, p2):
     """Get fxc utilizing rs,zeta, and theta."""
     theta0 = get_theta0(theta, zeta)
@@ -350,20 +328,6 @@ def get_fxc(rs, theta, zeta, p0, p1, p2):
     fxc1 = get_fxc_zeta(rs, theta1, p1)
     phi = get_phi(rs, theta0, zeta, p2)
     return fxc0 + (fxc1 - fxc0) * phi
-
-
-def get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
-    """Get fxc utilizing nup, ndn, and T."""
-    n = nup + ndn
-    zeta = (nup - ndn) / n
-    rs = get_rs_from_n(n)
-    theta = get_theta(T, n, zeta)
-    return get_fxc(rs, theta, zeta, p0, p1, p2)
-
-
-def get_zeta(nup, ndn):
-    """Get zeta from nup and ndn."""
-    return (nup - ndn) / (nup + ndn)
 
 
 def get_dzetadnup(nup, ndn):
@@ -391,16 +355,9 @@ def get_dtheta0dzeta(theta, zeta):
     return 2 * theta / (3 * (zeta + 1) ** (1 / 3))
 
 
-def get_theta_nup(T, nup):
-    """Get theta from T and nup."""
-    k_fermi_sq = (6 * np.pi**2 * nup) ** (2 / 3)
-    T_fermi = 1 / 2 * k_fermi_sq
-    return T / T_fermi
-
-
 def get_dthetadnup(T, nup):
     """Get dtheta / dnup."""
-    return -0.40380457618492 * T / (np.pi ** (4 / 3) * nup ** (5 / 3))
+    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * nup ** (5 / 3))
 
 
 def get_dfxc_zeta_paramsdrs(rs, omega, a, b, c, d, e):
@@ -427,7 +384,7 @@ def get_dfxcdnup_params(nup, ndn, T, p0, p1, p2):
     """Get dfxc / dnup."""
     n = nup + ndn
     zeta = (nup - ndn) / n
-    rs = get_rs_from_n(n)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
     theta0 = get_theta0(theta, zeta)
     fxc0 = get_fxc_zeta(rs, theta0, p0)
@@ -465,7 +422,7 @@ def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
     """Get dfxc / dndn."""
     n = nup + ndn
     zeta = (nup - ndn) / n
-    rs = get_rs_from_n(n)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
     theta0 = get_theta0(theta, zeta)
     fxc0 = get_fxc_zeta(rs, theta0, p0)
@@ -499,16 +456,6 @@ def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
     return dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
 
-def get_rs_from_n(n):
-    """Get rs from n."""
-    return (3 / (4 * np.pi * n)) ** (1 / 3)
-
-
-def get_n(rs):
-    """Get n from rs."""
-    return 1 / (4 * np.pi / 3 * rs**3)
-
-
 def get_dhdrs(rs, p):
     """Get dh / drs."""
     return p.h1 / (p.h2 * rs + 1) - p.h2 * (p.h1 * rs + 2 / 3) / (p.h2 * rs + 1) ** 2
@@ -539,16 +486,6 @@ def get_dalphadtheta(rs, theta, p):
     lam = get_lambda(rs, theta, p)
     dlamdtheta = get_dlamdtheta(rs, p)
     return -(-dlamdtheta * theta - lam) * h * np.exp(-theta * lam)
-
-
-def get_zeta_rs(rs, nup, ndn):
-    """Get zeta from rs, nup, and ndn."""
-    return (nup - ndn) / (get_n(rs))
-
-
-def get_dzetadrs(rs, nup, ndn):
-    """Get dzeta / drs."""
-    return 4 * np.pi * (-ndn + nup) * rs**2
 
 
 def get_dphidrs(rs, theta, zeta, p):
@@ -682,7 +619,7 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     """
     ndn = n * (1 - zeta) / 2
     nup = n * (1 + zeta) / 2
-    rs = get_rs_from_n(n)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
 
     p0, p1, p2 = get_gdsmfb_parameters()

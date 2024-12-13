@@ -200,14 +200,6 @@ def get_fxc(
     p1: Parameters,
     p2: Parameters,
 ) -> NDArray[floating]: ...
-def get_fxc_nupndn(
-    nup: NDArray[floating],
-    ndn: NDArray[floating],
-    T: float,
-    p0: Parameters,
-    p1: Parameters,
-    p2: Parameters,
-) -> NDArray[floating]: ...
 def get_fxc_zeta(
     rs: NDArray[floating],
     theta: NDArray[floating],
@@ -232,14 +224,17 @@ def get_lambda(
     theta: NDArray[floating],
     p: Parameters,
 ) -> NDArray[floating]: ...
-def get_n(rs: NDArray[floating]) -> NDArray[floating]: ...
 def get_phi(
     rs: NDArray[floating],
     theta: NDArray[floating],
     zeta: NDArray[floating],
     p: Parameters,
 ) -> NDArray[floating]: ...
-def get_rs_from_n(n: NDArray[floating]) -> NDArray[floating]: ...
+def get_T(
+    theta: NDArray[floating],
+    n: NDArray[floating],
+    zeta: NDArray[floating],
+) -> NDArray[floating]: ...
 def get_theta(
     T: float,
     n: NDArray[floating],

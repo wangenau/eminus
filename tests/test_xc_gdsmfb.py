@@ -11,13 +11,19 @@ from numpy.testing import assert_allclose
 
 from eminus.xc.lda_xc_gdsmfb import (
     get_fxc,
-    get_fxc_nupndn,
     get_gdsmfb_parameters,
-    get_n,
-    get_rs_from_n,
     get_theta,
     lda_xc_gdsmfb_spin,
 )
+
+
+def get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
+    """Get fxc utilizing nup, ndn, and T."""
+    n = nup + ndn
+    zeta = (nup - ndn) / n
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    theta = get_theta(T, n, zeta)
+    return get_fxc(rs, theta, zeta, p0, p1, p2)
 
 
 def grad(idx, eps=1e-4, shift=False):
@@ -85,7 +91,7 @@ def test_derivative_lda_xc_gdsmfb_spin():
 
     # Get finite difference derivatives.
     theta = get_theta(T, n, zeta)
-    rs = get_rs_from_n(n)
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     # parameters
     p0, p1, p2 = get_gdsmfb_parameters()
@@ -96,12 +102,12 @@ def test_derivative_lda_xc_gdsmfb_spin():
     @grad(idx=0, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
     def get_fd1(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dnup."""
-        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
+        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
 
     @grad(idx=1, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
     def get_fd2(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dndn."""
-        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)
+        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
 
     fd1 = get_fd1(nup, ndn, T, p0, p1, p2)
     fd2 = get_fd2(nup, ndn, T, p0, p1, p2)
@@ -123,7 +129,7 @@ def test_energy_lda_xc_gdsmfb_spin():
     REF = np.array([-1.22407997, -0.65378099, -0.57261495, -0.12552032, -0.03624066])
     CAL = np.zeros_like(REF)
     for idx, (rs, zeta, T) in enumerate(zip(RS, ZETA, TEMP)):
-        n = get_n(rs)
+        n = 1 / (4 * np.pi / 3 * rs**3)
         fxc, _, _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
         CAL[idx] = fxc
 
