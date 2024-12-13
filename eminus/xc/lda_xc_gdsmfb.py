@@ -5,9 +5,12 @@
 Reference: Phys. Rev. Lett. 119, 135001.
 """
 
+import dataclasses
+
 import numpy as np
 
 
+@dataclasses.dataclass
 class Parameters:
     """Parameters class.
 
@@ -15,275 +18,232 @@ class Parameters:
     Saving same space through attribute access.
     """
 
-    def __init__(self, params):
-        """Intitialize an instance of this class."""
-        for key, val in params.items():
-            setattr(self, key, val)
+    @property
+    def b5(self):
+        return self.b3 * np.sqrt(3 / 2) * self.omega * (4 / (9 * np.pi)) ** (-1 / 3)
 
+    def a(self, theta):
+        tmp1 = 0.610887 * np.tanh(1 / theta)
+        tmp2 = 0.75 + 3.04363 * theta**2 - 0.09227 * theta**3 + 1.7035 * theta**4
+        tmp3 = 1 + 8.31051 * theta**2 + 5.1105 * theta**4
+        return tmp1 * tmp2 / tmp3
 
-def get_b5(omega, b3):
-    """Get b5."""
-    return b3 * np.sqrt(3 / 2) * omega * (4 / (9 * np.pi)) ** (-1 / 3)
+    def b(self, theta):
+        tmp1 = np.tanh(1 / np.sqrt(theta)) * (self.b1 + self.b2 * theta**2 + self.b3 * theta**4)
+        tmp2 = 1 + self.b4 * theta**2 + self.b5 * theta**4
+        return tmp1 / tmp2
+
+    def c(self, theta):
+        thres = 1e-6
+        return np.where(
+            theta > thres,
+            (self.c1 + self.c2 * np.exp(-1 / theta)) * self.e(theta),
+            self.c1 * self.e(theta),
+        )
+
+    def d(self, theta):
+        tmp1 = np.tanh(1 / np.sqrt(theta)) * (self.d1 + self.d2 * theta**2 + self.d3 * theta**4)
+        tmp2 = 1 + self.d4 * theta**2 + self.d5 * theta**4
+        return tmp1 / tmp2
+
+    def e(self, theta):
+        return (
+            np.tanh(1 / theta)
+            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
+            / (1 + self.e4 * theta**2 + self.e5 * theta**4)
+        )
+
+    def dadtheta(self, theta):
+        tmp1 = -0.00884515668249876 * (20.442 * theta**3 + 16.62102 * theta)
+        tmp2 = 1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75
+        tmp3 = (
+            np.tanh(1 / theta) / (0.614944209200157 * theta**4 + theta**2 + 0.12032955859508) ** 2
+        )
+        denom = 5.1105 * theta**4 + 8.31051 * theta**2 + 1
+        tmp4 = (
+            0.610887
+            * (6.814 * theta**3 - 0.27681 * theta**2 + 6.08726 * theta)
+            * np.tanh(1 / theta)
+            / denom
+        )
+        with np.errstate(over="ignore"):
+            tmp41 = -0.610887 * (1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75)
+            tmp42 = denom * theta**2 * np.cosh(1 / theta) ** 2
+            tmp43 = tmp41 / tmp42
+            tmp5 = np.where(theta < 0.0025, 0, tmp43)
+        return tmp1 * tmp2 * tmp3 + tmp4 + tmp5
+
+    def dbdtheta(self, theta):
+        tmp1 = (
+            (2 * self.b2 * theta + 4 * self.b3 * theta**3)
+            * np.tanh(1 / np.sqrt(theta))
+            / (self.b4 * theta**2 + self.b5 * theta**4 + 1)
+        )
+        tmp11 = (
+            (2 * self.b4 * theta + 4 * self.b5 * theta**3)
+            * (self.b1 + self.b2 * theta**2 + self.b3 * theta**4)
+            * np.tanh(1 / np.sqrt(theta))
+        )
+        tmp12 = (self.b4 * theta**2 + self.b5 * theta**4 + 1) ** 2
+        tmp2 = tmp11 / tmp12
+        with np.errstate(over="ignore"):
+            tmp21 = self.b1 + self.b2 * theta**2 + self.b3 * theta**4
+            tmp22 = (
+                2
+                * (self.b4 * theta**2 + self.b5 * theta**4 + 1)
+                * theta ** (3 / 2)
+                * np.cosh(1 / np.sqrt(theta)) ** 2
+            )
+            tmp23 = tmp21 / tmp22
+            tmp3 = np.where(theta < 0.001, 0, tmp23)
+        return tmp1 - tmp2 - tmp3
+
+    def dcdtheta(self, theta):
+        tmp1 = self.c2 * self.e(theta) * np.exp(-1 / theta) / theta**2
+        tmp2 = self.c1 + self.c2 * np.exp(-1 / theta)
+        tmp3 = (
+            (2 * self.e2 * theta + 4 * self.e3 * theta**3)
+            * np.tanh(1 / theta)
+            / (self.e4 * theta**2 + self.e5 * theta**4 + 1)
+        )
+        tmp31 = (
+            (2 * self.e4 * theta + 4 * self.e5 * theta**3)
+            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
+            * np.tanh(1 / theta)
+        )
+        tmp32 = (self.e4 * theta**2 + self.e5 * theta**4 + 1) ** 2
+        tmp4 = tmp31 / tmp32
+        with np.errstate(over="ignore"):
+            tmp41 = self.e1 + self.e2 * theta**2 + self.e3 * theta**4
+            tmp42 = (
+                (self.e4 * theta**2 + self.e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
+            )
+            tmp43 = tmp41 / tmp42
+            tmp5 = np.where(theta < 0.0025, 0, tmp43)
+        return tmp1 + tmp2 * (tmp3 - tmp4 - tmp5)
+
+    def dddtheta(self, theta):
+        tmp1 = (
+            (2 * self.d2 * theta + 4 * self.d3 * theta**3)
+            * np.tanh(1 / np.sqrt(theta))
+            / (self.d4 * theta**2 + self.d5 * theta**4 + 1)
+        )
+        tmp11 = (
+            (2 * self.d4 * theta + 4 * self.d5 * theta**3)
+            * (self.d1 + self.d2 * theta**2 + self.d3 * theta**4)
+            * np.tanh(1 / np.sqrt(theta))
+        )
+        tmp12 = (self.d4 * theta**2 + self.d5 * theta**4 + 1) ** 2
+        tmp2 = tmp11 / tmp12
+        with np.errstate(over="ignore"):
+            tmp21 = self.d1 + self.d2 * theta**2 + self.d3 * theta**4
+            tmp22 = (
+                2
+                * (self.d4 * theta**2 + self.d5 * theta**4 + 1)
+                * theta ** (3 / 2)
+                * np.cosh(1 / np.sqrt(theta)) ** 2
+            )
+            tmp23 = tmp21 / tmp22
+            tmp3 = np.where(theta < 0.001, 0, tmp23)
+        return tmp1 - tmp2 - tmp3
+
+    def dedtheta(self, theta):
+        tmp1 = (
+            (2 * self.e2 * theta + 4 * self.e3 * theta**3)
+            * np.tanh(1 / theta)
+            / (self.e4 * theta**2 + self.e5 * theta**4 + 1)
+        )
+        tmp11 = (
+            (2 * self.e4 * theta + 4 * self.e5 * theta**3)
+            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
+            * np.tanh(1 / theta)
+        )
+        tmp12 = (self.e4 * theta**2 + self.e5 * theta**4 + 1) ** 2
+        tmp2 = tmp11 / tmp12
+        with np.errstate(over="ignore"):
+            tmp21 = self.e1 + self.e2 * theta**2 + self.e3 * theta**4
+            tmp22 = (
+                (self.e4 * theta**2 + self.e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
+            )
+            tmp23 = tmp21 / tmp22
+            tmp3 = np.where(theta < 0.0025, 0, tmp23)
+        return tmp1 - tmp2 - tmp3
 
 
 def get_gdsmfb_parameters():
     """Get the GDSMFB parameters."""
     # zeta = 0
-    p_zeta0 = {}
-    p_zeta0["omega"] = 1
-    p_zeta0["b1"] = 0.3436902
-    p_zeta0["b2"] = 7.82159531356
-    p_zeta0["b3"] = 0.300483986662
-    p_zeta0["b4"] = 15.8443467125
-    p_zeta0["b5"] = get_b5(p_zeta0["omega"], p_zeta0["b3"])
-    p_zeta0["c1"] = 0.8759442
-    p_zeta0["c2"] = -0.230130843551
-    p_zeta0["d1"] = 0.72700876
-    p_zeta0["d2"] = 2.38264734144
-    p_zeta0["d3"] = 0.30221237251
-    p_zeta0["d4"] = 4.39347718395
-    p_zeta0["d5"] = 0.729951339845
-    p_zeta0["e1"] = 0.25388214
-    p_zeta0["e2"] = 0.815795138599
-    p_zeta0["e3"] = 0.0646844410481
-    p_zeta0["e4"] = 15.0984620477
-    p_zeta0["e5"] = 0.230761357474
-    p0 = Parameters(p_zeta0)
+    p0 = Parameters()
+    p0.omega = 1
+    p0.b1 = 0.3436902
+    p0.b2 = 7.82159531356
+    p0.b3 = 0.300483986662
+    p0.b4 = 15.8443467125
+    p0.c1 = 0.8759442
+    p0.c2 = -0.230130843551
+    p0.d1 = 0.72700876
+    p0.d2 = 2.38264734144
+    p0.d3 = 0.30221237251
+    p0.d4 = 4.39347718395
+    p0.d5 = 0.729951339845
+    p0.e1 = 0.25388214
+    p0.e2 = 0.815795138599
+    p0.e3 = 0.0646844410481
+    p0.e4 = 15.0984620477
+    p0.e5 = 0.230761357474
 
     # zeta = 1
-    p_zeta1 = {}
-    p_zeta1["omega"] = 2 ** (1 / 3)
-    p_zeta1["b1"] = 0.84987704
-    p_zeta1["b2"] = 3.04033012073
-    p_zeta1["b3"] = 0.0775730131248
-    p_zeta1["b4"] = 7.57703592489
-    p_zeta1["b5"] = get_b5(p_zeta1["omega"], p_zeta1["b3"])
-    p_zeta1["c1"] = 0.91126873
-    p_zeta1["c2"] = -0.0307957123308
-    p_zeta1["d1"] = 1.48658718
-    p_zeta1["d2"] = 4.92684905511
-    p_zeta1["d3"] = 0.0849387225179
-    p_zeta1["d4"] = 8.3269821188
-    p_zeta1["d5"] = 0.218864952126
-    p_zeta1["e1"] = 0.27454097
-    p_zeta1["e2"] = 0.400994856555
-    p_zeta1["e3"] = 2.88773194962
-    p_zeta1["e4"] = 6.33499237092
-    p_zeta1["e5"] = 24.823008753
-    p1 = Parameters(p_zeta1)
+    p1 = Parameters()
+    p1.omega = 2 ** (1 / 3)
+    p1.b1 = 0.84987704
+    p1.b2 = 3.04033012073
+    p1.b3 = 0.0775730131248
+    p1.b4 = 7.57703592489
+    p1.c1 = 0.91126873
+    p1.c2 = -0.0307957123308
+    p1.d1 = 1.48658718
+    p1.d2 = 4.92684905511
+    p1.d3 = 0.0849387225179
+    p1.d4 = 8.3269821188
+    p1.d5 = 0.218864952126
+    p1.e1 = 0.27454097
+    p1.e2 = 0.400994856555
+    p1.e3 = 2.88773194962
+    p1.e4 = 6.33499237092
+    p1.e5 = 24.823008753
 
     # spin interpolation
-    p_spin = {}
+    p2 = Parameters()
     # Sign of parameters is different as in the supp. mat.
-    p_spin["h1"] = 3.18747258
-    p_spin["h2"] = 7.74662802
-    p_spin["lambda1"] = 1.85909536
-    p_spin["lambda2"] = 0
-    p2 = Parameters(p_spin)
+    p2.h1 = 3.18747258
+    p2.h2 = 7.74662802
+    p2.lambda1 = 1.85909536
+    p2.lambda2 = 0
 
     return p0, p1, p2
 
 
-def get_a(theta):
-    """Get a."""
-    tmp1 = 0.610887 * np.tanh(1 / theta)
-    tmp2 = 0.75 + 3.04363 * theta**2 - 0.09227 * theta**3 + 1.7035 * theta**4
-    tmp3 = 1 + 8.31051 * theta**2 + 5.1105 * theta**4
-    return tmp1 * tmp2 / tmp3
-
-
-def get_dadtheta(theta):
-    """Get da / dtheta."""
-    tmp1 = -0.00884515668249876 * (20.442 * theta**3 + 16.62102 * theta)
-    tmp2 = 1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75
-    tmp3 = np.tanh(1 / theta) / (0.614944209200157 * theta**4 + theta**2 + 0.12032955859508) ** 2
-    denom = 5.1105 * theta**4 + 8.31051 * theta**2 + 1
-    tmp4 = (
-        0.610887
-        * (6.814 * theta**3 - 0.27681 * theta**2 + 6.08726 * theta)
-        * np.tanh(1 / theta)
-        / denom
-    )
-    with np.errstate(over="ignore"):
-        tmp41 = -0.610887 * (1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75)
-        tmp42 = denom * theta**2 * np.cosh(1 / theta) ** 2
-        tmp43 = tmp41 / tmp42
-        tmp5 = np.where(theta < 0.0025, 0, tmp43)
-    return tmp1 * tmp2 * tmp3 + tmp4 + tmp5
-
-
-def get_b(theta, b1, b2, b3, b4, b5):
-    """Get b."""
-    tmp1 = np.tanh(1 / np.sqrt(theta)) * (b1 + b2 * theta**2 + b3 * theta**4)
-    tmp2 = 1 + b4 * theta**2 + b5 * theta**4
-    return tmp1 / tmp2
-
-
-def get_dbdtheta(theta, b1, b2, b3, b4, b5):
-    """Get db / dtheta."""
-    tmp1 = (
-        (2 * b2 * theta + 4 * b3 * theta**3)
-        * np.tanh(1 / np.sqrt(theta))
-        / (b4 * theta**2 + b5 * theta**4 + 1)
-    )
-    tmp11 = (
-        (2 * b4 * theta + 4 * b5 * theta**3)
-        * (b1 + b2 * theta**2 + b3 * theta**4)
-        * np.tanh(1 / np.sqrt(theta))
-    )
-    tmp12 = (b4 * theta**2 + b5 * theta**4 + 1) ** 2
-    tmp2 = tmp11 / tmp12
-    with np.errstate(over="ignore"):
-        tmp21 = b1 + b2 * theta**2 + b3 * theta**4
-        tmp22 = (
-            2
-            * (b4 * theta**2 + b5 * theta**4 + 1)
-            * theta ** (3 / 2)
-            * np.cosh(1 / np.sqrt(theta)) ** 2
-        )
-        tmp23 = tmp21 / tmp22
-        tmp3 = np.where(theta < 0.001, 0, tmp23)
-    return tmp1 - tmp2 - tmp3
-
-
-def get_c(theta, c1, c2, e1, e2, e3, e4, e5):
-    """Get c."""
-    thres = 1e-6
-    e = get_e(theta, e1, e2, e3, e4, e5)
-    return np.where(theta > thres, (c1 + c2 * np.exp(-1 / theta)) * e, c1 * e)
-
-
-def get_dcdtheta(theta, c1, c2, e1, e2, e3, e4, e5):
-    """Get dc / dtheta."""
-    e = get_e(theta, e1, e2, e3, e4, e5)
-    tmp1 = c2 * e * np.exp(-1 / theta) / theta**2
-    tmp2 = c1 + c2 * np.exp(-1 / theta)
-    tmp3 = (
-        (2 * e2 * theta + 4 * e3 * theta**3)
-        * np.tanh(1 / theta)
-        / (e4 * theta**2 + e5 * theta**4 + 1)
-    )
-    tmp31 = (
-        (2 * e4 * theta + 4 * e5 * theta**3)
-        * (e1 + e2 * theta**2 + e3 * theta**4)
-        * np.tanh(1 / theta)
-    )
-    tmp32 = (e4 * theta**2 + e5 * theta**4 + 1) ** 2
-    tmp4 = tmp31 / tmp32
-    with np.errstate(over="ignore"):
-        tmp41 = e1 + e2 * theta**2 + e3 * theta**4
-        tmp42 = (e4 * theta**2 + e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
-        tmp43 = tmp41 / tmp42
-        tmp5 = np.where(theta < 0.0025, 0, tmp43)
-    return tmp1 + tmp2 * (tmp3 - tmp4 - tmp5)
-
-
-def get_d(theta, d1, d2, d3, d4, d5):
-    """Get d."""
-    tmp1 = np.tanh(1 / np.sqrt(theta)) * (d1 + d2 * theta**2 + d3 * theta**4)
-    tmp2 = 1 + d4 * theta**2 + d5 * theta**4
-    return tmp1 / tmp2
-
-
-def get_dddtheta(theta, d1, d2, d3, d4, d5):
-    """Get dd / dtheta."""
-    tmp1 = (
-        (2 * d2 * theta + 4 * d3 * theta**3)
-        * np.tanh(1 / np.sqrt(theta))
-        / (d4 * theta**2 + d5 * theta**4 + 1)
-    )
-    tmp11 = (
-        (2 * d4 * theta + 4 * d5 * theta**3)
-        * (d1 + d2 * theta**2 + d3 * theta**4)
-        * np.tanh(1 / np.sqrt(theta))
-    )
-    tmp12 = (d4 * theta**2 + d5 * theta**4 + 1) ** 2
-    tmp2 = tmp11 / tmp12
-    with np.errstate(over="ignore"):
-        tmp21 = d1 + d2 * theta**2 + d3 * theta**4
-        tmp22 = (
-            2
-            * (d4 * theta**2 + d5 * theta**4 + 1)
-            * theta ** (3 / 2)
-            * np.cosh(1 / np.sqrt(theta)) ** 2
-        )
-        tmp23 = tmp21 / tmp22
-        tmp3 = np.where(theta < 0.001, 0, tmp23)
-    return tmp1 - tmp2 - tmp3
-
-
-def get_e(theta, e1, e2, e3, e4, e5):
-    """Get e."""
-    return (
-        np.tanh(1 / theta)
-        * (e1 + e2 * theta**2 + e3 * theta**4)
-        / (1 + e4 * theta**2 + e5 * theta**4)
-    )
-
-
-def get_dedtheta(theta, e1, e2, e3, e4, e5):
-    """Get de / dtheta."""
-    tmp1 = (
-        (2 * e2 * theta + 4 * e3 * theta**3)
-        * np.tanh(1 / theta)
-        / (e4 * theta**2 + e5 * theta**4 + 1)
-    )
-    tmp11 = (
-        (2 * e4 * theta + 4 * e5 * theta**3)
-        * (e1 + e2 * theta**2 + e3 * theta**4)
-        * np.tanh(1 / theta)
-    )
-    tmp12 = (e4 * theta**2 + e5 * theta**4 + 1) ** 2
-    tmp2 = tmp11 / tmp12
-    with np.errstate(over="ignore"):
-        tmp21 = e1 + e2 * theta**2 + e3 * theta**4
-        tmp22 = (e4 * theta**2 + e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
-        tmp23 = tmp21 / tmp22
-        tmp3 = np.where(theta < 0.0025, 0, tmp23)
-    return tmp1 - tmp2 - tmp3
-
-
-def get_fxc_zeta_params(rs, omega, a, b, c, d, e):
-    """Get fxc_zeta with explict parameters."""
-    return -1 / rs * (omega * a + np.sqrt(rs) * b + rs * c) / (1 + np.sqrt(rs) * d + rs * e)
-
-
-def get_dfxc_zeta_paramsdtheta(
-    rs, omega, a, b, c, d, e, dadtheta, dbdtheta, dcdtheta, dddtheta, dedtheta
-):
-    """Get dfxc_zeta / dtheta using explict parameters."""
-    tmp1 = (-np.sqrt(rs) * dddtheta - rs * dedtheta) * (-omega * a - b * np.sqrt(rs) - c * rs)
-    tmp2 = (d * np.sqrt(rs) + e * rs + 1) ** 2 * rs
-    tmp3 = tmp1 / tmp2
-    tmp4 = -omega * dadtheta - np.sqrt(rs) * dbdtheta - rs * dcdtheta
-    tmp5 = (d * np.sqrt(rs) + e * rs + 1) * rs
-    tmp6 = tmp4 / tmp5
-    return tmp3 + tmp6
-
-
 def get_fxc_zeta(rs, theta, p):
     """Get fxc_zeta using a parameters object."""
-    a = get_a(theta)
-    b = get_b(theta, p.b1, p.b2, p.b3, p.b4, p.b5)
-    e = get_e(theta, p.e1, p.e2, p.e3, p.e4, p.e5)
-    c = get_c(theta, p.c1, p.c2, p.e1, p.e2, p.e3, p.e4, p.e5)
-    d = get_d(theta, p.d1, p.d2, p.d3, p.d4, p.d5)
-    return get_fxc_zeta_params(rs, p.omega, a, b, c, d, e)
+    return (
+        -1
+        / rs
+        * (p.omega * p.a(theta) + np.sqrt(rs) * p.b(theta) + rs * p.c(theta))
+        / (1 + np.sqrt(rs) * p.d(theta) + rs * p.e(theta))
+    )
 
 
 def get_dfxc_zetadtheta(rs, theta, p):
     """Get dfxc / dtheta."""
-    a = get_a(theta)
-    b = get_b(theta, p.b1, p.b2, p.b3, p.b4, p.b5)
-    e = get_e(theta, p.e1, p.e2, p.e3, p.e4, p.e5)
-    c = get_c(theta, p.c1, p.c2, p.e1, p.e2, p.e3, p.e4, p.e5)
-    d = get_d(theta, p.d1, p.d2, p.d3, p.d4, p.d5)
-    dadt = get_dadtheta(theta)
-    dbdt = get_dbdtheta(theta, p.b1, p.b2, p.b3, p.b4, p.b5)
-    dcdt = get_dcdtheta(theta, p.c1, p.c2, p.e1, p.e2, p.e3, p.e4, p.e5)
-    dddt = get_dddtheta(theta, p.d1, p.d2, p.d3, p.d4, p.d5)
-    dedt = get_dedtheta(theta, p.e1, p.e2, p.e3, p.e4, p.e5)
-    return get_dfxc_zeta_paramsdtheta(rs, p.omega, a, b, c, d, e, dadt, dbdt, dcdt, dddt, dedt)
+    tmp1 = (-np.sqrt(rs) * p.dddtheta(theta) - rs * p.dedtheta(theta)) * (
+        -p.omega * p.a(theta) - p.b(theta) * np.sqrt(rs) - p.c(theta) * rs
+    )
+    tmp2 = (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1) ** 2 * rs
+    tmp3 = tmp1 / tmp2
+    tmp4 = -p.omega * p.dadtheta(theta) - np.sqrt(rs) * p.dbdtheta(theta) - rs * p.dcdtheta(theta)
+    tmp5 = (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1) * rs
+    tmp6 = tmp4 / tmp5
+    return tmp3 + tmp6
 
 
 def get_theta0(theta, zeta):
@@ -372,12 +332,9 @@ def get_dfxc_zeta_paramsdrs(rs, omega, a, b, c, d, e):
 
 def get_dfxc_zetadrs(rs, theta, p):
     """Get dfxc / drs utilizing a parameters object."""
-    a = get_a(theta)
-    b = get_b(theta, p.b1, p.b2, p.b3, p.b4, p.b5)
-    e = get_e(theta, p.e1, p.e2, p.e3, p.e4, p.e5)
-    c = get_c(theta, p.c1, p.c2, p.e1, p.e2, p.e3, p.e4, p.e5)
-    d = get_d(theta, p.d1, p.d2, p.d3, p.d4, p.d5)
-    return get_dfxc_zeta_paramsdrs(rs, p.omega, a, b, c, d, e)
+    return get_dfxc_zeta_paramsdrs(
+        rs, p.omega, p.a(theta), p.b(theta), p.c(theta), p.d(theta), p.e(theta)
+    )
 
 
 def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
