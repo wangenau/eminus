@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""GDSMFB exchange-correlation functional.
+"""GDSMFB LDA exchange-correlation.
 
-Author: S. Schwalbe
-Date: 12.12.2024
+Reference: Phys. Rev. Lett. 119, 135001.
 """
 
 import numpy as np
@@ -12,8 +11,7 @@ import numpy as np
 class Parameters:
     """Parameters class.
 
-    Holds parameters of exchange-correlation
-    functionals.
+    Holds parameters of exchange-correlation functionals.
     Saving same space through attribute access.
     """
 
@@ -76,7 +74,7 @@ def get_gdsmfb_parameters():
 
     # spin interpolation
     p_spin = {}
-    # SS: sign of parameters is different as in the supp. mat.
+    # Sign of parameters is different as in the supp. mat.
     p_spin["h1"] = 3.18747258
     p_spin["h2"] = 7.74662802
     p_spin["lambda1"] = 1.85909536
@@ -88,7 +86,7 @@ def get_gdsmfb_parameters():
 
 def get_a(theta):
     """Get a."""
-    tmp1 = 0.610887 * np.tanh(1.0 / theta)
+    tmp1 = 0.610887 * np.tanh(1 / theta)
     tmp2 = 0.75 + 3.04363 * theta**2 - 0.09227 * theta**3 + 1.7035 * theta**4
     tmp3 = 1 + 8.31051 * theta**2 + 5.1105 * theta**4
     return tmp1 * tmp2 / tmp3
@@ -98,19 +96,19 @@ def get_dadtheta(theta):
     """Get da / dtheta."""
     tmp1 = -0.00884515668249876 * (20.442 * theta**3 + 16.62102 * theta)
     tmp2 = 1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75
-    tmp3 = np.tanh(1.0 / theta) / (0.614944209200157 * theta**4 + theta**2 + 0.12032955859508) ** 2
+    tmp3 = np.tanh(1 / theta) / (0.614944209200157 * theta**4 + theta**2 + 0.12032955859508) ** 2
     denom = 5.1105 * theta**4 + 8.31051 * theta**2 + 1
     tmp4 = (
         0.610887
         * (6.814 * theta**3 - 0.27681 * theta**2 + 6.08726 * theta)
-        * np.tanh(1.0 / theta)
+        * np.tanh(1 / theta)
         / denom
     )
     with np.errstate(over="ignore"):
         tmp41 = -0.610887 * (1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75)
-        tmp42 = denom * theta**2 * np.cosh(1.0 / theta) ** 2
+        tmp42 = denom * theta**2 * np.cosh(1 / theta) ** 2
         tmp43 = tmp41 / tmp42
-        tmp5 = np.where((theta < 0.0025), 0, tmp43)
+        tmp5 = np.where(theta < 0.0025, 0, tmp43)
     return tmp1 * tmp2 * tmp3 + tmp4 + tmp5
 
 
@@ -332,14 +330,14 @@ def get_phi_T(rs, T, zeta, p):
 
 def get_fxc0(rs, theta, zeta):
     """Get fxc0."""
-    p0, p1, p2 = get_gdsmfb_parameters()
+    p0, _, _ = get_gdsmfb_parameters()
     theta0 = get_theta0(theta, zeta)
     return get_fxc_zeta(rs, theta0, p0)
 
 
 def get_fxc1(rs, theta, zeta):
     """Get fxc1."""
-    p0, p1, p2 = get_gdsmfb_parameters()
+    _, p1, _ = get_gdsmfb_parameters()
     theta1 = get_theta1(theta, zeta)
     return get_fxc_zeta(rs, theta1, p1)
 
@@ -395,7 +393,7 @@ def get_dtheta0dzeta(theta, zeta):
 
 def get_theta_nup(T, nup):
     """Get theta from T and nup."""
-    k_fermi_sq = (6.0 * np.pi * np.pi * nup) ** (2.0 / 3.0)
+    k_fermi_sq = (6 * np.pi**2 * nup) ** (2 / 3)
     T_fermi = 1 / 2 * k_fermi_sq
     return T / T_fermi
 
@@ -508,7 +506,7 @@ def get_rs_from_n(n):
 
 def get_n(rs):
     """Get n from rs."""
-    return 1.0 / (4.0 * np.pi / 3.0 * rs**3.0)
+    return 1 / (4 * np.pi / 3 * rs**3)
 
 
 def get_dhdrs(rs, p):
@@ -550,7 +548,7 @@ def get_zeta_rs(rs, nup, ndn):
 
 def get_dzetadrs(rs, nup, ndn):
     """Get dzeta / drs."""
-    return 4.0 * np.pi * (-ndn + nup) * rs**2.0
+    return 4 * np.pi * (-ndn + nup) * rs**2
 
 
 def get_dphidrs(rs, theta, zeta, p):
@@ -560,7 +558,7 @@ def get_dphidrs(rs, theta, zeta, p):
     tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
     tmp2 = (zeta + 1) ** alpha * np.log(zeta + 1)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * (2**alpha) * np.log(2)
+    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
     dalphadrs = get_dalphadrs(rs, theta, p)
     return (duv - udv) * dalphadrs / vv
@@ -574,7 +572,7 @@ def get_dphidtheta(rs, theta, zeta, p):
     tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
     tmp2 = (zeta + 1) ** alpha * np.log(zeta + 1)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * (2**alpha) * np.log(2)
+    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
     dalphadtheta = get_dalphadtheta(rs, theta, p)
     return (duv - udv) * dalphadtheta / vv
@@ -583,7 +581,6 @@ def get_dphidtheta(rs, theta, zeta, p):
 def get_dphidzeta(rs, theta, zeta, p):
     """Get dphi / dzeta."""
     alpha = get_alpha(rs, theta, p)
-    # Handle divisions by zero
     with np.errstate(divide="ignore", invalid="ignore"):
         tmp1 = alpha * (zeta + 1) ** alpha / (zeta + 1)
         tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
@@ -611,8 +608,8 @@ def get_theta(T, n, zeta):
     Returns:
         Reduced temperature.
     """
-    n_up = 0.5 * n * (1.0 + zeta)
-    k_fermi_sq = (6.0 * np.pi * np.pi * n_up) ** (2.0 / 3.0)
+    n_up = 0.5 * n * (1 + zeta)
+    k_fermi_sq = (6 * np.pi**2 * n_up) ** (2 / 3)
     T_fermi = 1 / 2 * k_fermi_sq
     return T / T_fermi
 
@@ -637,8 +634,8 @@ def get_T(theta, n, zeta):
     Returns:
         Reduced temperature.
     """
-    n_up = 0.50 * n * (1.0 + zeta)
-    k_fermi_sq = (6.0 * np.pi * np.pi * n_up) ** (2.0 / 3.0)
+    n_up = 0.5 * n * (1 + zeta)
+    k_fermi_sq = (6 * np.pi**2 * n_up) ** (2 / 3)
     T_fermi = 1 / 2 * k_fermi_sq
     return theta * T_fermi
 
@@ -689,16 +686,8 @@ def lda_xc_gdsmfb_spin(n, zeta, **kwargs):
     rs = get_rs_from_n(n)
     theta = get_theta(T, n, zeta)
 
-    # parameters
     p0, p1, p2 = get_gdsmfb_parameters()
-
-    # fxc
     fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
-
-    # dfxcdnup
     dfxcdnup = get_dfxcdnup_params(nup, ndn, T, p0, p1, p2)
-
-    # dfxcdndn
     dfxcdndn = get_dfxcdndn_params(nup, ndn, T, p0, p1, p2)
-
     return fxc, np.array([dfxcdnup, dfxcdndn]) * n + fxc, None
