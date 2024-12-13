@@ -146,7 +146,6 @@ def get_dlamdrs(
 ) -> NDArray[floating]: ...
 def get_dlamdtheta(
     rs: NDArray[floating],
-    theta: NDArray[floating],
     p: Parameters,
 ) -> NDArray[floating]: ...
 def get_dphidrs(
@@ -256,11 +255,13 @@ def get_theta1(
 ) -> NDArray[floating]: ...
 def lda_xc_gdsmfb(
     n: NDArray[floating],
+    T: float = ...,
     **kwargs: Any,
 ) -> tuple[NDArray[floating], NDArray[floating], None]: ...
 def lda_xc_gdsmfb_spin(
     n: NDArray[floating],
     zeta: NDArray[floating],
+    T: float = ...,
     **kwargs: Any,
 ) -> tuple[NDArray[floating], NDArray[floating], None]: ...
 

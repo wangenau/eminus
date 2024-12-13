@@ -640,7 +640,7 @@ def get_T(theta, n, zeta):
     return theta * T_fermi
 
 
-def lda_xc_gdsmfb(n, **kwargs):
+def lda_xc_gdsmfb(n, T=0, **kwargs):
     """GDSMFB exchange-correlation functional (spin-paired).
 
     Exchange and correlation connot be separated.
@@ -651,18 +651,18 @@ def lda_xc_gdsmfb(n, **kwargs):
         n: Real-space electronic density.
 
     Keyword Args:
+        T: Temperature in Hartree.
         **kwargs: Throwaway arguments.
-        T: Temperature.
 
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
     kwargs["zeta"] = np.zeros_like(n)
-    exc, vxc, _ = lda_xc_gdsmfb_spin(n, **kwargs)
+    exc, vxc, _ = lda_xc_gdsmfb_spin(n, T=T, **kwargs)
     return exc, np.array([vxc[0]]), None
 
 
-def lda_xc_gdsmfb_spin(n, zeta, **kwargs):
+def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     """GDSMFB exchange-correlation functional (spin-polarized).
 
     Exchange and correlation connot be separated.
@@ -674,13 +674,12 @@ def lda_xc_gdsmfb_spin(n, zeta, **kwargs):
         zeta: Relative spin polarization.
 
     Keyword Args:
+        T: Temperature in Hartree.
         **kwargs: Throwaway arguments.
-        T: Temperature.
 
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
-    T = kwargs.get("T")
     ndn = n * (1 - zeta) / 2
     nup = n * (1 + zeta) / 2
     rs = get_rs_from_n(n)
