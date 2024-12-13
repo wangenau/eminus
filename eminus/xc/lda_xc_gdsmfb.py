@@ -330,14 +330,14 @@ def get_fxc(rs, theta, zeta, p0, p1, p2):
     return fxc0 + (fxc1 - fxc0) * phi
 
 
-def get_dzetadnup(nup, ndn):
-    """Get dzeta / dnup."""
-    return -(-ndn + nup) / (ndn + nup) ** 2 + 1 / (ndn + nup)
+def get_dzetadn_up(n_up, n_dw):
+    """Get dzeta / dn_up."""
+    return -(-n_dw + n_up) / (n_dw + n_up) ** 2 + 1 / (n_dw + n_up)
 
 
-def get_dzetadndn(nup, ndn):
-    """Get dzeta / dndn."""
-    return -(-ndn + nup) / (ndn + nup) ** 2 - 1 / (ndn + nup)
+def get_dzetadn_dw(n_up, n_dw):
+    """Get dzeta / dn_dw."""
+    return -(-n_dw + n_up) / (n_dw + n_up) ** 2 - 1 / (n_dw + n_up)
 
 
 def get_drsdn(n):
@@ -355,9 +355,9 @@ def get_dtheta0dzeta(theta, zeta):
     return 2 * theta / (3 * (zeta + 1) ** (1 / 3))
 
 
-def get_dthetadnup(T, nup):
-    """Get dtheta / dnup."""
-    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * nup ** (5 / 3))
+def get_dthetadn_up(T, n_up):
+    """Get dtheta / dn_up."""
+    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * n_up ** (5 / 3))
 
 
 def get_dfxc_zeta_paramsdrs(rs, omega, a, b, c, d, e):
@@ -380,10 +380,10 @@ def get_dfxc_zetadrs(rs, theta, p):
     return get_dfxc_zeta_paramsdrs(rs, p.omega, a, b, c, d, e)
 
 
-def get_dfxcdnup_params(nup, ndn, T, p0, p1, p2):
-    """Get dfxc / dnup."""
-    n = nup + ndn
-    zeta = (nup - ndn) / n
+def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
+    """Get dfxc / dn_up."""
+    n = n_up + n_dw
+    zeta = (n_up - n_dw) / n
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
     theta0 = get_theta0(theta, zeta)
@@ -392,8 +392,8 @@ def get_dfxcdnup_params(nup, ndn, T, p0, p1, p2):
     fxc1 = get_fxc_zeta(rs, theta1, p1)
     phi = get_phi(rs, theta0, zeta, p2)
 
-    dndnup = 1
-    dzetadnup = get_dzetadnup(nup, ndn)
+    dndn_up = 1
+    dzetadn_up = get_dzetadn_up(n_up, n_dw)
     drsdn = get_drsdn(n)
     dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
     dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
@@ -402,7 +402,7 @@ def get_dfxcdnup_params(nup, ndn, T, p0, p1, p2):
     dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
 
     dtheta0dtheta = get_dtheta0dtheta(zeta)
-    dthetadnup = get_dthetadnup(T, nup)
+    dthetadn_up = get_dthetadn_up(T, n_up)
     dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
     dtheta1dtheta0 = 2 ** (-2 / 3)
 
@@ -410,18 +410,20 @@ def get_dfxcdnup_params(nup, ndn, T, p0, p1, p2):
     dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
     dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
 
-    dfxc0a = dfxc0drs * dndnup * drsdn
-    dfxc1a = dfxc1drs * dndnup * drsdn
-    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadnup + dtheta0dzeta * dzetadnup)
-    dfxc1b = dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadnup + dtheta0dzeta * dzetadnup)
-    dphi = dndnup * dphidrs * drsdn + dphidtheta * dthetadnup + dphidzeta * dzetadnup
+    dfxc0a = dfxc0drs * dndn_up * drsdn
+    dfxc1a = dfxc1drs * dndn_up * drsdn
+    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    dfxc1b = (
+        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    )
+    dphi = dndn_up * dphidrs * drsdn + dphidtheta * dthetadn_up + dphidzeta * dzetadn_up
     return dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
 
-def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
-    """Get dfxc / dndn."""
-    n = nup + ndn
-    zeta = (nup - ndn) / n
+def get_dfxcdn_dw_params(n_up, n_dw, T, p0, p1, p2):
+    """Get dfxc / dn_dw."""
+    n = n_up + n_dw
+    zeta = (n_up - n_dw) / n
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
     theta0 = get_theta0(theta, zeta)
@@ -430,8 +432,8 @@ def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
     fxc1 = get_fxc_zeta(rs, theta1, p1)
     phi = get_phi(rs, theta0, zeta, p2)
 
-    dndndn = 1
-    dzetadndn = get_dzetadndn(nup, ndn)
+    dndn_dw = 1
+    dzetadn_dw = get_dzetadn_dw(n_up, n_dw)
     drsdn = get_drsdn(n)
     dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
     dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
@@ -440,7 +442,7 @@ def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
     dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
 
     dtheta0dtheta = get_dtheta0dtheta(zeta)
-    dthetadndn = 0
+    dthetadn_dw = 0
     dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
     dtheta1dtheta0 = 2 ** (-2 / 3)
 
@@ -448,11 +450,13 @@ def get_dfxcdndn_params(nup, ndn, T, p0, p1, p2):
     dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
     dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
 
-    dfxc0a = dfxc0drs * dndndn * drsdn
-    dfxc1a = dfxc1drs * dndndn * drsdn
-    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadndn + dtheta0dzeta * dzetadndn)
-    dfxc1b = dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadndn + dtheta0dzeta * dzetadndn)
-    dphi = dndndn * dphidrs * drsdn + dphidtheta * dthetadndn + dphidzeta * dzetadndn
+    dfxc0a = dfxc0drs * dndn_dw * drsdn
+    dfxc1a = dfxc1drs * dndn_dw * drsdn
+    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_dw + dtheta0dzeta * dzetadn_dw)
+    dfxc1b = (
+        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_dw + dtheta0dzeta * dzetadn_dw)
+    )
+    dphi = dndn_dw * dphidrs * drsdn + dphidtheta * dthetadn_dw + dphidzeta * dzetadn_dw
     return dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
 
@@ -580,7 +584,7 @@ def get_T(theta, n, zeta):
 def lda_xc_gdsmfb(n, T=0, **kwargs):
     """GDSMFB exchange-correlation functional (spin-paired).
 
-    Exchange and correlation connot be separated.
+    Exchange and correlation cannot be separated.
 
     Reference: Phys. Rev. Lett. 119, 135001.
 
@@ -594,7 +598,6 @@ def lda_xc_gdsmfb(n, T=0, **kwargs):
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
-    kwargs["zeta"] = np.zeros_like(n)
     exc, vxc, _ = lda_xc_gdsmfb_spin(n, T=T, **kwargs)
     return exc, np.array([vxc[0]]), None
 
@@ -602,7 +605,7 @@ def lda_xc_gdsmfb(n, T=0, **kwargs):
 def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     """GDSMFB exchange-correlation functional (spin-polarized).
 
-    Exchange and correlation connot be separated.
+    Exchange and correlation cannot be separated.
 
     Reference: Phys. Rev. Lett. 119, 135001.
 
@@ -617,13 +620,13 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
-    ndn = n * (1 - zeta) / 2
-    nup = n * (1 + zeta) / 2
+    n_dw = (1 - zeta) * n / 2
+    n_up = (1 + zeta) * n / 2
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
 
     p0, p1, p2 = get_gdsmfb_parameters()
     fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
-    dfxcdnup = get_dfxcdnup_params(nup, ndn, T, p0, p1, p2)
-    dfxcdndn = get_dfxcdndn_params(nup, ndn, T, p0, p1, p2)
-    return fxc, np.array([dfxcdnup, dfxcdndn]) * n + fxc, None
+    dfxcdn_up = get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2)
+    dfxcdn_dw = get_dfxcdn_dw_params(n_up, n_dw, T, p0, p1, p2)
+    return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None

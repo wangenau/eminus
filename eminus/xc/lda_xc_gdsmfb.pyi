@@ -119,17 +119,17 @@ def get_dfxc_zetadtheta(
     theta: NDArray[floating],
     p: Parameters,
 ) -> NDArray[floating]: ...
-def get_dfxcdndn_params(
-    nup: NDArray[floating],
-    ndn: NDArray[floating],
+def get_dfxcdn_dw_params(
+    n_up: NDArray[floating],
+    n_dw: NDArray[floating],
     T: float,
     p0: Parameters,
     p1: Parameters,
     p2: Parameters,
 ) -> NDArray[floating]: ...
-def get_dfxcdnup_params(
-    nup: NDArray[floating],
-    ndn: NDArray[floating],
+def get_dfxcdn_up_params(
+    n_up: NDArray[floating],
+    n_dw: NDArray[floating],
     T: float,
     p0: Parameters,
     p1: Parameters,
@@ -172,17 +172,17 @@ def get_dtheta0dzeta(
     theta: NDArray[floating],
     zeta: NDArray[floating],
 ) -> NDArray[floating]: ...
-def get_dthetadnup(
+def get_dthetadn_up(
     T: float,
-    nup: NDArray[floating],
+    n_up: NDArray[floating],
 ) -> NDArray[floating]: ...
-def get_dzetadndn(
-    nup: NDArray[floating],
-    ndn: NDArray[floating],
+def get_dzetadn_dw(
+    n_up: NDArray[floating],
+    n_dw: NDArray[floating],
 ) -> NDArray[floating]: ...
-def get_dzetadnup(
-    nup: NDArray[floating],
-    ndn: NDArray[floating],
+def get_dzetadn_up(
+    n_up: NDArray[floating],
+    n_dw: NDArray[floating],
 ) -> NDArray[floating]: ...
 def get_e(
     theta: NDArray[floating],
