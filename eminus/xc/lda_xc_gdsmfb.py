@@ -337,7 +337,7 @@ def get_dfxc_zetadrs(rs, theta, p):
     )
 
 
-def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
+def get_dfxcdn(n_up, n_dw, T, p0, p1, p2):
     """Get dfxc / dn_up."""
     n = n_up + n_dw
     zeta = (n_up - n_dw) / n
@@ -351,6 +351,9 @@ def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
 
     dndn_up = 1
     dzetadn_up = get_dzetadn_up(n_up, n_dw)
+    dndn_dw = 1
+    dzetadn_dw = get_dzetadn_dw(n_up, n_dw)
+
     drsdn = get_drsdn(n)
     dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
     dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
@@ -360,6 +363,7 @@ def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
 
     dtheta0dtheta = get_dtheta0dtheta(zeta)
     dthetadn_up = get_dthetadn_up(T, n_up)
+    dthetadn_dw = 0
     dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
     dtheta1dtheta0 = 2 ** (-2 / 3)
 
@@ -374,38 +378,7 @@ def get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2):
         dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
     )
     dphi = dndn_up * dphidrs * drsdn + dphidtheta * dthetadn_up + dphidzeta * dzetadn_up
-    return dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
-
-
-def get_dfxcdn_dw_params(n_up, n_dw, T, p0, p1, p2):
-    """Get dfxc / dn_dw."""
-    n = n_up + n_dw
-    zeta = (n_up - n_dw) / n
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
-    theta = get_theta(T, n, zeta)
-    theta0 = get_theta0(theta, zeta)
-    fxc0 = get_fxc_zeta(rs, theta0, p0)
-    theta1 = get_theta1(theta, zeta)
-    fxc1 = get_fxc_zeta(rs, theta1, p1)
-    phi = get_phi(rs, theta0, zeta, p2)
-
-    dndn_dw = 1
-    dzetadn_dw = get_dzetadn_dw(n_up, n_dw)
-    drsdn = get_drsdn(n)
-    dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
-    dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
-
-    dfxc0dtheta0 = get_dfxc_zetadtheta(rs, theta0, p0)
-    dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
-
-    dtheta0dtheta = get_dtheta0dtheta(zeta)
-    dthetadn_dw = 0
-    dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
-    dtheta1dtheta0 = 2 ** (-2 / 3)
-
-    dphidrs = get_dphidrs(rs, theta0, zeta, p2)
-    dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
-    dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
+    dfxcdn_up = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
     dfxc0a = dfxc0drs * dndn_dw * drsdn
     dfxc1a = dfxc1drs * dndn_dw * drsdn
@@ -414,7 +387,8 @@ def get_dfxcdn_dw_params(n_up, n_dw, T, p0, p1, p2):
         dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_dw + dtheta0dzeta * dzetadn_dw)
     )
     dphi = dndn_dw * dphidrs * drsdn + dphidtheta * dthetadn_dw + dphidzeta * dzetadn_dw
-    return dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+    dfxcdn_dw = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+    return dfxcdn_up, dfxcdn_dw
 
 
 def get_dhdrs(rs, p):
@@ -487,54 +461,38 @@ def get_dphidzeta(rs, theta, zeta, p):
 
 
 def get_theta(T, n, zeta):
-    """Reduced temperature.
+    """Calculate the reduced temperature.
 
-    Calculates the reduced temperature
-
-    theta = T / T_Fermi
-
-    Reference: Phys. Rev. Lett. 119, 135001.
+    Reference: Phys. Rev. Lett. 112, 076403.
 
     Args:
         T: Absolute temperature in Hartree.
         n: Real-space electronic temperature.
         zeta: Relative spin polarization.
 
-    Keyword Args:
-        **kwargs: Throwaway arguments.
-
     Returns:
         Reduced temperature.
     """
-    n_up = 0.5 * n * (1 + zeta)
-    k_fermi_sq = (6 * np.pi**2 * n_up) ** (2 / 3)
-    T_fermi = 1 / 2 * k_fermi_sq
+    n_up = (1 + zeta) * n / 2
+    T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
     return T / T_fermi
 
 
 def get_T(theta, n, zeta):
-    """Absolute temperature.
+    """Calculate the absolute temperature.
 
-    Calculates the absolute temperature
-
-    T = theta * T_Fermi
-
-    Reference: Phys. Rev. Lett. 119, 135001.
+    Reference: Phys. Rev. Lett. 112, 076403.
 
     Args:
         theta: reduced temperature.
         n: Real-space electronic temperature.
         zeta: Relative spin polarization.
 
-    Keyword Args:
-        **kwargs: Throwaway arguments.
-
     Returns:
-        Reduced temperature.
+        Absolute temperature.
     """
-    n_up = 0.5 * n * (1 + zeta)
-    k_fermi_sq = (6 * np.pi**2 * n_up) ** (2 / 3)
-    T_fermi = 1 / 2 * k_fermi_sq
+    n_up = (1 + zeta) * n / 2
+    T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
     return theta * T_fermi
 
 
@@ -584,6 +542,5 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
 
     p0, p1, p2 = get_gdsmfb_parameters()
     fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
-    dfxcdn_up = get_dfxcdn_up_params(n_up, n_dw, T, p0, p1, p2)
-    dfxcdn_dw = get_dfxcdn_dw_params(n_up, n_dw, T, p0, p1, p2)
+    dfxcdn_up, dfxcdn_dw = get_dfxcdn(n_up, n_dw, T, p0, p1, p2)
     return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None

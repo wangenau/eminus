@@ -22,6 +22,7 @@ excludelist = {
 }
 functionals -= excludelist
 
+
 @pytest.mark.parametrize("xc", functionals)
 @pytest.mark.parametrize("Nspin", [1, 2])
 def test_get_exc(xc, Nspin):
