@@ -17,15 +17,6 @@ from eminus.xc.lda_xc_gdsmfb import (
 )
 
 
-def get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
-    """Get fxc utilizing nup, ndn, and T."""
-    n = nup + ndn
-    zeta = (nup - ndn) / n
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
-    theta = get_theta(T, n, zeta)
-    return get_fxc(rs, theta, zeta, p0, p1, p2)
-
-
 def grad(idx, eps=1e-4, shift=False):
     """Central difference gradient to perform finte difference calculations.
 
@@ -98,6 +89,14 @@ def test_derivative_lda_xc_gdsmfb_spin():
 
     # fxc
     fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
+
+    def get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
+        """Get fxc utilizing nup, ndn, and T."""
+        n = nup + ndn
+        zeta = (nup - ndn) / n
+        rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+        theta = get_theta(T, n, zeta)
+        return get_fxc(rs, theta, zeta, p0, p1, p2)
 
     @grad(idx=0, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
     def get_fd1(nup, ndn, T, p0, p1, p2):
