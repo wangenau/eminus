@@ -49,37 +49,43 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
-    n_dw = (1 - zeta) * n / 2
+    # Calculate properties
     n_up = (1 + zeta) * n / 2
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
     theta = get_theta(T, n, zeta)
-
-    p0, p1, p2 = get_gdsmfb_parameters()
     theta0 = get_theta0(theta, zeta)
     theta1 = get_theta1(theta, zeta)
+
+    # Calculate fxc
+    p0, p1, p2 = get_gdsmfb_parameters()
     fxc0 = get_fxc_zeta(rs, theta0, p0)
     fxc1 = get_fxc_zeta(rs, theta1, p1)
     phi = get_phi(rs, theta0, zeta, p2)
     fxc = fxc0 + (fxc1 - fxc0) * phi
 
+    # Generic derivatives
     drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
-    dzetadn_up = -(-n_dw + n_up) / (n_dw + n_up) ** 2 + 1 / (n_dw + n_up)
-    dzetadn_dw = -(-n_dw + n_up) / (n_dw + n_up) ** 2 - 1 / (n_dw + n_up)
+    dzetadn_up = -zeta / n ** 2 + 1 / n
+    dzetadn_dw = -zeta / n ** 2 - 1 / n
 
+    # fxc derivatives
     dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
     dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
     dfxc0dtheta0 = get_dfxc_zetadtheta(rs, theta0, p0)
     dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
 
+    # phi derivatives
     dphidrs = get_dphidrs(rs, theta0, zeta, p2)
     dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
     dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
 
+    # theta derivatives
     dthetadn_up = get_dthetadn_up(T, n_up)
     dtheta0dtheta = get_dtheta0dtheta(zeta)
     dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
     dtheta1dtheta0 = 2 ** (-2 / 3)
 
+    # Calculate dfxcdn_up (using dndn_up=1)
     dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
     dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
     dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
@@ -89,17 +95,14 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     dphi = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
     dfxcdn_up = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
-    dfxc0a = dfxc0drs * drsdn  # * dndn_dw = 1
-    dfxc1a = dfxc1drs * drsdn  # * dndn_dw = 1
-    dfxc0b = (
-        dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
-    )  # + dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw = 0
-    dfxc1b = (
-        dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
-    )  # + dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw = 0
-    dphi = (
-        dphidzeta * dzetadn_dw + dphidrs * drsdn
-    )  # * dndn_dw = 1 and + dphidtheta * dthetadn_dw = 0
+    # Calculate dfxcdn_dw (using dndn_dw=1 and dthetadn_dw=0)
+    # dfxc0a and dfxc1a are identical for dfxcdn_up and dfxcdn_dw
+    dfxc0b = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
+    # dfxc0b += dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw
+    dfxc1b = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
+    # dfxc1b += dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw
+    dphi = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
+    # dfxc1b += dphidtheta * dthetadn_dw
     dfxcdn_dw = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
 
     return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None
