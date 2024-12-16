@@ -65,8 +65,8 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
 
     # Generic derivatives
     drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
-    dzetadn_up = -zeta / n ** 2 + 1 / n
-    dzetadn_dw = -zeta / n ** 2 - 1 / n
+    dzetadn_up = -zeta / n**2 + 1 / n
+    dzetadn_dw = -zeta / n**2 - 1 / n
 
     # fxc derivatives
     dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
@@ -88,22 +88,32 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     # Calculate dfxcdn_up (using dndn_up=1)
     dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
     dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
-    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
-    dfxc1b = (
+    dfxc0b_up = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    dfxc1b_up = (
         dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
     )
-    dphi = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
-    dfxcdn_up = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+    dphi_up = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
+    dfxcdn_up = (
+        dfxc0a
+        + dfxc0b_up
+        - phi * (dfxc0a + dfxc0b_up - dfxc1a - dfxc1b_up)
+        - (fxc0 - fxc1) * dphi_up
+    )
 
     # Calculate dfxcdn_dw (using dndn_dw=1 and dthetadn_dw=0)
     # dfxc0a and dfxc1a are identical for dfxcdn_up and dfxcdn_dw
-    dfxc0b = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
+    dfxc0b_dw = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
     # dfxc0b += dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw
-    dfxc1b = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
+    dfxc1b_dw = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
     # dfxc1b += dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw
-    dphi = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
+    dphi_dw = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
     # dfxc1b += dphidtheta * dthetadn_dw
-    dfxcdn_dw = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+    dfxcdn_dw = (
+        dfxc0a
+        + dfxc0b_dw
+        - phi * (dfxc0a + dfxc0b_dw - dfxc1a - dfxc1b_dw)
+        - (fxc0 - fxc1) * dphi_dw
+    )
 
     return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None
 
@@ -450,9 +460,9 @@ def get_dphidrs(rs, theta, zeta, p):
     thres = 1e-15
     alpha = get_alpha(rs, theta, p)
     tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
-    tmp2 = (zeta + 1) ** alpha * np.log(zeta + 1)
+    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * 2**alpha * np.log(2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
     dalphadrs = get_dalphadrs(rs, theta, p)
     return (duv - udv) * dalphadrs / vv
@@ -464,31 +474,33 @@ def get_dphidtheta(rs, theta, zeta, p):
     alpha = get_alpha(rs, theta, p)
     dalphadtheta = get_dalphadtheta(rs, theta, p)
     tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
-    tmp2 = (zeta + 1) ** alpha * np.log(zeta + 1)
+    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (zeta + 1) ** alpha - 2) * 2**alpha * np.log(2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
     dalphadtheta = get_dalphadtheta(rs, theta, p)
     return (duv - udv) * dalphadtheta / vv
 
 
-def get_dphidzeta(rs, theta, zeta, p):  # TODO
+def get_dphidzeta(rs, theta, zeta, p):
     """Calculate dphi / dzeta."""
     alpha = get_alpha(rs, theta, p)
     with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = alpha * (zeta + 1) ** alpha / (zeta + 1)
+        tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
         tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
-        dphidzeta = (tmp1 - tmp2) / (2**alpha - 2)
+    dphidzeta = (tmp1 - tmp2) / (2**alpha - 2)
     return np.nan_to_num(dphidzeta, nan=0, posinf=0, neginf=0)
 
 
 ### theta
 
 
-def get_theta(T, n, zeta):  # TODO: Why n_up?
+def get_theta(T, n, zeta):
     """Calculate the reduced temperature theta.
 
     Reference: Phys. Rev. Lett. 119, 135001.
+
+    But only mentioned in the arXiv version: https://arxiv.org/abs/1703.08074
     """
     n_up = (1 + zeta) * n / 2
     T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
@@ -496,6 +508,7 @@ def get_theta(T, n, zeta):  # TODO: Why n_up?
 
 
 def get_dthetadn_up(T, n_up):
+    """Calculate dtheta / dn_up."""
     return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * n_up ** (5 / 3))
 
 
@@ -506,12 +519,12 @@ def get_theta0(theta, zeta):
 
 def get_dtheta0dtheta(zeta):
     """Calculate dtheta0 / dtheta."""
-    return (zeta + 1) ** (2 / 3)
+    return (1 + zeta) ** (2 / 3)
 
 
 def get_dtheta0dzeta(theta, zeta):
     """Calculate dtheta0 / dzeta."""
-    return 2 * theta / (3 * (zeta + 1) ** (1 / 3))
+    return 2 * theta / (3 * (1 + zeta) ** (1 / 3))
 
 
 def get_theta1(theta, zeta):
