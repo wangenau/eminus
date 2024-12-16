@@ -10,12 +10,12 @@ import pytest
 from numpy.testing import assert_allclose
 
 from eminus.xc.lda_xc_gdsmfb import (
+    get_fxc_zeta,
+    get_gdsmfb_parameters,
+    get_phi,
+    get_theta,
     get_theta0,
     get_theta1,
-    get_fxc_zeta,
-    get_phi,
-    get_gdsmfb_parameters,
-    get_theta,
     lda_xc_gdsmfb_spin,
 )
 

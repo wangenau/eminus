@@ -331,7 +331,7 @@ def get_gdsmfb_parameters():
     return p0, p1, p2
 
 
-### fxc_zeta
+### fxc_zeta ###
 
 
 def get_fxc_zeta(rs, theta, p):
@@ -356,11 +356,10 @@ def get_dfxc_zetadrs(rs, theta, p):
         -p.a(theta) * p.omega - p.b(theta) * np.sqrt(rs) - p.c(theta) * rs
     )
     tmp3 = rs * (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1) ** 2
-    tmp4 = tmp2 / tmp3
     tmp5 = (-p.a(theta) * p.omega - p.b(theta) * np.sqrt(rs) - p.c(theta) * rs) / (
         rs**2 * (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1)
     )
-    return tmp1 + tmp4 - tmp5
+    return tmp1 + tmp2 / tmp3 - tmp5
 
 
 def get_dfxc_zetadtheta(rs, theta, p):
@@ -369,14 +368,12 @@ def get_dfxc_zetadtheta(rs, theta, p):
         -p.omega * p.a(theta) - p.b(theta) * np.sqrt(rs) - p.c(theta) * rs
     )
     tmp2 = (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1) ** 2 * rs
-    tmp3 = tmp1 / tmp2
     tmp4 = -p.omega * p.dadtheta(theta) - np.sqrt(rs) * p.dbdtheta(theta) - rs * p.dcdtheta(theta)
     tmp5 = (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1) * rs
-    tmp6 = tmp4 / tmp5
-    return tmp3 + tmp6
+    return tmp1 / tmp2 + tmp4 / tmp5
 
 
-## alpha
+### alpha ###
 
 
 def get_alpha(rs, theta, p):
@@ -406,7 +403,7 @@ def get_dalphadtheta(rs, theta, p):
     return -(-dlamdtheta * theta - lam) * h * np.exp(-theta * lam)
 
 
-### h
+### h ###
 
 
 def get_h(rs, p):
@@ -422,7 +419,7 @@ def get_dhdrs(rs, p):
     return p.h1 / (p.h2 * rs + 1) - p.h2 * (p.h1 * rs + 2 / 3) / (p.h2 * rs + 1) ** 2
 
 
-### lambda
+### lambda ###
 
 
 def get_lambda(rs, theta, p):
@@ -443,7 +440,7 @@ def get_dlambdadtheta(rs, p):
     return p.lambda2 * np.sqrt(rs)
 
 
-### phi
+### phi ###
 
 
 def get_phi(rs, theta, zeta, p):
@@ -494,7 +491,7 @@ def get_dphidzeta(rs, theta, zeta, p):
     return (tmp1 - tmp2) / (2**alpha - 2)
 
 
-### theta
+### theta ###
 
 
 def get_theta(T, n, zeta):
