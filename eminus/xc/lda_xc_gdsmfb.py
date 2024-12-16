@@ -55,8 +55,53 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     theta = get_theta(T, n, zeta)
 
     p0, p1, p2 = get_gdsmfb_parameters()
-    fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
-    dfxcdn_up, dfxcdn_dw = get_dfxcdn(n_up, n_dw, T, p0, p1, p2)
+    theta0 = get_theta0(theta, zeta)
+    theta1 = get_theta1(theta, zeta)
+    fxc0 = get_fxc_zeta(rs, theta0, p0)
+    fxc1 = get_fxc_zeta(rs, theta1, p1)
+    phi = get_phi(rs, theta0, zeta, p2)
+    fxc = fxc0 + (fxc1 - fxc0) * phi
+
+    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
+    dzetadn_up = -(-n_dw + n_up) / (n_dw + n_up) ** 2 + 1 / (n_dw + n_up)
+    dzetadn_dw = -(-n_dw + n_up) / (n_dw + n_up) ** 2 - 1 / (n_dw + n_up)
+
+    dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
+    dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
+    dfxc0dtheta0 = get_dfxc_zetadtheta(rs, theta0, p0)
+    dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
+
+    dphidrs = get_dphidrs(rs, theta0, zeta, p2)
+    dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
+    dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
+
+    dthetadn_up = get_dthetadn_up(T, n_up)
+    dtheta0dtheta = get_dtheta0dtheta(zeta)
+    dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
+    dtheta1dtheta0 = 2 ** (-2 / 3)
+
+    dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
+    dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
+    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    dfxc1b = (
+        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    )
+    dphi = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
+    dfxcdn_up = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+
+    dfxc0a = dfxc0drs * drsdn  # * dndn_dw = 1
+    dfxc1a = dfxc1drs * drsdn  # * dndn_dw = 1
+    dfxc0b = (
+        dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
+    )  # + dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw = 0
+    dfxc1b = (
+        dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
+    )  # + dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw = 0
+    dphi = (
+        dphidzeta * dzetadn_dw + dphidrs * drsdn
+    )  # * dndn_dw = 1 and + dphidtheta * dthetadn_dw = 0
+    dfxcdn_dw = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
+
     return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None
 
 
@@ -83,7 +128,7 @@ class Parameters:
         tmp2 = 1 + self.b4 * theta**2 + self.b5 * theta**4
         return tmp1 / tmp2
 
-    def c(self, theta):
+    def c(self, theta):  # TODO
         thres = 1e-6
         return np.where(
             theta > thres,
@@ -123,7 +168,7 @@ class Parameters:
             tmp5 = np.where(theta < 0.0025, 0, tmp43)
         return tmp1 * tmp2 * tmp3 + tmp4 + tmp5
 
-    def dbdtheta(self, theta):
+    def dbdtheta(self, theta):  # TODO
         tmp1 = (
             (2 * self.b2 * theta + 4 * self.b3 * theta**3)
             * np.tanh(1 / np.sqrt(theta))
@@ -148,7 +193,7 @@ class Parameters:
             tmp3 = np.where(theta < 0.001, 0, tmp23)
         return tmp1 - tmp2 - tmp3
 
-    def dcdtheta(self, theta):
+    def dcdtheta(self, theta):  # TODO
         tmp1 = self.c2 * self.e(theta) * np.exp(-1 / theta) / theta**2
         tmp2 = self.c1 + self.c2 * np.exp(-1 / theta)
         tmp3 = (
@@ -172,7 +217,7 @@ class Parameters:
             tmp5 = np.where(theta < 0.0025, 0, tmp43)
         return tmp1 + tmp2 * (tmp3 - tmp4 - tmp5)
 
-    def dddtheta(self, theta):
+    def dddtheta(self, theta):  # TODO
         tmp1 = (
             (2 * self.d2 * theta + 4 * self.d3 * theta**3)
             * np.tanh(1 / np.sqrt(theta))
@@ -197,7 +242,7 @@ class Parameters:
             tmp3 = np.where(theta < 0.001, 0, tmp23)
         return tmp1 - tmp2 - tmp3
 
-    def dedtheta(self, theta):
+    def dedtheta(self, theta):  # TODO
         tmp1 = (
             (2 * self.e2 * theta + 4 * self.e3 * theta**3)
             * np.tanh(1 / theta)
@@ -273,77 +318,14 @@ def get_gdsmfb_parameters():
     return p0, p1, p2
 
 
-### fxc
-
-
-def get_fxc(rs, theta, zeta, p0, p1, p2):
-    theta0 = get_theta0(theta, zeta)
-    theta1 = get_theta1(theta, zeta)
-    fxc0 = get_fxc_zeta(rs, theta0, p0)
-    fxc1 = get_fxc_zeta(rs, theta1, p1)
-    phi = get_phi(rs, theta0, zeta, p2)
-    return fxc0 + (fxc1 - fxc0) * phi
-
-
-def get_dfxcdn(n_up, n_dw, T, p0, p1, p2):
-    n = n_up + n_dw
-
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
-    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
-
-    zeta = (n_up - n_dw) / n
-    dzetadn_up = -(-n_dw + n_up) / (n_dw + n_up) ** 2 + 1 / (n_dw + n_up)
-    dzetadn_dw = -(-n_dw + n_up) / (n_dw + n_up) ** 2 - 1 / (n_dw + n_up)
-
-    theta = get_theta(T, n, zeta)
-    theta0 = get_theta0(theta, zeta)
-    fxc0 = get_fxc_zeta(rs, theta0, p0)
-    theta1 = get_theta1(theta, zeta)
-    fxc1 = get_fxc_zeta(rs, theta1, p1)
-    phi = get_phi(rs, theta0, zeta, p2)
-
-    dfxc0drs = get_dfxc_zetadrs(rs, theta, p0)
-    dfxc1drs = get_dfxc_zetadrs(rs, theta, p1)
-
-    dfxc0dtheta0 = get_dfxc_zetadtheta(rs, theta0, p0)
-    dfxc1dtheta1 = get_dfxc_zetadtheta(rs, theta1, p1)
-
-    dtheta0dtheta = get_dtheta0dtheta(zeta)
-    dthetadn_up = get_dthetadn_up(T, n_up)
-    dthetadn_dw = 0
-    dtheta0dzeta = get_dtheta0dzeta(theta0, zeta)
-    dtheta1dtheta0 = 2 ** (-2 / 3)
-
-    dphidrs = get_dphidrs(rs, theta0, zeta, p2)
-    dphidtheta = get_dphidtheta(rs, theta0, zeta, p2)
-    dphidzeta = get_dphidzeta(rs, theta0, zeta, p2)
-
-    dndn_up = 1
-    dfxc0a = dfxc0drs * dndn_up * drsdn
-    dfxc1a = dfxc1drs * dndn_up * drsdn
-    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
-    dfxc1b = (
-        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
-    )
-    dphi = dndn_up * dphidrs * drsdn + dphidtheta * dthetadn_up + dphidzeta * dzetadn_up
-    dfxcdn_up = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
-
-    dndn_dw = 1
-    dfxc0a = dfxc0drs * dndn_dw * drsdn
-    dfxc1a = dfxc1drs * dndn_dw * drsdn
-    dfxc0b = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_dw + dtheta0dzeta * dzetadn_dw)
-    dfxc1b = (
-        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_dw + dtheta0dzeta * dzetadn_dw)
-    )
-    dphi = dndn_dw * dphidrs * drsdn + dphidtheta * dthetadn_dw + dphidzeta * dzetadn_dw
-    dfxcdn_dw = dfxc0a + dfxc0b - phi * (dfxc0a + dfxc0b - dfxc1a - dfxc1b) - (fxc0 - fxc1) * dphi
-    return dfxcdn_up, dfxcdn_dw
-
-
 ### fxc_zeta
 
 
 def get_fxc_zeta(rs, theta, p):
+    """Calculate the Pade formula f_xc^zeta.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     return (
         -1
         / rs
@@ -352,7 +334,8 @@ def get_fxc_zeta(rs, theta, p):
     )
 
 
-def get_dfxc_zetadrs(rs, theta, p):  # TODO
+def get_dfxc_zetadrs(rs, theta, p):
+    """Calculate dfxc_zeta / drs."""
     tmp1 = (-p.b(theta) / (2 * np.sqrt(rs)) - p.c(theta)) / (
         rs * (p.d(theta) * np.sqrt(rs) + p.e(theta) * rs + 1)
     )
@@ -368,6 +351,7 @@ def get_dfxc_zetadrs(rs, theta, p):  # TODO
 
 
 def get_dfxc_zetadtheta(rs, theta, p):
+    """Calculate dfxc_zeta / dzeta."""
     tmp1 = (-np.sqrt(rs) * p.dddtheta(theta) - rs * p.dedtheta(theta)) * (
         -p.omega * p.a(theta) - p.b(theta) * np.sqrt(rs) - p.c(theta) * rs
     )
@@ -383,12 +367,17 @@ def get_dfxc_zetadtheta(rs, theta, p):
 
 
 def get_alpha(rs, theta, p):
+    """Calculate alpha.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     h = get_h(rs, p)
     lam = get_lambda(rs, theta, p)
     return 2 - h * np.exp(-theta * lam)
 
 
 def get_dalphadrs(rs, theta, p):
+    """Calculate dalpha / drs."""
     h = get_h(rs, p)
     lam = get_lambda(rs, theta, p)
     dhdrs = get_dhdrs(rs, p)
@@ -397,6 +386,7 @@ def get_dalphadrs(rs, theta, p):
 
 
 def get_dalphadtheta(rs, theta, p):
+    """Calculate dalpha / dtheta."""
     h = get_h(rs, p)
     lam = get_lambda(rs, theta, p)
     dlamdtheta = get_dlambdadtheta(rs, p)
@@ -407,10 +397,15 @@ def get_dalphadtheta(rs, theta, p):
 
 
 def get_h(rs, p):
+    """Calculate h.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     return (2 / 3 + p.h1 * rs) / (1 + p.h2 * rs)
 
 
 def get_dhdrs(rs, p):
+    """Calculate dh / drs."""
     return p.h1 / (p.h2 * rs + 1) - p.h2 * (p.h1 * rs + 2 / 3) / (p.h2 * rs + 1) ** 2
 
 
@@ -418,14 +413,20 @@ def get_dhdrs(rs, p):
 
 
 def get_lambda(rs, theta, p):
+    """Calculate lambda.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     return p.lambda1 + p.lambda2 * theta * rs ** (1 / 2)
 
 
 def get_dlambdadrs(rs, theta, p):
+    """Calculate dlambda / drs."""
     return p.lambda2 * theta / (2 * np.sqrt(rs))
 
 
 def get_dlambdadtheta(rs, p):
+    """Calculate dlambda / dtheta."""
     return p.lambda2 * np.sqrt(rs)
 
 
@@ -433,11 +434,16 @@ def get_dlambdadtheta(rs, p):
 
 
 def get_phi(rs, theta, zeta, p):
+    """Calculate the interpolation function phi.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     alpha = get_alpha(rs, theta, p)
     return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
 
 
 def get_dphidrs(rs, theta, zeta, p):
+    """Calculate dphi / drs."""
     thres = 1e-15
     alpha = get_alpha(rs, theta, p)
     tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
@@ -450,6 +456,7 @@ def get_dphidrs(rs, theta, zeta, p):
 
 
 def get_dphidtheta(rs, theta, zeta, p):
+    """Calculate dphi / dtheta."""
     thres = 1e-15
     alpha = get_alpha(rs, theta, p)
     dalphadtheta = get_dalphadtheta(rs, theta, p)
@@ -462,7 +469,8 @@ def get_dphidtheta(rs, theta, zeta, p):
     return (duv - udv) * dalphadtheta / vv
 
 
-def get_dphidzeta(rs, theta, zeta, p):
+def get_dphidzeta(rs, theta, zeta, p):  # TODO
+    """Calculate dphi / dzeta."""
     alpha = get_alpha(rs, theta, p)
     with np.errstate(divide="ignore", invalid="ignore"):
         tmp1 = alpha * (zeta + 1) ** alpha / (zeta + 1)
@@ -474,18 +482,10 @@ def get_dphidzeta(rs, theta, zeta, p):
 ### theta
 
 
-def get_theta(T, n, zeta):
-    """Calculate the reduced temperature.
+def get_theta(T, n, zeta):  # TODO: Why n_up?
+    """Calculate the reduced temperature theta.
 
-    Reference: Phys. Rev. Lett. 112, 076403.
-
-    Args:
-        T: Absolute temperature in Hartree.
-        n: Real-space electronic temperature.
-        zeta: Relative spin polarization.
-
-    Returns:
-        Reduced temperature.
+    Reference: Phys. Rev. Lett. 119, 135001.
     """
     n_up = (1 + zeta) * n / 2
     T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
@@ -497,17 +497,24 @@ def get_dthetadn_up(T, n_up):
 
 
 def get_theta0(theta, zeta):
+    """Calculate theta0."""
     return theta * (1 + zeta) ** (2 / 3)
 
 
 def get_dtheta0dtheta(zeta):
+    """Calculate dtheta0 / dtheta."""
     return (zeta + 1) ** (2 / 3)
 
 
 def get_dtheta0dzeta(theta, zeta):
+    """Calculate dtheta0 / dzeta."""
     return 2 * theta / (3 * (zeta + 1) ** (1 / 3))
 
 
 def get_theta1(theta, zeta):
+    """Calculate theta1.
+
+    Not explicitly mentioned, but used as in Eq. (5).
+    """
     theta0 = get_theta0(theta, zeta)
     return theta0 * 2 ** (-2 / 3)
