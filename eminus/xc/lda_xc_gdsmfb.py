@@ -457,9 +457,10 @@ def get_phi(rs, theta, zeta, p):
 
 def get_dphidrs(rs, theta, zeta, p):
     """Calculate dphi / drs."""
-    thres = 1e-15
     alpha = get_alpha(rs, theta, p)
-    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
+    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
     tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
@@ -470,10 +471,11 @@ def get_dphidrs(rs, theta, zeta, p):
 
 def get_dphidtheta(rs, theta, zeta, p):
     """Calculate dphi / dtheta."""
-    thres = 1e-15
     alpha = get_alpha(rs, theta, p)
     dalphadtheta = get_dalphadtheta(rs, theta, p)
-    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta + thres)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
+    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
     tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
@@ -485,11 +487,11 @@ def get_dphidtheta(rs, theta, zeta, p):
 def get_dphidzeta(rs, theta, zeta, p):
     """Calculate dphi / dzeta."""
     alpha = get_alpha(rs, theta, p)
+    tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
     with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
         tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
-    dphidzeta = (tmp1 - tmp2) / (2**alpha - 2)
-    return np.nan_to_num(dphidzeta, nan=0, posinf=0, neginf=0)
+    tmp2 = np.nan_to_num(tmp2, nan=0, posinf=0, neginf=0)
+    return (tmp1 - tmp2) / (2**alpha - 2)
 
 
 ### theta
