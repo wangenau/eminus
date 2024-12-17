@@ -29,6 +29,7 @@ def lda_xc_gdsmfb(n, T=0, **kwargs):
     Returns:
         GDSMFB exchange-correlation energy density and potential.
     """
+    kwargs["zeta"] = np.zeros_like(n)
     exc, vxc, _ = lda_xc_gdsmfb_spin(n, T=T, **kwargs)
     return exc, np.array([vxc[0]]), None
 
