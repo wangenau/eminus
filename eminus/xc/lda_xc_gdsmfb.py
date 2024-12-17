@@ -157,17 +157,25 @@ class Coefficients:
     @property
     def a(self):
         """Calculate a."""
-        return (
-            self.a0
-            * np.tanh(1 / self.theta)
-            * pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
-        )
+        with np.errstate(divide="ignore"):
+            u = self.a0 * np.tanh(
+                1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0
+            )
+        return u * pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
 
     @property
     def dadtheta(self):
         """Calculate da / dtheta."""
-        u = self.a0 * np.tanh(1 / self.theta)
-        du = self.a0 * (1 - np.tanh(1 / self.theta) ** 2) * (-1 / self.theta**2)
+        with np.errstate(divide="ignore"):
+            u = self.a0 * np.tanh(
+                1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0
+            )
+        du = np.divide(
+            u**2 / self.a0 - self.a0,
+            self.theta**2,
+            out=np.zeros_like(self.theta),
+            where=(self.theta > 0),
+        )
         v = pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         dv = dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         return du * v + u * dv
@@ -175,15 +183,21 @@ class Coefficients:
     @property
     def b(self):
         """Calculate b."""
-        return np.tanh(1 / np.sqrt(self.theta)) * pade(
-            self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5
-        )
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        return u * pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
 
     @property
     def dbdtheta(self):
         """Calculate db / dtheta."""
-        u = np.tanh(1 / np.sqrt(self.theta))
-        du = (1 - u**2) * (-1 / (2 * self.theta * np.sqrt(self.theta)))
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        du = np.divide(
+            u**2 - 1,
+            2 * self.theta * np.sqrt(self.theta),
+            out=np.zeros_like(self.theta),
+            where=(self.theta > 0),
+        )
         v = pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         dv = dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         return du * v + u * dv
@@ -191,13 +205,17 @@ class Coefficients:
     @property
     def c(self):
         """Calculate c."""
-        return (self.c1 + self.c2 * np.exp(-1 / self.theta)) * self.e
+        exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        return (self.c1 + self.c2 * exp) * self.e
 
     @property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
-        u = self.c1 + self.c2 * np.exp(-1 / self.theta)
-        du = self.c2 / (np.exp(1 / self.theta) * self.theta**2)
+        exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        u = self.c1 + self.c2 * exp
+        du = np.divide(
+            self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
+        )
         v = self.e
         dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
@@ -205,15 +223,21 @@ class Coefficients:
     @property
     def d(self):
         """Calculate d."""
-        return np.tanh(1 / np.sqrt(self.theta)) * pade(
-            self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5
-        )
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        return u * pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
 
     @property
     def dddtheta(self):
         """Calculate dd / dtheta."""
-        u = np.tanh(1 / np.sqrt(self.theta))
-        du = (1 - u**2) * (-1 / (2 * self.theta * np.sqrt(self.theta)))
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        du = np.divide(
+            u**2 - 1,
+            2 * self.theta * np.sqrt(self.theta),
+            out=np.zeros_like(self.theta),
+            where=(self.theta > 0),
+        )
         v = pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         dv = dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         return du * v + u * dv
@@ -221,15 +245,18 @@ class Coefficients:
     @property
     def e(self):
         """Calculate e."""
-        return np.tanh(1 / self.theta) * pade(
-            self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5
-        )
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
+        return u * pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
 
     @property
     def dedtheta(self):
         """Calculate de / dtheta."""
-        u = np.tanh(1 / self.theta)
-        du = (1 - u**2) * (-1 / self.theta**2)
+        with np.errstate(divide="ignore"):
+            u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
+        du = np.divide(
+            u**2 - 1, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
+        )
         v = pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
@@ -430,9 +457,7 @@ def _get_phi(rs, theta, zeta, phi_params):
 def _get_dphidrs(rs, theta, zeta, phi_params):
     """Calculate dphi / drs."""
     alpha = _get_alpha(rs, theta, phi_params)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
-    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
+    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta, out=np.zeros_like(zeta), where=(1 - zeta > 0))
     tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
@@ -445,9 +470,7 @@ def _get_dphidtheta(rs, theta, zeta, phi_params):
     """Calculate dphi / dtheta."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
-    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
+    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta, out=np.zeros_like(zeta), where=(1 - zeta > 0))
     tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
@@ -460,9 +483,9 @@ def _get_dphidzeta(rs, theta, zeta, phi_params):
     """Calculate dphi / dzeta."""
     alpha = _get_alpha(rs, theta, phi_params)
     tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
-    tmp2 = np.nan_to_num(tmp2, nan=0, posinf=0, neginf=0)
+    tmp2 = np.divide(
+        alpha * (1 - zeta) ** alpha, 1 - zeta, out=np.zeros_like(zeta), where=(1 - zeta > 0)
+    )
     return (tmp1 - tmp2) / (2**alpha - 2)
 
 
