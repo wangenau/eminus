@@ -96,22 +96,3 @@ class PhiParams:
     h2: float = ...
     lambda1: float = ...
     lambda2: float = ...
-
-def pade(
-    x: NDArray[floating],
-    n1: float,
-    n2: float,
-    n3: float,
-    n4: float,
-    d1: float,
-    d2: float,
-) -> NDArray[floating]: ...
-def dpade(
-    x: NDArray[floating],
-    n1: float,
-    n2: float,
-    n3: float,
-    n4: float,
-    d1: float,
-    d2: float,
-) -> NDArray[floating]: ...

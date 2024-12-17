@@ -97,7 +97,7 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     dtheta0dzeta = _get_dtheta0dzeta(theta0, zeta)
     dtheta1dtheta0 = _get_dtheta1dtheta0()
 
-    # Calculate dfxcdn_up (using dndn_up=1)
+    # Calculate vxc_up (using dndn_up=1)
     dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
     dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
     dfxc0b_up = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
@@ -105,29 +105,29 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
         dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
     )
     dphi_up = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
-    dfxcdn_up = (
+    vxc_up = (
         dfxc0a
         + dfxc0b_up
         - phi * (dfxc0a + dfxc0b_up - dfxc1a - dfxc1b_up)
         - (fxc0 - fxc1) * dphi_up
     )
 
-    # Calculate dfxcdn_dw (using dndn_dw=1 and dthetadn_dw=0)
-    # dfxc0a and dfxc1a are identical for dfxcdn_up and dfxcdn_dw
+    # Calculate vxc_dw (using dndn_dw=1 and dthetadn_dw=0)
+    # dfxc0a and dfxc1a are identical for vxc_up and vxc_dw
     dfxc0b_dw = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
     # dfxc0b += dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw
     dfxc1b_dw = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
     # dfxc1b += dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw
     dphi_dw = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
     # dfxc1b += dphidtheta * dthetadn_dw
-    dfxcdn_dw = (
+    vxc_dw = (
         dfxc0a
         + dfxc0b_dw
         - phi * (dfxc0a + dfxc0b_dw - dfxc1a - dfxc1b_dw)
         - (fxc0 - fxc1) * dphi_dw
     )
 
-    return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None
+    return fxc, fxc + np.array([vxc_up, vxc_dw]) * n, None
 
 
 # ### Temperature dependent coefficients ###
@@ -161,7 +161,7 @@ class Coefficients:
             u = self.a0 * np.tanh(
                 1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0
             )
-        return u * pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        return u * _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
 
     @property
     def dadtheta(self):
@@ -176,8 +176,8 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=(self.theta > 0),
         )
-        v = pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
-        dv = dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        v = _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         return du * v + u * dv
 
     @property
@@ -185,7 +185,7 @@ class Coefficients:
         """Calculate b."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
-        return u * pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        return u * _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
 
     @property
     def dbdtheta(self):
@@ -198,8 +198,8 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=(self.theta > 0),
         )
-        v = pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
-        dv = dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        v = _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         return du * v + u * dv
 
     @property
@@ -217,7 +217,7 @@ class Coefficients:
             self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
         )
         v = self.e
-        dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
 
     @property
@@ -225,7 +225,7 @@ class Coefficients:
         """Calculate d."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
-        return u * pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        return u * _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
 
     @property
     def dddtheta(self):
@@ -238,8 +238,8 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=(self.theta > 0),
         )
-        v = pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
-        dv = dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        v = _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         return du * v + u * dv
 
     @property
@@ -247,7 +247,7 @@ class Coefficients:
         """Calculate e."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
-        return u * pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        return u * _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
 
     @property
     def dedtheta(self):
@@ -257,8 +257,8 @@ class Coefficients:
         du = np.divide(
             u**2 - 1, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
         )
-        v = pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
-        dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        v = _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
 
 
@@ -334,7 +334,7 @@ class PhiParams:
 # ### Pade approximation and derivative ###
 
 
-def pade(x, n1, n2, n3, n4, d1, d2):
+def _pade(x, n1, n2, n3, n4, d1, d2):
     """Pade approximation.
 
     Not the general case but as needed for this functional.
@@ -344,7 +344,7 @@ def pade(x, n1, n2, n3, n4, d1, d2):
     return num / denom
 
 
-def dpade(x, n1, n2, n3, n4, d1, d2):
+def _dpade(x, n1, n2, n3, n4, d1, d2):
     """Pade approximation derivative."""
     num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
     denom = 1 + d1 * x**2 + d2 * x**4
