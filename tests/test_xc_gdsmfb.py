@@ -10,12 +10,12 @@ import pytest
 from numpy.testing import assert_allclose
 
 from eminus.xc.lda_xc_gdsmfb import (
-    get_fxc_zeta,
-    get_gdsmfb_parameters,
-    get_phi,
-    get_theta,
-    get_theta0,
-    get_theta1,
+    _get_fxc_zeta,
+    _get_gdsmfb_parameters,
+    _get_phi,
+    _get_theta,
+    _get_theta0,
+    _get_theta1,
     lda_xc_gdsmfb_spin,
 )
 
@@ -84,43 +84,43 @@ def test_derivative_lda_xc_gdsmfb_spin():
     fxc, vxc, _ = lda_xc_gdsmfb_spin(n, zeta, T=T)
 
     # Get finite difference derivatives.
-    theta = get_theta(T, n, zeta)
+    theta = _get_theta(T, n, zeta)
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     # parameters
-    p0, p1, p2 = get_gdsmfb_parameters()
+    p0, p1, p2 = _get_gdsmfb_parameters()
 
-    def get_fxc(rs, theta, zeta, p0, p1, p2):
-        theta0 = get_theta0(theta, zeta)
-        theta1 = get_theta1(theta, zeta)
-        fxc0 = get_fxc_zeta(rs, theta0, p0)
-        fxc1 = get_fxc_zeta(rs, theta1, p1)
-        phi = get_phi(rs, theta0, zeta, p2)
+    def _get_fxc(rs, theta, zeta, p0, p1, p2):
+        theta0 = _get_theta0(theta, zeta)
+        theta1 = _get_theta1(theta, zeta)
+        fxc0 = _get_fxc_zeta(rs, theta0, p0)
+        fxc1 = _get_fxc_zeta(rs, theta1, p1)
+        phi = _get_phi(rs, theta0, zeta, p2)
         return fxc0 + (fxc1 - fxc0) * phi
 
     # fxc
-    fxc = get_fxc(rs, theta, zeta, p0, p1, p2)
+    fxc = _get_fxc(rs, theta, zeta, p0, p1, p2)
 
-    def get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
+    def _get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
         """Get fxc utilizing nup, ndn, and T."""
         n = nup + ndn
         zeta = (nup - ndn) / n
         rs = (3 / (4 * np.pi * n)) ** (1 / 3)
-        theta = get_theta(T, n, zeta)
-        return get_fxc(rs, theta, zeta, p0, p1, p2)
+        theta = _get_theta(T, n, zeta)
+        return _get_fxc(rs, theta, zeta, p0, p1, p2)
 
     @grad(idx=0, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
-    def get_fd1(nup, ndn, T, p0, p1, p2):
+    def _get_fd1(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dnup."""
-        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
+        return _get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
 
     @grad(idx=1, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
-    def get_fd2(nup, ndn, T, p0, p1, p2):
+    def _get_fd2(nup, ndn, T, p0, p1, p2):
         """Finite difference derivative dfxc / dndn."""
-        return get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
+        return _get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
 
-    fd1 = get_fd1(nup, ndn, T, p0, p1, p2)
-    fd2 = get_fd2(nup, ndn, T, p0, p1, p2)
+    fd1 = _get_fd1(nup, ndn, T, p0, p1, p2)
+    fd2 = _get_fd2(nup, ndn, T, p0, p1, p2)
     vxc_fd = np.array([fd1, fd2]) * n + fxc
 
     assert_allclose(vxc_fd, vxc, rtol=1e-03)
