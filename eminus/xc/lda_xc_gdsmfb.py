@@ -60,12 +60,16 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     theta0 = _get_theta0(theta, zeta)
     theta1 = _get_theta1(theta, zeta)
 
-    # Calculate fxc
+    # Initialize parameters
+    # We need to calculate coefficients for specific theta
+    # Create a coefficients object for each theta with its corresponding parameters
     phi_params = PhiParams()
     zeta0theta = Zeta0Coeffs(theta)
     zeta0theta0 = Zeta0Coeffs(theta0)
     zeta1theta = Zeta1Coeffs(theta)
     zeta1theta1 = Zeta1Coeffs(theta1)
+
+    # Calculate fxc
     fxc0 = _get_fxc_zeta(rs, zeta0theta0)
     fxc1 = _get_fxc_zeta(rs, zeta1theta1)
     phi = _get_phi(rs, theta0, zeta, phi_params)
@@ -131,7 +135,7 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
 
 @dataclasses.dataclass
 class Coefficients:
-    """Coefficient class to calculate temperature dependent coefficients.
+    """Coefficients class to calculate temperature/theta dependent coefficients.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
@@ -236,7 +240,7 @@ class Coefficients:
 
 @dataclasses.dataclass
 class Zeta0Coeffs(Coefficients):
-    """Coefficient class using the parameterization for zeta=0.
+    """Coefficient class using the parameters for zeta=0.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
@@ -262,7 +266,7 @@ class Zeta0Coeffs(Coefficients):
 
 @dataclasses.dataclass
 class Zeta1Coeffs(Coefficients):
-    """Coefficient class using the parameterization for zeta=1.
+    """Coefficient class using the parameters for zeta=1.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
@@ -306,7 +310,7 @@ class PhiParams:
 def pade(x, n1, n2, n3, n4, d1, d2):
     """Pade approximation.
 
-    Not the general case, but as often used in this functional.
+    Not the general case but as needed for this functional.
     """
     num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
     denom = 1 + d1 * x**2 + d2 * x**4
@@ -317,11 +321,63 @@ def dpade(x, n1, n2, n3, n4, d1, d2):
     """Pade approximation derivative."""
     num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
     denom = 1 + d1 * x**2 + d2 * x**4
-
     dnum = 2 * n2 * x + 3 * n3 * x**2 + 4 * n4 * x**3
     ddenom = 2 * d1 * x + 4 * d2 * x**3
     # df = (a'b - ab') / b^2
-    return (dnum * denom - num * ddenom) / (denom**2)
+    return (dnum * denom - num * ddenom) / denom**2
+
+
+# ### theta and derivatives ###
+
+
+def _get_theta(T, n, zeta):
+    """Calculate the reduced temperature theta.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    Only mentioned in the arXiv version: https://arxiv.org/abs/1703.08074
+    """
+    n_up = (1 + zeta) * n / 2
+    T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
+    return T / T_fermi
+
+
+def _get_dthetadn_up(T, n_up):
+    """Calculate dtheta / dn_up."""
+    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * n_up ** (5 / 3))
+
+
+def _get_theta0(theta, zeta):
+    """Calculate theta0.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+    return theta * (1 + zeta) ** (2 / 3)
+
+
+def _get_dtheta0dtheta(zeta):
+    """Calculate dtheta0 / dtheta."""
+    return (1 + zeta) ** (2 / 3)
+
+
+def _get_dtheta0dzeta(theta, zeta):
+    """Calculate dtheta0 / dzeta."""
+    return 2 * theta / (3 * (1 + zeta) ** (1 / 3))
+
+
+def _get_theta1(theta, zeta):
+    """Calculate theta1.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+
+    It is not explicitly mentioned but introduced as used in Eq. (5).
+    """
+    theta0 = _get_theta0(theta, zeta)
+    return theta0 * 2 ** (-2 / 3)
+
+
+def _get_dtheta1dtheta0():
+    """Calculate dtheta1 / dtheta0."""
+    return 2 ** (-2 / 3)
 
 
 # ### fxc_zeta and derivatives ###
@@ -332,15 +388,12 @@ def _get_fxc_zeta(rs, p):
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    return (
-        -1
-        / rs
-        * (p.omega * p.a + np.sqrt(rs) * p.b + rs * p.c)
-        / (1 + np.sqrt(rs) * p.d + rs * p.e)
-    )
+    num = p.omega * p.a + np.sqrt(rs) * p.b + rs * p.c
+    denom = 1 + np.sqrt(rs) * p.d + rs * p.e
+    return -1 / rs * num / denom
 
 
-def _get_dfxc_zetadrs(rs, p):
+def _get_dfxc_zetadrs(rs, p):  # TODO
     """Calculate dfxc_zeta / drs."""
     tmp1 = (-p.b / (2 * np.sqrt(rs)) - p.c) / (rs * (p.d * np.sqrt(rs) + p.e * rs + 1))
     tmp2 = (-p.d / (2 * np.sqrt(rs)) - p.e) * (-p.a * p.omega - p.b * np.sqrt(rs) - p.c * rs)
@@ -351,7 +404,7 @@ def _get_dfxc_zetadrs(rs, p):
     return tmp1 + tmp2 / tmp3 - tmp5
 
 
-def _get_dfxc_zetadtheta(rs, p):
+def _get_dfxc_zetadtheta(rs, p):  # TODO
     """Calculate dfxc_zeta / dzeta."""
     tmp1 = (-np.sqrt(rs) * p.dddtheta - rs * p.dedtheta) * (
         -p.omega * p.a - p.b * np.sqrt(rs) - p.c * rs
@@ -360,6 +413,57 @@ def _get_dfxc_zetadtheta(rs, p):
     tmp4 = -p.omega * p.dadtheta - np.sqrt(rs) * p.dbdtheta - rs * p.dcdtheta
     tmp5 = (p.d * np.sqrt(rs) + p.e * rs + 1) * rs
     return tmp1 / tmp2 + tmp4 / tmp5
+
+
+# ### phi and derivatives ###
+
+
+def _get_phi(rs, theta, zeta, phi_params):
+    """Calculate the interpolation function phi.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+    alpha = _get_alpha(rs, theta, phi_params)
+    return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
+
+
+def _get_dphidrs(rs, theta, zeta, phi_params):  # TODO
+    """Calculate dphi / drs."""
+    alpha = _get_alpha(rs, theta, phi_params)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
+    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
+    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
+    duv = (tmp1 + tmp2) * (2**alpha - 2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
+    vv = (2**alpha - 2) ** 2
+    dalphadrs = _get_dalphadrs(rs, theta, phi_params)
+    return (duv - udv) * dalphadrs / vv
+
+
+def _get_dphidtheta(rs, theta, zeta, phi_params):  # TODO
+    """Calculate dphi / dtheta."""
+    alpha = _get_alpha(rs, theta, phi_params)
+    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
+    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
+    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
+    duv = (tmp1 + tmp2) * (2**alpha - 2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
+    vv = (2**alpha - 2) ** 2
+    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
+    return (duv - udv) * dalphadtheta / vv
+
+
+def _get_dphidzeta(rs, theta, zeta, phi_params):  # TODO
+    """Calculate dphi / dzeta."""
+    alpha = _get_alpha(rs, theta, phi_params)
+    tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
+    tmp2 = np.nan_to_num(tmp2, nan=0, posinf=0, neginf=0)
+    return (tmp1 - tmp2) / (2**alpha - 2)
 
 
 # ### alpha and derivatives ###
@@ -371,25 +475,25 @@ def _get_alpha(rs, theta, phi_params):
     Reference: Phys. Rev. Lett. 119, 135001.
     """
     h = _get_h(rs, phi_params)
-    lam = _get_lambda(rs, theta, phi_params)
-    return 2 - h * np.exp(-theta * lam)
+    lamda = _get_lambda(rs, theta, phi_params)
+    return 2 - h * np.exp(-theta * lamda)
 
 
 def _get_dalphadrs(rs, theta, phi_params):
     """Calculate dalpha / drs."""
     h = _get_h(rs, phi_params)
-    lam = _get_lambda(rs, theta, phi_params)
+    lamda = _get_lambda(rs, theta, phi_params)
     dhdrs = _get_dhdrs(rs, phi_params)
-    dlamdrs = _get_dlambdadrs(rs, theta, phi_params)
-    return -dhdrs * np.exp(-theta * lam) + dlamdrs * theta * h * np.exp(-theta * lam)
+    dlambdadrs = _get_dlambdadrs(rs, theta, phi_params)
+    return -dhdrs * np.exp(-theta * lamda) + dlambdadrs * theta * h * np.exp(-theta * lamda)
 
 
 def _get_dalphadtheta(rs, theta, phi_params):
     """Calculate dalpha / dtheta."""
     h = _get_h(rs, phi_params)
-    lam = _get_lambda(rs, theta, phi_params)
-    dlamdtheta = _get_dlambdadtheta(rs, phi_params)
-    return -(-dlamdtheta * theta - lam) * h * np.exp(-theta * lam)
+    lamda = _get_lambda(rs, theta, phi_params)
+    dlambdadtheta = _get_dlambdadtheta(rs, phi_params)
+    return (dlambdadtheta * theta + lamda) * h * np.exp(-theta * lamda)
 
 
 # ### h and derivative ###
@@ -430,108 +534,3 @@ def _get_dlambdadrs(rs, theta, phi_params):
 def _get_dlambdadtheta(rs, phi_params):
     """Calculate dlambda / dtheta."""
     return phi_params.lambda2 * np.sqrt(rs)
-
-
-# ### phi and derivatives ###
-
-
-def _get_phi(rs, theta, zeta, phi_params):
-    """Calculate the interpolation function phi.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-    """
-    alpha = _get_alpha(rs, theta, phi_params)
-    return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
-
-
-def _get_dphidrs(rs, theta, zeta, phi_params):
-    """Calculate dphi / drs."""
-    alpha = _get_alpha(rs, theta, phi_params)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
-    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
-    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
-    duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
-    vv = (2**alpha - 2) ** 2
-    dalphadrs = _get_dalphadrs(rs, theta, phi_params)
-    return (duv - udv) * dalphadrs / vv
-
-
-def _get_dphidtheta(rs, theta, zeta, phi_params):
-    """Calculate dphi / dtheta."""
-    alpha = _get_alpha(rs, theta, phi_params)
-    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
-    tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
-    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
-    duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
-    vv = (2**alpha - 2) ** 2
-    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
-    return (duv - udv) * dalphadtheta / vv
-
-
-def _get_dphidzeta(rs, theta, zeta, phi_params):
-    """Calculate dphi / dzeta."""
-    alpha = _get_alpha(rs, theta, phi_params)
-    tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
-    with np.errstate(divide="ignore", invalid="ignore"):
-        tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)
-    tmp2 = np.nan_to_num(tmp2, nan=0, posinf=0, neginf=0)
-    return (tmp1 - tmp2) / (2**alpha - 2)
-
-
-# ### theta and derivatives ###
-
-
-def _get_theta(T, n, zeta):
-    """Calculate the reduced temperature theta.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-
-    But only mentioned in the arXiv version: https://arxiv.org/abs/1703.08074
-    """
-    n_up = (1 + zeta) * n / 2
-    T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
-    return T / T_fermi
-
-
-def _get_dthetadn_up(T, n_up):
-    """Calculate dtheta / dn_up."""
-    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * n_up ** (5 / 3))
-
-
-def _get_theta0(theta, zeta):
-    """Calculate theta0.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-    """
-    return theta * (1 + zeta) ** (2 / 3)
-
-
-def _get_dtheta0dtheta(zeta):
-    """Calculate dtheta0 / dtheta."""
-    return (1 + zeta) ** (2 / 3)
-
-
-def _get_dtheta0dzeta(theta, zeta):
-    """Calculate dtheta0 / dzeta."""
-    return 2 * theta / (3 * (1 + zeta) ** (1 / 3))
-
-
-def _get_theta1(theta, zeta):
-    """Calculate theta1.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-
-    Not explicitly mentioned, but used as in Eq. (5).
-    """
-    theta0 = _get_theta0(theta, zeta)
-    return theta0 * 2 ** (-2 / 3)
-
-
-def _get_dtheta1dtheta0():
-    """Calculate dtheta1 / dtheta0."""
-    return 2 ** (-2 / 3)
