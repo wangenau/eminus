@@ -129,180 +129,122 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
 # ### Temperature dependent coefficients ###
 
 
+def pade(x, n1, n2, n3, n4, d1, d2):
+    """Pade approximation.
+
+    Not the general case, but as often used in this functional.
+    """
+    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
+    denom = 1 + d1 * x**2 + d2 * x**4
+    return num / denom
+
+
+def dpade(x, n1, n2, n3, n4, d1, d2):
+    """Pade approximation derivative."""
+    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
+    denom = 1 + d1 * x**2 + d2 * x**4
+
+    dnum = 2 * n2 * x + 3 * n3 * x**2 + 4 * n4 * x**3
+    ddenom = 2 * d1 * x + 4 * d2 * x**3
+    # df = (a'b - ab') / b^2
+    return (dnum * denom - num * ddenom) / (denom**2)
+
+
 @dataclasses.dataclass
 class _Coefficients:
     theta: float
+    a0 = 0.610887
+    a1 = 0.75
+    a2 = 3.04363
+    a3 = -0.09227
+    a4 = 1.7035
+    a5 = 8.31051
+    a6 = 5.1105
 
     @property
     def b5(self):
+        """Calculate b5."""
         return self.b3 * np.sqrt(3 / 2) * self.omega * (4 / (9 * np.pi)) ** (-1 / 3)
 
     @property
     def a(self):
-        theta = self.theta
-        tmp1 = 0.610887 * np.tanh(1 / theta)
-        tmp2 = 0.75 + 3.04363 * theta**2 - 0.09227 * theta**3 + 1.7035 * theta**4
-        tmp3 = 1 + 8.31051 * theta**2 + 5.1105 * theta**4
-        return tmp1 * tmp2 / tmp3
-
-    @property
-    def b(self):
-        theta = self.theta
-        tmp1 = np.tanh(1 / np.sqrt(theta)) * (self.b1 + self.b2 * theta**2 + self.b3 * theta**4)
-        tmp2 = 1 + self.b4 * theta**2 + self.b5 * theta**4
-        return tmp1 / tmp2
-
-    @property
-    def c(self):
-        thres = 1e-6
-        theta = self.theta
-        return np.where(
-            theta > thres,
-            (self.c1 + self.c2 * np.exp(-1 / theta)) * self.e,
-            self.c1 * self.e,
-        )
-
-    @property
-    def d(self):
-        theta = self.theta
-        tmp1 = np.tanh(1 / np.sqrt(theta)) * (self.d1 + self.d2 * theta**2 + self.d3 * theta**4)
-        tmp2 = 1 + self.d4 * theta**2 + self.d5 * theta**4
-        return tmp1 / tmp2
-
-    @property
-    def e(self):
-        theta = self.theta
+        """Calculate a."""
         return (
-            np.tanh(1 / theta)
-            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
-            / (1 + self.e4 * theta**2 + self.e5 * theta**4)
+            self.a0
+            * np.tanh(1 / self.theta)
+            * pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         )
 
     @property
     def dadtheta(self):
-        theta = self.theta
-        tmp1 = -0.00884515668249876 * (20.442 * theta**3 + 16.62102 * theta)
-        tmp2 = 1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75
-        tmp3 = (
-            np.tanh(1 / theta) / (0.614944209200157 * theta**4 + theta**2 + 0.12032955859508) ** 2
+        """Calculate da / dtheta."""
+        u = self.a0 * np.tanh(1 / self.theta)
+        du = self.a0 * (1 - np.tanh(1 / self.theta) ** 2) * (-1 / self.theta**2)
+        v = pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        dv = dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        return du * v + u * dv
+
+    @property
+    def b(self):
+        """Calculate b."""
+        return np.tanh(1 / np.sqrt(self.theta)) * pade(
+            self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5
         )
-        denom = 5.1105 * theta**4 + 8.31051 * theta**2 + 1
-        tmp4 = (
-            0.610887
-            * (6.814 * theta**3 - 0.27681 * theta**2 + 6.08726 * theta)
-            * np.tanh(1 / theta)
-            / denom
-        )
-        with np.errstate(over="ignore"):
-            tmp41 = -0.610887 * (1.7035 * theta**4 - 0.09227 * theta**3 + 3.04363 * theta**2 + 0.75)
-            tmp42 = denom * theta**2 * np.cosh(1 / theta) ** 2
-            tmp43 = tmp41 / tmp42
-            tmp5 = np.where(theta < 0.0025, 0, tmp43)
-        return tmp1 * tmp2 * tmp3 + tmp4 + tmp5
 
     @property
     def dbdtheta(self):
-        theta = self.theta
-        tmp1 = (
-            (2 * self.b2 * theta + 4 * self.b3 * theta**3)
-            * np.tanh(1 / np.sqrt(theta))
-            / (self.b4 * theta**2 + self.b5 * theta**4 + 1)
-        )
-        tmp11 = (
-            (2 * self.b4 * theta + 4 * self.b5 * theta**3)
-            * (self.b1 + self.b2 * theta**2 + self.b3 * theta**4)
-            * np.tanh(1 / np.sqrt(theta))
-        )
-        tmp12 = (self.b4 * theta**2 + self.b5 * theta**4 + 1) ** 2
-        tmp2 = tmp11 / tmp12
-        with np.errstate(over="ignore"):
-            tmp21 = self.b1 + self.b2 * theta**2 + self.b3 * theta**4
-            tmp22 = (
-                2
-                * (self.b4 * theta**2 + self.b5 * theta**4 + 1)
-                * theta ** (3 / 2)
-                * np.cosh(1 / np.sqrt(theta)) ** 2
-            )
-            tmp23 = tmp21 / tmp22
-            tmp3 = np.where(theta < 0.001, 0, tmp23)
-        return tmp1 - tmp2 - tmp3
+        """Calculate db / dtheta."""
+        u = np.tanh(1 / np.sqrt(self.theta))
+        du = (1 - u**2) * (-1 / (2 * self.theta * np.sqrt(self.theta)))
+        v = pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        dv = dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        return du * v + u * dv
+
+    @property
+    def c(self):
+        """Calculate c."""
+        return (self.c1 + self.c2 * np.exp(-1 / self.theta)) * self.e
 
     @property
     def dcdtheta(self):
-        theta = self.theta
-        tmp1 = self.c2 * self.e * np.exp(-1 / theta) / theta**2
-        tmp2 = self.c1 + self.c2 * np.exp(-1 / theta)
-        tmp3 = (
-            (2 * self.e2 * theta + 4 * self.e3 * theta**3)
-            * np.tanh(1 / theta)
-            / (self.e4 * theta**2 + self.e5 * theta**4 + 1)
+        """Calculate dc / dtheta."""
+        u = self.c1 + self.c2 * np.exp(-1 / self.theta)
+        du = self.c2 / (np.exp(1 / self.theta) * self.theta**2)
+        v = self.e
+        dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        return du * v + u * dv
+
+    @property
+    def d(self):
+        """Calculate d."""
+        return np.tanh(1 / np.sqrt(self.theta)) * pade(
+            self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5
         )
-        tmp31 = (
-            (2 * self.e4 * theta + 4 * self.e5 * theta**3)
-            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
-            * np.tanh(1 / theta)
-        )
-        tmp32 = (self.e4 * theta**2 + self.e5 * theta**4 + 1) ** 2
-        tmp4 = tmp31 / tmp32
-        with np.errstate(over="ignore"):
-            tmp41 = self.e1 + self.e2 * theta**2 + self.e3 * theta**4
-            tmp42 = (
-                (self.e4 * theta**2 + self.e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
-            )
-            tmp43 = tmp41 / tmp42
-            tmp5 = np.where(theta < 0.0025, 0, tmp43)
-        return tmp1 + tmp2 * (tmp3 - tmp4 - tmp5)
 
     @property
     def dddtheta(self):
-        theta = self.theta
-        tmp1 = (
-            (2 * self.d2 * theta + 4 * self.d3 * theta**3)
-            * np.tanh(1 / np.sqrt(theta))
-            / (self.d4 * theta**2 + self.d5 * theta**4 + 1)
+        """Calculate dd / dtheta."""
+        u = np.tanh(1 / np.sqrt(self.theta))
+        du = (1 - u**2) * (-1 / (2 * self.theta * np.sqrt(self.theta)))
+        v = pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        dv = dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        return du * v + u * dv
+
+    @property
+    def e(self):
+        """Calculate e."""
+        return np.tanh(1 / self.theta) * pade(
+            self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5
         )
-        tmp11 = (
-            (2 * self.d4 * theta + 4 * self.d5 * theta**3)
-            * (self.d1 + self.d2 * theta**2 + self.d3 * theta**4)
-            * np.tanh(1 / np.sqrt(theta))
-        )
-        tmp12 = (self.d4 * theta**2 + self.d5 * theta**4 + 1) ** 2
-        tmp2 = tmp11 / tmp12
-        with np.errstate(over="ignore"):
-            tmp21 = self.d1 + self.d2 * theta**2 + self.d3 * theta**4
-            tmp22 = (
-                2
-                * (self.d4 * theta**2 + self.d5 * theta**4 + 1)
-                * theta ** (3 / 2)
-                * np.cosh(1 / np.sqrt(theta)) ** 2
-            )
-            tmp23 = tmp21 / tmp22
-            tmp3 = np.where(theta < 0.001, 0, tmp23)
-        return tmp1 - tmp2 - tmp3
 
     @property
     def dedtheta(self):
-        theta = self.theta
-        tmp1 = (
-            (2 * self.e2 * theta + 4 * self.e3 * theta**3)
-            * np.tanh(1 / theta)
-            / (self.e4 * theta**2 + self.e5 * theta**4 + 1)
-        )
-        tmp11 = (
-            (2 * self.e4 * theta + 4 * self.e5 * theta**3)
-            * (self.e1 + self.e2 * theta**2 + self.e3 * theta**4)
-            * np.tanh(1 / theta)
-        )
-        tmp12 = (self.e4 * theta**2 + self.e5 * theta**4 + 1) ** 2
-        tmp2 = tmp11 / tmp12
-        with np.errstate(over="ignore"):
-            tmp21 = self.e1 + self.e2 * theta**2 + self.e3 * theta**4
-            tmp22 = (
-                (self.e4 * theta**2 + self.e5 * theta**4 + 1) * theta**2 * np.cosh(1 / theta) ** 2
-            )
-            tmp23 = tmp21 / tmp22
-            tmp3 = np.where(theta < 0.0025, 0, tmp23)
-        return tmp1 - tmp2 - tmp3
+        """Calculate de / dtheta."""
+        u = np.tanh(1 / self.theta)
+        du = (1 - u**2) * (-1 / self.theta**2)
+        v = pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        dv = dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        return du * v + u * dv
 
 
 # ### Parameters ###
