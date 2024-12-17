@@ -24,8 +24,9 @@ from eminus.xc.lda_xc_gdsmfb import (  # type: ignore[attr-defined]
     ("n_up", "n_dw", "T"),
     [
         (0.9, 0.1, 0.01),
-        (0.5, 0.5, 0.1),
+        (0.4, 0.6, 0.1),
         (0.5, 0.5, 1),
+        (0.1, 0.1, 100),
     ],
 )
 def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
@@ -110,14 +111,14 @@ def test_lda_xc_gdsmfb_spin_exc(rs, zeta, T, ref):
     assert_allclose(e_out, ref)
 
 
-@pytest.mark.parametrize(("rs", "zeta", "T", "ref"), [(0.4, 0.0, 1e-8, -1.22407997)])
-def test_lda_xc_gdsmfb_exc(rs, zeta, T, ref):
+@pytest.mark.parametrize(("rs", "T", "ref"), [(0.4, 1e-8, -1.22407997)])
+def test_lda_xc_gdsmfb_exc(rs, T, ref):
     """Compare functional energy densities to reference values from the original implementation.
 
     Test case for the spin-unpolarized case from test_lda_xc_gdsmfb_spin_exc.
     """
     n = 1 / (4 * np.pi / 3 * rs**3)
-    e_out, _, _ = lda_xc_gdsmfb(np.array([n]), zeta=np.array([zeta]), T=T)
+    e_out, _, _ = lda_xc_gdsmfb(np.array([n]), T=T)
     assert_allclose(e_out, ref)
 
 
