@@ -11,7 +11,9 @@ from numpy.testing import assert_allclose
 
 from eminus.xc.lda_xc_gdsmfb import (
     _get_fxc_zeta,
-    _get_gdsmfb_parameters,
+    _Zeta0Coeffs,
+    _Zeta1Coeffs,
+    _PhiParams,
     _get_phi,
     _get_theta,
     _get_theta0,
@@ -88,7 +90,7 @@ def test_derivative_lda_xc_gdsmfb_spin():
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     # parameters
-    p0, p1, p2 = _get_gdsmfb_parameters()
+    p0, p1, p2 = _Zeta0Coeffs(), _Zeta1Coeffs(), _PhiParams()
 
     def _get_fxc(rs, theta, zeta, p0, p1, p2):
         theta0 = _get_theta0(theta, zeta)

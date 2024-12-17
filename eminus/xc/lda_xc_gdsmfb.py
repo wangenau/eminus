@@ -57,7 +57,7 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     theta1 = _get_theta1(theta, zeta)
 
     # Calculate fxc
-    p0, p1, p2 = _get_gdsmfb_parameters()
+    p0, p1, p2 = _Zeta0Coeffs(), _Zeta1Coeffs(), _PhiParams()
     fxc0 = _get_fxc_zeta(rs, theta0, p0)
     fxc1 = _get_fxc_zeta(rs, theta1, p1)
     phi = _get_phi(rs, theta0, zeta, p2)
@@ -118,18 +118,72 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     return fxc, fxc + np.array([dfxcdn_up, dfxcdn_dw]) * n, None
 
 
+# ### Parameters ###
+
+
 @dataclasses.dataclass
 class _Parameters:
-    """Parameters class.
-
-    Holds parameters of exchange-correlation functionals.
-    Saving same space through attribute access.
-    """
-
     @property
     def b5(self):
         return self.b3 * np.sqrt(3 / 2) * self.omega * (4 / (9 * np.pi)) ** (-1 / 3)
 
+
+@dataclasses.dataclass
+class _Zeta0Params(_Parameters):
+    omega = 1
+    b1 = 0.3436902
+    b2 = 7.82159531356
+    b3 = 0.300483986662
+    b4 = 15.8443467125
+    c1 = 0.8759442
+    c2 = -0.230130843551
+    d1 = 0.72700876
+    d2 = 2.38264734144
+    d3 = 0.30221237251
+    d4 = 4.39347718395
+    d5 = 0.729951339845
+    e1 = 0.25388214
+    e2 = 0.815795138599
+    e3 = 0.0646844410481
+    e4 = 15.0984620477
+    e5 = 0.230761357474
+
+
+@dataclasses.dataclass
+class _Zeta1Params(_Parameters):
+    omega = 2 ** (1 / 3)
+    b1 = 0.84987704
+    b2 = 3.04033012073
+    b3 = 0.0775730131248
+    b4 = 7.57703592489
+    c1 = 0.91126873
+    c2 = -0.0307957123308
+    d1 = 1.48658718
+    d2 = 4.92684905511
+    d3 = 0.0849387225179
+    d4 = 8.3269821188
+    d5 = 0.218864952126
+    e1 = 0.27454097
+    e2 = 0.400994856555
+    e3 = 2.88773194962
+    e4 = 6.33499237092
+    e5 = 24.823008753
+
+
+@dataclasses.dataclass
+class _PhiParams:
+    # Sign of parameters is different to the supplemental material
+    h1 = 3.18747258
+    h2 = 7.74662802
+    lambda1 = 1.85909536
+    lambda2 = 0
+
+
+# ### Temperature dependent coefficients ###
+
+
+@dataclasses.dataclass
+class _Coefficients:
     def a(self, theta):
         tmp1 = 0.610887 * np.tanh(1 / theta)
         tmp2 = 0.75 + 3.04363 * theta**2 - 0.09227 * theta**3 + 1.7035 * theta**4
@@ -278,57 +332,14 @@ class _Parameters:
         return tmp1 - tmp2 - tmp3
 
 
-def _get_gdsmfb_parameters():
-    """Get the GDSMFB parameters."""
-    # zeta = 0
-    p0 = _Parameters()
-    p0.omega = 1
-    p0.b1 = 0.3436902
-    p0.b2 = 7.82159531356
-    p0.b3 = 0.300483986662
-    p0.b4 = 15.8443467125
-    p0.c1 = 0.8759442
-    p0.c2 = -0.230130843551
-    p0.d1 = 0.72700876
-    p0.d2 = 2.38264734144
-    p0.d3 = 0.30221237251
-    p0.d4 = 4.39347718395
-    p0.d5 = 0.729951339845
-    p0.e1 = 0.25388214
-    p0.e2 = 0.815795138599
-    p0.e3 = 0.0646844410481
-    p0.e4 = 15.0984620477
-    p0.e5 = 0.230761357474
+@dataclasses.dataclass
+class _Zeta0Coeffs(_Zeta0Params, _Coefficients):
+    pass
 
-    # zeta = 1
-    p1 = _Parameters()
-    p1.omega = 2 ** (1 / 3)
-    p1.b1 = 0.84987704
-    p1.b2 = 3.04033012073
-    p1.b3 = 0.0775730131248
-    p1.b4 = 7.57703592489
-    p1.c1 = 0.91126873
-    p1.c2 = -0.0307957123308
-    p1.d1 = 1.48658718
-    p1.d2 = 4.92684905511
-    p1.d3 = 0.0849387225179
-    p1.d4 = 8.3269821188
-    p1.d5 = 0.218864952126
-    p1.e1 = 0.27454097
-    p1.e2 = 0.400994856555
-    p1.e3 = 2.88773194962
-    p1.e4 = 6.33499237092
-    p1.e5 = 24.823008753
 
-    # Spin interpolation
-    p2 = _Parameters()
-    # Sign of parameters is different to the supplemental material
-    p2.h1 = 3.18747258
-    p2.h2 = 7.74662802
-    p2.lambda1 = 1.85909536
-    p2.lambda2 = 0
-
-    return p0, p1, p2
+@dataclasses.dataclass
+class _Zeta1Coeffs(_Zeta1Params, _Coefficients):
+    pass
 
 
 # ### fxc_zeta ###
@@ -512,7 +523,10 @@ def _get_dthetadn_up(T, n_up):
 
 
 def _get_theta0(theta, zeta):
-    """Calculate theta0."""
+    """Calculate theta0.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
     return theta * (1 + zeta) ** (2 / 3)
 
 
@@ -528,6 +542,8 @@ def _get_dtheta0dzeta(theta, zeta):
 
 def _get_theta1(theta, zeta):
     """Calculate theta1.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
 
     Not explicitly mentioned, but used as in Eq. (5).
     """
