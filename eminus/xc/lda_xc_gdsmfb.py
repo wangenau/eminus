@@ -220,7 +220,7 @@ class Coefficients:
             self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
         )
         v = self.e
-        dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        dv = self.dedtheta
         return du * v + u * dv
 
     @property
