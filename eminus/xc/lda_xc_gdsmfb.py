@@ -57,10 +57,11 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     theta1 = _get_theta1(theta, zeta)
 
     # Calculate fxc
-    p0, p1, p2 = _Zeta0Coeffs(), _Zeta1Coeffs(), _PhiParams()
+    phi_params = _PhiParams()
+    p0, p1 = _Zeta0Coeffs(),_Zeta1Coeffs()
     fxc0 = _get_fxc_zeta(rs, theta0, p0)
     fxc1 = _get_fxc_zeta(rs, theta1, p1)
-    phi = _get_phi(rs, theta0, zeta, p2)
+    phi = _get_phi(rs, theta0, zeta, phi_params)
     fxc = fxc0 + (fxc1 - fxc0) * phi
 
     # Generic derivatives
@@ -75,9 +76,9 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     dfxc1dtheta1 = _get_dfxc_zetadtheta(rs, theta1, p1)
 
     # phi derivatives
-    dphidrs = _get_dphidrs(rs, theta0, zeta, p2)
-    dphidtheta = _get_dphidtheta(rs, theta0, zeta, p2)
-    dphidzeta = _get_dphidzeta(rs, theta0, zeta, p2)
+    dphidrs = _get_dphidrs(rs, theta0, zeta, phi_params)
+    dphidtheta = _get_dphidtheta(rs, theta0, zeta, phi_params)
+    dphidzeta = _get_dphidzeta(rs, theta0, zeta, phi_params)
 
     # theta derivatives
     dthetadn_up = _get_dthetadn_up(T, n_up)
@@ -387,85 +388,88 @@ def _get_dfxc_zetadtheta(rs, theta, p):
 # ### alpha ###
 
 
-def _get_alpha(rs, theta, p):
+def _get_alpha(rs, theta, phi_params):
     """Calculate alpha.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    h = _get_h(rs, p)
-    lam = _get_lambda(rs, theta, p)
+    h = _get_h(rs, phi_params)
+    lam = _get_lambda(rs, theta, phi_params)
     return 2 - h * np.exp(-theta * lam)
 
 
-def _get_dalphadrs(rs, theta, p):
+def _get_dalphadrs(rs, theta, phi_params):
     """Calculate dalpha / drs."""
-    h = _get_h(rs, p)
-    lam = _get_lambda(rs, theta, p)
-    dhdrs = _get_dhdrs(rs, p)
-    dlamdrs = _get_dlambdadrs(rs, theta, p)
+    h = _get_h(rs, phi_params)
+    lam = _get_lambda(rs, theta, phi_params)
+    dhdrs = _get_dhdrs(rs, phi_params)
+    dlamdrs = _get_dlambdadrs(rs, theta, phi_params)
     return -dhdrs * np.exp(-theta * lam) + dlamdrs * theta * h * np.exp(-theta * lam)
 
 
-def _get_dalphadtheta(rs, theta, p):
+def _get_dalphadtheta(rs, theta, phi_params):
     """Calculate dalpha / dtheta."""
-    h = _get_h(rs, p)
-    lam = _get_lambda(rs, theta, p)
-    dlamdtheta = _get_dlambdadtheta(rs, p)
+    h = _get_h(rs, phi_params)
+    lam = _get_lambda(rs, theta, phi_params)
+    dlamdtheta = _get_dlambdadtheta(rs, phi_params)
     return -(-dlamdtheta * theta - lam) * h * np.exp(-theta * lam)
 
 
 # ### h ###
 
 
-def _get_h(rs, p):
+def _get_h(rs, phi_params):
     """Calculate h.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    return (2 / 3 + p.h1 * rs) / (1 + p.h2 * rs)
+    return (2 / 3 + phi_params.h1 * rs) / (1 + phi_params.h2 * rs)
 
 
-def _get_dhdrs(rs, p):
+def _get_dhdrs(rs, phi_params):
     """Calculate dh / drs."""
-    return p.h1 / (p.h2 * rs + 1) - p.h2 * (p.h1 * rs + 2 / 3) / (p.h2 * rs + 1) ** 2
+    return (
+        phi_params.h1 / (phi_params.h2 * rs + 1)
+        - phi_params.h2 * (phi_params.h1 * rs + 2 / 3) / (phi_params.h2 * rs + 1) ** 2
+    )
 
 
 # ### lambda ###
 
 
-def _get_lambda(rs, theta, p):
+def _get_lambda(rs, theta, phi_params):
     """Calculate lambda.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    return p.lambda1 + p.lambda2 * theta * rs ** (1 / 2)
+    return phi_params.lambda1 + phi_params.lambda2 * theta * rs ** (1 / 2)
 
 
-def _get_dlambdadrs(rs, theta, p):
+def _get_dlambdadrs(rs, theta, phi_params):
     """Calculate dlambda / drs."""
-    return p.lambda2 * theta / (2 * np.sqrt(rs))
+    return phi_params.lambda2 * theta / (2 * np.sqrt(rs))
 
 
-def _get_dlambdadtheta(rs, p):
+def _get_dlambdadtheta(rs, phi_params):
     """Calculate dlambda / dtheta."""
-    return p.lambda2 * np.sqrt(rs)
+    return phi_params.lambda2 * np.sqrt(rs)
 
 
 # ### phi ###
 
 
-def _get_phi(rs, theta, zeta, p):
+def _get_phi(rs, theta, zeta, phi_params):
     """Calculate the interpolation function phi.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    alpha = _get_alpha(rs, theta, p)
+    alpha = _get_alpha(rs, theta, phi_params)
     return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
 
 
-def _get_dphidrs(rs, theta, zeta, p):
+def _get_dphidrs(rs, theta, zeta, phi_params):
     """Calculate dphi / drs."""
-    alpha = _get_alpha(rs, theta, p)
+    alpha = _get_alpha(rs, theta, phi_params)
     with np.errstate(divide="ignore", invalid="ignore"):
         tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
     tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
@@ -473,14 +477,14 @@ def _get_dphidrs(rs, theta, zeta, p):
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
-    dalphadrs = _get_dalphadrs(rs, theta, p)
+    dalphadrs = _get_dalphadrs(rs, theta, phi_params)
     return (duv - udv) * dalphadrs / vv
 
 
-def _get_dphidtheta(rs, theta, zeta, p):
+def _get_dphidtheta(rs, theta, zeta, phi_params):
     """Calculate dphi / dtheta."""
-    alpha = _get_alpha(rs, theta, p)
-    dalphadtheta = _get_dalphadtheta(rs, theta, p)
+    alpha = _get_alpha(rs, theta, phi_params)
+    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
     with np.errstate(divide="ignore", invalid="ignore"):
         tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta)
     tmp1 = np.nan_to_num(tmp1, nan=0, posinf=0, neginf=0)
@@ -488,13 +492,13 @@ def _get_dphidtheta(rs, theta, zeta, p):
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
     vv = (2**alpha - 2) ** 2
-    dalphadtheta = _get_dalphadtheta(rs, theta, p)
+    dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
     return (duv - udv) * dalphadtheta / vv
 
 
-def _get_dphidzeta(rs, theta, zeta, p):
+def _get_dphidzeta(rs, theta, zeta, phi_params):
     """Calculate dphi / dzeta."""
-    alpha = _get_alpha(rs, theta, p)
+    alpha = _get_alpha(rs, theta, phi_params)
     tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
     with np.errstate(divide="ignore", invalid="ignore"):
         tmp2 = alpha * (1 - zeta) ** alpha / (1 - zeta)

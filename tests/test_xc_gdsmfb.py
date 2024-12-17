@@ -90,39 +90,40 @@ def test_derivative_lda_xc_gdsmfb_spin():
     rs = (3 / (4 * np.pi * n)) ** (1 / 3)
 
     # parameters
-    p0, p1, p2 = _Zeta0Coeffs(), _Zeta1Coeffs(), _PhiParams()
+    phi_params = _PhiParams()
+    p0, p1 = _Zeta0Coeffs(), _Zeta1Coeffs()
 
-    def _get_fxc(rs, theta, zeta, p0, p1, p2):
+    def _get_fxc(rs, theta, zeta, p0, p1, phi_params):
         theta0 = _get_theta0(theta, zeta)
         theta1 = _get_theta1(theta, zeta)
         fxc0 = _get_fxc_zeta(rs, theta0, p0)
         fxc1 = _get_fxc_zeta(rs, theta1, p1)
-        phi = _get_phi(rs, theta0, zeta, p2)
+        phi = _get_phi(rs, theta0, zeta, phi_params)
         return fxc0 + (fxc1 - fxc0) * phi
 
     # fxc
-    fxc = _get_fxc(rs, theta, zeta, p0, p1, p2)
+    fxc = _get_fxc(rs, theta, zeta, p0, p1, phi_params)
 
-    def _get_fxc_nupndn(nup, ndn, T, p0, p1, p2):
+    def _get_fxc_nupndn(nup, ndn, T, p0, p1, phi_params):
         """Get fxc utilizing nup, ndn, and T."""
         n = nup + ndn
         zeta = (nup - ndn) / n
         rs = (3 / (4 * np.pi * n)) ** (1 / 3)
         theta = _get_theta(T, n, zeta)
-        return _get_fxc(rs, theta, zeta, p0, p1, p2)
+        return _get_fxc(rs, theta, zeta, p0, p1, phi_params)
 
     @grad(idx=0, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
-    def _get_fd1(nup, ndn, T, p0, p1, p2):
+    def _get_fd1(nup, ndn, T, p0, p1, phi_params):
         """Finite difference derivative dfxc / dnup."""
-        return _get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
+        return _get_fxc_nupndn(nup, ndn, T, p0, p1, phi_params)  # type: ignore[no-untyped-call]
 
     @grad(idx=1, eps=1e-5, shift=False)  # type: ignore[no-untyped-call]
-    def _get_fd2(nup, ndn, T, p0, p1, p2):
+    def _get_fd2(nup, ndn, T, p0, p1, phi_params):
         """Finite difference derivative dfxc / dndn."""
-        return _get_fxc_nupndn(nup, ndn, T, p0, p1, p2)  # type: ignore[no-untyped-call]
+        return _get_fxc_nupndn(nup, ndn, T, p0, p1, phi_params)  # type: ignore[no-untyped-call]
 
-    fd1 = _get_fd1(nup, ndn, T, p0, p1, p2)
-    fd2 = _get_fd2(nup, ndn, T, p0, p1, p2)
+    fd1 = _get_fd1(nup, ndn, T, p0, p1, phi_params)
+    fd2 = _get_fd2(nup, ndn, T, p0, p1, phi_params)
     vxc_fd = np.array([fd1, fd2]) * n + fxc
 
     assert_allclose(vxc_fd, vxc, rtol=1e-03)
