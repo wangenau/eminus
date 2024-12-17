@@ -15,10 +15,10 @@ from eminus.xc.lda_xc_gdsmfb import (  # type: ignore[attr-defined]
     _get_theta,
     _get_theta0,
     _get_theta1,
-    _PhiParams,
-    _Zeta0Coeffs,
-    _Zeta1Coeffs,
     lda_xc_gdsmfb_spin,
+    PhiParams,
+    Zeta0Coeffs,
+    Zeta1Coeffs,
 )
 
 
@@ -92,9 +92,9 @@ def test_derivative_lda_xc_gdsmfb_spin():
     # parameters
     theta0 = _get_theta0(theta, zeta)
     theta1 = _get_theta1(theta, zeta)
-    phi_params = _PhiParams()
-    zeta0theta0 = _Zeta0Coeffs(theta0)
-    zeta1theta1 = _Zeta1Coeffs(theta1)
+    phi_params = PhiParams()
+    zeta0theta0 = Zeta0Coeffs(theta0)
+    zeta1theta1 = Zeta1Coeffs(theta1)
 
     def _get_fxc(rs, theta, zeta, zeta0theta0, zeta1theta1, phi_params):
         theta0 = _get_theta0(theta, zeta)

@@ -61,11 +61,11 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
     theta1 = _get_theta1(theta, zeta)
 
     # Calculate fxc
-    phi_params = _PhiParams()
-    zeta0theta = _Zeta0Coeffs(theta)
-    zeta0theta0 = _Zeta0Coeffs(theta0)
-    zeta1theta = _Zeta1Coeffs(theta)
-    zeta1theta1 = _Zeta1Coeffs(theta1)
+    phi_params = PhiParams()
+    zeta0theta = Zeta0Coeffs(theta)
+    zeta0theta0 = Zeta0Coeffs(theta0)
+    zeta1theta = Zeta1Coeffs(theta)
+    zeta1theta1 = Zeta1Coeffs(theta1)
     fxc0 = _get_fxc_zeta(rs, zeta0theta0)
     fxc1 = _get_fxc_zeta(rs, zeta1theta1)
     phi = _get_phi(rs, theta0, zeta, phi_params)
@@ -129,29 +129,13 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
 # ### Temperature dependent coefficients ###
 
 
-def pade(x, n1, n2, n3, n4, d1, d2):
-    """Pade approximation.
-
-    Not the general case, but as often used in this functional.
-    """
-    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
-    denom = 1 + d1 * x**2 + d2 * x**4
-    return num / denom
-
-
-def dpade(x, n1, n2, n3, n4, d1, d2):
-    """Pade approximation derivative."""
-    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
-    denom = 1 + d1 * x**2 + d2 * x**4
-
-    dnum = 2 * n2 * x + 3 * n3 * x**2 + 4 * n4 * x**3
-    ddenom = 2 * d1 * x + 4 * d2 * x**3
-    # df = (a'b - ab') / b^2
-    return (dnum * denom - num * ddenom) / (denom**2)
-
-
 @dataclasses.dataclass
-class _Coefficients:
+class Coefficients:
+    """Coefficient class to calculate temperature dependent coefficients.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+
     theta: float
     a0 = 0.610887
     a1 = 0.75
@@ -251,7 +235,12 @@ class _Coefficients:
 
 
 @dataclasses.dataclass
-class _Zeta0Coeffs(_Coefficients):
+class Zeta0Coeffs(Coefficients):
+    """Coefficient class using the parameterization for zeta=0.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+
     omega = 1
     b1 = 0.3436902
     b2 = 7.82159531356
@@ -272,7 +261,12 @@ class _Zeta0Coeffs(_Coefficients):
 
 
 @dataclasses.dataclass
-class _Zeta1Coeffs(_Coefficients):
+class Zeta1Coeffs(Coefficients):
+    """Coefficient class using the parameterization for zeta=1.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+
     omega = 2 ** (1 / 3)
     b1 = 0.84987704
     b2 = 3.04033012073
@@ -293,7 +287,12 @@ class _Zeta1Coeffs(_Coefficients):
 
 
 @dataclasses.dataclass
-class _PhiParams:
+class PhiParams:
+    """Parameter class holding the spin-interpolation function parameters.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+    """
+
     # Sign of parameters is different to the supplemental material
     h1 = 3.18747258
     h2 = 7.74662802
@@ -301,7 +300,31 @@ class _PhiParams:
     lambda2 = 0
 
 
-# ### fxc_zeta ###
+# ### Pade approximation and derivative ###
+
+
+def pade(x, n1, n2, n3, n4, d1, d2):
+    """Pade approximation.
+
+    Not the general case, but as often used in this functional.
+    """
+    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
+    denom = 1 + d1 * x**2 + d2 * x**4
+    return num / denom
+
+
+def dpade(x, n1, n2, n3, n4, d1, d2):
+    """Pade approximation derivative."""
+    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
+    denom = 1 + d1 * x**2 + d2 * x**4
+
+    dnum = 2 * n2 * x + 3 * n3 * x**2 + 4 * n4 * x**3
+    ddenom = 2 * d1 * x + 4 * d2 * x**3
+    # df = (a'b - ab') / b^2
+    return (dnum * denom - num * ddenom) / (denom**2)
+
+
+# ### fxc_zeta and derivatives ###
 
 
 def _get_fxc_zeta(rs, p):
@@ -339,7 +362,7 @@ def _get_dfxc_zetadtheta(rs, p):
     return tmp1 / tmp2 + tmp4 / tmp5
 
 
-# ### alpha ###
+# ### alpha and derivatives ###
 
 
 def _get_alpha(rs, theta, phi_params):
@@ -369,7 +392,7 @@ def _get_dalphadtheta(rs, theta, phi_params):
     return -(-dlamdtheta * theta - lam) * h * np.exp(-theta * lam)
 
 
-# ### h ###
+# ### h and derivative ###
 
 
 def _get_h(rs, phi_params):
@@ -388,7 +411,7 @@ def _get_dhdrs(rs, phi_params):
     )
 
 
-# ### lambda ###
+# ### lambda and derivatives ###
 
 
 def _get_lambda(rs, theta, phi_params):
@@ -409,7 +432,7 @@ def _get_dlambdadtheta(rs, phi_params):
     return phi_params.lambda2 * np.sqrt(rs)
 
 
-# ### phi ###
+# ### phi and derivatives ###
 
 
 def _get_phi(rs, theta, zeta, phi_params):
@@ -460,7 +483,7 @@ def _get_dphidzeta(rs, theta, zeta, phi_params):
     return (tmp1 - tmp2) / (2**alpha - 2)
 
 
-# ### theta ###
+# ### theta and derivatives ###
 
 
 def _get_theta(T, n, zeta):
