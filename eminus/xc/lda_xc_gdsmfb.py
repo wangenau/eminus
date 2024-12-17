@@ -393,26 +393,26 @@ def _get_fxc_zeta(rs, p):
     return -1 / rs * num / denom
 
 
-def _get_dfxc_zetadrs(rs, p):  # TODO
+def _get_dfxc_zetadrs(rs, p):
     """Calculate dfxc_zeta / drs."""
     tmp1 = (-p.b / (2 * np.sqrt(rs)) - p.c) / (rs * (p.d * np.sqrt(rs) + p.e * rs + 1))
     tmp2 = (-p.d / (2 * np.sqrt(rs)) - p.e) * (-p.a * p.omega - p.b * np.sqrt(rs) - p.c * rs)
     tmp3 = rs * (p.d * np.sqrt(rs) + p.e * rs + 1) ** 2
-    tmp5 = (-p.a * p.omega - p.b * np.sqrt(rs) - p.c * rs) / (
+    tmp4 = (-p.a * p.omega - p.b * np.sqrt(rs) - p.c * rs) / (
         rs**2 * (p.d * np.sqrt(rs) + p.e * rs + 1)
     )
-    return tmp1 + tmp2 / tmp3 - tmp5
+    return tmp1 + tmp2 / tmp3 - tmp4
 
 
-def _get_dfxc_zetadtheta(rs, p):  # TODO
+def _get_dfxc_zetadtheta(rs, p):
     """Calculate dfxc_zeta / dzeta."""
     tmp1 = (-np.sqrt(rs) * p.dddtheta - rs * p.dedtheta) * (
         -p.omega * p.a - p.b * np.sqrt(rs) - p.c * rs
     )
     tmp2 = (p.d * np.sqrt(rs) + p.e * rs + 1) ** 2 * rs
-    tmp4 = -p.omega * p.dadtheta - np.sqrt(rs) * p.dbdtheta - rs * p.dcdtheta
-    tmp5 = (p.d * np.sqrt(rs) + p.e * rs + 1) * rs
-    return tmp1 / tmp2 + tmp4 / tmp5
+    tmp3 = -p.omega * p.dadtheta - np.sqrt(rs) * p.dbdtheta - rs * p.dcdtheta
+    tmp4 = (p.d * np.sqrt(rs) + p.e * rs + 1) * rs
+    return tmp1 / tmp2 + tmp3 / tmp4
 
 
 # ### phi and derivatives ###
@@ -427,7 +427,7 @@ def _get_phi(rs, theta, zeta, phi_params):
     return ((1 + zeta) ** alpha + (1 - zeta) ** alpha - 2) / (2**alpha - 2)
 
 
-def _get_dphidrs(rs, theta, zeta, phi_params):  # TODO
+def _get_dphidrs(rs, theta, zeta, phi_params):
     """Calculate dphi / drs."""
     alpha = _get_alpha(rs, theta, phi_params)
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -441,7 +441,7 @@ def _get_dphidrs(rs, theta, zeta, phi_params):  # TODO
     return (duv - udv) * dalphadrs / vv
 
 
-def _get_dphidtheta(rs, theta, zeta, phi_params):  # TODO
+def _get_dphidtheta(rs, theta, zeta, phi_params):
     """Calculate dphi / dtheta."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
@@ -456,7 +456,7 @@ def _get_dphidtheta(rs, theta, zeta, phi_params):  # TODO
     return (duv - udv) * dalphadtheta / vv
 
 
-def _get_dphidzeta(rs, theta, zeta, phi_params):  # TODO
+def _get_dphidzeta(rs, theta, zeta, phi_params):
     """Calculate dphi / dzeta."""
     alpha = _get_alpha(rs, theta, phi_params)
     tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
