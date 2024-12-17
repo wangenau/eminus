@@ -324,7 +324,7 @@ class PhiParams:
     Reference: Phys. Rev. Lett. 119, 135001.
     """
 
-    # Sign of parameters is different to the supplemental material
+    # Sign of parameters is different from the supplemental material
     h1: float = 3.18747258
     h2: float = 7.74662802
     lambda1: float = 1.85909536

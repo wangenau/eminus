@@ -18,7 +18,7 @@ n_tests = {
 }
 functionals = {xc for xc in XC_MAP if xc.isdigit()}
 excludelist = {
-    "577",  # GDSMFB as inconsistencies in the Libxc implementation
+    "577",  # GDSMFB has inconsistencies in the Libxc implementation
 }
 functionals -= excludelist
 
