@@ -205,13 +205,15 @@ class Coefficients:
     @property
     def c(self):
         """Calculate c."""
-        exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        with np.errstate(divide="ignore"):
+            exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
         return (self.c1 + self.c2 * exp) * self.e
 
     @property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
-        exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        with np.errstate(divide="ignore"):
+            exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
         u = self.c1 + self.c2 * exp
         du = np.divide(
             self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=(self.theta > 0)
