@@ -141,7 +141,7 @@ class Coefficients:
     Reference: Phys. Rev. Lett. 119, 135001.
     """
 
-    theta: float
+    theta: float  #: Reduced temperature.
     a0: float = 0.610887
     a1: float = 0.75
     a2: float = 3.04363
