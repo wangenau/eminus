@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
+from eminus import Atoms, SCF
 from eminus.xc.lda_xc_gdsmfb import (  # type: ignore[attr-defined]
     _get_fxc_zeta,
     _get_phi,
@@ -120,6 +121,14 @@ def test_lda_xc_gdsmfb_exc(rs, T, ref):
     n = 1 / (4 * np.pi / 3 * rs**3)
     e_out, _, _ = lda_xc_gdsmfb(np.array([n]), T=T)
     assert_allclose(e_out, ref)
+
+
+def test_lda_xc_gdsmfb_dft():
+    """DFT calculation with tight thresholds to ensure that energies and gradients don't change."""
+    atoms = Atoms("He", [0, 0, 0], ecut=1)
+    scf = SCF(atoms, guess="pseudo", xc="lda_xc_gdsmfb", opt={"sd": 5})
+    etot = scf.run()
+    assert_allclose(etot, -1.528978872314443)
 
 
 if __name__ == "__main__":
