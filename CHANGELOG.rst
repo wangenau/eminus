@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.0.1 - Dec 18, 2024
+---------------------
 - New features
    - Add GDSMFB thermal functional (thanks to @theonov13)
    - Improve HDF5 extra

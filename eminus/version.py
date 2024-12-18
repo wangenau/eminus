@@ -6,7 +6,7 @@ import importlib
 import platform
 import sys
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 #: eminus ASCII logo.
 LOGO = (" ___ _____ _ ___ _ _ ___ \n"
         "| -_|     | |   | | |_ -|\n"
