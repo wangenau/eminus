@@ -8,6 +8,7 @@ Changelog
 dev
 ---
 - New features
+   - Add GDSMFB thermal functional (thanks to @theonov13)
    - Improve HDF5 extra
       - Proper dataset and group creation
       - Support compression

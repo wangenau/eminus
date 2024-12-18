@@ -16,7 +16,11 @@ n_tests = {
     1: np.abs(rng.standard_normal((1, 10000))),
     2: np.abs(rng.standard_normal((2, 10000))),
 }
-functionals = [xc for xc in XC_MAP if xc.isdigit()]
+functionals = {xc for xc in XC_MAP if xc.isdigit()}
+excludelist = {
+    "577",  # GDSMFB has inconsistencies in the Libxc implementation
+}
+functionals -= excludelist
 
 
 @pytest.mark.parametrize("xc", functionals)
