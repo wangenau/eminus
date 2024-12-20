@@ -10,7 +10,7 @@ Examples
 ..
    Automatically generated examples page
 
-Find more examples in the `eminus-benchmarks <https://gitlab.com/wangenau/eminus-benchmarks>`_ repository.
+Find more examples in the `eminus-paper <https://gitlab.com/wangenau/eminus-paper>`_ or `eminus-benchmarks <https://gitlab.com/wangenau/eminus-benchmarks>`_ repositories.
 
 .. toctree::
    :caption: Examples
