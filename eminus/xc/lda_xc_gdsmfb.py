@@ -177,8 +177,7 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=self.theta > 0,
         )
-        v = _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
-        dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
+        v, dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         return du * v + u * dv
 
     @property
@@ -199,8 +198,7 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=self.theta > 0,
         )
-        v = _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
-        dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
+        v, dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         return du * v + u * dv
 
     @property
@@ -219,8 +217,7 @@ class Coefficients:
         du = np.divide(
             self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=self.theta > 0
         )
-        v = self.e
-        dv = self.dedtheta
+        v, dv = self.e, self.dedtheta
         return du * v + u * dv
 
     @property
@@ -241,8 +238,7 @@ class Coefficients:
             out=np.zeros_like(self.theta),
             where=self.theta > 0,
         )
-        v = _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
-        dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
+        v, dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         return du * v + u * dv
 
     @property
@@ -258,8 +254,7 @@ class Coefficients:
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
         du = np.divide(u**2 - 1, self.theta**2, out=np.zeros_like(self.theta), where=self.theta > 0)
-        v = _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
-        dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
+        v, dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
 
 
@@ -340,19 +335,21 @@ def _pade(x, n1, n2, n3, n4, d1, d2):
 
     Not the general case but as needed for this functional.
     """
-    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
-    denom = 1 + d1 * x**2 + d2 * x**4
+    x2, x4 = x**2, x**4
+    num = n1 + n2 * x2 + n3 * x**3 + n4 * x4
+    denom = 1 + d1 * x2 + d2 * x4
     return num / denom
 
 
 def _dpade(x, n1, n2, n3, n4, d1, d2):
-    """Pade approximation derivative."""
-    num = n1 + n2 * x**2 + n3 * x**3 + n4 * x**4
-    denom = 1 + d1 * x**2 + d2 * x**4
-    dnum = 2 * n2 * x + 3 * n3 * x**2 + 4 * n4 * x**3
-    ddenom = 2 * d1 * x + 4 * d2 * x**3
+    """Pade approximation and its derivative."""
+    x2, x3, x4 = x**2, x**3, x**4
+    num = n1 + n2 * x2 + n3 * x3 + n4 * x4
+    denom = 1 + d1 * x2 + d2 * x4
+    dnum = 2 * n2 * x + 3 * n3 * x2 + 4 * n4 * x3
+    ddenom = 2 * d1 * x + 4 * d2 * x3
     # df = (a'b - ab') / b^2
-    return (dnum * denom - num * ddenom) / denom**2
+    return num / denom, (dnum * denom - num * ddenom) / denom**2
 
 
 # ### theta and derivatives ###
