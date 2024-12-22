@@ -6,6 +6,7 @@ Reference: Phys. Rev. Lett. 119, 135001.
 """
 
 import dataclasses
+import functools
 
 import numpy as np
 
@@ -150,12 +151,12 @@ class Coefficients:
     a5: float = 8.31051
     a6: float = 5.1105
 
-    @property
+    @functools.cached_property
     def b5(self):
         """Calculate b5."""
         return self.b3 * np.sqrt(3 / 2) * self.omega * (4 / (9 * np.pi)) ** (-1 / 3)
 
-    @property
+    @functools.cached_property
     def a(self):
         """Calculate a."""
         with np.errstate(divide="ignore"):
@@ -164,7 +165,7 @@ class Coefficients:
             )
         return u * _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
 
-    @property
+    @functools.cached_property
     def dadtheta(self):
         """Calculate da / dtheta."""
         with np.errstate(divide="ignore"):
@@ -180,14 +181,14 @@ class Coefficients:
         v, dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         return du * v + u * dv
 
-    @property
+    @functools.cached_property
     def b(self):
         """Calculate b."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
         return u * _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
 
-    @property
+    @functools.cached_property
     def dbdtheta(self):
         """Calculate db / dtheta."""
         with np.errstate(divide="ignore"):
@@ -201,14 +202,14 @@ class Coefficients:
         v, dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         return du * v + u * dv
 
-    @property
+    @functools.cached_property
     def c(self):
         """Calculate c."""
         with np.errstate(divide="ignore"):
             exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
         return (self.c1 + self.c2 * exp) * self.e
 
-    @property
+    @functools.cached_property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
         with np.errstate(divide="ignore"):
@@ -220,14 +221,14 @@ class Coefficients:
         v, dv = self.e, self.dedtheta
         return du * v + u * dv
 
-    @property
+    @functools.cached_property
     def d(self):
         """Calculate d."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
         return u * _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
 
-    @property
+    @functools.cached_property
     def dddtheta(self):
         """Calculate dd / dtheta."""
         with np.errstate(divide="ignore"):
@@ -241,14 +242,14 @@ class Coefficients:
         v, dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         return du * v + u * dv
 
-    @property
+    @functools.cached_property
     def e(self):
         """Calculate e."""
         with np.errstate(divide="ignore"):
             u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
         return u * _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
 
-    @property
+    @functools.cached_property
     def dedtheta(self):
         """Calculate de / dtheta."""
         with np.errstate(divide="ignore"):

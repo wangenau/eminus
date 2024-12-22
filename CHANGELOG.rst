@@ -5,6 +5,12 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Improve GDSMFB thermal functional
+   - Drop Python 3.7 support
+
 v3.0.1 - Dec 18, 2024
 ---------------------
 - New features

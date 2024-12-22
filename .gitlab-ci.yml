@@ -93,9 +93,11 @@ lint:
 ##### Test the minimally supported versions #####
 minimal:
   extends: .pytest
-  image: python:3.7-slim
-  before_script:
-    - pip install numpy==1.17 scipy==1.6
+  image: ghcr.io/astral-sh/uv:python3.8-bookworm-slim
+  script:
+    - uv pip install . --resolution lowest
+    - uv pip install pytest
+    - pytest tests/ -m "not slow"
 
 ##### Test using the newest dependency versions #####
 newest:
@@ -184,7 +186,7 @@ python:
     - pytest tests/ -m "not slow"
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.8', '3.9', '3.10', '3.11', '3.12']
+      - PYTHON_VERSIONS: ['3.9', '3.10', '3.11', '3.12']
 
 ############### experiments ###############
 

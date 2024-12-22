@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Package version number and version info function."""
 
-import importlib
+import importlib.metadata
 import platform
 import sys
 
@@ -31,12 +31,7 @@ def info():
     )
     for pkg in dependencies + extras + dev:
         try:
-            module = importlib.import_module(pkg)
-            try:
-                sys.stdout.write(f"{pkg:<11}: {module.__version__}\n")
-            except AttributeError:
-                # pylibxc does not use the standard version identifier
-                sys.stdout.write(f"{pkg:<11}: {module.version.__version__}\n")
+            sys.stdout.write(f"{pkg:<11}: {importlib.metadata.version(pkg)}\n")
         except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
                 sys.stdout.write(f"{pkg:<11}: Dependency not installed\n")

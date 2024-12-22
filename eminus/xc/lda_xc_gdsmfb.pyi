@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from dataclasses import dataclass
+from functools import cached_property
 from typing import Any
 
 from numpy import floating
@@ -27,27 +28,27 @@ class Coefficients:
     a4: float = ...
     a5: float = ...
     a6: float = ...
-    @property
+    @cached_property
     def b5(self) -> float: ...
-    @property
+    @cached_property
     def a(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def dadtheta(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def b(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def dbdtheta(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def c(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def dcdtheta(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def d(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def dddtheta(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def e(self) -> NDArray[floating]: ...
-    @property
+    @cached_property
     def dedtheta(self) -> NDArray[floating]: ...
 
 @dataclass

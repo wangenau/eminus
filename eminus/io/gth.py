@@ -4,6 +4,7 @@
 
 import importlib.resources
 import pathlib
+import sys
 
 import numpy as np
 
@@ -26,10 +27,9 @@ def read_gth(atom, charge=None, psp_path="pbe"):
         GTH parameters.
     """
     if psp_path in {"pade", "pbe"}:
-        # The try-except block can be removed once eminus drops Python 3.7 support
-        try:
+        if sys.version_info >= (3, 9):
             file_path = importlib.resources.files(f"eminus.psp.{psp_path}")
-        except AttributeError:
+        else:
             with importlib.resources.path("eminus.psp", psp_path) as p:
                 file_path = p
     else:

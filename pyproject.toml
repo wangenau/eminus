@@ -16,10 +16,10 @@ version = {attr = "eminus.version.__version__"}
 name = "eminus"
 dynamic = ["version"]
 dependencies = [
-    "numpy>=1.17",
+    "numpy>=1.17.3",
     "scipy>=1.6",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
 description = "Pythonic electronic structure theory."
 readme = "README.md"
@@ -38,7 +38,6 @@ classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
@@ -58,7 +57,7 @@ dispersion = [
     "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
 ]
 hdf5 = [
-    "h5py>=2.8",  # HDF5 file reading and writing
+    "h5py>=2.9",  # HDF5 file reading and writing
 ]
 libxc = [
     "pyscf>=2.1",  # Libxc interface via PySCF
@@ -80,13 +79,13 @@ all = [
     "eminus[viewer]",
 ]
 dev = [
-    "coverage>=4.4",  # Generate coverage reports
+    "coverage>=5",  # Generate coverage reports
     "furo>=2022.02.14.1",  # Documentation theme
-    "matplotlib>=1.5",  # Plotting library for examples
+    "matplotlib>=3.1.2",  # Plotting library for examples
     "mypy>=1.7",  # Static type checker
-    "notebook",  # Run and convert notebooks to HTML
+    "notebook>=6",  # Run and convert notebooks to HTML
     "pytest>=6",  # Test utilities
-    "ruff>=0.2",  # Linter and formatter
+    "ruff>=0.7",  # Linter and formatter
     "sphinx>=4",  # Documentation builder
     "sphinx-design>=0.2",  # More directives for Sphinx
     "sphinxcontrib-bibtex>=2",  # Use bib files for citations in Sphinx
