@@ -117,6 +117,7 @@ newest:
 
 ##### Type check Python files #####
 typecheck:
+  image: ghcr.io/astral-sh/uv:python3.13-alpine
   stage: test
   script:
     - uv pip install mypy[faster-cache] numpy
