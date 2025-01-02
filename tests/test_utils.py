@@ -7,7 +7,6 @@ import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
 from scipy.linalg import norm
-from scipy.special import sph_harm
 
 from eminus import Atoms, config
 from eminus.utils import (
@@ -45,7 +44,14 @@ def test_Ylm(l):
     # Calculate the spherical harmonics
     for m in range(-l, l + 1):
         Y_intern = Ylm_real(l, m, G)
-        Y_extern = sph_harm(abs(m), l, phi, theta)
+        try:
+            from scipy.special import sph_harm_y
+
+            Y_extern = sph_harm_y(l, abs(m), theta, phi)
+        except ImportError:
+            from scipy.special import sph_harm
+
+            Y_extern = sph_harm(abs(m), l, phi, theta)
         if m < 0:
             Y_extern = np.sqrt(2) * (-1) ** m * Y_extern.imag
         elif m > 0:
