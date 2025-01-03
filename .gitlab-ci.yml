@@ -197,9 +197,7 @@ nogil:
   script:
     - uv venv --python 3.13t
     - source .venv/bin/activate
-    # SciPy has no nogil builds for now, use a nightly build instead
-    # TODO: Use official builds once scipy 1.15 is released with free-threading builds: https://github.com/scipy/scipy/releases
-    - uv pip install . --prerelease=allow
+    - uv pip install .
     - uv pip install pytest
     - pytest tests/ -m "not slow"
   rules:
