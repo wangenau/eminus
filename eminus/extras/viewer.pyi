@@ -6,10 +6,10 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
+from .._typing import _Array1D, _IntArray
 from ..atoms import Atoms
 from ..kpoints import KPoints
 from ..scf import SCF
-from ..typing import Array1D, IntArray
 
 def view(
     *args: Any,
@@ -22,7 +22,7 @@ def view_atoms(
     percent: float = ...,
     isovalue: float | None = ...,
     surfaces: int = ...,
-    size: IntArray = ...,
+    size: _IntArray = ...,
 ) -> Any: ...
 def view_contour(
     obj: Atoms | SCF,
@@ -30,29 +30,29 @@ def view_contour(
     axis: int = ...,
     value: float = ...,
     lines: int = ...,
-    limits: Array1D = ...,
+    limits: _Array1D = ...,
     zoom: float = ...,
     linewidth: float = ...,
-    size: IntArray = ...,
+    size: _IntArray = ...,
 ) -> Any: ...
 def view_file(
     filename: str | Sequence[str],
     isovalue: float = ...,
     gui: bool = ...,
     elec_symbols: Sequence[str] = ...,
-    size: IntArray = ...,
+    size: _IntArray = ...,
     **kwargs: Any,
 ) -> Any: ...
 def executed_in_notebook() -> bool: ...
 def plot_bandstructure(
     scf: SCF,
-    spin: int | IntArray = ...,
-    size: IntArray = ...,
+    spin: int | _IntArray = ...,
+    size: _IntArray = ...,
 ) -> Any: ...
 def plot_dos(
     scf: SCF,
-    spin: int | IntArray = ...,
-    size: IntArray = ...,
+    spin: int | _IntArray = ...,
+    size: _IntArray = ...,
     **kwargs: Any,
 ) -> Any: ...
 def view_kpts(
@@ -60,5 +60,5 @@ def view_kpts(
     path: bool = ...,
     special: bool = ...,
     connect: bool = ...,
-    size: IntArray = ...,
+    size: _IntArray = ...,
 ) -> Any: ...

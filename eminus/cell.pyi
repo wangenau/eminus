@@ -3,19 +3,19 @@
 from collections.abc import Sequence
 from typing import Any
 
+from ._typing import _Array1D, _Array2D, _IntArray
 from .atoms import Atoms
-from .typing import Array1D, Array2D, IntArray
 
 STRUCTURES: dict[str, dict[str, str | list[list[float]]]]
 
 def Cell(
     atom: str | Sequence[str],
-    lattice: str | Array2D,
+    lattice: str | _Array2D,
     ecut: float,
-    a: float | Array2D | None,
-    basis: Array1D | Array2D | None = ...,
+    a: float | _Array2D | None,
+    basis: _Array1D | _Array2D | None = ...,
     bands: int | None = ...,
-    kmesh: int | IntArray = ...,
+    kmesh: int | _IntArray = ...,
     smearing: float = ...,
     magnetization: float | None = ...,
     verbose: int | str | None = ...,

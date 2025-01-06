@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from numpy import floating
 from numpy.typing import NDArray
 
-from .typing import Array1D, Array2D, Array3D
+from ._typing import _Array1D, _Array2D, _Array3D
 
 @dataclass
 class Occupations:
@@ -38,7 +38,7 @@ class Occupations:
     @property
     def f(self) -> NDArray[floating]: ...
     @f.setter
-    def f(self, value: float | Array1D | Array2D | Array3D) -> None: ...
+    def f(self, value: float | _Array1D | _Array2D | _Array3D) -> None: ...
     @property
     def Nk(self) -> int: ...
     @Nk.setter
@@ -46,7 +46,7 @@ class Occupations:
     @property
     def wk(self) -> NDArray[floating]: ...
     @wk.setter
-    def wk(self, value: Array1D) -> None: ...
+    def wk(self, value: _Array1D) -> None: ...
     @property
     def bands(self) -> int: ...
     @bands.setter

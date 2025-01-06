@@ -5,8 +5,8 @@ from typing import overload, TypeVar
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
+from ._typing import _Array1D, _Array2D
 from .atoms import Atoms
-from .typing import Array1D, Array2D
 
 _AnyWorN = TypeVar(
     "_AnyWorN", NDArray[floating], NDArray[complexfloating], list[NDArray[complexfloating]]
@@ -82,5 +82,5 @@ def K(
 def T(
     atoms: Atoms,
     W: _AnyWorN,
-    dr: Array1D | Array2D,
+    dr: _Array1D | _Array2D,
 ) -> _AnyWorN: ...

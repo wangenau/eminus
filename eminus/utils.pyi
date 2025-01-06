@@ -6,7 +6,7 @@ from typing import Any, Literal, Protocol
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
-from .typing import Array2D, IntArray
+from ._typing import _Array2D, _IntArray
 
 # Create a custom Callable type for some decorators
 class _HandleType(Protocol):
@@ -54,7 +54,7 @@ def handle_torch(
     **kwargs: Any,
 ) -> Callable[..., Any]: ...
 def pseudo_uniform(
-    size: IntArray,
+    size: _IntArray,
     seed: int = ...,
 ) -> NDArray[complexfloating]: ...
 def add_maybe_none(
@@ -70,4 +70,4 @@ def vector_angle(
     a: NDArray[floating],
     b: NDArray[floating],
 ) -> NDArray[floating]: ...
-def get_lattice(lattice_vectors: Array2D) -> list[NDArray[floating]]: ...
+def get_lattice(lattice_vectors: _Array2D) -> list[NDArray[floating]]: ...

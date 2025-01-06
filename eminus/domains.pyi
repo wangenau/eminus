@@ -3,14 +3,14 @@
 from numpy import bool_, floating
 from numpy.typing import NDArray
 
+from ._typing import _Array1D, _Array2D
 from .atoms import Atoms
 from .scf import SCF
-from .typing import Array1D, Array2D
 
 def domain_cuboid(
     obj: Atoms | SCF,
-    length: float | Array1D,
-    centers: Array1D | Array2D | None = ...,
+    length: float | _Array1D,
+    centers: _Array1D | _Array2D | None = ...,
 ) -> NDArray[bool_]: ...
 def domain_isovalue(
     field: NDArray[floating] | None,
@@ -19,7 +19,7 @@ def domain_isovalue(
 def domain_sphere(
     obj: Atoms | SCF,
     radius: float,
-    centers: Array1D | Array2D | None = ...,
+    centers: _Array1D | _Array2D | None = ...,
 ) -> NDArray[bool_]: ...
 def truncate(
     field: NDArray[floating],

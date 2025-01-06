@@ -5,7 +5,7 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
-from ..typing import Array1D
+from .._typing import _Array1D
 
 def lda_c_pw(
     n: NDArray[floating],
@@ -20,7 +20,7 @@ def lda_c_pw(
 def lda_c_pw_spin(
     n: NDArray[floating],
     zeta: NDArray[floating],
-    A: Array1D = ...,
+    A: _Array1D = ...,
     fzeta0: float = ...,
     **kwargs: Any,
 ) -> tuple[NDArray[floating], NDArray[floating], None]: ...

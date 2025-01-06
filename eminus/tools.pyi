@@ -5,10 +5,10 @@ from typing import overload, TypeVar
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
+from ._typing import _Array1D
 from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
-from .typing import Array1D
 
 _AnyFloat = TypeVar("_AnyFloat", float, floating, NDArray[floating])
 
@@ -16,7 +16,7 @@ def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...
 def center_of_mass(
     coords: NDArray[floating],
-    masses: Array1D | None = ...,
+    masses: _Array1D | None = ...,
 ) -> NDArray[floating]: ...
 @overload
 def orbital_center(
@@ -30,7 +30,7 @@ def orbital_center(
 ) -> NDArray[floating]: ...
 def inertia_tensor(
     coords: NDArray[floating],
-    masses: Array1D | None = ...,
+    masses: _Array1D | None = ...,
 ) -> NDArray[floating]: ...
 def get_dipole(
     scf: SCF,

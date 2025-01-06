@@ -6,15 +6,15 @@ from typing import overload, TypeVar
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
+from ._typing import _Array1D, _Array2D
 from .atoms import Atoms
-from .typing import Array1D, Array2D
 
 _AnyW = TypeVar("_AnyW", NDArray[complexfloating], list[NDArray[complexfloating]])
 
 def eval_psi(
     atoms: Atoms,
     psi: _AnyW,
-    r: Array1D | Array2D,
+    r: _Array1D | _Array2D,
 ) -> _AnyW: ...
 def get_R(
     atoms: Atoms,

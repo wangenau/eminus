@@ -6,11 +6,11 @@ from typing import Any
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
+from ._typing import _Array1D
 from .atoms import Atoms
 from .energies import Energy
 from .gth import GTH
 from .kpoints import KPoints
-from .typing import Array1D
 from .utils import BaseObject
 
 class SCF(BaseObject):
@@ -95,7 +95,7 @@ class SCF(BaseObject):
         Nempty: int | None = ...,
         **kwargs: Any,
     ) -> SCF: ...
-    def recenter(self, center: float | Array1D | None = ...) -> SCF: ...
+    def recenter(self, center: float | _Array1D | None = ...) -> SCF: ...
     def clear(self) -> SCF: ...
 
 class RSCF(SCF):
