@@ -72,6 +72,7 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     ec0, vc0, _ = lda_c_vwn(n, A[0], b[0], c[0], x0[0])  # Paramagnetic
     ec1, vc1, _ = lda_c_vwn(n, A[1], b[1], c[1], x0[1])  # Ferromagnetic
     ac, dac, _ = lda_c_vwn(n, A[2], b[2], c[2], x0[2])  # Spin stiffness
+    vc0, vc1, dac = vc0[0], vc1[0], dac[0]  # Remove spin dimension for the correct shape
 
     d2fzeta0 = 4 / 9 / (2 ** (1 / 3) - 1)
     fzeta = 0.5 * ((1 + zeta) ** (4 / 3) + (1 - zeta) ** (4 / 3) - 2) / (2 ** (1 / 3) - 1)

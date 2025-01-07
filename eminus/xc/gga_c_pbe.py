@@ -35,6 +35,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     rs = pi34 * n ** (-1 / 3)
     norm_dn = norm(dn_spin[0], axis=1)
     ec, vc, _ = lda_c_pw_mod(n, **kwargs)
+    vc = vc[0]  # Remove spin dimension for the correct shape
 
     kf = (9 / 4 * np.pi) ** (1 / 3) / rs
     ks = np.sqrt(4 * kf / np.pi)

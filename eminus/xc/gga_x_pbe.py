@@ -31,6 +31,7 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """
     ex, vx, _ = lda_x(n, **kwargs)
     gex, gvx, vsigmax = pbe_x_base(n, mu, dn_spin[0], **kwargs)
+    vx, gvx = vx[0], gvx[0]  # Remove spin dimension for the correct shape
     return ex + gex / n, np.array([vx + gvx]), np.array([0.5 * vsigmax])
 
 
@@ -59,6 +60,7 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     n_dw = -zeta * n + n  # 2 * n_down
     ex_up, vx_up, vsigma_up = pbe_x_base(n_up, mu, 2 * dn_spin[0], **kwargs)
     ex_dw, vx_dw, vsigma_dw = pbe_x_base(n_dw, mu, 2 * dn_spin[1], **kwargs)
+    vx_up, vx_dw = vx_up[0], vx_dw[0]  # Remove spin dimension for the correct shape
 
     ex, vx, _ = lda_x_spin(n, zeta, **kwargs)
 

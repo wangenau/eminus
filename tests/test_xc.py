@@ -7,7 +7,7 @@ import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
-from eminus.xc import get_exc, get_vxc, XC_MAP
+from eminus.xc import get_exc, get_vxc, get_xc, get_zeta, IMPLEMENTED, XC_MAP
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
@@ -75,6 +75,34 @@ def test_get_vsigmaxc(xc, Nspin):
     _, vsigma_out, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, _, vsigma_test, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
+
+
+@pytest.mark.parametrize("xc", IMPLEMENTED)
+def test_xc_shape(xc):
+    """Compare return shapes from functionals compared to the wrapper function call."""
+    # Skip the mock functional
+    if "mock" in xc:
+        return
+
+    if "_spin" in xc:
+        Nspin = 2
+    else:
+        Nspin = 1
+    n_spin = n_tests[Nspin]
+    dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
+
+    # The functionals need n and zeta...
+    n = np.sum(n_spin, axis=0)
+    zeta = get_zeta(n_spin)
+    e_out, v_out, vsigma_out = IMPLEMENTED[xc](n, zeta=zeta, dn_spin=dn_spin)
+
+    # ...while the wrapper function takes n_spin instead
+    e_test, v_test, vsigma_test, _ = get_xc(xc.replace("_spin", ""), n_spin, Nspin, dn_spin=dn_spin)
+
+    assert e_out.shape == e_test.shape
+    assert v_out.shape == v_test.shape
+    if vsigma_out is not None:
+        assert vsigma_out.shape == vsigma_test.shape
 
 
 if __name__ == "__main__":

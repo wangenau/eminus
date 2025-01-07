@@ -70,6 +70,8 @@ def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     n_dw = -zeta * n + n  # 2 * n_down
     ex_up, vx_up, vsigma_up = gga_x_chachiyo(n_up, np.array([2 * dn_spin[0]]), **kwargs)
     ex_dw, vx_dw, vsigma_dw = gga_x_chachiyo(n_dw, np.array([2 * dn_spin[1]]), **kwargs)
+    vx_up, vx_dw = vx_up[0], vx_dw[0]  # Remove spin dimension for the correct shape
+    vsigma_up, vsigma_dw = vsigma_up[0], vsigma_dw[0]  # Remove spin dimension for the correct shape
 
     vsigmax = np.array([2 * vsigma_up, np.zeros_like(vsigma_up), 2 * vsigma_dw])
     return 0.5 * (ex_up * n_up + ex_dw * n_dw) / n, np.array([vx_up, vx_dw]), vsigmax
