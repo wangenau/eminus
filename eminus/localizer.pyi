@@ -1,15 +1,20 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import overload, TypeVar
+from typing import Any, overload, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
-from ._typing import _Array1D, _Array2D
 from .atoms import Atoms
 
-_AnyW = TypeVar("_AnyW", NDArray[complexfloating], list[NDArray[complexfloating]])
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+type _Array1D = Sequence[float] | _ArrayReal
+type _Array2D = Sequence[_Array1D] | _ArrayReal
+_AnyW = TypeVar("_AnyW", _ArrayComplex, list[_ArrayComplex])
 
 def eval_psi(
     atoms: Atoms,
@@ -19,21 +24,21 @@ def eval_psi(
 def get_R(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[floating] | Sequence[NDArray[floating]],
+    fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
 def get_FO(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[floating] | Sequence[NDArray[floating]],
+    fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
 def get_S(
     atoms: Atoms,
-    psirs: NDArray[complexfloating],
-) -> NDArray[complexfloating]: ...
+    psirs: _ArrayComplex,
+) -> _ArrayComplex: ...
 def get_FLO(
     atoms: Atoms,
     psi: _AnyW,
-    fods: NDArray[floating] | Sequence[NDArray[floating]],
+    fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
 def get_scdm(
     atoms: Atoms,
@@ -42,48 +47,48 @@ def get_scdm(
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: list[NDArray[complexfloating]],
-) -> list[NDArray[floating]]: ...
+    psirs: list[_ArrayComplex],
+) -> list[_ArrayReal]: ...
 @overload
 def wannier_cost(
     atoms: Atoms,
-    psirs: NDArray[complexfloating],
-) -> NDArray[floating]: ...
+    psirs: _ArrayComplex,
+) -> _ArrayReal: ...
 @overload
 def wannier_center(
     atoms: Atoms,
-    psirs: list[NDArray[complexfloating]],
-) -> list[NDArray[floating]]: ...
+    psirs: list[_ArrayComplex],
+) -> list[_ArrayReal]: ...
 @overload
 def wannier_center(
     atoms: Atoms,
-    psirs: NDArray[complexfloating],
-) -> NDArray[floating]: ...
+    psirs: _ArrayComplex,
+) -> _ArrayReal: ...
 @overload
 def second_moment(
     atoms: Atoms,
-    psirs: list[NDArray[complexfloating]],
-) -> list[NDArray[floating]]: ...
+    psirs: list[_ArrayComplex],
+) -> list[_ArrayReal]: ...
 @overload
 def second_moment(
     atoms: Atoms,
-    psirs: NDArray[complexfloating],
-) -> NDArray[floating]: ...
+    psirs: _ArrayComplex,
+) -> _ArrayReal: ...
 def wannier_supercell_matrices(
     atoms: Atoms,
-    psirs: NDArray[complexfloating],
-) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...
+    psirs: _ArrayComplex,
+) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...
 def wannier_supercell_cost(
-    X: NDArray[floating],
-    Y: NDArray[floating],
-    Z: NDArray[floating],
+    X: _ArrayReal,
+    Y: _ArrayReal,
+    Z: _ArrayReal,
 ) -> float: ...
 def wannier_supercell_grad(
     atoms: Atoms,
-    X: NDArray[floating],
-    Y: NDArray[floating],
-    Z: NDArray[floating],
-) -> NDArray[complexfloating]: ...
+    X: _ArrayReal,
+    Y: _ArrayReal,
+    Z: _ArrayReal,
+) -> _ArrayComplex: ...
 def get_wannier(
     atoms: Atoms,
     psirs: _AnyW,

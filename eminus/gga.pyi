@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload
+from typing import Any, overload
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -8,32 +8,37 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+
 def get_grad_field(
     atoms: Atoms,
-    field: NDArray[floating] | NDArray[complexfloating],
+    field: _ArrayReal | _ArrayComplex,
     real: bool = ...,
-) -> NDArray[floating] | NDArray[complexfloating]: ...
+) -> _ArrayReal | _ArrayComplex: ...
 def gradient_correction(
     atoms: Atoms,
     spin: int,
-    dn_spin: NDArray[floating],
-    vsigma: NDArray[complexfloating],
-) -> NDArray[complexfloating]: ...
+    dn_spin: _ArrayReal,
+    vsigma: _ArrayComplex,
+) -> _ArrayComplex: ...
 @overload
 def get_tau(
     atoms: Atoms,
-    Y: NDArray[complexfloating],
+    Y: _ArrayComplex,
     ik: int,
-) -> NDArray[floating]: ...
+) -> _ArrayReal: ...
 @overload
 def get_tau(
     atoms: Atoms,
-    Y: list[NDArray[complexfloating]],
-) -> NDArray[floating]: ...
+    Y: list[_ArrayComplex],
+) -> _ArrayReal: ...
 def calc_Vtau(
     scf: SCF,
     ik: int,
     spin: int,
-    W: NDArray[complexfloating],
-    vtau: NDArray[complexfloating],
-) -> NDArray[complexfloating]: ...
+    W: _ArrayComplex,
+    vtau: _ArrayComplex,
+) -> _ArrayComplex: ...

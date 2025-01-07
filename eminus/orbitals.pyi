@@ -9,34 +9,39 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+
 def KSO(
     scf: SCF,
     write_cubes: bool = ...,
     **kwargs: Any,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def FO(
     scf: SCF,
     write_cubes: bool = ...,
-    fods: NDArray[floating] | Sequence[NDArray[floating]] | None = ...,
+    fods: _ArrayReal | Sequence[_ArrayReal] | None = ...,
     guess: str = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def FLO(
     scf: SCF,
     write_cubes: bool = ...,
-    fods: NDArray[floating] | Sequence[NDArray[floating]] | None = ...,
+    fods: _ArrayReal | Sequence[_ArrayReal] | None = ...,
     guess: str = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def WO(
     scf: SCF,
     write_cubes: bool = ...,
     precondition: bool = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def SCDM(
     scf: SCF,
     write_cubes: bool = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def cube_writer(
     atoms: Atoms,
     orb_type: str,
-    orbitals: Sequence[NDArray[floating]] | Sequence[NDArray[complexfloating]],
+    orbitals: Sequence[_ArrayReal] | Sequence[_ArrayComplex],
 ) -> None: ...

@@ -6,18 +6,19 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+
 def lda_c_chachiyo(
-    n: NDArray[floating],
+    n: _ArrayReal,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def chachiyo_scaling(
-    zeta: NDArray[floating],
-) -> tuple[NDArray[floating], NDArray[floating]]: ...
+    zeta: _ArrayReal,
+) -> tuple[_ArrayReal, _ArrayReal]: ...
 def lda_c_chachiyo_spin(
-    n: NDArray[floating],
-    zeta: NDArray[floating],
-    weight_function: Callable[
-        [NDArray[floating]], tuple[NDArray[floating], NDArray[floating]]
-    ] = ...,
+    n: _ArrayReal,
+    zeta: _ArrayReal,
+    weight_function: Callable[[_ArrayReal], tuple[_ArrayReal, _ArrayReal]] = ...,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...

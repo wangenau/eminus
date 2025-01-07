@@ -5,16 +5,19 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+
 def lda_c_vwn(
-    n: NDArray[floating],
+    n: _ArrayReal,
     A: float = ...,
     b: float = ...,
     c: float = ...,
     x0: float = ...,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def lda_c_vwn_spin(
-    n: NDArray[floating],
-    zeta: NDArray[floating],
+    n: _ArrayReal,
+    zeta: _ArrayReal,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...

@@ -9,6 +9,11 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ComplexReal = NDArray[_Complex]
+
 # Create a custom Callable type for cost functions
 class _CostType(Protocol):
     def __call__(
@@ -24,9 +29,9 @@ class _GradType(Protocol):
         scf: SCF,
         ik: int,
         spin: int,
-        W: list[NDArray[complexfloating]],
+        W: list[_ComplexReal],
         **kwargs: Any,
-    ) -> NDArray[complexfloating]: ...
+    ) -> _ComplexReal: ...
 
 # Create a custom Callable type for condition functions
 class _Conditionype(Protocol):
@@ -35,9 +40,9 @@ class _Conditionype(Protocol):
         scf: SCF,
         method: str,
         Elist: list[float],
-        linmin: NDArray[floating] | None = ...,
-        cg: NDArray[floating] | None = ...,
-        norm_g: NDArray[floating] | None = ...,
+        linmin: _ArrayReal | None = ...,
+        cg: _ArrayReal | None = ...,
+        norm_g: _ArrayReal | None = ...,
     ) -> bool: ...
 
 def scf_step(
@@ -48,36 +53,36 @@ def check_convergence(
     scf: SCF,
     method: str,
     Elist: list[float],
-    linmin: NDArray[floating] | None = ...,
-    cg: NDArray[floating] | None = ...,
-    norm_g: NDArray[floating] | None = ...,
+    linmin: _ArrayReal | None = ...,
+    cg: _ArrayReal | None = ...,
+    norm_g: _ArrayReal | None = ...,
 ) -> bool: ...
 def print_scf_step(
     scf: SCF,
     method: str,
     Elist: list[float],
-    linmin: NDArray[floating] | None,
-    cg: NDArray[floating] | None,
-    norm_g: NDArray[floating] | None,
+    linmin: _ArrayReal | None,
+    cg: _ArrayReal | None,
+    norm_g: _ArrayReal | None,
 ) -> None: ...
 def linmin_test(
-    g: NDArray[complexfloating],
-    d: NDArray[complexfloating],
+    g: _ComplexReal,
+    d: _ComplexReal,
 ) -> float: ...
 def cg_test(
     atoms: Atoms,
     ik: int,
-    g: NDArray[complexfloating],
-    g_old: NDArray[complexfloating],
+    g: _ComplexReal,
+    g_old: _ComplexReal,
     precondition: bool = ...,
 ) -> float: ...
 def cg_method(
     scf: SCF,
     ik: int,
     cgform: int,
-    g: NDArray[complexfloating],
-    g_old: NDArray[complexfloating],
-    d_old: NDArray[complexfloating],
+    g: _ComplexReal,
+    g_old: _ComplexReal,
+    d_old: _ComplexReal,
     precondition: bool = ...,
 ) -> tuple[float, float]: ...
 def sd(

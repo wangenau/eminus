@@ -1,34 +1,43 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
+from typing import Any
+
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .scf import SCF
 
-class GTH:
-    GTH: dict[str, dict[str, float | NDArray[floating]]]
-    NbetaNL: int
-    prj2beta: NDArray[integer]
-    betaNL: NDArray[complexfloating]  # noqa: N815
-    def __init__(self, scf: SCF | None = ...) -> None: ...
-    def __getitem__(self, key: str) -> dict[str, float | NDArray[floating]]: ...
+type _Int = integer[Any]
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+type _ArrayInt = NDArray[_Int]
 
-def init_gth_loc(scf: SCF) -> NDArray[complexfloating]: ...
+class GTH:
+    GTH: dict[str, dict[str, float | _ArrayReal]]
+    NbetaNL: int
+    prj2beta: _ArrayInt
+    betaNL: _ArrayComplex  # noqa: N815
+    def __init__(self, scf: SCF | None = ...) -> None: ...
+    def __getitem__(self, key: str) -> dict[str, float | _ArrayReal]: ...
+
+def init_gth_loc(scf: SCF) -> _ArrayComplex: ...
 def init_gth_nonloc(
     atoms: Atoms,
     gth: GTH,
-) -> tuple[int, NDArray[integer], NDArray[complexfloating]]: ...
+) -> tuple[int, _ArrayInt, _ArrayComplex]: ...
 def calc_Vnonloc(
     scf: SCF,
     ik: int,
     spin: int,
-    W: NDArray[complexfloating],
-) -> NDArray[complexfloating]: ...
+    W: _ArrayComplex,
+) -> _ArrayComplex: ...
 def eval_proj_G(
-    psp: dict[str, float | NDArray[floating]],
+    psp: dict[str, float | _ArrayReal],
     l: int,
     iprj: int,
-    Gm: NDArray[floating],
+    Gm: _ArrayReal,
     Omega: float,
-) -> NDArray[floating]: ...
+) -> _ArrayReal: ...

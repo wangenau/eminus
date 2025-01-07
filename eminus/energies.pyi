@@ -9,6 +9,11 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+
 @dataclass
 class Energy:
     Ekin: float = ...
@@ -28,42 +33,42 @@ def get_E(scf: SCF) -> float: ...
 @overload
 def get_Ekin(
     atoms: Atoms,
-    Y: NDArray[complexfloating],
+    Y: _ArrayComplex,
     ik: int,
 ) -> float: ...
 @overload
 def get_Ekin(
     atoms: Atoms,
-    Y: list[NDArray[complexfloating]],
+    Y: list[_ArrayComplex],
 ) -> float: ...
 def get_Ecoul(
     atoms: Atoms,
-    n: NDArray[floating],
-    phi: NDArray[floating] | None = ...,
+    n: _ArrayReal,
+    phi: _ArrayReal | None = ...,
 ) -> float: ...
 def get_Exc(
     scf: SCF,
-    n: NDArray[floating],
-    exc: NDArray[floating] | None = ...,
-    n_spin: NDArray[floating] | None = ...,
-    dn_spin: NDArray[floating] | None = ...,
-    tau: NDArray[floating] | None = ...,
+    n: _ArrayReal,
+    exc: _ArrayReal | None = ...,
+    n_spin: _ArrayReal | None = ...,
+    dn_spin: _ArrayReal | None = ...,
+    tau: _ArrayReal | None = ...,
     Nspin: int = ...,
 ) -> float: ...
 def get_Eloc(
     scf: SCF,
-    n: NDArray[floating],
+    n: _ArrayReal,
 ) -> float: ...
 @overload
 def get_Enonloc(
     scf: SCF,
-    Y: NDArray[complexfloating],
+    Y: _ArrayComplex,
     ik: int,
 ) -> float: ...
 @overload
 def get_Enonloc(
     scf: SCF,
-    Y: list[NDArray[complexfloating]],
+    Y: list[_ArrayComplex],
 ) -> float: ...
 def get_Eewald(
     atoms: Atoms,
@@ -72,8 +77,8 @@ def get_Eewald(
 ) -> float: ...
 def get_Esic(
     scf: SCF,
-    Y: list[NDArray[complexfloating]] | None,
-    n_single: NDArray[floating] | None = ...,
+    Y: list[_ArrayComplex] | None,
+    n_single: _ArrayReal | None = ...,
 ) -> float: ...
 def get_Edisp(
     scf: SCF,
@@ -83,11 +88,11 @@ def get_Edisp(
 ) -> float: ...
 def get_Eband(
     scf: SCF,
-    Y: list[NDArray[complexfloating]],
+    Y: list[_ArrayComplex],
     **kwargs: Any,
 ) -> float: ...
 def get_Eentropy(
     scf: SCF,
-    epsilon: NDArray[floating],
+    epsilon: _ArrayReal,
     Efermi: float,
 ) -> float: ...

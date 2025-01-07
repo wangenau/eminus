@@ -149,8 +149,24 @@ class ConfigClass:
             sys.stdout.write(f"FFT threads : {self.threads}\n")
 
 
-# Do not initialize the class when Sphinx is running
-# Since we set the class instance to the module name Sphinx will only document the main docstring of
-# the class without the properties
-if "sphinx-build" not in pathlib.Path(sys.argv[0]).name:
+if (
+    "sphinx-build" not in pathlib.Path(sys.argv[0]).name
+    and "stubtest" not in pathlib.Path(sys.argv[0]).name
+):
+    # Do not initialize the class when Sphinx or stubtest is running
+    # Since we set the class instance to the module name Sphinx would only document
+    # the main docstring of the class without the properties
     sys.modules[__name__] = ConfigClass()
+else:
+    # Add mock variables for all properties and methods of the ConfigClass to the module
+    # This allows IDEs to see that the module has said attribute
+    # This also allows for stubtesting and documentation of these variables and functions
+    use_torch = False  #: Whether to use Torch or SciPy if Torch is installed.
+    use_gpu = False  #: Whether to use Torch on the GPU if available.
+    use_pylibxc = False  #: Whether to use pylibxc or PySCF for functionals if both are installed.
+    threads = 0  #: Number of threads used in FFT calculations.
+    verbose = ""  #: Logger verbosity level.
+
+    def info():
+        """Print configuration and performance information."""
+        return

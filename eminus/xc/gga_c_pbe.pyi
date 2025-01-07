@@ -5,16 +5,19 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+
 def gga_c_pbe(
-    n: NDArray[floating],
+    n: _ArrayReal,
     beta: float = ...,
-    dn_spin: NDArray[floating] | None = ...,
+    dn_spin: _ArrayReal | None = ...,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...
+) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...
 def gga_c_pbe_spin(
-    n: NDArray[floating],
-    zeta: NDArray[floating],
+    n: _ArrayReal,
+    zeta: _ArrayReal,
     beta: float = ...,
-    dn_spin: NDArray[floating] | None = ...,
+    dn_spin: _ArrayReal | None = ...,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], NDArray[floating]]: ...
+) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...

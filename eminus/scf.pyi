@@ -6,12 +6,16 @@ from typing import Any
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
-from ._typing import _Array1D
 from .atoms import Atoms
 from .energies import Energy
 from .gth import GTH
 from .kpoints import KPoints
 from .utils import BaseObject
+
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
 
 class SCF(BaseObject):
     etol: float
@@ -22,20 +26,20 @@ class SCF(BaseObject):
     energies: Energy
     is_converged: bool
     gth: GTH
-    Vloc: NDArray[complexfloating]
-    W: list[NDArray[complexfloating]] | None
-    Y: list[NDArray[complexfloating]] | None
-    Z: list[NDArray[complexfloating]] | None
-    D: list[NDArray[complexfloating]] | None
-    n: NDArray[floating] | None
-    n_spin: NDArray[floating] | None
-    dn_spin: NDArray[floating] | None
-    tau: NDArray[floating] | None
-    phi: NDArray[floating] | None
-    exc: NDArray[floating] | None
-    vxc: NDArray[complexfloating] | None
-    vsigma: NDArray[complexfloating] | None
-    vtau: NDArray[complexfloating] | None
+    Vloc: _ArrayComplex
+    W: list[_ArrayComplex] | None
+    Y: list[_ArrayComplex] | None
+    Z: list[_ArrayComplex] | None
+    D: list[_ArrayComplex] | None
+    n: _ArrayReal | None
+    n_spin: _ArrayReal | None
+    dn_spin: _ArrayReal | None
+    tau: _ArrayReal | None
+    phi: _ArrayReal | None
+    exc: _ArrayReal | None
+    vxc: _ArrayComplex | None
+    vsigma: _ArrayComplex | None
+    vtau: _ArrayComplex | None
     def __init__(
         self,
         atoms: Atoms,
@@ -58,9 +62,9 @@ class SCF(BaseObject):
     @xc.setter
     def xc(self, value: str | Sequence[str]) -> None: ...
     @property
-    def xc_params(self) -> dict[str, Any]: ...
+    def xc_params(self) -> dict[str, float]: ...
     @xc_params.setter
-    def xc_params(self, value: dict[str, Any]) -> None: ...
+    def xc_params(self, value: dict[str, float]) -> None: ...
     @property
     def pot(self) -> str: ...
     @pot.setter
@@ -86,7 +90,7 @@ class SCF(BaseObject):
     @property
     def xc_type(self) -> str: ...
     @property
-    def xc_params_defaults(self) -> dict[str, Any]: ...
+    def xc_params_defaults(self) -> dict[str, float]: ...
     def run(self, **kwargs: Any) -> float: ...
     kernel = run
     def converge_bands(self, **kwargs: Any) -> SCF: ...
@@ -95,7 +99,7 @@ class SCF(BaseObject):
         Nempty: int | None = ...,
         **kwargs: Any,
     ) -> SCF: ...
-    def recenter(self, center: float | _Array1D | None = ...) -> SCF: ...
+    def recenter(self, center: float | Sequence[float] | _ArrayReal | None = ...) -> SCF: ...
     def clear(self) -> SCF: ...
 
 class RSCF(SCF):

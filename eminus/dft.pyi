@@ -8,12 +8,16 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-_AnyW = TypeVar("_AnyW", NDArray[complexfloating], list[NDArray[complexfloating]])
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+_AnyW = TypeVar("_AnyW", _ArrayComplex, list[_ArrayComplex])
 
 def get_phi(
     atoms: Atoms,
-    n: NDArray[floating],
-) -> NDArray[floating]: ...
+    n: _ArrayReal,
+) -> _ArrayReal: ...
 def orth(
     atoms: Atoms,
     W: _AnyW,
@@ -25,88 +29,88 @@ def orth_unocc(
 ) -> _AnyW: ...
 def get_n_total(
     atoms: Atoms,
-    Y: list[NDArray[complexfloating]],
-    n_spin: NDArray[floating] | None = ...,
-) -> NDArray[floating]: ...
+    Y: list[_ArrayComplex],
+    n_spin: _ArrayReal | None = ...,
+) -> _ArrayReal: ...
 @overload
 def get_n_spin(
     atoms: Atoms,
-    Y: list[NDArray[complexfloating]],
-) -> NDArray[floating]: ...
+    Y: _ArrayComplex,
+    ik: int,
+) -> _ArrayReal: ...
 @overload
 def get_n_spin(
     atoms: Atoms,
-    Y: NDArray[complexfloating],
-    ik: int,
-) -> NDArray[floating]: ...
+    Y: list[_ArrayComplex],
+) -> _ArrayReal: ...
 @overload
 def get_n_single(
     atoms: Atoms,
-    Y: list[NDArray[complexfloating]],
-) -> NDArray[floating]: ...
+    Y: _ArrayComplex,
+    ik: int,
+) -> _ArrayReal: ...
 @overload
 def get_n_single(
     atoms: Atoms,
-    Y: NDArray[complexfloating],
-    ik: int,
-) -> NDArray[floating]: ...
+    Y: list[_ArrayComplex],
+) -> _ArrayReal: ...
 def get_grad(
     scf: SCF,
     ik: int,
     spin: int,
-    W: list[NDArray[complexfloating]],
+    W: list[_ArrayComplex],
     **kwargs: Any,
-) -> NDArray[complexfloating]: ...
+) -> _ArrayComplex: ...
 def H(
     scf: SCF,
     ik: int,
     spin: int,
-    W: list[NDArray[complexfloating]],
-    dn_spin: NDArray[floating] | None = ...,
-    phi: NDArray[floating] | None = ...,
-    vxc: NDArray[complexfloating] | None = ...,
-    vsigma: NDArray[complexfloating] | None = ...,
-    vtau: NDArray[complexfloating] | None = ...,
-) -> NDArray[complexfloating]: ...
+    W: list[_ArrayComplex],
+    dn_spin: _ArrayReal | None = ...,
+    phi: _ArrayReal | None = ...,
+    vxc: _ArrayComplex | None = ...,
+    vsigma: _ArrayComplex | None = ...,
+    vtau: _ArrayComplex | None = ...,
+) -> _ArrayComplex: ...
 def H_precompute(
     scf: SCF,
-    W: list[NDArray[complexfloating]],
+    W: list[_ArrayComplex],
 ) -> tuple[
-    NDArray[floating],
-    NDArray[complexfloating],
-    NDArray[complexfloating],
-    NDArray[complexfloating],
-    NDArray[complexfloating],
+    _ArrayReal,
+    _ArrayComplex,
+    _ArrayComplex,
+    _ArrayComplex,
+    _ArrayComplex,
 ]: ...
 def Q(
-    inp: NDArray[complexfloating],
-    U: NDArray[complexfloating],
-) -> NDArray[complexfloating]: ...
+    inp: _ArrayComplex,
+    U: _ArrayComplex,
+) -> _ArrayComplex: ...
 def get_psi(
     scf: SCF,
-    W: list[NDArray[complexfloating]] | None,
+    W: list[_ArrayComplex] | None,
     **kwargs: Any,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def get_epsilon(
     scf: SCF,
-    W: list[NDArray[complexfloating]] | None,
+    W: list[_ArrayComplex] | None,
     **kwargs: Any,
-) -> NDArray[floating]: ...
+) -> _ArrayReal: ...
 def get_epsilon_unocc(
     scf: SCF,
-    W: list[NDArray[complexfloating]] | None,
-    Z: list[NDArray[complexfloating]] | None,
+    W: list[_ArrayComplex] | None,
+    Z: list[_ArrayComplex] | None,
     **kwargs: Any,
-) -> NDArray[floating]: ...
+) -> _ArrayReal: ...
 def guess_random(
     scf: SCF,
     Nstate: int | None = ...,
     seed: int = ...,
     symmetric: bool = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...
 def guess_pseudo(
     scf: SCF,
     Nstate: int | None = ...,
     seed: int = ...,
     symmetric: bool = ...,
-) -> list[NDArray[complexfloating]]: ...
+) -> list[_ArrayComplex]: ...

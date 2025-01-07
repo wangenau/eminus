@@ -3,13 +3,17 @@
 from collections.abc import Sequence
 from typing import Any
 
-from numpy import floating
+from numpy import floating, integer
 from numpy.typing import NDArray
 
-from .._typing import _Array1D, _IntArray
 from ..atoms import Atoms
 from ..kpoints import KPoints
 from ..scf import SCF
+
+type _Int = integer[Any]
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+type _IntArray = Sequence[int] | NDArray[_Int]
 
 def view(
     *args: Any,
@@ -17,7 +21,7 @@ def view(
 ) -> Any: ...
 def view_atoms(
     obj: Atoms | SCF,
-    fods: NDArray[floating] | Sequence[NDArray[floating]] | None = ...,
+    fods: _ArrayReal | Sequence[_ArrayReal] | None = ...,
     plot_n: bool = ...,
     percent: float = ...,
     isovalue: float | None = ...,
@@ -26,11 +30,11 @@ def view_atoms(
 ) -> Any: ...
 def view_contour(
     obj: Atoms | SCF,
-    field: NDArray[floating] | None,
+    field: _ArrayReal | None,
     axis: int = ...,
     value: float = ...,
     lines: int = ...,
-    limits: _Array1D = ...,
+    limits: Sequence[float] | NDArray[_Float] = ...,
     zoom: float = ...,
     linewidth: float = ...,
     size: _IntArray = ...,

@@ -43,7 +43,7 @@ def test_xc_params():
     scf.xc_params = {
         "beta": 0.046,  # PBEsol parameter
         "mu": 10 / 81,  # PBEsol parameter
-        "mock": None,  # This should print a warning
+        "mock": 0,  # This should print a warning
     }
     scf.run()
     assert scf.energies.Etot == ref

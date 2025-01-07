@@ -1,11 +1,17 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
+from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import Any
 
 from numpy import floating
 from numpy.typing import NDArray
 
-from ._typing import _Array1D, _Array2D, _Array3D
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+type _Array1D = Sequence[float] | _ArrayReal
+type _Array2D = Sequence[_Array1D] | _ArrayReal
+type _Array3D = Sequence[_Array2D] | _ArrayReal
 
 @dataclass
 class Occupations:
@@ -36,7 +42,7 @@ class Occupations:
     @charge.setter
     def charge(self, value: int) -> None: ...
     @property
-    def f(self) -> NDArray[floating]: ...
+    def f(self) -> _ArrayReal: ...
     @f.setter
     def f(self, value: float | _Array1D | _Array2D | _Array3D) -> None: ...
     @property
@@ -44,7 +50,7 @@ class Occupations:
     @Nk.setter
     def Nk(self, value: int) -> None: ...
     @property
-    def wk(self) -> NDArray[floating]: ...
+    def wk(self) -> _ArrayReal: ...
     @wk.setter
     def wk(self, value: _Array1D) -> None: ...
     @property
@@ -66,11 +72,11 @@ class Occupations:
     @property
     def Nempty(self) -> int: ...
     @property
-    def F(self) -> NDArray[floating]: ...
+    def F(self) -> _ArrayReal: ...
     def fill(
         self,
-        f: float | NDArray[floating] | None = ...,
+        f: float | _ArrayReal | None = ...,
         magnetization: float | None = ...,
     ) -> Occupations: ...
     kernel = fill
-    def smear(self, epsilon: NDArray[floating]) -> float: ...
+    def smear(self, epsilon: _ArrayReal) -> float: ...

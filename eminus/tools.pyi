@@ -1,111 +1,115 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload, TypeVar
+from collections.abc import Sequence
+from typing import Any, overload, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
-from ._typing import _Array1D
 from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
 
-_AnyFloat = TypeVar("_AnyFloat", float, floating, NDArray[floating])
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+_ScalarOrArrayReal = TypeVar("_ScalarOrArrayReal", float, _ArrayReal)
 
 def cutoff2gridspacing(E: float) -> float: ...
 def gridspacing2cutoff(h: float) -> float: ...
 def center_of_mass(
-    coords: NDArray[floating],
-    masses: _Array1D | None = ...,
-) -> NDArray[floating]: ...
+    coords: _ArrayReal,
+    masses: Sequence[float] | _ArrayReal | None = ...,
+) -> _ArrayReal: ...
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: list[NDArray[complexfloating]],
-) -> list[NDArray[floating]]: ...
+    psirs: list[_ArrayComplex],
+) -> list[_ArrayReal]: ...
 @overload
 def orbital_center(
     obj: Atoms | SCF,
-    psirs: NDArray[complexfloating],
-) -> NDArray[floating]: ...
+    psirs: _ArrayComplex,
+) -> _ArrayReal: ...
 def inertia_tensor(
-    coords: NDArray[floating],
-    masses: _Array1D | None = ...,
-) -> NDArray[floating]: ...
+    coords: _ArrayReal,
+    masses: Sequence[float] | _ArrayReal | None = ...,
+) -> _ArrayReal: ...
 def get_dipole(
     scf: SCF,
-    n: NDArray[floating] | None = ...,
-) -> NDArray[floating]: ...
+    n: _ArrayReal | None = ...,
+) -> _ArrayReal: ...
 def get_ip(scf: SCF) -> float: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: list[NDArray[complexfloating]],
+    func: list[_ArrayComplex],
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
 def check_ortho(
     obj: Atoms | SCF,
-    func: NDArray[complexfloating],
+    func: _ArrayComplex,
     eps: float = ...,
 ) -> bool: ...
 @overload
 def check_norm(
     obj: Atoms | SCF,
-    func: list[NDArray[complexfloating]],
+    func: list[_ArrayComplex],
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
 def check_norm(
     obj: Atoms | SCF,
-    func: NDArray[complexfloating],
+    func: _ArrayComplex,
     eps: float = ...,
 ) -> bool: ...
 @overload
 def check_orthonorm(
     obj: Atoms | SCF,
-    func: list[NDArray[complexfloating]],
+    func: list[_ArrayComplex],
     eps: float = ...,
 ) -> list[bool]: ...
 @overload
 def check_orthonorm(
     obj: Atoms | SCF,
-    func: NDArray[complexfloating],
+    func: _ArrayComplex,
     eps: float = ...,
 ) -> bool: ...
 def get_isovalue(
-    n: NDArray[floating],
+    n: _ArrayReal,
     percent: int = ...,
 ) -> float: ...
-def get_tautf(scf: SCF) -> NDArray[floating]: ...
-def get_tauw(scf: SCF) -> NDArray[floating]: ...
-def get_elf(scf: SCF) -> NDArray[floating]: ...
+def get_tautf(scf: SCF) -> _ArrayReal: ...
+def get_tauw(scf: SCF) -> _ArrayReal: ...
+def get_elf(scf: SCF) -> _ArrayReal: ...
 def get_reduced_gradient(
     scf: SCF,
     eps: float = ...,
-) -> NDArray[floating]: ...
+) -> _ArrayReal: ...
 def get_spin_squared(scf: SCF) -> float: ...
 def get_multiplicity(scf: SCF) -> float: ...
 def get_magnetization(scf: SCF) -> float: ...
 def get_bandgap(scf: SCF) -> float: ...
 def get_Efermi(
     obj: Occupations | SCF,
-    epsilon: NDArray[floating] | None = ...,
+    epsilon: _ArrayReal | None = ...,
 ) -> float: ...
 def fermi_distribution(
-    E: _AnyFloat,
+    E: _ScalarOrArrayReal,
     mu: float,
     kbT: float,
-) -> _AnyFloat: ...
+) -> _ScalarOrArrayReal: ...
 def electronic_entropy(
-    E: _AnyFloat,
+    E: _ScalarOrArrayReal,
     mu: float,
     kbT: float,
-) -> _AnyFloat: ...
+) -> _ScalarOrArrayReal: ...
 def get_dos(
-    epsilon: NDArray[floating],
-    wk: NDArray[floating],
+    epsilon: _ArrayReal,
+    wk: _ArrayReal,
     spin: int = ...,
     npts: int = ...,
     width: float = ...,
-) -> tuple[NDArray[floating], NDArray[floating]]: ...
+) -> tuple[_ArrayReal, _ArrayReal]: ...

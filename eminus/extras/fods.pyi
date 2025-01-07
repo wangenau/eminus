@@ -9,24 +9,27 @@ from numpy.typing import NDArray
 from ..atoms import Atoms
 from ..scf import SCF
 
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+
 def get_localized_orbitals(
     mf: Any,
     Nspin: int,
     loc: str,
     Nit: int = ...,
     seed: int = ...,
-) -> list[NDArray[floating]]: ...
+) -> list[_ArrayReal]: ...
 def get_fods(
     obj: Atoms | SCF,
     basis: str = ...,
     loc: str = ...,
-) -> list[NDArray[floating]]: ...
+) -> list[_ArrayReal]: ...
 def split_fods(
     atom: Sequence[str],
-    pos: NDArray[floating],
+    pos: _ArrayReal,
     elec_symbols: Sequence[str] = ...,
-) -> tuple[list[str], NDArray[floating], list[NDArray[floating]]]: ...
+) -> tuple[list[str], _ArrayReal, list[_ArrayReal]]: ...
 def remove_core_fods(
     obj: Atoms | SCF,
-    fods: NDArray[floating] | Sequence[NDArray[floating]],
-) -> list[NDArray[floating]]: ...
+    fods: _ArrayReal | Sequence[_ArrayReal],
+) -> list[_ArrayReal]: ...

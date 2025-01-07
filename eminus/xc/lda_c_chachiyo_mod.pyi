@@ -5,15 +5,18 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
+type _Float = floating[Any]
+type _ArrayReal = NDArray[_Float]
+
 def lda_c_chachiyo_mod(
-    n: NDArray[floating],
+    n: _ArrayReal,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def chachiyo_scaling_mod(
-    zeta: NDArray[floating],
-) -> tuple[NDArray[floating], NDArray[floating]]: ...
+    zeta: _ArrayReal,
+) -> tuple[_ArrayReal, _ArrayReal]: ...
 def lda_c_chachiyo_mod_spin(
-    n: NDArray[floating],
-    zeta: NDArray[floating],
+    n: _ArrayReal,
+    zeta: _ArrayReal,
     **kwargs: Any,
-) -> tuple[NDArray[floating], NDArray[floating], None]: ...
+) -> tuple[_ArrayReal, _ArrayReal, None]: ...

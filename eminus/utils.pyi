@@ -3,10 +3,15 @@
 from collections.abc import Callable, Sequence
 from typing import Any, Literal, Protocol
 
-from numpy import complexfloating, floating
+from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
-from ._typing import _Array2D, _IntArray
+type _Int = integer[Any]
+type _Float = floating[Any]
+type _Complex = complexfloating[Any]
+type _ArrayReal = NDArray[_Float]
+type _ArrayComplex = NDArray[_Complex]
+type _Array2D = Sequence[Sequence[float]] | Sequence[_ArrayReal] | _ArrayReal
 
 # Create a custom Callable type for some decorators
 class _HandleType(Protocol):
@@ -32,14 +37,14 @@ class BaseObject:
     ) -> None: ...
 
 def dotprod(
-    a: NDArray[complexfloating],
-    b: NDArray[complexfloating],
+    a: _ArrayComplex,
+    b: _ArrayComplex,
 ) -> float: ...
 def Ylm_real(
     l: int,
     m: int,
-    G: NDArray[floating],
-) -> NDArray[floating]: ...
+    G: _ArrayReal,
+) -> _ArrayReal: ...
 def handle_spin(
     func: _HandleType,
 ) -> _HandleType: ...
@@ -54,20 +59,20 @@ def handle_torch(
     **kwargs: Any,
 ) -> Callable[..., Any]: ...
 def pseudo_uniform(
-    size: _IntArray,
+    size: Sequence[int] | NDArray[_Int],
     seed: int = ...,
-) -> NDArray[complexfloating]: ...
+) -> _ArrayComplex: ...
 def add_maybe_none(
-    a: NDArray[complexfloating] | None,
-    b: NDArray[complexfloating] | None,
-) -> NDArray[complexfloating]: ...
+    a: _ArrayComplex | None,
+    b: _ArrayComplex | None,
+) -> _ArrayComplex: ...
 def molecule2list(molecule: str) -> list[str]: ...
 def atom2charge(
     atom: Sequence[str],
     path: str | None = ...,
 ) -> list[int]: ...
 def vector_angle(
-    a: NDArray[floating],
-    b: NDArray[floating],
-) -> NDArray[floating]: ...
-def get_lattice(lattice_vectors: _Array2D) -> list[NDArray[floating]]: ...
+    a: _ArrayReal,
+    b: _ArrayReal,
+) -> _ArrayReal: ...
+def get_lattice(lattice_vectors: _Array2D) -> list[_ArrayReal]: ...

@@ -120,8 +120,17 @@ typecheck:
   image: ghcr.io/astral-sh/uv:python3.13-alpine
   stage: test
   script:
-    - uv pip install mypy[faster-cache] numpy
+    - uv pip install -e .
+    - uv pip install mypy[faster-cache]
     - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
+    # Overload issues due to https://github.com/python/mypy/issues/16956
+    - >-
+      echo -e
+      "eminus.dft.(get_n_single|get_n_spin)\n"
+      "eminus.energies.(get_Ekin|get_Enonloc)\n"
+      "eminus.gga.get_tau\n"
+      > .mypyignore
+    - stubtest eminus --allowlist=.mypyignore
   rules:
     - if: $CI_PIPELINE_SOURCE != "schedule"
       changes:
