@@ -417,7 +417,7 @@ def pccg(
         for ik in range(atoms.kpts.Nk):
             for spin in range(atoms.occ.Nspin):
                 g[ik][spin] = grad(scf, ik, spin, scf.W, **scf._precomputed)
-                # Calculate linmin and cg for each spin and k-point separately if desired
+                # Calculate linmin and cg for each spin and k-point separately if needed
                 if scf._log.level <= logging.DEBUG:
                     linmin[ik][spin] = linmin_test(g[ik][spin], d[ik][spin])
                     cg[ik][spin] = cg_test(atoms, ik, g[ik][spin], g_old[ik][spin], precondition)

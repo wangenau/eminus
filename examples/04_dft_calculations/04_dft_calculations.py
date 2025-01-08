@@ -62,7 +62,7 @@ scf = SCF(
     verbose=verbose,
 )
 
-# # Arguments for the minimizer can be passed through via the run function, e.g., for the conjugated-gradient form
+# # Arguments for the minimizer can be passed through using the run function, e.g., for the conjugated-gradient form
 etot = scf.run(cgform=2)
 
 # # The total energy is a return value of the `SCF.run` function, but it is saved in the `SCF` object as well with all energy contributions

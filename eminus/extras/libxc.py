@@ -20,7 +20,7 @@ from ..logger import log
 
 
 def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
-    """Handle Libxc exchange-correlation functionals via pylibxc.
+    """Handle Libxc exchange-correlation functionals using pylibxc.
 
     Reference: SoftwareX 7, 1.
 
@@ -101,7 +101,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
 
 def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
-    """Handle Libxc exchange-correlation functionals via PySCF.
+    """Handle Libxc exchange-correlation functionals using PySCF.
 
     Reference: WIREs Comput. Mol. Sci. 8, e1340.
 

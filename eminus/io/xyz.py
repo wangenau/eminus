@@ -102,7 +102,7 @@ def write_xyz(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
             fp.write(
                 f"{atoms.atom[ia]:<2s}  {pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
             )
-        # Add FOD coordinates if desired
+        # Add FOD coordinates if needed
         # The atom symbol will default to pos (no atom type)
         if fods is not None:
             for s in range(len(fods)):

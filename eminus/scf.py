@@ -316,10 +316,10 @@ class SCF(BaseObject):
         else:
             self._log.warning("SCF not converged!")
 
-        # Calculate SIC energy if desired
+        # Calculate SIC energy if needed
         if self.sic:
             self.energies.Esic = get_Esic(self, self.Y)
-        # Calculate dispersion correction energy if desired
+        # Calculate dispersion correction energy if needed
         if isinstance(self.disp, dict):
             self.energies.Edisp = get_Edisp(self, **self.disp)
         elif self.disp:
@@ -415,7 +415,7 @@ class SCF(BaseObject):
             )
         self._log.info(f"Total band minimization time: {t_tot:.5f} s")
 
-        # Converge empty bands automatically if desired
+        # Converge empty bands automatically if needed
         if self.atoms.occ.Nempty > 0:
             self.converge_empty_bands(**kwargs)
         return self

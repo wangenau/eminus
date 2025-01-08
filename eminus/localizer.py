@@ -136,7 +136,7 @@ def get_FLO(atoms, psi, fods):
 @handle_k(mode="skip")
 @handle_spin
 def get_scdm(atoms, psi):
-    """Calculate localized orbitals via QR decomposition, as given in the SCDM method.
+    """Calculate localized orbitals by QR decomposition, as given in the SCDM method.
 
     Reference: J. Chem. Theory Comput. 11, 1463.
 

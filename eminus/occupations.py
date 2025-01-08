@@ -93,7 +93,7 @@ class Occupations:
 
     @charge.setter
     def charge(self, value):
-        # If we set a charge via this setter update the number of electrons
+        # If we set a charge using this setter update the number of electrons
         if hasattr(self, "Nelec"):
             self.Nelec += self._charge - int(value)
         if self._charge != int(value):

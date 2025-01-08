@@ -839,7 +839,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         )
         fig.add_trace(bz_data)
 
-    # Plot special points if desired
+    # Plot special points if needed
     if special:
         for label, k_scaled in SPECIAL_POINTS[kpts.lattice].items():
             if label == "G":

@@ -17,7 +17,7 @@ def test_GTH():
     cell = Cell("Ne", "sc", 20, 10, kmesh=(1, 1, 2))
     scf = SCF(cell)
     gth = scf.gth
-    gth["Ne"]  # Test that the object can be accessed via square brackets
+    gth["Ne"]  # Test that the object can be accessed using square brackets
     print(gth)  # Test that the object can be printed
     assert gth.NbetaNL == 5
     assert len(gth.betaNL) == cell.kpts.Nk

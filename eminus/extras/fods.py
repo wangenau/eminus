@@ -184,7 +184,7 @@ def remove_core_fods(obj, fods):
             n_core = SYMBOL2NUMBER[atoms.atom[ia]] - atoms.Z[ia]
             # In the spin-paired case two electrons are one state
             # Since only core states are removed in pseudopotentials this value is divisible by 2
-            # +1 to account for uneven amounts of core FODs (e.g., for hydrogen)
+            # +1 to account for uneven amounts of core FODs (like in hydrogen)
             n_core = (n_core + 1) // 2
             dist = norm(fods[s] - atoms.pos[ia], axis=1)
             idx = np.argsort(dist)

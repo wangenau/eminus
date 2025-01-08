@@ -142,7 +142,7 @@ def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
         for ia in range(atoms.Natoms):
             fp.write(f"{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n")
 
-        # Add FOD coordinates if desired
+        # Add FOD coordinates if needed
         if fods is not None:
             for s in range(len(fods)):
                 for ie in fods[s]:
