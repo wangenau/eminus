@@ -151,7 +151,6 @@ ignore = [
     "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
     # The following rules are disabled due to possible conflicts with the formatter
     "COM812",  # Trailing comma missing
-    "ISC001",  # Implicitly concatenated string literals on one line
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -171,6 +170,9 @@ ignore = [
     "T201",  # print found
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-allowed-modules = ["json", "pdb"]
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
