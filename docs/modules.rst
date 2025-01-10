@@ -63,6 +63,7 @@ Modules
    eminus.extras.dispersion
    eminus.extras.fods
    eminus.extras.hdf5
+   eminus.extras.jax
    eminus.extras.libxc
    eminus.extras.symmetry
    eminus.extras.torch

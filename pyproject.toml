@@ -62,6 +62,9 @@ hdf5 = [
 libxc = [
     "pyscf>=2.1",  # Libxc interface using PySCF
 ]
+jax = [
+    "jax>=0.4.8",  # Faster FFT operators
+]
 torch = [
     "torch>=1.8",  # Faster FFT operators
 ]

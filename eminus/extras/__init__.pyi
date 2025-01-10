@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from . import torch
+from . import jax, torch
 from .dispersion import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
 from .hdf5 import read_hdf5, write_hdf5
@@ -21,6 +21,7 @@ __all__: list[str] = [
     "executed_in_notebook",
     "get_Edisp",
     "get_fods",
+    "jax",
     "libxc_functional",
     "plot_bandstructure",
     "plot_dos",

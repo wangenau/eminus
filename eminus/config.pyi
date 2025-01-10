@@ -4,7 +4,7 @@ from collections.abc import Callable
 
 # Add type hints for all properties and methods of the ConfigClass to the module
 # This allows IDEs to see that the module has said attribute
-use_torch: bool
+backend: str
 use_gpu: bool
 use_pylibxc: bool
 threads: int
@@ -14,9 +14,9 @@ info: Callable[[], None]
 class ConfigClass:
     def __init__(self) -> None: ...
     @property
-    def use_torch(self) -> bool: ...
-    @use_torch.setter
-    def use_torch(self, value: bool) -> None: ...
+    def backend(self) -> str: ...
+    @backend.setter
+    def backend(self, value: str) -> None: ...
     @property
     def use_gpu(self) -> bool: ...
     @use_gpu.setter

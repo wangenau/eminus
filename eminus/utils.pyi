@@ -53,7 +53,7 @@ def handle_k(
     *,
     mode: Literal["gracefully", "index", "reduce", "skip"] = ...,
 ) -> Any: ...
-def handle_torch(
+def handle_backend(
     func: Callable[..., Any],
     *args: Any,
     **kwargs: Any,

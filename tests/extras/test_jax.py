@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Test torch extra."""
+"""Test jax extra."""
 
 import typing  # noqa: F401
 
@@ -11,7 +11,7 @@ from numpy.testing import assert_allclose
 
 from eminus import Atoms, config
 
-config.backend = "torch"
+config.backend = "jax"
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
@@ -31,7 +31,7 @@ W_tests = {
 @pytest.mark.parametrize("field", ["full", "full_single", "full_spin", "full_k"])
 def test_IJ(field):
     """Test forward and backward operator identity."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     out = atoms.I(atoms.J(W_tests[field]))
     test = W_tests[field]
     assert_allclose(out, test)
@@ -52,7 +52,7 @@ def test_IJ(field):
 )
 def test_JI(field):
     """Test forward and backward operator identity."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     if "active" in field:
         out = atoms.J(atoms.I(W_tests[field]), full=False)
     else:
@@ -64,7 +64,7 @@ def test_JI(field):
 @pytest.mark.parametrize("field", ["active", "active_single", "active_spin", "active_k"])
 def test_IdagJdag(field):
     """Test daggered forward and backward operator identity."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     out = atoms.Idag(atoms.Jdag(W_tests[field]))
     test = W_tests[field]
     assert_allclose(out, test)
@@ -73,7 +73,7 @@ def test_IdagJdag(field):
 @pytest.mark.parametrize("field", ["full", "full_single", "full_spin", "full_k"])
 def test_JdagIdag(field):
     """Test daggered forward and backward operator identity."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     out = atoms.Jdag(atoms.Idag(W_tests[field], full=True))
     test = W_tests[field]
     assert_allclose(out, test)
@@ -82,7 +82,7 @@ def test_JdagIdag(field):
 @pytest.mark.parametrize("field", ["full_single"])
 def test_hermitian_I(field):
     """Test that I and Idag operators are hermitian."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
     assert not isinstance(a, list)
@@ -94,7 +94,7 @@ def test_hermitian_I(field):
 @pytest.mark.parametrize("field", ["full_single"])
 def test_hermitian_J(field):
     """Test that J and Jdag operators are hermitian."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
     a = W_tests[field]
     b = W_tests[field] + rng.standard_normal(1)
     assert not isinstance(a, list)

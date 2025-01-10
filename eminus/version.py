@@ -16,7 +16,7 @@ LOGO = (" ___ _____ _ ___ _ _ ___ \n"
 def info():
     """Print version numbers and availability of packages."""
     dependencies = ("numpy", "scipy")
-    extras = ("torch", "pyscf", "dftd3", "h5py", "plotly", "nglview")
+    extras = ("jax", "torch", "pyscf", "dftd3", "h5py", "plotly", "nglview")
     dev = ("matplotlib", "notebook", "pylibxc", "pytest", "sphinx", "furo")
 
     sys.stdout.write(LOGO)

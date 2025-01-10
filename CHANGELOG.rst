@@ -9,6 +9,8 @@ dev
 ---
 - Miscellaneous
    - Improve GDSMFB thermal functional
+   - Add Jax powered FFT operators as an extra (thanks to @artemfilatov1)
+   - Rename use_torch to backend in config
    - Drop Python 3.7 support
    - Rework type hints
 

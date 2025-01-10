@@ -51,6 +51,12 @@ License
      -
    * -
      -
+   * - jax
+     - Apache-2.0
+   * -
+     -
+   * -
+     -
    * - torch
      - BSD-3-Clause
    * -

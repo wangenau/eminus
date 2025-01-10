@@ -19,7 +19,7 @@ class ConfigClass:
 
     def __init__(self):
         """Initialize the ConfigClass object."""
-        self.use_torch = True  # Use the faster Torch FFTs if available
+        self.backend = "torch"  # Use faster Torch FFTs from a different backend if available
         self.use_gpu = False  # Disable GPU by default, since it is slower in my tests
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.threads = None  # Read threads from environment variables by default
@@ -28,28 +28,46 @@ class ConfigClass:
     # ### Class properties ###
 
     @property
-    def use_torch(self):
-        """Whether to use Torch or SciPy if Torch is installed."""
+    def backend(self):
+        """Whether to use SciPy or a different backend if installed."""
         # Add the logic in the getter method so it does not run on initialization since importing
         # Torch is rather slow
-        if self._use_torch:
+        if self._backend == "jax":
+            if "jax" in sys.modules:
+                return "jax"
             try:
-                import torch  # noqa: F401
+                import jax
+                import jax.numpy
 
-                return True  # noqa: TRY300
+                jax.config.update("jax_enable_x64", True)  # noqa: FBT003
+                return "jax"  # noqa: TRY300
             except ImportError:
                 pass
-        return False
+        if self._backend == "torch":
+            if "torch" in sys.modules:
+                return "torch"
+            try:
+                import torch
 
-    @use_torch.setter
-    def use_torch(self, value):
-        self._use_torch = value
+                torch.set_default_dtype(torch.double)
+                return "torch"  # noqa: TRY300
+            except ImportError:
+                pass
+        return "scipy"
+
+    @backend.setter
+    def backend(self, value):
+        self._backend = value.lower()
 
     @property
     def use_gpu(self):
-        """Whether to use Torch on the GPU if available."""
-        # Only use GPU if Torch is available
-        if self.use_torch and self._use_gpu:
+        """Whether to use the GPU if available."""
+        # Only use GPU if Torch or Jax is available
+        if self.backend == "jax" and self._use_gpu:
+            import jax
+
+            return jax.default_backend() != "cpu"
+        if self.backend == "torch" and self._use_gpu:
             import torch
 
             return torch.cuda.is_available()
@@ -80,7 +98,7 @@ class ConfigClass:
         """Number of threads used in FFT calculations."""
         if self._threads is None:
             try:
-                if self.use_torch:
+                if self.backend == "torch":
                     import torch
 
                     return torch.get_num_threads()
@@ -94,7 +112,7 @@ class ConfigClass:
     def threads(self, value):
         self._threads = value
         if isinstance(value, numbers.Integral):
-            if self.use_torch:
+            if self.backend == "torch":
                 import torch
 
                 return torch.set_num_threads(value)
@@ -130,7 +148,7 @@ class ConfigClass:
 
         sys.stdout.write(
             "\n--- Performance infos ---\n"
-            f"FFT backend : {'Torch' if self.use_torch else 'SciPy'}\n"
+            f"FFT backend : {self.backend}\n"
             f"FFT device  : {'GPU' if self.use_gpu else 'CPU'}\n"
         )
         # Do not print threading information when using GPU
@@ -161,8 +179,8 @@ else:
     # Add mock variables for all properties and methods of the ConfigClass to the module
     # This allows IDEs to see that the module has said attribute
     # This also allows for stubtesting and documentation of these variables and functions
-    use_torch = False  #: Whether to use Torch or SciPy if Torch is installed.
-    use_gpu = False  #: Whether to use Torch on the GPU if available.
+    backend = ""  #: Whether to use SciPy or a different backend if installed.
+    use_gpu = False  #: Whether to use the GPU if available.
     use_pylibxc = False  #: Whether to use pylibxc or PySCF for functionals if both are installed.
     threads = 0  #: Number of threads used in FFT calculations.
     verbose = ""  #: Logger verbosity level.

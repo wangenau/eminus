@@ -22,15 +22,23 @@ def test_logger(level):
     assert config.verbose == eminus.log.verbose
 
 
-def test_torch():
-    """Check the Torch initialization."""
+def test_backend():
+    """Check the backend initialization."""
+    try:
+        import jax.numpy  # noqa: F401
+
+        config.backend = "jax"
+        assert config.backend == "jax"
+    except ImportError:
+        assert config.backend != "jax"
+
     try:
         import torch  # noqa: F401
 
-        config.use_torch = True
-        assert config.use_torch
+        config.backend = "torch"
+        assert config.backend == "torch"
     except ImportError:
-        assert not config.use_torch
+        assert config.backend != "torch"
 
 
 def test_libxc():
@@ -48,7 +56,7 @@ def test_threads():
     assert isinstance(config.threads, int) or config.threads is None
 
     threads = 2
-    if config.use_torch:
+    if config.backend == "torch":
         import torch
 
         torch.set_num_threads(threads)

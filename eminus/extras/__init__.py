@@ -11,6 +11,7 @@ Alternatively, you can only install selected extras using the respective name:
 * :mod:`~eminus.extras.dispersion`
 * :mod:`~eminus.extras.fods`
 * :mod:`~eminus.extras.hdf5`
+* :mod:`~eminus.extras.jax`
 * :mod:`~eminus.extras.libxc`
 * :mod:`~eminus.extras.symmetry`
 * :mod:`~eminus.extras.torch`
@@ -24,7 +25,7 @@ Additionally, :mod:`~eminus.extras.torch` has different installation flavors. Se
 :mod:`~eminus.extras.torch` for more information.
 """
 
-from . import torch
+from . import jax, torch
 from .dispersion import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
 from .hdf5 import read_hdf5, write_hdf5
@@ -45,6 +46,7 @@ __all__ = [
     "executed_in_notebook",
     "get_Edisp",
     "get_fods",
+    "jax",
     "libxc_functional",
     "plot_bandstructure",
     "plot_dos",
