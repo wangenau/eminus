@@ -37,6 +37,7 @@ v3.0.2 - Jan 16, 2025
 ---------------------
 - New features
    - eminus paper release!
+   - Add KSDT thermal functional
    - Add Jax powered FFT operators as an extra (thanks to @artemfilatov1)
 - Miscellaneous
    - Improve GDSMFB thermal functional

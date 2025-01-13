@@ -21,4 +21,5 @@ Exchange-correlation functional implementations and utility functions.
 | lda_c_vwn.py          | VWN correlation |
 | lda_x.py              | Slater exchange |
 | lda_xc_gdsmfb.py      | GDSMFB exchange-correlation |
+| lda_xc_ksdt.py        | KSDT exchange-correlation |
 | utils.py              | Utility functions |

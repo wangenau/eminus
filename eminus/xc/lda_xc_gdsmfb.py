@@ -10,128 +10,6 @@ import functools
 
 import numpy as np
 
-
-def lda_xc_gdsmfb(n, T=0, **kwargs):
-    """GDSMFB exchange-correlation functional (spin-paired).
-
-    Similar to the functional with the label LDA_XC_GDSMFB and ID 577 in Libxc, but the
-    implementations differ: https://gitlab.com/libxc/libxc/-/issues/525
-    Exchange and correlation cannot be separated.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-
-    Args:
-        n: Real-space electronic density.
-
-    Keyword Args:
-        T: Temperature in Hartree.
-        **kwargs: Throwaway arguments.
-
-    Returns:
-        GDSMFB exchange-correlation energy density and potential.
-    """
-    kwargs["zeta"] = np.zeros_like(n)
-    exc, vxc, _ = lda_xc_gdsmfb_spin(n, T=T, **kwargs)
-    return exc, np.array([vxc[0]]), None
-
-
-def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
-    """GDSMFB exchange-correlation functional (spin-polarized).
-
-    Similar to the functional with the label LDA_XC_GDSMFB and ID 577 in Libxc, but the
-    implementations differ: https://gitlab.com/libxc/libxc/-/issues/525
-    Exchange and correlation cannot be separated.
-
-    Reference: Phys. Rev. Lett. 119, 135001.
-
-    Args:
-        n: Real-space electronic density.
-        zeta: Relative spin polarization.
-
-    Keyword Args:
-        T: Temperature in Hartree.
-        **kwargs: Throwaway arguments.
-
-    Returns:
-        GDSMFB exchange-correlation energy density and potential.
-    """
-    # Calculate properties
-    n_up = (1 + zeta) * n / 2
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
-    theta = _get_theta(T, n, zeta)
-    theta0 = _get_theta0(theta, zeta)
-    theta1 = _get_theta1(theta, zeta)
-
-    # Initialize parameters
-    # We need to calculate coefficients for specific theta
-    # Create a coefficients object for each theta with its corresponding parameters
-    phi_params = PhiParams()
-    zeta0theta = Zeta0Coeffs(theta)
-    zeta0theta0 = Zeta0Coeffs(theta0)
-    zeta1theta = Zeta1Coeffs(theta)
-    zeta1theta1 = Zeta1Coeffs(theta1)
-
-    # Calculate fxc
-    fxc0 = _get_fxc_zeta(rs, zeta0theta0)
-    fxc1 = _get_fxc_zeta(rs, zeta1theta1)
-    phi = _get_phi(rs, theta0, zeta, phi_params)
-    fxc = fxc0 + (fxc1 - fxc0) * phi
-
-    # Generic derivatives
-    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
-    dzetadn_up = -zeta / n**2 + 1 / n
-    dzetadn_dw = -zeta / n**2 - 1 / n
-
-    # fxc derivatives
-    dfxc0drs = _get_dfxc_zetadrs(rs, zeta0theta)
-    dfxc1drs = _get_dfxc_zetadrs(rs, zeta1theta)
-    dfxc0dtheta0 = _get_dfxc_zetadtheta(rs, zeta0theta0)
-    dfxc1dtheta1 = _get_dfxc_zetadtheta(rs, zeta1theta1)
-
-    # phi derivatives
-    dphidrs = _get_dphidrs(rs, theta0, zeta, phi_params)
-    dphidtheta = _get_dphidtheta(rs, theta0, zeta, phi_params)
-    dphidzeta = _get_dphidzeta(rs, theta0, zeta, phi_params)
-
-    # theta derivatives
-    dthetadn_up = _get_dthetadn_up(T, n_up)
-    dtheta0dtheta = _get_dtheta0dtheta(zeta)
-    dtheta0dzeta = _get_dtheta0dzeta(theta0, zeta)
-    dtheta1dtheta0 = _get_dtheta1dtheta0()
-
-    # Calculate vxc_up (using dndn_up=1)
-    dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
-    dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
-    dfxc0b_up = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
-    dfxc1b_up = (
-        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
-    )
-    dphi_up = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
-    vxc_up = (
-        dfxc0a
-        + dfxc0b_up
-        - phi * (dfxc0a + dfxc0b_up - dfxc1a - dfxc1b_up)
-        - (fxc0 - fxc1) * dphi_up
-    )
-
-    # Calculate vxc_dw (using dndn_dw=1 and dthetadn_dw=0)
-    # dfxc0a and dfxc1a are identical for vxc_up and vxc_dw
-    dfxc0b_dw = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
-    # dfxc0b += dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw
-    dfxc1b_dw = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
-    # dfxc1b += dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw
-    dphi_dw = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
-    # dfxc1b += dphidtheta * dthetadn_dw
-    vxc_dw = (
-        dfxc0a
-        + dfxc0b_dw
-        - phi * (dfxc0a + dfxc0b_dw - dfxc1a - dfxc1b_dw)
-        - (fxc0 - fxc1) * dphi_dw
-    )
-
-    return fxc, fxc + np.array([vxc_up, vxc_dw]) * n, None
-
-
 # ### Temperature dependent coefficients ###
 
 
@@ -206,17 +84,20 @@ class Coefficients:
     def c(self):
         """Calculate c."""
         with np.errstate(divide="ignore"):
-            exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+            exp = np.exp(-self.c3 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
         return (self.c1 + self.c2 * exp) * self.e
 
     @property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
         with np.errstate(divide="ignore"):
-            exp = np.exp(-1 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+            exp = np.exp(-self.c3 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
         u = self.c1 + self.c2 * exp
         du = np.divide(
-            self.c2 * exp, self.theta**2, out=np.zeros_like(self.theta), where=self.theta > 0
+            self.c2 * self.c3 * exp,
+            self.theta**2,
+            out=np.zeros_like(self.theta),
+            where=self.theta > 0,
         )
         v, dv = self.e, self.dedtheta
         return du * v + u * dv
@@ -276,6 +157,7 @@ class Zeta0Coeffs(Coefficients):
     b4: float = 15.8443467125
     c1: float = 0.8759442
     c2: float = -0.230130843551
+    c3: float = 1
     d1: float = 0.72700876
     d2: float = 2.38264734144
     d3: float = 0.30221237251
@@ -302,6 +184,7 @@ class Zeta1Coeffs(Coefficients):
     b4: float = 7.57703592489
     c1: float = 0.91126873
     c2: float = -0.0307957123308
+    c3: float = 1
     d1: float = 1.48658718
     d2: float = 4.92684905511
     d3: float = 0.0849387225179
@@ -326,6 +209,147 @@ class PhiParams:
     h2: float = 7.74662802
     lambda1: float = 1.85909536
     lambda2: float = 0
+
+
+# ### Functional implementation ###
+
+
+def lda_xc_gdsmfb(
+    n, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
+):
+    """GDSMFB exchange-correlation functional (spin-paired).
+
+    Similar to the functional with the label LDA_XC_GDSMFB and ID 577 in Libxc, but the
+    implementations differ: https://gitlab.com/libxc/libxc/-/issues/525
+    Exchange and correlation cannot be separated.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+
+    Args:
+        n: Real-space electronic density.
+
+    Keyword Args:
+        T: Temperature in Hartree.
+        zeta0_coeffs: Coefficient class using the parameters for zeta=0.
+        zeta1_coeffs: Coefficient class using the parameters for zeta=1.
+        phi_params: Parameter class holding the spin-interpolation function parameters.
+        **kwargs: Throwaway arguments.
+
+    Returns:
+        GDSMFB exchange-correlation energy density and potential.
+    """
+    kwargs["zeta"] = np.zeros_like(n)
+    exc, vxc, _ = lda_xc_gdsmfb_spin(
+        n,
+        T=T,
+        zeta0_coeffs=zeta0_coeffs,
+        zeta1_coeffs=zeta1_coeffs,
+        phi_params=phi_params,
+        **kwargs,
+    )
+    return exc, np.array([vxc[0]]), None
+
+
+def lda_xc_gdsmfb_spin(
+    n, zeta, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
+):
+    """GDSMFB exchange-correlation functional (spin-polarized).
+
+    Similar to the functional with the label LDA_XC_GDSMFB and ID 577 in Libxc, but the
+    implementations differ: https://gitlab.com/libxc/libxc/-/issues/525
+    Exchange and correlation cannot be separated.
+
+    Reference: Phys. Rev. Lett. 119, 135001.
+
+    Args:
+        n: Real-space electronic density.
+        zeta: Relative spin polarization.
+
+    Keyword Args:
+        T: Temperature in Hartree.
+        zeta0_coeffs: Coefficient class using the parameters for zeta=0.
+        zeta1_coeffs: Coefficient class using the parameters for zeta=1.
+        phi_params: Parameter class holding the spin-interpolation function parameters.
+        **kwargs: Throwaway arguments.
+
+    Returns:
+        GDSMFB exchange-correlation energy density and potential.
+    """
+    # Calculate properties
+    n_up = (1 + zeta) * n / 2
+    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    theta = _get_theta(T, n, zeta)
+    theta0 = _get_theta0(theta, zeta)
+    theta1 = _get_theta1(theta, zeta)
+
+    # Initialize parameters
+    # We need to calculate coefficients for specific theta
+    # Create a coefficients object for each theta with its corresponding parameters
+    phi_params = phi_params()
+    zeta0theta = zeta0_coeffs(theta)
+    zeta0theta0 = zeta0_coeffs(theta0)
+    zeta1theta = zeta1_coeffs(theta)
+    zeta1theta1 = zeta1_coeffs(theta1)
+
+    # Calculate fxc
+    fxc0 = _get_fxc_zeta(rs, zeta0theta0)
+    fxc1 = _get_fxc_zeta(rs, zeta1theta1)
+    phi = _get_phi(rs, theta0, zeta, phi_params)
+    fxc = fxc0 + (fxc1 - fxc0) * phi
+
+    # Generic derivatives
+    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
+    dzetadn_up = -zeta / n**2 + 1 / n
+    dzetadn_dw = -zeta / n**2 - 1 / n
+
+    # fxc derivatives
+    dfxc0drs = _get_dfxc_zetadrs(rs, zeta0theta)
+    dfxc1drs = _get_dfxc_zetadrs(rs, zeta1theta)
+    dfxc0dtheta0 = _get_dfxc_zetadtheta(rs, zeta0theta0)
+    dfxc1dtheta1 = _get_dfxc_zetadtheta(rs, zeta1theta1)
+
+    # phi derivatives
+    dphidrs = _get_dphidrs(rs, theta0, zeta, phi_params)
+    dphidtheta = _get_dphidtheta(rs, theta0, zeta, phi_params)
+    dphidzeta = _get_dphidzeta(rs, theta0, zeta, phi_params)
+
+    # theta derivatives
+    dthetadn_up = _get_dthetadn_up(T, n_up)
+    dtheta0dtheta = _get_dtheta0dtheta(zeta)
+    dtheta0dzeta = _get_dtheta0dzeta(theta0, zeta)
+    dtheta1dtheta0 = _get_dtheta1dtheta0()
+
+    # Calculate vxc_up (using dndn_up=1)
+    dfxc0a = dfxc0drs * drsdn  # * dndn_up = 1
+    dfxc1a = dfxc1drs * drsdn  # * dndn_up = 1
+    dfxc0b_up = dfxc0dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    dfxc1b_up = (
+        dfxc1dtheta1 * dtheta1dtheta0 * (dtheta0dtheta * dthetadn_up + dtheta0dzeta * dzetadn_up)
+    )
+    dphi_up = dphidtheta * dthetadn_up + dphidzeta * dzetadn_up + dphidrs * drsdn  # * dndn_up = 1
+    vxc_up = (
+        dfxc0a
+        + dfxc0b_up
+        - phi * (dfxc0a + dfxc0b_up - dfxc1a - dfxc1b_up)
+        - (fxc0 - fxc1) * dphi_up
+    )
+
+    # Calculate vxc_dw (using dndn_dw=1 and dthetadn_dw=0)
+    # dfxc0a and dfxc1a are identical for vxc_up and vxc_dw
+    dfxc0b_dw = dfxc0dtheta0 * dtheta0dzeta * dzetadn_dw
+    # dfxc0b += dfxc0dtheta0 * dtheta0dtheta * dthetadn_dw
+    dfxc1b_dw = dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dzeta * dzetadn_dw
+    # dfxc1b += dfxc1dtheta1 * dtheta1dtheta0 * dtheta0dtheta * dthetadn_dw
+    dphi_dw = dphidzeta * dzetadn_dw + dphidrs * drsdn  # * dndn_dw = 1
+    # dfxc1b += dphidtheta * dthetadn_dw
+    vxc_dw = (
+        dfxc0a
+        + dfxc0b_dw
+        - phi * (dfxc0a + dfxc0b_dw - dfxc1a - dfxc1b_dw)
+        - (fxc0 - fxc1) * dphi_dw
+    )
+
+    return fxc, fxc + np.array([vxc_up, vxc_dw]) * n, None
 
 
 # ### Pade approximation and derivative ###

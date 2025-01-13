@@ -19,15 +19,18 @@ n_tests = {
 }
 functionals = {xc for xc in XC_MAP if xc.isdigit()}
 excludelist = {
-    "577",  # GDSMFB has inconsistencies in the Libxc implementation
+    ("259", 2),  # KSDT has inconsistencies in the Libxc implementation
+    ("577", 2),  # GDSMFB has inconsistencies in the Libxc implementation
 }
-functionals -= excludelist
 
 
 @pytest.mark.parametrize("xc", functionals)
 @pytest.mark.parametrize("Nspin", [1, 2])
 def test_get_exc(xc, Nspin):
     """Compare internal functional energy densities to Libxc."""
+    if (xc, Nspin) in excludelist:
+        pytest.skip(f"test_get_exc: Exclude xc={xc}, Nspin={Nspin}")
+
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from pyscf.dft.libxc import is_gga
 
@@ -46,6 +49,9 @@ def test_get_exc(xc, Nspin):
 @pytest.mark.parametrize("Nspin", [1, 2])
 def test_get_vxc(xc, Nspin):
     """Compare internal functional potentials to Libxc."""
+    if (xc, Nspin) in excludelist:
+        pytest.skip(f"test_get_vxc: Exclude xc={xc}, Nspin={Nspin}")
+
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     from pyscf.dft.libxc import is_gga
 
