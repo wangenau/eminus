@@ -205,8 +205,9 @@ class PhiParams:
     """
 
     # Sign of parameters is different from the supplemental material
-    h1: float = 3.18747258
-    h2: float = 7.74662802
+    g1: float = 2 / 3
+    g2: float = 3.18747258
+    g3: float = 7.74662802
     lambda1: float = 1.85909536
     lambda2: float = 0
 
@@ -545,14 +546,14 @@ def _get_h(rs, phi_params):
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    return (2 / 3 + phi_params.h1 * rs) / (1 + phi_params.h2 * rs)
+    return (phi_params.g1 + phi_params.g2 * rs) / (1 + phi_params.g3 * rs)
 
 
 def _get_dhdrs(rs, phi_params):
     """Calculate dh / drs."""
     return (
-        phi_params.h1 / (phi_params.h2 * rs + 1)
-        - phi_params.h2 * (phi_params.h1 * rs + 2 / 3) / (phi_params.h2 * rs + 1) ** 2
+        phi_params.g2 / (phi_params.g3 * rs + 1)
+        - phi_params.g3 * (phi_params.g2 * rs + phi_params.g1) / (phi_params.g3 * rs + 1) ** 2
     )
 
 

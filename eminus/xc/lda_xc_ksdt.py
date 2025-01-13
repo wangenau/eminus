@@ -73,8 +73,9 @@ class PhiParams:
     Reference: Phys. Rev. Lett. 112, 076403.
     """
 
-    h1: float = -0.0139261
-    h2: float = 0.183208
+    g1: float = 2 / 3
+    g2: float = -0.0139261
+    g3: float = 0.183208
     lambda1: float = 1.064009
     lambda2: float = 0.572565
 
