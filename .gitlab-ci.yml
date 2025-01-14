@@ -372,17 +372,15 @@ pypi:
 
 ##### Create a weekly build and push it to the GitLab package registry #####
 weekly:
+  image: ghcr.io/astral-sh/uv:python3.13-alpine
   stage: publish
   script:
     # Tag the version with a valid dev tag (VERSION.devYYYYMMDD)
     - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
     - WEEKLY_VERSION="${VERSION}.dev$(date +\%Y\%m\%d)"
     - sed -i 's/__version__ = "'${VERSION}'"/__version__ = "'${WEEKLY_VERSION}'"/' eminus/version.py
-    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
-    - uv pip install twine
     - uv build
-    - twine check dist/*
-    - python -m twine upload -u gitlab-ci-token -p $CI_JOB_TOKEN --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    - uv publish -u gitlab-ci-token -p $CI_JOB_TOKEN --publish-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
   rules:
     # Only run this stage on scheduled pipelines
     - if: $CI_PIPELINE_SOURCE == "schedule"
