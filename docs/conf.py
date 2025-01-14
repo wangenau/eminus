@@ -8,7 +8,8 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable  # noqa: TC003
+from typing import Any
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
