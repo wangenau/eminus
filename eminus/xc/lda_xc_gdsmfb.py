@@ -21,13 +21,17 @@ class Coefficients:
     """
 
     theta: float  #: Reduced temperature.
-    a0: float = 0.610887
     a1: float = 0.75
     a2: float = 3.04363
     a3: float = -0.09227
     a4: float = 1.7035
     a5: float = 8.31051
     a6: float = 5.1105
+
+    @functools.cached_property
+    def a0(self):
+        """Calculate a0."""
+        return 1 / (np.pi * (4 / (9 * np.pi)) ** (1 / 3))
 
     @functools.cached_property
     def b5(self):
@@ -516,41 +520,41 @@ def _get_alpha(rs, theta, phi_params):
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
-    h = _get_h(rs, phi_params)
+    g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
-    return 2 - h * np.exp(-theta * lamda)
+    return 2 - g * np.exp(-theta * lamda)
 
 
 def _get_dalphadrs(rs, theta, phi_params):
     """Calculate dalpha / drs."""
-    h = _get_h(rs, phi_params)
+    g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
-    dhdrs = _get_dhdrs(rs, phi_params)
+    dhdrs = _get_dgdrs(rs, phi_params)
     dlambdadrs = _get_dlambdadrs(rs, theta, phi_params)
-    return -dhdrs * np.exp(-theta * lamda) + dlambdadrs * theta * h * np.exp(-theta * lamda)
+    return -dhdrs * np.exp(-theta * lamda) + dlambdadrs * theta * g * np.exp(-theta * lamda)
 
 
 def _get_dalphadtheta(rs, theta, phi_params):
     """Calculate dalpha / dtheta."""
-    h = _get_h(rs, phi_params)
+    g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
     dlambdadtheta = _get_dlambdadtheta(rs, phi_params)
-    return (dlambdadtheta * theta + lamda) * h * np.exp(-theta * lamda)
+    return (dlambdadtheta * theta + lamda) * g * np.exp(-theta * lamda)
 
 
-# ### h and derivative ###
+# ### g and derivative ###
 
 
-def _get_h(rs, phi_params):
-    """Calculate h.
+def _get_g(rs, phi_params):
+    """Calculate g.
 
     Reference: Phys. Rev. Lett. 119, 135001.
     """
     return (phi_params.g1 + phi_params.g2 * rs) / (1 + phi_params.g3 * rs)
 
 
-def _get_dhdrs(rs, phi_params):
-    """Calculate dh / drs."""
+def _get_dgdrs(rs, phi_params):
+    """Calculate dg / drs."""
     return (
         phi_params.g2 / (phi_params.g3 * rs + 1)
         - phi_params.g3 * (phi_params.g2 * rs + phi_params.g1) / (phi_params.g3 * rs + 1) ** 2
