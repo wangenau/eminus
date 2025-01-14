@@ -443,7 +443,7 @@ XC_MAP = {
     "chachiyoc": "gga_c_chachiyo",
     # lda_xc_gdsmfb
     "577": "lda_xc_gdsmfb",
-    "ldaxcgdsmfb": "lda_xc_gdsmfb",
+    "gdsmfb": "lda_xc_gdsmfb",
 }
 
 #: Dictionary of common functional aliases.
