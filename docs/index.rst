@@ -21,7 +21,7 @@ Home
    overview.rst
    installation.rst
    theory.rst
-   _examples/examples.rst
+   examples/examples.rst
    modules.rst
    citation.rst
    changelog.rst
@@ -55,7 +55,7 @@ Home
       :columns: 6
 
    .. grid-item-card:: :octicon:`book` User guide
-      :link: _examples/examples
+      :link: examples/examples
       :link-type: doc
       :columns: 6
 

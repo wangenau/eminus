@@ -11,16 +11,16 @@ from typing import Any
 def generate(*args: Any, **kwargs: Any) -> None:
     """Automatically generate examples page from examples folder."""
     # Copy template file and create examples folder
-    pathlib.Path("docs/_examples").mkdir(exist_ok=True)
-    shutil.copy2("docs/_templates/custom-examples.rst", "docs/_examples/examples.rst")
+    pathlib.Path("docs/examples").mkdir(exist_ok=True)
+    shutil.copy2("docs/_templates/custom-examples.rst", "docs/examples/examples.rst")
     # Get list of examples from subfolders
     examples = sorted(pathlib.Path("examples").iterdir())
     examples = [name for name in examples if name.is_dir()]
 
-    with open("docs/_examples/examples.rst", "a", encoding="utf-8") as f_index:
+    with open("docs/examples/examples.rst", "a", encoding="utf-8") as f_index:
         for example in examples:
             # Create example subfile
-            with open(f"docs/_examples/{example.name}.rst", "w", encoding="utf-8") as fp:
+            with open(f"docs/examples/{example.name}.rst", "w", encoding="utf-8") as fp:
                 fp.write(f".. _{example.name}:\n")
                 # Include readme
                 fp.write(f"\n.. include:: ../../{example}/README.rst\n")
@@ -35,7 +35,7 @@ def generate(*args: Any, **kwargs: Any) -> None:
                         "   :color: primary\n   :outline:\n\n   Preview\n"
                     )
                 # Add download links
-                fp.write("\nDownload")
+                fp.write("\nDownloads: ")
                 files = sorted(example.glob("*"))
                 exclude = [".ipynb_checkpoints", "__pycache__", "README.rst"]
                 for file in files:
@@ -43,7 +43,7 @@ def generate(*args: Any, **kwargs: Any) -> None:
                         fp.write(f" :download:`{file.name} <../../{file}>`")
                         # Copy all images to the examples folder
                         if file.suffix == ".png":
-                            shutil.copy2(file, "docs/_examples/")
+                            shutil.copy2(file, "docs/examples/")
             # Add example subfile to index
             f_index.write(f"\n   {example.name}.rst")
 
@@ -87,4 +87,4 @@ def parse(script: str) -> str:
 
 def clean(*args: Any, **kwargs: Any) -> None:
     """Remove generated examples after build."""
-    shutil.rmtree("docs/_examples")
+    shutil.rmtree("docs/examples")

@@ -166,4 +166,4 @@ Calculate the eigenenergies and plot the band structure.
    :align: center
    :width: 65%
 
-Find this example with more comments in the :doc:`examples section <_examples/19_band_structures>`.
+Find this example with more comments in the :doc:`examples section <examples/19_band_structures>`.

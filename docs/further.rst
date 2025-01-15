@@ -16,7 +16,6 @@ Further information
 - The code `JDFTx <https://jdftx.org/index.html>`_ from Ravishankar Sundararaman et al. offers a great reference implementation in C++ using DFT++.
 - Another great read is the book by Fadjar Fathurrahman et al. called `Implementing Density Functional Theory Calculations <https://github.com/f-fathurrahman/ImplementingDFT>`_.
 - This book outlines an implementation in Julia using a different formulation called `PWDFT.jl <https://github.com/f-fathurrahman/PWDFT.jl>`_.
-- More open-source codes related to DFT, SIC, and more can be found on the `ESP <https://esp42.gitlab.io>`_ and `OpenSIC <https://opensic.gitlab.io/opensic>`_ pages.
 
 Contact
 =======
