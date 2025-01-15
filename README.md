@@ -44,15 +44,18 @@ To learn more about the features, usage, or implementation of eminus, take a loo
 
 ## Citation
 
-A supplementary paper is available on [arXiv](https://arxiv.org/abs/2410.19438). The following BibTeX key can be used
+A supplementary paper is available on [SoftwareX](https://www.sciencedirect.com/science/article/pii/S2352711025000020). The following BibTeX key can be used
 
 ```terminal
-@Misc{Schulze2021,
-  author    = {Schulze, Wanja T. and Schwalbe, Sebastian and Trepte, Kai and Gr{\"a}fe, Stefanie},
-  title     = {eminus -- Pythonic electronic structure theory},
-  year      = {2024},
-  doi       = {10.48550/arXiv.2410.19438},
-  publisher = {arXiv},
+@Article{Schulze2025,
+  author  = {Schulze, Wanja Timm and Schwalbe, Sebastian and Trepte, Kai and Gr\"afe, Stefanie},
+  title   = {{eminus} --- Pythonic electronic structure theory},
+  year    = {2025},
+  doi     = {10.1016/j.softx.2025.102035},
+  issn    = {2352-7110},
+  journal = {SoftwareX},
+  pages   = {102035},
+  volume  = {29},
 }
 ```
 

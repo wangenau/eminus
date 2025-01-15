@@ -21,7 +21,8 @@ def info():
 
     sys.stdout.write(LOGO)
     sys.stdout.write(
-        "\nhttps://arxiv.org/abs/2410.19438\n"
+        "\neminus - Pythonic electronic structure theory"
+        "\n https://doi.org/10.1016/j.softx.2025.102035\n"
         "\n--- Platform infos ---"
         f"\nPlatform   : {platform.system()} {platform.machine()}"
         f"\nRelease    : {platform.release()} {platform.version()}"

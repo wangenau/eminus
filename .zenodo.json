@@ -30,10 +30,10 @@
     "license": "Apache-2.0",
     "related_identifiers": [
         {
-            "identifier": "10.48550/arXiv.2410.19438",
+            "identifier": "10.1016/j.softx.2025.102035",
             "relation": "isPublishedIn",
-            "resource_type": "publication-preprint",
-            "scheme": "arxiv"
+            "resource_type": "publication-article",
+            "scheme": "doi"
         },
         {
             "identifier": "https://gitlab.com/wangenau/eminus",

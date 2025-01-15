@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """eminus - Pythonic electronic structure theory.
 
-Reference: https://arxiv.org/abs/2410.19438
+Reference: SoftwareX 29, 102035.
 
 Minimal usage example to do a DFT calculation for helium::
 

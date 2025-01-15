@@ -7,18 +7,22 @@
 Citation
 ********
 
-A supplementary paper is available on `arXiv <https://arxiv.org/abs/2410.19438>`_. The following BibTeX key can be used
+A supplementary paper is available on `SoftwareX <https://www.sciencedirect.com/science/article/pii/S2352711025000020>`_. The following BibTeX key can be used
 
 .. code-block:: TeX
 
-  @Misc{Schulze2021,
-   author    = {Schulze, Wanja T. and Schwalbe, Sebastian and Trepte, Kai and Gr{\"a}fe, Stefanie},
-   title     = {eminus -- Pythonic electronic structure theory},
-   year      = {2024},
-   doi       = {10.48550/arXiv.2410.19438},
-   publisher = {arXiv},
+  @Article{Schulze2021,
+   author  = {Schulze, Wanja Timm and Schwalbe, Sebastian and Trepte, Kai and Gr\"afe, Stefanie},
+   title   = {{eminus} --- Pythonic electronic structure theory},
+   year    = {2025},
+   doi     = {10.1016/j.softx.2025.102035},
+   issn    = {2352-7110},
+   journal = {SoftwareX},
+   pages   = {102035},
+   volume  = {29},
   }
 
+The paper is also available on `arXiv <https://arxiv.org/abs/2410.19438>`_.
 To cite a specific version one can select and cite it with `Zenodo <https://doi.org/10.5281/zenodo.5720635>`_.
 
 Publications

@@ -27,7 +27,9 @@ preferred-citation:
   - given-names: Stefanie
     family-names: Gräfe
     orcid: "https://orcid.org/0000-0002-1747-5809"
-  doi: "10.48550/arXiv.2410.19438"
-  journal: "arXiv"
-  title: "eminus – Pythonic electronic structure theory"
-  year: 2024
+  doi: "10.1016/j.softx.2025.102035"
+  journal: "SoftwareX"
+  pages: 102035
+  title: "eminus — Pythonic electronic structure theory"
+  volume: 29
+  year: 2025

@@ -9,12 +9,14 @@ dev
 ---
 
 - New features
+   - eminus paper release!
    - Add Jax powered FFT operators as an extra (thanks to @artemfilatov1)
 - Miscellaneous
    - Improve GDSMFB thermal functional
    - Rename use_torch to backend in config
    - Drop Python 3.7 support
    - Rework type hints
+   - Update citation information
 
 v3.0.1 - Dec 18, 2024
 ---------------------

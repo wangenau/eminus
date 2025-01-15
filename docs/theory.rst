@@ -7,8 +7,8 @@
 Theory
 ******
 
-This theory section serves as a short, but incomplete introduction to electronic structure theory and the theoretical foundations of the code.
-To get a more complete overview one can start by reading the cited articles and/or one can take a look inside a master thesis :cite:`Schulze2021`.
+This theory section serves as a short, but incomplete introduction to electronic structure theory and the theoretical foundations of the eminus code :cite:`Schulze2025`.
+To get a more complete overview one can start by reading the cited articles and/or one can take a look inside a master thesis :cite:`Schulze2021` that describes an early version of eminus.
 
 ----
 
