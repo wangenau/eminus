@@ -14,7 +14,6 @@ type _ArrayReal = NDArray[_Float]
 
 def get_localized_orbitals(
     mf: Any,
-    Nspin: int,
     loc: str,
     Nit: int = ...,
     seed: int = ...,

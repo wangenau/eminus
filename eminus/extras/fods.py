@@ -15,7 +15,7 @@ from ..logger import log
 from ..units import bohr2ang
 
 
-def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
+def get_localized_orbitals(mf, loc, Nit=1000, seed=1234):
     """Generate localized orbitals with additional simple stability analysis.
 
     Same as implemented in PyFLOSIC2.
@@ -24,7 +24,6 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
 
     Args:
         mf: PySCF SCF object.
-        Nspin: Number of spin states.
         loc: Localization method.
 
     Keyword Args:
@@ -34,7 +33,6 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
     Returns:
         Localized occupied orbital coefficients per spin channel.
     """
-    rng = np.random.default_rng(seed=seed)
     from pyscf.lo import boys, edmiston, pipek
 
     loc_dict = {
@@ -43,6 +41,9 @@ def get_localized_orbitals(mf, Nspin, loc, Nit=1000, seed=1234):
         "GPM": pipek.PipekMezey,
         "PM": pipek.PipekMezey,
     }
+
+    rng = np.random.default_rng(seed=seed)
+    Nspin = mf.mo_occ.ndim
 
     loc_orb = []
     # Localize each spin channel separately
@@ -116,7 +117,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
     mf.kernel()
 
     # Get the localized orbital coefficients
-    loc_orb = get_localized_orbitals(mf, atoms.occ.Nspin, loc)
+    loc_orb = get_localized_orbitals(mf, loc)
     # Calculate the COMs
     loc_com = []
     ao = mf._numint.eval_ao(mf.mol, mf.grids.coords)
