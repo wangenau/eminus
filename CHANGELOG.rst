@@ -7,7 +7,6 @@ Changelog
 
 dev
 ---
-
 - New features
    - eminus paper release!
    - Add Jax powered FFT operators as an extra (thanks to @artemfilatov1)

@@ -41,7 +41,7 @@ class ConfigClass:
             except ImportError:
                 pass
             else:
-                jax.config.update(name="jax_enable_x64", val=True)
+                jax.config.update("jax_enable_x64", val=True)
                 return "jax"
         if self._backend == "torch":
             if "torch" in sys.modules:

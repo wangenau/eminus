@@ -12,7 +12,6 @@ from numpy.testing import assert_allclose
 from eminus import Atoms, config
 
 config.backend = "scipy"
-assert config.backend == "scipy"
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
@@ -28,6 +27,11 @@ W_tests = {
     "active_k": [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
 }  # type: dict[str, typing.Any]
 dr = rng.standard_normal(3)
+
+
+def test_backend():
+    """Test that the correct backend is used."""
+    assert config.backend == "scipy"
 
 
 @pytest.mark.parametrize("field", ["full", "full_spin"])

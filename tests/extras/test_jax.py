@@ -12,7 +12,7 @@ from numpy.testing import assert_allclose
 from eminus import Atoms, config
 
 config.backend = "jax"
-assert config.backend == "jax"
+print(config.backend)  # Call the getter function once
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
@@ -27,6 +27,12 @@ W_tests = {
     "full_k": [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
     "active_k": [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
 }  # type: dict[str, typing.Any]
+
+
+def test_backend():
+    """Test that the correct backend is used."""
+    pytest.importorskip("jax", reason="jax not installed, skip tests")
+    assert config.backend == "jax"
 
 
 @pytest.mark.parametrize("field", ["full", "full_single", "full_spin", "full_k"])
