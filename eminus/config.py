@@ -38,21 +38,21 @@ class ConfigClass:
             try:
                 import jax
                 import jax.numpy
-
-                jax.config.update("jax_enable_x64", True)  # noqa: FBT003
-                return "jax"  # noqa: TRY300
             except ImportError:
                 pass
+            else:
+                jax.config.update(name="jax_enable_x64", val=True)
+                return "jax"
         if self._backend == "torch":
             if "torch" in sys.modules:
                 return "torch"
             try:
                 import torch
-
-                torch.set_default_dtype(torch.double)
-                return "torch"  # noqa: TRY300
             except ImportError:
                 pass
+            else:
+                torch.set_default_dtype(torch.double)
+                return "torch"
         return "scipy"
 
     @backend.setter
@@ -83,10 +83,10 @@ class ConfigClass:
         if self._use_pylibxc:
             try:
                 import pylibxc  # noqa: F401
-
-                return True  # noqa: TRY300
             except ImportError:
                 pass
+            else:
+                return True
         return False
 
     @use_pylibxc.setter

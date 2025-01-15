@@ -8,8 +8,10 @@ https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 from __future__ import annotations
 
-from collections.abc import Callable  # noqa: TC003
-from typing import Any
+from typing import Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 from sphinx.ext.autosummary.generate import AutosummaryRenderer
 
@@ -17,7 +19,7 @@ import eminus
 
 project: str = "eminus"
 author: str = "Wanja Timm Schulze"
-copyright: str = "2021-%Y, The eminus developers"  # noqa: A001
+copyright: str = "2021-%Y, The eminus developers"
 version: str = eminus.__version__
 release: str = version
 
