@@ -17,11 +17,13 @@
         with p; [
           ### basic ###
           numpy
-          pip
           scipy
+          uv
           ### dispersion ###
           simple-dftd3
-          ### fods and libxc ###
+          ### hdf5 ###
+          h5py
+          ### fods, libxc, and symmetry ###
           pyscf
           ### torch ###
           # torch-bin
@@ -35,6 +37,7 @@
           matplotlib
           mypy
           pytest
+          ruff
           sphinx
           sphinx-design
           sphinxcontrib-bibtex
@@ -44,14 +47,10 @@
     {
       devShells."${system}".default = with pkgs;
         mkShell {
-          buildInputs = [
-            pyEnv
-            ### dev ###
-            ruff
-          ];
+          buildInputs = [ pyEnv ];
 
           shellHook = ''
-            pip install -e . --prefix "$TMPDIR"
+            uv pip install -e . --link-mode=copy --prefix="$TMPDIR"
             export PYTHONPATH="$(pwd):$PYTHONPATH"
           '';
         };
