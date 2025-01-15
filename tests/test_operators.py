@@ -12,6 +12,7 @@ from numpy.testing import assert_allclose
 from eminus import Atoms, config
 
 config.backend = "scipy"
+assert config.backend == "scipy"
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
