@@ -294,7 +294,7 @@ attestate:
     # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
     # TODO: Remove prerelease flag once betterproto 2.0 is released: https://github.com/danielgtaylor/python-betterproto/releases
     - uv pip install pypi-attestations --prerelease=allow
-    - python -m pypi_attestations sign dist/*
+    - pypi-attestations sign dist/*
   artifacts:
     paths:
       - dist/
