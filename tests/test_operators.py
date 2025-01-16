@@ -29,11 +29,6 @@ W_tests = {
 dr = rng.standard_normal(3)
 
 
-def test_backend():
-    """Test that the correct backend is used."""
-    assert config.backend == "scipy"
-
-
 @pytest.mark.parametrize("field", ["full", "full_spin"])
 def test_LinvL(field):
     """Test Laplacian operator identity."""

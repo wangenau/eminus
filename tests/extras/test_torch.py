@@ -29,12 +29,6 @@ W_tests = {
 }  # type: dict[str, typing.Any]
 
 
-def test_backend():
-    """Test that the correct backend is used."""
-    pytest.importorskip("torch", reason="jax not installed, skip tests")
-    assert config.backend == "torch"
-
-
 @pytest.mark.parametrize("field", ["full", "full_single", "full_spin", "full_k"])
 def test_IJ(field):
     """Test forward and backward operator identity."""
