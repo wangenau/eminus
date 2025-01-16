@@ -67,17 +67,20 @@ Home
 .. image:: https://img.shields.io/pypi/v/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Version
    :target: https://pypi.org/project/eminus
 
-.. image:: https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python
-   :target: https://wangenau.gitlab.io/eminus/installation.html
-
 .. image:: https://img.shields.io/badge/license-Apache2.0-1a962b?logo=python&logoColor=a0dba2&label=License
    :target: https://wangenau.gitlab.io/eminus/license.html
+
+.. image:: https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python
+   :target: https://wangenau.gitlab.io/eminus/installation.html
 
 .. image:: https://img.shields.io/gitlab/pipeline-coverage/wangenau%2Feminus?branch=main&color=1a962b&logo=gitlab&logoColor=a0dba2&label=Coverage
    :target: https://wangenau.gitlab.io/eminus/htmlcov
 
 .. image:: https://img.shields.io/badge/Chat-Discord-1a962b?logo=discord&logoColor=a0dba2
    :target: https://discord.gg/k2XwdMtVec
+
+.. image:: https://img.shields.io/badge/DOI-10.1016/j.softx.2025.102035-1a962b?logo=DOI&logoColor=a0dba2
+   :target: https://doi.org/10.1016/j.softx.2025.102035
 
 eminus is a pythonic electronic structure theory code.
 It implements plane wave density functional theory (DFT) with self-interaction correction (SIC) functionalities.

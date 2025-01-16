@@ -6,10 +6,11 @@ SPDX-License-Identifier: Apache-2.0
 
 # eminus
 [![Version](https://img.shields.io/pypi/v/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Version)](https://pypi.org/project/eminus)
-[![Python](https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python)](https://wangenau.gitlab.io/eminus/installation.html)
 [![License](https://img.shields.io/badge/license-Apache2.0-1a962b?logo=python&logoColor=a0dba2&label=License)](https://wangenau.gitlab.io/eminus/license.html)
+[![Python](https://img.shields.io/pypi/pyversions/eminus?color=1a962b&logo=python&logoColor=a0dba2&label=Python)](https://wangenau.gitlab.io/eminus/installation.html)
 [![Coverage](https://img.shields.io/gitlab/pipeline-coverage/wangenau%2Feminus?branch=main&color=1a962b&logo=gitlab&logoColor=a0dba2&label=Coverage)](https://wangenau.gitlab.io/eminus/htmlcov)
 [![Chat](https://img.shields.io/badge/Chat-Discord-1a962b?logo=discord&logoColor=a0dba2)](https://discord.gg/k2XwdMtVec)
+[![DOI](https://img.shields.io/badge/DOI-10.1016/j.softx.2025.102035-1a962b?logo=DOI&logoColor=a0dba2)](https://doi.org/10.1016/j.softx.2025.102035)
 
 eminus is a pythonic electronic structure theory code.
 It implements plane wave density functional theory (DFT) with self-interaction correction (SIC) functionalities.
