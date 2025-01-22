@@ -355,15 +355,10 @@ pypi:
     PYPI_ID_TOKEN:
       aud: pypi
   script:
-    - apt-get update -y
-    - apt-get install curl jq -y --no-install-recommends
     # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
-    - uv pip install id twine
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
-    - OIDC_TOKEN=$(python -m id pypi)
-    - RESP=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\":\"${OIDC_TOKEN}\"}")
-    - API_TOKEN=$(jq --raw-output '.token' <<< "${RESP}")
-    - twine upload -u __token__ -p "${API_TOKEN}" --attestations dist/*
+    - uv pip install twine
+    - twine upload --attestations dist/*
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "main"
