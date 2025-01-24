@@ -140,4 +140,5 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
             data_str = "%+1.6e  " * atoms.s[2] % tuple(field[i * atoms.s[2] : (i + 1) * atoms.s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len("+1.00000e-000  ")=90
-            fp.write(f"{textwrap.fill(data_str, width=90)}\n\n")
+            # Setting break_on_hyphens to False greatly improves the textwrap.fill performance
+            fp.write(f"{textwrap.fill(data_str, width=90, break_on_hyphens=False)}\n\n")

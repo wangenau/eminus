@@ -5,6 +5,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Improve performance of CUBE writing
+
 v3.0.2 - Jan 16, 2025
 ---------------------
 - New features
