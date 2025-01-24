@@ -139,11 +139,12 @@ def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
         fp.write("\nCartesian\n")
 
         # Write the coordinates
-        for ia in range(atoms.Natoms):
-            fp.write(f"{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n")
+        fp.writelines(
+            f"{pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
+            for ia in range(atoms.Natoms)
+        )
 
         # Add FOD coordinates if needed
         if fods is not None:
             for s in range(len(fods)):
-                for ie in fods[s]:
-                    fp.write(f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n")
+                fp.writelines(f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n" for ie in fods[s])

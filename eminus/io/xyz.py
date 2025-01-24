@@ -98,13 +98,15 @@ def write_xyz(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
         # The second line can contain a comment
         # Print information about the file and program, and the file creation time
         fp.write(f"File generated with eminus {__version__} on {time.ctime()}\n")
-        for ia in range(atoms.Natoms):
-            fp.write(
-                f"{atoms.atom[ia]:<2s}  {pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
-            )
+        fp.writelines(
+            f"{atoms.atom[ia]:<2s}  {pos[ia, 0]: .6f}  {pos[ia, 1]: .6f}  {pos[ia, 2]: .6f}\n"
+            for ia in range(atoms.Natoms)
+        )
         # Add FOD coordinates if needed
         # The atom symbol will default to pos (no atom type)
         if fods is not None:
             for s in range(len(fods)):
-                for ie in fods[s]:
-                    fp.write(f"{elec_symbols[s]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n")
+                fp.writelines(
+                    f"{elec_symbols[s]:<2s}  {ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n"
+                    for ie in fods[s]
+                )

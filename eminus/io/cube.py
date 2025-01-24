@@ -121,18 +121,18 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
             f"  {atoms.a[2, 2] / atoms.s[2]:.6f}\n"
         )
         # Atomic number (int), atomic charge (float), and atom position (floats) for every atom
-        for ia in range(atoms.Natoms):
-            fp.write(
-                f"{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  "
-                f"{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n"
-            )
+        fp.writelines(
+            f"{SYMBOL2NUMBER[atoms.atom[ia]]}  {atoms.Z[ia]:.3f}  "
+            f"{atoms.pos[ia, 0]: .6f}  {atoms.pos[ia, 1]: .6f}  {atoms.pos[ia, 2]: .6f}\n"
+            for ia in range(atoms.Natoms)
+        )
         if fods is not None:
             for s in range(len(fods)):
-                for ie in fods[s]:
-                    fp.write(
-                        f"{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  "
-                        f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n"
-                    )
+                fp.writelines(
+                    f"{SYMBOL2NUMBER[elec_symbols[s]]}  0.000  "
+                    f"{ie[0]: .6f}  {ie[1]: .6f}  {ie[2]: .6f}\n"
+                    for ie in fods[s]
+                )
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
         for i in range(atoms.s[0] * atoms.s[1]):
