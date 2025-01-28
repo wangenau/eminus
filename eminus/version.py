@@ -10,7 +10,7 @@ __version__ = "3.0.2"
 #: eminus ASCII logo.
 LOGO = (" ___ _____ _ ___ _ _ ___ \n"
         "| -_|     | |   | | |_ -|\n"
-        "|___|_|_|_|_|_|_|___|___|\n")  # fmt: skip
+        "|___|_|_|_|_|_|_|___|___|")  # fmt: skip
 
 
 def info():
@@ -19,9 +19,9 @@ def info():
     extras = ("jax", "torch", "pyscf", "dftd3", "h5py", "plotly", "nglview")
     dev = ("matplotlib", "notebook", "pylibxc", "pytest", "sphinx", "furo")
 
-    sys.stdout.write(LOGO)
+    sys.stdout.write("\n".join([f"{line:>35}" for line in LOGO.split("\n")]))
     sys.stdout.write(
-        "\neminus - Pythonic electronic structure theory"
+        "\n\neminus - Pythonic electronic structure theory"
         "\n https://doi.org/10.1016/j.softx.2025.102035\n"
         "\n--- Platform infos ---"
         f"\nPlatform   : {platform.system()} {platform.machine()}"
