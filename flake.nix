@@ -17,8 +17,8 @@
         with p; [
           ### basic ###
           numpy
+          pip
           scipy
-          uv
           ### dispersion ###
           simple-dftd3
           ### hdf5 ###
@@ -50,7 +50,7 @@
           buildInputs = [ pyEnv ];
 
           shellHook = ''
-            uv pip install -e . --link-mode=copy --prefix="$TMPDIR"
+            pip install -e . --prefix="$TMPDIR"
             export PYTHONPATH="$(pwd):$PYTHONPATH"
           '';
         };
