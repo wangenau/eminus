@@ -15,10 +15,7 @@ RUN apt-get update -y \
 && rm -rf /var/lib/apt/lists/*
 
 # Install Torch manually since we only want to compute on the CPU
-RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir \
-# Needed to get Torch to work (for now)
-# TODO: Remove once Torch 2.6 is released
-&& uv pip install typing-extensions --upgrade --no-cache-dir
+RUN uv pip install torch --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
 # Install eminus with all extras available
 # Use an editable installation so users can make changes on the fly

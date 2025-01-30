@@ -116,6 +116,7 @@ strict = true
 disable_error_code = [
     # Many setter methods change the variable type, this is not considered by Mypy
     # Reference: https://github.com/python/mypy/issues/3004
+    # TODO: Remove once Mypy 1.16 is released
     "assignment",  # Incompatible types in assignment  [assignment]
     # Do not complain about imported modules that are untyped
     "import-untyped",  # Module is missing library stubs or py.typed marker  [import-untyped]
