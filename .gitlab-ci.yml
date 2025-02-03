@@ -4,6 +4,7 @@ default:
   image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 variables:
   UV_SYSTEM_PYTHON: 1
+  UV_NO_PROGRESS: 1
 
 stages:
   - test
@@ -274,10 +275,7 @@ pages:dev:
 build:
   extends: .build
   script:
-    # TODO: Remove twine once uv implements a check equivalent: https://github.com/astral-sh/uv/issues/8641
-    - uv pip install twine
     - uv build
-    - twine check dist/*
   artifacts:
     paths:
       - dist/
@@ -305,18 +303,10 @@ install:
   needs:
     - job: attestate
   script:
-    # TODO: Rewrite once uv implements something equivalent: https://github.com/astral-sh/uv/issues/8774
-    # Copy the build directory to test the installation
-    - cp -r dist/ tmp/
-    - cd tmp/
     # Test the source distribution
-    - tar -xf eminus-*.tar.gz
-    - uv pip install eminus-*/.
-    - python -c "import eminus; assert eminus.demo()"
+    - uv run --isolated --no-project --with dist/*.tar.gz python -c "import eminus; assert eminus.demo()"
     # Test the wheel
-    - uv pip uninstall eminus
-    - uv pip install eminus-*.whl
-    - python -c "import eminus; assert eminus.demo()"
+    - uv run --isolated --no-project --with dist/*.whl python -c "import eminus; assert eminus.demo()"
   artifacts:
     paths:
       - dist/
@@ -355,8 +345,8 @@ pypi:
     PYPI_ID_TOKEN:
       aud: pypi
   script:
-    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
+    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
     - uv pip install twine
     - twine upload --attestations dist/*
   rules:
