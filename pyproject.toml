@@ -95,10 +95,10 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://wangenau.gitlab.io/eminus"
-Repository = "https://gitlab.com/wangenau/eminus"
-Issues = "https://gitlab.com/wangenau/eminus/-/issues"
-Changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
+source = "https://gitlab.com/wangenau/eminus"
+changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
+documentation = "https://wangenau.gitlab.io/eminus"
+issues = "https://gitlab.com/wangenau/eminus/-/issues"
 
 ### Coverage ###
 [tool.coverage.report]
@@ -176,7 +176,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.flake8-builtins]
-builtins-allowed-modules = ["json", "pdb"]
+builtins-allowed-modules = ["io", "json", "pdb"]
 builtins-ignorelist = ["copyright"]
 
 [tool.ruff.lint.flake8-unused-arguments]
