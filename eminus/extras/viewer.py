@@ -64,7 +64,7 @@ def _uniform_density_data(n, r, s):
     z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), np.min([s[2], 25]))
     r_new = np.array(np.meshgrid(x, y, z)).T.reshape(-1, 3)
     n_new = griddata(r, n, r_new)
-    return n_new, r_new
+    return np.nan_to_num(n_new), r_new
 
 
 def view_atoms(  # noqa: PLR0915
@@ -181,7 +181,7 @@ def view_atoms(  # noqa: PLR0915
             # We will get data points outside of the unit cell that can contain NaNs
             # Do not use the get_isovalue function here but simply use the minimum value
             percent = 100
-            isomin = np.nanmin(density)
+            isomin = np.min(density)
             log.warning(
                 "The density data for non-orthogonal grids will be interpolated. The "
                 '"percent" keyword has no effect and all of the density data will be displayed.'
@@ -203,7 +203,7 @@ def view_atoms(  # noqa: PLR0915
             colorbar_title=name,
             colorscale="Inferno",
             isomin=isomin,
-            isomax=np.nanmax(density),
+            isomax=np.max(density),
             surface_count=surfaces,
             opacity=0.1,
             showlegend=True,
