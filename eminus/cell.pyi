@@ -20,7 +20,7 @@ def Cell(
     atom: str | Sequence[str],
     lattice: str | _Array2D,
     ecut: float,
-    a: float | _Array2D | None,
+    a: float | _Array1D | _Array2D | None,
     basis: _Array1D | _Array2D | None = ...,
     bands: int | None = ...,
     kmesh: int | Sequence[int] | NDArray[_Int] = ...,

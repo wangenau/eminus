@@ -87,6 +87,13 @@ def test_kwargs():
     assert cell.charge == 1
 
 
+def test_s():
+    """Test that the sampling respects the symmetry of the cell."""
+    a = [3, 3, 1]
+    cell = Cell("Be", "hexagonal", 30, a)
+    assert_equal(a, cell.s / 5)
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib
