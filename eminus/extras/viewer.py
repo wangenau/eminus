@@ -217,7 +217,7 @@ def view_atoms(  # noqa: PLR0915
         "xaxis": {"title": "x [a<sub>0</sub>]"},
         "yaxis": {"title": "y [a<sub>0</sub>]"},
         "zaxis": {"title": "z [a<sub>0</sub>]"},
-        "aspectmode": "cube",
+        "aspectmode": "data",
     }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
     if (np.diag(np.diag(atoms.a)) == atoms.a).all():
@@ -876,7 +876,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         "xaxis": {"title": "b<sub>1</sub>"},
         "yaxis": {"title": "b<sub>2</sub>"},
         "zaxis": {"title": "b<sub>3</sub>"},
-        "aspectmode": "cube",
+        "aspectmode": "data",
     }
     fig.update_layout(
         scene=scene,

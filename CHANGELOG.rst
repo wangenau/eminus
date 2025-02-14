@@ -13,6 +13,7 @@ dev
 - Miscellaneous
    - Improve performance of CUBE writing
    - Improve Coulomb potential to use it with different atomic species
+   - Fix aspect mode in cell viewer which previously distorted the cell
 
 v3.0.2 - Jan 16, 2025
 ---------------------
