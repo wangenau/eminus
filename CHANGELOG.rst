@@ -7,8 +7,12 @@ Changelog
 
 dev
 ---
+- New features
+   - Allow setting of potential parameters
+   - Add long-range Coulomb potential
 - Miscellaneous
    - Improve performance of CUBE writing
+   - Improve Coulomb potential to use it with different atomic species
 
 v3.0.2 - Jan 16, 2025
 ---------------------

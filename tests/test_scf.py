@@ -73,6 +73,26 @@ def test_pot():
     assert scf.pot == "ge"
     assert not hasattr(scf, "gth")
 
+    scf = SCF(atoms, pot="lr")
+    assert scf.pot == "lr"
+    assert scf.pot_params_defaults == {"alpha": 100}
+
+
+def test_pot_params():
+    """Test the custom pot parameters."""
+    scf = SCF(atoms, pot="harmonic", opt={"sd": 1})
+    scf.pot_params = {
+        "freq": 1,
+        "mock": 0,  # This should print a warning
+    }
+    scf.run()
+
+    # Make sure default parameters are viable
+    scf.pot_params = None
+    scf.run()
+    scf.pot_params = {}
+    scf.run()
+
 
 def test_guess():
     """Test initialization of the guess method."""
