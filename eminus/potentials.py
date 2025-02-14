@@ -9,7 +9,7 @@ from .gth import init_gth_loc
 from .logger import log
 
 
-def harmonic(scf):
+def harmonic(scf, freq=2):
     """Harmonic potential.
 
     Can be used for quantum dot calculations.
@@ -17,11 +17,13 @@ def harmonic(scf):
     Args:
         scf: SCF object.
 
+    Keyword Args:
+        freq: Harmonic oscillator frequency.
+
     Returns:
         Harmonic potential in real-space.
     """
     atoms = scf.atoms
-    freq = 2
     dr = norm(atoms.r - np.sum(atoms.a, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
@@ -39,16 +41,24 @@ def coulomb(scf):
         Coulomb potential in real-space.
     """
     atoms = scf.atoms
-    Z = atoms.Z[0]  # This potential should only be used for same species
 
-    # Ignore the division by zero for the first elements
-    # One could do some proper indexing with [1:] but indexing is slow
-    with np.errstate(divide="ignore", invalid="ignore"):
-        Vcoul = -4 * np.pi * Z / atoms.G2
-    Vcoul[0] = 0
+    Vcoul = np.zeros_like(atoms.G2)
+    for isp in set(atoms.atom):
+        # Sum up the structure factor for every species
+        # Also get the charge, assuming all species have the same charge
+        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        for ia in range(atoms.Natoms):
+            if atoms.atom[ia] == isp:
+                Sf += atoms.Sf[ia]
+                Z = atoms.Z[ia]
 
-    Sf = np.sum(atoms.Sf, axis=0)
-    return atoms.J(Vcoul * Sf)
+        # Ignore the division by zero for the first elements
+        # One could do some proper indexing with [1:] but indexing is slow
+        with np.errstate(divide="ignore", invalid="ignore"):
+            Vsp = -4 * np.pi * Z / atoms.G2
+        Vsp[0] = 0
+        Vcoul += np.real(atoms.J(Vsp * Sf))
+    return Vcoul
 
 
 def ge(scf):
