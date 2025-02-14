@@ -25,8 +25,8 @@ from .gga import get_grad_field, get_tau
 from .gth import GTH
 from .logger import create_logger, get_level
 from .minimizer import IMPLEMENTED as ALL_MINIMIZER
+from .potentials import get_pot_defaults, init_pot
 from .potentials import IMPLEMENTED as ALL_POTENTIALS
-from .potentials import init_pot
 from .tools import center_of_mass, get_spin_squared
 from .utils import BaseObject
 from .version import info
@@ -236,6 +236,11 @@ class SCF(BaseObject):
     def kpts(self):
         """Pass-through to the KPoints object of the Atoms object."""
         return self.atoms.kpts
+
+    @property
+    def pot_params_defaults(self):
+        """Get the default potential parameters."""
+        return get_pot_defaults(self.pot)
 
     @property
     def psp(self):

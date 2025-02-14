@@ -2,11 +2,32 @@
 # SPDX-License-Identifier: Apache-2.0
 """Collection of miscellaneous potentials."""
 
+import inspect
+
 import numpy as np
 from scipy.linalg import norm
 
 from .gth import init_gth_loc
 from .logger import log
+
+
+def get_pot_defaults(pot):
+    """Get the default parameters and values for a given potential.
+
+    Args:
+        pot: Potential name.
+
+    Returns:
+        Default parameters and values.
+    """
+    if pot in IMPLEMENTED:
+        sig = inspect.signature(IMPLEMENTED[pot])
+        return {
+            param.name: param.default
+            for param in sig.parameters.values()
+            if param.default is not inspect.Parameter.empty
+        }
+    return {}
 
 
 def harmonic(scf, freq=2):
