@@ -95,6 +95,7 @@ class SCF(BaseObject):
         self._log = create_logger(self)  #: Logger object.
         self.verbose = verbose  #: Verbosity level.
         self.xc = xc  #: Exchange-correlation functional.
+        self.pot_params = {}  #: Potential parameters.
         self.pot = pot  #: Used potential.
         self.guess = guess  #: Initial wave functions guess.
         self.etol = etol  #: Total energy convergence tolerance.
@@ -178,7 +179,24 @@ class SCF(BaseObject):
         # Build the potential
         if self._pot == "gth":
             self.gth = GTH(self)
-        self.Vloc = init_pot(self)
+        self.Vloc = init_pot(self, self.pot_params)
+
+    @property
+    def pot_params(self):
+        """Potential parameters."""
+        return self._pot_params
+
+    @pot_params.setter
+    def pot_params(self, value):
+        # Check if some parameters are unused in the potential
+        if value != {} and value is not None:
+            not_used = value.keys() - self.pot_params_defaults.keys()
+            if len(not_used) > 0:
+                self._log.warning(f"Some pot_params are unused, namely: {', '.join(not_used)}.")
+        self._pot_params = value
+        # Update the local potential for the new parameters
+        if hasattr(self, "pot"):
+            self.Vloc = init_pot(self, self.pot_params)
 
     @property
     def guess(self):

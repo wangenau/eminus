@@ -30,7 +30,7 @@ def get_pot_defaults(pot):
     return {}
 
 
-def harmonic(scf, freq=2):
+def harmonic(scf, freq=2, **kwargs):
     """Harmonic potential.
 
     Can be used for quantum dot calculations.
@@ -40,6 +40,7 @@ def harmonic(scf, freq=2):
 
     Keyword Args:
         freq: Harmonic oscillator frequency.
+        **kwargs: Throwaway arguments.
 
     Returns:
         Harmonic potential in real-space.
@@ -50,13 +51,16 @@ def harmonic(scf, freq=2):
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
 
-def coulomb(scf):
+def coulomb(scf, **kwargs):
     """All-electron Coulomb potential.
 
     Reference: Bull. Lebedev Phys. Inst. 42, 329.
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         Coulomb potential in real-space.
@@ -82,7 +86,7 @@ def coulomb(scf):
     return Vcoul
 
 
-def coulomb_lr(scf, alpha=100):
+def coulomb_lr(scf, alpha=100, **kwargs):
     """Long-range all-electron Coulomb potential.
 
     Reference: J. Comput. Phys. 117, 171.
@@ -92,6 +96,7 @@ def coulomb_lr(scf, alpha=100):
 
     Keyword Args:
         alpha: Convergence parameter.
+        **kwargs: Throwaway arguments.
 
     Returns:
         Long-range Coulomb potential in real-space.
@@ -117,7 +122,7 @@ def coulomb_lr(scf, alpha=100):
     return Vcoul
 
 
-def ge(scf):
+def ge(scf, **kwargs):
     """Starkloff-Joannopoulos local pseudopotential for germanium.
 
     Fourier-transformed by Tomas Arias.
@@ -126,6 +131,9 @@ def ge(scf):
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         Germanium pseudopotential in real-space.
@@ -167,17 +175,22 @@ def ge(scf):
     return atoms.J(Vps * Sf)
 
 
-def init_pot(scf):
+def init_pot(scf, pot_params=None):
     """Handle and initialize potentials.
 
     Args:
         scf: SCF object.
 
+    Keywords Args:
+        pot_params: Potential parameters.
+
     Returns:
         Potential in real-space.
     """
+    if pot_params is None:
+        pot_params = {}
     try:
-        pot = IMPLEMENTED[scf.pot](scf)
+        pot = IMPLEMENTED[scf.pot](scf, **pot_params)
     except KeyError:
         log.exception(f'No potential found for "{scf.pot}".')
         raise

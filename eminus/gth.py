@@ -44,13 +44,16 @@ class GTH:
         return f"NbetaNL: {self.NbetaNL}\nGTH values for: {', '.join(list(self.GTH))}"
 
 
-def init_gth_loc(scf):
+def init_gth_loc(scf, **kwargs):
     """Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
     Reference: Phys. Rev. B 54, 1703.
 
     Args:
         scf: SCF object.
+
+    Keyword Args:
+        **kwargs: Throwaway arguments.
 
     Returns:
         Local GTH potential contribution.
