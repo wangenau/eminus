@@ -82,6 +82,41 @@ def coulomb(scf):
     return Vcoul
 
 
+def coulomb_lr(scf, alpha=100):
+    """Long-range all-electron Coulomb potential.
+
+    Reference: J. Comput. Phys. 117, 171.
+
+    Args:
+        scf: SCF object.
+
+    Keyword Args:
+        alpha: Convergence parameter.
+
+    Returns:
+        Long-range Coulomb potential in real-space.
+    """
+    atoms = scf.atoms
+
+    Vcoul = np.zeros_like(atoms.G2)
+    for isp in set(atoms.atom):
+        # Sum up the structure factor for every species
+        # Also get the charge, assuming all species have the same charge
+        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        for ia in range(atoms.Natoms):
+            if atoms.atom[ia] == isp:
+                Sf += atoms.Sf[ia]
+                Z = atoms.Z[ia]
+
+        # Ignore the division by zero for the first elements
+        # One could do some proper indexing with [1:] but indexing is slow
+        with np.errstate(divide="ignore", invalid="ignore"):
+            Vsp = -4 * np.pi * Z * np.exp(-atoms.G2 / (4 * alpha**2)) / atoms.G2
+        Vsp[0] = 0
+        Vcoul += np.real(atoms.J(Vsp * Sf))
+    return Vcoul
+
+
 def ge(scf):
     """Starkloff-Joannopoulos local pseudopotential for germanium.
 
@@ -153,6 +188,7 @@ def init_pot(scf):
 IMPLEMENTED = {
     "harmonic": harmonic,
     "coulomb": coulomb,
+    "lr": coulomb_lr,
     "ge": ge,
     "gth": init_gth_loc,
 }
