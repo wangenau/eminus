@@ -266,11 +266,11 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
 
             # Add the real-space contribution
-            rmag = np.sqrt(norm(dpos - T, axis=1) ** 2)
+            rmag = norm(dpos - T, axis=1)
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = np.sqrt(norm(dpos) ** 2)
+                rmag = norm(dpos)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
             # Add the reciprocal space contribution
