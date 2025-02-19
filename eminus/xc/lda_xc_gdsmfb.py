@@ -529,9 +529,9 @@ def _get_dalphadrs(rs, theta, phi_params):
     """Calculate dalpha / drs."""
     g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
-    dhdrs = _get_dgdrs(rs, phi_params)
+    dgdrs = _get_dgdrs(rs, phi_params)
     dlambdadrs = _get_dlambdadrs(rs, theta, phi_params)
-    return -dhdrs * np.exp(-theta * lamda) + dlambdadrs * theta * g * np.exp(-theta * lamda)
+    return -dgdrs * np.exp(-theta * lamda) + dlambdadrs * theta * g * np.exp(-theta * lamda)
 
 
 def _get_dalphadtheta(rs, theta, phi_params):
