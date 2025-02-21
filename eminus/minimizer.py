@@ -60,11 +60,11 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
     if iteration > 1:
         # Check for convergence
         if scf.gradtol is None or norm_g is None:
-            if abs(Elist[-2] - Elist[-1]) < scf.etol:
+            if abs(Elist[-1] - Elist[-2]) < scf.etol:
                 scf.is_converged = True
                 return True
         # If a gradient tolerance has been set we also check norm_g for convergence
-        elif abs(Elist[-2] - Elist[-1]) < scf.etol and (np.sum(norm_g, axis=0) < scf.gradtol).all():
+        elif abs(Elist[-1] - Elist[-2]) < scf.etol and (np.sum(norm_g, axis=0) < scf.gradtol).all():
             scf.is_converged = True
             return True
         # Check if the current energy is higher than the last two values
@@ -112,7 +112,7 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
         info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
         # In the first step we do not have all information yet
         if iteration > 1:
-            info += f"{Elist[-2] - Elist[-1]:<+13,.4e}"
+            info += f"{Elist[-1] - Elist[-2]:<+13,.4e}"
             if norm_g is not None:
                 info += str(np.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
             if scf._log.level <= logging.DEBUG:

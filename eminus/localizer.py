@@ -343,11 +343,11 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
     for i in range(Nit):
         sign = 1
         costs.append(wannier_supercell_cost(X, Y, Z))
-        if abs(costs[-2] - costs[-1]) < conv_tol:
+        if abs(costs[-1] - costs[-2]) < conv_tol:
             atoms._log.info(f"Wannier localizer converged after {i} iterations.")
             break
         # If the cost function gets smaller, change the direction
-        if costs[-2] - costs[-1] < 0:
+        if costs[-1] - costs[-2] > 0:
             sign = -1
 
         # Calculate unitary transformation
@@ -363,9 +363,9 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         Y = expA_neg @ Y @ expA_pos
         Z = expA_neg @ Z @ expA_pos
 
-        atoms._log.debug(f"{i:>8}   {costs[-1]:<+13,.6f}{costs[-2] - costs[-1]:<+13,.4e}")
+        atoms._log.debug(f"{i:>8}   {costs[-1]:<+13,.6f}{costs[-1] - costs[-2]:<+13,.4e}")
 
-    if len(costs) > 1 and abs(costs[-2] - costs[-1]) > conv_tol:
+    if len(costs) > 1 and abs(costs[-1] - costs[-2]) > conv_tol:
         atoms._log.warning("Wannier localizer not converged!")
     # Return the localized orbitals by rotating them
     return psirs @ U

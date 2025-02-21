@@ -16,6 +16,7 @@ dev
    - Fix aspect mode in cell viewer which previously distorted the cell
    - Fix sampling of non-cubic cells
    - Fix density viewer of non-cubic cells
+   - Fix sign of SCF differences
 
 v3.0.2 - Jan 16, 2025
 ---------------------
