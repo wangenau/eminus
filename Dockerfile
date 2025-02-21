@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 The eminus developers
+# SPDX-FileCopyrightText: 2022 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
 FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS build

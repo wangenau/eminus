@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 The eminus developers
+# SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 """Test total energies for bulk lithium (spin-polarized) for different smearings."""
 

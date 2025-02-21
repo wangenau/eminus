@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: 2021 The eminus developers
+   SPDX-FileCopyrightText: 2024 The eminus developers
    SPDX-License-Identifier: Apache-2.0
 
 Changelog
@@ -17,6 +17,7 @@ dev
    - Fix sampling of non-cubic cells
    - Fix density viewer of non-cubic cells
    - Fix sign of SCF differences
+   - Use the creation year of a file in copyright notices
 
 v3.0.2 - Jan 16, 2025
 ---------------------

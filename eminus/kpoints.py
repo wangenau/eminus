@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 The eminus developers
+# SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 """Generate k-points and sample band paths."""
 

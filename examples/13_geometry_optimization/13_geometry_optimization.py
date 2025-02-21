@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 The eminus developers
+# SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # mypy: disable-error-code="no-untyped-call,no-untyped-def"
 import matplotlib.pyplot as plt
