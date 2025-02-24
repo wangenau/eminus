@@ -17,6 +17,7 @@ dev
    - Fix sampling of non-cubic cells
    - Fix density viewer of non-cubic cells
    - Fix sign of SCF differences
+   - Fix number of bands when overwriting atomic charges
    - Use the creation year of a file in copyright notices
 
 v3.0.2 - Jan 16, 2025

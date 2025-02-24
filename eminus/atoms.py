@@ -292,6 +292,9 @@ class Atoms(BaseObject):
             raise ValueError(msg)
         # Get the number of calculated electrons and pass it to occ
         self.occ.Nelec = np.sum(self._Z) - self.charge
+        if self.occ.Nspin and self.occ.bands < self.occ.Nelec // self.occ.Nspin:
+            log.warning("The number of bands is too small, reset to the minimally needed amount.")
+            self.occ.bands = 0
 
     # ### Read-only properties ###
 

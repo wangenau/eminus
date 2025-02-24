@@ -171,15 +171,18 @@ def test_s(s, ref):
         ("Li-q3", None, [3], 3),
         ("He2", 2, [2, 2], 4),
         ("CH4", {"C": 3, "H": 2}, [3, 2, 2, 2, 2], 11),
+        ("Ne", 10, [10], 10),
     ],
 )
 def test_Z(atom, Z, ref, Nref):
     """Test setting of charges."""
     atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
     atoms.Z = Z
+    atoms.build()
     assert_equal(atoms.Z, ref)
     assert len(atoms.Z) == atoms.Natoms
     assert atoms.occ.Nelec == Nref
+    assert atoms.occ.Nempty >= 0
 
 
 def test_G():
