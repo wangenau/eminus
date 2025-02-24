@@ -16,8 +16,8 @@ LOGO = (" ___ _____ _ ___ _ _ ___ \n"
 def info():
     """Print version numbers and availability of packages."""
     dependencies = ("numpy", "scipy")
-    extras = ("jax", "torch", "pyscf", "dftd3", "h5py", "plotly", "nglview")
-    dev = ("matplotlib", "notebook", "pylibxc", "pytest", "sphinx", "furo")
+    extras = ("dftd3", "h5py", "pyscf", "torch", "plotly", "nglview")
+    dev = ("pylibxc", "mypy", "notebook", "pytest", "ruff", "sphinx")
 
     sys.stdout.write("\n".join([f"{line:>35}" for line in LOGO.split("\n")]))
     sys.stdout.write(
