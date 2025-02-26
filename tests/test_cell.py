@@ -94,6 +94,15 @@ def test_s():
     assert_equal(a, cell.s / 5)
 
 
+def test_Z():
+    """Test that the number of bands gets updated when updating Z."""
+    cell = Cell("Ar", "sc", 10, 10)
+    assert cell.occ.bands == 4
+    cell.Z = {"Ar": 18}
+    cell.build()
+    assert cell.occ.bands == 9
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib
