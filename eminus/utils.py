@@ -257,7 +257,7 @@ def pseudo_uniform(size, seed=1234):
     Returns:
         Array with (pseudo) random numbers.
     """
-    W = np.zeros(size, dtype=complex)
+    W = np.empty(size, dtype=complex)
     mult = 48271
     mod = (2**31) - 1
     x = (seed * mult + 1) % mod

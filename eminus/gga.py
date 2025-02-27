@@ -131,9 +131,8 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     """
     atoms = scf.atoms
 
-    Vpsi = np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
     if scf.xc_type != "meta-gga":  # Only calculate the contribution for meta-GGAs
-        return Vpsi
+        return np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
 
     # The "intuitive" way is the one commented out below (without k-point dependency)
     # Sadly, this implementation is really slow for various reasons so use the faster one below

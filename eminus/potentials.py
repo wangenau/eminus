@@ -143,7 +143,6 @@ def ge(scf, **kwargs):
     lamda = 18.5
     rc = 1.052
     Gm = np.sqrt(atoms.G2)
-    Vps = np.empty_like(atoms.G2)
 
     with np.errstate(divide="ignore", invalid="ignore"):
         Vps = (

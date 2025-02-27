@@ -114,8 +114,8 @@ def init_gth_nonloc(atoms, gth):
     Returns:
         NbetaNL, prj2beta, and betaNL.
     """
-    prj2beta = np.zeros((3, atoms.Natoms, 4, 7), dtype=int)
-    prj2beta += -1  # Set to an invalid index
+    prj2beta = np.empty((3, atoms.Natoms, 4, 7), dtype=int)
+    prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
     for ia in range(atoms.Natoms):
