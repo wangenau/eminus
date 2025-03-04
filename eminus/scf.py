@@ -557,6 +557,19 @@ class SCF(BaseObject):
         self._opt_log = {}  # Log of the optimization procedure
         return self
 
+    @staticmethod
+    def callback(scf, step):
+        """Callback function that will get called every SCF iteration.
+
+        This is just an empty function users can overwrite with their implementation.
+        Remember that the "auto" minimization can call the callback function twice when the pccg
+        step is not preferred.
+
+        Args:
+            scf: SCF object.
+            step: Optimization step.
+        """
+
     def _precompute(self):
         """Precompute fields stored in the SCF object."""
         atoms = self.atoms

@@ -223,6 +223,23 @@ def test_uscf():
     assert id(scf.atoms) != id(atoms)
 
 
+def test_callback():
+    """Test the callback method."""
+    scf = SCF(atoms, opt={"pccg": 5})
+    assert scf.callback(scf, 0) is None
+
+    def callback(scf, step):  # noqa: ARG001
+        """Force the wave function to ones so the SCF has to converge."""
+        print("Get to the Chopper!")
+        for ik in range(len(scf.W)):
+            scf.W[ik][:] = 1
+
+    scf.callback = callback
+    scf.run()
+    assert hasattr(scf, "_opt_log")
+    assert scf._opt_log["pccg"]["iter"] == 2
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib

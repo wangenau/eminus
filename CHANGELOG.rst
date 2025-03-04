@@ -10,6 +10,7 @@ dev
 - New features
    - Allow setting of potential parameters
    - Add long-range Coulomb potential
+   - Add a callback method for customizable SCF workflows
 - Miscellaneous
    - Improve performance of CUBE writing
    - Improve Coulomb potential to use it with different atomic species

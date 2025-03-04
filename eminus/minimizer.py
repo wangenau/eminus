@@ -27,6 +27,7 @@ def scf_step(scf, step):
     Returns:
         Total energy.
     """
+    scf.callback(scf, step)
     scf._precompute()
     # Update occupations every smear_update'th cycle
     if scf.atoms.occ.smearing > 0 and step % scf.smear_update == 0:
