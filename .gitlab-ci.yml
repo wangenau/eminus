@@ -201,14 +201,15 @@ python:
 
 ############### experiments ###############
 
-##### Test eminus for free-threaded Python a.k.a. no-GIL #####
-nogil:
+##### Test eminus for free-threaded Python a.k.a. no-GIL, with JIT enabled #####
+nogil+jit:
   extends: .experiments
   script:
     - uv venv --python 3.13t
     - source .venv/bin/activate
     - uv pip install .
     - uv pip install pytest
+    - export PYTHON_JIT=1
     - pytest tests/ -m "not slow"
   rules:
     - when: manual
