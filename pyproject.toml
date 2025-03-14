@@ -176,8 +176,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.flake8-builtins]
-builtins-allowed-modules = ["io", "json", "pdb"]
-builtins-ignorelist = ["copyright"]
+allowed-modules = ["io", "json", "pdb"]
+ignorelist = ["copyright"]
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
