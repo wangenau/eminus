@@ -87,7 +87,7 @@ def J(atoms, W, ik=-1, full=True):
 
     Keyword Args:
         ik: k-point index.
-        full: Wether to transform in the full or in the active space.
+        full: Whether to transform in the full or in the active space.
 
     Returns:
         The operator applied on W.
@@ -131,7 +131,7 @@ def Idag(atoms, W, ik=-1, full=False):
 
     Keyword Args:
         ik: k-point index.
-        full: Wether to transform in the full or in the active space.
+        full: Whether to transform in the full or in the active space.
 
     Returns:
         The operator applied on W.
