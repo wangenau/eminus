@@ -6,7 +6,7 @@ import importlib.metadata
 import platform
 import sys
 
-__version__ = "3.0.2"
+__version__ = "3.0.3"
 #: eminus ASCII logo.
 LOGO = (" ___ _____ _ ___ _ _ ___ \n"
         "| -_|     | |   | | |_ -|\n"

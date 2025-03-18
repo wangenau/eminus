@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.0.3 - Mar 18, 2025
+---------------------
 - New features
    - Allow setting of potential parameters
    - Add long-range Coulomb potential
