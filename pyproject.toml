@@ -2,14 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 ### Build backend ###
 [build-system]
-requires = ["setuptools>=64"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.dynamic]
-version = {attr = "eminus.version.__version__"}
+[tool.hatch.build.targets]
+sdist.only-include = ["eminus", "tests"]
+sdist.exclude = ["tests/examples", "tests/extras"]
+wheel.only-include = ["eminus"]
 
-[tool.setuptools.package-data]
-"eminus.psp" = ["**/*-q*"]
+[tool.hatch.version]
+path = "eminus/version.py"
 
 ### Metadata ###
 [project]
@@ -23,14 +25,14 @@ requires-python = ">=3.8"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
 description = "Pythonic electronic structure theory."
 readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 keywords = ["density-functional-theory", "electronic-structure", "education", "python"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved",
-    "License :: OSI Approved :: Apache Software License",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX",

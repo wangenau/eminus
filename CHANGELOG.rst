@@ -5,6 +5,14 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Change build backend from setuptools to hatchling
+      - Improve build performance
+      - Support PEP 639 license identifiers
+      - Support reproducible builds
+
 v3.0.3 - Mar 18, 2025
 ---------------------
 - New features
