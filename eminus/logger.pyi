@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable
 from logging import Formatter, Logger, LogRecord
-from typing import Any
+from typing import Any, override
 
 class CustomLogger(Logger):
     def __init__(self, name: str) -> None: ...
@@ -12,6 +12,7 @@ class CustomLogger(Logger):
     def verbose(self, level: int | str) -> None: ...
 
 class CustomFormatter(Formatter):
+    @override
     def format(self, record: LogRecord) -> str: ...
 
 def create_logger(obj: object) -> CustomLogger: ...

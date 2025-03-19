@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, override
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -112,12 +112,14 @@ class SCF(BaseObject):
 
 class RSCF(SCF):
     @property
+    @override
     def atoms(self) -> Atoms: ...
     @atoms.setter
     def atoms(self, value: Atoms) -> None: ...
 
 class USCF(SCF):
     @property
+    @override
     def atoms(self) -> Atoms: ...
     @atoms.setter
     def atoms(self, value: Atoms) -> None: ...
