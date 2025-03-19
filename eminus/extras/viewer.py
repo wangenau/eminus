@@ -99,7 +99,7 @@ def view_atoms(  # noqa: PLR0915
     atoms = obj._atoms
 
     fig = go.Figure()
-    # Calculate vertices of the Brillouin zone and plot them
+    # Calculate vertices of the unit cell and plot them
     lattice = get_lattice(atoms.a)
     for xx in lattice:
         bz_data = go.Scatter3d(
