@@ -7,7 +7,7 @@ from collections.abc import Callable
 backend: str
 use_gpu: bool
 use_pylibxc: bool
-threads: int
+threads: int | None
 verbose: int | str
 info: Callable[[], None]
 
@@ -26,7 +26,7 @@ class ConfigClass:
     @use_pylibxc.setter
     def use_pylibxc(self, value: bool) -> None: ...
     @property
-    def threads(self) -> int: ...
+    def threads(self) -> int | None: ...
     @threads.setter
     def threads(self, value: int) -> None: ...
     @property
