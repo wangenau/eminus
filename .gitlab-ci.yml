@@ -89,7 +89,9 @@ lint:
     - if: $CI_PIPELINE_SOURCE != "schedule"
       changes:
       - "*.py"
+      - "*.pyi"
       - "**/*.py"
+      - "**/*.pyi"
 
 ##### Test the minimally supported versions #####
 minimal:
@@ -136,7 +138,9 @@ typecheck:
     - if: $CI_PIPELINE_SOURCE != "schedule"
       changes:
       - "*.py"
+      - "*.pyi"
       - "**/*.py"
+      - "**/*.pyi"
 
 ############### fulltest ###############
 
