@@ -67,7 +67,7 @@ def _uniform_density_data(n, r, s):
     return np.nan_to_num(n_new), r_new
 
 
-def view_atoms(  # noqa: PLR0915
+def view_atoms(
     obj, fods=None, plot_n=False, percent=85, isovalue=None, surfaces=10, size=(600, 600)
 ):
     """Display atoms with optional FODs or grid points, or even densities.

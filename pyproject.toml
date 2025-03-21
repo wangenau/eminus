@@ -141,7 +141,8 @@ ignore = [
     "TID252",  # Prefer absolute imports over relative imports from parent modules
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
-    "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
+    "PLR0911", "PLR0912", "PLR0913", "PLR0915",  # "Too many" rules
+    "PLR2004", # Magic value used in comparison
     "COM812",  # Trailing comma missing (disabled due to possible conflicts with the formatter)
 ]
 

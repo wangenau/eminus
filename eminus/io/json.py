@@ -9,7 +9,7 @@ import json
 import numpy as np
 
 
-def _custom_object_hook(dct):  # noqa: PLR0911
+def _custom_object_hook(dct):
     """Custom JSON object hook to create eminus classes after deserialization."""
     import eminus
 

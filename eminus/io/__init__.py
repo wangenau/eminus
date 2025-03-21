@@ -60,7 +60,7 @@ def read(filename, *args, **kwargs):
     raise NotImplementedError(msg)
 
 
-def write(obj, filename, *args, **kwargs):  # noqa: PLR0911
+def write(obj, filename, *args, **kwargs):
     """Unified file writer function.
 
     Args:
