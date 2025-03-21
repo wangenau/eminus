@@ -460,7 +460,7 @@ class Atoms(BaseObject):
             np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1) ** 2)
             for ik in range(self.kpts.Nk)
         ]
-        self._G2c = self.G2[np.nonzero(2 * self.ecut >= self._G2)]
+        self._G2c = self._G2[np.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
         self._Gk2 = np.asarray(
             [norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]

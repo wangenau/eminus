@@ -89,8 +89,8 @@ def get_fods(obj, basis="pc-1", loc="FB"):
         FOD positions.
     """
     try:
+        from pyscf.dft import numint, RKS, UKS
         from pyscf.gto import Mole
-        from pyscf.scf import RKS, UKS
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
@@ -120,7 +120,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
     loc_orb = get_localized_orbitals(mf, loc)
     # Calculate the COMs
     loc_com = []
-    ao = mf._numint.eval_ao(mf.mol, mf.grids.coords)
+    ao = numint.eval_ao(mf.mol, mf.grids.coords)
     for s in range(atoms.occ.Nspin):
         phi = ao @ loc_orb[s]
         dens = phi.conj() * phi * mf.grids.weights[:, None]

@@ -22,7 +22,7 @@ def view(
 def view_atoms(
     obj: Atoms | SCF,
     fods: _ArrayReal | Sequence[_ArrayReal] | None = ...,
-    plot_n: bool = ...,
+    plot_n: bool | _ArrayReal = ...,
     percent: float = ...,
     isovalue: float | None = ...,
     surfaces: int = ...,

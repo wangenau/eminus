@@ -88,16 +88,16 @@ def write_json(obj, filename):
     class _CustomEncoder(json.JSONEncoder):
         """Custom JSON encoder class to serialize eminus classes."""
 
-        def default(self, obj):
+        def default(self, o):
             """Overwrite the default function to handle eminus objects."""
             # ndarrays are not JSON serializable, encode them as base64 to save them
-            if isinstance(obj, np.ndarray):
-                data = base64.b64encode(obj.copy(order="C")).decode("utf-8")
-                return {"__ndarray__": data, "dtype": str(obj.dtype), "shape": obj.shape}
+            if isinstance(o, np.ndarray):
+                data = base64.b64encode(o.copy(order="C")).decode("utf-8")
+                return {"__ndarray__": data, "dtype": str(o.dtype), "shape": o.shape}
 
             # If obj is an eminus class dump them as a dictionary
             if isinstance(
-                obj,
+                o,
                 (
                     eminus.Atoms,
                     eminus.SCF,
@@ -108,12 +108,12 @@ def write_json(obj, filename):
                 ),
             ):
                 # Only dumping the dict would result in a string, so do one dump and one load
-                data = json.dumps(obj.__dict__, cls=_CustomEncoder)
+                data = json.dumps(o.__dict__, cls=_CustomEncoder)
                 return dict(json.loads(data))
             # The logger class is not serializable, just ignore it
-            if isinstance(obj, eminus.logger.CustomLogger):
+            if isinstance(o, eminus.logger.CustomLogger):
                 return None
-            return json.JSONEncoder.default(self, obj)
+            return json.JSONEncoder.default(self, o)
 
     if not filename.endswith(".json"):
         filename += ".json"

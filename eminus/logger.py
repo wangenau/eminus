@@ -3,7 +3,6 @@
 """Logger initialization and configuration."""
 
 import logging
-import numbers
 import sys
 
 
@@ -103,7 +102,7 @@ def get_level(verbose):
     if verbose is None:
         level = log.verbose
     # Fall back to DEBUG if the level is not available
-    elif isinstance(verbose, numbers.Number):
+    elif isinstance(verbose, int):
         level = log_levels.get(verbose, "DEBUG")
     else:
         level = verbose

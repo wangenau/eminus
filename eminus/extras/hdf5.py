@@ -23,7 +23,7 @@ def read_hdf5(filename):
         Class object.
     """
     try:
-        from h5py import _hl, check_string_dtype, File
+        from h5py import check_string_dtype, Dataset, File, Group
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
@@ -38,7 +38,7 @@ def read_hdf5(filename):
         """Load HDF5 files while creating the appropriate nested object structure."""
         dct = {}
         for key, value in fh[path].items():
-            if isinstance(value, _hl.dataset.Dataset):
+            if isinstance(value, Dataset):
                 # Restore None values using attributes
                 if "None" in value.attrs:
                     dct[key] = None
@@ -50,7 +50,7 @@ def read_hdf5(filename):
                         dct[key] = dct[key].tolist()
                 else:
                     dct[key] = value[()]
-            elif isinstance(value, _hl.group.Group):
+            elif isinstance(value, Group):
                 dct[key] = read_hdf5_recursively(fh, f"{path}{key}/")
         # Create eminus objects from dictionaries, reuse the JSON helper function
         return _custom_object_hook(dct)

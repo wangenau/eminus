@@ -129,6 +129,8 @@ typecheck:
     # Overload issues due to https://github.com/python/mypy/issues/16956
     - >-
       echo -e
+      "eminus.Atoms.(I|Idag|J|Jdag)\n"
+      "eminus.atoms.Atoms.(I|Idag|J|Jdag)\n"
       "eminus.dft.(get_n_single|get_n_spin)\n"
       "eminus.energies.(get_Ekin|get_Enonloc)\n"
       "eminus.gga.get_tau\n"

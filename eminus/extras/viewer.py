@@ -420,7 +420,7 @@ def executed_in_notebook():
         Whether in a notebook or not.
     """
     try:
-        from IPython import get_ipython
+        from IPython.core.getipython import get_ipython
 
         if "IPKernelApp" not in get_ipython().config:
             return False

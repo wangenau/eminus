@@ -32,50 +32,44 @@ class Atoms(BaseObject):
     K = operators.K
     T = operators.T
     @overload
-    def I(
-        atoms: Atoms,  # noqa: N805
-        W: list[_ArrayComplex],
-    ) -> list[_ArrayComplex]: ...
+    def I(self, W: list[_ArrayComplex]) -> list[_ArrayComplex]: ...
     @overload
     def I(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: _ArrayRealOrComplex,
         ik: int = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
     def J(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: list[_ArrayComplex],
         full: bool = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def J(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: _ArrayRealOrComplex,
         ik: int = ...,
         full: bool = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
     def Idag(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: list[_ArrayComplex],
         full: bool = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def Idag(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: _ArrayRealOrComplex,
         ik: int = ...,
         full: bool = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
-    def Jdag(
-        atoms: Atoms,  # noqa: N805
-        W: list[_ArrayComplex],
-    ) -> list[_ArrayComplex]: ...
+    def Jdag(self, W: list[_ArrayComplex]) -> list[_ArrayComplex]: ...
     @overload
     def Jdag(
-        atoms: Atoms,  # noqa: N805
+        self,
         W: _ArrayRealOrComplex,
         ik: int = ...,
     ) -> _ArrayRealOrComplex: ...
