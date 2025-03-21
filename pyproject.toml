@@ -1,26 +1,25 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-### Build backend ###
+##### Build backend #####
 [build-system]
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
-[tool.hatch.build.targets]
-sdist.only-include = ["eminus", "tests"]
-sdist.exclude = ["tests/examples", "tests/extras"]
-wheel.only-include = ["eminus"]
+[tool.hatch.build.targets.sdist]
+only-include = ["eminus", "tests"]
+exclude = ["tests/examples", "tests/extras"]
+
+[tool.hatch.build.targets.wheel]
+only-include = ["eminus"]
 
 [tool.hatch.version]
 path = "eminus/version.py"
 
-### Metadata ###
+##### Metadata #####
 [project]
 name = "eminus"
 dynamic = ["version"]
-dependencies = [
-    "numpy>=1.17.3",
-    "scipy>=1.6",
-]
+dependencies = ["numpy>=1.17.3", "scipy>=1.6"]
 requires-python = ">=3.8"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
 description = "Pythonic electronic structure theory."
@@ -54,6 +53,12 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+source = "https://gitlab.com/wangenau/eminus"
+changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
+documentation = "https://wangenau.gitlab.io/eminus"
+issues = "https://gitlab.com/wangenau/eminus/-/issues"
+
 [project.optional-dependencies]
 dispersion = [
     "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
@@ -76,13 +81,7 @@ viewer = [
 ]
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
 symmetry = ["eminus[libxc]"]  # k-point symmetrization uses PySCF
-all = [
-    "eminus[dispersion]",
-    "eminus[hdf5]",
-    "eminus[libxc]",
-    "eminus[torch]",
-    "eminus[viewer]",
-]
+all = ["eminus[dispersion]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]", "eminus[viewer]"]
 
 [dependency-groups]
 dev = [
@@ -97,13 +96,7 @@ dev = [
     "sphinxcontrib-bibtex>=2",  # Use bib files for citations in Sphinx
 ]
 
-[project.urls]
-source = "https://gitlab.com/wangenau/eminus"
-changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
-documentation = "https://wangenau.gitlab.io/eminus"
-issues = "https://gitlab.com/wangenau/eminus/-/issues"
-
-### Coverage ###
+##### Coverage #####
 [tool.coverage.report]
 exclude_lines = ['if __name__ == "__main__":']
 
@@ -111,34 +104,28 @@ exclude_lines = ['if __name__ == "__main__":']
 include = ["eminus/*"]
 omit = ["eminus/extras/*"]
 
-### Mypy ###
+##### Mypy #####
 [tool.mypy]
 python_version = "3.13"
-exclude = ["public"]
 strict = true
 disable_error_code = [
-    # Many setter methods change the variable type, this is not considered by Mypy
-    # Reference: https://github.com/python/mypy/issues/3004
     # TODO: Remove once Mypy 1.16 is released
     "assignment",  # Incompatible types in assignment  [assignment]
-    # Do not complain about imported modules that are untyped
     "import-untyped",  # Module is missing library stubs or py.typed marker  [import-untyped]
 ]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
 disable_error_code = [
-    # The tests folder has functions with missing type annotations
     "no-untyped-def",  # Function is missing a type annotation  [no-untyped-def]
 ]
 
-### Pytest ###
+##### Pytest #####
 [tool.pytest.ini_options]
 addopts = "-rsxX"
 markers = ["slow: test runs longer than five seconds."]
-norecursedirs = "public/*"
 
-### Ruff ###
+##### Ruff #####
 [tool.ruff]
 line-length = 100
 
@@ -155,8 +142,7 @@ ignore = [
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
     "PLR0912", "PLR0913", "PLR2004",  # Too many branches, arguments to functions, or magic values
-    # The following rules are disabled due to possible conflicts with the formatter
-    "COM812",  # Trailing comma missing
+    "COM812",  # Trailing comma missing (disabled due to possible conflicts with the formatter)
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -176,9 +162,6 @@ ignore = [
     "T201",  # print found
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
-
-[tool.ruff.lint.flake8-builtins]
-ignorelist = ["copyright"]
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true

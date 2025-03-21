@@ -19,7 +19,7 @@ import eminus
 
 project: str = "eminus"
 author: str = "Wanja Timm Schulze"
-copyright: str = "2021-%Y, The eminus developers"
+copyright: str = "2021-%Y, The eminus developers"  # noqa: A001
 version: str = eminus.__version__
 release: str = version
 
