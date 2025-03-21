@@ -5,22 +5,16 @@ __pycache__/
 *.pyc
 
 # Packaging files
-build/
 dist/
-*.egg-info/
 
 # Unit test / Coverage reports
-.cache/
 .coverage
-.coverage.*
 coverage.xml
 htmlcov/
-.pytest_cache/
 
 # Sphinx documentation
 docs/_autosummary/
 public/
-bibtex.json
 *.bib.sav
 
 # Jupyter Notebook
