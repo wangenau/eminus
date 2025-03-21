@@ -39,7 +39,7 @@ To install all packages needed for development as listed below, use the followin
 
 .. code-block:: console
 
-   pip install -e .[dev]
+   pip install -e . --group dev
 
 Testing
 -------

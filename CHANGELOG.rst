@@ -12,6 +12,7 @@ dev
       - Improve build performance
       - Support PEP 639 license identifiers
       - Support reproducible builds
+   - Make the dev optional-dependency a dependency-group
 
 v3.0.3 - Mar 18, 2025
 ---------------------
