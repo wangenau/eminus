@@ -22,6 +22,7 @@ from .lda_c_pw import lda_c_pw, lda_c_pw_spin
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 from .lda_c_vwn import lda_c_vwn, lda_c_vwn_spin
 from .lda_x import lda_x, lda_x_spin
+from .lda_xc_corr_ksdt import lda_xc_corr_ksdt
 from .lda_xc_gdsmfb import lda_xc_gdsmfb, lda_xc_gdsmfb_spin
 from .lda_xc_ksdt import lda_xc_ksdt, lda_xc_ksdt_spin
 
@@ -394,6 +395,7 @@ IMPLEMENTED = {
         lda_c_chachiyo_spin,
         lda_c_chachiyo_mod,
         lda_c_chachiyo_mod_spin,
+        lda_xc_corr_ksdt,
         lda_xc_gdsmfb,
         lda_xc_gdsmfb_spin,
         lda_xc_ksdt,
@@ -432,6 +434,9 @@ XC_MAP = {
     # gga_c_pbe_sol
     "133": "gga_c_pbe_sol",
     "pbesolc": "gga_c_pbe_sol",
+    # lda_xc_ksdt
+    "259": "lda_xc_ksdt",
+    "ksdt": "lda_xc_ksdt",
     # lda_c_chachiyo
     "287": "lda_c_chachiyo",
     "chachiyo": "lda_c_chachiyo",
@@ -444,12 +449,12 @@ XC_MAP = {
     # gga_c_chachiyo
     "309": "gga_c_chachiyo",
     "chachiyoc": "gga_c_chachiyo",
+    # lda_xc_corr_ksdt
+    "318": "lda_xc_corr_ksdt",
+    "corrksdt": "lda_xc_corr_ksdt",
     # lda_xc_gdsmfb
     "577": "lda_xc_gdsmfb",
     "gdsmfb": "lda_xc_gdsmfb",
-    # lda_xc_ksdt
-    "259": "lda_xc_ksdt",
-    "ksdt": "lda_xc_ksdt",
 }
 
 #: Dictionary of common functional aliases.

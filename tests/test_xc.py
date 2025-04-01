@@ -20,6 +20,7 @@ n_tests = {
 functionals = {xc for xc in XC_MAP if xc.isdigit()}
 excludelist = {
     ("259", 2),  # KSDT has inconsistencies in the Libxc implementation
+    ("318", 2),  # CORRKSDT has not been parameterized for spin-polarized calculations
     ("577", 2),  # GDSMFB has inconsistencies in the Libxc implementation
 }
 
