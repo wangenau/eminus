@@ -60,21 +60,11 @@ documentation = "https://wangenau.gitlab.io/eminus"
 issues = "https://gitlab.com/wangenau/eminus/-/issues"
 
 [project.optional-dependencies]
-dispersion = [
-    "dftd3>=0.6",  # Interface for DFT-D3 dispersion corrections
-]
-hdf5 = [
-    "h5py>=2.9",  # HDF5 file reading and writing
-]
-libxc = [
-    "pyscf>=2.1",  # Libxc interface using PySCF
-]
-jax = [
-    "jax>=0.4.8",  # Faster FFT operators
-]
-torch = [
-    "torch>=1.8",  # Faster FFT operators
-]
+dispersion = ["dftd3>=0.6"]  # Interface for DFT-D3 dispersion corrections
+hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
+libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
+jax = ["jax>=0.4.8"]  # Faster FFT operators
+torch = ["torch>=1.8"]  # Faster FFT operators
 viewer = [
     "nglview>=2.6.5",  # Molecule viewer
     "plotly>=4.5",  # Various visualizations
@@ -110,15 +100,13 @@ python_version = "3.13"
 strict = true
 disable_error_code = [
     # TODO: Remove once Mypy 1.16 is released
-    "assignment",  # Incompatible types in assignment  [assignment]
-    "import-untyped",  # Module is missing library stubs or py.typed marker  [import-untyped]
+    "assignment",  # Incompatible types in assignment
+    "import-untyped",  # Module is missing library stubs or py.typed marker
 ]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disable_error_code = [
-    "no-untyped-def",  # Function is missing a type annotation  [no-untyped-def]
-]
+disable_error_code = ["no-untyped-def"]  # Function is missing a type annotation
 
 ##### Pytest #####
 [tool.pytest.ini_options]
@@ -147,9 +135,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"docs/*" = [
-    "INP001",  # File is part of an implicit namespace package
-]
+"docs/*" = ["INP001"]  # File is part of an implicit namespace package
 "examples/*" = [
     "D100", "D103",  # Missing docstring in public module or function
     "E501",  # Line too long

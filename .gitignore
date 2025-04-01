@@ -18,7 +18,7 @@ public/
 *.bib.sav
 
 # Jupyter Notebook
-.ipynb_checkpoints
+.ipynb_checkpoints/
 
 # Environments
 .envrc

@@ -31,7 +31,6 @@
           # nglview is missing
           plotly
           ### dev ###
-          coverage
           furo
           jupyter
           matplotlib
