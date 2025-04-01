@@ -7,17 +7,19 @@ import pytest
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
-from eminus.xc.lda_xc_gdsmfb import (  # type: ignore[attr-defined]
-    _get_fxc_zeta,
-    _get_phi,
-    _get_theta,
-    _get_theta0,
-    _get_theta1,
+from eminus.xc.lda_xc_gdsmfb import (
     lda_xc_gdsmfb,
     lda_xc_gdsmfb_spin,
     PhiParams,
     Zeta0Coeffs,
     Zeta1Coeffs,
+)
+from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
+    _get_fxc_zeta,
+    _get_phi,
+    _get_theta,
+    _get_theta0,
+    _get_theta1,
 )
 
 

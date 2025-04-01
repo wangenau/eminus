@@ -1,49 +1,15 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from collections.abc import Callable
 from dataclasses import dataclass
-from functools import cached_property
 from typing import Any
 
 from numpy import floating
 from numpy.typing import NDArray
 
+from .lda_xc_ksdt import Coefficients
+
 type _Float = floating[Any]
 type _ArrayReal = NDArray[_Float]
-
-@dataclass
-class Coefficients:
-    theta: _ArrayReal
-    a1: float = ...
-    a2: float = ...
-    a3: float = ...
-    a4: float = ...
-    a5: float = ...
-    a6: float = ...
-    @cached_property
-    def a0(self) -> float: ...
-    @cached_property
-    def b5(self) -> float: ...
-    @cached_property
-    def a(self) -> _ArrayReal: ...
-    @property
-    def dadtheta(self) -> _ArrayReal: ...
-    @cached_property
-    def b(self) -> _ArrayReal: ...
-    @property
-    def dbdtheta(self) -> _ArrayReal: ...
-    @cached_property
-    def c(self) -> _ArrayReal: ...
-    @property
-    def dcdtheta(self) -> _ArrayReal: ...
-    @cached_property
-    def d(self) -> _ArrayReal: ...
-    @property
-    def dddtheta(self) -> _ArrayReal: ...
-    @cached_property
-    def e(self) -> _ArrayReal: ...
-    @cached_property
-    def dedtheta(self) -> _ArrayReal: ...
 
 @dataclass
 class Zeta0Coeffs(Coefficients):
@@ -98,17 +64,11 @@ class PhiParams:
 def lda_xc_gdsmfb(
     n: _ArrayReal,
     T: float = ...,
-    zeta0_coeffs: Callable[..., Coefficients] = ...,
-    zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., Any] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def lda_xc_gdsmfb_spin(
     n: _ArrayReal,
     zeta: _ArrayReal,
     T: float = ...,
-    zeta0_coeffs: Callable[..., Coefficients] = ...,
-    zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., Any] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...

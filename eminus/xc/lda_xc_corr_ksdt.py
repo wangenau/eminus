@@ -9,7 +9,7 @@ Reference: Phys. Rev. Lett. 120, 076401.
 
 import dataclasses
 
-from .lda_xc_gdsmfb import Coefficients, lda_xc_gdsmfb
+from .lda_xc_ksdt import Coefficients, lda_xc_ksdt
 
 # ### Parameters ###
 
@@ -47,7 +47,8 @@ class Zeta0Coeffs(Coefficients):
 def lda_xc_corr_ksdt(n, T=0, **kwargs):
     """Corrected KSDT exchange-correlation functional (spin-paired).
 
-    Corresponds to the functional with the label LDA_XC_CORRKSDT and ID 318 in Libxc.
+    Similar to the functional with the label LDA_XC_CORRKSDT and ID 318 in Libxc, but the
+    implementations differ: https://gitlab.com/libxc/libxc/-/issues/525
     Exchange and correlation cannot be separated.
 
     Reference: Phys. Rev. Lett. 120, 076401.
@@ -62,4 +63,4 @@ def lda_xc_corr_ksdt(n, T=0, **kwargs):
     Returns:
         Corrected KSDT exchange-correlation energy density and potential.
     """
-    return lda_xc_gdsmfb(n, T=T, zeta0_coeffs=Zeta0Coeffs, **kwargs)
+    return lda_xc_ksdt(n, T=T, zeta0_coeffs=Zeta0Coeffs, **kwargs)

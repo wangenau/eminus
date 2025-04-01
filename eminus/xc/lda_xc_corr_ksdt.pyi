@@ -6,7 +6,7 @@ from typing import Any
 from numpy import floating
 from numpy.typing import NDArray
 
-from .lda_xc_gdsmfb import Coefficients
+from .lda_xc_ksdt import Coefficients
 
 type _Float = floating[Any]
 type _ArrayReal = NDArray[_Float]
