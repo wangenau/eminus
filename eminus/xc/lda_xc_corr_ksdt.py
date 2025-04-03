@@ -11,8 +11,6 @@ import dataclasses
 
 from .lda_xc_ksdt import Coefficients, lda_xc_ksdt
 
-# ### Parameters ###
-
 
 @dataclasses.dataclass
 class Zeta0Coeffs(Coefficients):
@@ -39,9 +37,6 @@ class Zeta0Coeffs(Coefficients):
     e3: float = 0.115398
     e4: float = 17.234117
     e5: float = 0.451437
-
-
-# ### Functional implementation ###
 
 
 def lda_xc_corr_ksdt(n, T=0, **kwargs):

@@ -9,8 +9,6 @@ import dataclasses
 
 from .lda_xc_ksdt import Coefficients, lda_xc_ksdt, lda_xc_ksdt_spin
 
-# ### Parameters ###
-
 
 @dataclasses.dataclass
 class Zeta0Coeffs(Coefficients):
@@ -79,9 +77,6 @@ class PhiParams:
     g3: float = 7.74662802
     lambda1: float = 1.85909536
     lambda2: float = 0
-
-
-# ### Functional implementation ###
 
 
 def lda_xc_gdsmfb(n, T=0, **kwargs):
