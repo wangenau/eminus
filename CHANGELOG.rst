@@ -9,6 +9,7 @@ dev
 ---
 - New features
    - Implement time reversal symmetry in k-point objects
+   - Add KSDT and CORRKSDT thermal functionals
 - Miscellaneous
    - Remove the symmetry extra
    - Change build backend from setuptools to hatchling

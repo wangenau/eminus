@@ -57,7 +57,9 @@ Modules
    eminus.xc.lda_c_pw_mod
    eminus.xc.lda_c_vwn
    eminus.xc.lda_x
+   eminus.xc.lda_xc_corr_ksdt
    eminus.xc.lda_xc_gdsmfb
+   eminus.xc.lda_xc_ksdt
    eminus.xc.utils
    eminus.extras
    eminus.extras.dispersion
