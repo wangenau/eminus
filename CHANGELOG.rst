@@ -8,15 +8,16 @@ Changelog
 dev
 ---
 - New features
-   - Implement time reversal symmetry in k-point objects
    - Add KSDT and CORRKSDT thermal functionals
+   - Implement time reversal symmetry in k-point objects
 - Miscellaneous
-   - Remove the symmetry extra
    - Change build backend from setuptools to hatchling
       - Improve build performance
       - Support PEP 639 license identifiers
       - Support reproducible builds
+   - Remove the symmetry extra
    - Make the dev optional-dependency a dependency-group
+   - Small typing improvements
 
 v3.0.3 - Mar 18, 2025
 ---------------------
