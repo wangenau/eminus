@@ -198,9 +198,11 @@ def test_trs():
     kpts.gamma_centered = False
     kpts.kmesh = 3
     kpts.build()
+    old_Nk = kpts.Nk
     old_k = kpts.k
     old_wk = kpts.wk
     kpts.trs()
+    assert old_Nk > kpts.Nk
     assert len(old_k) > len(kpts.k)
     assert len(old_wk) > len(kpts.wk)
     assert_allclose(np.sum(kpts.wk), 1)
