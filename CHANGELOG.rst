@@ -7,7 +7,10 @@ Changelog
 
 dev
 ---
+- New features
+   - Implement time reversal symmetry in k-point objects
 - Miscellaneous
+   - Remove the symmetry extra
    - Change build backend from setuptools to hatchling
       - Improve build performance
       - Support PEP 639 license identifiers

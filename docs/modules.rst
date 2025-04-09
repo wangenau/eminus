@@ -65,7 +65,6 @@ Modules
    eminus.extras.hdf5
    eminus.extras.jax
    eminus.extras.libxc
-   eminus.extras.symmetry
    eminus.extras.torch
    eminus.extras.viewer
    eminus.psp

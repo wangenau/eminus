@@ -23,7 +23,7 @@
           simple-dftd3
           ### hdf5 ###
           h5py
-          ### fods, libxc, and symmetry ###
+          ### fods and libxc ###
           pyscf
           ### torch ###
           # torch-bin

@@ -192,6 +192,37 @@ def test_get_brillouin_zone():
     assert_allclose(np.abs(ridges), np.pi)
 
 
+def test_trs():
+    """Test time reversal symmetry."""
+    kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
+    kpts.gamma_centered = False
+    kpts.kmesh = 3
+    kpts.build()
+    old_k = kpts.k
+    old_wk = kpts.wk
+    kpts.trs()
+    assert len(old_k) > len(kpts.k)
+    assert len(old_wk) > len(kpts.wk)
+    assert_allclose(np.sum(kpts.wk), 1)
+    # Make sure the Gamma-point included in the symmetrized k-points
+    assert np.any(np.isin(kpts.k, [0, 0, 0]))
+
+
+def test_trs_ordering():
+    """Test that the correct weights are adjusted."""
+    kpts = KPoints("sc", 1)
+    kpts.gamma_centered = False
+    kpts.kmesh = 2
+    kpts.build()
+    kpts.wk[2] = 1
+    kpts.wk[5] = 0.5
+    old_wk = np.copy(kpts.wk)
+    old_k = kpts.k
+    kpts.trs()
+    assert_allclose(old_wk[2] + old_wk[5], kpts.wk[1])
+    assert_allclose(old_k[2], -kpts.k[1])
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib

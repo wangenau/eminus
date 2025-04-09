@@ -153,6 +153,20 @@ class KPoints(BaseObject):
 
     kernel = build
 
+    def trs(self):
+        """Reduce k-points using time reversal symmetry (k=-k)."""
+        idx_to_remove = []
+        for i in range(self.Nk):
+            for j in range(i + 1, self.Nk):
+                # Check k=-k within some tolerance
+                if np.sum(np.abs(self.k[i] + self.k[j])) < 1e-15:
+                    idx_to_remove.append(i)
+                    self.wk[j] += self.wk[i]  # Adjust weights
+        # Delete k-points and weights
+        self.k = np.delete(self.k, idx_to_remove, axis=0)
+        self.wk = np.delete(self.wk, idx_to_remove)
+        return self
+
     def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
         if not np.all(self.k == 0):

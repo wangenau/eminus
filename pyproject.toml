@@ -70,7 +70,6 @@ viewer = [
     "plotly>=4.5",  # Various visualizations
 ]
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
-symmetry = ["eminus[libxc]"]  # k-point symmetrization uses PySCF
 all = ["eminus[dispersion]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]", "eminus[viewer]"]
 
 [dependency-groups]
