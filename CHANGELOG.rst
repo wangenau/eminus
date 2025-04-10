@@ -17,6 +17,7 @@ dev
       - Support reproducible builds
    - Remove the symmetry extra
    - Make the dev optional-dependency a dependency-group
+   - Update dev dependency versions, requires Python 3.10
    - Small typing improvements
 
 v3.0.3 - Mar 18, 2025
