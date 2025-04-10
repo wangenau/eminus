@@ -8,8 +8,8 @@ Further information
 *******************
 
 - An early version of the code has been described in a `master thesis <https://researchgate.net/publication/356537762_Domain-averaged_Fermi_holes_A_self-interaction_correction_perspective>`_.
-- This thesis comes with an in-detail explanation of a minimalistic implementation called `SimpleDFT <https://gitlab.com/wangenau/simpledft>`_.
-- There is also a version of SimpleDFT written in Julia, called `SimpleDFT.jl <https://gitlab.com/wangenau/simpledft.jl>`_.
+- This thesis includes an in-detail explanation of a minimalistic implementation called `SimpleDFT <https://gitlab.com/wangenau/simpledft>`_.
+- There is also a version of SimpleDFT written in Julia called `SimpleDFT.jl <https://gitlab.com/wangenau/simpledft.jl>`_.
 - A separate repository called `eminus-benchmarks <https://gitlab.com/wangenau/eminus-benchmarks>`_ is available for performance and code comparisons.
 - A comparison of both SimpleDFT codes is available under the `SimpleDFT pages <https://wangenau.gitlab.io/simpledft_pages/>`_.
 - For more information about implementing DFT using the `DFT++ <https://arxiv.org/abs/cond-mat/9909130>`_ formulation, fantastic lectures from Tomas Arias can be found `here <https://jdftx.org/PracticalDFT.html>`_.
@@ -21,8 +21,8 @@ Contact
 =======
 
 - If you encounter issues, please use the `GitLab issue tracker <https://gitlab.com/wangenau/eminus/-/issues>`_ file in bug reports.
-- Additionally, there is a `Discord server <https://discord.gg/k2XwdMtVec>`_ where you can easily ask your questions.
-- If there are still open questions about anything, feel free to `contact me <mailto:wangenau@protonmail.com>`_.
+- Additionally, there is a `Discord server <https://discord.gg/k2XwdMtVec>`_ where you can easily ask questions.
+- If there are still open questions, feel free to `contact me <mailto:wangenau@protonmail.com>`_.
 
 Development
 ===========
@@ -35,11 +35,12 @@ To apply changes to the code without reinstalling the code, install eminus with
    cd eminus
    pip install -e .
 
-To install all packages needed for development as listed below, use the following option
+To install all packages needed for development, use the following option.
+Note that at least Python 3.10 is required to use all dev dependencies.
 
 .. code-block:: console
 
-   pip install -e . --group dev
+   pip install --group dev
 
 Testing
 -------
@@ -53,40 +54,28 @@ Testing
    pip install pytest
    pytest
 
-Coverage
---------
-
-| To check that all functions have a test case a coverage report can be created.
-| To install the necessary pytest extensions, use
+To skip test that can run for a longer time, one can use
 
 .. code-block:: console
 
-   pip install coverage pytest
-
-| A detailed coverage report that gives a clear overview of the covered code `is uploaded with every release <https://wangenau.gitlab.io/eminus/htmlcov>`_.
-| To create this webpage, use
-
-.. code-block:: console
-
-   coverage run -m pytest
-   coverage html
+   pytest -m "not slow"
 
 Linting and formatting
 ----------------------
 
-| This code is lint-checked and formatted with `Ruff <https://beta.ruff.rs>`_, using a custom `style configuration <https://gitlab.com/wangenau/eminus/-/tree/main/pyproject.toml>`_.
+| This code is lint-checked and formatted with `Ruff <https://beta.ruff.rs>`_ using a custom `style configuration <https://gitlab.com/wangenau/eminus/-/tree/main/pyproject.toml>`_.
 | To install Ruff and do a lint check, use
 
 .. code-block:: console
 
    pip install ruff
-   ruff check .
+   ruff check
 
 To format the code use
 
 .. code-block:: console
 
-   ruff format .
+   ruff format
 
 Type checking
 -------------
@@ -99,9 +88,15 @@ Type checking
    pip install mypy
    mypy .
 
+To test the stub files against the implementation files, use
+
+.. code-block:: console
+
+   stubtest eminus
+
 Documentation
 -------------
-| The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org>`_, using a custom theme called `Furo <https://pradyunsg.me/furo>`_.
+| The documentation is automatically generated with `Sphinx <https://www.sphinx-doc.org>`_ using a custom theme called `Furo <https://pradyunsg.me/furo>`_.
 | Both packages can be installed and the webpage can be built with
 
 .. code-block:: console

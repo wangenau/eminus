@@ -71,8 +71,6 @@ License
      -
    * -
      -
-   * - coverage
-     - Apache-2.0
    * - furo
      - MIT
    * - matplotlib
