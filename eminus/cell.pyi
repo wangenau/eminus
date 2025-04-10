@@ -1,18 +1,18 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import floating, integer
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 
-type _Int = integer[Any]
-type _Float = floating[Any]
-type _ArrayReal = NDArray[_Float]
-type _Array1D = Sequence[float] | _ArrayReal
-type _Array2D = Sequence[_Array1D] | _ArrayReal
+_Int: TypeAlias = integer[Any]
+_Float: TypeAlias = floating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_Array1D: TypeAlias = Sequence[float] | _ArrayReal
+_Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal
 
 STRUCTURES: dict[str, dict[str, str | list[list[float]]]]
 

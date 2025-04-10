@@ -3,13 +3,13 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import floating
 from numpy.typing import NDArray
 
-type _Float = floating[Any]
-type _ArrayReal = NDArray[_Float]
+_Float: TypeAlias = floating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
 
 @dataclass
 class Coefficients:

@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import complexfloating
 from numpy.typing import NDArray
 
 from .scf import SCF
 
-type _Complex = complexfloating[Any]
-type _ArrayComplex = NDArray[_Complex]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
 
 def get_pot_defaults(pot: str) -> dict[str, float]: ...
 def harmonic(

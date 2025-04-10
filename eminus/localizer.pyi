@@ -1,19 +1,19 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, TypeVar
+from typing import Any, overload, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayReal = NDArray[_Float]
-type _ArrayComplex = NDArray[_Complex]
-type _Array1D = Sequence[float] | _ArrayReal
-type _Array2D = Sequence[_Array1D] | _ArrayReal
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
+_Array1D: TypeAlias = Sequence[float] | _ArrayReal
+_Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal
 _AnyW = TypeVar("_AnyW", _ArrayComplex, list[_ArrayComplex])
 
 def eval_psi(

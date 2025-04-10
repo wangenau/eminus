@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, TypeVar
+from typing import Any, overload, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -10,10 +10,10 @@ from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
 
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayReal = NDArray[_Float]
-type _ArrayComplex = NDArray[_Complex]
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
 _ScalarOrArrayReal = TypeVar("_ScalarOrArrayReal", float, _ArrayReal)
 
 def cutoff2gridspacing(E: float) -> float: ...

@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -8,12 +8,12 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-type _Int = integer[Any]
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayReal = NDArray[_Float]
-type _ArrayComplex = NDArray[_Complex]
-type _ArrayInt = NDArray[_Int]
+_Int: TypeAlias = integer[Any]
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
+_ArrayInt: TypeAlias = NDArray[_Int]
 
 class GTH:
     GTH: dict[str, dict[str, float | _ArrayReal]]

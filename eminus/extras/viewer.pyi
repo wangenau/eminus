@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import floating, integer
 from numpy.typing import NDArray
@@ -10,10 +10,10 @@ from ..atoms import Atoms
 from ..kpoints import KPoints
 from ..scf import SCF
 
-type _Int = integer[Any]
-type _Float = floating[Any]
-type _ArrayReal = NDArray[_Float]
-type _IntArray = Sequence[int] | NDArray[_Int]
+_Int: TypeAlias = integer[Any]
+_Float: TypeAlias = floating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_IntArray: TypeAlias = Sequence[int] | NDArray[_Int]
 
 def view(
     *args: Any,

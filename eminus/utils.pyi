@@ -1,17 +1,17 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable, Sequence
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Protocol, TypeAlias
 
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
-type _Int = integer[Any]
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayReal = NDArray[_Float]
-type _ArrayComplex = NDArray[_Complex]
-type _Array2D = Sequence[Sequence[float]] | Sequence[_ArrayReal] | _ArrayReal
+_Int: TypeAlias = integer[Any]
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
+_Array2D: TypeAlias = Sequence[Sequence[float]] | Sequence[_ArrayReal] | _ArrayReal
 
 # Create a custom Callable type for some decorators
 class _HandleType(Protocol):

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, TypeVar
+from typing import Any, overload, TypeAlias, TypeVar
 
 from numpy import bool_, complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -11,15 +11,15 @@ from .kpoints import KPoints
 from .occupations import Occupations
 from .utils import BaseObject
 
-type _Int = integer[Any]
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayComplex = NDArray[_Complex]
-type _ArrayReal = NDArray[_Float]
-type _ArrayInt = NDArray[_Int]
-type _Array1D = Sequence[float] | _ArrayReal
-type _Array2D = Sequence[_Array1D] | _ArrayReal
-type _Array3D = Sequence[_Array2D] | _ArrayReal
+_Int: TypeAlias = integer[Any]
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayComplex: TypeAlias = NDArray[_Complex]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ArrayInt: TypeAlias = NDArray[_Int]
+_Array1D: TypeAlias = Sequence[float] | _ArrayReal
+_Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal
+_Array3D: TypeAlias = Sequence[_Array2D] | _ArrayReal
 _ArrayRealOrComplex = TypeVar("_ArrayRealOrComplex", _ArrayReal, _ArrayComplex)
 
 class Atoms(BaseObject):

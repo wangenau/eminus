@@ -1,17 +1,17 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Callable
-from typing import Any, Protocol
+from typing import Any, Protocol, TypeAlias
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .scf import SCF
 
-type _Float = floating[Any]
-type _Complex = complexfloating[Any]
-type _ArrayReal = NDArray[_Float]
-type _ComplexReal = NDArray[_Complex]
+_Float: TypeAlias = floating[Any]
+_Complex: TypeAlias = complexfloating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
+_ComplexReal: TypeAlias = NDArray[_Complex]
 
 # Create a custom Callable type for cost functions
 class _CostType(Protocol):

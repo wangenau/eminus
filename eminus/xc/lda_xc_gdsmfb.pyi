@@ -1,15 +1,15 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypeAlias
 
 from numpy import floating
 from numpy.typing import NDArray
 
 from .lda_xc_ksdt import Coefficients
 
-type _Float = floating[Any]
-type _ArrayReal = NDArray[_Float]
+_Float: TypeAlias = floating[Any]
+_ArrayReal: TypeAlias = NDArray[_Float]
 
 @dataclass
 class Zeta0Coeffs(Coefficients):
