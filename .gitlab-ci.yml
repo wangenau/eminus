@@ -154,7 +154,7 @@ docker:
     - docker:dind
   script:
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
-    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
+    - VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' pyproject.toml)
     - docker buildx build -t wangenau/eminus:"${VERSION}" --build-arg BRANCH=${CI_COMMIT_BRANCH:-main} .
     - docker run wangenau/eminus:"${VERSION}" bash -c "export OMP_NUM_THREADS=$(nproc);export MKL_NUM_THREADS=$(nproc);pytest"
 
@@ -258,7 +258,7 @@ pages:
       - docs/**/*
       - examples/*
       - examples/**/*
-      - eminus/version.py
+      - pyproject.toml
 
 ##### Build the documentation for the dev branch under a different URL #####
 pages:dev:
@@ -274,7 +274,6 @@ pages:dev:
       - docs/**/*
       - examples/*
       - examples/**/*
-      - eminus/version.py
   variables:
     PUBLIC_URL: "/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/public"
 
@@ -332,7 +331,7 @@ dockerhub:
   script:
     - echo -n $DOCKER_ACCESS_TOKEN | docker login -u wangenau --password-stdin
     # Use sed to get the version since CI_COMMIT_TAG is only non-empty when triggered for tags
-    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
+    - VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' pyproject.toml)
     # Build the image with full attestations and push it directly
     - docker buildx create --driver=docker-container --name container default
     - docker buildx build -t wangenau/eminus:"${VERSION}" --builder=container --sbom=true --provenance=true --push .
@@ -368,9 +367,9 @@ weekly:
   stage: publish
   script:
     # Tag the version with a valid dev tag (VERSION.devYYYYMMDD)
-    - VERSION=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' eminus/version.py)
+    - VERSION=$(sed -n 's/^version = "\(.*\)"/\1/p' pyproject.toml)
     - WEEKLY_VERSION="${VERSION}.dev$(date +\%Y\%m\%d)"
-    - sed -i 's/__version__ = "'${VERSION}'"/__version__ = "'${WEEKLY_VERSION}'"/' eminus/version.py
+    - sed -i 's/version = "'${VERSION}'"/version = "'${WEEKLY_VERSION}'"/' pyproject.toml
     - uv build
     - uv publish -u gitlab-ci-token -p $CI_JOB_TOKEN --publish-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
   rules:
