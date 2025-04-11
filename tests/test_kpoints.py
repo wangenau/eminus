@@ -225,6 +225,15 @@ def test_trs_ordering():
     assert_allclose(old_k[2], -kpts.k[1])
 
 
+def test_trs_building_and_logging():
+    """Test that k-points are being built and only symmetrized when needed."""
+    kpts = KPoints("sc", 1)
+    kpts.kmesh = 2
+    assert kpts.Nk == 1  # Unbuild
+    kpts.trs()  # This should print a warning
+    assert kpts.Nk == 8  # Build
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib

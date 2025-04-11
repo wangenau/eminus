@@ -155,6 +155,11 @@ class KPoints(BaseObject):
 
     def trs(self):
         """Reduce k-points using time reversal symmetry (k=-k)."""
+        if not self.is_built:
+            self.build()
+        if not np.any(self.k < 0):
+            log.warning("No negative k-points found. Nothing to do.")
+            return self
         idx_to_remove = []
         for i in range(self.Nk):
             for j in range(i + 1, self.Nk):
