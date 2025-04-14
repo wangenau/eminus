@@ -389,8 +389,9 @@ class Atoms(BaseObject):
         else:
             center = np.asarray(center)
             self.pos = self.pos - (com - center)
-        # Recalculate the structure factor since it depends on the atom positions
-        self._Sf = np.exp(1j * self.G @ self.pos.T).T
+        if hasattr(self, "_Sf"):
+            # Recalculate the structure factor since it depends on the atom positions
+            self._Sf = np.exp(1j * self.G @ self.pos.T).T
         self._center = "recentered"
         return self
 

@@ -244,6 +244,7 @@ def test_recenter():
     """Test the recenter function."""
     atoms = Atoms(*inp)
     atoms.s = 2
+    atoms.recenter()  # Recenter without building
     atoms.build()
     Sf_old = atoms.Sf
     center = (1, 1, 1)

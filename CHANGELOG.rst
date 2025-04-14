@@ -11,6 +11,7 @@ dev
    - Add KSDT and CORRKSDT thermal functionals
    - Implement time reversal symmetry in k-point objects
 - Miscellaneous
+   - Allow recentering unbuilt Atoms objects
    - Change build backend from setuptools to hatchling
       - Improve build performance
       - Support PEP 639 license identifiers
@@ -20,6 +21,9 @@ dev
    - Update dev dependency versions, requires Python 3.10
    - Small typing improvements
       - Remove PEP 695 syntax and use TypeAlias again
+   - Small cleanups
+      - Make the pyproject.toml a lot shorter
+      - Reduce notebook file sizes
 
 v3.0.3 - Mar 18, 2025
 ---------------------
