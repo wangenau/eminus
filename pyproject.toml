@@ -7,10 +7,6 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.sdist]
 only-include = ["eminus", "tests"]
-exclude = ["tests/examples", "tests/extras"]
-
-[tool.hatch.build.targets.wheel]
-only-include = ["eminus"]
 
 ##### Metadata #####
 [project]

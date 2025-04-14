@@ -19,6 +19,7 @@ dev
    - Make the dev optional-dependency a dependency-group
    - Update dev dependency versions, requires Python 3.10
    - Small typing improvements
+      - Remove PEP 695 syntax and use TypeAlias again
 
 v3.0.3 - Mar 18, 2025
 ---------------------
