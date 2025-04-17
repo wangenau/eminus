@@ -9,6 +9,7 @@ All necessary dependencies to use this extra can be installed with::
 Note that if one wants to use Jupyter one has to install it separately.
 """
 
+import collections
 import io
 import pathlib
 import uuid
@@ -40,6 +41,11 @@ def view(*args, **kwargs):
     Returns:
         Viewable object.
     """
+    # Handle pathlib Paths or globs
+    if isinstance(args[0], pathlib.Path):
+        args = (str(args[0]),)
+    elif isinstance(args[0], collections.abc.Generator):
+        args = ([str(arg) for arg in args[0]],)
     if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)
     if isinstance(args[0], KPoints):

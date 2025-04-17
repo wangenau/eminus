@@ -12,6 +12,7 @@ dev
    - Implement time reversal symmetry in k-point objects
 - Miscellaneous
    - Allow recentering unbuilt Atoms objects
+   - Allow pathlib paths in the view function
    - Change build backend from setuptools to hatchling
       - Improve build performance
       - Support PEP 639 license identifiers

@@ -124,7 +124,6 @@ ignore = [
     "E501",  # Line too long
     "INP001",  # File is part of an implicit namespace package
     "T201",  # print found
-    "PTH207",  # Replace glob with Path.glob or Path.rglob
 ]
 "tests/*" = [
     "S101",  # Use of assert detected
