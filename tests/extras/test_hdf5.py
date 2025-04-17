@@ -2,9 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test HDF5 input and output functionalities."""
 
-import inspect
 import os
-import pathlib
 
 import pytest
 from numpy.testing import assert_allclose
