@@ -4,8 +4,9 @@
 
 import numpy as np
 
-from ..logger import log
-from ..units import ang2bohr
+from eminus.logger import log
+from eminus.units import ang2bohr
+
 from .xyz import write_xyz
 
 

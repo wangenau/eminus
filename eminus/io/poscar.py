@@ -6,9 +6,9 @@ import time
 
 import numpy as np
 
-from ..logger import log
-from ..units import ang2bohr, bohr2ang
-from ..version import __version__
+from eminus.logger import log
+from eminus.units import ang2bohr, bohr2ang
+from eminus.version import __version__
 
 
 def read_poscar(filename):

@@ -45,7 +45,7 @@ def read(filename, *args, **kwargs):
     if filename.endswith(".json"):
         return read_json(filename, *args, **kwargs)
     if filename.endswith((".h5", ".hdf", ".hdf5")):
-        from ..extras import read_hdf5
+        from eminus.extras import read_hdf5
 
         return read_hdf5(filename, *args, **kwargs)
     if filename.endswith(".xyz"):
@@ -77,7 +77,7 @@ def write(obj, filename, *args, **kwargs):
     if filename.endswith(".json"):
         return write_json(obj, filename, *args, **kwargs)
     if filename.endswith((".h5", ".hdf", ".hdf5")):
-        from ..extras import write_hdf5
+        from eminus.extras import write_hdf5
 
         return write_hdf5(obj, filename, *args, **kwargs)
     if filename.endswith(".xyz"):

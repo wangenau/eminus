@@ -10,9 +10,9 @@ All necessary dependencies to use this extra can be installed with::
 import numpy as np
 from scipy.linalg import norm
 
-from ..data import SYMBOL2NUMBER
-from ..logger import log
-from ..units import bohr2ang
+from eminus.data import SYMBOL2NUMBER
+from eminus.logger import log
+from eminus.units import bohr2ang
 
 
 def get_localized_orbitals(mf, loc, Nit=1000, seed=1234):

@@ -9,8 +9,8 @@ All necessary dependencies to use this extra can be installed with::
 
 import numpy as np
 
-from ..io.json import _custom_object_hook
-from ..logger import log
+from eminus.io.json import _custom_object_hook
+from eminus.logger import log
 
 
 def read_hdf5(filename):

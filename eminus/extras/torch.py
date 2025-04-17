@@ -27,8 +27,8 @@ Reference: Adv. Neural. Inf. Process Syst. 32, 8024.
 
 import numpy as np
 
-from .. import config
-from ..utils import handle_k
+from eminus import config
+from eminus.utils import handle_k
 
 
 @handle_k(mode="index")

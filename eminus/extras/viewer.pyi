@@ -6,9 +6,9 @@ from typing import Any, TypeAlias
 from numpy import floating, integer
 from numpy.typing import NDArray
 
-from ..atoms import Atoms
-from ..kpoints import KPoints
-from ..scf import SCF
+from eminus.atoms import Atoms
+from eminus.kpoints import KPoints
+from eminus.scf import SCF
 
 _Int: TypeAlias = integer[Any]
 _Float: TypeAlias = floating[Any]

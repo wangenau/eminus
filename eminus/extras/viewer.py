@@ -17,15 +17,16 @@ import uuid
 import numpy as np
 from scipy.interpolate import griddata
 
-from ..atoms import Atoms
-from ..data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
-from ..dft import get_epsilon, get_epsilon_unocc
-from ..io import create_pdb_str, read_cube, read_traj, read_xyz
-from ..kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
-from ..logger import log
-from ..tools import get_dos, get_Efermi, get_isovalue
-from ..units import ha2ev
-from ..utils import get_lattice
+from eminus.atoms import Atoms
+from eminus.data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
+from eminus.dft import get_epsilon, get_epsilon_unocc
+from eminus.io import create_pdb_str, read_cube, read_traj, read_xyz
+from eminus.kpoints import get_brillouin_zone, kpoint_convert, KPoints, kpoints2axis
+from eminus.logger import log
+from eminus.tools import get_dos, get_Efermi, get_isovalue
+from eminus.units import ha2ev
+from eminus.utils import get_lattice
+
 from .fods import split_fods
 
 

@@ -14,8 +14,8 @@ except ImportError:
     pass
 import numpy as np
 
-from ..data import SYMBOL2NUMBER
-from ..logger import log
+from eminus.data import SYMBOL2NUMBER
+from eminus.logger import log
 
 
 def get_Edisp(scf, version="d3bj", atm=True, xc=None):

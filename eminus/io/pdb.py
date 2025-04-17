@@ -5,9 +5,9 @@
 import numpy as np
 from scipy.linalg import norm
 
-from ..logger import log
-from ..units import bohr2ang
-from ..utils import vector_angle
+from eminus.logger import log
+from eminus.units import bohr2ang
+from eminus.utils import vector_angle
 
 
 def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=False):

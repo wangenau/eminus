@@ -5,7 +5,7 @@ from typing import Any, overload, TypeAlias, TypeVar
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
-from ..atoms import Atoms
+from eminus.atoms import Atoms
 
 _Float: TypeAlias = floating[Any]
 _Complex: TypeAlias = complexfloating[Any]

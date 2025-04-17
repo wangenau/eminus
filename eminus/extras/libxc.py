@@ -15,8 +15,8 @@ Alternatively, one can use the PySCF Libxc interface with::
 import numpy as np
 from scipy.linalg import norm
 
-from .. import config
-from ..logger import log
+from eminus import config
+from eminus.logger import log
 
 
 def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):

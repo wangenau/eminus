@@ -109,7 +109,6 @@ ignore = [
     "FBT001", "FBT002",  # Boolean (default) positional argument in function definition
     "SLF001",  # Private member accessed
     "SIM108",  # Use ternary operator instead of if-else-block
-    "TID252",  # Prefer absolute imports over relative imports from parent modules
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
     "PLR0911", "PLR0912", "PLR0913", "PLR0915",  # "Too many" rules

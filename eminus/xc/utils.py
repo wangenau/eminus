@@ -7,9 +7,10 @@ import sys
 
 import numpy as np
 
-from .. import config
-from ..logger import log
-from ..utils import add_maybe_none
+from eminus import config
+from eminus.logger import log
+from eminus.utils import add_maybe_none
+
 from .gga_c_chachiyo import gga_c_chachiyo, gga_c_chachiyo_spin
 from .gga_c_pbe import gga_c_pbe, gga_c_pbe_spin
 from .gga_c_pbe_sol import gga_c_pbe_sol, gga_c_pbe_sol_spin
@@ -66,7 +67,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
         """Calculate a given functional fxc, same for exchange and correlation."""
         # Calculate with the libxc extra...
         if ":" in fxc:
-            from ..extras.libxc import libxc_functional
+            from eminus.extras.libxc import libxc_functional
 
             fxc = fxc.split(":")[-1]
             exc, vxc, vsigma, vtau = libxc_functional(fxc, n_spin, Nspin, dn_spin, tau, xc_params)

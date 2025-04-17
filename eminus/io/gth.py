@@ -8,7 +8,7 @@ import sys
 
 import numpy as np
 
-from ..logger import log
+from eminus.logger import log
 
 
 def read_gth(atom, charge=None, psp_path="pbe"):

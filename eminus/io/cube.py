@@ -7,9 +7,9 @@ import time
 
 import numpy as np
 
-from ..data import NUMBER2SYMBOL, SYMBOL2NUMBER
-from ..logger import log
-from ..version import __version__
+from eminus.data import NUMBER2SYMBOL, SYMBOL2NUMBER
+from eminus.logger import log
+from eminus.version import __version__
 
 
 def read_cube(filename):

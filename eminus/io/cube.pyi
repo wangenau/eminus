@@ -6,8 +6,8 @@ from typing import Any, TypeAlias
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
-from ..atoms import Atoms
-from ..scf import SCF
+from eminus.atoms import Atoms
+from eminus.scf import SCF
 
 _Int: TypeAlias = integer[Any]
 _Float: TypeAlias = floating[Any]
