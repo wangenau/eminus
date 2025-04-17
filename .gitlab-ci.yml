@@ -57,9 +57,9 @@ coverage:
     - uv pip install .
     - uv pip install coverage pyscf pytest
     - coverage run -m pytest tests/ --ignore=tests/examples --ignore=tests/extras
-    - coverage report --precision=2
-    - coverage html --precision=2
-    - coverage xml
+    - coverage report --include=eminus/* --omit=eminus/extras/* --precision=2
+    - coverage html --include=eminus/* --omit=eminus/extras/* --precision=2
+    - coverage xml --include=eminus/* --omit=eminus/extras/*
   coverage: '/TOTAL.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     paths:

@@ -68,23 +68,14 @@ all = ["eminus[dispersion]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]", "
 [dependency-groups]
 dev = [
     "furo>=2024.08.06; python_version>='3.10'",  # Documentation theme
-    "matplotlib>=3.6.2",  # Plotting library for examples
+    "matplotlib>=3.6.2",  # Plotting library for images in examples
     "mypy>=1.9",  # Static type checker
-    "notebook>=7",  # Run and convert notebooks to HTML
     "pytest>=7",  # Test utilities
     "ruff>=0.10",  # Linter and formatter
     "sphinx>=8.1; python_version>='3.10'",  # Documentation builder
     "sphinx-design>=0.6.1; python_version>='3.10'",  # More directives for Sphinx
     "sphinxcontrib-bibtex>=2.1; python_version>='3.10'",  # Use bib files for citations in Sphinx
 ]
-
-##### Coverage #####
-[tool.coverage.report]
-exclude_lines = ['if __name__ == "__main__":']
-
-[tool.coverage.run]
-include = ["eminus/*"]
-omit = ["eminus/extras/*"]
 
 ##### Mypy #####
 [tool.mypy]

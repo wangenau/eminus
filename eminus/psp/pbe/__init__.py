@@ -5,7 +5,7 @@
 Reference: Theor. Chem. Acc. 114, 145.
 """
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     import importlib.resources
     import shutil
     import urllib.request
