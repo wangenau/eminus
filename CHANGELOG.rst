@@ -25,6 +25,8 @@ dev
    - Small cleanups
       - Make the pyproject.toml a lot shorter
       - Reduce notebook file sizes
+   - Fix and build the Nix package properly
+   - Use Python 3.13 in Nix package
 
 v3.0.3 - Mar 18, 2025
 ---------------------

@@ -104,4 +104,4 @@ To use the package under `Nix <https://nixos.org/>`_ one can easily create a dev
 
    git clone https://gitlab.com/wangenau/eminus.git
    cd eminus
-   nix develop
+   nix shell
