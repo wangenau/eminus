@@ -10,21 +10,28 @@ dev
 - New features
    - Add KSDT and CORRKSDT thermal functionals
    - Implement time reversal symmetry in k-point objects
+- Coding style
+   - Typing improvements
+      - Remove PEP 695 syntax and use TypeAlias again
+      - Use typing.override and typing.Self
+      - Miscellaneous small fixes
+      - Typecheck in CI also on changes in stub files
+   - Small cleanups
+      - Make the pyproject.toml a lot shorter
+      - Reduce notebook file sizes
+      - Implement and cleanup of Ruff rules
 - Miscellaneous
-   - Allow recentering unbuilt Atoms objects
-   - Allow pathlib paths in the view function
    - Change build backend from setuptools to hatchling
       - Improve build performance
       - Support PEP 639 license identifiers
       - Support reproducible builds
+      - Include all tests in source distributions
+   - Allow recentering unbuilt Atoms objects
+   - Allow pathlib paths in the view function
    - Remove the symmetry extra
    - Make the dev optional-dependency a dependency-group
    - Update dev dependency versions, requires Python 3.10
-   - Small typing improvements
-      - Remove PEP 695 syntax and use TypeAlias again
-   - Small cleanups
-      - Make the pyproject.toml a lot shorter
-      - Reduce notebook file sizes
+   - Remove coverage and notebook from dev dependencies
    - Fix and build the Nix package properly
    - Use Python 3.13 in Nix package
 
