@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, TypeAlias
+from typing import Any, Self, TypeAlias
 
 from numpy import floating, integer
 from numpy.typing import NDArray
@@ -54,9 +54,9 @@ class KPoints(BaseObject):
     def path(self, value: str | None) -> None: ...
     @property
     def k_scaled(self) -> _ArrayReal: ...
-    def build(self) -> KPoints: ...
+    def build(self) -> Self: ...
     kernel = build
-    def trs(self) -> KPoints: ...
+    def trs(self) -> Self: ...
 
 def kpoint_convert(
     k_points: _Array2D,

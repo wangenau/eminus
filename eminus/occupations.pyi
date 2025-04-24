@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, TypeAlias
+from typing import Any, Self, TypeAlias
 
 from numpy import floating
 from numpy.typing import NDArray
@@ -77,6 +77,6 @@ class Occupations:
         self,
         f: float | _ArrayReal | None = ...,
         magnetization: float | None = ...,
-    ) -> Occupations: ...
+    ) -> Self: ...
     kernel = fill
     def smear(self, epsilon: _ArrayReal) -> float: ...
