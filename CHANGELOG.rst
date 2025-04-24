@@ -14,7 +14,7 @@ dev
    - Typing improvements
       - Remove PEP 695 syntax and use TypeAlias again
       - Use typing.override and typing.Self
-      - Miscellaneous small fixes
+      - Miscellaneous fixes
       - Typecheck in CI also on changes in stub files
    - Small cleanups
       - Make the pyproject.toml a lot shorter
@@ -26,14 +26,14 @@ dev
       - Support PEP 639 license identifiers
       - Support reproducible builds
       - Include all tests in source distributions
+   - Restructure dependencies
+      - Remove the symmetry extra
+      - Make the dev optional-dependency a dependency-group
+      - Update dev dependency versions, requires Python 3.10
+      - Remove coverage and notebook from dev dependencies
    - Allow recentering unbuilt Atoms objects
    - Allow pathlib paths in the view function
-   - Remove the symmetry extra
-   - Make the dev optional-dependency a dependency-group
-   - Update dev dependency versions, requires Python 3.10
-   - Remove coverage and notebook from dev dependencies
-   - Fix and build the Nix package properly
-   - Use Python 3.13 in Nix package
+   - Fix and build the Nix package properly, use Python 3.13
 
 v3.0.3 - Mar 18, 2025
 ---------------------
