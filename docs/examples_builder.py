@@ -69,10 +69,9 @@ def parse(script: str) -> str:
                     words = line.split()
                     for word in words:
                         if ".png" in word:
-                            image_name = word
-                    # Replace backticks
-                    image_name = image_name.replace("`", "")
-                    rst += f"\n.. image:: {image_name}\n   :align: center\n\n"
+                            # Replace backticks
+                            image_name = word.replace("`", "")
+                            rst += f"\n.. image:: {image_name}\n   :align: center\n\n"
             # Otherwise it is a code block
             else:
                 if not last_block_was_code:
