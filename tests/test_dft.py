@@ -30,7 +30,7 @@ def test_wavefunction(guess, unrestricted):
         scf = SCF(atoms_unpol, guess=guess)
     if guess == "random":
         W = guess_random(scf)
-    elif guess == "pseudo":
+    else:
         W = guess_pseudo(scf)
     psi = get_psi(scf, W)
     for ik in range(scf.kpts.Nk):
@@ -123,8 +123,8 @@ def test_k_point_permutation():
     cell = Cell("C", "diamond", 10, 6.75, kmesh=(2, 1, 1))
     scf = SCF(cell)
     etot1 = scf.run()
-    assert hasattr(cell.kpts, "_k")
-    cell.kpts._k = cell.kpts._k[::-1]
+    cell.kpts.k = cell.kpts.k[::-1]
+    cell.kpts.is_built = True
     assert not np.all(cell.kpts.k == scf.kpts.k)
     scf = SCF(cell)
     etot2 = scf.run()
