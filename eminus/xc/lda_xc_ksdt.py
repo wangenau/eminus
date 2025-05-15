@@ -21,6 +21,24 @@ class Coefficients:
     """
 
     theta: float  #: Reduced temperature.
+    omega: float
+    e1: float
+    e2: float
+    e3: float
+    e4: float
+    e5: float
+    d1: float
+    d2: float
+    d3: float
+    d4: float
+    d5: float
+    c1: float
+    c2: float
+    c3: float
+    b1: float
+    b2: float
+    b3: float
+    b4: float
     a1: float = 0.75
     a2: float = 3.04363
     a3: float = -0.09227
