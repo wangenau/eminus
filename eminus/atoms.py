@@ -420,10 +420,12 @@ class Atoms(BaseObject):
     def clear(self):
         """Initialize or clear parameters that will be built out of the inputs."""
         self._r = None  # Sample points in cell
+        self._active = None  # Mask for active G-vectors
         self._G = None  # G-vectors
         self._G2 = None  # Squared magnitudes of G-vectors
-        self._active = None  # Mask for active G-vectors
         self._G2c = None  # Truncated squared magnitudes of G-vectors
+        self._Gk2 = None  # Squared magnitudes of G+k-vectors
+        self._Gk2c = None  # Truncated squared magnitudes of G+k-vectors
         self._Sf = None  # Structure factor
         self.is_built = False  # Flag to determine if the object was built or not
         return self
