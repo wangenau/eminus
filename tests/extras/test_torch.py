@@ -16,6 +16,9 @@ print(config.backend)  # Call the getter function once
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
+assert atoms.G2 is not None
+assert atoms.G2c is not None
+assert atoms.Gk2c is not None
 rng = default_rng()
 W_tests = {
     "full": rng.standard_normal((len(atoms.G2), atoms.occ.Nstate)),

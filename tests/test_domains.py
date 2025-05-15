@@ -25,6 +25,7 @@ atoms = Atoms(
 @pytest.mark.parametrize("length", [0.001, 0.01, 0.1, 1, 10])
 def test_domain_cuboid(length):
     """Test cuboidal domain generation by ensuring that the grid points are close to the center."""
+    assert atoms.r is not None
     out = truncate(atoms.r, domain_cuboid(atoms, length))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=length)
@@ -38,6 +39,7 @@ def test_domain_cuboid(length):
 @pytest.mark.parametrize("radius", [0.001, 0.01, 0.1, 1, 10])
 def test_domain_sphere(radius):
     """Test spherical domain generation by ensuring that the grid points are close to the center."""
+    assert atoms.r is not None
     out = truncate(atoms.r, domain_sphere(atoms, radius))
     ref = np.zeros_like(out)
     assert_allclose(out, ref, atol=radius)
@@ -50,6 +52,7 @@ def test_domain_sphere(radius):
 
 def test_domain_isovalue():
     """Test isovalue domain execution."""
+    assert atoms.G2 is not None
     out = truncate(atoms.G2, domain_isovalue(atoms.G2, 0.1))
     assert not (out == atoms.G2).all()
 

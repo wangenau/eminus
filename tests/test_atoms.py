@@ -63,6 +63,7 @@ def test_cell(a, ref, Omega):
     assert atoms.Omega == Omega
     assert_equal(atoms.a, ref)
     assert_allclose(atoms.Omega, det(atoms.a))
+    assert atoms.r is not None
     assert_equal(atoms.r[0], 0)
     assert len(atoms.r) == atoms.Ns
     assert_allclose(atoms.s[0] / atoms.s[1], abs(atoms.a[0, 0] / atoms.a[1, 1]), atol=0.1)
@@ -190,6 +191,7 @@ def test_G():
     atoms = Atoms(*inp)
     atoms.s = 2
     atoms.build()
+    assert atoms.G is not None
     assert_equal(atoms.G[0], 0)
     assert len(atoms.G) == atoms.Ns
     assert_equal(atoms.G2, atoms.G2c)
@@ -197,6 +199,8 @@ def test_G():
     atoms = Atoms(*inp)
     atoms.s = 2
     atoms.build()
+    assert atoms.G2 is not None
+    assert atoms.G2c is not None
     assert len(atoms.G2) == len(atoms.G2c)
 
 
@@ -205,6 +209,9 @@ def test_Gk():
     atoms = Cell("He", "fcc", 30, 5)
     atoms.kpts.kmesh = (2, 1, 2)
     atoms.build()
+    assert atoms.G2 is not None
+    assert atoms.Gk2 is not None
+    assert atoms.Gk2c is not None
     assert len(atoms.Gk2) == atoms.kpts.Nk + 1
     assert len(atoms.Gk2[0]) == len(atoms.G2)
     assert len(atoms.Gk2c) == atoms.kpts.Nk + 1
@@ -246,10 +253,12 @@ def test_recenter():
     atoms.s = 2
     atoms.recenter()  # Recenter without building
     atoms.build()
+    assert atoms.Sf is not None
     Sf_old = atoms.Sf
     center = (1, 1, 1)
     atoms.recenter(center)
     assert_allclose(center_of_mass(atoms.pos), center)
+    assert atoms.Sf is not None
     assert not np.array_equal(Sf_old, atoms.Sf)
     assert atoms.center == "recentered"
 
@@ -264,6 +273,8 @@ def test_set_k():
     assert len(atoms.kpts.k) == 2
     assert len(atoms.kpts.wk) == 2
     assert len(atoms.occ.wk) == 2
+    assert atoms.Gk2 is not None
+    assert atoms.Gk2c is not None
     assert len(atoms.Gk2) == 2 + 1
     assert len(atoms.Gk2c) == 2 + 1
 

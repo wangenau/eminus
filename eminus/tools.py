@@ -52,6 +52,9 @@ def center_of_mass(coords, masses=None):
     Returns:
         Center of mass.
     """
+    if coords is None:
+        msg = 'The provided coordinates are "None".'
+        raise ValueError(msg)
     if masses is None:
         masses = np.ones(len(coords))
     return np.sum(masses * coords.T, axis=1) / np.sum(masses)
