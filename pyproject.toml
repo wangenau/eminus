@@ -53,17 +53,17 @@ documentation = "https://wangenau.gitlab.io/eminus"
 issues = "https://gitlab.com/wangenau/eminus/-/issues"
 
 [project.optional-dependencies]
-dispersion = ["dftd3>=0.6"]  # Interface for DFT-D3 dispersion corrections
-hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
-libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
-jax = ["jax>=0.4.8"]  # Faster FFT operators
-torch = ["torch>=1.8"]  # Faster FFT operators
-viewer = [
+d3 = ["dftd3>=0.6"]  # Interface for DFT-D3 dispersion corrections
+gui = [
     "nglview>=2.6.5",  # Molecule viewer
     "plotly>=4.5",  # Various visualizations
 ]
+hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
+jax = ["jax>=0.4.8"]  # Faster FFT operators
+libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
+torch = ["torch>=1.8"]  # Faster FFT operators
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
-all = ["eminus[dispersion]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]", "eminus[viewer]"]
+all = ["eminus[d3]", "eminus[gui]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]"]
 
 [dependency-groups]
 dev = [

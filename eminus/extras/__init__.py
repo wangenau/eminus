@@ -8,13 +8,13 @@ To also install all additional dependencies, use::
 
 Alternatively, you can only install selected extras using the respective name:
 
-* :mod:`~eminus.extras.dispersion`
+* :mod:`~eminus.extras.d3`
 * :mod:`~eminus.extras.fods`
+* :mod:`~eminus.extras.gui`
 * :mod:`~eminus.extras.hdf5`
 * :mod:`~eminus.extras.jax`
 * :mod:`~eminus.extras.libxc`
 * :mod:`~eminus.extras.torch`
-* :mod:`~eminus.extras.viewer`
 
 Note that the :mod:`~eminus.extras.libxc` extra will install PySCF by default. pylibxc is also
 supported and will be preferred if it is found in the environment. See :mod:`~eminus.extras.libxc`
@@ -25,11 +25,9 @@ Additionally, :mod:`~eminus.extras.torch` has different installation flavors. Se
 """
 
 from . import jax, torch
-from .dispersion import get_Edisp
+from .d3 import get_Edisp
 from .fods import get_fods, remove_core_fods, split_fods
-from .hdf5 import read_hdf5, write_hdf5
-from .libxc import libxc_functional
-from .viewer import (
+from .gui import (
     executed_in_notebook,
     plot_bandstructure,
     plot_dos,
@@ -39,6 +37,8 @@ from .viewer import (
     view_file,
     view_kpts,
 )
+from .hdf5 import read_hdf5, write_hdf5
+from .libxc import libxc_functional
 
 __all__ = [
     "executed_in_notebook",

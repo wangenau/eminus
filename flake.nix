@@ -31,8 +31,11 @@
             ### basic ###
             numpy
             scipy
-            ### dispersion ###
+            ### d3 ###
             simple-dftd3
+            ### gui ###
+            # nglview is missing
+            plotly
             ### hdf5 ###
             h5py
             ### fods and libxc ###
@@ -41,9 +44,6 @@
             # jax
             ### torch ###
             # torch-bin
-            ### viewer ###
-            # nglview is missing
-            plotly
             ### dev ###
             furo
             jupyter

@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Dispersion correction interface.
+"""D3 dispersion correction interface.
 
 All necessary dependencies to use this extra can be installed with::
 
-    pip install eminus[dispersion]
+    pip install eminus[d3]
 """
 
 # Import the DFT-D3 C extension beforehand, if one doesn't do this the dispersion energies are wrong
@@ -46,7 +46,7 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[dispersion]".\n\n'
+            'install them with "pip install eminus[d3]".\n\n'
         )
         raise
     # Dictionary of implemented dispersion models

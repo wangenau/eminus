@@ -9,7 +9,7 @@ from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_n_single, get_phi, H
-from .extras import dispersion
+from .extras import d3
 from .gga import get_grad_field, get_tau
 from .logger import log
 from .tools import electronic_entropy
@@ -346,13 +346,13 @@ def get_Esic(scf, Y, n_single=None):
 
 def get_Edisp(scf, version="d3bj", atm=True, xc=None):  # noqa: D103
     try:
-        return dispersion.get_Edisp(scf, version, atm, xc)
+        return d3.get_Edisp(scf, version, atm, xc)
     except ImportError:
-        log.warning("You have to install the dispersion extra to use this function.")
+        log.warning("You have to install the d3 extra to use this function.")
         return 0
 
 
-get_Edisp.__doc__ = dispersion.get_Edisp.__doc__
+get_Edisp.__doc__ = d3.get_Edisp.__doc__
 
 
 def get_Eband(scf, Y, **kwargs):

@@ -6,12 +6,12 @@ SPDX-License-Identifier: Apache-2.0
 
 Extras directory that contains functions that need additional dependencies to work.
 
-| File          | Description |
-| :-----------: | :---------: |
-| dispersion.py | Dispersion correction |
-| fods.py       | FOD generation |
-| hdf5.py       | HDF5 file handling |
-| jax.py        | Faster FFT operators using Jax |
-| libxc.py      | Use Libxc functionals |
-| torch.py      | Faster FFT operators using Torch |
-| viewer.py     | Notebook display functions |
+| File      | Description |
+| :-------: | :---------: |
+| d3.py     | D3 dispersion correction |
+| fods.py   | FOD generation |
+| gui.py    | Notebook display functions |
+| hdf5.py   | HDF5 file handling |
+| jax.py    | Faster FFT operators using Jax |
+| libxc.py  | Use Libxc functionals |
+| torch.py  | Faster FFT operators using Torch |

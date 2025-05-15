@@ -27,6 +27,7 @@ dev
       - Support reproducible builds
       - Include all tests in source distributions
    - Restructure dependencies
+      - Rename extras (see Breaking section)
       - Remove the symmetry extra
       - Make the dev optional-dependency a dependency-group
       - Update dev dependency versions, requires Python 3.10
@@ -36,6 +37,10 @@ dev
    - Fix Gk2 and Gk2c not being cleared when performing Atoms.clear()
    - Allow pathlib paths in the view function
    - Fix and build the Nix package properly, use Python 3.13
+- Breaking
+   - Two extras have been renamed for brevity
+      - dispersion is now called d3
+      - viewer is now called gui
 
 v3.0.3 - Mar 18, 2025
 ---------------------

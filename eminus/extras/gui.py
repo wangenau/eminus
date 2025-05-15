@@ -1,10 +1,10 @@
 # SPDX-FileCopyrightText: 2022 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Viewer functions for Jupyter notebooks.
+"""GUI functions for Jupyter notebooks.
 
 All necessary dependencies to use this extra can be installed with::
 
-    pip install eminus[viewer]
+    pip install eminus[gui]
 
 Note that if one wants to use Jupyter one has to install it separately.
 """
@@ -100,7 +100,7 @@ def view_atoms(
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
     atoms = obj._atoms
@@ -272,7 +272,7 @@ def view_contour(
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
     atoms = obj._atoms
@@ -360,7 +360,7 @@ def view_file(
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
 
@@ -574,7 +574,7 @@ def _traj_view(view, filename):
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
 
@@ -659,7 +659,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
     k_axis, special, label = kpoints2axis(scf.kpts)
@@ -759,7 +759,7 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
     e_occ = ha2ev(get_epsilon(scf, scf.W, **scf._precomputed))
@@ -828,7 +828,7 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     except ImportError:
         log.exception(
             "Necessary dependencies not found. To use this module, "
-            'install them with "pip install eminus[viewer]".\n\n'
+            'install them with "pip install eminus[gui]".\n\n'
         )
         raise
 

@@ -35,5 +35,5 @@ scf.run()
 # # Save the density as a CUBE file
 atoms.write("Ge_solid_density.cube", scf.n)
 
-# # If you have the viewer extra installed, the following line will plot the unit cell and 20 isosurfaces of the density, such that 50% of the density is contained
+# # If you have the gui extra installed, the following line will plot the unit cell and 20 isosurfaces of the density, such that 50% of the density is contained
 # scf.view(plot_n=True, surfaces=20, percent=50)

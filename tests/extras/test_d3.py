@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Test dispersion corrections."""
+"""Test D3 dispersion corrections."""
 
 import pytest
 from numpy.testing import assert_allclose

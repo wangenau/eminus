@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Test viewer extra."""
+"""Test gui extra."""
 
 import inspect
 import os
@@ -8,7 +8,7 @@ import pathlib
 
 import pytest
 
-from eminus.extras.viewer import executed_in_notebook
+from eminus.extras.gui import executed_in_notebook
 
 
 @pytest.mark.slow
@@ -22,7 +22,7 @@ from eminus.extras.viewer import executed_in_notebook
         "test_view_kpts",
     ],
 )
-def test_viewer(name):
+def test_gui(name):
     """Test the execution of a given Jupyter notebook."""
     pytest.importorskip("nglview", reason="nglview not installed, skip tests")
     pytest.importorskip("plotly", reason="plotly not installed, skip tests")

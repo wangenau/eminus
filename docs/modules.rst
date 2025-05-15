@@ -62,13 +62,13 @@ Modules
    eminus.xc.lda_xc_ksdt
    eminus.xc.utils
    eminus.extras
-   eminus.extras.dispersion
+   eminus.extras.d3
    eminus.extras.fods
+   eminus.extras.gui
    eminus.extras.hdf5
    eminus.extras.jax
    eminus.extras.libxc
    eminus.extras.torch
-   eminus.extras.viewer
    eminus.psp
    eminus.psp.pade
    eminus.psp.pbe
