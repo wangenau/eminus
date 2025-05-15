@@ -35,6 +35,7 @@ dev
    - Allow recentering unbuilt Atoms objects
    - Fix saving unbuilt Atoms objects as JSON or HDF5
    - Fix Gk2 and Gk2c not being cleared when performing Atoms.clear()
+   - Set default values for uninitialized Atoms attributes to None
    - Allow pathlib paths in the view function
    - Fix and build the Nix package properly, use Python 3.13
 - Breaking
