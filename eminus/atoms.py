@@ -85,6 +85,7 @@ class Atoms(BaseObject):
         # Initialize other attributes
         self.occ.fill()  #: Fill states from the given input.
         self.is_built = False  #: Determines the Atoms object build status.
+        self.clear()
 
     # ### Class properties ###
 
@@ -389,7 +390,7 @@ class Atoms(BaseObject):
         else:
             center = np.asarray(center)
             self.pos = self.pos - (com - center)
-        if hasattr(self, "_Sf"):
+        if self.Sf is not None:
             # Recalculate the structure factor since it depends on the atom positions
             self._Sf = np.exp(1j * self.G @ self.pos.T).T
         self._center = "recentered"

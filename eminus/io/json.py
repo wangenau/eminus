@@ -34,7 +34,7 @@ def _custom_object_hook(dct):
         atoms = eminus.Atoms(dct["_atom"], dct["_pos"], verbose=dct["_verbose"])
         atoms = set_attrs(atoms, dct)
         # The tuple type is not preserved when serializing, manually cast the only important one
-        if not isinstance(atoms._active, tuple):
+        if atoms._active is not None and not isinstance(atoms._active, tuple):
             atoms._active = [tuple(i) for i in atoms._active]
         return atoms
     # SCF objects

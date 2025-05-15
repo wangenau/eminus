@@ -8,15 +8,35 @@ import pytest
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, SCF
+from eminus.energies import Energy
 from eminus.extras import read_hdf5, write_hdf5
+from eminus.gth import GTH
 from eminus.io import read, write
+from eminus.kpoints import KPoints
+from eminus.occupations import Occupations
 
 atoms = Atoms("LiH", ((0, 0, 0), (3, 0, 0)), ecut=1).build()
 scf = SCF(atoms, opt={"sd": 1})
 scf.run()
 
 
-@pytest.mark.parametrize("obj", [atoms, atoms.kpts, atoms.occ, scf, scf.energies, scf.gth])
+@pytest.mark.parametrize(
+    "obj",
+    [
+        atoms,
+        atoms.kpts,
+        atoms.occ,
+        scf,
+        scf.energies,
+        scf.gth,
+        Atoms("He", (0, 0, 0)),
+        KPoints("sc"),
+        Occupations(),
+        SCF(atoms),
+        Energy(),
+        GTH(),
+    ],
+)
 def test_hdf5(obj):
     """Test HDF5 file output and input."""
     pytest.importorskip("h5py", reason="h5py not installed, skip tests")

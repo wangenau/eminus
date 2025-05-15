@@ -17,12 +17,16 @@ class GTH:
 
     def __init__(self, scf=None):
         """Initialize the GTH object."""
+        self.GTH = {}  #: Dictionary with GTH parameters per atom type.
+        self.NbetaNL = 0  #: Number of projector functions for the non-local potential.
+        self.prj2beta = np.array([0])  #: Index matrix to map to the correct projector function.
+        self.betaNL = np.array([0])  #: Atomic-centered projector functions.
+
         # Allow creating an empty instance (used when loading GTH objects from JSON files)
         if scf is not None:
             atoms = scf.atoms
 
             # Set up a dictionary with all GTH parameters
-            self.GTH = {}  #: Dictionary with GTH parameters per atom type.
             for ia in range(atoms.Natoms):
                 # Skip if the atom is already in the dictionary
                 if atoms.atom[ia] in self.GTH:
@@ -31,9 +35,9 @@ class GTH:
 
             # Initialize the non-local potential
             NbetaNL, prj2beta, betaNL = init_gth_nonloc(atoms, self)
-            self.NbetaNL = NbetaNL  #: Number of projector functions for the non-local potential.
-            self.prj2beta = prj2beta  #: Index matrix to map to the correct projector function.
-            self.betaNL = betaNL  #: Atomic-centered projector functions.
+            self.NbetaNL = NbetaNL
+            self.prj2beta = prj2beta
+            self.betaNL = betaNL
 
     def __getitem__(self, key):
         """Allow accessing the GTH parameters of an atom by indexing the GTH object."""

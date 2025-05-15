@@ -32,6 +32,7 @@ dev
       - Update dev dependency versions, requires Python 3.10
       - Remove coverage and notebook from dev dependencies
    - Allow recentering unbuilt Atoms objects
+   - Fix saving unbuilt Atoms objects as JSON or HDF5
    - Allow pathlib paths in the view function
    - Fix and build the Nix package properly, use Python 3.13
 
