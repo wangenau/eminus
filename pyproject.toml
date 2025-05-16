@@ -93,7 +93,7 @@ disable_error_code = ["no-untyped-def"]  # Function is missing a type annotation
 
 ##### Pytest #####
 [tool.pytest.ini_options]
-addopts = "-rsxX"
+addopts = ["-rsxX", "--strict-config", "--strict-markers"]
 markers = ["slow: test runs longer than five seconds."]
 
 ##### Ruff #####
