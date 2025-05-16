@@ -133,9 +133,9 @@ def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
         _, counts = np.unique(atom, return_counts=True)
         fp.write(f"{' '.join(map(str, counts))}")
         if fods is not None:
-            for s in range(len(fods)):
-                if len(fods[s]) > 0:
-                    fp.write(f" {len(fods[s])}")
+            for fod in fods:
+                if len(fod) > 0:
+                    fp.write(f" {len(fod)}")
         fp.write("\nCartesian\n")
 
         # Write the coordinates
