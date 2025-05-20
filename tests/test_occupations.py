@@ -212,13 +212,7 @@ def test_smearing(Nspin):
 
 @pytest.mark.parametrize(
     ("Nspin", "spin", "wk", "ref"),
-    [
-        (1, 0, [1], 0),
-        (2, 0, [1], 0),
-        (2, 1, [1], 0.5),
-        (2, 2, [1], 1),
-        (2, 2, [0.5, 0.5], 1),
-    ],
+    [(1, 0, [1], 0), (2, 0, [1], 0), (2, 1, [1], 0.5), (2, 2, [1], 1), (2, 2, [0.5, 0.5], 1)],
 )
 def test_magnetization(Nspin, spin, wk, ref):
     """Test the magnetization property."""

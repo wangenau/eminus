@@ -24,13 +24,7 @@ from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
 
 
 @pytest.mark.parametrize(
-    ("n_up", "n_dw", "T"),
-    [
-        (0.9, 0.1, 0.01),
-        (0.4, 0.6, 0.1),
-        (0.5, 0.5, 1),
-        (0.1, 0.1, 100),
-    ],
+    ("n_up", "n_dw", "T"), [(0.9, 0.1, 0.01), (0.4, 0.6, 0.1), (0.5, 0.5, 1), (0.1, 0.1, 100)]
 )
 def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
     """Compare functional potentials to finite difference derivatives."""

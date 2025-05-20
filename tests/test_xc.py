@@ -13,10 +13,7 @@ from eminus.xc import get_exc, get_vxc, get_xc, get_zeta, IMPLEMENTED, XC_MAP
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
 rng = default_rng()
-n_tests = {
-    1: np.abs(rng.standard_normal((1, 10000))),
-    2: np.abs(rng.standard_normal((2, 10000))),
-}
+n_tests = {1: np.abs(rng.standard_normal((1, 10000))), 2: np.abs(rng.standard_normal((2, 10000)))}
 functionals = {xc for xc in XC_MAP if xc.isdigit()}
 excludelist = {
     ("259", 2),  # KSDT has inconsistencies in the Libxc implementation

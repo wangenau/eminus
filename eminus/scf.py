@@ -11,15 +11,7 @@ import numpy as np
 from . import config
 from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
-from .dft import (
-    get_epsilon,
-    get_n_spin,
-    get_n_total,
-    get_phi,
-    guess_pseudo,
-    guess_random,
-    orth,
-)
+from .dft import get_epsilon, get_n_spin, get_n_total, get_phi, guess_pseudo, guess_random, orth
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gga import get_grad_field, get_tau
 from .gth import GTH

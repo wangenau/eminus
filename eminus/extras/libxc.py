@@ -141,10 +141,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
             rho = np.vstack((n_spin[0], dn_spin[0].T))
         else:
             rho = np.array(
-                [
-                    np.vstack((n_spin[0], dn_spin[0].T)),
-                    np.vstack((n_spin[1], dn_spin[1].T)),
-                ]
+                [np.vstack((n_spin[0], dn_spin[0].T)), np.vstack((n_spin[1], dn_spin[1].T))]
             )
     else:
         # For meta-GGAs we have to append the kinetic energy densities as well

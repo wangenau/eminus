@@ -103,11 +103,7 @@ def test_gamma_centered_generation():
 
 def test_bandpath_lgx():
     """Test a simple band path in the FCC lattice."""
-    s_points = [
-        SPECIAL_POINTS["fcc"]["L"],
-        SPECIAL_POINTS["fcc"]["G"],
-        SPECIAL_POINTS["fcc"]["X"],
-    ]
+    s_points = [SPECIAL_POINTS["fcc"]["L"], SPECIAL_POINTS["fcc"]["G"], SPECIAL_POINTS["fcc"]["X"]]
 
     kpts = KPoints("fcc", LATTICE_VECTORS["fcc"])
     kpts.path = "LGX"
