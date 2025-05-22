@@ -18,8 +18,7 @@ dev
       - Typecheck in CI also on changes in stub files
    - Small cleanups
       - Make the pyproject.toml a lot shorter
-      - Reduce notebook file sizes
-      - Implement and cleanup of Ruff rules
+      - Adoption and cleanup of Ruff rules
 - Miscellaneous
    - Change build backend from setuptools to hatchling
       - Improve build performance
@@ -38,6 +37,7 @@ dev
    - Set default values for uninitialized Atoms attributes to None
    - Allow pathlib paths in the view function
    - Fix and build the Nix package properly, use Python 3.13
+   - Reduce notebook file sizes
 - Breaking
    - Two extras have been renamed for brevity
       - dispersion is now called d3
