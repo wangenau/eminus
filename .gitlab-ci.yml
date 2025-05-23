@@ -297,8 +297,7 @@ attestate:
   script:
     # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
     # TODO: Remove prerelease flag once betterproto 2.0 is released: https://github.com/danielgtaylor/python-betterproto/releases
-    - uv pip install pypi-attestations --prerelease=allow
-    - pypi-attestations sign dist/*
+    - uvx --prerelease=allow pypi-attestations sign dist/*
   artifacts:
     paths:
       - dist/
@@ -353,8 +352,7 @@ pypi:
   script:
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
     # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
-    - uv pip install twine
-    - twine upload --attestations dist/*
+    - uvx twine upload --attestations dist/*
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "main"
