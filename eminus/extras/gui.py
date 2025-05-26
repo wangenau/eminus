@@ -45,7 +45,8 @@ def view(*args, **kwargs):
     # Handle pathlib Paths or globs
     if isinstance(args[0], pathlib.Path):
         args = (str(args[0]),)
-    elif isinstance(args[0], collections.abc.Generator):
+    # Pathlib.glob returns a map instead of a Generator under Python 3.13+
+    elif isinstance(args[0], (collections.abc.Generator, map)):
         args = ([str(arg) for arg in args[0]],)
     if isinstance(args[0], (str, list, tuple)):
         return view_file(*args, **kwargs)
