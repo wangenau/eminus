@@ -150,7 +150,7 @@ def test_get_tauw(unrestricted):
     else:
         scf = scf_unpol
         assert scf.n_spin is not None
-        scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
+        scf.dn_spin = np.real(get_grad_field(scf.atoms, scf.n_spin))
     tauw = get_tauw(scf)
     T = np.sum(tauw) * scf.atoms.dV
     # vW KED is exact for one- and two-electron systems
@@ -177,7 +177,7 @@ def test_get_reduced_gradient(unrestricted):
     else:
         scf = scf_unpol
         assert scf.n_spin is not None
-        scf.dn_spin = get_grad_field(scf.atoms, scf.n_spin)
+        scf.dn_spin = np.real(get_grad_field(scf.atoms, scf.n_spin))
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((s >= 0) & (s < 100)).all()
 

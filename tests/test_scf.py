@@ -234,7 +234,7 @@ def test_callback():
         for ik in range(len(scf.W)):
             scf.W[ik][:] = 1
 
-    scf.callback = callback
+    scf.callback = callback  # type: ignore[method-assign]
     scf.run()
     assert hasattr(scf, "_opt_log")
     assert scf._opt_log["pccg"]["iter"] == 2

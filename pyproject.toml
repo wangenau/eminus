@@ -69,7 +69,7 @@ all = ["eminus[d3]", "eminus[gui]", "eminus[hdf5]", "eminus[libxc]", "eminus[tor
 dev = [
     "furo>=2024.08.06; python_version>='3.10'",  # Documentation theme
     "matplotlib>=3.6.2",  # Plotting library for images in examples
-    "mypy>=1.9",  # Static type checker
+    "mypy>=1.16; python_version>='3.10'",  # Static type checker
     "pytest>=7",  # Test utilities
     "ruff>=0.10",  # Linter and formatter
     "sphinx>=8.1; python_version>='3.10'",  # Documentation builder
@@ -81,11 +81,7 @@ dev = [
 [tool.mypy]
 python_version = "3.13"
 strict = true
-disable_error_code = [
-    # TODO: Remove once Mypy 1.16 is released
-    "assignment",  # Incompatible types in assignment
-    "import-untyped",  # Module is missing library stubs or py.typed marker
-]
+disable_error_code = ["import-untyped"]  # Module is missing library stubs or py.typed marker
 
 [[tool.mypy.overrides]]
 module = "tests.*"
