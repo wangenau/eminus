@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.1.0 - May 30, 2025
+---------------------
 - New features
    - Add KSDT and CORRKSDT thermal functionals
    - Implement time reversal symmetry in k-point objects
