@@ -37,8 +37,22 @@ License
      -
    * -
      -
+   * - nglview
+     - MIT
+   * - plotly
+     - MIT
+   * -
+     -
+   * -
+     -
    * - h5py
      - BSD-3-Clause
+   * -
+     -
+   * -
+     -
+   * - jax
+     - Apache-2.0
    * -
      -
    * -
@@ -51,22 +65,8 @@ License
      -
    * -
      -
-   * - jax
-     - Apache-2.0
-   * -
-     -
-   * -
-     -
    * - torch
      - BSD-3-Clause
-   * -
-     -
-   * -
-     -
-   * - nglview
-     - MIT
-   * - plotly
-     - MIT
    * -
      -
    * -
@@ -77,8 +77,6 @@ License
      - PSF
    * - mypy
      - MIT
-   * - notebook
-     - BSD-3-Clause
    * - pytest
      - MIT
    * - ruff
