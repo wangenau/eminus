@@ -46,12 +46,16 @@ Features
       <li style="background:#ffbb78">GGA</li>
       <li style="background:#ffbb78">meta-GGA</li>
       <li style="background:#ffbb78">Libxc</li>
+      <li style="background:#ffbb78">Thermal functionals</li>
+      <li style="background:#ffbb78">Custom parameters</li>
    </ul>
 
    <div class="colored-heading" style="background:#67bf5c">Potentials</div>
    <ul class="colored-ul">
       <li style="background:#98df8a">All-electron Coulomb</li>
+      <li style="background:#98df8a">Long-range Coulomb</li>
       <li style="background:#98df8a">GTH</li>
+      <li style="background:#98df8a">Custom parameters</li>
    </ul>
 
    <div class="colored-heading" style="background:#ed665d">SCF</div>
@@ -74,11 +78,9 @@ Features
    <div class="colored-heading" style="background:#a8786e">Properties</div>
    <ul class="colored-ul">
       <li style="background:#c49c94">Energy contributions</li>
-      <li style="background:#c49c94">Dipole moments</li>
-      <li style="background:#c49c94">Ionization potentials</li>
-      <li style="background:#c49c94">Orbital spreads</li>
-      <li style="background:#c49c94">Centers of mass</li>
+      <li style="background:#c49c94">Orbital properties</li>
       <li style="background:#c49c94">Field properties</li>
+      <li style="background:#c49c94">Spin properties</li>
    </ul>
 
    <div class="colored-heading" style="background:#ed97ca">SIC</div>
@@ -86,18 +88,7 @@ Features
       <li style="background:#f7b6c2">Fixed density SIC</li>
       <li style="background:#f7b6c2">FLO-SIC</li>
       <li style="background:#f7b6c2">PyCOM</li>
-   </ul>
-
-   <div class="colored-heading" style="background:#a2a2a2">Visualization</div>
-   <ul class="colored-ul">
-      <li style="background:#c7c7c7">Molecules</li>
-      <li style="background:#c7c7c7">Orbitals</li>
-      <li style="background:#c7c7c7">Densities</li>
-      <li style="background:#c7c7c7">Grids</li>
-      <li style="background:#c7c7c7">Files</li>
-      <li style="background:#c7c7c7">Contours</li>
-      <li style="background:#c7c7c7">Brillouin zones</li>
-      <li style="background:#c7c7c7">Band structures</li>
+      <li style="background:#f7b6c2">Arbitraty orbital SIC</li>
    </ul>
 
    <div class="colored-heading" style="background:#cdcc5d">Files</div>
@@ -108,13 +99,19 @@ Features
       <li style="background:#dbdb8d">POSCAR</li>
       <li style="background:#dbdb8d">PDB</li>
       <li style="background:#dbdb8d">JSON</li>
+      <li style="background:#dbdb8d">HDF5</li>
    </ul>
 
-   <div class="colored-heading" style="background:#6dccda">Domains</div>
+   <div class="colored-heading" style="background:#6dccda">Visualization</div>
    <ul class="colored-ul">
-      <li style="background:#9edae5">Spherical</li>
-      <li style="background:#9edae5">Cuboidal</li>
-      <li style="background:#9edae5">Isovalue</li>
+      <li style="background:#9edae5">Molecules</li>
+      <li style="background:#9edae5">Orbitals</li>
+      <li style="background:#9edae5">Densities</li>
+      <li style="background:#9edae5">Grids</li>
+      <li style="background:#9edae5">Files</li>
+      <li style="background:#9edae5">Contours</li>
+      <li style="background:#9edae5">Brillouin zones</li>
+      <li style="background:#9edae5">Band structures</li>
    </ul>
 
 Workflow
