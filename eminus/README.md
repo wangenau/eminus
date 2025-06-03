@@ -9,6 +9,7 @@ Main source code directory.
 | File              | Description |
 | :---------------: | :---------: |
 | atoms.py          | Atoms class definition |
+| backend.py        | Array backend handling |
 | band_minimizer.py | Minimization algorithms for fixed Hamiltonians |
 | cell.py           | Cell wrapper function |
 | config.py         | Consolidated configuration module |

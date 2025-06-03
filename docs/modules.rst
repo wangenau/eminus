@@ -14,6 +14,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.backend
    eminus.band_minimizer
    eminus.cell
    eminus.config
