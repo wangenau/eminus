@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 from typing import Any, Literal, Protocol, TypeAlias
 
 from numpy import complexfloating, floating, integer
@@ -53,11 +53,6 @@ def handle_k(
     *,
     mode: Literal["gracefully", "index", "reduce", "skip"] = ...,
 ) -> Any: ...
-def handle_backend(
-    func: Callable[..., Any],
-    *args: Any,
-    **kwargs: Any,
-) -> Callable[..., Any]: ...
 def pseudo_uniform(
     size: Sequence[int] | NDArray[_Int],
     seed: int = ...,

@@ -32,17 +32,6 @@ class ConfigClass:
         """Whether to use SciPy or a different backend if installed."""
         # Add the logic in the getter method so it does not run on initialization since importing
         # Torch is rather slow
-        if self._backend == "jax":
-            if "jax" in sys.modules:
-                return "jax"
-            try:
-                import jax
-                import jax.numpy
-            except ImportError:
-                pass
-            else:
-                jax.config.update("jax_enable_x64", val=True)
-                return "jax"
         if self._backend == "torch":
             if "torch" in sys.modules:
                 return "torch"
@@ -62,11 +51,6 @@ class ConfigClass:
     @property
     def use_gpu(self):
         """Whether to use the GPU if available."""
-        # Only use GPU if Torch or Jax is available
-        if self.backend == "jax" and self._use_gpu:
-            import jax
-
-            return jax.default_backend() != "cpu"
         if self.backend == "torch" and self._use_gpu:
             import torch
 

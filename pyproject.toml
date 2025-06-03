@@ -59,7 +59,6 @@ gui = [
     "plotly>=4.5",  # Various visualizations
 ]
 hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
-jax = ["jax>=0.4.8"]  # Faster FFT operators
 libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
 torch = ["torch>=1.8"]  # Faster FFT operators
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF

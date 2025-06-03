@@ -22,25 +22,6 @@ def test_logger(level):
     assert config.verbose == eminus.log.verbose
 
 
-def test_backend():
-    """Check the backend initialization."""
-    try:
-        import jax.numpy  # noqa: F401
-
-        config.backend = "jax"
-        assert config.backend == "jax"
-    except ImportError:
-        assert config.backend != "jax"
-
-    try:
-        import torch  # noqa: F401
-
-        config.backend = "torch"
-        assert config.backend == "torch"
-    except ImportError:
-        assert config.backend != "torch"
-
-
 def test_libxc():
     """Check the Libxc initialization."""
     try:

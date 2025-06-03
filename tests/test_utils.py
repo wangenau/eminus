@@ -8,12 +8,11 @@ from numpy.random import default_rng
 from numpy.testing import assert_allclose, assert_equal
 from scipy.linalg import norm
 
-from eminus import Atoms, config
+from eminus import Atoms
 from eminus.utils import (
     add_maybe_none,
     atom2charge,
     get_lattice,
-    handle_backend,
     handle_k,
     handle_spin,
     molecule2list,
@@ -177,22 +176,6 @@ def test_handle_k(mode):
     assert_equal(out, W[0])
     out = mock(atoms, W[0][0], kwarg="kwarg")
     assert_equal(out, W[0][0])
-
-
-def test_handle_backend():
-    """Test the handle_backend decorator."""
-
-    @handle_backend
-    def mock(x):
-        return x
-
-    config.backend = "scipy"
-    out = mock(np.pi)
-    assert_equal(out, np.pi)
-    config.backend = "torch"
-    if config.backend == "torch":
-        with pytest.raises(AttributeError):
-            mock(np.pi)
 
 
 if __name__ == "__main__":

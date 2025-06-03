@@ -66,9 +66,7 @@ Modules
    eminus.extras.fods
    eminus.extras.gui
    eminus.extras.hdf5
-   eminus.extras.jax
    eminus.extras.libxc
-   eminus.extras.torch
    eminus.psp
    eminus.psp.pade
    eminus.psp.pbe

@@ -12,6 +12,4 @@ Extras directory that contains functions that need additional dependencies to wo
 | fods.py   | FOD generation |
 | gui.py    | Notebook display functions |
 | hdf5.py   | HDF5 file handling |
-| jax.py    | Faster FFT operators using Jax |
 | libxc.py  | Use Libxc functionals |
-| torch.py  | Faster FFT operators using Torch |

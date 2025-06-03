@@ -40,8 +40,6 @@
             h5py
             ### fods and libxc ###
             pyscf
-            ### jax ###
-            # jax
             ### torch ###
             # torch-bin
             ### dev ###

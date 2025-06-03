@@ -33,7 +33,7 @@ import numpy as np
 from scipy.fft import fftn, ifftn
 
 from . import config
-from .utils import handle_backend, handle_k, handle_spin
+from .utils import handle_k, handle_spin
 
 
 # Spin handling is trivial for this operator
@@ -110,7 +110,6 @@ def Linv(atoms, W):
     return out
 
 
-@handle_backend
 @handle_k(mode="index")
 @handle_spin
 def I(atoms, W, ik=-1):
@@ -162,7 +161,6 @@ def I(atoms, W, ik=-1):
     return Finv
 
 
-@handle_backend
 @handle_k(mode="index")
 @handle_spin
 def J(atoms, W, ik=-1, full=True):
@@ -207,7 +205,6 @@ def J(atoms, W, ik=-1, full=True):
     return F
 
 
-@handle_backend
 @handle_k(mode="index")
 @handle_spin
 def Idag(atoms, W, ik=-1, full=False):
@@ -233,7 +230,6 @@ def Idag(atoms, W, ik=-1, full=False):
     return F * n
 
 
-@handle_backend
 @handle_k(mode="index")
 @handle_spin
 def Jdag(atoms, W, ik=-1):
