@@ -41,6 +41,7 @@
             ### fods and libxc ###
             pyscf
             ### torch ###
+            # array-api-compat
             # torch-bin
             ### dev ###
             furo

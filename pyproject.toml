@@ -60,7 +60,7 @@ gui = [
 ]
 hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
 libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
-torch = ["torch>=1.8"]  # Faster FFT operators
+torch = ["array-api-compat", "torch>=1.8"]  # Faster FFT operators
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
 all = ["eminus[d3]", "eminus[gui]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]"]
 
