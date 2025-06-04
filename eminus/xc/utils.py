@@ -5,8 +5,7 @@
 import inspect
 import sys
 
-import numpy as np
-
+from eminus import backend as xp
 from eminus import config
 from eminus.logger import log
 from eminus.utils import add_maybe_none
@@ -28,6 +27,7 @@ from .lda_xc_gdsmfb import lda_xc_gdsmfb, lda_xc_gdsmfb_spin
 from .lda_xc_ksdt import lda_xc_ksdt, lda_xc_ksdt_spin
 
 
+@xp.debug
 def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
     """Handle and get exchange-correlation functionals.
 
@@ -52,8 +52,8 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
         xc_params = {}
 
     # Only use non-zero values of the density
-    n = np.sum(n_spin, axis=0)
-    nz_mask = np.where(n > dens_threshold)
+    n = xp.sum(n_spin, axis=0)
+    nz_mask = xp.atleast_2d(xp.nonzero(n > dens_threshold)[0])  # Torch can't handle tuple to Tensor
     n_nz = n[nz_mask]
     # Zeta is only needed for non-zero values of the density
     zeta_nz = get_zeta(n_spin[:, nz_mask])
@@ -75,17 +75,17 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
         else:
             if Nspin == 2 and fxc != "mock_xc":
                 fxc += "_spin"
-            exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](
-                n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params
+            exc_nz, vxc_nz, vsigma_nz = xp.convert(
+                IMPLEMENTED[fxc](n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params)
             )
             # Map the non-zero values back to the right dimension
-            exc = np.zeros_like(n)
+            exc = xp.zeros_like(n)
             exc[nz_mask] = exc_nz
-            vxc = np.zeros_like(n_spin)
+            vxc = xp.zeros_like(n_spin)
             for s in range(Nspin):
                 vxc[s, nz_mask] = vxc_nz[s]
             if vsigma_nz is not None:
-                vsigma = np.zeros((len(vsigma_nz), len(exc)))
+                vsigma = xp.zeros((len(vsigma_nz), len(exc)))
                 for i in range(len(vsigma)):
                     vsigma[i, nz_mask] = vsigma_nz[i]
             else:
@@ -335,6 +335,7 @@ def get_xc_defaults(xc):
     return params
 
 
+@xp.debug
 def get_zeta(n_spin):
     """Calculate the relative spin polarization.
 
@@ -346,10 +347,11 @@ def get_zeta(n_spin):
     """
     # If only one spin is given return an array of ones as if the density only is in one channel
     if len(n_spin) == 1:
-        return np.ones_like(n_spin[0])
+        return xp.ones_like(n_spin[0])
     return (n_spin[0] - n_spin[1]) / (n_spin[0] + n_spin[1])
 
 
+@xp.debug
 def mock_xc(n, Nspin=1, **kwargs):
     """Mock exchange-correlation functional with no effect (spin-paired).
 
@@ -363,8 +365,8 @@ def mock_xc(n, Nspin=1, **kwargs):
     Returns:
         Mock exchange-correlation energy density and potential.
     """
-    zeros = np.zeros_like(n)
-    return zeros, np.array([zeros] * Nspin), None
+    zeros = xp.zeros_like(n)
+    return zeros, xp.array([zeros] * Nspin), None
 
 
 #: Map functional names with their respective implementation.

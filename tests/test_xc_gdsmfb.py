@@ -29,8 +29,8 @@ from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
 def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
     """Compare functional potentials to finite difference derivatives."""
     # Input
-    n_up = np.asarray(n_up)
-    n_dw = np.asarray(n_dw)
+    n_up = np.array([n_up])
+    n_dw = np.array([n_dw])
 
     # Calculate analytical energy density and derivative
     n = n_up + n_dw

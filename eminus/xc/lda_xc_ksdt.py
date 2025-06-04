@@ -7,8 +7,9 @@ Reference: Phys. Rev. Lett. 112, 076403.
 
 import dataclasses
 import functools
+import math
 
-import numpy as np
+from eminus import backend as xp
 
 # ### Temperature dependent coefficients ###
 
@@ -49,115 +50,93 @@ class Coefficients:
     @functools.cached_property
     def a0(self):
         """Calculate a0."""
-        return 1 / (np.pi * (4 / (9 * np.pi)) ** (1 / 3))
+        return 1 / (math.pi * (4 / (9 * math.pi)) ** (1 / 3))
 
     @functools.cached_property
     def b5(self):
         """Calculate b5."""
-        return self.b3 * np.sqrt(3 / 2) * self.omega * (4 / (9 * np.pi)) ** (-1 / 3)
+        return self.b3 * math.sqrt(3 / 2) * self.omega * (4 / (9 * math.pi)) ** (-1 / 3)
 
     @functools.cached_property
     def a(self):
         """Calculate a."""
-        with np.errstate(divide="ignore"):
-            u = self.a0 * np.tanh(
-                1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0
-            )
+        self.theta = xp.convert(self.theta)
+        with xp.errstate(divide="ignore"):
+            u = self.a0 * xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
         return u * _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
 
     @property
     def dadtheta(self):
         """Calculate da / dtheta."""
-        with np.errstate(divide="ignore"):
-            u = self.a0 * np.tanh(
-                1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0
-            )
-        du = np.divide(
-            u**2 / self.a0 - self.a0,
-            self.theta**2,
-            out=np.zeros_like(self.theta),
-            where=self.theta > 0,
-        )
+        with xp.errstate(divide="ignore", invalid="ignore"):
+            u = self.a0 * xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
+            du = xp.where(self.theta > 0, (u**2 / self.a0 - self.a0) / self.theta**2, 0)
         v, dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
         return du * v + u * dv
 
     @functools.cached_property
     def b(self):
         """Calculate b."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
         return u * _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
 
     @property
     def dbdtheta(self):
         """Calculate db / dtheta."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
-        du = np.divide(
-            u**2 - 1,
-            2 * self.theta * np.sqrt(self.theta),
-            out=np.zeros_like(self.theta),
-            where=self.theta > 0,
-        )
+        with xp.errstate(divide="ignore", invalid="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
+            du = xp.where(self.theta > 0, (u**2 - 1) / (2 * self.theta * xp.sqrt(self.theta)), 0)
         v, dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
         return du * v + u * dv
 
     @functools.cached_property
     def c(self):
         """Calculate c."""
-        with np.errstate(divide="ignore"):
-            exp = np.exp(-self.c3 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore"):
+            exp = xp.where(self.theta > 0, xp.exp(-self.c3 / self.theta), 0)
         return (self.c1 + self.c2 * exp) * self.e
 
     @property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
-        with np.errstate(divide="ignore"):
-            exp = np.exp(-self.c3 / self.theta, out=np.zeros_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore"):
+            exp = xp.where(self.theta > 0, xp.exp(-self.c3 / self.theta), 0)
         u = self.c1 + self.c2 * exp
-        du = np.divide(
-            self.c2 * self.c3 * exp,
-            self.theta**2,
-            out=np.zeros_like(self.theta),
-            where=self.theta > 0,
-        )
+        with xp.errstate(invalid="ignore"):
+            du = xp.where(self.theta > 0, self.c2 * self.c3 * exp / self.theta**2, 0)
         v, dv = self.e, self.dedtheta
         return du * v + u * dv
 
     @functools.cached_property
     def d(self):
         """Calculate d."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
         return u * _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
 
     @property
     def dddtheta(self):
         """Calculate dd / dtheta."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / np.sqrt(self.theta), out=np.ones_like(self.theta), where=self.theta > 0)
-        du = np.divide(
-            u**2 - 1,
-            2 * self.theta * np.sqrt(self.theta),
-            out=np.zeros_like(self.theta),
-            where=self.theta > 0,
-        )
+        with xp.errstate(divide="ignore", invalid="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
+            du = xp.where(self.theta > 0, (u**2 - 1) / (2 * self.theta * xp.sqrt(self.theta)), 0)
         v, dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
         return du * v + u * dv
 
     @functools.cached_property
     def e(self):
         """Calculate e."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
         return u * _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
 
     @functools.cached_property
     def dedtheta(self):
         """Calculate de / dtheta."""
-        with np.errstate(divide="ignore"):
-            u = np.tanh(1 / self.theta, out=np.ones_like(self.theta), where=self.theta > 0)
-        du = np.divide(u**2 - 1, self.theta**2, out=np.zeros_like(self.theta), where=self.theta > 0)
+        with xp.errstate(divide="ignore", invalid="ignore"):
+            u = xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
+            du = xp.where(self.theta > 0, (u**2 - 1) / self.theta**2, 0)
         v, dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
         return du * v + u * dv
 
@@ -236,6 +215,7 @@ class PhiParams:
 # ### Functional implementation ###
 
 
+@xp.debug
 def lda_xc_ksdt(
     n, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
 ):
@@ -260,7 +240,7 @@ def lda_xc_ksdt(
     Returns:
         KSDT exchange-correlation energy density and potential.
     """
-    kwargs["zeta"] = np.zeros_like(n)
+    kwargs["zeta"] = xp.zeros_like(n)
     exc, vxc, _ = lda_xc_ksdt_spin(
         n,
         T=T,
@@ -269,9 +249,10 @@ def lda_xc_ksdt(
         phi_params=phi_params,
         **kwargs,
     )
-    return exc, np.array([vxc[0]]), None
+    return exc, xp.stack([vxc[0]]), None
 
 
+@xp.debug
 def lda_xc_ksdt_spin(
     n, zeta, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
 ):
@@ -299,7 +280,7 @@ def lda_xc_ksdt_spin(
     """
     # Calculate properties
     n_up = (1 + zeta) * n / 2
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
     theta = _get_theta(T, n, zeta)
     theta0 = _get_theta0(theta, zeta)
     theta1 = _get_theta1(theta, zeta)
@@ -320,7 +301,7 @@ def lda_xc_ksdt_spin(
     fxc = fxc0 + (fxc1 - fxc0) * phi
 
     # Generic derivatives
-    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * np.pi ** (1 / 3) * n)
+    drsdn = -(6 ** (1 / 3)) * (1 / n) ** (1 / 3) / (6 * math.pi ** (1 / 3) * n)
     dzetadn_up = -zeta / n**2 + 1 / n
     dzetadn_dw = -zeta / n**2 - 1 / n
 
@@ -371,7 +352,7 @@ def lda_xc_ksdt_spin(
         - (fxc0 - fxc1) * dphi_dw
     )
 
-    return fxc, fxc + np.array([vxc_up, vxc_dw]) * n, None
+    return fxc, fxc + xp.stack([vxc_up, vxc_dw]) * n, None
 
 
 # ### Pade approximation and derivative ###
@@ -409,13 +390,13 @@ def _get_theta(T, n, zeta):
     Only mentioned in the arXiv version: https://arxiv.org/abs/1703.08074
     """
     n_up = (1 + zeta) * n / 2
-    T_fermi = (6 * np.pi**2 * n_up) ** (2 / 3) / 2
+    T_fermi = (6 * math.pi**2 * n_up) ** (2 / 3) / 2
     return T / T_fermi
 
 
 def _get_dthetadn_up(T, n_up):
     """Calculate dtheta / dn_up."""
-    return -4 / (3 * 6 ** (2 / 3)) * T / (np.pi ** (4 / 3) * n_up ** (5 / 3))
+    return -4 / (3 * 6 ** (2 / 3)) * T / (math.pi ** (4 / 3) * n_up ** (5 / 3))
 
 
 def _get_theta0(theta, zeta):
@@ -455,37 +436,39 @@ def _get_dtheta1dtheta0():
 # ### fxc_zeta and derivatives ###
 
 
+@xp.debug
 def _get_fxc_zeta(rs, p):
     """Calculate the Pade formula f_xc^zeta.
 
     Reference: Phys. Rev. Lett. 112, 076403.
     """
-    num = p.a * p.omega + p.b * np.sqrt(rs) + p.c * rs
-    denom = 1 + p.d * np.sqrt(rs) + p.e * rs
+    num = p.a * p.omega + p.b * xp.sqrt(rs) + p.c * rs
+    denom = 1 + p.d * xp.sqrt(rs) + p.e * rs
     return -1 / rs * num / denom
 
 
 def _get_dfxc_zetadrs(rs, p):
     """Calculate dfxc_zeta / drs."""
-    num = p.a * p.omega + p.b * np.sqrt(rs) + p.c * rs
-    denom = 1 + p.d * np.sqrt(rs) + p.e * rs
-    tmp1 = (p.d / (2 * np.sqrt(rs)) + p.e) * num / denom**2
-    tmp2 = (p.b / (2 * np.sqrt(rs)) + p.c) / denom
+    num = p.a * p.omega + p.b * xp.sqrt(rs) + p.c * rs
+    denom = 1 + p.d * xp.sqrt(rs) + p.e * rs
+    tmp1 = (p.d / (2 * xp.sqrt(rs)) + p.e) * num / denom**2
+    tmp2 = (p.b / (2 * xp.sqrt(rs)) + p.c) / denom
     return (tmp1 - tmp2) / rs + num / denom / rs**2
 
 
 def _get_dfxc_zetadtheta(rs, p):
     """Calculate dfxc_zeta / dzeta."""
-    num = p.a * p.omega + p.b * np.sqrt(rs) + p.c * rs
-    denom = 1 + p.d * np.sqrt(rs) + p.e * rs
-    tmp1 = (p.dddtheta * np.sqrt(rs) + p.dedtheta * rs) * num / denom**2
-    tmp2 = (p.dadtheta * p.omega + p.dbdtheta * np.sqrt(rs) + p.dcdtheta * rs) / denom
+    num = p.a * p.omega + p.b * xp.sqrt(rs) + p.c * rs
+    denom = 1 + p.d * xp.sqrt(rs) + p.e * rs
+    tmp1 = (p.dddtheta * xp.sqrt(rs) + p.dedtheta * rs) * num / denom**2
+    tmp2 = (p.dadtheta * p.omega + p.dbdtheta * xp.sqrt(rs) + p.dcdtheta * rs) / denom
     return (tmp1 - tmp2) / rs
 
 
 # ### phi and derivatives ###
 
 
+@xp.debug
 def _get_phi(rs, theta, zeta, phi_params):
     """Calculate the interpolation function phi.
 
@@ -499,10 +482,11 @@ def _get_dphidrs(rs, theta, zeta, phi_params):
     """Calculate dphi / drs."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadrs = _get_dalphadrs(rs, theta, phi_params)
-    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta, out=np.zeros_like(zeta), where=1 - zeta > 0)
-    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
+    with xp.errstate(divide="ignore"):
+        tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
+    tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * math.log(2)
     vv = (2**alpha - 2) ** 2
     return (duv - udv) * dalphadrs / vv
 
@@ -511,10 +495,11 @@ def _get_dphidtheta(rs, theta, zeta, phi_params):
     """Calculate dphi / dtheta."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
-    tmp1 = (1 - zeta) ** alpha * np.log(1 - zeta, out=np.zeros_like(zeta), where=1 - zeta > 0)
-    tmp2 = (1 + zeta) ** alpha * np.log(1 + zeta)
+    with xp.errstate(divide="ignore"):
+        tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
+    tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
-    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * np.log(2)
+    udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * math.log(2)
     vv = (2**alpha - 2) ** 2
     return (duv - udv) * dalphadtheta / vv
 
@@ -523,15 +508,15 @@ def _get_dphidzeta(rs, theta, zeta, phi_params):
     """Calculate dphi / dzeta."""
     alpha = _get_alpha(rs, theta, phi_params)
     tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
-    tmp2 = np.divide(
-        alpha * (1 - zeta) ** alpha, 1 - zeta, out=np.zeros_like(zeta), where=1 - zeta > 0
-    )
+    with xp.errstate(invalid="ignore"):
+        tmp2 = xp.where(1 - zeta > 0, alpha * (1 - zeta) ** alpha / (1 - zeta), 0)
     return (tmp1 - tmp2) / (2**alpha - 2)
 
 
 # ### alpha and derivatives ###
 
 
+@xp.debug
 def _get_alpha(rs, theta, phi_params):
     """Calculate alpha.
 
@@ -539,7 +524,7 @@ def _get_alpha(rs, theta, phi_params):
     """
     g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
-    return 2 - g * np.exp(-theta * lamda)
+    return 2 - g * xp.exp(-theta * lamda)
 
 
 def _get_dalphadrs(rs, theta, phi_params):
@@ -548,7 +533,7 @@ def _get_dalphadrs(rs, theta, phi_params):
     lamda = _get_lambda(rs, theta, phi_params)
     dgdrs = _get_dgdrs(rs, phi_params)
     dlambdadrs = _get_dlambdadrs(rs, theta, phi_params)
-    return -dgdrs * np.exp(-theta * lamda) + dlambdadrs * theta * g * np.exp(-theta * lamda)
+    return -dgdrs * xp.exp(-theta * lamda) + dlambdadrs * theta * g * xp.exp(-theta * lamda)
 
 
 def _get_dalphadtheta(rs, theta, phi_params):
@@ -556,7 +541,7 @@ def _get_dalphadtheta(rs, theta, phi_params):
     g = _get_g(rs, phi_params)
     lamda = _get_lambda(rs, theta, phi_params)
     dlambdadtheta = _get_dlambdadtheta(rs, phi_params)
-    return (dlambdadtheta * theta + lamda) * g * np.exp(-theta * lamda)
+    return (dlambdadtheta * theta + lamda) * g * xp.exp(-theta * lamda)
 
 
 # ### g and derivative ###
@@ -591,9 +576,9 @@ def _get_lambda(rs, theta, phi_params):
 
 def _get_dlambdadrs(rs, theta, phi_params):
     """Calculate dlambda / drs."""
-    return phi_params.lambda2 * theta / (2 * np.sqrt(rs))
+    return phi_params.lambda2 * theta / (2 * xp.sqrt(rs))
 
 
 def _get_dlambdadtheta(rs, phi_params):
     """Calculate dlambda / dtheta."""
-    return phi_params.lambda2 * np.sqrt(rs)
+    return phi_params.lambda2 * xp.sqrt(rs)

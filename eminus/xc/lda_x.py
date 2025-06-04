@@ -5,9 +5,12 @@
 Reference: Phys. Rev. 81, 385.
 """
 
-import numpy as np
+import math
+
+from eminus import backend as xp
 
 
+@xp.debug
 def lda_x(n, **kwargs):
     """Slater exchange functional (spin-paired).
 
@@ -24,15 +27,16 @@ def lda_x(n, **kwargs):
     Returns:
         Exchange energy density and potential.
     """
-    f = -3 / 4 * (3 / (2 * np.pi)) ** (2 / 3)
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    f = -3 / 4 * (3 / (2 * math.pi)) ** (2 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
 
     ex = f / rs
 
     vx = 4 / 3 * ex
-    return ex, np.array([vx]), None
+    return ex, xp.stack([vx]), None
 
 
+@xp.debug
 def lda_x_spin(n, zeta, **kwargs):
     """Slater exchange functional (spin-polarized).
 
@@ -50,7 +54,7 @@ def lda_x_spin(n, zeta, **kwargs):
     Returns:
         Exchange energy density and potential.
     """
-    f = -3 / 4 * (3 / np.pi) ** (1 / 3)
+    f = -3 / 4 * (3 / math.pi) ** (1 / 3)
 
     rho13p = ((1 + zeta) * n) ** (1 / 3)
     rho13m = ((1 - zeta) * n) ** (1 / 3)
@@ -61,4 +65,4 @@ def lda_x_spin(n, zeta, **kwargs):
 
     vx_up = 4 / 3 * ex_up
     vx_dw = 4 / 3 * ex_dw
-    return ex, np.array([vx_up, vx_dw]), None
+    return ex, xp.stack([vx_up, vx_dw]), None

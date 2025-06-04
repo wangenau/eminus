@@ -5,12 +5,14 @@
 Reference: Phys. Rev. Lett. 77, 3865.
 """
 
-import numpy as np
-from scipy.linalg import norm
+import math
+
+from eminus import backend as xp
 
 from .lda_x import lda_x, lda_x_spin
 
 
+@xp.debug
 def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
 
@@ -32,9 +34,10 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     ex, vx, _ = lda_x(n, **kwargs)
     gex, gvx, vsigmax = pbe_x_base(n, mu, dn_spin[0], **kwargs)
     vx, gvx = vx[0], gvx[0]  # Remove spin dimension for the correct shape
-    return ex + gex / n, np.array([vx + gvx]), np.array([0.5 * vsigmax])
+    return ex + gex / n, xp.stack([vx + gvx]), xp.stack([0.5 * vsigmax])
 
 
+@xp.debug
 def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
 
@@ -64,8 +67,8 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     ex, vx, _ = lda_x_spin(n, zeta, **kwargs)
 
-    vsigmax = np.array([vsigma_up, np.zeros_like(ex), vsigma_dw])
-    return ex + 0.5 * (ex_up + ex_dw) / n, np.array([vx[0] + vx_up, vx[1] + vx_dw]), vsigmax
+    vsigmax = xp.stack([vsigma_up, xp.zeros_like(ex), vsigma_dw])
+    return ex + 0.5 * (ex_up + ex_dw) / n, xp.stack([vx[0] + vx_up, vx[1] + vx_dw]), vsigmax
 
 
 def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
@@ -86,17 +89,19 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     """
     kappa = 0.804
 
-    norm_dn = norm(dn, axis=1)
-    kf = (3 * np.pi**2 * n) ** (1 / 3)
+    norm_dn = xp.linalg.norm(dn, axis=1)
+    kf = (3 * math.pi**2 * n) ** (1 / 3)
     # Handle divisions by zero
     # divkf = 1 / kf
-    divkf = np.divide(1, kf, out=np.zeros_like(kf), where=kf > 0)
+    with xp.errstate(divide="ignore"):
+        divkf = xp.where(kf > 0, 1 / kf, 0)
     # Handle divisions by zero
     # s = norm_dn * divkf / (2 * n)
-    s = np.divide(norm_dn * divkf, 2 * n, out=np.zeros_like(n), where=n > 0)
+    with xp.errstate(invalid="ignore"):
+        s = xp.where(n > 0, norm_dn * divkf / (2 * n), 0)
     f1 = 1 + mu * s**2 / kappa
     Fx = kappa - kappa / f1
-    exunif = -3 * kf / (4 * np.pi)
+    exunif = -3 * kf / (4 * math.pi)
     # In Fx a "1 + " is missing, since n * exunif is the Slater exchange that is added later
     sx = exunif * Fx
 
@@ -108,7 +113,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
 
     # Handle divisions by zero
     # vsigmax = exunifdFx * divkf / (2 * norm_dn)
-    vsigmax = np.divide(
-        exunifdFx * divkf, 2 * norm_dn, out=np.zeros_like(norm_dn), where=norm_dn > 0
-    )
-    return sx * n, np.array([vx]), vsigmax
+    with xp.errstate(invalid="ignore"):
+        vsigmax = xp.where(norm_dn > 0, exunifdFx * divkf / (2 * norm_dn), 0)
+
+    return sx * n, xp.stack([vx]), vsigmax

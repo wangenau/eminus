@@ -5,12 +5,14 @@
 Reference: Comput. Theor. Chem. 1172, 112669.
 """
 
-import numpy as np
-from scipy.linalg import norm
+import math
+
+from eminus import backend as xp
 
 from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
 
+@xp.debug
 def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-paired).
 
@@ -28,21 +30,21 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     Returns:
         Chachiyo correlation energy density, potential and vsigma.
     """
-    h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
+    h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / math.pi)**(1 / 3)
 
     # ### Start lda_c_chachiyo_mod ### #
-    a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
+    a = -0.01554535  # (xp.log(2) - 1) / (2 * math.pi**2)
     b = 20.4562557
 
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
     rs2 = rs**2
     ecinner = 1 + b / rs + b / rs2
 
-    ec = a * np.log(ecinner)
+    ec = a * xp.log(ecinner)
     # ### End lda_c_chachiyo_mod ### #
 
-    norm_dn = norm(dn_spin[0], axis=1)
-    t = (np.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
+    norm_dn = xp.linalg.norm(dn_spin[0], axis=1)
+    t = (math.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
     t2 = t**2
     gec = 1 + t2
     expgec = gec ** (h / ec)
@@ -52,13 +54,14 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     # ### End lda_c_chachiyo_mod ### #
 
     term1 = h * (1 - 1 / gec)
-    term2 = h * np.log(gec) * (1 - vc / ec)
+    term2 = h * xp.log(gec) * (1 - vc / ec)
     gvc = (vc - 7 / 3 * term1 + term2) * expgec
 
     vsigmac = n * expgec * term1 / norm_dn**2
-    return ec * expgec, np.array([gvc]), np.array([vsigmac])
+    return ec * expgec, xp.stack([gvc]), xp.stack([vsigmac])
 
 
+@xp.debug
 def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-polarized).
 
@@ -77,29 +80,29 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     Returns:
         Chachiyo correlation energy density, potential and vsigma.
     """
-    h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / np.pi)**(1 / 3)
+    h = 0.06672632  # 0.5 * 0.00847 * 16 * (3 / math.pi)**(1 / 3)
 
     # ### Start lda_c_chachiyo_spin_mod ### #
-    a0 = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
-    a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
+    a0 = -0.01554535  # (xp.log(2) - 1) / (2 * math.pi**2)
+    a1 = -0.007772675  # (xp.log(2) - 1) / (4 * math.pi**2)
     b0 = 20.4562557
     b1 = 27.4203609
 
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
     rs2 = rs**2
 
     fzeta, dfdzeta = weight_function(zeta)
 
     ec0inner = 1 + b0 / rs + b0 / rs2
     ec1inner = 1 + b1 / rs + b1 / rs2
-    ec0 = a0 * np.log(ec0inner)
-    ec1 = a1 * np.log(ec1inner)
+    ec0 = a0 * xp.log(ec0inner)
+    ec1 = a1 * xp.log(ec1inner)
 
     ec = ec0 + (ec1 - ec0) * fzeta
     # ### End lda_c_chachiyo_spin_mod ### #
 
-    norm_dn = norm(dn_spin[0] + dn_spin[1], axis=1)
-    t = (np.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
+    norm_dn = xp.linalg.norm(dn_spin[0] + dn_spin[1], axis=1)
+    t = (math.pi / 3) ** (1 / 6) / 4 * norm_dn / n ** (7 / 6)
     t2 = t**2
     gec = 1 + t2
     expgec = gec ** (h / ec)
@@ -117,18 +120,18 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     # ### End lda_c_chachiyo_spin_mod ### #
 
     dn2 = (
-        norm(dn_spin[0], axis=1) ** 2
-        + 2 * np.sum(dn_spin[0] * dn_spin[1], axis=1)
-        + norm(dn_spin[1], axis=1) ** 2
+        xp.linalg.norm(dn_spin[0], axis=1) ** 2
+        + 2 * xp.sum(dn_spin[0] * dn_spin[1], axis=1)
+        + xp.linalg.norm(dn_spin[1], axis=1) ** 2
     )
     ht2divgecdn2 = (1 - 1 / gec) * h / norm_dn**2
     term1 = -7 / 3 * ht2divgecdn2 * dn2
-    term2 = 1 - h * np.log(gec) / ec
+    term2 = 1 - h * xp.log(gec) / ec
     prefactor = -decdrs * rs / 3
     gvc = ec + term1 + term2 * prefactor
     gvc_up = gvc + term2 * decdf * (1 - zeta)
     gvc_dw = gvc - term2 * decdf * (1 + zeta)
 
     vsigma = n * expgec * 2 * ht2divgecdn2
-    vsigmac = np.array([0.5 * vsigma, vsigma, 0.5 * vsigma])
-    return ec * expgec, np.array([gvc_up, gvc_dw]) * expgec, vsigmac
+    vsigmac = xp.stack([0.5 * vsigma, vsigma, 0.5 * vsigma])
+    return ec * expgec, xp.stack([gvc_up, gvc_dw]) * expgec, vsigmac

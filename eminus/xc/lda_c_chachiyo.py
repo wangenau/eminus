@@ -5,9 +5,12 @@
 Reference: J. Chem. Phys. 145, 021101.
 """
 
-import numpy as np
+import math
+
+from eminus import backend as xp
 
 
+@xp.debug
 def lda_c_chachiyo(n, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-paired).
 
@@ -24,17 +27,17 @@ def lda_c_chachiyo(n, **kwargs):
     Returns:
         Chachiyo correlation energy density and potential.
     """
-    a = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
+    a = -0.01554535  # (xp.log(2) - 1) / (2 * math.pi**2)
     b = 20.4562557
 
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
     rs2 = rs**2
     ecinner = 1 + b / rs + b / rs2
 
-    ec = a * np.log(ecinner)
+    ec = a * xp.log(ecinner)
 
     vc = ec + a * b * (2 + rs) / (3 * (b + b * rs + rs2))
-    return ec, np.array([vc]), None
+    return ec, xp.stack([vc]), None
 
 
 def chachiyo_scaling(zeta):
@@ -54,6 +57,7 @@ def chachiyo_scaling(zeta):
     return fzeta, dfdzeta
 
 
+@xp.debug
 def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-polarized).
 
@@ -72,20 +76,20 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     Returns:
         Chachiyo correlation energy density and potential.
     """
-    a0 = -0.01554535  # (np.log(2) - 1) / (2 * np.pi**2)
-    a1 = -0.007772675  # (np.log(2) - 1) / (4 * np.pi**2)
+    a0 = -0.01554535  # (xp.log(2) - 1) / (2 * math.pi**2)
+    a1 = -0.007772675  # (xp.log(2) - 1) / (4 * math.pi**2)
     b0 = 20.4562557
     b1 = 27.4203609
 
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
     rs2 = rs**2
 
     fzeta, dfdzeta = weight_function(zeta)
 
     ec0inner = 1 + b0 / rs + b0 / rs2
     ec1inner = 1 + b1 / rs + b1 / rs2
-    ec0 = a0 * np.log(ec0inner)
-    ec1 = a1 * np.log(ec1inner)
+    ec0 = a0 * xp.log(ec0inner)
+    ec1 = a1 * xp.log(ec1inner)
 
     ec = ec0 + (ec1 - ec0) * fzeta
 
@@ -98,4 +102,4 @@ def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
 
     vc_up = prefactor + decdf * (1 - zeta)
     vc_dw = prefactor - decdf * (1 + zeta)
-    return ec, np.array([vc_up, vc_dw]), None
+    return ec, xp.stack([vc_up, vc_dw]), None
