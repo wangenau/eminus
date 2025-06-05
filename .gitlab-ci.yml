@@ -5,6 +5,10 @@ default:
 variables:
   UV_SYSTEM_PYTHON: 1
   UV_NO_PROGRESS: 1
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "array_api"
+      when: never
 
 stages:
   - test

@@ -29,24 +29,21 @@ class ConfigClass:
 
     @property
     def backend(self):
-        """Whether to use SciPy or a different backend if installed."""
-        # Add the logic in the getter method so it does not run on initialization since importing
-        # Torch is rather slow
-        if self._backend == "torch":
-            if "torch" in sys.modules:
-                return "torch"
-            try:
-                import torch
-            except ImportError:
-                pass
-            else:
-                torch.set_default_dtype(torch.double)
-                return "torch"
-        return "scipy"
+        """Whether to use NumPY or a different backend if installed."""
+        return self._backend
 
     @backend.setter
     def backend(self, value):
         self._backend = value.lower()
+        if self._backend == "torch":
+            try:
+                import torch
+            except ImportError:
+                self._backend = "numpy"
+            else:
+                torch.set_default_dtype(torch.double)
+        else:
+            self._backend = "numpy"
 
     @property
     def use_gpu(self):

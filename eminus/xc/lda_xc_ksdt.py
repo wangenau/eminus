@@ -60,7 +60,6 @@ class Coefficients:
     @functools.cached_property
     def a(self):
         """Calculate a."""
-        self.theta = xp.convert(self.theta)
         with xp.errstate(divide="ignore"):
             u = self.a0 * xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
         return u * _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
@@ -442,6 +441,7 @@ def _get_fxc_zeta(rs, p):
 
     Reference: Phys. Rev. Lett. 112, 076403.
     """
+    p.theta = xp.convert(p.theta)
     num = p.a * p.omega + p.b * xp.sqrt(rs) + p.c * rs
     denom = 1 + p.d * xp.sqrt(rs) + p.e * rs
     return -1 / rs * num / denom
@@ -468,7 +468,6 @@ def _get_dfxc_zetadtheta(rs, p):
 # ### phi and derivatives ###
 
 
-@xp.debug
 def _get_phi(rs, theta, zeta, phi_params):
     """Calculate the interpolation function phi.
 

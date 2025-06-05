@@ -351,7 +351,6 @@ def get_zeta(n_spin):
     return (n_spin[0] - n_spin[1]) / (n_spin[0] + n_spin[1])
 
 
-@xp.debug
 def mock_xc(n, Nspin=1, **kwargs):
     """Mock exchange-correlation functional with no effect (spin-paired).
 

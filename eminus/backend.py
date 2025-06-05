@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Array backend handling."""
 
+import functools
 import pathlib
 import sys
 
@@ -25,16 +26,16 @@ class Backend:
             return getattr(np, name)
 
     @staticmethod
-    def debug(func, *args, **kwargs):
+    def debug(func):
         """Decorator to convert input arrays to Torch tensors and return NumPy arrays in the end."""
-        import functools
-
-        import torch
+        DEBUG = True
 
         @functools.wraps(func)
         def decorator(*args, **kwargs):
             torch_input = True
-            if config.backend == "torch":
+            if DEBUG and config.backend == "torch":
+                import torch
+
                 # Convert input args to Torch tensors if necessary
                 args = list(args)
                 for i in range(len(args)):
@@ -47,7 +48,7 @@ class Backend:
                         kwargs[key] = torch.asarray(value)
                         torch_input = False
             ret = func(*args, **kwargs)
-            if config.backend == "torch" and not torch_input:
+            if DEBUG and config.backend == "torch" and not torch_input:
                 # Convert return value to NumPy array if necessary
                 if isinstance(ret, tuple):
                     ret = list(ret)
@@ -67,7 +68,7 @@ class Backend:
             from array_api_compat import torch as xp
         else:
             xp = np
-        if isinstance(value, tuple):
+        if isinstance(value, (list, tuple)):
             return [xp.asarray(i) if isinstance(i, np.ndarray) else i for i in value]
         return xp.asarray(value)
 
@@ -80,3 +81,12 @@ if (
     and "stubtest" not in pathlib.Path(sys.argv[0]).name
 ):
     sys.modules[__name__] = Backend()
+else:
+
+    def debug(func):
+        """Decorator to convert input arrays to Torch tensors and return NumPy arrays in the end."""
+        return func
+
+    def convert(value):
+        """Convert input to the desired backend array; wrapper to keep track of changes."""
+        return value

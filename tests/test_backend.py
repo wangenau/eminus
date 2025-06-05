@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2025 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
+# mypy: disable-error-code="attr-defined"
 """Test backend class."""
 
 import numpy as np
