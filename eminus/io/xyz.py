@@ -6,11 +6,13 @@ import time
 
 import numpy as np
 
+from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import ang2bohr, bohr2ang
 from eminus.version import __version__
 
 
+@xp.debug
 def read_xyz(filename):
     """Load atom species and positions from XYZ files.
 
@@ -47,6 +49,7 @@ def read_xyz(filename):
 
     # XYZ files are in Angstrom, so convert to Bohr
     pos = ang2bohr(np.asarray(pos))
+    pos = xp.convert(pos)
     return atom, pos
 
 

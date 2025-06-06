@@ -4,6 +4,7 @@
 
 import numpy as np
 
+from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import ang2bohr
 
@@ -48,6 +49,7 @@ def read_traj(filename):
                 pos.append(np.float64(line_split[1:4]))
             # XYZ files are in Angstrom, so convert to Bohr
             pos = ang2bohr(np.asarray(pos))
+            pos = xp.convert(pos)
             traj.append((atom, pos))
     return traj
 

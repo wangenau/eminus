@@ -2,9 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """PDB file handling."""
 
-import numpy as np
-from scipy.linalg import norm
-
+from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import bohr2ang
 from eminus.utils import vector_angle
@@ -36,14 +34,15 @@ def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
         )
 
     atom = atoms.atom
-    pos = atoms.pos
+    pos = xp.convert(atoms.pos)
     if fods is not None:
+        fods = xp.convert(fods)
         if len(fods[0]) != 0:
             atom = atom + [elec_symbols[0]] * len(fods[0])
-            pos = np.vstack((pos, fods[0]))
+            pos = xp.vstack((pos, fods[0]))
         if len(fods) > 1 and len(fods[1]) != 0:
             atom = atom + [elec_symbols[1]] * len(fods[1])
-            pos = np.vstack((pos, fods[1]))
+            pos = xp.vstack((pos, fods[1]))
 
     # Append to a file when using the trajectory keyword
     if trajectory:
@@ -76,7 +75,7 @@ def create_pdb_str(atom, pos, a=None):
     # Convert Bohr to Angstrom
     pos = bohr2ang(pos)
     if a is not None:
-        a = bohr2ang(a)
+        a = xp.convert(bohr2ang(a))
 
     # PDB files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not lose track of line lengths
@@ -84,9 +83,9 @@ def create_pdb_str(atom, pos, a=None):
     # Create data for a cuboidal cell
     if a is not None:
         pdb += "CRYST1"  # 1-6 "CRYST1"
-        pdb += f"{norm(a[0]):>9,.3f}"  # 7-15 a
-        pdb += f"{norm(a[1]):>9,.3f}"  # 16-24 b
-        pdb += f"{norm(a[2]):>9,.3f}"  # 25-33 c
+        pdb += f"{xp.linalg.norm(a[0]):>9,.3f}"  # 7-15 a
+        pdb += f"{xp.linalg.norm(a[1]):>9,.3f}"  # 16-24 b
+        pdb += f"{xp.linalg.norm(a[2]):>9,.3f}"  # 25-33 c
         pdb += f"{vector_angle(a[1], a[2]):>7,.2f}"  # 34-40 alpha
         pdb += f"{vector_angle(a[0], a[2]):>7,.2f}"  # 41-47 beta
         pdb += f"{vector_angle(a[0], a[1]):>7,.2f}"  # 48-54 gamma

@@ -7,6 +7,7 @@ import time
 
 import numpy as np
 
+from eminus import backend as xp
 from eminus.data import NUMBER2SYMBOL, SYMBOL2NUMBER
 from eminus.logger import log
 from eminus.version import __version__
@@ -37,12 +38,13 @@ def read_cube(filename):
             log.info(f'CUBE file comment: "{comment}"')
 
         # Lines 4 to 6 contain the sampling per axis and the cell basis vectors with length a/s
-        s = np.empty(3, dtype=int)
+        s = xp.empty(3, dtype=int)
         a = np.empty((3, 3))
         for i, line in enumerate(lines[3:6]):
             line_split = line.strip().split()
-            s[i] = line_split[0]
+            s[i] = float(line_split[0])
             a[i] = s[i] * np.float64(line_split[1:])
+        a = xp.convert(a)
 
         atom = []
         pos = []
@@ -57,16 +59,17 @@ def read_cube(filename):
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(float(line_split[1]))
             pos.append(np.float64(line_split[2:5]))
-    pos = np.asarray(pos)
+    pos = xp.convert(np.asarray(pos))
 
     # The rest of the data is the field data
     # Split the strings, flatten the lists of lists, and convert to a float numpy array
     tmp_list = [l.split() for l in lines[6 + _offset :]]
     field_list = [item for sublist in tmp_list for item in sublist]
-    field = np.asarray(field_list, dtype=float)
+    field = xp.convert(np.asarray(field_list, dtype=float))
     return atom, pos, Z, a, s, field
 
 
+@xp.debug
 def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
     """Generate CUBE files from given field data.
 
@@ -98,7 +101,7 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
     if field is None:
         log.warning('The provided field is "None".')
         return
-    field = np.real(field)
+    field = xp.real(field)
 
     with open(filename, "w", encoding="utf-8") as fp:
         # The first two lines have to be a comment

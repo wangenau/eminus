@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 
+# from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import ang2bohr, bohr2ang
 from eminus.version import __version__
@@ -69,6 +70,8 @@ def read_poscar(filename):
     # POSCAR files are in Angstrom, so convert to Bohr
     pos = ang2bohr(pos)
     a = ang2bohr(a)
+    # pos = xp.debug(pos)
+    # a = xp.debug(a)
     return atom, pos, a
 
 

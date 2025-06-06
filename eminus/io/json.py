@@ -8,6 +8,7 @@ import json
 
 import numpy as np
 
+from eminus import backend as xp
 
 def _custom_object_hook(dct):
     """Custom JSON object hook to create eminus classes after deserialization."""
@@ -24,7 +25,7 @@ def _custom_object_hook(dct):
     # ndarrays are base64 encoded, decode and recreate
     if isinstance(dct, dict) and "__ndarray__" in dct:
         data = base64.b64decode(dct["__ndarray__"])
-        return np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])
+        return np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])  # xp.convert()
 
     # Create simple eminus objects and set all attributes afterwards
     # Explicitly call objects with verbosity since the logger is created at instantiation
@@ -76,6 +77,7 @@ def read_json(filename):
         return json.load(fh, object_hook=_custom_object_hook)
 
 
+@xp.debug
 def write_json(obj, filename):
     """Save objects in a JSON file.
 
@@ -91,7 +93,8 @@ def write_json(obj, filename):
         def default(self, o):
             """Overwrite the default function to handle eminus objects."""
             # ndarrays are not JSON serializable, encode them as base64 to save them
-            if isinstance(o, np.ndarray):
+            if xp.is_array(o):
+                o = np.asarray(o)
                 data = base64.b64encode(o.copy(order="C")).decode("utf-8")
                 return {"__ndarray__": data, "dtype": str(o.dtype), "shape": o.shape}
 
