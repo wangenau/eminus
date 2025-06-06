@@ -7,12 +7,12 @@ All necessary dependencies to use this extra can be installed with::
     pip install eminus[hdf5]
 """
 
-import numpy as np
-
+from eminus import backend as xp
 from eminus.io.json import _custom_object_hook
 from eminus.logger import log
 
 
+@xp.debug
 def read_hdf5(filename):
     """Load objects from an HDF5 file.
 
@@ -46,7 +46,7 @@ def read_hdf5(filename):
                 elif check_string_dtype(value.dtype):
                     dct[key] = value.asstr()[()]
                     # Lists of strings are encoded as arrays, restore them as well
-                    if isinstance(dct[key], np.ndarray):
+                    if xp.is_array(dct[key]):
                         dct[key] = dct[key].tolist()
                 else:
                     dct[key] = value[()]
@@ -59,6 +59,7 @@ def read_hdf5(filename):
         return read_hdf5_recursively(fh, "/")
 
 
+@xp.debug
 def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
     """Save objects in an HDF5 file.
 
@@ -109,7 +110,7 @@ def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
                 dataset = fp.create_dataset(f"{path}{key}", data=[])
                 dataset.attrs["None"] = True
             # Compress arrays
-            elif isinstance(value, np.ndarray):
+            elif xp.is_array(value):
                 fp.create_dataset(
                     f"{path}{key}",
                     data=value,

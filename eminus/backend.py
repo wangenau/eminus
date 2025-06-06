@@ -72,6 +72,17 @@ class Backend:
             return [xp.asarray(i) if isinstance(i, np.ndarray) else i for i in value]
         return xp.asarray(value)
 
+    @staticmethod
+    def is_array(value):
+        """Check if the object is an NumPy array or Torch tensor."""
+        if isinstance(value, np.ndarray):
+            return True
+        if config.backend == "torch":
+            import torch
+
+            return isinstance(value, torch.Tensor)
+        return False
+
 
 # Do not initialize the class when Sphinx or stubtest is running
 # Since we set the class instance to the module name Sphinx would only document
@@ -89,4 +100,8 @@ else:
 
     def convert(value):
         """Convert input to the desired backend array; wrapper to keep track of changes."""
+        return value
+
+    def is_array(value):
+        """Check if the object is an NumPy array or Torch tensor."""
         return value
