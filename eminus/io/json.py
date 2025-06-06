@@ -10,6 +10,7 @@ import numpy as np
 
 from eminus import backend as xp
 
+
 def _custom_object_hook(dct):
     """Custom JSON object hook to create eminus classes after deserialization."""
     import eminus

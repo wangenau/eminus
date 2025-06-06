@@ -3,9 +3,9 @@
 """Calculate different energy contributions."""
 
 import dataclasses
+import math
 
 import numpy as np
-from scipy.linalg import inv, norm
 from scipy.special import erfc
 
 from .dft import get_n_single, get_phi, H
@@ -230,18 +230,18 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
         return M[~(M == 0).all(axis=1)]
 
     # Calculate the Ewald splitting parameter nu
-    gexp = -np.log(gamma)
-    nu = 0.5 * np.sqrt(gcut**2 / gexp)
+    gexp = -math.log(gamma)
+    nu = 0.5 * math.sqrt(gcut**2 / gexp)
 
     # Start by calculating the self-energy
-    Eewald = -nu / np.sqrt(np.pi) * np.sum(atoms.Z**2)
+    Eewald = -nu / math.sqrt(math.pi) * np.sum(atoms.Z**2)
     # Add the electroneutrality term
-    Eewald += -np.pi * np.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
+    Eewald += -math.pi * np.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
-    Rm = norm(atoms.a, axis=1)
-    tmax = np.sqrt(0.5 * gexp) / nu
+    Rm = np.linalg.norm(atoms.a, axis=1)
+    tmax = math.sqrt(0.5 * gexp) / nu
     s = np.rint(tmax / Rm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
@@ -250,15 +250,15 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
-    g = 2 * np.pi * inv(atoms.a.T)
-    gm = norm(g, axis=1)
+    g = 2 * math.pi * np.linalg.inv(atoms.a.T)
+    gm = np.linalg.norm(g, axis=1)
     s = np.rint(gcut / gm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
-    G2 = norm(G, axis=1) ** 2
-    prefactor = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
+    G2 = np.linalg.norm(G, axis=1) ** 2
+    prefactor = 2 * math.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
@@ -266,11 +266,11 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
 
             # Add the real-space contribution
-            rmag = norm(dpos - T, axis=1)
+            rmag = np.linalg.norm(dpos - T, axis=1)
             Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = norm(dpos)
+                rmag = np.linalg.norm(dpos)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
             # Add the reciprocal space contribution

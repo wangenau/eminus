@@ -2,10 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 """Various tools to check physical properties."""
 
+import math
+
 import numpy as np
-from scipy.linalg import norm
 from scipy.optimize import minimize_scalar, root_scalar
 
+from . import backend as xp
 from .dft import get_epsilon, get_epsilon_unocc
 from .gga import get_grad_field, get_tau
 from .logger import log
@@ -23,7 +25,7 @@ def cutoff2gridspacing(E):
     Returns:
         Grid spacing in Bohr.
     """
-    return np.pi / np.sqrt(2 * E)
+    return math.pi / math.sqrt(2 * E)
 
 
 def gridspacing2cutoff(h):
@@ -37,9 +39,10 @@ def gridspacing2cutoff(h):
     Returns:
         Cut-off in Hartree.
     """
-    return 0.5 * (np.pi / h) ** 2
+    return 0.5 * (math.pi / h) ** 2
 
 
+@xp.debug
 def center_of_mass(coords, masses=None):
     """Calculate the center of mass for a set of coordinates and masses.
 
@@ -56,8 +59,8 @@ def center_of_mass(coords, masses=None):
         msg = 'The provided coordinates are "None".'
         raise ValueError(msg)
     if masses is None:
-        masses = np.ones(len(coords))
-    return np.sum(masses * coords.T, axis=1) / np.sum(masses)
+        masses = xp.ones(len(coords))
+    return xp.sum(masses * coords.T, axis=1) / xp.sum(masses)
 
 
 @handle_k
@@ -86,6 +89,7 @@ def orbital_center(obj, psirs):
     return coms
 
 
+@xp.debug
 def inertia_tensor(coords, masses=None):
     """Calculate the inertia tensor for a set of coordinates and masses.
 
@@ -101,17 +105,17 @@ def inertia_tensor(coords, masses=None):
         Inertia tensor.
     """
     if masses is None:
-        masses = np.ones(len(coords))
+        masses = xp.ones(len(coords))
 
     # The inertia tensor for a set of point masses can be calculated with a simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
-    I = np.empty((3, 3))
-    I[0, 0] = np.sum(masses * (coords[:, 1] ** 2 + coords[:, 2] ** 2))
-    I[1, 1] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 2] ** 2))
-    I[2, 2] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 1] ** 2))
-    I[0, 1] = I[1, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
-    I[0, 2] = I[2, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
-    I[1, 2] = I[2, 1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
+    I = xp.empty((3, 3))
+    I[0, 0] = xp.sum(masses * (coords[:, 1] ** 2 + coords[:, 2] ** 2))
+    I[1, 1] = xp.sum(masses * (coords[:, 0] ** 2 + coords[:, 2] ** 2))
+    I[2, 2] = xp.sum(masses * (coords[:, 0] ** 2 + coords[:, 1] ** 2))
+    I[0, 1] = I[1, 0] = -xp.sum(masses * (coords[:, 0] * coords[:, 1]))
+    I[0, 2] = I[2, 0] = -xp.sum(masses * (coords[:, 0] * coords[:, 2]))
+    I[1, 2] = I[2, 1] = -xp.sum(masses * (coords[:, 1] * coords[:, 2]))
     return I
 
 
@@ -294,7 +298,7 @@ def get_tautf(scf):
     """
     atoms = scf.atoms
     # Use the definition with a division by two
-    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
+    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * math.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
 
     log.debug(f"Calculated Ekin:  {scf.energies.Ekin:.6f} Eh")
     log.debug(f"Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh")
@@ -317,7 +321,7 @@ def get_tauw(scf):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    dn2 = norm(dn_spin, axis=2) ** 2
+    dn2 = np.linalg.norm(dn_spin, axis=2) ** 2
     # Use the definition with a division by two
     tauw = dn2 / (8 * scf.n_spin)
 
@@ -363,9 +367,9 @@ def get_reduced_gradient(scf, eps=0):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
+    norm_dn = np.linalg.norm(np.sum(dn_spin, axis=0), axis=1)
 
-    kf = (3 * np.pi**2 * scf.n) ** (1 / 3)
+    kf = (3 * math.pi**2 * scf.n) ** (1 / 3)
     with np.errstate(divide="ignore", invalid="ignore"):
         s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0
@@ -406,7 +410,7 @@ def get_multiplicity(scf):
     """
     S2 = get_spin_squared(scf)
     # <S^2> = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(<S^2>+0.25)-0.5
-    S = np.sqrt(S2 + 0.25) - 0.5
+    S = math.sqrt(S2 + 0.25) - 0.5
     return 2 * S + 1
 
 
@@ -550,7 +554,7 @@ def get_dos(epsilon, wk, spin=0, npts=500, width=0.1):
 
     def delta(x, x0, width):
         """Gaussian of given width centered at x0."""
-        return np.exp(-(((x - x0) / width) ** 2)) / (np.sqrt(np.pi) * width)
+        return np.exp(-(((x - x0) / width) ** 2)) / (math.sqrt(math.pi) * width)
 
     energies = epsilon[:, spin].flatten()
     emin = np.min(energies) - 5 * width

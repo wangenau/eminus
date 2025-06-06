@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Generate k-points and sample band paths."""
 
+import math
 import numbers
 
 import numpy as np
-from scipy.linalg import inv, norm
 from scipy.spatial import Voronoi
 
 from .data import LATTICE_VECTORS, SPECIAL_POINTS
@@ -201,7 +201,7 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         k-points in cartesian coordinates.
     """
-    inv_cell = 2 * np.pi * inv(lattice_vectors).T
+    inv_cell = 2 * math.pi * np.linalg.inv(lattice_vectors).T
     return k_points @ inv_cell
 
 
@@ -268,13 +268,13 @@ def bandpath(kpts):
         if "," not in path_list[i : i + 2]:
             # Use subtract since s_points are lists
             dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
-            dists.append(norm(kpoint_convert(dist, kpts.a)))
+            dists.append(np.linalg.norm(kpoint_convert(dist, kpts.a)))
         else:
             # Set distance to zero when jumping between special points
             dists.append(0)
 
     # Calculate sample points between the special points
-    scaled_dists = (N - N_special) * np.array(dists) / sum(dists)
+    scaled_dists = (N - N_special) * np.asarray(dists) / sum(dists)
     samplings = np.int64(np.round(scaled_dists))
 
     # If our sampling does not match the given N add the difference to the longest distance
@@ -317,7 +317,7 @@ def kpoints2axis(kpts):
 
     # Calculate the distances between k-points
     k_dist = kpts.k_scaled[1:] - kpts.k_scaled[:-1]
-    dists = norm(kpoint_convert(k_dist, kpts.a), axis=1)
+    dists = np.linalg.norm(kpoint_convert(k_dist, kpts.a), axis=1)
 
     # Create the labels
     labels = []

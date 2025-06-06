@@ -3,14 +3,15 @@
 """Linear algebra calculation utilities."""
 
 import functools
+import math
 import pathlib
 import re
 
 import numpy as np
-from scipy.linalg import norm
 
 import eminus
 
+from . import backend as xp
 from .units import rad2deg
 
 
@@ -50,6 +51,7 @@ class BaseObject:
         return eminus.io.write(self, filename, *args, **kwargs)
 
 
+@xp.debug
 def dotprod(a, b):
     """Efficiently calculate the expression a * b.
 
@@ -65,14 +67,15 @@ def dotprod(a, b):
     """
     eps = 1e-15  # 2.22e-16 is the range of float64 machine precision
     # The dot product of complex vectors looks like the expression below, but this is slow
-    # res = np.real(np.trace(a.conj().T @ b))
+    # res = xp.real(xp.trace(a.conj().T @ b))
     # We can calculate the trace faster by taking the sum of the Hadamard product
-    res = np.sum(a.conj() * b)
+    res = xp.sum(a.conj() * b)
     if abs(res) < eps:
         return eps
-    return np.real(res)
+    return xp.real(res)
 
 
+@xp.debug
 def Ylm_real(l, m, G):  # noqa: C901
     """Calculate real spherical harmonics from cartesian coordinates.
 
@@ -88,61 +91,73 @@ def Ylm_real(l, m, G):  # noqa: C901
     """
     eps = 1e-9
     # Account for single vectors
-    G = np.atleast_2d(G)
+    G = xp.atleast_2d(G)
 
     # No need to calculate more for l=0
     if l == 0:
-        return 0.5 * np.sqrt(1 / np.pi) * np.ones(len(G))
+        return 0.5 * math.sqrt(1 / math.pi) * xp.ones(len(G))
 
     # cos(theta)=Gz/|G|
-    Gm = norm(G, axis=1)
-    with np.errstate(divide="ignore", invalid="ignore"):
+    Gm = np.linalg.norm(G, axis=1)
+    with xp.errstate(divide="ignore", invalid="ignore"):
         cos_theta = G[:, 2] / Gm
     # Account for small magnitudes, if norm(G) < eps: cos_theta=0
     cos_theta[Gm < eps] = 0
 
     # Vectorized version of sin(theta)=sqrt(max(0, 1-cos_theta^2))
-    sin_theta = np.sqrt(np.amax((np.zeros_like(cos_theta), 1 - cos_theta**2), axis=0))
+    sin_theta = xp.sqrt(xp.max(xp.stack([xp.zeros_like(cos_theta), 1 - cos_theta**2]), axis=0))
 
     # phi=arctan(Gy/Gx)
-    phi = np.arctan2(G[:, 1], G[:, 0])
+    phi = xp.arctan2(G[:, 1], G[:, 0])
     # If Gx=0: phi=pi/2*sign(Gy)
-    phi_idx = np.abs(G[:, 0]) < eps
-    phi[phi_idx] = np.pi / 2 * np.sign(G[phi_idx, 1])
+    phi_idx = xp.abs(G[:, 0]) < eps
+    phi[phi_idx] = math.pi / 2 * xp.sign(G[phi_idx, 1])
 
     if l == 1:
         if m == -1:  # py
-            return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.sin(phi)
+            return 0.5 * math.sqrt(3 / math.pi) * sin_theta * xp.sin(phi)
         if m == 0:  # pz
-            return 0.5 * np.sqrt(3 / np.pi) * cos_theta
+            return 0.5 * math.sqrt(3 / math.pi) * cos_theta
         if m == 1:  # px
-            return 0.5 * np.sqrt(3 / np.pi) * sin_theta * np.cos(phi)
+            return 0.5 * math.sqrt(3 / math.pi) * sin_theta * xp.cos(phi)
     elif l == 2:
         if m == -2:  # dxy
-            return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.sin(2 * phi)
+            return math.sqrt(15 / 16 / math.pi) * sin_theta**2 * xp.sin(2 * phi)
         if m == -1:  # dyz
-            return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.sin(phi)
+            return math.sqrt(15 / 4 / math.pi) * cos_theta * sin_theta * xp.sin(phi)
         if m == 0:  # dz2
-            return 0.25 * np.sqrt(5 / np.pi) * (3 * cos_theta**2 - 1)
+            return 0.25 * math.sqrt(5 / math.pi) * (3 * cos_theta**2 - 1)
         if m == 1:  # dxz
-            return np.sqrt(15 / 4 / np.pi) * cos_theta * sin_theta * np.cos(phi)
+            return math.sqrt(15 / 4 / math.pi) * cos_theta * sin_theta * xp.cos(phi)
         if m == 2:  # dx2-y2
-            return np.sqrt(15 / 16 / np.pi) * sin_theta**2 * np.cos(2 * phi)
+            return math.sqrt(15 / 16 / math.pi) * sin_theta**2 * xp.cos(2 * phi)
     elif l == 3:
         if m == -3:
-            return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.sin(3 * phi)
+            return 0.25 * math.sqrt(35 / 2 / math.pi) * sin_theta**3 * xp.sin(3 * phi)
         if m == -2:
-            return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.sin(2 * phi)
+            return 0.25 * math.sqrt(105 / math.pi) * sin_theta**2 * cos_theta * xp.sin(2 * phi)
         if m == -1:
-            return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.sin(phi)
+            return (
+                0.25
+                * math.sqrt(21 / 2 / math.pi)
+                * sin_theta
+                * (5 * cos_theta**2 - 1)
+                * xp.sin(phi)
+            )
         if m == 0:
-            return 0.25 * np.sqrt(7 / np.pi) * (5 * cos_theta**3 - 3 * cos_theta)
+            return 0.25 * math.sqrt(7 / math.pi) * (5 * cos_theta**3 - 3 * cos_theta)
         if m == 1:
-            return 0.25 * np.sqrt(21 / 2 / np.pi) * sin_theta * (5 * cos_theta**2 - 1) * np.cos(phi)
+            return (
+                0.25
+                * math.sqrt(21 / 2 / math.pi)
+                * sin_theta
+                * (5 * cos_theta**2 - 1)
+                * xp.cos(phi)
+            )
         if m == 2:
-            return 0.25 * np.sqrt(105 / np.pi) * sin_theta**2 * cos_theta * np.cos(2 * phi)
+            return 0.25 * math.sqrt(105 / math.pi) * sin_theta**2 * cos_theta * xp.cos(2 * phi)
         if m == 3:
-            return 0.25 * np.sqrt(35 / 2 / np.pi) * sin_theta**3 * np.cos(3 * phi)
+            return 0.25 * math.sqrt(35 / 2 / math.pi) * sin_theta**3 * xp.cos(3 * phi)
 
     msg = f"No definition found for Ylm({l}, {m})."
     raise ValueError(msg)
@@ -308,6 +323,7 @@ def atom2charge(atom, path=None):
     return [read_gth(ia, psp_path=psp_path)["Zion"] for ia in atom]
 
 
+@xp.debug
 def vector_angle(a, b):
     """Calculate the angle between two vectors.
 
@@ -319,12 +335,14 @@ def vector_angle(a, b):
         Angle between a and b in Degree.
     """
     # Normalize vectors first
-    a_norm = a / norm(a)
-    b_norm = b / norm(b)
-    angle = np.arccos(a_norm @ b_norm)
+    a, b = xp.asarray(a, dtype=float), xp.asarray(b, dtype=float)
+    a_norm = a / xp.linalg.norm(a)
+    b_norm = b / xp.linalg.norm(b)
+    angle = xp.arccos(a_norm @ b_norm)
     return rad2deg(angle)
 
 
+@xp.debug
 def get_lattice(lattice_vectors):
     """Generate a cell for given lattice vectors.
 
@@ -335,7 +353,7 @@ def get_lattice(lattice_vectors):
         Lattice vertices.
     """
     # Vertices of a cube
-    vertices = np.array(
+    vertices = xp.asarray(
         [
             [0, 0, 0],
             [0, 0, 1],
@@ -345,10 +363,11 @@ def get_lattice(lattice_vectors):
             [1, 0, 1],
             [1, 1, 0],
             [1, 1, 1],
-        ]
+        ],
+        dtype=float,
     )
     # Connected vertices of a cube with the above ordering
-    edges = np.array(
+    edges = xp.asarray(
         [
             [0, 1],
             [0, 2],

@@ -3,9 +3,9 @@
 """Collection of miscellaneous potentials."""
 
 import inspect
+import math
 
 import numpy as np
-from scipy.linalg import norm
 
 from .gth import init_gth_loc
 from .logger import log
@@ -46,7 +46,7 @@ def harmonic(scf, freq=2, **kwargs):
         Harmonic potential in real-space.
     """
     atoms = scf.atoms
-    dr = norm(atoms.r - np.sum(atoms.a, axis=1) / 2, axis=1)
+    dr = np.linalg.norm(atoms.r - np.sum(atoms.a, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
@@ -80,7 +80,7 @@ def coulomb(scf, **kwargs):
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide="ignore", invalid="ignore"):
-            Vsp = -4 * np.pi * Z / atoms.G2
+            Vsp = -4 * math.pi * Z / atoms.G2
         Vsp[0] = 0
         Vcoul += np.real(atoms.J(Vsp * Sf))
     return Vcoul
@@ -116,7 +116,7 @@ def coulomb_lr(scf, alpha=100, **kwargs):
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide="ignore", invalid="ignore"):
-            Vsp = -4 * np.pi * Z * np.exp(-atoms.G2 / (4 * alpha**2)) / atoms.G2
+            Vsp = -4 * math.pi * Z * np.exp(-atoms.G2 / (4 * alpha**2)) / atoms.G2
         Vsp[0] = 0
         Vcoul += np.real(atoms.J(Vsp * Sf))
     return Vcoul
@@ -147,26 +147,26 @@ def ge(scf, **kwargs):
     with np.errstate(divide="ignore", invalid="ignore"):
         Vps = (
             -2
-            * np.pi
-            * np.exp(-np.pi * Gm / lamda)
+            * math.pi
+            * np.exp(-math.pi * Gm / lamda)
             * np.cos(rc * Gm)
             * (Gm / lamda)
-            / (1 - np.exp(-2 * np.pi * Gm / lamda))
+            / (1 - np.exp(-2 * math.pi * Gm / lamda))
         )
         for n in range(5):
-            Vps = Vps + (-1) ** n * np.exp(-lamda * rc * n) / (1 + (n * lamda / Gm) ** 2)
-        Vps = Vps * 4 * np.pi * Z / Gm**2 * (1 + np.exp(-lamda * rc)) - 4 * np.pi * Z / Gm**2
+            Vps = Vps + (-1) ** n * math.exp(-lamda * rc * n) / (1 + (n * lamda / Gm) ** 2)
+        Vps = Vps * 4 * math.pi * Z / Gm**2 * (1 + math.exp(-lamda * rc)) - 4 * math.pi * Z / Gm**2
 
     # Special case for G=(0,0,0)
     n = np.arange(1, 5)
     Vps[0] = (
         4
-        * np.pi
+        * math.pi
         * Z
-        * (1 + np.exp(-lamda * rc))
+        * (1 + math.exp(-lamda * rc))
         * (
             rc**2 / 2
-            + 1 / lamda**2 * (np.pi**2 / 6 + np.sum((-1) ** n * np.exp(-lamda * rc * n) / n**2))
+            + 1 / lamda**2 * (math.pi**2 / 6 + np.sum((-1) ** n * np.exp(-lamda * rc * n) / n**2))
         )
     )
 

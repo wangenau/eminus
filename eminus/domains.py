@@ -5,7 +5,6 @@
 import numbers
 
 import numpy as np
-from scipy.linalg import norm
 
 from .logger import log
 from .tools import center_of_mass
@@ -88,11 +87,11 @@ def domain_sphere(obj, radius, centers=None):
         centers = center_of_mass(atoms.pos)
     centers = np.asarray(centers)
     if centers.ndim == 1:
-        mask = norm(centers - atoms.r, axis=1) < radius
+        mask = np.linalg.norm(centers - atoms.r, axis=1) < radius
     else:
         mask = np.zeros(atoms.Ns, dtype=bool)
         for center in centers:
-            mask_tmp = norm(center - atoms.r, axis=1) < radius
+            mask_tmp = np.linalg.norm(center - atoms.r, axis=1) < radius
             mask = mask | mask_tmp
     return mask
 

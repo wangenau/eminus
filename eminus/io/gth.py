@@ -6,10 +6,12 @@ import importlib.resources
 import pathlib
 import sys
 
-import numpy as xp
-# from eminus import backend as xp, xp.convert
+import numpy as np
 
 from eminus.logger import log
+
+# from eminus import backend as xp, xp.convert
+xp = np
 
 
 def read_gth(atom, charge=None, psp_path="pbe"):

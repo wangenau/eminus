@@ -60,7 +60,7 @@ def test_pos(pos, center, ref):
 def test_cell(a, ref, Omega):
     """Test the setting of cell size."""
     atoms = Atoms(*inp, a=a).build()
-    assert atoms.Omega == Omega
+    assert_allclose(atoms.Omega, Omega)
     assert_equal(atoms.a, ref)
     assert_allclose(atoms.Omega, det(atoms.a))
     assert atoms.r is not None
@@ -112,7 +112,7 @@ def test_center(center):
     if center is False:
         assert_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
     elif center is True:
-        assert_equal(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
+        assert_allclose(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
     elif center == "rotate":
         assert_allclose(atoms.pos, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
     elif center == "shift":

@@ -11,6 +11,7 @@ Note that if one wants to use Jupyter one has to install it separately.
 
 import collections
 import io
+import math
 import pathlib
 import uuid
 
@@ -70,7 +71,7 @@ def _uniform_density_data(n, r, s):
     x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), np.min([s[0], 25]))
     y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), np.min([s[1], 25]))
     z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), np.min([s[2], 25]))
-    r_new = np.array(np.meshgrid(x, y, z)).T.reshape(-1, 3)
+    r_new = np.asarray(np.meshgrid(x, y, z)).T.reshape(-1, 3)
     n_new = griddata(r, n, r_new)
     return np.nan_to_num(n_new), r_new
 
@@ -122,7 +123,7 @@ def view_atoms(
     # Add species one by one to be able to have them named and be selectable in the legend
     # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):
-        mask = np.where(np.asarray(atoms.atom) == ia)[0]
+        mask = np.nonzero(np.asarray(atoms.atom) == ia)[0]
         atom_data = go.Scatter3d(
             x=atoms.pos[mask, 0],
             y=atoms.pos[mask, 1],
@@ -130,7 +131,7 @@ def view_atoms(
             name=ia,
             mode="markers",
             marker={
-                "size": 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
+                "size": 2 * math.pi * math.sqrt(COVALENT_RADII[ia]),
                 "color": CPK_COLORS[ia],
                 "line": {"color": "black", "width": 2},
             },
@@ -146,7 +147,7 @@ def view_atoms(
                     z=fods[0][:, 2],
                     name="up-FOD",
                     mode="markers",
-                    marker={"size": np.pi, "color": "red"},
+                    marker={"size": math.pi, "color": "red"},
                 )
                 fig.add_trace(fods_data)
             if len(fods) > 1 and len(fods[1]) != 0:
@@ -156,7 +157,7 @@ def view_atoms(
                     z=fods[1][:, 2],
                     name="down-FOD",
                     mode="markers",
-                    marker={"size": np.pi, "color": "green"},
+                    marker={"size": math.pi, "color": "green"},
                 )
                 fig.add_trace(fods_data)
         # Treat fods as normal coordinates otherwise

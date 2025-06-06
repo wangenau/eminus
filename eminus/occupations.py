@@ -265,7 +265,7 @@ class Occupations:
         # Determine the electrons per spin channel
         Nup = self.Nelec // self.Nspin + self.spin // self.Nspin + self.Nelec % self.Nspin
         Ndw = self.Nelec // self.Nspin - self.spin // self.Nspin
-        elecs = np.array([Nup, Ndw])
+        elecs = np.asarray([Nup, Ndw])
 
         # Get the number of states
         Nstate = int(np.ceil(max(elecs / f)))
@@ -322,7 +322,7 @@ class Occupations:
             Nup = (magnetization * self.Nelec + self.Nelec) / 2
             Ndw = self.Nelec - Nup
             self.spin = abs(Nup - Ndw)
-        elecs = np.array([Nup, Ndw])
+        elecs = np.asarray([Nup, Ndw])
 
         # Get the number of states
         Nstate = int(np.ceil(max(elecs / f)))

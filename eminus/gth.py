@@ -2,8 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Utilities to use Goedecker, Teter, and Hutter pseudopotentials."""
 
+import math
+
 import numpy as np
 
+from . import backend as xp
 from .io import read_gth
 from .utils import Ylm_real
 
@@ -19,8 +22,8 @@ class GTH:
         """Initialize the GTH object."""
         self.GTH = {}  #: Dictionary with GTH parameters per atom type.
         self.NbetaNL = 0  #: Number of projector functions for the non-local potential.
-        self.prj2beta = np.array([0])  #: Index matrix to map to the correct projector function.
-        self.betaNL = np.array([0])  #: Atomic-centered projector functions.
+        self.prj2beta = np.asarray([0])  #: Index matrix to map to the correct projector function.
+        self.betaNL = np.asarray([0])  #: Atomic-centered projector functions.
 
         # Allow creating an empty instance (used when loading GTH objects from JSON files)
         if scf is not None:
@@ -82,8 +85,8 @@ def init_gth_loc(scf, **kwargs):
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide="ignore", invalid="ignore"):
-            Vsp = -4 * np.pi * Zion / omega * exprlocG2 / atoms.G2 + np.sqrt(
-                (2 * np.pi) ** 3
+            Vsp = -4 * math.pi * Zion / omega * exprlocG2 / atoms.G2 + math.sqrt(
+                (2 * math.pi) ** 3
             ) * rloc**3 / omega * exprlocG2 * (
                 c1
                 + c2 * (3 - rlocG2)
@@ -91,7 +94,7 @@ def init_gth_loc(scf, **kwargs):
                 + c4 * (105 - 105 * rlocG2 + 21 * rlocG22 - rlocG2**3)
             )
         # Special case for G=(0,0,0), same as in QE
-        Vsp[0] = 2 * np.pi * Zion * rloc**2 + (2 * np.pi) ** 1.5 * rloc**3 * (
+        Vsp[0] = 2 * math.pi * Zion * rloc**2 + (2 * math.pi) ** 1.5 * rloc**3 * (
             c1 + 3 * c2 + 15 * c3 + 105 * c4
         )
 
@@ -191,6 +194,7 @@ def calc_Vnonloc(scf, ik, spin, W):
     return atoms.O(Vpsi)
 
 
+@xp.debug
 def eval_proj_G(psp, l, iprj, Gm, Omega):
     """Evaluate GTH projector functions in G-space.
 
@@ -211,31 +215,31 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     rrl = psp["rp"][l]
     Gr2 = (Gm * rrl) ** 2
 
-    prefactor = 4 * np.pi ** (5 / 4) * np.sqrt(2 ** (l + 1) * rrl ** (2 * l + 3) / Omega)
-    Vprj = prefactor * np.exp(-0.5 * Gr2)
+    prefactor = 4 * math.pi ** (5 / 4) * math.sqrt(2 ** (l + 1) * rrl ** (2 * l + 3) / Omega)
+    Vprj = prefactor * xp.exp(-0.5 * Gr2)
 
     if l == 0:  # s-channel
         if iprj == 1:
             return Vprj
         if iprj == 2:
-            return 2 / np.sqrt(15) * (3 - Gr2) * Vprj
+            return 2 / math.sqrt(15) * (3 - Gr2) * Vprj
         if iprj == 3:
-            return (4 / 3) / np.sqrt(105) * (15 - 10 * Gr2 + Gr2**2) * Vprj
+            return (4 / 3) / math.sqrt(105) * (15 - 10 * Gr2 + Gr2**2) * Vprj
     elif l == 1:  # p-channel
         if iprj == 1:
-            return 1 / np.sqrt(3) * Gm * Vprj
+            return 1 / math.sqrt(3) * Gm * Vprj
         if iprj == 2:
-            return 2 / np.sqrt(105) * Gm * (5 - Gr2) * Vprj
+            return 2 / math.sqrt(105) * Gm * (5 - Gr2) * Vprj
         if iprj == 3:
-            return (4 / 3) / np.sqrt(1155) * Gm * (35 - 14 * Gr2 + Gr2**2) * Vprj
+            return (4 / 3) / math.sqrt(1155) * Gm * (35 - 14 * Gr2 + Gr2**2) * Vprj
     elif l == 2:  # d-channel
         if iprj == 1:
-            return 1 / np.sqrt(15) * Gm**2 * Vprj
+            return 1 / math.sqrt(15) * Gm**2 * Vprj
         if iprj == 2:
-            return (2 / 3) / np.sqrt(105) * Gm**2 * (7 - Gr2) * Vprj
+            return (2 / 3) / math.sqrt(105) * Gm**2 * (7 - Gr2) * Vprj
     elif l == 3:  # f-channel
         # Only one projector
-        return 1 / np.sqrt(105) * Gm**3 * Vprj
+        return 1 / math.sqrt(105) * Gm**3 * Vprj
 
     msg = f"No projector found for l={l}."
     raise ValueError(msg)

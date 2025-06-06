@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Atoms class definition."""
 
+import math
 import numbers
 
 import numpy as np
 from scipy.fft import next_fast_len
-from scipy.linalg import det, eigh, inv, norm
 
 from . import operators
 from .kpoints import KPoints
@@ -139,7 +139,7 @@ class Atoms(BaseObject):
     def ecut(self, value):
         self._ecut = value
         # Calculate the sampling from the cut-off energy
-        s = np.int64(norm(self.a, axis=1) / cutoff2gridspacing(value))
+        s = np.int64(np.linalg.norm(self.a, axis=1) / cutoff2gridspacing(value))
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations
@@ -164,7 +164,7 @@ class Atoms(BaseObject):
         if hasattr(self, "ecut"):
             self.ecut = self.ecut
         # Calculate the unit cell volume
-        self._Omega = abs(det(self._a))
+        self._Omega = abs(np.linalg.det(self._a))
         if hasattr(self, "kpts"):
             self.kpts.a = self._a
         # The cell changes when changing a
@@ -220,8 +220,8 @@ class Atoms(BaseObject):
         # Rotate before shifting!
         if self._center is True or self._center == "rotate":
             I = inertia_tensor(self.pos)
-            _, eigvecs = eigh(I)
-            self.pos = (inv(eigvecs) @ self.pos.T).T
+            _, eigvecs = np.linalg.eigh(I)
+            self.pos = (np.linalg.inv(eigvecs) @ self.pos.T).T
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == "shift":
             com = center_of_mass(self.pos)
@@ -454,20 +454,20 @@ class Atoms(BaseObject):
         # Calculate index matrices
         M, N = self._get_index_matrices()
         # Build the real-space sampling
-        self._r = M @ inv(np.diag(self.s)) @ self.a
+        self._r = M @ np.linalg.inv(np.diag(self.s)) @ self.a
         # Build G-vectors
-        self._G = 2 * np.pi * N @ inv(self.a.T)
+        self._G = 2 * math.pi * N @ np.linalg.inv(self.a.T)
         # Calculate squared magnitudes of G-vectors
-        self._G2 = norm(self.G, axis=1) ** 2
+        self._G2 = np.linalg.norm(self.G, axis=1) ** 2
         # Calculate the G2 restriction
         self._active = [
-            np.nonzero(2 * self.ecut >= norm(self.G + self.kpts.k[ik], axis=1) ** 2)
+            np.nonzero(2 * self.ecut >= np.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2)
             for ik in range(self.kpts.Nk)
         ]
         self._G2c = self._G2[np.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
         self._Gk2 = np.asarray(
-            [norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
+            [np.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
         )
         self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom

@@ -10,7 +10,7 @@ import copy
 import logging
 
 import numpy as np
-from scipy.linalg import inv, sqrtm
+from scipy.linalg import sqrtm
 
 from .dft import H, orth, orth_unocc
 from .energies import get_Eband
@@ -72,8 +72,8 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     WHW = W[ik][spin].conj().T @ HW
     OW = atoms.O(W[ik][spin])
     U = W[ik][spin].conj().T @ OW
-    invU = inv(U)
-    U12 = sqrtm(invU)
+    invU = np.linalg.inv(U)
+    U12 = np.asarray(sqrtm(invU), dtype=complex)
     # grad E = (I - O(Y) Ydag) H(Y) U^-0.5
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
@@ -100,7 +100,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     Ydag = Y.conj().T
     # We need X12 later, so orthogonalize in-place and only the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
-    X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+    X12 = np.linalg.inv(np.asarray(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
     D_tmp = [None] * len(Z)

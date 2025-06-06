@@ -62,7 +62,7 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
     # The dispersion correction is only geometry dependent which makes handling the input easy
     atoms = scf.atoms
     positions = atoms.pos
-    numbers = np.array([SYMBOL2NUMBER[ia] for ia in atoms.atom])
+    numbers = np.asarray([SYMBOL2NUMBER[ia] for ia in atoms.atom])
     # Try to determine the method keyword
     if xc is None:
         if scf.xc_type == "lda":
@@ -83,7 +83,7 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
         method = xc
 
     # Set up the dispersion model object with periodic boundary conditions
-    model = DispersionModel(numbers, positions, lattice=atoms.a, periodic=np.array([1, 1, 1]))
+    model = DispersionModel(numbers, positions, lattice=atoms.a, periodic=np.asarray([1, 1, 1]))
     # Calculate the dispersion energy, neglecting the gradient
     res = model.get_dispersion(dispersion_version[version](method=method, atm=atm), grad=False)
     scf.energies.Edisp = res["energy"]
