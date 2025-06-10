@@ -497,3 +497,40 @@ class Atoms(BaseObject):
                 f"{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}"
             )
         return out
+
+    def convert(self, backend="xp"):
+        """Debug."""
+        if backend == "np":
+            import numpy as np
+
+            xp = np
+        else:
+            from . import backend as xp
+
+        self.occ.convert(backend)
+        self.kpts.convert(backend)
+        self._pos = xp.asarray(self._pos)
+        self._a = xp.asarray(self._a)
+        if hasattr(self, "_f"):
+            self._f = xp.asarray(self._f)
+        self._s = xp.asarray(self._s)
+        self._Z = xp.asarray(self._Z)
+        self._Ns = xp.asarray(self._Ns)
+        if self._r is not None:
+            self._r = xp.asarray(self._r)
+        if self._active is not None:
+            for i in range(len(self._active)):
+                self._active[i] = (xp.asarray(self._active[i][0]),)
+        if self._G is not None:
+            self._G = xp.asarray(self._G)
+        if self._G2 is not None:
+            self._G2 = xp.asarray(self._G2)
+        if self._G2c is not None:
+            self._G2c = xp.asarray(self._G2c)
+        if self._Gk2 is not None:
+            self._Gk2 = xp.asarray(self._Gk2)
+        if self._Gk2c is not None:
+            for i in range(len(self._Gk2c)):
+                self._Gk2c[i] = xp.asarray(self._Gk2c[i])
+        if self._Sf is not None:
+            self._Sf = xp.asarray(self._Sf)

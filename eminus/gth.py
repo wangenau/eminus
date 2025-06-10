@@ -50,6 +50,23 @@ class GTH:
         """Print a short overview over the values stored in the GTH object."""
         return f"NbetaNL: {self.NbetaNL}\nGTH values for: {', '.join(list(self.GTH))}"
 
+    def convert(self, backend="xp"):
+        """Debug."""
+        if backend == "np":
+            import numpy as np
+
+            xp = np
+        else:
+            from . import backend as xp
+
+        self.prj2beta = xp.asarray(self.prj2beta)
+        self.betaNL = xp.asarray(self.betaNL)
+        for key in self.GTH:
+            self.GTH[key]["cloc"] = xp.asarray(self.GTH[key]["cloc"])
+            self.GTH[key]["rp"] = xp.asarray(self.GTH[key]["rp"])
+            self.GTH[key]["Nproj_l"] = xp.asarray(self.GTH[key]["Nproj_l"])
+            self.GTH[key]["h"] = xp.asarray(self.GTH[key]["h"])
+
 
 def init_gth_loc(scf, **kwargs):
     """Initialize parameters to calculate local contributions of GTH pseudopotentials.

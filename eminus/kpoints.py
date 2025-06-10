@@ -188,6 +188,20 @@ class KPoints(BaseObject):
             f"Weights: {self.wk}"
         )
 
+    def convert(self, backend="xp"):
+        """Debug."""
+        if backend == "np":
+            import numpy as np
+
+            xp = np
+        else:
+            from . import backend as xp
+
+        self._wk = xp.asarray(self._wk)
+        self._k = xp.asarray(self._k)
+        if hasattr(self, "_k_scaled"):
+            self._k_scaled = xp.asarray(self._k_scaled)
+
 
 def kpoint_convert(k_points, lattice_vectors):
     """Convert scaled k-points to cartesian coordinates.

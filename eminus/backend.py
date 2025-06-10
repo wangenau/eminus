@@ -26,12 +26,12 @@ class Backend:
             return getattr(np, name)
 
     @staticmethod
-    def debug(func):
+    def debug(func):  # noqa: C901
         """Decorator to convert input arrays to Torch tensors and return NumPy arrays in the end."""
         DEBUG = True
 
         @functools.wraps(func)
-        def decorator(*args, **kwargs):
+        def decorator(*args, **kwargs):  # noqa: C901
             torch_input = True
             if DEBUG and config.backend == "torch":
                 import torch
@@ -42,10 +42,16 @@ class Backend:
                     if isinstance(args[i], np.ndarray):
                         args[i] = torch.asarray(args[i])
                         torch_input = False
+                    if hasattr(args[i], "convert"):
+                        args[i].convert()
+                        torch_input = False
                 # Convert input kwargs to Torch tensors if necessary
                 for key, value in kwargs.items():
                     if isinstance(value, np.ndarray):
                         kwargs[key] = torch.asarray(value)
+                        torch_input = False
+                    if hasattr(value, "convert"):
+                        value.convert()
                         torch_input = False
             ret = func(*args, **kwargs)
             if DEBUG and config.backend == "torch" and not torch_input:
@@ -57,6 +63,14 @@ class Backend:
                             ret[i] = np.asarray(ret[i])
                 elif isinstance(ret, torch.Tensor):
                     ret = np.asarray(ret)
+                # Convert objects back to NumPy
+                args = list(args)
+                for i in range(len(args)):
+                    if hasattr(args[i], "convert"):
+                        args[i].convert("np")
+                for value in kwargs.values():
+                    if hasattr(value, "convert"):
+                        value.convert("np")
             return ret
 
         return decorator

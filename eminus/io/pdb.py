@@ -8,6 +8,7 @@ from eminus.units import bohr2ang
 from eminus.utils import vector_angle
 
 
+@xp.debug
 def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=False):
     """Generate PDB files from atoms objects.
 
@@ -34,7 +35,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
         )
 
     atom = atoms.atom
-    pos = xp.convert(atoms.pos)
+    pos = atoms.pos
     if fods is not None:
         fods = xp.convert(fods)
         if len(fods[0]) != 0:
@@ -75,7 +76,7 @@ def create_pdb_str(atom, pos, a=None):
     # Convert Bohr to Angstrom
     pos = bohr2ang(pos)
     if a is not None:
-        a = xp.convert(bohr2ang(a))
+        a = bohr2ang(a)
 
     # PDB files have specific numbers of characters for every data with changing justification
     # Write everything explicitly down to not lose track of line lengths

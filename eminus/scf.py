@@ -601,6 +601,49 @@ class SCF(BaseObject):
             f"Smearing update cycle: {self.smear_update}"
         )
 
+    def convert(self, backend="xp"):  # noqa: C901
+        """Debug."""
+        if backend == "np":
+            import numpy as np
+
+            xp = np
+        else:
+            from . import backend as xp
+
+        self.atoms.convert(backend)
+        self.gth.convert(backend)
+        self.Vloc = xp.asarray(self.Vloc)
+        if self.W is not None:
+            for i in range(len(self.W)):
+                self.W[i] = xp.asarray(self.W[i])
+        if self.Y is not None:
+            for i in range(len(self.Y)):
+                self.Y[i] = xp.asarray(self.Y[i])
+        if self.Z is not None:
+            for i in range(len(self.Z)):
+                self.Z[i] = xp.asarray(self.Z[i])
+        if self.D is not None:
+            for i in range(len(self.D)):
+                self.D[i] = xp.asarray(self.D[i])
+        if self.n is not None:
+            self.n = xp.asarray(self.n)
+        if self.n_spin is not None:
+            self.n_spin = xp.asarray(self.n_spin)
+        if self.dn_spin is not None:
+            self.dn_spin = xp.asarray(self.dn_spin)
+        if self.tau is not None:
+            self.tau = xp.asarray(self.tau)
+        if self.phi is not None:
+            self.phi = xp.asarray(self.phi)
+        if self.exc is not None:
+            self.exc = xp.asarray(self.exc)
+        if self.vxc is not None:
+            self.vxc = xp.asarray(self.vxc)
+        if self.vsigma is not None:
+            self.vsigma = xp.asarray(self.vsigma)
+        if self.vtau is not None:
+            self.vtau = xp.asarray(self.vtau)
+
 
 class RSCF(SCF):
     """SCF class for spin-paired systems.

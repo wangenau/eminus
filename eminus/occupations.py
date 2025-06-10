@@ -393,3 +393,17 @@ class Occupations:
         Efermi = get_Efermi(self, epsilon)
         self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
         return Efermi
+
+    def convert(self, backend="xp"):
+        """Debug."""
+        if backend == "np":
+            import numpy as np
+
+            xp = np
+        else:
+            from . import backend as xp
+
+        if hasattr(self, "_f"):
+            self._f = xp.asarray(self._f)
+        if hasattr(self, "_wk"):
+            self._wk = xp.asarray(self._wk)
