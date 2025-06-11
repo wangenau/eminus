@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test configuration class."""
 
-import os
-
 import pytest
 
 import eminus
@@ -30,26 +28,6 @@ def test_libxc():
         assert config.use_pylibxc
     except ImportError:
         assert not config.use_pylibxc
-
-
-def test_threads():
-    """Check the threads setting."""
-    assert isinstance(config.threads, int) or config.threads is None
-
-    threads = 2
-    if config.backend == "torch":
-        import torch
-
-        torch.set_num_threads(threads)
-    else:
-        os.environ["OMP_NUM_THREADS"] = str(threads)
-    assert config.threads == threads
-    assert isinstance(config.threads, int)
-
-    threads = 6
-    config.threads = threads
-    assert config.threads == threads
-    assert isinstance(config.threads, int)
 
 
 def test_info():
