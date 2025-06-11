@@ -69,7 +69,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     for dim in range(3):
         Gh[:, dim] = xp.convert(atoms.J(h[spin, :, dim]))
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * xp.einsum("ir,ir->i",  xp.astype(xp.convert(atoms.G), complex), Gh)
+    return 1j * xp.einsum("ir,ir->i", xp.astype(xp.convert(atoms.G), complex), Gh)
 
 
 @handle_k(mode="reduce")
@@ -113,7 +113,9 @@ def get_tau(atoms, Y, ik):
     return (
         0.5
         * atoms.kpts.wk[ik]
-        * xp.real(xp.einsum("sj,sijr,sijr->si", xp.astype(atoms.occ.f[ik], complex), dYrs.conj(), dYrs))
+        * xp.real(
+            xp.einsum("sj,sijr,sijr->si", xp.astype(atoms.occ.f[ik], complex), dYrs.conj(), dYrs)
+        )
     )
 
 

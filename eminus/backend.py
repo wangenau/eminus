@@ -9,13 +9,13 @@ import sys
 import numpy as np
 import scipy
 
-
 from . import config
 
 
 def sqrtm(A, *args, **kwargs):
-    """sqrtm with Cupy support, convert to complex additionally."""
+    """Sqrtm with Cupy support, convert to complex additionally."""
     from array_api_compat.common import array_namespace
+
     xp = array_namespace(A)
     return xp.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=xp.complex128)
 

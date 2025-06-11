@@ -49,7 +49,9 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ xp.linalg.inv(xp.asarray(xp.sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex))
+    return W @ xp.linalg.inv(
+        xp.asarray(xp.sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex)
+    )
 
 
 @xp.debug
@@ -131,7 +133,8 @@ def get_n_spin(atoms, Y, ik):
     n = xp.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
         n[spin] = xp.sum(
-            xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(Yrs[spin].conj() * Yrs[spin]),
+            xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik])
+            * xp.real(Yrs[spin].conj() * Yrs[spin]),
             axis=1,
         )
     return n
@@ -153,7 +156,9 @@ def get_n_single(atoms, Y, ik):
     Yrs = xp.convert(atoms.I(Y, ik))
     n = xp.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(Yrs[spin].conj() * Yrs[spin])
+        n[spin] = xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(
+            Yrs[spin].conj() * Yrs[spin]
+        )
     return n
 
 

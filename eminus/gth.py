@@ -69,6 +69,7 @@ class GTH:
             self.GTH[key]["h"] = xp.asarray(self.GTH[key]["h"])
 
 
+@xp.debug
 def init_gth_loc(scf, **kwargs):
     """Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
@@ -87,7 +88,7 @@ def init_gth_loc(scf, **kwargs):
     species = set(atoms.atom)
     omega = 1  # Normally this would be det(atoms.a), but Arias notation is off by this factor
 
-    Vloc = np.zeros_like(atoms.G2)
+    Vloc = xp.zeros_like(atoms.G2)
     for isp in species:
         psp = scf.gth[isp]
         rloc = psp["rloc"]
@@ -97,12 +98,12 @@ def init_gth_loc(scf, **kwargs):
         c3 = psp["cloc"][2]
         c4 = psp["cloc"][3]
 
-        rlocG2 = atoms.G2 * rloc**2
+        rlocG2 = xp.convert(atoms.G2 * rloc**2)
         rlocG22 = rlocG2**2
-        exprlocG2 = np.exp(-0.5 * rlocG2)
+        exprlocG2 = xp.exp(-0.5 * rlocG2)
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
-        with np.errstate(divide="ignore", invalid="ignore"):
+        with xp.errstate(divide="ignore", invalid="ignore"):
             Vsp = -4 * math.pi * Zion / omega * exprlocG2 / atoms.G2 + math.sqrt(
                 (2 * math.pi) ** 3
             ) * rloc**3 / omega * exprlocG2 * (
@@ -117,14 +118,15 @@ def init_gth_loc(scf, **kwargs):
         )
 
         # Sum up the structure factor for every species
-        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        Sf = xp.zeros(len(atoms.Sf[0]), dtype=complex)
         for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
-        Vloc += np.real(atoms.J(Vsp * Sf))
+        Vloc += xp.real(xp.convert(atoms.J(Vsp * Sf)))
     return Vloc
 
 
+@xp.debug
 def init_gth_nonloc(atoms, gth):
     """Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
@@ -139,7 +141,7 @@ def init_gth_nonloc(atoms, gth):
     Returns:
         NbetaNL, prj2beta, and betaNL.
     """
-    prj2beta = np.empty((3, atoms.Natoms, 4, 7), dtype=int)
+    prj2beta = xp.empty((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
@@ -153,20 +155,20 @@ def init_gth_nonloc(atoms, gth):
 
     betaNL = []
     for ik in range(atoms.kpts.Nk):
-        betaNL_ik = np.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
+        betaNL_ik = xp.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
         ibeta = 0
         gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
-        Gkm = np.sqrt(atoms.Gk2c[ik])
+        Gkm = xp.sqrt(xp.convert(atoms.Gk2c[ik]))
         for ia in range(atoms.Natoms):
             # It is important to transform the structure factor to make both notations compatible
-            Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
+            Sf = xp.convert(atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik))
             psp = gth[atoms.atom[ia]]
             for l in range(psp["lmax"]):
                 for m in range(-l, l + 1):
                     for iprj in range(psp["Nproj_l"][l]):
                         betaNL_ik[:, ibeta] = (
                             (-1j) ** l
-                            * Ylm_real(l, m, gk)
+                            * xp.convert(Ylm_real(l, m, gk))
                             * eval_proj_G(psp, l, iprj + 1, Gkm, atoms.Omega)
                             * Sf
                         )

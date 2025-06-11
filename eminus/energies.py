@@ -8,7 +8,6 @@ import math
 import numpy as np
 from scipy.special import erfc
 
-from . import backend as xp
 from .dft import get_n_single, get_phi, H
 from .extras import d3
 from .gga import get_grad_field, get_tau
