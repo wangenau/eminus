@@ -9,9 +9,7 @@ import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
-from eminus import Atoms, config
-
-config.backend = "scipy"
+from eminus import Atoms
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()

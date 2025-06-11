@@ -7,6 +7,8 @@ All necessary dependencies to use this extra can be installed with::
     pip install eminus[hdf5]
 """
 
+import numpy as np
+
 from eminus import backend as xp
 from eminus.io.json import _custom_object_hook
 from eminus.logger import log
@@ -110,7 +112,7 @@ def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
                 dataset = fp.create_dataset(f"{path}{key}", data=[])
                 dataset.attrs["None"] = True
             # Compress arrays
-            elif xp.is_array(value):
+            elif isinstance(value, np.ndarray):
                 fp.create_dataset(
                     f"{path}{key}",
                     data=value,

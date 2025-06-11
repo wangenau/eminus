@@ -60,7 +60,8 @@ class GTH:
             from . import backend as xp
 
         self.prj2beta = xp.asarray(self.prj2beta)
-        self.betaNL = xp.asarray(self.betaNL)
+        for i in range(len(self.betaNL)):
+            self.betaNL[i] = xp.asarray(self.betaNL[i])
         for key in self.GTH:
             self.GTH[key]["cloc"] = xp.asarray(self.GTH[key]["cloc"])
             self.GTH[key]["rp"] = xp.asarray(self.GTH[key]["rp"])

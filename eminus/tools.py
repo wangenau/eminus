@@ -3,6 +3,7 @@
 """Various tools to check physical properties."""
 
 import math
+import numbers
 
 import numpy as np
 from scipy.optimize import minimize_scalar, root_scalar
@@ -522,6 +523,8 @@ def fermi_distribution(E, mu, kbT):
     """
     x = (E - mu) / kbT
     with xp.errstate(over="ignore"):
+        if isinstance(x, numbers.Real):
+            return 1 / (math.exp(x) + 1)
         return 1 / (xp.exp(x) + 1)
 
 
@@ -543,6 +546,8 @@ def electronic_entropy(E, mu, kbT):
     if abs((E - mu) / kbT) > 36:
         return 0
     f = fermi_distribution(E, mu, kbT)
+    if isinstance(f, numbers.Real):
+        return f * math.log(f) + (1 - f) * math.log(1 - f)
     return f * xp.log(f) + (1 - f) * xp.log(1 - f)
 
 
