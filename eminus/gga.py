@@ -8,9 +8,11 @@ To mitigate this, easier (but slower) implementations have been added as comment
 
 import numpy as np
 
+from . import backend as xp
 from .utils import handle_k
 
 
+@xp.debug
 def get_grad_field(atoms, field, real=True):
     """Calculate the gradient of fields on the grid per spin channel.
 
@@ -24,16 +26,17 @@ def get_grad_field(atoms, field, real=True):
     Returns:
         Gradients of field per spin channel.
     """
-    dfield = np.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
+    dfield = xp.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
     for spin in range(atoms.occ.Nspin):
         fieldG = atoms.J(field[spin])
         for dim in range(3):
-            dfield[spin, :, dim] = atoms.I(1j * atoms.G[:, dim] * fieldG)
+            dfield[spin, :, dim] = xp.convert(atoms.I(1j * atoms.G[:, dim] * fieldG))
     if real:
-        return np.real(dfield)
+        return xp.real(dfield)
     return dfield
 
 
+@xp.debug
 def gradient_correction(atoms, spin, dn_spin, vsigma):
     """Calculate the gradient correction for the exchange-correlation potential.
 
@@ -49,7 +52,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
         Gradient correction in reciprocal space.
     """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
-    h = np.empty_like(dn_spin)
+    h = xp.empty_like(dn_spin)
     if not atoms.unrestricted:
         # In the unpolarized case we have no spin mixing and only one spin density
         h[0] = 2 * vsigma[0, :, None] * dn_spin[0]
@@ -62,14 +65,15 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
     # Calculate Nabla dot h
     # Normally we would calculate the correction for each spin, but we only need one at a time in H
-    Gh = np.empty((len(atoms.G2), 3), dtype=complex)
+    Gh = xp.empty((len(atoms.G2), 3), dtype=complex)
     for dim in range(3):
-        Gh[:, dim] = atoms.J(h[spin, :, dim])
+        Gh[:, dim] = xp.convert(atoms.J(h[spin, :, dim]))
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * np.einsum("ir,ir->i", atoms.G, Gh)
+    return 1j * xp.einsum("ir,ir->i",  xp.astype(xp.convert(atoms.G), complex), Gh)
 
 
 @handle_k(mode="reduce")
+@xp.debug
 def get_tau(atoms, Y, ik):
     """Calculate the positive-definite kinetic energy densities per spin.
 
@@ -93,27 +97,27 @@ def get_tau(atoms, Y, ik):
     #     tau += 0.5 * atoms.occ.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     # return np.real(tau)
 
-    dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
+    dYrs = xp.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
     # Calculate the active G vectors and broadcast to the needed shape
     Gkc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
     for dim in range(3):
-        dYrs[..., dim] = atoms.I(1j * Gkc[..., dim] * Y, ik)
+        dYrs[..., dim] = xp.convert(atoms.I(1j * Gkc[..., dim] * Y, ik))
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
     # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
     # Sum over all states
     # Use the definition with a division by two
     # return 0.5 * np.sum(atoms.occ.f[:, None, :] * sumdYrs, axis=2)
     # Or in compressed Einstein notation:
+    atoms.convert()
     return (
         0.5
         * atoms.kpts.wk[ik]
-        * np.real(
-            np.einsum("sj,sijr,sijr->si", atoms.occ.f[ik], dYrs.conj(), dYrs, optimize="greedy")
-        )
+        * xp.real(xp.einsum("sj,sijr,sijr->si", xp.astype(atoms.occ.f[ik], complex), dYrs.conj(), dYrs))
     )
 
 
+# @xp.debug  TODO: segfaults somehow
 def calc_Vtau(scf, ik, spin, W, vtau):
     """Calculate the tau-dependent potential contribution for meta-GGAs.
 

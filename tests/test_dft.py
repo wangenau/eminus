@@ -39,7 +39,7 @@ def test_wavefunction(guess, unrestricted):
             ovlp = W[ik][s].conj().T @ scf.atoms.O(W[ik][s])
             assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
             # Also test that psiOpsi is the identity
-            ovlp = psi[ik][s].conj().T @ scf.atoms.O(psi[ik][s])
+            ovlp = np.asarray(psi[ik][s]).conj().T @ scf.atoms.O(psi[ik][s])
             assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
 
 
@@ -67,7 +67,7 @@ def test_H(unrestricted):
     for ik in range(scf.kpts.Nk):
         for s in range(scf.atoms.occ.Nspin):
             HW = H(scf, ik, s, psi)
-            WHW = psi[ik][s].conj().T @ HW
+            WHW = np.asarray(psi[ik][s]).conj().T @ HW
             # Test that WHW is a diagonal matrix
             assert_allclose(WHW, np.diag(np.diag(WHW)), atol=1e-12)
 

@@ -8,6 +8,7 @@ import math
 import numpy as np
 from scipy.special import erfc
 
+from . import backend as xp
 from .dft import get_n_single, get_phi, H
 from .extras import d3
 from .gga import get_grad_field, get_tau
@@ -376,7 +377,7 @@ def get_Eband(scf, Y, **kwargs):
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             Eband += atoms.kpts.wk[ik] * np.trace(
-                Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
+                np.asarray(Y[ik][spin]).conj().T @ H(scf, ik, spin, Y, **kwargs)
             )
     return np.real(Eband)
 

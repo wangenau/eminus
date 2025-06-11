@@ -7,8 +7,17 @@ import pathlib
 import sys
 
 import numpy as np
+import scipy
+
 
 from . import config
+
+
+def sqrtm(A, *args, **kwargs):
+    """sqrtm with Cupy support, convert to complex additionally."""
+    from array_api_compat.common import array_namespace
+    xp = array_namespace(A)
+    return xp.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=xp.complex128)
 
 
 class Backend:
@@ -16,6 +25,14 @@ class Backend:
 
     def __getattr__(self, name):
         """Access modules and functions of array backends by their name."""
+        WRAPPERS = {
+            "sqrtm": sqrtm,
+        }
+        WRAPPER_KEYS = set(WRAPPERS)
+
+        if name in WRAPPER_KEYS:
+            return WRAPPERS[name]
+
         if config.backend == "torch":
             from array_api_compat import torch as xp
         else:

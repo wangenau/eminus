@@ -4,13 +4,11 @@ band_minimizer
 cell
 dft
 energies
-gga
 gth
 kpoints
 localizer
 minimizer
 occupations
-operators
 potentials
 scf
 tools

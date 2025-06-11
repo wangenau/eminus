@@ -29,8 +29,6 @@ W[ik][s, :, n].
 
 import copy
 
-import numpy as np
-
 from . import backend as xp
 from .utils import handle_k, handle_spin
 
@@ -272,6 +270,7 @@ def K(atoms, W, ik):
     return W / (1 + atoms.Gk2c[ik][:, None])
 
 
+@xp.debug
 def T(atoms, W, dr):
     """Translation operator.
 
@@ -289,10 +288,10 @@ def T(atoms, W, dr):
         The operator applied on W.
     """
     # We can not use a fancy decorator for this operator, so handle it here
-    if isinstance(W, np.ndarray) and W.ndim == 3:
-        return np.asarray([T(atoms, Wspin, dr) for Wspin in W])
+    if xp.is_array(W) and W.ndim == 3:
+        return xp.asarray([T(atoms, Wspin, dr) for Wspin in W])
 
-    if isinstance(W, np.ndarray):
+    if xp.is_array(W):
         atoms.kpts._assert_gamma_only()
         if len(W) == len(atoms.Gk2c[0]):
             G = atoms.G[atoms.active[0]]
@@ -300,7 +299,7 @@ def T(atoms, W, dr):
             G = atoms.G[atoms.active[-1]]
         else:
             G = atoms.G
-        factor = np.exp(-1j * G @ dr)
+        factor = xp.exp(-1j * G @ xp.astype(dr, complex))
         if W.ndim == 2:
             factor = factor[:, None]
         return factor * W
@@ -313,5 +312,5 @@ def T(atoms, W, dr):
             Gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         else:
             Gk = atoms.G + atoms.kpts.k[ik]
-        Wshift[ik] = np.exp(-1j * Gk @ dr)[:, None] * W[ik]
+        Wshift[ik] = xp.exp(-1j * Gk @ xp.astype(dr, complex))[:, None] * W[ik]
     return Wshift

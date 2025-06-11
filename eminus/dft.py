@@ -8,6 +8,7 @@ import numpy as np
 from numpy.random import Generator, SFC64
 from scipy.linalg import sqrtm
 
+from . import backend as xp
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
 from .logger import log
@@ -15,6 +16,7 @@ from .utils import handle_k, handle_spin, pseudo_uniform
 from .xc import get_vxc
 
 
+@xp.debug
 def get_phi(atoms, n):
     """Solve the Poisson equation.
 
@@ -33,6 +35,7 @@ def get_phi(atoms, n):
 
 @handle_k
 @handle_spin
+@xp.debug
 def orth(atoms, W):
     """Orthogonalize coefficient matrix W.
 
@@ -46,9 +49,10 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ np.linalg.inv(np.asarray(sqrtm(W.conj().T @ atoms.O(W)), dtype=complex))
+    return W @ xp.linalg.inv(xp.asarray(xp.sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex))
 
 
+@xp.debug
 def orth_unocc(atoms, Y, Z):
     """Orthogonalize unoccupied matrix Z while maintaining orthogonality to Y.
 
@@ -62,19 +66,20 @@ def orth_unocc(atoms, Y, Z):
     Returns:
         Orthogonalized wave functions.
     """
-    D = [np.empty_like(Zk) for Zk in Z]
+    D = [xp.empty_like(xp.convert(Zk)) for Zk in Z]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             # rhoZ = (I - Y Ydag O) Z
             Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
-            rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
+            rhoZ = xp.convert(Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin]))
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
-            D[ik][spin] = rhoZ @ np.linalg.inv(
-                np.asarray(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex)
+            D[ik][spin] = rhoZ @ xp.linalg.inv(
+                xp.asarray(xp.sqrtm(rhoZ.conj().T @ xp.convert(atoms.O(rhoZ))), dtype=complex)
             )
     return D
 
 
+@xp.debug
 def get_n_total(atoms, Y, n_spin=None):
     """Calculate the total electronic density.
 
@@ -92,23 +97,23 @@ def get_n_total(atoms, Y, n_spin=None):
     """
     # Return the total density in the spin-paired case
     if n_spin is not None:
-        return np.sum(n_spin, axis=0)
+        return xp.sum(n_spin, axis=0)
 
     # n = (IW) F (IW)dag
-    n = np.zeros(atoms.Ns)
-    Yrs = atoms.I(Y)
+    n = xp.zeros(atoms.Ns)
+    Yrs = xp.convert(atoms.I(Y))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            n += np.sum(
-                atoms.occ.f[ik, spin]
-                * atoms.kpts.wk[ik]
-                * np.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
+            n += xp.sum(
+                xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik])
+                * xp.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
                 axis=1,
             )
     return n
 
 
 @handle_k(mode="reduce")
+@xp.debug
 def get_n_spin(atoms, Y, ik):
     """Calculate the electronic density per spin channel.
 
@@ -122,17 +127,18 @@ def get_n_spin(atoms, Y, ik):
     Returns:
         Electronic densities per spin channel.
     """
-    Yrs = atoms.I(Y, ik)
-    n = np.empty((atoms.occ.Nspin, atoms.Ns))
+    Yrs = xp.convert(atoms.I(Y, ik))
+    n = xp.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(
-            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]),
+        n[spin] = xp.sum(
+            xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(Yrs[spin].conj() * Yrs[spin]),
             axis=1,
         )
     return n
 
 
 @handle_k(mode="reduce")
+@xp.debug
 def get_n_single(atoms, Y, ik):
     """Calculate the single-electron densities.
 
@@ -144,13 +150,14 @@ def get_n_single(atoms, Y, ik):
     Returns:
         Single-electron densities.
     """
-    Yrs = atoms.I(Y, ik)
-    n = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
+    Yrs = xp.convert(atoms.I(Y, ik))
+    n = xp.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin])
+        n[spin] = xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(Yrs[spin].conj() * Yrs[spin])
     return n
 
 
+@xp.debug
 def get_grad(scf, ik, spin, W, **kwargs):
     """Calculate the energy gradient with respect to W.
 
@@ -169,24 +176,25 @@ def get_grad(scf, ik, spin, W, **kwargs):
         Gradient.
     """
     atoms = scf.atoms
-    F = atoms.occ.F[ik][spin]
-    HW = H(scf, ik, spin, W, **kwargs)
-    WHW = W[ik][spin].conj().T @ HW
+    F = xp.asarray(atoms.occ.F[ik][spin], dtype=complex)
+    HW = xp.convert(H(scf, ik, spin, W, **kwargs))
+    WHW = xp.convert(W[ik][spin]).conj().T @ HW
     # U = Wdag O(W)
-    OW = atoms.O(W[ik][spin])
-    U = W[ik][spin].conj().T @ OW
-    invU = np.linalg.inv(U)
-    U12 = np.asarray(sqrtm(invU), dtype=complex)
+    OW = xp.convert(atoms.O(W[ik][spin]))
+    U = xp.convert(W[ik][spin]).conj().T @ OW
+    invU = xp.linalg.inv(U)
+    U12 = xp.asarray(sqrtm(invU), dtype=complex)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
-    Ht = np.linalg.multi_dot([U12, WHW, U12])
+    Ht = xp.linalg.multi_dot([U12, WHW, U12])
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    tmp = np.linalg.multi_dot([OW, invU, WHW])
+    tmp = xp.linalg.multi_dot([OW, invU, WHW])
     return atoms.kpts.wk[ik] * (
-        np.linalg.multi_dot([HW - tmp, U12, F, U12])
-        + np.linalg.multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)])
+        xp.linalg.multi_dot([HW - tmp, U12, F, U12])
+        + xp.linalg.multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)])
     )
 
 
+@xp.debug
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     """Left-hand side of the eigenvalue equation.
 
@@ -213,10 +221,10 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     # If dn_spin is None all other keyword arguments are None by design
     # In that case precompute values from the SCF class
     if phi is None:
-        dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
+        dn_spin, phi, vxc, vsigma, vtau = xp.convert(H_precompute(scf, W))
 
     # This calculates the XC potential in the reciprocal space
-    Gvxc = atoms.J(vxc[spin])
+    Gvxc = xp.convert(atoms.J(vxc[spin]))
     # Calculate the gradient correction to the potential if a (meta-)GGA functional is used
     if "gga" in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
@@ -235,6 +243,7 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     )
 
 
+@xp.debug
 def H_precompute(scf, W):
     """Create precomputed values as intermediate results.
 
@@ -264,6 +273,7 @@ def H_precompute(scf, W):
     return dn_spin, phi, vxc, vsigma, vtau
 
 
+@xp.debug
 def Q(inp, U):
     """Operator needed to calculate gradients with non-constant occupations.
 
@@ -276,15 +286,16 @@ def Q(inp, U):
     Returns:
         Q operator result.
     """
-    mu, V = np.linalg.eig(U)
+    mu, V = xp.linalg.eig(U)
     mu = mu[:, None]
-    denom = np.sqrt(mu) @ np.ones((1, len(mu)))
+    denom = xp.sqrt(mu) @ xp.ones((1, len(mu)), dtype=complex)
     denom2 = denom + denom.conj().T
     # return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
-    tmp = np.linalg.multi_dot([V.conj().T, inp, V])
-    return np.linalg.multi_dot([V, tmp / denom2, V.conj().T])
+    tmp = xp.linalg.multi_dot([V.conj().T, inp, V])
+    return xp.linalg.multi_dot([V, tmp / denom2, V.conj().T])
 
 
+@xp.debug
 def get_psi(scf, W, **kwargs):
     """Calculate eigenstates from H.
 
@@ -305,16 +316,17 @@ def get_psi(scf, W, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = orth(atoms, W)
-    psi = [np.empty_like(Yk) for Yk in Y]
+    Y = xp.convert(orth(atoms, W))
+    psi = [xp.empty_like(xp.convert(Yk)) for Yk in Y]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
-            _, D = np.linalg.eigh(mu)
+            mu = Y[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, Y, **kwargs))
+            _, D = xp.linalg.eigh(mu)
             psi[ik][spin] = Y[ik][spin] @ D
     return psi
 
 
+@xp.debug
 def get_epsilon(scf, W, **kwargs):
     """Calculate eigenvalues from H.
 
@@ -335,15 +347,16 @@ def get_epsilon(scf, W, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = orth(atoms, W)
-    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
+    Y = xp.convert(orth(atoms, W))
+    epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
-            epsilon[ik][spin] = np.sort(np.linalg.eigvalsh(mu))
+            mu = Y[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, Y, **kwargs))
+            epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
+@xp.debug
 def get_epsilon_unocc(scf, W, Z, **kwargs):
     """Calculate eigenvalues from H of unoccupied states.
 
@@ -365,13 +378,13 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = orth(atoms, W)
+    Y = xp.convert(orth(atoms, W))
     D = orth_unocc(atoms, Y, Z)
-    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
+    epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = D[ik][spin].conj().T @ H(scf, ik, spin, D, **kwargs)
-            epsilon[ik][spin] = np.sort(np.linalg.eigvalsh(mu))
+            mu = D[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, D, **kwargs))
+            epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
