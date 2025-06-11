@@ -3,7 +3,6 @@ atoms
 band_minimizer
 cell
 dft
-domains
 energies
 gga
 gth

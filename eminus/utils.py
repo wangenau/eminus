@@ -98,7 +98,7 @@ def Ylm_real(l, m, G):  # noqa: C901
         return 0.5 * math.sqrt(1 / math.pi) * xp.ones(len(G))
 
     # cos(theta)=Gz/|G|
-    Gm = np.linalg.norm(G, axis=1)
+    Gm = xp.linalg.norm(G, axis=1)
     with xp.errstate(divide="ignore", invalid="ignore"):
         cos_theta = G[:, 2] / Gm
     # Account for small magnitudes, if norm(G) < eps: cos_theta=0

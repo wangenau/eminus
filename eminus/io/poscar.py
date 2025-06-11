@@ -6,7 +6,7 @@ import time
 
 import numpy as np
 
-# from eminus import backend as xp
+from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import ang2bohr, bohr2ang
 from eminus.version import __version__
@@ -75,6 +75,7 @@ def read_poscar(filename):
     return atom, pos, a
 
 
+@xp.debug
 def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate POSCAR files from atoms objects.
 

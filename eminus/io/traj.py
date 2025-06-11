@@ -54,6 +54,7 @@ def read_traj(filename):
     return traj
 
 
+@xp.debug
 def write_traj(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate TRAJ files from atoms objects.
 

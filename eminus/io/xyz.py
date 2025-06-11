@@ -53,6 +53,7 @@ def read_xyz(filename):
     return atom, pos
 
 
+@xp.debug
 def write_xyz(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=False):
     """Generate XYZ files from atoms objects.
 

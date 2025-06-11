@@ -55,6 +55,7 @@ def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
         fp.write(create_pdb_str(atom, pos, a=atoms.a))
 
 
+@xp.debug
 def create_pdb_str(atom, pos, a=None):
     """Convert atom symbols and positions to the PDB format.
 
