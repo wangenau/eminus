@@ -8,6 +8,7 @@ import numbers
 import numpy as np
 from scipy.fft import next_fast_len
 
+from . import backend as xp
 from . import operators
 from .kpoints import KPoints
 from .logger import create_logger, get_level, log
@@ -120,7 +121,7 @@ class Atoms(BaseObject):
     @pos.setter
     def pos(self, value):
         # We need atom positions as a two-dimensional array
-        self._pos = np.atleast_2d(value)
+        self._pos = xp.atleast_2d(xp.asarray(value))
         if self.Natoms != len(self._pos):
             msg = (
                 f"Mismatch between number of atoms ({self.Natoms}) and number of "
@@ -143,7 +144,7 @@ class Atoms(BaseObject):
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations
-        self.s = [next_fast_len(i) for i in s]
+        self.s = [int(next_fast_len(i)) for i in s]
         # The cell discretization changes when changing s or ecut
         self.is_built = False
 
@@ -155,16 +156,16 @@ class Atoms(BaseObject):
     @a.setter
     def a(self, value):
         # Build a cubic cell if a number or 1d-array is given
-        if np.asarray(value).ndim <= 1:
-            self._a = value * np.eye(3)
+        if xp.asarray(value).ndim <= 1:
+            self._a = value * xp.eye(3)
         # Otherwise scaled cell vectors are given
         else:
-            self._a = np.asarray(value)
+            self._a = xp.asarray(value)
         # Update ecut and s if it has been set before
         if hasattr(self, "ecut"):
             self.ecut = self.ecut
         # Calculate the unit cell volume
-        self._Omega = abs(np.linalg.det(self._a))
+        self._Omega = abs(xp.linalg.det(self._a))
         if hasattr(self, "kpts"):
             self.kpts.a = self._a
         # The cell changes when changing a
@@ -220,12 +221,12 @@ class Atoms(BaseObject):
         # Rotate before shifting!
         if self._center is True or self._center == "rotate":
             I = inertia_tensor(self.pos)
-            _, eigvecs = np.linalg.eigh(I)
-            self.pos = (np.linalg.inv(eigvecs) @ self.pos.T).T
+            _, eigvecs = xp.linalg.eigh(I)
+            self.pos = (xp.linalg.inv(eigvecs) @ self.pos.T).T
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == "shift":
             com = center_of_mass(self.pos)
-            self.pos = self.pos - (com - np.sum(self.a, axis=0) / 2)
+            self.pos = self.pos - (com - xp.sum(self.a, axis=0) / 2)
         # The structure factor changes when changing pos
         self.is_built = False
 
@@ -263,9 +264,9 @@ class Atoms(BaseObject):
     def s(self, value):
         # Choose the same sampling for every direction if an integer is given
         if isinstance(value, numbers.Integral):
-            value = value * np.ones(3, dtype=int)
-        self._s = np.asarray(value)
-        self._Ns = int(np.prod(self._s))
+            value = value * xp.ones(3, dtype=int)
+        self._s = xp.asarray(value)
+        self._Ns = int(xp.prod(self._s))
         # The cell discretization changes when changing s
         self.is_built = False
 
@@ -278,13 +279,13 @@ class Atoms(BaseObject):
     def Z(self, value):
         # Assume same charges for all atoms if an integer is given
         if isinstance(value, numbers.Integral):
-            value = value * np.ones(self.Natoms, dtype=int)
+            value = value * xp.ones(self.Natoms, dtype=int)
         elif isinstance(value, dict):
             value = [value[ia] for ia in self.atom]
         # Get the valence charges from the GTH files
         elif value is None or isinstance(value, str):
             value = atom2charge(self.atom, value)
-        self._Z = np.asarray(value)
+        self._Z = xp.asarray(value)
         if self.Natoms != len(self._Z):
             msg = (
                 f"Mismatch between number of atoms ({self.Natoms}) and number of "
@@ -292,7 +293,7 @@ class Atoms(BaseObject):
             )
             raise ValueError(msg)
         # Get the number of calculated electrons and pass it to occ
-        self.occ.Nelec = np.sum(self._Z) - self.charge
+        self.occ.Nelec = xp.sum(self._Z) - self.charge
         if self.occ.Nspin and self.occ.bands < self.occ.Nelec * self.occ.Nspin // 2:
             log.warning("The number of bands is too small, reset to the minimally needed amount.")
             self.occ.bands = 0
@@ -386,13 +387,13 @@ class Atoms(BaseObject):
         """
         com = center_of_mass(self.pos)
         if center is None:
-            self.pos = self.pos - (com - np.sum(self.a, axis=0) / 2)
+            self.pos = self.pos - (com - xp.sum(self.a, axis=0) / 2)
         else:
-            center = np.asarray(center)
+            center = xp.asarray(center)
             self.pos = self.pos - (com - center)
         if self.Sf is not None:
             # Recalculate the structure factor since it depends on the atom positions
-            self._Sf = np.exp(1j * self.G @ self.pos.T).T
+            self._Sf = xp.exp(1j * self.G @ self.pos.T).T
         self._center = "recentered"
         return self
 
@@ -406,11 +407,11 @@ class Atoms(BaseObject):
             wk: k-point weights.
         """
         self.kpts.build()
-        self.kpts._k = np.atleast_2d(k)
+        self.kpts._k = xp.atleast_2d(k)
         if wk is None:
-            self.kpts._wk = np.ones(len(self.kpts._k)) / len(self.kpts._k)
+            self.kpts._wk = xp.ones(len(self.kpts._k)) / len(self.kpts._k)
         else:
-            self.kpts._wk = np.asarray(wk)
+            self.kpts._wk = xp.asarray(wk)
         self.kpts._Nk = len(self.kpts._wk)
         self.kpts._kmesh = None
         self.occ.wk = self.kpts.wk
@@ -444,7 +445,7 @@ class Atoms(BaseObject):
         # m2 = np.floor(ms / self.s[2]) % self.s[1]
         # m3 = ms % self.s[2]
         # M = np.column_stack((m1, m2, m3))
-        M = np.indices(self.s).transpose((1, 2, 3, 0)).reshape((-1, 3))
+        M = xp.asarray(np.indices(self.s).transpose((1, 2, 3, 0)).reshape((-1, 3)), dtype=float)
         # Build index matrix N
         N = M - (self.s / 2 < M) * self.s
         return M, N
@@ -454,28 +455,28 @@ class Atoms(BaseObject):
         # Calculate index matrices
         M, N = self._get_index_matrices()
         # Build the real-space sampling
-        self._r = M @ np.linalg.inv(np.diag(self.s)) @ self.a
+        self._r = M @ xp.linalg.inv(xp.diag(xp.astype(self.s, float))) @ self.a
         # Build G-vectors
-        self._G = 2 * math.pi * N @ np.linalg.inv(self.a.T)
+        self._G = 2 * math.pi * N @ xp.linalg.inv(self.a.T)
         # Calculate squared magnitudes of G-vectors
-        self._G2 = np.linalg.norm(self.G, axis=1) ** 2
+        self._G2 = xp.linalg.norm(self.G, axis=1) ** 2
         # Calculate the G2 restriction
         self._active = [
-            np.nonzero(2 * self.ecut >= np.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2)
+            xp.nonzero(2 * self.ecut >= xp.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2)
             for ik in range(self.kpts.Nk)
         ]
-        self._G2c = self._G2[np.nonzero(2 * self.ecut >= self._G2)]
+        self._G2c = self._G2[xp.nonzero(2 * self.ecut >= self._G2)]
         # Calculate G+k-vectors
-        self._Gk2 = np.asarray(
-            [np.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
+        self._Gk2 = xp.stack(
+            [xp.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
         )
         self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
-        self._Sf = np.exp(1j * self.G @ self.pos.T).T
+        self._Sf = xp.exp(1j * self.G @ xp.astype(self.pos.T, complex)).T
 
         # Create the grid used for the non-wave function fields and append it to the end
-        self._active.append(np.nonzero(2 * self.ecut >= self._G2))
-        self._Gk2 = np.vstack((self._Gk2, self._G2))
+        self._active.append(xp.nonzero(2 * self.ecut >= self._G2))
+        self._Gk2 = xp.vstack((self._Gk2, self._G2))
         self._Gk2c.append(self._G2c)
 
     O = operators.O
@@ -497,40 +498,3 @@ class Atoms(BaseObject):
                 f"{self.pos[i, 0]:10.5f}  {self.pos[i, 1]:10.5f}  {self.pos[i, 2]:10.5f}"
             )
         return out
-
-    def convert(self, backend="xp"):
-        """Debug."""
-        if backend == "np":
-            import numpy as np
-
-            xp = np
-        else:
-            from . import backend as xp
-
-        self.occ.convert(backend)
-        self.kpts.convert(backend)
-        self._pos = xp.asarray(self._pos)
-        self._a = xp.asarray(self._a)
-        if hasattr(self, "_f"):
-            self._f = xp.asarray(self._f)
-        self._s = xp.asarray(self._s)
-        self._Z = xp.asarray(self._Z)
-        self._Ns = xp.asarray(self._Ns)
-        if self._r is not None:
-            self._r = xp.asarray(self._r)
-        if self._active is not None:
-            for i in range(len(self._active)):
-                self._active[i] = (xp.asarray(self._active[i][0]),)
-        if self._G is not None:
-            self._G = xp.asarray(self._G)
-        if self._G2 is not None:
-            self._G2 = xp.asarray(self._G2)
-        if self._G2c is not None:
-            self._G2c = xp.asarray(self._G2c)
-        if self._Gk2 is not None:
-            self._Gk2 = xp.asarray(self._Gk2)
-        if self._Gk2c is not None:
-            for i in range(len(self._Gk2c)):
-                self._Gk2c[i] = xp.asarray(self._Gk2c[i])
-        if self._Sf is not None:
-            self._Sf = xp.asarray(self._Sf)

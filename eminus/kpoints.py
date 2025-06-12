@@ -28,7 +28,7 @@ class KPoints(BaseObject):
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
-            a = a * np.asarray(LATTICE_VECTORS[self.lattice])
+            a = a * xp.asarray(LATTICE_VECTORS[self.lattice])
         self.a = a  #: Cell size.
         self.kmesh = [1, 1, 1]  #: k-point mesh.
         self.wk = [1]  #: k-point weights.
@@ -48,8 +48,8 @@ class KPoints(BaseObject):
     def kmesh(self, value):
         if value is not None:
             if isinstance(value, numbers.Integral):
-                value = value * np.ones(3, dtype=int)
-            self._kmesh = np.asarray(value)
+                value = value * xp.ones(3, dtype=int)
+            self._kmesh = xp.asarray(value)
             self.path = None
             self.is_built = False
         # If we set a band path to the object the k-mesh gets set to None
@@ -63,7 +63,7 @@ class KPoints(BaseObject):
 
     @wk.setter
     def wk(self, value):
-        self._wk = np.asarray(value)
+        self._wk = xp.asarray(value)
         self._Nk = len(self._wk)
         self.is_built = False
 
@@ -74,7 +74,7 @@ class KPoints(BaseObject):
 
     @k.setter
     def k(self, value):
-        self._k = np.asarray(value)
+        self._k = xp.asarray(value)
         self.is_built = False
 
     @property
@@ -94,7 +94,7 @@ class KPoints(BaseObject):
 
     @kshift.setter
     def kshift(self, value):
-        self._kshift = np.asarray(value)
+        self._kshift = xp.asarray(value)
         self.is_built = False
 
     @property
@@ -135,7 +135,7 @@ class KPoints(BaseObject):
 
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == "sc" and not (self.a == np.diag(np.diag(self.a))).all():
+        if self.lattice == "sc" and not (self.a == xp.diag(xp.diag(self.a))).all():
             log.warning("Lattice system and lattice vectors do not match.")
         if self.is_built:
             return self
@@ -146,8 +146,9 @@ class KPoints(BaseObject):
                 self._k_scaled = monkhorst_pack(self.kmesh)
         else:
             self._k_scaled = bandpath(self)
+        self._k_scaled = xp.convert(self._k_scaled)
         # Without removing redundancies the weight is the same for all k-points
-        self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
+        self.wk = xp.ones(len(self._k_scaled)) / len(self._k_scaled)
         self.k = kpoint_convert(self._k_scaled, self.a) + self.kshift
         self.is_built = True
         return self
@@ -158,19 +159,19 @@ class KPoints(BaseObject):
         """Reduce k-points using time reversal symmetry (k=-k)."""
         if not self.is_built:
             self.build()
-        if not np.any(self.k < 0):
+        if not xp.any(self.k < 0):
             log.warning("No negative k-points found. Nothing to do.")
             return self
         idx_to_remove = []
         for i in range(self.Nk):
             for j in range(i + 1, self.Nk):
                 # Check k=-k within some tolerance
-                if np.sum(np.abs(self.k[i] + self.k[j])) < 1e-15:
+                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-15:
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = np.delete(self.k, idx_to_remove, axis=0)
-        self.wk = np.delete(self.wk, idx_to_remove)
+        self.k = xp.delete(self.k, idx_to_remove, axis=0)
+        self.wk = xp.delete(self.wk, idx_to_remove)
         return self
 
     def _assert_gamma_only(self):
@@ -193,20 +194,6 @@ class KPoints(BaseObject):
             f"Weights: {self.wk}"
         )
 
-    def convert(self, backend="xp"):
-        """Debug."""
-        if backend == "np":
-            import numpy as np
-
-            xp = np
-        else:
-            from . import backend as xp
-
-        self._wk = xp.asarray(self._wk)
-        self._k = xp.asarray(self._k)
-        if hasattr(self, "_k_scaled"):
-            self._k_scaled = xp.asarray(self._k_scaled)
-
 
 def kpoint_convert(k_points, lattice_vectors):
     """Convert scaled k-points to cartesian coordinates.
@@ -220,8 +207,8 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         k-points in cartesian coordinates.
     """
-    inv_cell = 2 * math.pi * np.linalg.inv(lattice_vectors).T
-    return k_points @ inv_cell
+    inv_cell = 2 * math.pi * xp.linalg.inv(lattice_vectors).T
+    return xp.asarray(k_points) @ inv_cell
 
 
 def monkhorst_pack(nk):
@@ -318,7 +305,7 @@ def bandpath(kpts):
         # If we jump, add the new special point to start from
         elif path_list[i] == ",":
             k_points.append(s_points[path_list[i + 1]])
-    return np.asarray(k_points)
+    return xp.asarray(k_points)
 
 
 def kpoints2axis(kpts):

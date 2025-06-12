@@ -7,6 +7,7 @@ import numbers
 
 import numpy as np
 
+from . import backend as xp
 from .logger import log
 from .tools import fermi_distribution, get_Efermi
 
@@ -108,8 +109,8 @@ class Occupations:
     @f.setter
     def f(self, value):
         # Make sure the occupations are in a two-dimensional array
-        if isinstance(value, (list, tuple, np.ndarray)):
-            value = np.atleast_2d(value)
+        if isinstance(value, (list, tuple)) or xp.is_array(value):
+            value = xp.atleast_2d(value)
         self.is_filled = False
         # This setter will only be called when explicitly setting f
         # Call the fill function in that case
@@ -132,7 +133,7 @@ class Occupations:
 
     @wk.setter
     def wk(self, value):
-        self._wk = np.asarray(value)
+        self._wk = xp.asarray(value)
         self._Nk = len(self._wk)
         self.is_filled = False
 
@@ -169,7 +170,7 @@ class Occupations:
         if not self.is_filled:
             log.warning("Can not calculate magnetization for unfilled occupations.")
             return 0
-        return np.sum(self.wk * (self.f[:, 0] - self.f[:, 1])) / np.sum(self.wk * self.f)
+        return xp.sum(self.wk * (self.f[:, 0] - self.f[:, 1])) / xp.sum(self.wk * self.f)
 
     @magnetization.setter
     def magnetization(self, value):
@@ -199,7 +200,7 @@ class Occupations:
     @property
     def F(self):
         """Diagonal matrices of f per k-point and spin."""
-        return [[np.diag(f) for f in f_spin] for f_spin in self.f]
+        return [[xp.diag(f) for f in f_spin] for f_spin in self.f]
 
     # ### Class methods ###
 
@@ -235,7 +236,7 @@ class Occupations:
             # Do not leave the states array empty when no electrons are present
             if self.Nelec <= 0:
                 self._Nstate = 1
-                self._f = np.zeros((self.Nk, self.Nspin, 1))
+                self._f = xp.zeros((self.Nk, self.Nspin, 1))
             # Always use the fractional fillings method if a magnetization is given
             elif isinstance(magnetization, numbers.Real):
                 self._fractional_fillings(value, magnetization)
@@ -249,12 +250,12 @@ class Occupations:
             self._f = value
             self._Nspin = len(value)
             self._Nstate = len(value[0])
-            self._charge += self.Nelec - int(np.sum(value))
-            self.Nelec = int(np.sum(value))
+            self._charge += self.Nelec - int(xp.sum(value))
+            self.Nelec = int(xp.sum(value))
             if self.Nspin == 1:
                 self.spin = 0
             else:
-                self.spin = abs(np.sum(self.f[0] - self.f[1]))
+                self.spin = abs(xp.sum(self.f[0] - self.f[1]))
 
     def _integer_fillings(self, f):
         """Update fillings while maintaining integer occupations numbers.
@@ -265,10 +266,10 @@ class Occupations:
         # Determine the electrons per spin channel
         Nup = self.Nelec // self.Nspin + self.spin // self.Nspin + self.Nelec % self.Nspin
         Ndw = self.Nelec // self.Nspin - self.spin // self.Nspin
-        elecs = np.asarray([Nup, Ndw])
+        elecs = xp.asarray([Nup, Ndw])
 
         # Get the number of states
-        Nstate = int(np.ceil(max(elecs / f)))
+        Nstate = int(xp.ceil(max(elecs / f)))
         # If no bands are set, set them now
         if self.bands == 0:
             self.bands = Nstate
@@ -283,10 +284,10 @@ class Occupations:
             self._Nempty = self.bands - Nstate
 
         # Simply build the occupations array
-        self._f = f * np.ones((self.Nspin, Nstate), dtype=int)
+        self._f = f * xp.ones((self.Nspin, Nstate), dtype=int)
         # If we have filled too much correct it in the second spin channel
         # The following procedure ensures that we have no negative fillings
-        rest = np.sum(self._f) - self.Nelec
+        rest = xp.sum(self._f) - self.Nelec
         i = 1
         while rest > 0:
             # If the occupation is greater than the rest we are done with removing electrons
@@ -300,9 +301,9 @@ class Occupations:
 
         if self.smearing > 0:
             # Append extra states
-            self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - Nstate))))
+            self._f = xp.hstack((self._f, xp.zeros((self.Nspin, self.bands - Nstate))))
             self._Nstate = self.bands
-        self._f = np.vstack([[self._f]] * self.Nk)
+        self._f = xp.vstack([xp.asarray(np.asarray([self._f]))] * self.Nk)
 
     def _fractional_fillings(self, f, magnetization=None):
         """Update fillings while allowing fractional occupation numbers.
@@ -322,10 +323,10 @@ class Occupations:
             Nup = (magnetization * self.Nelec + self.Nelec) / 2
             Ndw = self.Nelec - Nup
             self.spin = abs(Nup - Ndw)
-        elecs = np.asarray([Nup, Ndw])
+        elecs = xp.asarray([Nup, Ndw])
 
         # Get the number of states
-        Nstate = int(np.ceil(max(elecs / f)))
+        Nstate = int(xp.ceil(max(elecs / f)))
         # If no bands are set, set them now
         if self.bands == 0:
             self.bands = Nstate
@@ -340,10 +341,10 @@ class Occupations:
             self._Nempty = self.bands - Nstate
 
         # Simply build the occupations array
-        self._f = f * np.ones((self.Nspin, Nstate))
+        self._f = f * xp.ones((self.Nspin, Nstate))
         # If we have filled too much correct it in both spin channels
         # The following procedure ensures that we have no negative fillings
-        rest = np.sum(self._f, axis=1) - elecs
+        rest = xp.sum(self._f, axis=1) - elecs
         for spin in range(self.Nspin):
             i = 1
             while rest[spin] > 0:
@@ -358,9 +359,9 @@ class Occupations:
 
         if self.smearing > 0:
             # Append extra states
-            self._f = np.hstack((self._f, np.zeros((self.Nspin, self.bands - Nstate))))
+            self._f = xp.hstack((self._f, xp.zeros((self.Nspin, self.bands - Nstate))))
             self._Nstate = self.bands
-        self._f = np.vstack([[self._f]] * self.Nk)
+        self._f = xp.vstack([xp.asarray(np.asarray([self._f]))] * self.Nk)
 
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""
@@ -393,17 +394,3 @@ class Occupations:
         Efermi = get_Efermi(self, epsilon)
         self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
         return Efermi
-
-    def convert(self, backend="xp"):
-        """Debug."""
-        if backend == "np":
-            import numpy as np
-
-            xp = np
-        else:
-            from . import backend as xp
-
-        if hasattr(self, "_f"):
-            self._f = xp.asarray(self._f)
-        if hasattr(self, "_wk"):
-            self._wk = xp.asarray(self._wk)

@@ -4,7 +4,6 @@
 
 import math
 
-import numpy as np
 from numpy.random import Generator, SFC64
 from scipy.linalg import sqrtm
 
@@ -393,6 +392,7 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
     return epsilon
 
 
+@xp.debug
 def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     """Generate random initial-guess coefficients as starting values.
 
@@ -418,15 +418,16 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
             W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + 1j * rng.standard_normal(
                 (len(atoms.Gk2c[ik]), Nstate)
             )
-            W.append(np.asarray([W_ik] * atoms.occ.Nspin))
+            W.append(xp.asarray([W_ik] * atoms.occ.Nspin))
         else:
             W_ik = rng.standard_normal(
                 (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
             ) + 1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
-            W.append(W_ik)
+            W.append(xp.convert(W_ik))
     return orth(atoms, W)
 
 
+@xp.debug
 def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     """Generate initial-guess coefficients using pseudo-random starting values.
 
@@ -449,8 +450,8 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     for ik in range(atoms.kpts.Nk):
         if symmetric:
             W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), Nstate), seed=seed)
-            W.append(np.asarray([W_ik[0]] * atoms.occ.Nspin))
+            W.append(xp.asarray([W_ik[0]] * atoms.occ.Nspin))
         else:
             W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate), seed=seed)
-            W.append(W_ik)
+            W.append(xp.convert(W_ik))
     return orth(atoms, W)

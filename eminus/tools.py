@@ -457,7 +457,7 @@ def get_bandgap(scf):
         return 0
 
     e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
-    return np.min(e_unocc) - np.max(e_occ)
+    return xp.min(e_unocc) - xp.max(e_occ)
 
 
 def get_Efermi(obj, epsilon=None):
@@ -492,19 +492,19 @@ def get_Efermi(obj, epsilon=None):
         """Number of electrons by Fermi distribution minus the actual number of electrons."""
         occ_sum = 0
         for ik in range(occ.Nk):
-            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
+            occ_sum += occ.wk[ik] * xp.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
         return occ_sum * 2 / occ.Nspin - occ.Nelec
 
     # For smeared systems we have to find the root of an objective function
     if occ.smearing > 0:
-        return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
+        return root_scalar(electron_root, bracket=(float(xp.min(e_occ)), float(xp.max(e_occ)))).root
 
     if obj.Z is None:
         log.warning("The SCF object has no unoccupied energies, return the maximum energy instead.")
-        return np.max(e_occ)
+        return xp.max(e_occ)
 
     e_unocc = get_epsilon_unocc(obj, obj.W, obj.Z, **obj._precomputed)
-    return np.max(e_occ) + (np.min(e_unocc) - np.max(e_occ)) / 2
+    return xp.max(e_occ) + (xp.min(e_unocc) - xp.max(e_occ)) / 2
 
 
 @xp.debug

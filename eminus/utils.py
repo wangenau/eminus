@@ -184,7 +184,7 @@ def handle_spin(func):
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
         if W.ndim == 3:
-            return np.asarray([func(obj, Wspin, *args, **kwargs) for Wspin in W])
+            return xp.stack([func(obj, Wspin, *args, **kwargs) for Wspin in W])
         return func(obj, W, *args, **kwargs)
 
     return decorator
@@ -207,7 +207,7 @@ def handle_k(func=None, *, mode="gracefully"):
 
     @functools.wraps(func)
     def decorator(obj, W, *args, **kwargs):
-        if isinstance(W, list) or (isinstance(W, np.ndarray) and W.ndim == 4):
+        if isinstance(W, list) or (xp.is_array(W) and W.ndim == 4):
             # No explicit k-point indexing is needed
             if mode == "gracefully":
                 return [func(obj, Wk, *args, **kwargs) for Wk in W]
@@ -222,7 +222,7 @@ def handle_k(func=None, *, mode="gracefully"):
             if mode == "skip":
                 obj._atoms.kpts._assert_gamma_only()
                 ret = func(obj, W[0], *args, **kwargs)
-                if isinstance(ret, np.ndarray) and ret.ndim == 3:
+                if isinstance(ret, xp.ndarray) and ret.ndim == 3:
                     return [ret]
                 return ret
         return func(obj, W, *args, **kwargs)

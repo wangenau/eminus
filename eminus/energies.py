@@ -8,6 +8,7 @@ import math
 import numpy as np
 from scipy.special import erfc
 
+from . import backend as xp
 from .dft import get_n_single, get_phi, H
 from .extras import d3
 from .gga import get_grad_field, get_tau
@@ -93,7 +94,9 @@ def get_Ekin(atoms, Y, ik):
         Ekin += (
             -0.5
             * atoms.kpts.wk[ik]
-            * np.trace(atoms.occ.F[ik][spin] @ Y[spin].conj().T @ atoms.L(Y[spin], ik))
+            * np.trace(
+                xp.astype(atoms.occ.F[ik][spin], complex) @ Y[spin].conj().T @ atoms.L(Y[spin], ik)
+            )
         )
     return np.real(Ekin)
 
@@ -116,7 +119,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
-    return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
+    return np.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
@@ -142,7 +145,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
-    return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return np.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
 def get_Eloc(scf, n):
@@ -185,7 +188,7 @@ def get_Enonloc(scf, Y, ik):
     for spin in range(atoms.occ.Nspin):
         betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
 
-        enl = np.zeros(Y.shape[-1], dtype=complex)
+        enl = xp.zeros(Y.shape[-1], dtype=complex)
         for ia in range(atoms.Natoms):
             psp = scf.gth[atoms.atom[ia]]
             for l in range(psp["lmax"]):
@@ -196,7 +199,7 @@ def get_Enonloc(scf, Y, ik):
                             jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp["lmax"] - 1] - 1
                             hij = psp["h"][l, iprj, jprj]
                             enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-        Enonloc += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
+        Enonloc += xp.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
     return np.real(Enonloc * atoms.Omega)
 
@@ -234,23 +237,23 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     nu = 0.5 * math.sqrt(gcut**2 / gexp)
 
     # Start by calculating the self-energy
-    Eewald = -nu / math.sqrt(math.pi) * np.sum(atoms.Z**2)
+    Eewald = -nu / math.sqrt(math.pi) * np.sum(np.asarray(atoms.Z) ** 2)
     # Add the electroneutrality term
-    Eewald += -math.pi * np.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
+    Eewald += -math.pi * np.sum(np.asarray(atoms.Z)) ** 2 / (2 * nu**2 * atoms.Omega)
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
-    Rm = np.linalg.norm(atoms.a, axis=1)
+    Rm = np.linalg.norm(np.asarray(atoms.a), axis=1)
     tmax = math.sqrt(0.5 * gexp) / nu
     s = np.rint(tmax / Rm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the translation vectors
-    T = M @ atoms.a
+    T = M @ np.asarray(atoms.a)
 
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
-    g = 2 * math.pi * np.linalg.inv(atoms.a.T)
+    g = 2 * math.pi * np.linalg.inv(np.asarray(atoms.a).T)
     gm = np.linalg.norm(g, axis=1)
     s = np.rint(gcut / gm + 1.5)
     # Collect all box index vectors in a matrix
@@ -258,12 +261,12 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
     G2 = np.linalg.norm(G, axis=1) ** 2
-    prefactor = 2 * math.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
+    prefactor = 2 * math.pi / float(atoms.Omega) * np.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
-            dpos = atoms.pos[ia] - atoms.pos[ja]
-            ZiZj = atoms.Z[ia] * atoms.Z[ja]
+            dpos = np.asarray(atoms.pos[ia] - atoms.pos[ja])
+            ZiZj = np.asarray(atoms.Z[ia] * atoms.Z[ja])
 
             # Add the real-space contribution
             rmag = np.linalg.norm(dpos - T, axis=1)
@@ -375,10 +378,10 @@ def get_Eband(scf, Y, **kwargs):
     Eband = 0
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            Eband += atoms.kpts.wk[ik] * np.trace(
-                np.asarray(Y[ik][spin]).conj().T @ H(scf, ik, spin, Y, **kwargs)
+            Eband += atoms.kpts.wk[ik] * xp.trace(
+                xp.asarray(Y[ik][spin]).conj().T @ H(scf, ik, spin, Y, **kwargs)
             )
-    return np.real(Eband)
+    return xp.real(Eband)
 
 
 def get_Eentropy(scf, epsilon, Efermi):
