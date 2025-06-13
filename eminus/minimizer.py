@@ -4,6 +4,7 @@
 
 import copy
 import logging
+import math
 
 import numpy as np
 
@@ -143,7 +144,7 @@ def linmin_test(g, d):
         Linmin angle.
     """
     # cos = A B / |A| |B|
-    return dotprod(g, d) / xp.sqrt(dotprod(g, g) * dotprod(d, d))
+    return dotprod(g, d) / math.sqrt(dotprod(g, g) * dotprod(d, d))
 
 
 def cg_test(atoms, ik, g, g_old, precondition=True):
@@ -171,7 +172,7 @@ def cg_test(atoms, ik, g, g_old, precondition=True):
     else:
         Kg, Kg_old = g, g_old
     # cos = A B / |A| |B|
-    return dotprod(g, Kg_old) / xp.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
+    return dotprod(g, Kg_old) / math.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
 def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):

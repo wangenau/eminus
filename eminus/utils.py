@@ -177,6 +177,24 @@ def sqrtm(A):
     return xp.asarray(scipy.linalg.sqrtm(A.cpu().detach().numpy()), dtype=A.dtype)
 
 
+def expm(A, *args, **kwargs):
+    """Matrix exponential.
+
+    Args:
+        A: Matrix whose matrix exponential to evaluate.
+        args: Pass-through arguments.
+
+    Keyword Args:
+        **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Value of the exp function at A.
+    """
+    if isinstance(A, np.ndarray):
+        return scipy.linalg.expm(A, *args, **kwargs)
+    return xp.linalg.matrix_exp(A, *args, **kwargs)
+
+
 def handle_spin(func):
     """Handle spin calculating the function for each channel separately.
 
@@ -236,7 +254,7 @@ def handle_k(func=None, *, mode="gracefully"):
             if mode == "skip":
                 obj._atoms.kpts._assert_gamma_only()
                 ret = func(obj, W[0], *args, **kwargs)
-                if isinstance(ret, xp.ndarray) and ret.ndim == 3:
+                if xp.is_array(ret) and ret.ndim == 3:
                     return [ret]
                 return ret
         return func(obj, W, *args, **kwargs)

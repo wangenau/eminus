@@ -160,7 +160,7 @@ def get_Eloc(scf, n):
     Returns:
         Local energy contribution in Hartree.
     """
-    return xp.real(xp.vdot(scf.Vloc, n))
+    return xp.real(xp.vdot(scf.Vloc, xp.astype(n, complex)))
 
 
 @handle_k(mode="reduce")
@@ -309,16 +309,16 @@ def get_Esic(scf, Y, n_single=None):
     Esic = 0
     for i in range(atoms.occ.Nstate):
         for spin in range(atoms.occ.Nspin):
-            if np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk) > 0:
+            if xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk) > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
-                ni = np.zeros((2, atoms.Ns))
+                ni = xp.zeros((2, atoms.Ns))
                 # Normalize single-particle densities to 1
-                ni[0] = n_single[spin, :, i] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
+                ni[0] = n_single[spin, :, i] / xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
 
                 # Get the gradient of the single-particle density
                 if "gga" in scf.xc_type:
-                    dni = np.zeros((2, atoms.Ns, 3))
+                    dni = xp.zeros((2, atoms.Ns, 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
@@ -328,11 +328,11 @@ def get_Esic(scf, Y, n_single=None):
                     # Use only one orbital for the calculation
                     Ytmp = []
                     for ik in range(atoms.kpts.Nk):
-                        Ytmp.append(np.zeros_like(Y[ik]))
+                        Ytmp.append(xp.zeros_like(Y[ik]))
                         Ytmp[ik][0, :, 0] = Y[ik][spin, :, i]
-                    taui = np.zeros_like(ni)
+                    taui = xp.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Ytmp)[0] / np.sum(
+                    taui[0] = get_tau(atoms, Ytmp)[0] / xp.sum(
                         atoms.occ.f[:, spin, i] * atoms.kpts.wk
                     )
                 else:
@@ -342,7 +342,7 @@ def get_Esic(scf, Y, n_single=None):
                 # The exchange part for a SIC correction has to be spin-polarized
                 xc = get_Exc(scf, ni[0], n_spin=ni, dn_spin=dni, tau=taui, Nspin=2)
                 # SIC energy is scaled by the occupation number
-                Esic += (coul + xc) * np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
+                Esic += (coul + xc) * xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
     scf.energies.Esic = Esic
     return Esic
 

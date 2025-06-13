@@ -157,10 +157,10 @@ class Atoms(BaseObject):
     def a(self, value):
         # Build a cubic cell if a number or 1d-array is given
         if xp.asarray(value).ndim <= 1:
-            self._a = value * xp.eye(3)
+            self._a = xp.asarray(value, dtype=float) * xp.eye(3)
         # Otherwise scaled cell vectors are given
         else:
-            self._a = xp.asarray(value)
+            self._a = xp.asarray(value, dtype=float)
         # Update ecut and s if it has been set before
         if hasattr(self, "ecut"):
             self.ecut = self.ecut
@@ -222,7 +222,7 @@ class Atoms(BaseObject):
         if self._center is True or self._center == "rotate":
             I = inertia_tensor(self.pos)
             _, eigvecs = xp.linalg.eigh(I)
-            self.pos = (xp.linalg.inv(eigvecs) @ self.pos.T).T
+            self.pos = (xp.linalg.inv(eigvecs) @ xp.astype(self.pos.T, float)).T
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == "shift":
             com = center_of_mass(self.pos)
@@ -393,7 +393,7 @@ class Atoms(BaseObject):
             self.pos = self.pos - (com - center)
         if self.Sf is not None:
             # Recalculate the structure factor since it depends on the atom positions
-            self._Sf = xp.exp(1j * self.G @ self.pos.T).T
+            self._Sf = xp.exp(1j * self.G @ xp.astype(self.pos.T, complex)).T
         self._center = "recentered"
         return self
 

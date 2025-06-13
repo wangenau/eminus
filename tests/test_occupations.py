@@ -169,7 +169,7 @@ def test_wk():
     """Test the wk property."""
     occ = Occupations()
     occ.wk = [1, 1]
-    assert_equal(occ.wk, 1)
+    assert_equal(occ.wk, np.asarray([1, 1]))
     assert occ.Nk == 2
 
 

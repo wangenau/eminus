@@ -282,7 +282,7 @@ def T(atoms, W, dr):
     """
     # We can not use a fancy decorator for this operator, so handle it here
     if xp.is_array(W) and W.ndim == 3:
-        return xp.asarray([T(atoms, Wspin, dr) for Wspin in W])
+        return xp.stack([T(atoms, Wspin, dr) for Wspin in W])
 
     if xp.is_array(W):
         atoms.kpts._assert_gamma_only()

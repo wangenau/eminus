@@ -69,7 +69,7 @@ def init_gth_loc(scf, **kwargs):
     species = set(atoms.atom)
     omega = 1  # Normally this would be det(atoms.a), but Arias notation is off by this factor
 
-    Vloc = xp.zeros_like(atoms.G2)
+    Vloc = xp.zeros_like(atoms.G2, dtype=complex)
     for isp in species:
         psp = scf.gth[isp]
         rloc = psp["rloc"]

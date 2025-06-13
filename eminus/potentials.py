@@ -68,7 +68,7 @@ def coulomb(scf, **kwargs):
     """
     atoms = scf.atoms
 
-    Vcoul = xp.zeros_like(atoms.G2)
+    Vcoul = xp.zeros_like(atoms.G2, dtype=complex)
     for isp in set(atoms.atom):
         # Sum up the structure factor for every species
         # Also get the charge, assuming all species have the same charge
@@ -104,7 +104,7 @@ def coulomb_lr(scf, alpha=100, **kwargs):
     """
     atoms = scf.atoms
 
-    Vcoul = xp.zeros_like(atoms.G2)
+    Vcoul = xp.zeros_like(atoms.G2, dtype=complex)
     for isp in set(atoms.atom):
         # Sum up the structure factor for every species
         # Also get the charge, assuming all species have the same charge
