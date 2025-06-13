@@ -249,7 +249,6 @@ def wannier_supercell_matrices(atoms, psirs):
     return X * atoms.dV, Y * atoms.dV, Z * atoms.dV
 
 
-@xp.debug
 def wannier_supercell_cost(X, Y, Z):
     """Calculate the supercell Wannier cost.
 

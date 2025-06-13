@@ -17,7 +17,6 @@ from eminus import config
 from eminus.logger import log
 
 
-@xp.debug
 def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
     """Handle Libxc exchange-correlation functionals using pylibxc.
 
@@ -93,13 +92,12 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
     if dn_spin is not None:
         vsigma = xp.atleast_2d(xp.convert(out["vsigma"]).T)
         if tau is not None:
-            vtau = out["vtau"].T
+            vtau = xp.convert(out["vtau"]).T
             return exc, vxc, vsigma, vtau
         return exc, vxc, vsigma, None
     return exc, vxc, None, None
 
 
-@xp.debug
 def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
     """Handle Libxc exchange-correlation functionals using PySCF.
 
@@ -140,7 +138,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
             # For spin-paired systems we have to remove the spin indexing (the outermost shape)
             rho = xp.vstack((n_spin[0], dn_spin[0].T))
         else:
-            rho = xp.array(
+            rho = xp.asarray(
                 [xp.vstack((n_spin[0], dn_spin[0].T)), xp.vstack((n_spin[1], dn_spin[1].T))]
             )
     else:
@@ -151,7 +149,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         if Nspin == 1:
             rho = xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
         else:
-            rho = xp.array(
+            rho = xp.asarray(
                 [
                     xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
                     xp.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1])),

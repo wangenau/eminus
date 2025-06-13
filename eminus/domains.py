@@ -9,7 +9,6 @@ from .logger import log
 from .tools import center_of_mass
 
 
-@xp.debug
 def domain_cuboid(obj, length, centers=None):
     """Generate a mask for a cuboidal real-space domain.
 
@@ -49,7 +48,6 @@ def domain_cuboid(obj, length, centers=None):
     return mask
 
 
-@xp.debug
 def domain_isovalue(field, isovalue):
     """Generate a mask for an isovalue real-space domain.
 
@@ -66,7 +64,6 @@ def domain_isovalue(field, isovalue):
     return xp.abs(field) > isovalue
 
 
-@xp.debug
 def domain_sphere(obj, radius, centers=None):
     """Generate a mask for a spherical real-space domain.
 
@@ -98,7 +95,6 @@ def domain_sphere(obj, radius, centers=None):
     return mask
 
 
-@xp.debug
 def truncate(field, mask):
     """Truncate field data for a given mask.
 

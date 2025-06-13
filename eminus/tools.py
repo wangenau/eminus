@@ -43,7 +43,6 @@ def gridspacing2cutoff(h):
     return 0.5 * (math.pi / h) ** 2
 
 
-@xp.debug
 def center_of_mass(coords, masses=None):
     """Calculate the center of mass for a set of coordinates and masses.
 
@@ -65,7 +64,6 @@ def center_of_mass(coords, masses=None):
 
 
 @handle_k
-@xp.debug
 def orbital_center(obj, psirs):
     """Calculate the orbital center of masses, e.g., from localized orbitals.
 
@@ -91,7 +89,6 @@ def orbital_center(obj, psirs):
     return coms
 
 
-@xp.debug
 def inertia_tensor(coords, masses=None):
     """Calculate the inertia tensor for a set of coordinates and masses.
 
@@ -121,7 +118,6 @@ def inertia_tensor(coords, masses=None):
     return I
 
 
-@xp.debug
 def get_dipole(scf, n=None):
     """Calculate the electric dipole moment.
 
@@ -174,7 +170,6 @@ def get_ip(scf):
 
 
 @handle_k(mode="skip")
-@xp.debug
 def check_ortho(obj, func, eps=1e-9):
     """Check the orthogonality condition for a set of functions.
 
@@ -211,7 +206,6 @@ def check_ortho(obj, func, eps=1e-9):
 
 
 @handle_k(mode="skip")
-@xp.debug
 def check_norm(obj, func, eps=1e-9):
     """Check the normalization condition for a set of functions.
 
@@ -242,7 +236,6 @@ def check_norm(obj, func, eps=1e-9):
 
 
 @handle_k(mode="skip")
-@xp.debug
 def check_orthonorm(obj, func, eps=1e-9):
     """Check the orthonormality conditions for a set of functions.
 
@@ -263,7 +256,6 @@ def check_orthonorm(obj, func, eps=1e-9):
     return ortho_bool * norm_bool
 
 
-@xp.debug
 def get_isovalue(n, percent=85):
     """Find an isovalue that contains a percentage of the electronic density.
 
@@ -292,7 +284,6 @@ def get_isovalue(n, percent=85):
     return res.x
 
 
-@xp.debug
 def get_tautf(scf):
     """Calculate the Thomas-Fermi kinetic energy densities per spin.
 
@@ -384,7 +375,6 @@ def get_reduced_gradient(scf, eps=0):
     return s
 
 
-@xp.debug
 def get_spin_squared(scf):
     """Calculate the expectation value of the squared spin operator <S^2>.
 
@@ -408,7 +398,6 @@ def get_spin_squared(scf):
     return SX * (SX + 1) + rhoX
 
 
-@xp.debug
 def get_multiplicity(scf):
     """Calculate the multiplicity from <S^2>.
 
@@ -424,7 +413,6 @@ def get_multiplicity(scf):
     return 2 * S + 1
 
 
-@xp.debug
 def get_magnetization(scf):
     """Calculate the total magnetization M.
 
@@ -507,7 +495,6 @@ def get_Efermi(obj, epsilon=None):
     return xp.max(e_occ) + (xp.min(e_unocc) - xp.max(e_occ)) / 2
 
 
-@xp.debug
 def fermi_distribution(E, mu, kbT):
     """Calculate the Fermi distribution.
 
@@ -528,7 +515,6 @@ def fermi_distribution(E, mu, kbT):
         return 1 / (xp.exp(x) + 1)
 
 
-@xp.debug
 def electronic_entropy(E, mu, kbT):
     """Calculate the electronic entropic energy.
 
@@ -551,7 +537,6 @@ def electronic_entropy(E, mu, kbT):
     return f * xp.log(f) + (1 - f) * xp.log(1 - f)
 
 
-@xp.debug
 def get_dos(epsilon, wk, spin=0, npts=500, width=0.1):
     """Calculate the total density of states.
 

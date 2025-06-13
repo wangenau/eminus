@@ -14,7 +14,6 @@ from .utils import handle_k, handle_spin, pseudo_uniform, sqrtm
 from .xc import get_vxc
 
 
-@xp.debug
 def get_phi(atoms, n):
     """Solve the Poisson equation.
 
@@ -33,7 +32,6 @@ def get_phi(atoms, n):
 
 @handle_k
 @handle_spin
-@xp.debug
 def orth(atoms, W):
     """Orthogonalize coefficient matrix W.
 
@@ -47,10 +45,9 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ xp.linalg.inv(xp.asarray(sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex))
+    return W @ xp.linalg.inv(xp.asarray(sqrtm(W.conj().T @ atoms.O(W)), dtype=complex))
 
 
-@xp.debug
 def orth_unocc(atoms, Y, Z):
     """Orthogonalize unoccupied matrix Z while maintaining orthogonality to Y.
 
@@ -64,20 +61,19 @@ def orth_unocc(atoms, Y, Z):
     Returns:
         Orthogonalized wave functions.
     """
-    D = [xp.empty_like(xp.convert(Zk)) for Zk in Z]
+    D = [xp.empty_like(Zk) for Zk in Z]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             # rhoZ = (I - Y Ydag O) Z
             Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
-            rhoZ = xp.convert(Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin]))
+            rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
             D[ik][spin] = rhoZ @ xp.linalg.inv(
-                xp.asarray(sqrtm(rhoZ.conj().T @ xp.convert(atoms.O(rhoZ))), dtype=complex)
+                xp.asarray(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex)
             )
     return D
 
 
-@xp.debug
 def get_n_total(atoms, Y, n_spin=None):
     """Calculate the total electronic density.
 
@@ -99,11 +95,12 @@ def get_n_total(atoms, Y, n_spin=None):
 
     # n = (IW) F (IW)dag
     n = xp.zeros(atoms.Ns)
-    Yrs = xp.convert(atoms.I(Y))
+    Yrs = atoms.I(Y)
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             n += xp.sum(
-                xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik])
+                atoms.occ.f[ik, spin]
+                * atoms.kpts.wk[ik]
                 * xp.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
                 axis=1,
             )
@@ -111,7 +108,6 @@ def get_n_total(atoms, Y, n_spin=None):
 
 
 @handle_k(mode="reduce")
-@xp.debug
 def get_n_spin(atoms, Y, ik):
     """Calculate the electronic density per spin channel.
 
@@ -125,19 +121,17 @@ def get_n_spin(atoms, Y, ik):
     Returns:
         Electronic densities per spin channel.
     """
-    Yrs = xp.convert(atoms.I(Y, ik))
+    Yrs = atoms.I(Y, ik)
     n = xp.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
         n[spin] = xp.sum(
-            xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik])
-            * xp.real(Yrs[spin].conj() * Yrs[spin]),
+            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * xp.real(Yrs[spin].conj() * Yrs[spin]),
             axis=1,
         )
     return n
 
 
 @handle_k(mode="reduce")
-@xp.debug
 def get_n_single(atoms, Y, ik):
     """Calculate the single-electron densities.
 
@@ -149,16 +143,13 @@ def get_n_single(atoms, Y, ik):
     Returns:
         Single-electron densities.
     """
-    Yrs = xp.convert(atoms.I(Y, ik))
+    Yrs = atoms.I(Y, ik)
     n = xp.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = xp.convert(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik]) * xp.real(
-            Yrs[spin].conj() * Yrs[spin]
-        )
+        n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * xp.real(Yrs[spin].conj() * Yrs[spin])
     return n
 
 
-@xp.debug
 def get_grad(scf, ik, spin, W, **kwargs):
     """Calculate the energy gradient with respect to W.
 
@@ -178,11 +169,11 @@ def get_grad(scf, ik, spin, W, **kwargs):
     """
     atoms = scf.atoms
     F = xp.asarray(atoms.occ.F[ik][spin], dtype=complex)
-    HW = xp.convert(H(scf, ik, spin, W, **kwargs))
-    WHW = xp.convert(W[ik][spin]).conj().T @ HW
+    HW = H(scf, ik, spin, W, **kwargs)
+    WHW = W[ik][spin].conj().T @ HW
     # U = Wdag O(W)
-    OW = xp.convert(atoms.O(W[ik][spin]))
-    U = xp.convert(W[ik][spin]).conj().T @ OW
+    OW = atoms.O(W[ik][spin])
+    U = W[ik][spin].conj().T @ OW
     invU = xp.linalg.inv(U)
     U12 = xp.asarray(sqrtm(invU), dtype=complex)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
@@ -195,7 +186,6 @@ def get_grad(scf, ik, spin, W, **kwargs):
     )
 
 
-@xp.debug
 def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None):
     """Left-hand side of the eigenvalue equation.
 
@@ -222,10 +212,10 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     # If dn_spin is None all other keyword arguments are None by design
     # In that case precompute values from the SCF class
     if phi is None:
-        dn_spin, phi, vxc, vsigma, vtau = xp.convert(H_precompute(scf, W))
+        dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
 
     # This calculates the XC potential in the reciprocal space
-    Gvxc = xp.convert(atoms.J(vxc[spin]))
+    Gvxc = atoms.J(vxc[spin])
     # Calculate the gradient correction to the potential if a (meta-)GGA functional is used
     if "gga" in scf.xc_type:
         Gvxc = Gvxc - gradient_correction(atoms, spin, dn_spin, vsigma)
@@ -244,7 +234,6 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     )
 
 
-@xp.debug
 def H_precompute(scf, W):
     """Create precomputed values as intermediate results.
 
@@ -274,7 +263,6 @@ def H_precompute(scf, W):
     return dn_spin, phi, vxc, vsigma, vtau
 
 
-@xp.debug
 def Q(inp, U):
     """Operator needed to calculate gradients with non-constant occupations.
 
@@ -296,7 +284,6 @@ def Q(inp, U):
     return xp.linalg.multi_dot([V, tmp / denom2, V.conj().T])
 
 
-@xp.debug
 def get_psi(scf, W, **kwargs):
     """Calculate eigenstates from H.
 
@@ -317,17 +304,16 @@ def get_psi(scf, W, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = xp.convert(orth(atoms, W))
-    psi = [xp.empty_like(xp.convert(Yk)) for Yk in Y]
+    Y = orth(atoms, W)
+    psi = [xp.empty_like(Yk) for Yk in Y]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = Y[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, Y, **kwargs))
+            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             _, D = xp.linalg.eigh(mu)
             psi[ik][spin] = Y[ik][spin] @ D
     return psi
 
 
-@xp.debug
 def get_epsilon(scf, W, **kwargs):
     """Calculate eigenvalues from H.
 
@@ -348,16 +334,15 @@ def get_epsilon(scf, W, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = xp.convert(orth(atoms, W))
+    Y = orth(atoms, W)
     epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = Y[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, Y, **kwargs))
+            mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
-@xp.debug
 def get_epsilon_unocc(scf, W, Z, **kwargs):
     """Calculate eigenvalues from H of unoccupied states.
 
@@ -379,17 +364,16 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
         return None
 
     atoms = scf.atoms
-    Y = xp.convert(orth(atoms, W))
+    Y = orth(atoms, W)
     D = orth_unocc(atoms, Y, Z)
     epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            mu = D[ik][spin].conj().T @ xp.convert(H(scf, ik, spin, D, **kwargs))
+            mu = D[ik][spin].conj().T @ H(scf, ik, spin, D, **kwargs)
             epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
-@xp.debug
 def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     """Generate random initial-guess coefficients as starting values.
 
@@ -420,11 +404,10 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
             W_ik = rng.standard_normal(
                 (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
             ) + 1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
-            W.append(xp.convert(W_ik))
+            W.append(xp.asarray(W_ik))
     return orth(atoms, W)
 
 
-@xp.debug
 def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     """Generate initial-guess coefficients using pseudo-random starting values.
 
@@ -450,5 +433,5 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
             W.append(xp.asarray([W_ik[0]] * atoms.occ.Nspin))
         else:
             W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate), seed=seed)
-            W.append(xp.convert(W_ik))
+            W.append(W_ik)
     return orth(atoms, W)

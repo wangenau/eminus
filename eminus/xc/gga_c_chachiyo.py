@@ -12,7 +12,6 @@ from eminus import backend as xp
 from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
 
-@xp.debug
 def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-paired).
 
@@ -61,7 +60,6 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     return ec * expgec, xp.stack([gvc]), xp.stack([vsigmac])
 
 
-@xp.debug
 def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-polarized).
 

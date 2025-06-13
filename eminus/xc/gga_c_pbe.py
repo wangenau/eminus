@@ -14,7 +14,6 @@ from eminus import backend as xp
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 
 
-@xp.debug
 def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
 
@@ -63,7 +62,6 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     return ec + gec, xp.stack([vc + gvc]), xp.stack([0.5 * vsigmac])
 
 
-@xp.debug
 def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
 

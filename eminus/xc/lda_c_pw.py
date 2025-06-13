@@ -10,7 +10,6 @@ import math
 from eminus import backend as xp
 
 
-@xp.debug
 def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.49294, **kwargs):
     """Perdew-Wang parametrization of the correlation functional (spin-paired).
 
@@ -47,7 +46,6 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
     return ec, xp.stack([vc]), None
 
 
-@xp.debug
 def lda_c_pw_spin(n, zeta, A=(0.031091, 0.015545, 0.016887), fzeta0=1.709921, **kwargs):
     """Perdew-Wang parametrization of the correlation functional (spin-polarized).
 

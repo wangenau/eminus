@@ -10,7 +10,6 @@ import math
 from eminus import backend as xp
 
 
-@xp.debug
 def lda_c_chachiyo(n, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-paired).
 
@@ -57,7 +56,6 @@ def chachiyo_scaling(zeta):
     return fzeta, dfdzeta
 
 
-@xp.debug
 def lda_c_chachiyo_spin(n, zeta, weight_function=chachiyo_scaling, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-polarized).
 

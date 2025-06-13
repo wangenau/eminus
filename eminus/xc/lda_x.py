@@ -10,7 +10,6 @@ import math
 from eminus import backend as xp
 
 
-@xp.debug
 def lda_x(n, **kwargs):
     """Slater exchange functional (spin-paired).
 
@@ -36,7 +35,6 @@ def lda_x(n, **kwargs):
     return ex, xp.stack([vx]), None
 
 
-@xp.debug
 def lda_x_spin(n, zeta, **kwargs):
     """Slater exchange functional (spin-polarized).
 

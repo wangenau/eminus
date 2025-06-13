@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test exchange-correlation functional utilities."""
 
-import numpy as np
 import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
+from eminus import backend as xp
 from eminus import config
 from eminus.xc import get_xc, get_xc_defaults, parse_functionals, parse_xc_type
 
@@ -99,7 +99,7 @@ def test_libxc_str():
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
     # Create a random mock density
     rng = default_rng()
-    n_spin = np.abs(rng.standard_normal((1, 10000)))
+    n_spin = xp.abs(xp.asarray(rng.standard_normal((1, 10000))))
     e_out, v_out, _, _ = get_xc("1,7", n_spin, 1)
     e_test, v_test, _, _ = get_xc("l:1,l:7", n_spin, 1)
     assert_allclose(e_out, e_test)

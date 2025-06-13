@@ -146,7 +146,7 @@ class KPoints(BaseObject):
                 self._k_scaled = monkhorst_pack(self.kmesh)
         else:
             self._k_scaled = bandpath(self)
-        self._k_scaled = xp.convert(self._k_scaled)
+        self._k_scaled = self._k_scaled
         # Without removing redundancies the weight is the same for all k-points
         self.wk = xp.ones(len(self._k_scaled)) / len(self._k_scaled)
         self.k = kpoint_convert(self._k_scaled, self.a) + self.kshift

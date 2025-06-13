@@ -10,7 +10,6 @@ import math
 from eminus import backend as xp
 
 
-@xp.debug
 def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     """Vosko-Wilk-Nusair parametrization of the correlation functional (spin-paired).
 
@@ -50,7 +49,6 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     return ec, xp.stack([vc]), None
 
 
-@xp.debug
 def lda_c_vwn_spin(n, zeta, **kwargs):
     """Vosko-Wilk-Nusair parametrization of the correlation functional (spin-polarized).
 

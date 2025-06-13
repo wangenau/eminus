@@ -12,7 +12,6 @@ from eminus import backend as xp
 from .lda_x import lda_x
 
 
-@xp.debug
 def gga_x_chachiyo(n, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the exchange functional (spin-paired).
 
@@ -49,7 +48,6 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
     return ex * gex, xp.stack([gvx]) * gex, xp.stack([vsigmax]) * gex
 
 
-@xp.debug
 def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     """Chachiyo parametrization of the exchange functional (spin-polarized).
 

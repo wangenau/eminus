@@ -52,7 +52,6 @@ class BaseObject:
         return eminus.io.write(self, filename, *args, **kwargs)
 
 
-@xp.debug
 def dotprod(a, b):
     """Efficiently calculate the expression a * b.
 
@@ -76,7 +75,6 @@ def dotprod(a, b):
     return xp.real(res)
 
 
-@xp.debug
 def Ylm_real(l, m, G):  # noqa: C901
     """Calculate real spherical harmonics from cartesian coordinates.
 
@@ -339,7 +337,6 @@ def atom2charge(atom, path=None):
     return [read_gth(ia, psp_path=psp_path)["Zion"] for ia in atom]
 
 
-@xp.debug
 def vector_angle(a, b):
     """Calculate the angle between two vectors.
 
@@ -358,7 +355,6 @@ def vector_angle(a, b):
     return rad2deg(angle)
 
 
-@xp.debug
 def get_lattice(lattice_vectors):
     """Generate a cell for given lattice vectors.
 

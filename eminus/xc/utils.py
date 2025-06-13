@@ -27,7 +27,6 @@ from .lda_xc_gdsmfb import lda_xc_gdsmfb, lda_xc_gdsmfb_spin
 from .lda_xc_ksdt import lda_xc_ksdt, lda_xc_ksdt_spin
 
 
-@xp.debug
 def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_threshold=0):
     """Handle and get exchange-correlation functionals.
 
@@ -75,8 +74,8 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
         else:
             if Nspin == 2 and fxc != "mock_xc":
                 fxc += "_spin"
-            exc_nz, vxc_nz, vsigma_nz = xp.convert(
-                IMPLEMENTED[fxc](n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params)
+            exc_nz, vxc_nz, vsigma_nz = IMPLEMENTED[fxc](
+                n_nz, zeta=zeta_nz, dn_spin=dn_spin_nz, Nspin=Nspin, **xc_params
             )
             # Map the non-zero values back to the right dimension
             exc = xp.zeros_like(n)
@@ -335,7 +334,6 @@ def get_xc_defaults(xc):
     return params
 
 
-@xp.debug
 def get_zeta(n_spin):
     """Calculate the relative spin polarization.
 
@@ -365,7 +363,7 @@ def mock_xc(n, Nspin=1, **kwargs):
         Mock exchange-correlation energy density and potential.
     """
     zeros = xp.zeros_like(n)
-    return zeros, xp.array([zeros] * Nspin), None
+    return zeros, xp.stack([zeros] * Nspin), None
 
 
 #: Map functional names with their respective implementation.

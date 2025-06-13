@@ -216,7 +216,6 @@ class PhiParams:
 # ### Functional implementation ###
 
 
-@xp.debug
 def lda_xc_ksdt(
     n, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
 ):
@@ -253,7 +252,6 @@ def lda_xc_ksdt(
     return exc, xp.stack([vxc[0]]), None
 
 
-@xp.debug
 def lda_xc_ksdt_spin(
     n, zeta, T=0, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
 ):
@@ -437,13 +435,12 @@ def _get_dtheta1dtheta0():
 # ### fxc_zeta and derivatives ###
 
 
-@xp.debug
 def _get_fxc_zeta(rs, p):
     """Calculate the Pade formula f_xc^zeta.
 
     Reference: Phys. Rev. Lett. 112, 076403.
     """
-    p.theta = xp.convert(p.theta)
+    p.theta = p.theta
     num = p.a * p.omega + p.b * xp.sqrt(rs) + p.c * rs
     denom = 1 + p.d * xp.sqrt(rs) + p.e * rs
     return -1 / rs * num / denom
@@ -517,7 +514,6 @@ def _get_dphidzeta(rs, theta, zeta, phi_params):
 # ### alpha and derivatives ###
 
 
-@xp.debug
 def _get_alpha(rs, theta, phi_params):
     """Calculate alpha.
 

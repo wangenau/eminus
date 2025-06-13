@@ -14,7 +14,6 @@ from eminus import backend as xp
 from .lda_x import lda_x, lda_x_spin
 
 
-@xp.debug
 def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
 
@@ -39,7 +38,6 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
     return ex + gex / n, xp.stack([vx + gvx]), xp.stack([0.5 * vsigmax])
 
 
-@xp.debug
 def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
 

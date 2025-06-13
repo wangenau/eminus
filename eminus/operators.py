@@ -37,7 +37,6 @@ from .utils import handle_k, handle_spin
 
 # Spin handling is trivial for this operator
 @handle_k
-@xp.debug
 def O(atoms, W):
     """Overlap operator.
 
@@ -56,7 +55,6 @@ def O(atoms, W):
 
 
 @handle_spin
-@xp.debug
 def L(atoms, W, ik=-1):
     """Laplacian operator with k-point dependency.
 
@@ -79,11 +77,10 @@ def L(atoms, W, ik=-1):
         Gk2 = atoms.Gk2c[ik][:, None]
     else:
         Gk2 = atoms.Gk2[ik][:, None]
-    return -atoms.Omega * xp.convert(Gk2) * W
+    return -atoms.Omega * Gk2 * W
 
 
 @handle_spin
-@xp.debug
 def Linv(atoms, W):
     """Inverse Laplacian operator.
 
@@ -114,7 +111,6 @@ def Linv(atoms, W):
 
 @handle_k(mode="index")
 @handle_spin
-@xp.debug
 def I(atoms, W, ik=-1):
     """Backward transformation from reciprocal space to real-space.
 
@@ -162,7 +158,6 @@ def I(atoms, W, ik=-1):
 
 @handle_k(mode="index")
 @handle_spin
-@xp.debug
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
@@ -202,7 +197,6 @@ def J(atoms, W, ik=-1, full=True):
 
 @handle_k(mode="index")
 @handle_spin
-@xp.debug
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
@@ -228,7 +222,6 @@ def Idag(atoms, W, ik=-1, full=False):
 
 @handle_k(mode="index")
 @handle_spin
-@xp.debug
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -252,7 +245,6 @@ def Jdag(atoms, W, ik=-1):
 
 
 @handle_spin
-@xp.debug
 def K(atoms, W, ik):
     """Preconditioning operator with k-point dependency.
 
@@ -272,7 +264,6 @@ def K(atoms, W, ik):
     return W / (1 + atoms.Gk2c[ik][:, None])
 
 
-@xp.debug
 def T(atoms, W, dr):
     """Translation operator.
 

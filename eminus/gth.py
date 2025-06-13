@@ -51,7 +51,6 @@ class GTH:
         return f"NbetaNL: {self.NbetaNL}\nGTH values for: {', '.join(list(self.GTH))}"
 
 
-@xp.debug
 def init_gth_loc(scf, **kwargs):
     """Initialize parameters to calculate local contributions of GTH pseudopotentials.
 
@@ -80,7 +79,7 @@ def init_gth_loc(scf, **kwargs):
         c3 = psp["cloc"][2]
         c4 = psp["cloc"][3]
 
-        rlocG2 = xp.convert(atoms.G2 * rloc**2)
+        rlocG2 = atoms.G2 * rloc**2
         rlocG22 = rlocG2**2
         exprlocG2 = xp.exp(-0.5 * rlocG2)
         # Ignore the division by zero for the first elements
@@ -104,11 +103,10 @@ def init_gth_loc(scf, **kwargs):
         for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
-        Vloc += xp.real(xp.convert(atoms.J(Vsp * Sf)))
+        Vloc += xp.real(atoms.J(Vsp * Sf))
     return Vloc
 
 
-@xp.debug
 def init_gth_nonloc(atoms, gth):
     """Initialize parameters to calculate non-local contributions of GTH pseudopotentials.
 
@@ -140,17 +138,17 @@ def init_gth_nonloc(atoms, gth):
         betaNL_ik = xp.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
         ibeta = 0
         gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
-        Gkm = xp.sqrt(xp.convert(atoms.Gk2c[ik]))
+        Gkm = xp.sqrt(atoms.Gk2c[ik])
         for ia in range(atoms.Natoms):
             # It is important to transform the structure factor to make both notations compatible
-            Sf = xp.convert(atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik))
+            Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
             psp = gth[atoms.atom[ia]]
             for l in range(psp["lmax"]):
                 for m in range(-l, l + 1):
                     for iprj in range(psp["Nproj_l"][l]):
                         betaNL_ik[:, ibeta] = (
                             (-1j) ** l
-                            * xp.convert(Ylm_real(l, m, gk))
+                            * Ylm_real(l, m, gk)
                             * eval_proj_G(psp, l, iprj + 1, Gkm, atoms.Omega)
                             * Sf
                         )
@@ -159,7 +157,6 @@ def init_gth_nonloc(atoms, gth):
     return NbetaNL, prj2beta, betaNL
 
 
-@xp.debug
 def calc_Vnonloc(scf, ik, spin, W):
     """Calculate the non-local pseudopotential, applied on the basis functions W.
 
@@ -197,7 +194,6 @@ def calc_Vnonloc(scf, ik, spin, W):
     return atoms.O(Vpsi)
 
 
-@xp.debug
 def eval_proj_G(psp, l, iprj, Gm, Omega):
     """Evaluate GTH projector functions in G-space.
 

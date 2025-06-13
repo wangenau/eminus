@@ -47,7 +47,6 @@ def scf_step_unocc(scf, Z):
     return get_Eband(scf, scf.D, **scf._precomputed)
 
 
-@xp.debug
 def get_grad_occ(scf, ik, spin, W, **kwargs):
     """Calculate the occupied band energy gradient with respect to W.
 
@@ -67,17 +66,16 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     """
     atoms = scf.atoms
     W = orth(atoms, W)
-    HW = xp.convert(H(scf, ik, spin, W, **kwargs))
-    WHW = xp.convert(W[ik][spin]).conj().T @ HW
-    OW = xp.convert(atoms.O(W[ik][spin]))
-    U = xp.convert(W[ik][spin]).conj().T @ OW
+    HW = H(scf, ik, spin, W, **kwargs)
+    WHW = W[ik][spin].conj().T @ HW
+    OW = atoms.O(W[ik][spin])
+    U = W[ik][spin].conj().T @ OW
     invU = xp.linalg.inv(U)
     U12 = xp.asarray(sqrtm(invU), dtype=complex)
     # grad E = (I - O(Y) Ydag) H(Y) U^-0.5
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
 
-@xp.debug
 def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     """Calculate the unoccupied band energy gradient with respect to Z.
 
@@ -100,19 +98,17 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     Ydag = Y.conj().T
     # We need X12 later, so orthogonalize in-place and only the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
-    X12 = xp.linalg.inv(xp.asarray(sqrtm(rhoZ.conj().T @ xp.convert(atoms.O(rhoZ))), dtype=complex))
+    X12 = xp.linalg.inv(xp.asarray(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
     D_tmp = [None] * len(Z)
     D_tmp[ik] = xp.empty_like(Z[ik])
     D_tmp[ik][spin] = D
-    HD = xp.convert(H(scf, ik, spin, D_tmp, **kwargs))
-    DHD = xp.convert(D).conj().T @ HD
+    HD = H(scf, ik, spin, D_tmp, **kwargs)
+    DHD = D.conj().T @ HD
     I = xp.eye(Z[ik].shape[1])
     # grad E = (I - O(Y) Ydag) (I - O(D) Ddag) H(D) X^-0.5
-    return atoms.kpts.wk[ik] * (
-        (I - xp.convert(atoms.O(Y)) @ Ydag) @ (HD - xp.convert(atoms.O(D)) @ DHD) @ X12
-    )
+    return atoms.kpts.wk[ik] * ((I - atoms.O(Y) @ Ydag) @ (HD - atoms.O(D) @ DHD) @ X12)
 
 
 @name("steepest descent minimization")

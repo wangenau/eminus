@@ -10,7 +10,6 @@ from . import backend as xp
 from .utils import handle_k
 
 
-@xp.debug
 def get_grad_field(atoms, field, real=True):
     """Calculate the gradient of fields on the grid per spin channel.
 
@@ -28,13 +27,12 @@ def get_grad_field(atoms, field, real=True):
     for spin in range(atoms.occ.Nspin):
         fieldG = atoms.J(field[spin])
         for dim in range(3):
-            dfield[spin, :, dim] = xp.convert(atoms.I(1j * atoms.G[:, dim] * fieldG))
+            dfield[spin, :, dim] = atoms.I(1j * atoms.G[:, dim] * fieldG)
     if real:
         return xp.real(dfield)
     return dfield
 
 
-@xp.debug
 def gradient_correction(atoms, spin, dn_spin, vsigma):
     """Calculate the gradient correction for the exchange-correlation potential.
 
@@ -65,13 +63,12 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     # Normally we would calculate the correction for each spin, but we only need one at a time in H
     Gh = xp.empty((len(atoms.G2), 3), dtype=complex)
     for dim in range(3):
-        Gh[:, dim] = xp.convert(atoms.J(h[spin, :, dim]))
+        Gh[:, dim] = atoms.J(h[spin, :, dim])
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * xp.einsum("ir,ir->i", xp.astype(xp.convert(atoms.G), complex), Gh)
+    return 1j * xp.einsum("ir,ir->i", xp.astype(atoms.G, complex), Gh)
 
 
 @handle_k(mode="reduce")
-@xp.debug
 def get_tau(atoms, Y, ik):
     """Calculate the positive-definite kinetic energy densities per spin.
 
@@ -100,7 +97,7 @@ def get_tau(atoms, Y, ik):
     Gkc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
     for dim in range(3):
-        dYrs[..., dim] = xp.convert(atoms.I(1j * Gkc[..., dim] * Y, ik))
+        dYrs[..., dim] = atoms.I(1j * Gkc[..., dim] * Y, ik)
     # Sum over dimensions (dYx* dYx + dYy* dYy + dYz* dYz)
     # sumdYrs = np.real(np.sum(dYrs.conj() * dYrs, axis=3))
     # Sum over all states
@@ -116,7 +113,6 @@ def get_tau(atoms, Y, ik):
     )
 
 
-# @xp.debug  TODO: segfaults somehow
 def calc_Vtau(scf, ik, spin, W, vtau):
     """Calculate the tau-dependent potential contribution for meta-GGAs.
 
@@ -154,7 +150,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     # Calculate the active G vectors and broadcast to the needed shape
     Gkc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
     # We only calculate Vtau for one spin channel, index, and reshape before the loop
-    vtau_spin = xp.convert(vtau[spin, :, None])
+    vtau_spin = vtau[spin, :, None]
     W_spin = W[ik][spin]
     for dim in range(3):
         # Calculate the gradients of W in the active(!) space and transform to real-space
