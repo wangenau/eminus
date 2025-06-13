@@ -7,6 +7,8 @@ Reference: Phys. Rev. Lett. 77, 3865.
 
 import math
 
+import numpy as np
+
 from eminus import backend as xp
 
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
@@ -106,7 +108,7 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     gec = gamma * phi3 * xp.log(nolog)
 
     # Handle divisions by zero
-    with xp.errstate(divide="ignore", invalid="ignore"):
+    with np.errstate(divide="ignore", invalid="ignore"):
         dfz = ((1 + zeta) ** (-1 / 3) - (1 - zeta) ** (-1 / 3)) / 3
     dfz = xp.nan_to_num(dfz, nan=0, posinf=0, neginf=0)
     factor = A2t4 * (2 + At2) / divsum**2

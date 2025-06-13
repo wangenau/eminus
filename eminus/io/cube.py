@@ -43,7 +43,7 @@ def read_cube(filename):
         for i, line in enumerate(lines[3:6]):
             line_split = line.strip().split()
             s[i] = float(line_split[0])
-            a[i] = float(s[i]) * np.float64(line_split[1:])
+            a[i] = float(s[i]) * np.asarray(line_split[1:], dtype=float)
         a = xp.convert(a)
 
         atom = []
@@ -58,7 +58,7 @@ def read_cube(filename):
                 break
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(float(line_split[1]))
-            pos.append(np.float64(line_split[2:5]))
+            pos.append(np.asarray(line_split[2:5], dtype=float))
     pos = xp.convert(np.asarray(pos))
 
     # The rest of the data is the field data

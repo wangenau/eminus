@@ -140,7 +140,7 @@ class Atoms(BaseObject):
     def ecut(self, value):
         self._ecut = value
         # Calculate the sampling from the cut-off energy
-        s = np.int64(np.linalg.norm(self.a, axis=1) / cutoff2gridspacing(value))
+        s = xp.asarray(xp.linalg.norm(self.a, axis=1) / cutoff2gridspacing(value), dtype=int)
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations

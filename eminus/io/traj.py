@@ -46,7 +46,7 @@ def read_traj(filename):
             for line in lines[(2 + Natoms) * frame + 2 : (2 + Natoms) * (frame + 1)]:
                 line_split = line.strip().split()
                 atom.append(line_split[0])
-                pos.append(np.float64(line_split[1:4]))
+                pos.append(np.asarray(line_split[1:4], dtype=float))
             # XYZ files are in Angstrom, so convert to Bohr
             pos = ang2bohr(np.asarray(pos))
             pos = xp.convert(pos)

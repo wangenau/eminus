@@ -7,6 +7,7 @@ import math
 
 import numpy as np
 
+from . import backend as xp
 from .gth import init_gth_loc
 from .logger import log
 
@@ -46,7 +47,7 @@ def harmonic(scf, freq=2, **kwargs):
         Harmonic potential in real-space.
     """
     atoms = scf.atoms
-    dr = np.linalg.norm(atoms.r - np.sum(atoms.a, axis=1) / 2, axis=1)
+    dr = xp.linalg.norm(atoms.r - xp.sum(atoms.a, axis=1) / 2, axis=1)
     Vharm = 0.5 * freq**2 * dr**2
     return atoms.Jdag(atoms.O(atoms.J(Vharm)))
 
@@ -67,11 +68,11 @@ def coulomb(scf, **kwargs):
     """
     atoms = scf.atoms
 
-    Vcoul = np.zeros_like(atoms.G2)
+    Vcoul = xp.zeros_like(atoms.G2)
     for isp in set(atoms.atom):
         # Sum up the structure factor for every species
         # Also get the charge, assuming all species have the same charge
-        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        Sf = xp.zeros(len(atoms.Sf[0]), dtype=complex)
         for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
@@ -82,7 +83,7 @@ def coulomb(scf, **kwargs):
         with np.errstate(divide="ignore", invalid="ignore"):
             Vsp = -4 * math.pi * Z / atoms.G2
         Vsp[0] = 0
-        Vcoul += np.real(atoms.J(Vsp * Sf))
+        Vcoul += xp.real(atoms.J(Vsp * Sf))
     return Vcoul
 
 
@@ -103,11 +104,11 @@ def coulomb_lr(scf, alpha=100, **kwargs):
     """
     atoms = scf.atoms
 
-    Vcoul = np.zeros_like(atoms.G2)
+    Vcoul = xp.zeros_like(atoms.G2)
     for isp in set(atoms.atom):
         # Sum up the structure factor for every species
         # Also get the charge, assuming all species have the same charge
-        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        Sf = xp.zeros(len(atoms.Sf[0]), dtype=complex)
         for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
@@ -116,9 +117,9 @@ def coulomb_lr(scf, alpha=100, **kwargs):
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide="ignore", invalid="ignore"):
-            Vsp = -4 * math.pi * Z * np.exp(-atoms.G2 / (4 * alpha**2)) / atoms.G2
+            Vsp = -4 * math.pi * Z * xp.exp(-atoms.G2 / (4 * alpha**2)) / atoms.G2
         Vsp[0] = 0
-        Vcoul += np.real(atoms.J(Vsp * Sf))
+        Vcoul += xp.real(atoms.J(Vsp * Sf))
     return Vcoul
 
 
@@ -142,23 +143,23 @@ def ge(scf, **kwargs):
     Z = 4  # This potential should only be used for germanium
     lamda = 18.5
     rc = 1.052
-    Gm = np.sqrt(atoms.G2)
+    Gm = xp.sqrt(atoms.G2)
 
     with np.errstate(divide="ignore", invalid="ignore"):
         Vps = (
             -2
             * math.pi
-            * np.exp(-math.pi * Gm / lamda)
-            * np.cos(rc * Gm)
+            * xp.exp(-math.pi * Gm / lamda)
+            * xp.cos(rc * Gm)
             * (Gm / lamda)
-            / (1 - np.exp(-2 * math.pi * Gm / lamda))
+            / (1 - xp.exp(-2 * math.pi * Gm / lamda))
         )
         for n in range(5):
             Vps = Vps + (-1) ** n * math.exp(-lamda * rc * n) / (1 + (n * lamda / Gm) ** 2)
         Vps = Vps * 4 * math.pi * Z / Gm**2 * (1 + math.exp(-lamda * rc)) - 4 * math.pi * Z / Gm**2
 
     # Special case for G=(0,0,0)
-    n = np.arange(1, 5)
+    n = xp.arange(1, 5)
     Vps[0] = (
         4
         * math.pi
@@ -166,11 +167,11 @@ def ge(scf, **kwargs):
         * (1 + math.exp(-lamda * rc))
         * (
             rc**2 / 2
-            + 1 / lamda**2 * (math.pi**2 / 6 + np.sum((-1) ** n * np.exp(-lamda * rc * n) / n**2))
+            + 1 / lamda**2 * (math.pi**2 / 6 + xp.sum((-1) ** n * xp.exp(-lamda * rc * n) / n**2))
         )
     )
 
-    Sf = np.sum(atoms.Sf, axis=0)
+    Sf = xp.sum(atoms.Sf, axis=0)
     return atoms.J(Vps * Sf)
 
 

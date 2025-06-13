@@ -281,7 +281,7 @@ def bandpath(kpts):
 
     # Calculate sample points between the special points
     scaled_dists = (N - N_special) * np.asarray(dists) / sum(dists)
-    samplings = np.int64(np.round(scaled_dists))
+    samplings = np.asarray(np.round(scaled_dists), dtype=int)
 
     # If our sampling does not match the given N add the difference to the longest distance
     if N - N_special - np.sum(samplings) != 0:

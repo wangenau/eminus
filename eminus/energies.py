@@ -94,11 +94,11 @@ def get_Ekin(atoms, Y, ik):
         Ekin += (
             -0.5
             * atoms.kpts.wk[ik]
-            * np.trace(
+            * xp.trace(
                 xp.astype(atoms.occ.F[ik][spin], complex) @ Y[spin].conj().T @ atoms.L(Y[spin], ik)
             )
         )
-    return np.real(Ekin)
+    return xp.real(Ekin)
 
 
 def get_Ecoul(atoms, n, phi=None):
@@ -119,7 +119,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
-    return np.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi)))
+    return xp.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
@@ -145,7 +145,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
-    return np.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return xp.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
 def get_Eloc(scf, n):
@@ -160,7 +160,7 @@ def get_Eloc(scf, n):
     Returns:
         Local energy contribution in Hartree.
     """
-    return np.real(np.vdot(scf.Vloc, n))
+    return xp.real(xp.vdot(scf.Vloc, n))
 
 
 @handle_k(mode="reduce")
@@ -201,7 +201,7 @@ def get_Enonloc(scf, Y, ik):
                             enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
         Enonloc += xp.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
-    return np.real(Enonloc * atoms.Omega)
+    return xp.real(Enonloc * atoms.Omega)
 
 
 def get_Eewald(atoms, gcut=2, gamma=1e-8):

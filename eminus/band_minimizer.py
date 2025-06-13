@@ -194,8 +194,8 @@ def pclm(
     atoms = scf.atoms
     costs = []
 
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = [np.empty_like(Wk) for Wk in W]
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    d = [xp.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = "pclm"
@@ -287,12 +287,12 @@ def pccg(
     atoms = scf.atoms
     costs = []
 
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = [np.empty_like(Wk) for Wk in W]
-    d_old = [np.empty_like(Wk) for Wk in W]
-    g_old = [np.empty_like(Wk) for Wk in W]
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    d = [xp.empty_like(Wk) for Wk in W]
+    d_old = [xp.empty_like(Wk) for Wk in W]
+    g_old = [xp.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = "pccg"

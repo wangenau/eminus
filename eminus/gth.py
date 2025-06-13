@@ -4,6 +4,8 @@
 
 import math
 
+import numpy as np
+
 from . import backend as xp
 from .io import read_gth
 from .utils import Ylm_real
@@ -83,7 +85,7 @@ def init_gth_loc(scf, **kwargs):
         exprlocG2 = xp.exp(-0.5 * rlocG2)
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
-        with xp.errstate(divide="ignore", invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             Vsp = -4 * math.pi * Zion / omega * exprlocG2 / atoms.G2 + math.sqrt(
                 (2 * math.pi) ** 3
             ) * rloc**3 / omega * exprlocG2 * (

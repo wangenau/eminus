@@ -9,6 +9,8 @@ import dataclasses
 import functools
 import math
 
+import numpy as np
+
 from eminus import backend as xp
 
 # ### Temperature dependent coefficients ###
@@ -60,14 +62,14 @@ class Coefficients:
     @functools.cached_property
     def a(self):
         """Calculate a."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             u = self.a0 * xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
         return u * _pade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
 
     @property
     def dadtheta(self):
         """Calculate da / dtheta."""
-        with xp.errstate(divide="ignore", invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             u = self.a0 * xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
             du = xp.where(self.theta > 0, (u**2 / self.a0 - self.a0) / self.theta**2, 0)
         v, dv = _dpade(self.theta, self.a1, self.a2, self.a3, self.a4, self.a5, self.a6)
@@ -76,14 +78,14 @@ class Coefficients:
     @functools.cached_property
     def b(self):
         """Calculate b."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
         return u * _pade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
 
     @property
     def dbdtheta(self):
         """Calculate db / dtheta."""
-        with xp.errstate(divide="ignore", invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
             du = xp.where(self.theta > 0, (u**2 - 1) / (2 * self.theta * xp.sqrt(self.theta)), 0)
         v, dv = _dpade(self.theta, self.b1, self.b2, 0, self.b3, self.b4, self.b5)
@@ -92,17 +94,17 @@ class Coefficients:
     @functools.cached_property
     def c(self):
         """Calculate c."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             exp = xp.where(self.theta > 0, xp.exp(-self.c3 / self.theta), 0)
         return (self.c1 + self.c2 * exp) * self.e
 
     @property
     def dcdtheta(self):
         """Calculate dc / dtheta."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             exp = xp.where(self.theta > 0, xp.exp(-self.c3 / self.theta), 0)
         u = self.c1 + self.c2 * exp
-        with xp.errstate(invalid="ignore"):
+        with np.errstate(invalid="ignore"):
             du = xp.where(self.theta > 0, self.c2 * self.c3 * exp / self.theta**2, 0)
         v, dv = self.e, self.dedtheta
         return du * v + u * dv
@@ -110,14 +112,14 @@ class Coefficients:
     @functools.cached_property
     def d(self):
         """Calculate d."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
         return u * _pade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
 
     @property
     def dddtheta(self):
         """Calculate dd / dtheta."""
-        with xp.errstate(divide="ignore", invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / xp.sqrt(self.theta)), 1)
             du = xp.where(self.theta > 0, (u**2 - 1) / (2 * self.theta * xp.sqrt(self.theta)), 0)
         v, dv = _dpade(self.theta, self.d1, self.d2, 0, self.d3, self.d4, self.d5)
@@ -126,14 +128,14 @@ class Coefficients:
     @functools.cached_property
     def e(self):
         """Calculate e."""
-        with xp.errstate(divide="ignore"):
+        with np.errstate(divide="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
         return u * _pade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
 
     @functools.cached_property
     def dedtheta(self):
         """Calculate de / dtheta."""
-        with xp.errstate(divide="ignore", invalid="ignore"):
+        with np.errstate(divide="ignore", invalid="ignore"):
             u = xp.where(self.theta > 0, xp.tanh(1 / self.theta), 1)
             du = xp.where(self.theta > 0, (u**2 - 1) / self.theta**2, 0)
         v, dv = _dpade(self.theta, self.e1, self.e2, 0, self.e3, self.e4, self.e5)
@@ -481,7 +483,7 @@ def _get_dphidrs(rs, theta, zeta, phi_params):
     """Calculate dphi / drs."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadrs = _get_dalphadrs(rs, theta, phi_params)
-    with xp.errstate(divide="ignore"):
+    with np.errstate(divide="ignore"):
         tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
     tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
@@ -494,7 +496,7 @@ def _get_dphidtheta(rs, theta, zeta, phi_params):
     """Calculate dphi / dtheta."""
     alpha = _get_alpha(rs, theta, phi_params)
     dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
-    with xp.errstate(divide="ignore"):
+    with np.errstate(divide="ignore"):
         tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
     tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
@@ -507,7 +509,7 @@ def _get_dphidzeta(rs, theta, zeta, phi_params):
     """Calculate dphi / dzeta."""
     alpha = _get_alpha(rs, theta, phi_params)
     tmp1 = alpha * (1 + zeta) ** alpha / (1 + zeta)
-    with xp.errstate(invalid="ignore"):
+    with np.errstate(invalid="ignore"):
         tmp2 = xp.where(1 - zeta > 0, alpha * (1 - zeta) ** alpha / (1 - zeta), 0)
     return (tmp1 - tmp2) / (2**alpha - 2)
 

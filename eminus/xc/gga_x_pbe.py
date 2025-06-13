@@ -7,6 +7,8 @@ Reference: Phys. Rev. Lett. 77, 3865.
 
 import math
 
+import numpy as np
+
 from eminus import backend as xp
 
 from .lda_x import lda_x, lda_x_spin
@@ -93,11 +95,11 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
     kf = (3 * math.pi**2 * n) ** (1 / 3)
     # Handle divisions by zero
     # divkf = 1 / kf
-    with xp.errstate(divide="ignore"):
+    with np.errstate(divide="ignore"):
         divkf = xp.where(kf > 0, 1 / kf, 0)
     # Handle divisions by zero
     # s = norm_dn * divkf / (2 * n)
-    with xp.errstate(invalid="ignore"):
+    with np.errstate(invalid="ignore"):
         s = xp.where(n > 0, norm_dn * divkf / (2 * n), 0)
     f1 = 1 + mu * s**2 / kappa
     Fx = kappa - kappa / f1
@@ -113,7 +115,7 @@ def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
 
     # Handle divisions by zero
     # vsigmax = exunifdFx * divkf / (2 * norm_dn)
-    with xp.errstate(invalid="ignore"):
+    with np.errstate(invalid="ignore"):
         vsigmax = xp.where(norm_dn > 0, exunifdFx * divkf / (2 * norm_dn), 0)
 
     return sx * n, xp.stack([vx]), vsigmax

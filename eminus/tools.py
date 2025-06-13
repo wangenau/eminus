@@ -169,7 +169,7 @@ def get_ip(scf):
     scf.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
     # Account for spin-polarized calculations
-    epsilon = np.sort(np.ravel(epsilon))
+    epsilon = xp.sort(xp.ravel(epsilon))
     return -epsilon[-1]
 
 
@@ -329,13 +329,13 @@ def get_tauw(scf):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    dn2 = np.linalg.norm(dn_spin, axis=2) ** 2
+    dn2 = xp.linalg.norm(dn_spin, axis=2) ** 2
     # Use the definition with a division by two
     tauw = dn2 / (8 * scf.n_spin)
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
     log.debug(f"Calculated Ekin: {scf.energies.Ekin:.6f} Eh")
-    log.debug(f"Integrated tauw: {np.sum(tauw) * atoms.dV:.6f} Eh")
+    log.debug(f"Integrated tauw: {xp.sum(tauw) * atoms.dV:.6f} Eh")
     return tauw
 
 
@@ -375,7 +375,7 @@ def get_reduced_gradient(scf, eps=0):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    norm_dn = np.linalg.norm(np.sum(dn_spin, axis=0), axis=1)
+    norm_dn = xp.linalg.norm(xp.sum(dn_spin, axis=0), axis=1)
 
     kf = (3 * math.pi**2 * scf.n) ** (1 / 3)
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -522,7 +522,7 @@ def fermi_distribution(E, mu, kbT):
         Fermi distribution.
     """
     x = (E - mu) / kbT
-    with xp.errstate(over="ignore"):
+    with np.errstate(over="ignore"):
         if isinstance(x, numbers.Real):
             return 1 / (math.exp(x) + 1)
         return 1 / (xp.exp(x) + 1)

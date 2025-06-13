@@ -35,12 +35,12 @@ def read_poscar(filename):
             log.info(f'POSCAR file comment: "{comment}"')
 
         # The second line contains scaling factors
-        scaling = np.float64(lines[1].strip().split())
+        scaling = np.asarray(lines[1].strip().split(), dtype=float)
 
         # Followed by unscaled lattice coordinates, scale them here
         a = np.empty((3, 3))
         for i, line in enumerate(lines[2:5]):
-            a[i] = scaling * np.float64(line.strip().split())
+            a[i] = scaling * np.asarray(line.strip().split(), dtype=float)
 
         # If line number six contains numbers a POTCAR file is required
         if lines[5].strip().split()[0].isnumeric():
@@ -48,7 +48,7 @@ def read_poscar(filename):
             raise NotImplementedError(msg)
         # Otherwise the atom species are given with their amount
         atom = lines[5].strip().split()
-        Natom = np.int64(lines[6].strip().split())
+        Natom = np.asarray(lines[6].strip().split(), dtype=int)
         # Extend the atoms by their respective amount
         atom = [a for a, N in zip(atom, Natom) for _ in range(N)]
 
@@ -62,9 +62,9 @@ def read_poscar(filename):
         # Following lines contain atom positions
         for i, line in enumerate(lines[8 + skip : 8 + skip + np.sum(Natom)]):
             if mode == "direct":
-                pos[i] = np.sum(a * np.float64(line.strip().split()[:3]), axis=0)
+                pos[i] = np.sum(a * np.asarray(line.strip().split()[:3]), axis=0, dtype=float)
             if mode == "cartesian":
-                pos[i] = scaling * np.float64(line.strip().split()[:3])
+                pos[i] = scaling * np.asarray(line.strip().split()[:3], dtype=float)
         # Skip all the properties afterwards
 
     # POSCAR files are in Angstrom, so convert to Bohr

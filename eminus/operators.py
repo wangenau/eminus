@@ -29,6 +29,8 @@ W[ik][s, :, n].
 
 import copy
 
+import numpy as np
+
 from . import backend as xp
 from .utils import handle_k, handle_spin
 
@@ -97,7 +99,7 @@ def Linv(atoms, W):
         The operator applied on W.
     """
     # Ignore the division by zero for the first elements
-    with xp.errstate(divide="ignore", invalid="ignore"):
+    with np.errstate(divide="ignore", invalid="ignore"):
         if W.ndim == 1:
             # One could do some proper indexing with [1:] but indexing is slow
             out = W / (atoms.G2 * -atoms.Omega)

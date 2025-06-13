@@ -99,7 +99,7 @@ def Ylm_real(l, m, G):  # noqa: C901
 
     # cos(theta)=Gz/|G|
     Gm = xp.linalg.norm(G, axis=1)
-    with xp.errstate(divide="ignore", invalid="ignore"):
+    with np.errstate(divide="ignore", invalid="ignore"):
         cos_theta = G[:, 2] / Gm
     # Account for small magnitudes, if norm(G) < eps: cos_theta=0
     cos_theta[Gm < eps] = 0
@@ -244,7 +244,7 @@ def pseudo_uniform(size, seed=1234):
     Returns:
         Array with (pseudo) random numbers.
     """
-    W = np.empty(size, dtype=complex)
+    W = xp.empty(size, dtype=complex)
     mult = 48271
     mod = (2**31) - 1
     x = (seed * mult + 1) % mod

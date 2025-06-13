@@ -143,7 +143,7 @@ def linmin_test(g, d):
         Linmin angle.
     """
     # cos = A B / |A| |B|
-    return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+    return dotprod(g, d) / xp.sqrt(dotprod(g, g) * dotprod(d, d))
 
 
 def cg_test(atoms, ik, g, g_old, precondition=True):
@@ -171,7 +171,7 @@ def cg_test(atoms, ik, g, g_old, precondition=True):
     else:
         Kg, Kg_old = g, g_old
     # cos = A B / |A| |B|
-    return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
+    return dotprod(g, Kg_old) / xp.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
 def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
@@ -283,10 +283,10 @@ def pclm(
         method = "lm"
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Search direction that needs to be saved for each spin
-    d = [np.empty_like(Wk) for Wk in scf.W]
-    g = [np.empty_like(Wk) for Wk in scf.W]
+    d = [xp.empty_like(Wk) for Wk in scf.W]
+    g = [xp.empty_like(Wk) for Wk in scf.W]
 
     for i in range(Nit):
         W_tmp = copy.deepcopy(scf.W)
@@ -377,14 +377,14 @@ def pccg(
         method = "cg"
 
     # Scalars that need to be saved for each spin and k-point
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin and k-point
-    d = [np.empty_like(Wk) for Wk in scf.W]
-    g = [np.empty_like(Wk) for Wk in scf.W]
-    d_old = [np.empty_like(Wk) for Wk in scf.W]
-    g_old = [np.empty_like(Wk) for Wk in scf.W]
+    d = [xp.empty_like(Wk) for Wk in scf.W]
+    g = [xp.empty_like(Wk) for Wk in scf.W]
+    d_old = [xp.empty_like(Wk) for Wk in scf.W]
+    g_old = [xp.empty_like(Wk) for Wk in scf.W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     W_tmp = copy.deepcopy(scf.W)

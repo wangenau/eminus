@@ -20,7 +20,7 @@ def test_singleton():
 def test_numpy_backend():
     """Test the numpy backend."""
     config.backend = "numpy"
-    array = xp.arange(9, dtype=xp.float64).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape((3, 3))
 
     assert isinstance(xp.pi, float)
     assert xp.sqrt(array).ndim == 2
@@ -35,7 +35,7 @@ def test_torch_backend():
     import torch
 
     config.backend = "torch"
-    array = xp.arange(9, dtype=xp.float64).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape((3, 3))
 
     assert isinstance(xp.pi, float)
     assert xp.sqrt(array).ndim == 2
@@ -48,12 +48,12 @@ def test_switching_and_equality():
     """Test backend switching and compare results."""
     pytest.importorskip("torch", reason="torch not installed, skip tests")
     config.backend = "torch"
-    array = xp.arange(9, dtype=xp.float64).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape((3, 3))
     sqrt_torch = xp.sqrt(array)
     norm_torch = xp.linalg.norm(array, axis=0)
 
     config.backend = "numpy"
-    array = xp.arange(9, dtype=xp.float64).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape((3, 3))
     sqrt_numpy = xp.sqrt(array)
     norm_numpy = xp.linalg.norm(array, axis=0)
 
