@@ -19,6 +19,7 @@ def test_singleton():
 
 def test_numpy_backend():
     """Test the numpy backend."""
+    backend = config.backend
     config.backend = "numpy"
     array = xp.arange(9, dtype=float).reshape((3, 3))
 
@@ -27,7 +28,7 @@ def test_numpy_backend():
     assert isinstance(xp.sqrt(array), np.ndarray)
     assert xp.linalg.norm(array, axis=0).ndim == 1
     assert isinstance(xp.linalg.norm(array, axis=0), np.ndarray)
-    config.backend = "torch"  # Change back to default
+    config.backend = backend  # Restore the default
 
 
 def test_torch_backend():
@@ -35,6 +36,7 @@ def test_torch_backend():
     pytest.importorskip("torch", reason="torch not installed, skip tests")
     import torch
 
+    backend = config.backend
     config.backend = "torch"
     array = xp.arange(9, dtype=float).reshape((3, 3))
 
@@ -43,11 +45,13 @@ def test_torch_backend():
     assert isinstance(xp.sqrt(array), torch.Tensor)
     assert xp.linalg.norm(array, axis=0).ndim == 1
     assert isinstance(xp.linalg.norm(array, axis=0), torch.Tensor)
+    config.backend = backend  # Restore the default
 
 
 def test_switching_and_equality():
     """Test backend switching and compare results."""
     pytest.importorskip("torch", reason="torch not installed, skip tests")
+    backend = config.backend
     config.backend = "torch"
     array = xp.arange(9, dtype=float).reshape((3, 3))
     sqrt_torch = xp.sqrt(array)
@@ -62,7 +66,7 @@ def test_switching_and_equality():
     assert_allclose(sqrt_torch, sqrt_numpy)
     assert type(norm_torch) is not type(norm_numpy)
     assert_allclose(norm_torch, norm_numpy)
-    config.backend = "torch"  # Change back to default
+    config.backend = backend  # Restore the default
 
 
 if __name__ == "__main__":
