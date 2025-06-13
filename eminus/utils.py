@@ -8,6 +8,7 @@ import pathlib
 import re
 
 import numpy as np
+import scipy
 
 import eminus
 
@@ -161,6 +162,21 @@ def Ylm_real(l, m, G):  # noqa: C901
 
     msg = f"No definition found for Ylm({l}, {m})."
     raise ValueError(msg)
+
+
+def sqrtm(A):
+    """Matrix square root.
+
+    Args:
+        A: Matrix whose square root to evaluate.
+
+    Returns:
+        Value of the sqrt function at A.
+    """
+    if isinstance(A, np.ndarray):
+        return scipy.linalg.sqrtm(A)
+    # sqrtm is not implemented in Torch
+    return xp.asarray(scipy.linalg.sqrtm(A.cpu().detach().numpy()), dtype=A.dtype)
 
 
 def handle_spin(func):

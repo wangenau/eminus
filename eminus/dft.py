@@ -5,13 +5,12 @@
 import math
 
 from numpy.random import Generator, SFC64
-from scipy.linalg import sqrtm
 
 from . import backend as xp
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
 from .logger import log
-from .utils import handle_k, handle_spin, pseudo_uniform
+from .utils import handle_k, handle_spin, pseudo_uniform, sqrtm
 from .xc import get_vxc
 
 
@@ -48,9 +47,7 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ xp.linalg.inv(
-        xp.asarray(xp.sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex)
-    )
+    return W @ xp.linalg.inv(xp.asarray(sqrtm(W.conj().T @ xp.convert(atoms.O(W))), dtype=complex))
 
 
 @xp.debug
@@ -75,7 +72,7 @@ def orth_unocc(atoms, Y, Z):
             rhoZ = xp.convert(Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin]))
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
             D[ik][spin] = rhoZ @ xp.linalg.inv(
-                xp.asarray(xp.sqrtm(rhoZ.conj().T @ xp.convert(atoms.O(rhoZ))), dtype=complex)
+                xp.asarray(sqrtm(rhoZ.conj().T @ xp.convert(atoms.O(rhoZ))), dtype=complex)
             )
     return D
 

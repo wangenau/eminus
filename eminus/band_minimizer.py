@@ -9,15 +9,12 @@ and made more performant.
 import copy
 import logging
 
-import numpy as np
-from scipy.linalg import sqrtm
-
 from . import backend as xp
 from .dft import H, orth, orth_unocc
 from .energies import get_Eband
 from .logger import name
 from .minimizer import cg_method, cg_test, check_convergence, linmin_test
-from .utils import dotprod
+from .utils import dotprod, sqrtm
 
 
 def scf_step_occ(scf, W):
