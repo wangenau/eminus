@@ -62,20 +62,17 @@ def read_poscar(filename):
         # Following lines contain atom positions
         for i, line in enumerate(lines[8 + skip : 8 + skip + np.sum(Natom)]):
             if mode == "direct":
-                pos[i] = np.sum(a * np.asarray(line.strip().split()[:3]), axis=0, dtype=float)
+                pos[i] = np.sum(a * np.asarray(line.strip().split()[:3], dtype=float), axis=0)
             if mode == "cartesian":
                 pos[i] = scaling * np.asarray(line.strip().split()[:3], dtype=float)
         # Skip all the properties afterwards
 
     # POSCAR files are in Angstrom, so convert to Bohr
-    pos = ang2bohr(pos)
-    a = ang2bohr(a)
-    # pos = xp.debug(pos)
-    # a = xp.debug(a)
+    pos = xp.asarray(ang2bohr(pos))
+    a = xp.asarray(ang2bohr(a))
     return atom, pos, a
 
 
-@xp.debug
 def write_poscar(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate POSCAR files from atoms objects.
 

@@ -41,7 +41,7 @@ dr = xp.asarray(rng.standard_normal(3))
 def test_LinvL(field):
     """Test Laplacian operator identity."""
     out = atoms.Linv(atoms.L(W_tests[field]))
-    test = copy.copy(W_tests[field])
+    test = copy.deepcopy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -53,7 +53,7 @@ def test_LinvL(field):
 def test_LLinv(field):
     """Test Laplacian operator identity."""
     out = atoms.L(atoms.Linv(W_tests[field]))
-    test = copy.copy(W_tests[field])
+    test = copy.deepcopy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:

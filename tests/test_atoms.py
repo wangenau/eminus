@@ -2,12 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the Atoms class."""
 
+import math
+
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 from scipy.linalg import det
 
 from eminus import Atoms, Cell, log
+from eminus import backend as xp
 from eminus.tools import center_of_mass
 
 inp = ("He", (0, 0, 0))
@@ -38,15 +41,19 @@ def test_atom(atom, ref, Nref):
         ([[0, 0, 0]], None, [(0, 0, 0)]),
         ([[0, 0, 0]], True, [(10, 10, 10)]),
         ([[0, 0, 0]], "shift", [(10, 10, 10)]),
-        ([[0] * 3, [1] * 3], "rotate", [(0, 0, 0), (np.sqrt(3), 0, 0)]),
+        ([[0] * 3, [1] * 3], "rotate", [(0, 0, 0), (math.sqrt(3), 0, 0)]),
         ([[0] * 3, [1] * 3], "shift", [[9.5] * 3, [10.5] * 3]),
-        ([[0] * 3, [1] * 3], True, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]]),
+        (
+            [[0] * 3, [1] * 3],
+            True,
+            [[10 - math.sqrt(3) / 2, 10, 10], [10 + math.sqrt(3) / 2, 10, 10]],
+        ),
     ],
 )
 def test_pos(pos, center, ref):
     """Test the setting of the atom coordinates."""
     atoms = Atoms(["H"] * len(pos), pos=pos, center=center)
-    assert_allclose(np.abs(atoms.pos), ref, atol=1e-15)
+    assert_allclose(xp.abs(atoms.pos), ref, atol=1e-15)
 
 
 @pytest.mark.parametrize(
@@ -61,13 +68,13 @@ def test_cell(a, ref, Omega):
     """Test the setting of cell size."""
     atoms = Atoms(*inp, a=a).build()
     assert_allclose(atoms.Omega, Omega)
-    assert_equal(atoms.a, ref)
+    assert_array_equal(atoms.a, ref)
     assert_allclose(atoms.Omega, det(atoms.a))
     assert atoms.r is not None
-    assert_equal(atoms.r[0], 0)
+    assert_array_equal(atoms.r[0], 0)
     assert len(atoms.r) == atoms.Ns
     assert_allclose(atoms.s[0] / atoms.s[1], abs(atoms.a[0, 0] / atoms.a[1, 1]), atol=0.1)
-    assert atoms.dV == atoms.Omega / np.prod(atoms.s)
+    assert atoms.dV == atoms.Omega / xp.prod(atoms.s)
     assert atoms.is_built
 
 
@@ -110,15 +117,17 @@ def test_center(center):
     """Test the center option."""
     atoms = Atoms("H2", [[0, 0, 0], [1, 1, 1]], center=center)
     if center is False:
-        assert_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
+        assert_array_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
     elif center is True:
-        assert_allclose(atoms.pos, [[10 - np.sqrt(3) / 2, 10, 10], [10 + np.sqrt(3) / 2, 10, 10]])
+        assert_allclose(
+            atoms.pos, [[10 - math.sqrt(3) / 2, 10, 10], [10 + math.sqrt(3) / 2, 10, 10]]
+        )
     elif center == "rotate":
-        assert_allclose(atoms.pos, [[0, 0, 0], [np.sqrt(3), 0, 0]], atol=1e-15)
+        assert_allclose(atoms.pos, [[0, 0, 0], [math.sqrt(3), 0, 0]], atol=1e-15)
     elif center == "shift":
-        assert_equal(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
+        assert_array_equal(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
     elif center == "recentered":
-        assert_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
+        assert_array_equal(atoms.pos, [[0, 0, 0], [1, 1, 1]])
 
 
 def test_verbose():
@@ -149,7 +158,7 @@ def test_f(f, unrestricted, fref, Nref):
     atoms.s = 1
     atoms.f = f
     atoms.build()
-    assert_equal(atoms.f, fref)
+    assert_array_equal(atoms.f, fref)
     assert atoms.occ.is_filled
     assert atoms.occ.Nstate == Nref
 
@@ -160,7 +169,7 @@ def test_s(s, ref):
     atoms = Atoms(*inp)
     if s is not None:
         atoms.s = s
-    assert_equal(atoms.s, ref)
+    assert_array_equal(atoms.s, ref)
 
 
 @pytest.mark.parametrize(
@@ -180,7 +189,7 @@ def test_Z(atom, Z, ref, Nref):
     atoms = Atoms(atom, [[0, 0, 0]] * len(ref))
     atoms.Z = Z
     atoms.build()
-    assert_equal(atoms.Z, ref)
+    assert_array_equal(atoms.Z, ref)
     assert len(atoms.Z) == atoms.Natoms
     assert atoms.occ.Nelec == Nref
     assert atoms.occ.Nempty >= 0
@@ -192,10 +201,10 @@ def test_G():
     atoms.s = 2
     atoms.build()
     assert atoms.G is not None
-    assert_equal(atoms.G[0], 0)
+    assert_array_equal(atoms.G[0], 0)
     assert len(atoms.G) == atoms.Ns
-    assert_equal(atoms.G2, atoms.G2c)
-    assert_equal(atoms.Sf, 1)
+    assert_array_equal(atoms.G2, atoms.G2c)
+    assert_array_equal(atoms.Sf, 1)
     atoms = Atoms(*inp)
     atoms.s = 2
     atoms.build()
@@ -221,14 +230,14 @@ def test_Gk():
 def test_kpts():
     """Test the k-points object."""
     atoms = Atoms(*inp, a=(1, 2, 3)).build()
-    assert_equal(atoms.kpts.a, atoms.a)
+    assert_array_equal(atoms.kpts.a, atoms.a)
     atoms.a = [2] * 3
-    assert_equal(atoms.kpts.a, atoms.a)
-    assert_equal(atoms.occ.wk, atoms.kpts.wk)
+    assert_array_equal(atoms.kpts.a, atoms.a)
+    assert_array_equal(atoms.occ.wk, atoms.kpts.wk)
     atoms.kpts.wk = [0.5]
     atoms.kpts.is_built = True
     atoms.build()
-    assert_equal(atoms.occ.wk, atoms.kpts.wk)
+    assert_array_equal(atoms.occ.wk, atoms.kpts.wk)
 
 
 def test_operators():

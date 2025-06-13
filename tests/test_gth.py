@@ -3,13 +3,12 @@
 """Test GTH functions."""
 
 import inspect
-import numbers
 import pathlib
 
-import numpy as np
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms, Cell, SCF
+from eminus import backend as xp
 
 
 def test_GTH():
@@ -34,7 +33,7 @@ def test_norm():
     scf = SCF(atoms)
     for ik in range(scf.kpts.Nk):
         for i in range(scf.gth.NbetaNL):
-            norm = np.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])
+            norm = xp.sum(scf.gth.betaNL[ik][:, i] * scf.gth.betaNL[ik][:, i])
             assert_allclose(abs(norm), 1, atol=1e-1)
 
 
@@ -49,7 +48,7 @@ def test_mock():
     E = scf.run()
     assert_allclose(E, E_ref)
     for key in scf.gth["X"]:
-        assert_equal(scf.gth["X"][key], 0)
+        assert_array_equal(scf.gth["X"][key], 0)
 
 
 def test_custom_files():
@@ -57,7 +56,6 @@ def test_custom_files():
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atoms = Atoms("B", (0, 0, 0)).build()
     atoms.Z = file_path
-    assert isinstance(atoms.Z[0], numbers.Real)
     assert atoms.Z[0] == 3
     scf = SCF(atoms, pot=file_path)
     assert scf.gth["B"]["rloc"] == 0.41878773

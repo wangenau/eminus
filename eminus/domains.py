@@ -2,7 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Functions to restrict real-space fields to domains."""
 
+import copy
 import numbers
+
+import numpy as np
 
 from . import backend as xp
 from .logger import log
@@ -31,7 +34,7 @@ def domain_cuboid(obj, length, centers=None):
         length = length * xp.ones(3)
     if centers is None:
         centers = center_of_mass(atoms.pos)
-    centers = xp.asarray(centers)
+    centers = xp.asarray(np.asarray(centers))
     # Handle each dimension separately and add them together
     if centers.ndim == 1:
         mask1 = xp.abs(centers[0] - atoms.r[:, 0]) < length[0]
@@ -84,7 +87,7 @@ def domain_sphere(obj, radius, centers=None):
 
     if centers is None:
         centers = center_of_mass(atoms.pos)
-    centers = xp.asarray(centers)
+    centers = xp.asarray(np.asarray(centers))
     if centers.ndim == 1:
         mask = xp.linalg.norm(centers - atoms.r, axis=1) < radius
     else:
@@ -107,6 +110,6 @@ def truncate(field, mask):
     Returns:
         Truncated field.
     """
-    field_trunc = xp.copy(field)
+    field_trunc = copy.deepcopy(field)
     field_trunc[~mask] = 0
     return field_trunc

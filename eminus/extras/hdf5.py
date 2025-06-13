@@ -14,7 +14,6 @@ from eminus.io.json import _custom_object_hook
 from eminus.logger import log
 
 
-@xp.debug
 def read_hdf5(filename):
     """Load objects from an HDF5 file.
 
@@ -51,7 +50,7 @@ def read_hdf5(filename):
                     if xp.is_array(dct[key]):
                         dct[key] = dct[key].tolist()
                 else:
-                    dct[key] = value[()]
+                    dct[key] = xp.asarray(value[()])
             elif isinstance(value, Group):
                 dct[key] = read_hdf5_recursively(fh, f"{path}{key}/")
         # Create eminus objects from dictionaries, reuse the JSON helper function
@@ -61,7 +60,6 @@ def read_hdf5(filename):
         return read_hdf5_recursively(fh, "/")
 
 
-@xp.debug
 def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
     """Save objects in an HDF5 file.
 

@@ -27,6 +27,7 @@ def test_numpy_backend():
     assert isinstance(xp.sqrt(array), np.ndarray)
     assert xp.linalg.norm(array, axis=0).ndim == 1
     assert isinstance(xp.linalg.norm(array, axis=0), np.ndarray)
+    config.backend = "torch"  # Change back to default
 
 
 def test_torch_backend():
@@ -61,6 +62,7 @@ def test_switching_and_equality():
     assert_allclose(sqrt_torch, sqrt_numpy)
     assert type(norm_torch) is not type(norm_numpy)
     assert_allclose(norm_torch, norm_numpy)
+    config.backend = "torch"  # Change back to default
 
 
 if __name__ == "__main__":

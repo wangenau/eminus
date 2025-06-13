@@ -138,7 +138,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
             # For spin-paired systems we have to remove the spin indexing (the outermost shape)
             rho = xp.vstack((n_spin[0], dn_spin[0].T))
         else:
-            rho = xp.asarray(
+            rho = xp.stack(
                 [xp.vstack((n_spin[0], dn_spin[0].T)), xp.vstack((n_spin[1], dn_spin[1].T))]
             )
     else:
@@ -149,7 +149,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         if Nspin == 1:
             rho = xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
         else:
-            rho = xp.asarray(
+            rho = xp.stack(
                 [
                     xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
                     xp.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1])),

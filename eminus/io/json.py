@@ -26,7 +26,7 @@ def _custom_object_hook(dct):
     # ndarrays are base64 encoded, decode and recreate
     if isinstance(dct, dict) and "__ndarray__" in dct:
         data = base64.b64decode(dct["__ndarray__"])
-        return np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])  # xp.convert()
+        return xp.asarray(np.frombuffer(data, dct["dtype"]).reshape(dct["shape"]))
 
     # Create simple eminus objects and set all attributes afterwards
     # Explicitly call objects with verbosity since the logger is created at instantiation
@@ -78,7 +78,6 @@ def read_json(filename):
         return json.load(fh, object_hook=_custom_object_hook)
 
 
-@xp.debug
 def write_json(obj, filename):
     """Save objects in a JSON file.
 

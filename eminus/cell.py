@@ -103,7 +103,8 @@ def Cell(
 
     # Only scale the lattice vectors with if a is given
     if a is not None:
-        lattice_vectors = a * lattice_vectors
+        a = xp.asarray(a)
+        lattice_vectors = a * xp.asarray(lattice_vectors)
         basis = a * xp.atleast_2d(xp.asarray(basis))
 
     # Account for different atom and basis sizes

@@ -7,11 +7,11 @@ import inspect
 import os
 import pathlib
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms, Cell, SCF
+from eminus import backend as xp
 from eminus.energies import Energy
 from eminus.gth import GTH
 from eminus.io import (
@@ -65,9 +65,9 @@ def test_cube(Nspin):
     else:
         assert atoms.atom + ["X"] * atoms.Natoms + ["He"] * atoms.Natoms == atom
     assert_allclose(atoms.pos, pos[: atoms.Natoms], atol=1e-6)
-    assert_equal(atoms.Z, Z[: atoms.Natoms])
-    assert_equal(atoms.a, a)
-    assert_equal(atoms.s, s)
+    assert_array_equal(atoms.Z, Z[: atoms.Natoms])
+    assert_array_equal(atoms.a, a)
+    assert_array_equal(atoms.s, s)
     assert scf.n is not None
     assert_allclose(scf.n, field, atol=1e-9)
 
@@ -83,7 +83,7 @@ def test_cube_noncubic():
     _, _, _, a, s, field = read(filename)
     os.remove(filename)
     assert_allclose(atoms.a, a, atol=2e-6)
-    assert_equal(atoms.s, s)
+    assert_array_equal(atoms.s, s)
     assert scf.n is not None
     assert_allclose(scf.n, field, atol=1e-8)
 
@@ -168,7 +168,7 @@ def test_poscar(Nspin):
         assert sorted(atoms.atom + ["X"] * atoms.Natoms + ["He"] * atoms.Natoms) == sorted(atom)
     assert_allclose(atoms.a, a)
     # Also coordinates get sorted, stick with the sum of coordinate contributions
-    assert_allclose(np.sum(atoms.pos, axis=0), np.sum(pos[: atoms.Natoms], axis=0), atol=1e-6)
+    assert_allclose(xp.sum(atoms.pos, axis=0), xp.sum(pos[: atoms.Natoms], axis=0), atol=1e-6)
 
 
 def test_poscar_file():
@@ -176,8 +176,8 @@ def test_poscar_file():
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atom, pos, a = read(f"{file_path}/POSCAR.test")
     assert atom == ["B", "N"]
-    assert_allclose(pos, np.asarray([[0] * 3, [1.68658057] * 3]))
-    assert_allclose(a, 3.37316113 * (np.ones((3, 3)) - np.eye(3)))
+    assert_allclose(pos, xp.asarray([[0] * 3, [1.68658057] * 3]))
+    assert_allclose(a, 3.37316113 * (xp.ones((3, 3)) - xp.eye(3)))
 
 
 @pytest.mark.parametrize("Nspin", [1, 2])

@@ -48,13 +48,11 @@ def read_traj(filename):
                 atom.append(line_split[0])
                 pos.append(np.asarray(line_split[1:4], dtype=float))
             # XYZ files are in Angstrom, so convert to Bohr
-            pos = ang2bohr(np.asarray(pos))
-            pos = xp.convert(pos)
+            pos = xp.asarray(ang2bohr(np.asarray(pos)))
             traj.append((atom, pos))
     return traj
 
 
-@xp.debug
 def write_traj(obj, filename, fods=None, elec_symbols=("X", "He")):
     """Generate TRAJ files from atoms objects.
 

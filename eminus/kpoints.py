@@ -135,7 +135,9 @@ class KPoints(BaseObject):
 
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == "sc" and not (self.a == xp.diag(xp.diag(self.a))).all():
+        if self.lattice == "sc" and not xp.all(
+            xp.asarray(self.a) == xp.diag(xp.diag(xp.asarray(self.a)))
+        ):
             log.warning("Lattice system and lattice vectors do not match.")
         if self.is_built:
             return self
@@ -166,12 +168,12 @@ class KPoints(BaseObject):
         for i in range(self.Nk):
             for j in range(i + 1, self.Nk):
                 # Check k=-k within some tolerance
-                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-15:
+                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-12:
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = xp.delete(self.k, idx_to_remove, axis=0)
-        self.wk = xp.delete(self.wk, idx_to_remove)
+        self.k = xp.asarray(np.delete(self.k, idx_to_remove, axis=0))
+        self.wk = xp.asarray(np.delete(self.wk, idx_to_remove))
         return self
 
     def _assert_gamma_only(self):
@@ -207,8 +209,8 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         k-points in cartesian coordinates.
     """
-    inv_cell = 2 * math.pi * xp.linalg.inv(lattice_vectors).T
-    return xp.asarray(k_points) @ inv_cell
+    inv_cell = 2 * math.pi * xp.linalg.inv(xp.asarray(lattice_vectors, dtype=float)).T
+    return xp.asarray(k_points, dtype=float) @ inv_cell
 
 
 def monkhorst_pack(nk):
@@ -343,7 +345,7 @@ def kpoints2axis(kpts):
     for p in labels[1:]:
         # Only search the k-points starting from the previous special point
         shift = special_indices[-1]
-        k = kpts.k_scaled[shift:]
+        k = np.asarray(kpts.k_scaled[shift:])
         # We index p[0] since p could be a joined label of a jump
         # This expression simply finds the special point in the k_points matrix
         index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift

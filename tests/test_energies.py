@@ -4,11 +4,11 @@
 
 import copy
 
-import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, SCF
+from eminus import backend as xp
 from eminus.dft import get_epsilon, guess_pseudo
 from eminus.energies import Energy, get_Eband, get_Eentropy
 from eminus.minimizer import scf_step
@@ -38,7 +38,7 @@ atoms_pol = Atoms("Ne", (0, 0, 0), ecut=10, unrestricted=True)
 atoms_pol.s = 20
 scf_pol = SCF(atoms_pol, sic=True)
 assert scf_unpol.W is not None
-scf_pol.W = [np.array([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
+scf_pol.W = [xp.stack([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
 scf_pol.run()
 
 
@@ -118,7 +118,7 @@ def test_multiple_k():
     scf_step(scf, 0)
 
     atoms = Cell("Si", "diamond", ecut=30, a=10.2631, kmesh=(2, 2, 2))
-    atoms.set_k(np.zeros((8, 3)))
+    atoms.set_k(xp.zeros((8, 3)))
     scf_k = SCF(atoms, etol=1e-5)
     scf_k.W = guess_pseudo(scf_k)
     scf_k.dn_spin, scf_k.tau = None, None

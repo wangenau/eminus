@@ -72,7 +72,6 @@ def get_localized_orbitals(mf, loc, Nit=1000, seed=1234):
     return loc_orb
 
 
-@xp.debug
 def get_fods(obj, basis="pc-1", loc="FB"):
     """Generate FOD positions using the PyCOM method.
 
@@ -129,7 +128,6 @@ def get_fods(obj, basis="pc-1", loc="FB"):
     return xp.convert(loc_com)
 
 
-@xp.debug
 def split_fods(atom, pos, elec_symbols=("X", "He")):
     """Split atom and FOD coordinates.
 
@@ -152,14 +150,13 @@ def split_fods(atom, pos, elec_symbols=("X", "He")):
                 pos_fod_up = xp.vstack((pos_fod_up, pos[ia]))
             if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
                 pos_fod_dn = xp.vstack((pos_fod_dn, pos[ia]))
-            pos = xp.delete(pos, ia, axis=0)
+            pos = xp.asarray(np.delete(pos, ia, axis=0))
             del atom[ia]
 
     pos_fod = [xp.asarray(pos_fod_up), xp.asarray(pos_fod_dn)]
     return atom, pos, pos_fod
 
 
-@xp.debug
 def remove_core_fods(obj, fods):
     """Remove core FODs from a set of FOD coordinates.
 
@@ -195,5 +192,5 @@ def remove_core_fods(obj, fods):
             dist = xp.linalg.norm(fods[s] - atoms.pos[ia], axis=1)
             idx = xp.argsort(dist)
             # Remove core FODs with the smallest distance to the core
-            fods[s] = xp.delete(fods[s], idx[:n_core], axis=0)
+            fods[s] = xp.asarray(np.delete(fods[s], idx[:n_core], axis=0))
     return fods

@@ -407,7 +407,7 @@ class Atoms(BaseObject):
             wk: k-point weights.
         """
         self.kpts.build()
-        self.kpts._k = xp.atleast_2d(k)
+        self.kpts._k = xp.atleast_2d(xp.asarray(k))
         if wk is None:
             self.kpts._wk = xp.ones(len(self.kpts._k)) / len(self.kpts._k)
         else:

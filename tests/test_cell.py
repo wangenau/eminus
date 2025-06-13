@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the Cell generation."""
 
-import numpy as np
-from numpy.testing import assert_equal
+from numpy.testing import assert_array_equal
 
+from eminus import backend as xp
 from eminus import Cell
 from eminus.data import LATTICE_VECTORS
 
@@ -34,23 +34,23 @@ def test_lattice():
     """Test the lattice setting."""
     lattice = [[1, 2, 3], [3, 1, 2], [2, 3, 1]]
     cell = Cell("Si", lattice, 30, None)
-    assert_equal(lattice, cell.a)
+    assert_array_equal(lattice, cell.a)
     cell = Cell("Si", lattice, 30, 0)
-    assert_equal(cell.a, 0)
+    assert_array_equal(cell.a, 0)
     cell = Cell("Si", "diamond", 30, None)
-    assert_equal(cell.a, LATTICE_VECTORS["fcc"])
+    assert_array_equal(cell.a, xp.asarray(LATTICE_VECTORS["fcc"]))
     cell = Cell("Si", "diamond", 30, -2)
-    assert_equal(cell.a, np.eye(3) - 1)
+    assert_array_equal(cell.a, xp.eye(3) - 1)
 
 
 def test_a():
     """Test the a setting."""
     cell = Cell("Si", "fcc", 30, None)
-    assert_equal(cell.a, LATTICE_VECTORS["fcc"])
-    assert_equal(cell.pos, 0)
+    assert_array_equal(cell.a, xp.asarray(LATTICE_VECTORS["fcc"]))
+    assert_array_equal(cell.pos, 0)
     cell = Cell("Si", "diamond", 30, 0)
-    assert_equal(cell.a, 0)
-    assert_equal(cell.pos, 0)
+    assert_array_equal(cell.a, 0)
+    assert_array_equal(cell.pos, 0)
 
 
 def test_basis():
@@ -72,7 +72,7 @@ def test_bands():
 def test_kmesh():
     """Test the kmesh setting."""
     cell = Cell("Si", "diamond", 30, 0, kmesh=1)
-    assert_equal(cell.kpts.kmesh, 1)
+    assert_array_equal(cell.kpts.kmesh, 1)
     cell = Cell("Si", "diamond", 30, 1, kmesh=2)
     assert cell.kpts.build().Nk == 8
     cell = Cell("Si", "diamond", 30, 1, kmesh=(1, 3, 2))
@@ -91,7 +91,7 @@ def test_s():
     """Test that the sampling respects the symmetry of the cell."""
     a = [3, 3, 1]
     cell = Cell("Be", "hexagonal", 30, a)
-    assert_equal(a, cell.s / 5)
+    assert_array_equal(a, cell.s / 5)
 
 
 def test_Z():

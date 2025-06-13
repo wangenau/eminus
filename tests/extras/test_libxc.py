@@ -3,17 +3,20 @@
 # mypy: disable-error-code="no-redef"
 """Test libxc extra."""
 
-import numpy as np
 import pytest
 from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
+from eminus import backend as xp
 from eminus.xc import get_exc, get_vxc, get_xc_defaults
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
 rng = default_rng()
-n_tests = {1: np.abs(rng.standard_normal((1, 10000))), 2: np.abs(rng.standard_normal((2, 10000)))}
+n_tests = {
+    1: xp.abs(xp.asarray(rng.standard_normal((1, 10000)))),
+    2: xp.abs(xp.asarray(rng.standard_normal((2, 10000)))),
+}
 
 
 @pytest.mark.parametrize("xc", ["1", "7", "101", "130"])
@@ -29,7 +32,7 @@ def test_libxc_functional_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
     e_out, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
@@ -48,7 +51,7 @@ def test_libxc_functional_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
     _, v_out, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
@@ -62,7 +65,7 @@ def test_libxc_functional_vsigmaxc(xc, Nspin):
     from eminus.extras import libxc_functional
 
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     _, _, vsigma_out, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
@@ -78,7 +81,7 @@ def test_libxc_ext_params(Nspin):
     get_xc_defaults(":18,:21")  # This should print a warning
 
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     xc_params = {
         "_beta": 0.046,  # PBEsol parameter
         "_mu": 10 / 81,  # PBEsol parameter
@@ -117,7 +120,7 @@ def test_pyscf_functional_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
     e_out, _, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
@@ -135,7 +138,7 @@ def test_pyscf_functional_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
     _, v_out, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
@@ -149,7 +152,7 @@ def test_pyscf_functional_vsigmaxc(xc, Nspin):
     from eminus.extras.libxc import pyscf_functional
 
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     _, _, vsigma_out, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, vsigma_test, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
@@ -164,7 +167,7 @@ def test_pyscf_mgga(xc, Nspin):
     from eminus.extras.libxc import libxc_functional, pyscf_functional
 
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack([n_spin, n_spin, n_spin], axis=2)
+    dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     tau = n_spin
     e_out, v_out, vsigma_out, vtau_out = pyscf_functional(
         xc, n_spin, Nspin, dn_spin=dn_spin, tau=tau

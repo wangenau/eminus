@@ -12,7 +12,6 @@ from eminus.units import ang2bohr, bohr2ang
 from eminus.version import __version__
 
 
-@xp.debug
 def read_xyz(filename):
     """Load atom species and positions from XYZ files.
 
@@ -48,12 +47,10 @@ def read_xyz(filename):
             pos.append(np.asarray(line_split[1:4], dtype=float))
 
     # XYZ files are in Angstrom, so convert to Bohr
-    pos = ang2bohr(np.asarray(pos))
-    pos = xp.convert(pos)
+    pos = xp.asarray(ang2bohr(np.asarray(pos)))
     return atom, pos
 
 
-@xp.debug
 def write_xyz(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=False):
     """Generate XYZ files from atoms objects.
 
