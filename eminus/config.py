@@ -17,7 +17,7 @@ class ConfigClass:
 
     def __init__(self):
         """Initialize the ConfigClass object."""
-        self.backend = "torch"  # Use faster Torch FFTs from a different backend if available
+        self.backend = "numpy"  # Use faster Torch FFTs from a different backend if available
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.verbose = "INFO"  # Only display warnings (and worse) by default
 

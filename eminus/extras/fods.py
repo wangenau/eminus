@@ -141,15 +141,15 @@ def split_fods(atom, pos, elec_symbols=("X", "He")):
     Returns:
         Atom types, the respective coordinates, and FOD positions.
     """
-    pos_fod_up = xp.empty((0, 3))
-    pos_fod_dn = xp.empty((0, 3))
+    pos_fod_up = np.empty((0, 3))
+    pos_fod_dn = np.empty((0, 3))
     # Iterate in reverse order because we may delete elements
     for ia in range(len(pos) - 1, -1, -1):
         if atom[ia] in elec_symbols:
             if atom[ia] in elec_symbols[0]:
-                pos_fod_up = xp.vstack((pos_fod_up, pos[ia]))
+                pos_fod_up = np.vstack((pos_fod_up, pos[ia]))
             if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
-                pos_fod_dn = xp.vstack((pos_fod_dn, pos[ia]))
+                pos_fod_dn = np.vstack((pos_fod_dn, pos[ia]))
             pos = xp.asarray(np.delete(pos, ia, axis=0))
             del atom[ia]
 

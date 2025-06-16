@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the Occupations object."""
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
+from eminus import backend as xp
 from eminus.occupations import Occupations
 
 
@@ -35,10 +35,10 @@ def test_Nspin_change_after_fill():
     occ.Nspin = 2
     occ.spin = 1
     occ.fill()
-    assert_equal(occ.f, np.array([[[1], [0]]]))
+    assert_array_equal(occ.f, xp.asarray([[[1], [0]]]))
     occ.Nspin = 1
     occ.fill()
-    assert_equal(occ.f, np.array([[[1]]]))
+    assert_array_equal(occ.f, xp.asarray([[[1]]]))
 
 
 @pytest.mark.parametrize(
@@ -73,23 +73,23 @@ def test_charge_change():
 @pytest.mark.parametrize(
     ("Nelec", "Nspin", "spin", "charge", "ref"),
     [
-        (1, 1, 1, 0, np.array([[[1]]])),
-        (2, 1, 0, 0, np.array([[[2]]])),
-        (1, 2, 1, 0, np.array([[[1], [0]]])),
-        (2, 2, 0, 0, np.array([[[1], [1]]])),
-        (2, 2, 2, 0, np.array([[[1, 1], [0, 0]]])),
-        (3, 1, 0, 0, np.array([[[2, 1]]])),
-        (3, 2, 1, 0, np.array([[[1, 1], [1, 0]]])),
-        (3, 2, 3, 0, np.array([[[1, 1, 1], [0, 0, 0]]])),
-        (3, 2, 0, -1, np.array([[[1, 1], [1, 1]]])),
-        (3, 2, 2, -1, np.array([[[1, 1, 1], [1, 0, 0]]])),
-        (3, 2, 4, -1, np.array([[[1, 1, 1, 1], [0, 0, 0, 0]]])),
-        (3, 2, 0, 1, np.array([[[1], [1]]])),
-        (3, 2, 2, 1, np.array([[[1, 1], [0, 0]]])),
-        (3, 1, 0, 3, np.array([[[0]]])),
-        (3, 2, 0, 3, np.array([[[0], [0]]])),
-        (3, 2, 0, 0, np.array([[[1, 0.5], [1, 0.5]]])),
-        (3, 2, 2, 0, np.array([[[1, 1, 0.5], [0.5, 0, 0]]])),
+        (1, 1, 1, 0, xp.asarray([[[1]]])),
+        (2, 1, 0, 0, xp.asarray([[[2]]])),
+        (1, 2, 1, 0, xp.asarray([[[1], [0]]])),
+        (2, 2, 0, 0, xp.asarray([[[1], [1]]])),
+        (2, 2, 2, 0, xp.asarray([[[1, 1], [0, 0]]])),
+        (3, 1, 0, 0, xp.asarray([[[2, 1]]])),
+        (3, 2, 1, 0, xp.asarray([[[1, 1], [1, 0]]])),
+        (3, 2, 3, 0, xp.asarray([[[1, 1, 1], [0, 0, 0]]])),
+        (3, 2, 0, -1, xp.asarray([[[1, 1], [1, 1]]])),
+        (3, 2, 2, -1, xp.asarray([[[1, 1, 1], [1, 0, 0]]])),
+        (3, 2, 4, -1, xp.asarray([[[1, 1, 1, 1], [0, 0, 0, 0]]])),
+        (3, 2, 0, 1, xp.asarray([[[1], [1]]])),
+        (3, 2, 2, 1, xp.asarray([[[1, 1], [0, 0]]])),
+        (3, 1, 0, 3, xp.asarray([[[0]]])),
+        (3, 2, 0, 3, xp.asarray([[[0], [0]]])),
+        (3, 2, 0, 0, xp.asarray([[[1, 0.5], [1, 0.5]]])),
+        (3, 2, 2, 0, xp.asarray([[[1, 1, 0.5], [0.5, 0, 0]]])),
     ],
 )
 def test_fill(Nelec, Nspin, spin, charge, ref):
@@ -100,20 +100,20 @@ def test_fill(Nelec, Nspin, spin, charge, ref):
     occ.spin = spin
     occ.charge = charge
     occ.fill()
-    assert_equal(occ.f, ref)
+    assert_array_equal(occ.f, ref)
 
 
 @pytest.mark.parametrize(
     ("f", "Nelec", "Nspin", "spin", "ref"),
     [
-        (2, 2, 1, 3, np.array([[[2]]])),
-        (2, 2, 2, 2, np.array([[[2], [0]]])),
-        (1, 2, 2, 0, np.array([[[1], [1]]])),
-        (1, 3, 2, 0, np.array([[[1, 0.5], [1, 0.5]]])),
-        (0.5, 2, 2, 1, np.array([[[0.5, 0.5, 0.5], [0.5, 0, 0]]])),
-        (2 / 3, 2, 1, 0, np.array([[[2 / 3, 2 / 3, 2 / 3]]])),
-        (2 / 3, 3, 2, 1, np.array([[[2 / 3, 2 / 3, 2 / 3], [2 / 3, 1 / 3, 0]]])),
-        (2 / 3, 3, 2, 2, np.array([[[2 / 3, 2 / 3, 2 / 3, 0.5], [0.5, 0, 0, 0]]])),
+        (2, 2, 1, 3, xp.asarray([[[2]]])),
+        (2, 2, 2, 2, xp.asarray([[[2], [0]]])),
+        (1, 2, 2, 0, xp.asarray([[[1], [1]]])),
+        (1, 3, 2, 0, xp.asarray([[[1, 0.5], [1, 0.5]]])),
+        (0.5, 2, 2, 1, xp.asarray([[[0.5, 0.5, 0.5], [0.5, 0, 0]]])),
+        (2 / 3, 2, 1, 0, xp.asarray([[[2 / 3, 2 / 3, 2 / 3]]])),
+        (2 / 3, 3, 2, 1, xp.asarray([[[2 / 3, 2 / 3, 2 / 3], [2 / 3, 1 / 3, 0]]])),
+        (2 / 3, 3, 2, 2, xp.asarray([[[2 / 3, 2 / 3, 2 / 3, 0.5], [0.5, 0, 0, 0]]])),
     ],
 )
 def test_f_change(f, Nelec, Nspin, spin, ref):
@@ -129,12 +129,12 @@ def test_f_change(f, Nelec, Nspin, spin, ref):
 @pytest.mark.parametrize(
     ("f", "Nelec_init", "Nelec", "Nspin", "Nstate", "spin", "charge"),
     [
-        (np.array([3]), 3, 3, 1, 1, 0, 0),
-        (np.array([2, 2]), 3, 4, 1, 2, 0, -1),
-        (np.array([[1, 1], [1, 0]]), 3, 3, 2, 2, 1, 0),
-        (np.array([[1, 1], [0, 0]]), 3, 2, 2, 2, 2, 1),
-        (np.array([[1, 0.5], [1, 0.5]]), 3, 3, 2, 2, 0, 0),
-        (np.array([[1, 1 / 3, 0, 2 / 3], [2, 0.5, 0.75, 0.75]]), 7, 6, 2, 4, 2, 1),
+        (xp.asarray([3]), 3, 3, 1, 1, 0, 0),
+        (xp.asarray([2, 2]), 3, 4, 1, 2, 0, -1),
+        (xp.asarray([[1, 1], [1, 0]]), 3, 3, 2, 2, 1, 0),
+        (xp.asarray([[1, 1], [0, 0]]), 3, 2, 2, 2, 2, 1),
+        (xp.asarray([[1, 0.5], [1, 0.5]]), 3, 3, 2, 2, 0, 0),
+        (xp.asarray([[1, 1 / 3, 0, 2 / 3], [2, 0.5, 0.75, 0.75]]), 7, 6, 2, 4, 2, 1),
     ],
 )
 def test_f_change_array(f, Nelec_init, Nelec, Nspin, Nstate, spin, charge):
@@ -152,9 +152,9 @@ def test_f_change_array(f, Nelec_init, Nelec, Nspin, Nstate, spin, charge):
 def test_F():
     """Test the F property."""
     occ = Occupations()
-    occ.f = np.array([[[1, 2, 3], [0, 1, 2]]])
-    assert_equal(occ.F[0][0], np.diag([1, 2, 3]))
-    assert_equal(occ.F[0][1], np.diag([0, 1, 2]))
+    occ.f = xp.asarray([[[1, 2, 3], [0, 1, 2]]])
+    assert_array_equal(occ.F[0][0], xp.diag(xp.asarray([1, 2, 3])))
+    assert_array_equal(occ.F[0][1], xp.diag(xp.asarray([0, 1, 2])))
 
 
 def test_Nk():
@@ -169,19 +169,19 @@ def test_wk():
     """Test the wk property."""
     occ = Occupations()
     occ.wk = [1, 1]
-    assert_equal(occ.wk, np.asarray([1, 1]))
+    assert_array_equal(occ.wk, xp.asarray([1, 1]))
     assert occ.Nk == 2
 
 
 @pytest.mark.parametrize(
     ("Nelec", "Nspin", "spin", "bands", "ref"),
     [
-        (2, 1, 0, 2, np.array([[[2, 0]]])),
-        (2, 2, 0, 2, np.array([[[1, 0], [1, 0]]])),
-        (4, 1, 0, 4, np.array([[[2, 2, 0, 0]]])),
-        (4, 2, 2, 4, np.array([[[1, 1, 1, 0], [1, 0, 0, 0]]])),
-        (4, 2, 1, 4, np.array([[[1, 1, 0.5, 0], [1, 0.5, 0, 0]]])),
-        (4, 2, 3, 5, np.array([[[1, 1, 1, 0.5, 0], [0.5, 0, 0, 0, 0]]])),
+        (2, 1, 0, 2, xp.asarray([[[2, 0]]])),
+        (2, 2, 0, 2, xp.asarray([[[1, 0], [1, 0]]])),
+        (4, 1, 0, 4, xp.asarray([[[2, 2, 0, 0]]])),
+        (4, 2, 2, 4, xp.asarray([[[1, 1, 1, 0], [1, 0, 0, 0]]])),
+        (4, 2, 1, 4, xp.asarray([[[1, 1, 0.5, 0], [1, 0.5, 0, 0]]])),
+        (4, 2, 3, 5, xp.asarray([[[1, 1, 1, 0.5, 0], [0.5, 0, 0, 0, 0]]])),
     ],
 )
 def test_bands(Nelec, Nspin, spin, bands, ref):

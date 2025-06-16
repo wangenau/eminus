@@ -5,9 +5,8 @@
 import copy
 import math
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_array_equal, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import backend as xp
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
@@ -85,24 +84,24 @@ def test_k_scaled():
     kpts = KPoints("sc")
     kpts.kmesh = 2
     kpts.build()
-    assert_allclose(np.abs(kpts.k_scaled - 1 / 4), 1 / 4)
+    assert_allclose(xp.abs(kpts.k_scaled - 1 / 4), 1 / 4)
 
 
 def test_monkhorst_pack_generation():
     """Test the Monkhorst-Pack mesh generation."""
     k_points = monkhorst_pack((1, 1, 1))
-    assert_equal(k_points, 0)
+    assert_array_equal(k_points, 0)
     k_points = monkhorst_pack((2, 2, 2))
-    assert_equal(np.abs(k_points), 1 / 4)
+    assert_array_equal(xp.abs(k_points), 1 / 4)
 
 
 def test_gamma_centered_generation():
     """Test the Gamma centered mesh generation."""
     k_points = gamma_centered((1, 1, 1))
-    assert_equal(k_points, 0)
+    assert_array_equal(k_points, 0)
     k_points = gamma_centered((2, 2, 2))
-    assert_equal(k_points[0], 0)
-    assert np.all(k_points >= 0)
+    assert_array_equal(k_points[0], 0)
+    assert xp.all(k_points >= 0)
 
 
 def test_bandpath_lgx():
@@ -189,7 +188,7 @@ def test_get_brillouin_zone():
     """Test the Brillouin zone generation."""
     ridges = get_brillouin_zone(xp.eye(3))
     # The Brillouin zone of a cubic lattice is cubic again
-    assert_allclose(np.abs(ridges), math.pi)
+    assert_allclose(xp.abs(ridges), math.pi)
 
 
 def test_trs():

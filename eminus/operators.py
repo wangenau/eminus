@@ -150,7 +150,7 @@ def I(atoms, W, ik=-1):
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
-        Wfft = Wfft.reshape(s + [W.shape[-1]])
+        Wfft = Wfft.reshape([*s, W.shape[-1]])
         # Tell the function that the FFT only has to act on the first 3 axes
         Finv = xp.fft.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((n, W.shape[-1]))
     return Finv
@@ -185,7 +185,7 @@ def J(atoms, W, ik=-1, full=True):
         Wfft = W.reshape(s)
         F = xp.fft.fftn(Wfft, norm="forward").ravel()
     else:
-        Wfft = W.reshape(s + [W.shape[-1]])
+        Wfft = W.reshape([*s, W.shape[-1]])
         F = xp.fft.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((n, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space

@@ -222,7 +222,7 @@ def monkhorst_pack(nk):
     """
     # Same index matrix as in Atoms._get_index_matrices()
     M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
+    return (xp.asarray(M) + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
 
 
 def gamma_centered(nk):
@@ -238,7 +238,7 @@ def gamma_centered(nk):
     """
     # Same index matrix as in Atoms._get_index_matrices()
     M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return M / nk  # Gamma-centered grid
+    return xp.asarray(M) / xp.asarray(nk)  # Gamma-centered grid
 
 
 def bandpath(kpts):
@@ -378,4 +378,4 @@ def get_brillouin_zone(lattice_vectors):
     for pid, rid in zip(vor.ridge_points, vor.ridge_vertices):
         if pid[0] == 13 or pid[1] == 13:
             bz_ridges.append(vor.vertices[np.r_[rid, [rid[0]]]])
-    return bz_ridges
+    return xp.asarray(np.asarray(bz_ridges))
