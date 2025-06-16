@@ -178,11 +178,7 @@ class KPoints(BaseObject):
 
     def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
-        if isinstance(self.k, np.ndarray):
-            if not np.all(self.k == 0):
-                msg = "The k-points object does not contain only the Gamma point."
-                raise NotImplementedError(msg)
-        elif not xp.all(self.k == 0):
+        if not xp.all(self.k == 0):
             msg = "The k-points object does not contain only the Gamma point."
             raise NotImplementedError(msg)
 

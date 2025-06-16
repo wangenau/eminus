@@ -10,7 +10,7 @@ from scipy.stats import unitary_group
 
 from . import backend as xp
 from .logger import log
-from .utils import expm, handle_k, handle_spin
+from .utils import handle_k, handle_spin
 
 
 @handle_k(mode="skip")
@@ -362,7 +362,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         A = sign * mu * dOmega
         # dOmega is anti-hermitian, therefore calculate -A instead of A.conj().T
         # expm(A) will be unitary
-        expA_pos, expA_neg = expm(A), expm(-A)
+        expA_pos, expA_neg = xp.expm(A), xp.expm(-A)
         # Update total rotation
         U = U @ expA_pos
         # Update matrices
