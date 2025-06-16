@@ -29,7 +29,7 @@ class KPoints(BaseObject):
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
             a = a * xp.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a  #: Cell size.
+        self.a = xp.asarray(a, dtype=float)  #: Cell size.
         self.kmesh = [1, 1, 1]  #: k-point mesh.
         self.wk = [1]  #: k-point weights.
         self.k = [[0, 0, 0]]  #: k-point coordinates.
@@ -135,9 +135,7 @@ class KPoints(BaseObject):
 
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == "sc" and not xp.all(
-            xp.asarray(self.a) == xp.diag(xp.diag(xp.asarray(self.a)))
-        ):
+        if self.lattice == "sc" and not xp.all(self.a == xp.diag(xp.diag(self.a))):
             log.warning("Lattice system and lattice vectors do not match.")
         if self.is_built:
             return self

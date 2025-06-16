@@ -5,8 +5,6 @@
 import dataclasses
 import numbers
 
-import numpy as np
-
 from . import backend as xp
 from .logger import log
 from .tools import fermi_distribution, get_Efermi
@@ -303,7 +301,7 @@ class Occupations:
             # Append extra states
             self._f = xp.hstack((self._f, xp.zeros((self.Nspin, self.bands - Nstate))))
             self._Nstate = self.bands
-        self._f = xp.vstack([xp.asarray(np.asarray([self._f]))] * self.Nk)
+        self._f = xp.vstack([xp.stack([self._f])] * self.Nk)
 
     def _fractional_fillings(self, f, magnetization=None):
         """Update fillings while allowing fractional occupation numbers.
@@ -361,7 +359,7 @@ class Occupations:
             # Append extra states
             self._f = xp.hstack((self._f, xp.zeros((self.Nspin, self.bands - Nstate))))
             self._Nstate = self.bands
-        self._f = xp.vstack([xp.asarray(np.asarray([self._f]))] * self.Nk)
+        self._f = xp.vstack([xp.stack([self._f])] * self.Nk)
 
     def __repr__(self):
         """Print the parameters stored in the Occupations object."""

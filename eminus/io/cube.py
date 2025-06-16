@@ -38,13 +38,13 @@ def read_cube(filename):
             log.info(f'CUBE file comment: "{comment}"')
 
         # Lines 4 to 6 contain the sampling per axis and the cell basis vectors with length a/s
-        s = xp.empty(3, dtype=int)
+        s = np.empty(3, dtype=int)
         a = np.empty((3, 3))
         for i, line in enumerate(lines[3:6]):
             line_split = line.strip().split()
-            s[i] = float(line_split[0])
-            a[i] = float(s[i]) * np.asarray(line_split[1:], dtype=float)
-        a = xp.asarray(a)
+            s[i] = line_split[0]
+            a[i] = s[i] * np.asarray(line_split[1:], dtype=float)
+        a, s = xp.asarray(a), xp.asarray(s)
 
         atom = []
         pos = []

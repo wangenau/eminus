@@ -128,31 +128,28 @@ def I(atoms, W, ik=-1):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    s = [int(i) for i in atoms.s]
-
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.Gk2[ik]):
-        Wfft = W
+        Wfft = copy.deepcopy(W)
     else:
         # Fill with zeros if W is in the active space
         if W.ndim == 1:
-            Wfft = xp.zeros(n, dtype=W.dtype)
+            Wfft = xp.zeros(atoms.Ns, dtype=W.dtype)
         else:
-            Wfft = xp.zeros((n, W.shape[-1]), dtype=W.dtype)
+            Wfft = xp.zeros((atoms.Ns, W.shape[-1]), dtype=W.dtype)
         Wfft[atoms.active[ik]] = W
 
     # Normally, we would have to multiply by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
-        Wfft = Wfft.reshape(s)
+        Wfft = Wfft.reshape(list(atoms.s))
         Finv = xp.fft.ifftn(Wfft, norm="forward").ravel()
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
-        Wfft = Wfft.reshape([*s, W.shape[-1]])
+        Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = xp.fft.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((n, W.shape[-1]))
+        Finv = xp.fft.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     return Finv
 
 
@@ -176,17 +173,14 @@ def J(atoms, W, ik=-1, full=True):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    s = [int(i) for i in atoms.s]
-
     # Normally, we would have to divide by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
-        Wfft = W.reshape(s)
+        Wfft = W.reshape(list(atoms.s))
         F = xp.fft.fftn(Wfft, norm="forward").ravel()
     else:
-        Wfft = W.reshape([*s, W.shape[-1]])
-        F = xp.fft.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((n, W.shape[-1]))
+        Wfft = W.reshape([*atoms.s, W.shape[-1]])
+        F = xp.fft.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
@@ -215,7 +209,7 @@ def Idag(atoms, W, ik=-1, full=False):
     Returns:
         The operator applied on W.
     """
-    n = int(atoms.Ns)
+    n = atoms.Ns
     F = J(atoms, W, ik, full)
     return F * n
 
@@ -239,7 +233,7 @@ def Jdag(atoms, W, ik=-1):
     Returns:
         The operator applied on W.
     """
-    n = int(atoms.Ns)
+    n = atoms.Ns
     Finv = I(atoms, W, ik)
     return Finv / n
 

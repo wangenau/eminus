@@ -45,7 +45,7 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ xp.linalg.inv(xp.asarray(xp.sqrtm(W.conj().T @ atoms.O(W)), dtype=complex))
+    return W @ xp.linalg.inv(xp.sqrtm(W.conj().T @ atoms.O(W)))
 
 
 def orth_unocc(atoms, Y, Z):
@@ -68,9 +68,7 @@ def orth_unocc(atoms, Y, Z):
             Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
             rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
-            D[ik][spin] = rhoZ @ xp.linalg.inv(
-                xp.asarray(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex)
-            )
+            D[ik][spin] = rhoZ @ xp.linalg.inv(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     return D
 
 
@@ -175,7 +173,7 @@ def get_grad(scf, ik, spin, W, **kwargs):
     OW = atoms.O(W[ik][spin])
     U = W[ik][spin].conj().T @ OW
     invU = xp.linalg.inv(U)
-    U12 = xp.asarray(xp.sqrtm(invU), dtype=complex)
+    U12 = xp.sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
     Ht = xp.linalg.multi_dot([U12, WHW, U12])
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))

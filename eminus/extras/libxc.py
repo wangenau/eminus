@@ -160,8 +160,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
-    exc = xp.asarray(exc)
-    vxc = [xp.asarray(v) if isinstance(v, np.ndarray) else v for v in vxc]
+    exc, vxc = xp.asarray(exc), [xp.asarray(v) if isinstance(v, np.ndarray) else v for v in vxc]
     # The first entry of vxc is vrho
     # The second entry of the second entry is vsigma
     # The fourth entry of the second entry is vtau (the third would be vlapl)

@@ -175,11 +175,11 @@ def calc_Vnonloc(scf, ik, spin, W):
     """
     atoms = scf.atoms
 
-    Vpsi = xp.zeros_like(xp.asarray(W[ik][spin]), dtype=complex)
+    Vpsi = xp.zeros_like(W[ik][spin], dtype=complex)
     if scf.pot != "gth" or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
         return Vpsi
 
-    betaNL_psi = (xp.asarray(W[ik][spin]).conj().T @ scf.gth.betaNL[ik]).conj()
+    betaNL_psi = (W[ik][spin].conj().T @ scf.gth.betaNL[ik]).conj()
     for ia in range(atoms.Natoms):
         psp = scf.gth[atoms.atom[ia]]
         for l in range(psp["lmax"]):

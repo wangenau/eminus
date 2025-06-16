@@ -121,7 +121,7 @@ class Atoms(BaseObject):
     @pos.setter
     def pos(self, value):
         # We need atom positions as a two-dimensional array
-        self._pos = xp.atleast_2d(xp.asarray(value))
+        self._pos = xp.atleast_2d(xp.asarray(value, dtype=float))
         if self.Natoms != len(self._pos):
             msg = (
                 f"Mismatch between number of atoms ({self.Natoms}) and number of "
@@ -222,7 +222,7 @@ class Atoms(BaseObject):
         if self._center is True or self._center == "rotate":
             I = inertia_tensor(self.pos)
             _, eigvecs = xp.linalg.eigh(I)
-            self.pos = (xp.linalg.inv(eigvecs) @ xp.astype(self.pos.T, float)).T
+            self.pos = (xp.linalg.inv(eigvecs) @ self.pos.T).T
         # Shift system such that its geometric center of mass is in the center of the cell
         if self._center is True or self._center == "shift":
             com = center_of_mass(self.pos)
@@ -265,7 +265,7 @@ class Atoms(BaseObject):
         # Choose the same sampling for every direction if an integer is given
         if isinstance(value, numbers.Integral):
             value = value * xp.ones(3, dtype=int)
-        self._s = xp.asarray(value)
+        self._s = xp.asarray(value, dtype=int)
         self._Ns = int(xp.prod(self._s))
         # The cell discretization changes when changing s
         self.is_built = False
@@ -285,7 +285,7 @@ class Atoms(BaseObject):
         # Get the valence charges from the GTH files
         elif value is None or isinstance(value, str):
             value = atom2charge(self.atom, value)
-        self._Z = xp.asarray(value)
+        self._Z = xp.asarray(value, dtype=int)
         if self.Natoms != len(self._Z):
             msg = (
                 f"Mismatch between number of atoms ({self.Natoms}) and number of "
@@ -389,7 +389,7 @@ class Atoms(BaseObject):
         if center is None:
             self.pos = self.pos - (com - xp.sum(self.a, axis=0) / 2)
         else:
-            center = xp.asarray(center)
+            center = xp.asarray(center, dtype=float)
             self.pos = self.pos - (com - center)
         if self.Sf is not None:
             # Recalculate the structure factor since it depends on the atom positions
@@ -407,11 +407,11 @@ class Atoms(BaseObject):
             wk: k-point weights.
         """
         self.kpts.build()
-        self.kpts._k = xp.atleast_2d(xp.asarray(k))
+        self.kpts._k = xp.atleast_2d(xp.asarray(k, dtype=float))
         if wk is None:
             self.kpts._wk = xp.ones(len(self.kpts._k)) / len(self.kpts._k)
         else:
-            self.kpts._wk = xp.asarray(wk)
+            self.kpts._wk = xp.asarray(wk, dtype=float)
         self.kpts._Nk = len(self.kpts._wk)
         self.kpts._kmesh = None
         self.occ.wk = self.kpts.wk

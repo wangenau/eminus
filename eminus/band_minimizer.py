@@ -71,7 +71,7 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     OW = atoms.O(W[ik][spin])
     U = W[ik][spin].conj().T @ OW
     invU = xp.linalg.inv(U)
-    U12 = xp.asarray(xp.sqrtm(invU), dtype=complex)
+    U12 = xp.sqrtm(invU)
     # grad E = (I - O(Y) Ydag) H(Y) U^-0.5
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
@@ -98,7 +98,7 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     Ydag = Y.conj().T
     # We need X12 later, so orthogonalize in-place and only the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
-    X12 = xp.linalg.inv(xp.asarray(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)), dtype=complex))
+    X12 = xp.linalg.inv(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
     D_tmp = [None] * len(Z)
