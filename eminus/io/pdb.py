@@ -36,7 +36,6 @@ def write_pdb(obj, filename, fods=None, elec_symbols=("X", "He"), trajectory=Fal
     atom = atoms.atom
     pos = atoms.pos
     if fods is not None:
-        fods = xp.convert(fods)
         if len(fods[0]) != 0:
             atom = atom + [elec_symbols[0]] * len(fods[0])
             pos = xp.vstack((pos, fods[0]))

@@ -125,7 +125,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
         phi = ao @ loc_orb[s]
         dens = phi.conj() * phi * mf.grids.weights[:, None]
         loc_com.append(dens.T @ mf.grids.coords)
-    return xp.convert(loc_com)
+    return [xp.asarray(coms) for coms in loc_com]
 
 
 def split_fods(atom, pos, elec_symbols=("X", "He")):
@@ -168,8 +168,6 @@ def remove_core_fods(obj, fods):
         Valence FOD positions.
     """
     atoms = obj._atoms
-    fods = xp.convert(fods)
-    atoms.occ._f = xp.convert(atoms.occ.f)
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
     atoms.kpts._assert_gamma_only()

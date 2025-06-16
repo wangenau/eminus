@@ -12,6 +12,8 @@ Alternatively, one can use the PySCF Libxc interface with::
     pip install eminus[libxc]
 """
 
+import numpy as np
+
 from eminus import backend as xp
 from eminus import config
 from eminus.logger import log
@@ -85,14 +87,14 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                 {"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel(), "tau": tau.T.ravel()}
             )
     # zk is a column vector, flatten it to a 1d row vector
-    exc = xp.convert(out["zk"].ravel())
+    exc = xp.asarray(out["zk"].ravel())
 
     # vrho (and vsigma) is exactly transposed from what we need
-    vxc = xp.convert(out["vrho"]).T
+    vxc = xp.asarray(out["vrho"]).T
     if dn_spin is not None:
-        vsigma = xp.atleast_2d(xp.convert(out["vsigma"]).T)
+        vsigma = xp.atleast_2d(xp.asarray(out["vsigma"]).T)
         if tau is not None:
-            vtau = xp.convert(out["vtau"]).T
+            vtau = xp.asarray(out["vtau"]).T
             return exc, vxc, vsigma, vtau
         return exc, vxc, vsigma, None
     return exc, vxc, None, None
@@ -158,7 +160,8 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
-    exc, vxc = xp.convert(exc), xp.convert(vxc)
+    exc = xp.asarray(exc)
+    vxc = [xp.asarray(v) if isinstance(v, np.ndarray) else v for v in vxc]
     # The first entry of vxc is vrho
     # The second entry of the second entry is vsigma
     # The fourth entry of the second entry is vtau (the third would be vlapl)
