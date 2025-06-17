@@ -393,7 +393,7 @@ class Atoms(BaseObject):
             self.pos = self.pos - (com - center)
         if self.Sf is not None:
             # Recalculate the structure factor since it depends on the atom positions
-            self._Sf = xp.exp(1j * self.G @ xp.astype(self.pos.T, complex)).T
+            self._Sf = xp.exp(1j * (self.G @ self.pos.T)).T
         self._center = "recentered"
         return self
 
@@ -472,7 +472,7 @@ class Atoms(BaseObject):
         )
         self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
-        self._Sf = xp.exp(1j * self.G @ xp.astype(self.pos.T, complex)).T
+        self._Sf = xp.exp(1j * (self.G @ self.pos.T)).T
 
         # Create the grid used for the non-wave function fields and append it to the end
         self._active.append(xp.nonzero(2 * self.ecut >= self._G2))

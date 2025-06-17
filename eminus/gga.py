@@ -65,7 +65,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
     for dim in range(3):
         Gh[:, dim] = atoms.J(h[spin, :, dim])
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * xp.einsum("ir,ir->i", xp.astype(atoms.G, complex), Gh)
+    return xp.einsum("ir,ir->i", 1j * atoms.G, Gh)
 
 
 @handle_k(mode="reduce")
@@ -160,5 +160,5 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     # Sum over dimensions
     # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
     # Vpsi = -0.5 * 1j * np.sum(Gkc * GVpsi, axis=2)
-    Vpsi = -0.5 * 1j * xp.einsum("ior,ijr->ij", xp.astype(Gkc, complex), GVpsi)
+    Vpsi = -0.5 * xp.einsum("ior,ijr->ij", 1j * Gkc, GVpsi)
     return atoms.O(Vpsi)

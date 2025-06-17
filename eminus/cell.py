@@ -95,17 +95,17 @@ def Cell(
         if basis is None:
             basis = STRUCTURES[lattice]["basis"]
         lattice = STRUCTURES[lattice]["lattice"]
-        lattice_vectors = xp.asarray(LATTICE_VECTORS[lattice])
+        lattice_vectors = xp.asarray(LATTICE_VECTORS[lattice], dtype=float)
     else:
         if basis is None:
             basis = [[0, 0, 0]]
-        lattice_vectors = xp.asarray(lattice)
+        lattice_vectors = xp.asarray(lattice, dtype=float)
 
     # Only scale the lattice vectors with if a is given
     if a is not None:
-        a = xp.asarray(a)
-        lattice_vectors = a * xp.asarray(lattice_vectors)
-        basis = a * xp.atleast_2d(xp.asarray(basis))
+        a = xp.asarray(a, dtype=float)
+        lattice_vectors = a * lattice_vectors
+        basis = a * xp.atleast_2d(xp.asarray(basis, dtype=float))
 
     # Account for different atom and basis sizes
     if isinstance(atom, str):

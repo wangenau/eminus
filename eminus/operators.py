@@ -110,7 +110,6 @@ def Linv(atoms, W):
 
 
 @handle_k(mode="index")
-@handle_spin
 def I(atoms, W, ik=-1):
     """Backward transformation from reciprocal space to real-space.
 
@@ -128,33 +127,43 @@ def I(atoms, W, ik=-1):
     Returns:
         The operator applied on W.
     """
-    # If W is in the full space do nothing with W
-    if len(W) == len(atoms.Gk2[ik]):
+    if W.ndim < 3:
+        # If W is in the full space do nothing with W
+        if len(W) == len(atoms._Gk2[ik]):
+            Wfft = W
+        # Fill with zeros if W is in the active space
+        else:
+            if W.ndim == 1:
+                Wfft = xp.zeros(atoms.Ns, dtype=W.dtype)
+            else:
+                Wfft = xp.zeros((atoms.Ns, W.shape[-1]), dtype=W.dtype)
+            Wfft[atoms._active[ik]] = W
+    elif W.shape[1] == len(atoms._G2):
         Wfft = W
     else:
-        # Fill with zeros if W is in the active space
-        if W.ndim == 1:
-            Wfft = xp.zeros(atoms.Ns, dtype=W.dtype)
-        else:
-            Wfft = xp.zeros((atoms.Ns, W.shape[-1]), dtype=W.dtype)
-        Wfft[atoms.active[ik]] = W
+        Wfft = xp.zeros((atoms.occ._Nspin, atoms.Ns, W.shape[-1]), dtype=W.dtype)
+        Wfft[:, atoms._active[ik][0]] = W
 
     # Normally, we would have to multiply by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(list(atoms.s))
         Finv = xp.ifftn(Wfft, norm="forward").ravel()
-    else:
-        # Here we reshape the input like in the 1d case but add an extra dimension in the end,
-        # holding the number of states
+    # Here we reshape the input like in the 1d case but add an extra dimension in the end,
+    # holding the number of states
+    # Tell the function that the FFT only has to act on the respective 3 axes
+    elif W.ndim == 2:
         Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
-        # Tell the function that the FFT only has to act on the first 3 axes
         Finv = xp.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+    else:
+        Wfft = Wfft.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        Finv = xp.ifftn(Wfft, norm="forward", axes=(1, 2, 3)).reshape(
+            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
+        )
     return Finv
 
 
 @handle_k(mode="index")
-@handle_spin
 def J(atoms, W, ik=-1, full=True):
     """Forward transformation from real-space to reciprocal space.
 
@@ -178,19 +187,24 @@ def J(atoms, W, ik=-1, full=True):
     if W.ndim == 1:
         Wfft = W.reshape(list(atoms.s))
         F = xp.fftn(Wfft, norm="forward").ravel()
-    else:
+    elif W.ndim == 2:
         Wfft = W.reshape([*atoms.s, W.shape[-1]])
         F = xp.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
-
+    else:
+        Wfft = W.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        F = xp.fftn(Wfft, norm="forward", axes=(1, 2, 3)).reshape(
+            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
+        )
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:
-        return F[atoms.active[ik]]
+        if F.ndim < 3:
+            return F[atoms._active[ik]]
+        return F[:, atoms._active[ik][0]]
     return F
 
 
 @handle_k(mode="index")
-@handle_spin
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
@@ -215,7 +229,6 @@ def Idag(atoms, W, ik=-1, full=False):
 
 
 @handle_k(mode="index")
-@handle_spin
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -286,7 +299,7 @@ def T(atoms, W, dr):
             G = atoms.G[atoms.active[-1]]
         else:
             G = atoms.G
-        factor = xp.exp(-1j * G @ xp.astype(dr, complex))
+        factor = xp.exp(-1j * (G @ dr))
         if W.ndim == 2:
             factor = factor[:, None]
         return factor * W
@@ -299,5 +312,5 @@ def T(atoms, W, dr):
             Gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         else:
             Gk = atoms.G + atoms.kpts.k[ik]
-        Wshift[ik] = xp.exp(-1j * Gk @ xp.astype(dr, complex))[:, None] * W[ik]
+        Wshift[ik] = xp.exp(-1j * (Gk @ dr))[:, None] * W[ik]
     return Wshift

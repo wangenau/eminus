@@ -108,7 +108,7 @@ class Occupations:
     def f(self, value):
         # Make sure the occupations are in a two-dimensional array
         if isinstance(value, (list, tuple)) or xp.is_array(value):
-            value = xp.atleast_2d(xp.asarray(value))
+            value = xp.atleast_2d(xp.asarray(value, dtype=float))
         self.is_filled = False
         # This setter will only be called when explicitly setting f
         # Call the fill function in that case
@@ -131,7 +131,7 @@ class Occupations:
 
     @wk.setter
     def wk(self, value):
-        self._wk = xp.asarray(value)
+        self._wk = xp.asarray(value, dtype=float)
         self._Nk = len(self._wk)
         self.is_filled = False
 

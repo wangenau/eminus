@@ -28,7 +28,7 @@ class KPoints(BaseObject):
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
-            a = a * xp.asarray(LATTICE_VECTORS[self.lattice])
+            a = a * xp.asarray(LATTICE_VECTORS[self.lattice], dtype=float)
         self.a = xp.asarray(a, dtype=float)  #: Cell size.
         self.kmesh = [1, 1, 1]  #: k-point mesh.
         self.wk = [1]  #: k-point weights.
@@ -49,7 +49,7 @@ class KPoints(BaseObject):
         if value is not None:
             if isinstance(value, numbers.Integral):
                 value = value * xp.ones(3, dtype=int)
-            self._kmesh = xp.asarray(value)
+            self._kmesh = xp.asarray(value, dtype=int)
             self.path = None
             self.is_built = False
         # If we set a band path to the object the k-mesh gets set to None
@@ -63,7 +63,7 @@ class KPoints(BaseObject):
 
     @wk.setter
     def wk(self, value):
-        self._wk = xp.asarray(value)
+        self._wk = xp.asarray(value, dtype=float)
         self._Nk = len(self._wk)
         self.is_built = False
 
@@ -74,7 +74,7 @@ class KPoints(BaseObject):
 
     @k.setter
     def k(self, value):
-        self._k = xp.asarray(value)
+        self._k = xp.asarray(value, dtype=float)
         self.is_built = False
 
     @property
@@ -94,7 +94,7 @@ class KPoints(BaseObject):
 
     @kshift.setter
     def kshift(self, value):
-        self._kshift = xp.asarray(value)
+        self._kshift = xp.asarray(value, dtype=float)
         self.is_built = False
 
     @property

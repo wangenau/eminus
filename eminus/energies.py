@@ -379,7 +379,7 @@ def get_Eband(scf, Y, **kwargs):
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             Eband += atoms.kpts.wk[ik] * xp.trace(
-                xp.asarray(Y[ik][spin]).conj().T @ H(scf, ik, spin, Y, **kwargs)
+                Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             )
     return xp.real(Eband)
 

@@ -509,7 +509,7 @@ class SCF(BaseObject):
         if center is None:
             dr = com - xp.sum(atoms.a, axis=0) / 2
         else:
-            center = xp.asarray(center)
+            center = xp.asarray(center, dtype=float)
             dr = com - center
 
         # Shift orbitals and density
