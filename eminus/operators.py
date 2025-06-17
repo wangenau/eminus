@@ -130,7 +130,7 @@ def I(atoms, W, ik=-1):
     """
     # If W is in the full space do nothing with W
     if len(W) == len(atoms.Gk2[ik]):
-        Wfft = copy.deepcopy(W)
+        Wfft = W
     else:
         # Fill with zeros if W is in the active space
         if W.ndim == 1:
@@ -143,13 +143,13 @@ def I(atoms, W, ik=-1):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(list(atoms.s))
-        Finv = xp.fft.ifftn(Wfft, norm="forward").ravel()
+        Finv = xp.ifftn(Wfft, norm="forward").ravel()
     else:
         # Here we reshape the input like in the 1d case but add an extra dimension in the end,
         # holding the number of states
         Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
         # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = xp.fft.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        Finv = xp.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     return Finv
 
 
@@ -177,10 +177,10 @@ def J(atoms, W, ik=-1, full=True):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = W.reshape(list(atoms.s))
-        F = xp.fft.fftn(Wfft, norm="forward").ravel()
+        F = xp.fftn(Wfft, norm="forward").ravel()
     else:
         Wfft = W.reshape([*atoms.s, W.shape[-1]])
-        F = xp.fft.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        F = xp.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
 
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
