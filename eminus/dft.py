@@ -394,10 +394,11 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     W = []
     for ik in range(atoms.kpts.Nk):
         if symmetric:
-            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + 1j * rng.standard_normal(
-                (len(atoms.Gk2c[ik]), Nstate)
+            W_ik = xp.asarray(
+                rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
+                + 1j * rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
             )
-            W.append(xp.asarray([W_ik] * atoms.occ.Nspin))
+            W.append(xp.stack([W_ik] * atoms.occ.Nspin))
         else:
             W_ik = rng.standard_normal(
                 (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
@@ -428,7 +429,7 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     for ik in range(atoms.kpts.Nk):
         if symmetric:
             W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), Nstate), seed=seed)
-            W.append(xp.asarray([W_ik[0]] * atoms.occ.Nspin))
+            W.append(xp.stack([W_ik[0]] * atoms.occ.Nspin))
         else:
             W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate), seed=seed)
             W.append(W_ik)

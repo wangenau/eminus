@@ -146,7 +146,6 @@ class KPoints(BaseObject):
                 self._k_scaled = monkhorst_pack(self.kmesh)
         else:
             self._k_scaled = bandpath(self)
-        self._k_scaled = self._k_scaled
         # Without removing redundancies the weight is the same for all k-points
         self.wk = xp.ones(len(self._k_scaled)) / len(self._k_scaled)
         self.k = kpoint_convert(self._k_scaled, self.a) + self.kshift
@@ -170,8 +169,8 @@ class KPoints(BaseObject):
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = xp.asarray(np.delete(self.k, idx_to_remove, axis=0))
-        self.wk = xp.asarray(np.delete(self.wk, idx_to_remove))
+        self.k = xp.asarray(np.delete(np.asarray(self.k), idx_to_remove, axis=0))
+        self.wk = xp.asarray(np.delete(np.asarray(self.wk), idx_to_remove))
         return self
 
     def _assert_gamma_only(self):
@@ -301,7 +300,7 @@ def bandpath(kpts):
         # If we jump, add the new special point to start from
         elif path_list[i] == ",":
             k_points.append(s_points[path_list[i + 1]])
-    return xp.asarray(k_points)
+    return xp.asarray(np.asarray(k_points))
 
 
 def kpoints2axis(kpts):

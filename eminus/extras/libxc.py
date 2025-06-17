@@ -160,13 +160,13 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
-    exc, vxc = xp.asarray(exc), [xp.asarray(v) if isinstance(v, np.ndarray) else v for v in vxc]
+    exc, vxc = xp.asarray(exc), [xp.asarray(v.T) if isinstance(v, np.ndarray) else v for v in vxc]
     # The first entry of vxc is vrho
     # The second entry of the second entry is vsigma
     # The fourth entry of the second entry is vtau (the third would be vlapl)
     # These arrays are 1d for Nspin=1 and a 2d column array for Nspin=2, reshape them as needed
     if dn_spin is not None:
         if tau is not None:
-            return exc, xp.atleast_2d(vxc[0].T), xp.atleast_2d(vxc[1].T), xp.atleast_2d(vxc[3].T)
-        return exc, xp.atleast_2d(vxc[0].T), xp.atleast_2d(vxc[1].T), None
-    return exc, xp.atleast_2d(vxc[0].T), None, None
+            return exc, xp.atleast_2d(vxc[0]), xp.atleast_2d(vxc[1]), xp.atleast_2d(vxc[3])
+        return exc, xp.atleast_2d(vxc[0]), xp.atleast_2d(vxc[1]), None
+    return exc, xp.atleast_2d(vxc[0]), None, None

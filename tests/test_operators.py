@@ -113,10 +113,10 @@ def test_JdagIdag(field):
 def test_hermitian_I(field):
     """Test that I and Idag operators are hermitian."""
     a = xp.astype(W_tests[field], complex)
-    b = xp.astype(W_tests[field] + rng.standard_normal(1), complex)
+    b = xp.astype(W_tests[field] + xp.asarray(rng.standard_normal(1)), complex)
     assert not isinstance(a, list)
-    out = (a.conj().T @ atoms.I(b)).conj()
-    test = b.conj().T @ atoms.Idag(a, full=True)
+    out = (a.conj() @ atoms.I(b)).conj()
+    test = b.conj() @ atoms.Idag(a, full=True)
     try:
         assert_allclose(out.resolve_conj().numpy(), test.resolve_conj().numpy())
     except AttributeError:
@@ -127,10 +127,10 @@ def test_hermitian_I(field):
 def test_hermitian_J(field):
     """Test that J and Jdag operators are hermitian."""
     a = xp.astype(W_tests[field], complex)
-    b = xp.astype(W_tests[field] + rng.standard_normal(1), complex)
+    b = xp.astype(W_tests[field] + xp.asarray(rng.standard_normal(1)), complex)
     assert not isinstance(a, list)
-    out = (a.conj().T @ atoms.J(b)).conj()
-    test = b.conj().T @ atoms.Jdag(a)
+    out = (a.conj() @ atoms.J(b)).conj()
+    test = b.conj() @ atoms.Jdag(a)
     try:
         assert_allclose(out.resolve_conj().numpy(), test.resolve_conj().numpy())
     except AttributeError:

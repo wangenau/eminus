@@ -150,7 +150,7 @@ def split_fods(atom, pos, elec_symbols=("X", "He")):
                 pos_fod_up = np.vstack((pos_fod_up, pos[ia]))
             if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
                 pos_fod_dn = np.vstack((pos_fod_dn, pos[ia]))
-            pos = xp.asarray(np.delete(pos, ia, axis=0))
+            pos = xp.asarray(np.delete(np.asarray(pos), ia, axis=0))
             del atom[ia]
 
     pos_fod = [xp.asarray(pos_fod_up), xp.asarray(pos_fod_dn)]
@@ -190,5 +190,5 @@ def remove_core_fods(obj, fods):
             dist = xp.linalg.norm(fods[s] - atoms.pos[ia], axis=1)
             idx = xp.argsort(dist)
             # Remove core FODs with the smallest distance to the core
-            fods[s] = xp.asarray(np.delete(fods[s], idx[:n_core], axis=0))
+            fods[s] = xp.asarray(np.delete(np.asarray(fods[s]), idx[:n_core], axis=0))
     return fods

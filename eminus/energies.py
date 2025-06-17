@@ -35,7 +35,7 @@ class Energy:
     @property
     def Etot(self):
         """Total energy is the sum of all energy contributions."""
-        return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
+        return sum(float(getattr(self, ie.name)) for ie in dataclasses.fields(self))
 
     def extrapolate(self):
         """Calculate the total energy at T=0.

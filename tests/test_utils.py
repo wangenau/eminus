@@ -6,7 +6,7 @@ import math
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose, assert_equal
+from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms
 from eminus import backend as xp
@@ -129,10 +129,10 @@ def test_get_lattice():
     """Test the lattice utility function."""
     out = get_lattice(xp.eye(3))
     for vert in out:
-        assert_equal(xp.linalg.norm(vert[0] - vert[1]), xp.asarray([1]))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), xp.asarray([1]))
     out = get_lattice(xp.ones((3, 3)) - xp.eye(3))
     for vert in out:
-        assert_equal(xp.linalg.norm(vert[0] - vert[1]), xp.sqrt(xp.asarray([2])))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), xp.sqrt(xp.asarray([2])))
 
 
 def test_handle_spin():
@@ -145,9 +145,9 @@ def test_handle_spin():
 
     W = xp.ones((1, 1, 1))
     out = mock(None, W, kwarg="kwarg")
-    assert_equal(out, W)
+    assert_array_equal(out, W)
     out = mock(None, W[0], kwarg="kwarg")
-    assert_equal(out, W[0])
+    assert_array_equal(out, W[0])
 
 
 @pytest.mark.parametrize("mode", ["gracefully", "index", "reduce", "skip"])
@@ -169,14 +169,14 @@ def test_handle_k(mode):
 
     out = mock(atoms, W, kwarg="kwarg")
     if mode == "reduce":
-        assert_equal(out, xp.ones((1, 1, 1)) * 2)
+        assert_array_equal(out, xp.ones((1, 1, 1)) * 2)
     else:
-        assert_equal(out, W)
+        assert_array_equal(out, W)
 
     out = mock(atoms, W[0], kwarg="kwarg")
-    assert_equal(out, W[0])
+    assert_array_equal(out, W[0])
     out = mock(atoms, W[0][0], kwarg="kwarg")
-    assert_equal(out, W[0][0])
+    assert_array_equal(out, W[0][0])
 
 
 if __name__ == "__main__":

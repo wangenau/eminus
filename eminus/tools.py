@@ -481,7 +481,7 @@ def get_Efermi(obj, epsilon=None):
         occ_sum = 0
         for ik in range(occ.Nk):
             occ_sum += occ.wk[ik] * xp.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
-        return occ_sum * 2 / occ.Nspin - occ.Nelec
+        return float(occ_sum * 2 / occ.Nspin - occ.Nelec)
 
     # For smeared systems we have to find the root of an objective function
     if occ.smearing > 0:
