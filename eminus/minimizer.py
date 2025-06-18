@@ -6,8 +6,6 @@ import copy
 import logging
 import math
 
-import numpy as np
-
 from . import backend as xp
 from .dft import get_epsilon, get_grad
 from .energies import get_E, get_Eentropy
@@ -110,19 +108,20 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
             scf._log.info(header)
 
     # Print the information for every cycle
-    # Context manager for printing norm_g, linmin, and cg
-    with np.printoptions(formatter={"float": "{:+0.2e}".format}):
-        info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
-        # In the first step we do not have all information yet
-        if iteration > 1:
-            info += f"{Elist[-1] - Elist[-2]:<+13,.4e}"
-            if norm_g is not None:
-                info += str(xp.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-            if scf._log.level <= logging.DEBUG:
-                if method != "sd" and linmin is not None:
-                    info += str(xp.sum(linmin, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-                if method not in {"sd", "lm", "pclm"} and cg is not None:
-                    info += str(xp.sum(cg, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
+    info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
+    # In the first step we do not have all information yet
+    if iteration > 1:
+        info += f"{Elist[-1] - Elist[-2]:<+13,.4e}"
+        if norm_g is not None:
+            norm_g_str = [f"{x:+.2e}" for x in xp.sum(norm_g, axis=0)]
+            info += f"[{' '.join(norm_g_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
+        if scf._log.level <= logging.DEBUG:
+            if method != "sd" and linmin is not None:
+                linmin_str = [f"{x:+.2e}" for x in xp.sum(linmin, axis=0)]
+                info += f"[{' '.join(linmin_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
+            if method not in {"sd", "lm", "pclm"} and cg is not None:
+                cg_str = [f"{x:+.2e}" for x in xp.sum(cg, axis=0)]
+                info += f"[{' '.join(cg_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf._log.level <= logging.DEBUG:
         scf._log.debug(info)
     else:
