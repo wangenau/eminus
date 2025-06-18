@@ -35,10 +35,10 @@ def test_Nspin_change_after_fill():
     occ.Nspin = 2
     occ.spin = 1
     occ.fill()
-    assert_array_equal(occ.f, xp.asarray([[[1], [0]]]))
+    assert_array_equal(occ.f, [[[1], [0]]])
     occ.Nspin = 1
     occ.fill()
-    assert_array_equal(occ.f, xp.asarray([[[1]]]))
+    assert_array_equal(occ.f, [[[1]]])
 
 
 @pytest.mark.parametrize(
@@ -152,7 +152,7 @@ def test_f_change_array(f, Nelec_init, Nelec, Nspin, Nstate, spin, charge):
 def test_F():
     """Test the F property."""
     occ = Occupations()
-    occ.f = xp.asarray([[[1, 2, 3], [0, 1, 2]]])
+    occ.f = [[[1, 2, 3], [0, 1, 2]]]
     assert_array_equal(occ.F[0][0], xp.diag(xp.asarray([1, 2, 3])))
     assert_array_equal(occ.F[0][1], xp.diag(xp.asarray([0, 1, 2])))
 
@@ -169,7 +169,7 @@ def test_wk():
     """Test the wk property."""
     occ = Occupations()
     occ.wk = [1, 1]
-    assert_array_equal(occ.wk, xp.asarray([1, 1]))
+    assert_array_equal(occ.wk, 1)
     assert occ.Nk == 2
 
 

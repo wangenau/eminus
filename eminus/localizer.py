@@ -157,7 +157,7 @@ def get_scdm(atoms, psi):
     if isinstance(psi_rs, np.ndarray):
         Q, _, _ = qr(psi_rs.T.conj(), pivoting=True)
     else:
-        Q, _, _ = qr(psi_rs.cpu().detach().numpy().T.conj(), pivoting=True)
+        Q, _, _ = qr(np.asarray(psi_rs).T.conj(), pivoting=True)
         Q = xp.asarray(Q, dtype=psi_rs.dtype)
     # Apply the transformation
     return psi_rs @ Q

@@ -4,7 +4,6 @@
 
 import math
 
-import numpy as np
 import pytest
 from numpy.testing import assert_allclose, assert_array_equal
 from scipy.linalg import det
@@ -268,7 +267,7 @@ def test_recenter():
     atoms.recenter(center)
     assert_allclose(center_of_mass(atoms.pos), center)
     assert atoms.Sf is not None
-    assert not np.array_equal(Sf_old, atoms.Sf)
+    assert not xp.all(xp.equal(Sf_old, atoms.Sf))
     assert atoms.center == "recentered"
 
 

@@ -176,7 +176,7 @@ def test_poscar_file():
     file_path = str(pathlib.Path(inspect.stack()[0][1]).parent)
     atom, pos, a = read(f"{file_path}/POSCAR.test")
     assert atom == ["B", "N"]
-    assert_allclose(pos, xp.asarray([[0] * 3, [1.68658057] * 3]))
+    assert_allclose(pos, [[0] * 3, [1.68658057] * 3])
     assert_allclose(a, 3.37316113 * (xp.ones((3, 3)) - xp.eye(3)))
 
 

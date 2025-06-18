@@ -274,7 +274,7 @@ def get_isovalue(n, percent=85):
     def deviation(isovalue):
         """Wrapper function for finding the isovalue by minimization."""
         n_mask = xp.sum(n[n > isovalue])
-        return abs(percent - (float(n_mask) / float(n_ref)) * 100)
+        return float(xp.abs(percent - (n_mask / n_ref) * 100))
 
     # Integrated density
     n_ref = xp.sum(n)

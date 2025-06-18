@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the SCF class."""
 
-import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
@@ -204,7 +203,7 @@ def test_recenter(center):
         center_of_mass(atoms.r, xp.real(W[1, :, 0].conj() * W[1, :, 0])), com, atol=0.005
     )
     # Test that the local potential has been rebuild
-    assert not np.array_equal(scf.Vloc, Vloc)
+    assert not xp.all(xp.equal(scf.Vloc, Vloc))
     assert scf.atoms.center == "recentered"
 
 

@@ -169,8 +169,8 @@ class KPoints(BaseObject):
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = xp.asarray(xp.delete(self.k, idx_to_remove, axis=0))
-        self.wk = xp.asarray(xp.delete(self.wk, idx_to_remove))
+        self.k = xp.delete(self.k, idx_to_remove, axis=0)
+        self.wk = xp.delete(self.wk, idx_to_remove)
         return self
 
     def _assert_gamma_only(self):
@@ -202,8 +202,10 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         k-points in cartesian coordinates.
     """
-    inv_cell = 2 * math.pi * xp.linalg.inv(xp.asarray(lattice_vectors, dtype=float)).T
-    return xp.asarray(k_points, dtype=float) @ inv_cell
+    k_points = xp.asarray(k_points, dtype=float)
+    lattice_vectors = xp.asarray(lattice_vectors, dtype=float)
+    inv_cell = 2 * math.pi * xp.linalg.inv(lattice_vectors).T
+    return k_points @ inv_cell
 
 
 def monkhorst_pack(nk):
@@ -218,8 +220,8 @@ def monkhorst_pack(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return (xp.asarray(M) + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
+    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    return (M + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
 
 
 def gamma_centered(nk):
@@ -234,8 +236,8 @@ def gamma_centered(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return xp.asarray(M) / xp.asarray(nk)  # Gamma-centered grid
+    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    return M / xp.asarray(nk)  # Gamma-centered grid
 
 
 def bandpath(kpts):

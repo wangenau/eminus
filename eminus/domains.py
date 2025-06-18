@@ -5,8 +5,6 @@
 import copy
 import numbers
 
-import numpy as np
-
 from . import backend as xp
 from .logger import log
 from .tools import center_of_mass
@@ -34,7 +32,7 @@ def domain_cuboid(obj, length, centers=None):
         length = length * xp.ones(3)
     if centers is None:
         centers = center_of_mass(atoms.pos)
-    centers = xp.asarray(np.asarray(centers))
+    centers = xp.asarray(centers)
     # Handle each dimension separately and add them together
     if centers.ndim == 1:
         mask1 = xp.abs(centers[0] - atoms.r[:, 0]) < length[0]
@@ -87,7 +85,7 @@ def domain_sphere(obj, radius, centers=None):
 
     if centers is None:
         centers = center_of_mass(atoms.pos)
-    centers = xp.asarray(np.asarray(centers))
+    centers = xp.asarray(centers)
     if centers.ndim == 1:
         mask = xp.linalg.norm(centers - atoms.r, axis=1) < radius
     else:

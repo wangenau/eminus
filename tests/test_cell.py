@@ -38,7 +38,7 @@ def test_lattice():
     cell = Cell("Si", lattice, 30, 0)
     assert_array_equal(cell.a, 0)
     cell = Cell("Si", "diamond", 30, None)
-    assert_array_equal(cell.a, xp.asarray(LATTICE_VECTORS["fcc"]))
+    assert_array_equal(cell.a, LATTICE_VECTORS["fcc"])
     cell = Cell("Si", "diamond", 30, -2)
     assert_array_equal(cell.a, xp.eye(3) - 1)
 
@@ -46,7 +46,7 @@ def test_lattice():
 def test_a():
     """Test the a setting."""
     cell = Cell("Si", "fcc", 30, None)
-    assert_array_equal(cell.a, xp.asarray(LATTICE_VECTORS["fcc"]))
+    assert_array_equal(cell.a, LATTICE_VECTORS["fcc"])
     assert_array_equal(cell.pos, 0)
     cell = Cell("Si", "diamond", 30, 0)
     assert_array_equal(cell.a, 0)

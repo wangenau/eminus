@@ -62,8 +62,8 @@ def test_Ylm(l):
 @pytest.mark.parametrize(
     ("seed", "ref"),
     [
-        (1234, xp.asarray([[[0.93006472, 0.15416989, 0.93472344]]])),
-        (42, xp.asarray([[[0.57138534, 0.34186435, 0.13408117]]])),
+        (1234, [[[0.93006472, 0.15416989, 0.93472344]]]),
+        (42, [[[0.57138534, 0.34186435, 0.13408117]]]),
     ],
 )
 def test_pseudo_uniform(seed, ref):
@@ -129,10 +129,10 @@ def test_get_lattice():
     """Test the lattice utility function."""
     out = get_lattice(xp.eye(3))
     for vert in out:
-        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), xp.asarray([1]))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), 1)
     out = get_lattice(xp.ones((3, 3)) - xp.eye(3))
     for vert in out:
-        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), xp.sqrt(xp.asarray([2])))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), math.sqrt(2))
 
 
 def test_handle_spin():
