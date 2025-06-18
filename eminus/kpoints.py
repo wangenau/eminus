@@ -369,7 +369,7 @@ def get_brillouin_zone(lattice_vectors):
     Returns:
         Brillouin zone vertices.
     """
-    inv_cell = kpoint_convert(np.eye(3), np.asarray(lattice_vectors))
+    inv_cell = np.asarray(kpoint_convert(xp.eye(3), lattice_vectors))
 
     px, py, pz = np.tensordot(inv_cell, np.mgrid[-1:2, -1:2, -1:2], axes=(0, 0))
     points = np.c_[px.ravel(), py.ravel(), pz.ravel()]
@@ -379,4 +379,4 @@ def get_brillouin_zone(lattice_vectors):
     for pid, rid in zip(vor.ridge_points, vor.ridge_vertices):
         if pid[0] == 13 or pid[1] == 13:
             bz_ridges.append(vor.vertices[np.r_[rid, [rid[0]]]])
-    return xp.asarray(np.asarray(bz_ridges))
+    return bz_ridges

@@ -5,6 +5,7 @@
 import copy
 import math
 
+import numpy as np
 import pytest
 from numpy.testing import assert_allclose, assert_array_equal
 
@@ -188,7 +189,7 @@ def test_get_brillouin_zone():
     """Test the Brillouin zone generation."""
     ridges = get_brillouin_zone(xp.eye(3))
     # The Brillouin zone of a cubic lattice is cubic again
-    assert_allclose(xp.abs(ridges), math.pi)
+    assert_allclose(np.abs(ridges), math.pi)
 
 
 def test_trs():

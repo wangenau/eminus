@@ -18,6 +18,7 @@ import uuid
 import numpy as np
 from scipy.interpolate import griddata
 
+from eminus import backend as xp
 from eminus.atoms import Atoms
 from eminus.data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
 from eminus.dft import get_epsilon, get_epsilon_unocc
@@ -67,6 +68,7 @@ def _uniform_density_data(n, r, s):
     Returns:
         Interpolated density and new grid points.
     """
+    n, r, s = np.asarray(n), np.asarray(r), np.asarray(s)
     # Do not use a super fine grid to display the interpolated data
     x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), np.min([s[0], 25]))
     y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), np.min([s[1], 25]))
@@ -173,19 +175,19 @@ def view_atoms(
             fig.add_trace(fods_data)
 
     # A density can be plotted for an SCF object
-    if isinstance(plot_n, np.ndarray) or plot_n:
+    if xp.is_array(plot_n) or plot_n:
         # Use the density from an SCF object...
         density = obj.n
         name = "Density"
         # ...or use the quantity if an array is given
-        if isinstance(plot_n, np.ndarray):
+        if xp.is_array(plot_n):
             density = plot_n
             name = "Quantity"
 
         # If the unit cell is not diagonal we have to interpolate the density data
         # Plotly will not display volumes that are represented on non-orthogonal grids, which is
         # normally the case for non-diagonal unit cells
-        if (np.diag(np.diag(atoms.a)) != atoms.a).any():
+        if (xp.diag(xp.diag(atoms.a)) != atoms.a).any():
             density, r = _uniform_density_data(density, atoms.r, atoms.s)
             # We will get data points outside of the unit cell that can contain NaNs
             # Do not use the get_isovalue function here but simply use the minimum value
@@ -198,6 +200,7 @@ def view_atoms(
         else:
             r = atoms.r
             isomin = get_isovalue(density, percent=percent)
+            density = np.asarray(density)
 
         if isovalue is not None:
             isomin = isovalue
@@ -229,7 +232,7 @@ def view_atoms(
         "aspectmode": "data",
     }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
-    if (np.diag(np.diag(atoms.a)) == atoms.a).all():
+    if (xp.diag(xp.diag(atoms.a)) == atoms.a).all():
         scene["xaxis"]["range"] = [0, atoms.a[0, 0]]
         scene["yaxis"]["range"] = [0, atoms.a[1, 1]]
         scene["zaxis"]["range"] = [0, atoms.a[2, 2]]
@@ -284,7 +287,7 @@ def view_contour(
     # Create an index mask to obtain a clean slice through the cell
     # Since the expression is a bit involved it can be understood with the following pseudo-code:
     # mask = |axis_values - slice_value| < axis_value_dist
-    mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
+    mask = xp.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
         atoms.a[axes[2], axes[2]] / atoms.s[axes[2]]
     )
 
@@ -292,7 +295,7 @@ def view_contour(
         log.warning('The provided field is "None".')
         return None
     # Create a copy of the field data to not overwrite the input
-    field = np.copy(field)
+    field = np.copy(np.asarray(field))
     # Remove large and small values (similar to VESTA)
     field[field < limits[0]] = limits[0]
     field[field > limits[1]] = limits[1]
