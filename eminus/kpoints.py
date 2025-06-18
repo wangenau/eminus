@@ -320,7 +320,7 @@ def kpoints2axis(kpts):
 
     # Calculate the distances between k-points
     k_dist = kpts.k_scaled[1:] - kpts.k_scaled[:-1]
-    dists = np.linalg.norm(kpoint_convert(k_dist, kpts.a), axis=1)
+    dists = xp.linalg.norm(kpoint_convert(k_dist, kpts.a), axis=1)
 
     # Create the labels
     labels = []
@@ -340,17 +340,19 @@ def kpoints2axis(kpts):
     for p in labels[1:]:
         # Only search the k-points starting from the previous special point
         shift = special_indices[-1]
-        k = np.asarray(kpts.k_scaled[shift:])
+        k = xp.asarray(kpts.k_scaled[shift:])
         # We index p[0] since p could be a joined label of a jump
         # This expression simply finds the special point in the k_points matrix
-        index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
-        special_indices.append(index)
+        # The following expressions is a bit more readable, but only works with NumPy
+        # index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
+        index = xp.nonzero(xp.ravel(xp.all(k == xp.asarray(s_points[p[0]]), axis=1)))[0][0] + shift
+        special_indices.append(int(index))
         # Set the distance between special points to zero if we have a jump
         if "," in p:
             dists[index] = 0
 
     # Insert a zero at the beginning and add up the lengths to create the k-axis
-    k_axis = np.append([0], np.cumsum(dists))
+    k_axis = xp.concatenate((xp.asarray([0]), xp.cumsum(dists, axis=0)))
     return k_axis, k_axis[special_indices], labels
 
 
@@ -367,7 +369,7 @@ def get_brillouin_zone(lattice_vectors):
     Returns:
         Brillouin zone vertices.
     """
-    inv_cell = kpoint_convert(np.eye(3), lattice_vectors)
+    inv_cell = kpoint_convert(np.eye(3), np.asarray(lattice_vectors))
 
     px, py, pz = np.tensordot(inv_cell, np.mgrid[-1:2, -1:2, -1:2], axes=(0, 0))
     points = np.c_[px.ravel(), py.ravel(), pz.ravel()]

@@ -5,10 +5,8 @@
 import dataclasses
 import math
 
-import numpy as np
-from scipy.special import erfc
-
 from . import backend as xp
+from . import config
 from .dft import get_n_single, get_phi, H
 from .extras import d3
 from .gga import get_grad_field, get_tau
@@ -219,16 +217,20 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     Returns:
         Ewald energy in Hartree.
     """
+    if config.backend == "torch":
+        erfc = xp.special.erfc
+    else:
+        from scipy.special import erfc
 
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     def get_index_vectors(s):
         """Create index vectors of s periodic images."""
-        m1 = np.arange(-s[0], s[0] + 1)
-        m2 = np.arange(-s[1], s[1] + 1)
-        m3 = np.arange(-s[2], s[2] + 1)
-        M = np.transpose(np.meshgrid(m1, m2, m3)).reshape(-1, 3)
+        m1 = xp.arange(-s[0], s[0] + 1)
+        m2 = xp.arange(-s[1], s[1] + 1)
+        m3 = xp.arange(-s[2], s[2] + 1)
+        M = xp.permute_dims(xp.stack(xp.meshgrid(m1, m2, m3)), (3, 2, 1, 0)).reshape(-1, 3)
         # Delete the [0, 0, 0] element, to prevent checking for it in every loop
         return M[~(M == 0).all(axis=1)]
 
@@ -237,48 +239,48 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     nu = 0.5 * math.sqrt(gcut**2 / gexp)
 
     # Start by calculating the self-energy
-    Eewald = -nu / math.sqrt(math.pi) * np.sum(np.asarray(atoms.Z) ** 2)
+    Eewald = -nu / math.sqrt(math.pi) * xp.sum(atoms.Z**2)
     # Add the electroneutrality term
-    Eewald += -math.pi * np.sum(np.asarray(atoms.Z)) ** 2 / (2 * nu**2 * atoms.Omega)
+    Eewald += -math.pi * xp.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
-    Rm = np.linalg.norm(np.asarray(atoms.a), axis=1)
+    Rm = xp.linalg.norm(atoms.a, axis=1)
     tmax = math.sqrt(0.5 * gexp) / nu
-    s = np.rint(tmax / Rm + 1.5)
+    s = xp.round(tmax / Rm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the translation vectors
-    T = M @ np.asarray(atoms.a)
+    T = M @ atoms.a
 
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
-    g = 2 * math.pi * np.linalg.inv(np.asarray(atoms.a).T)
-    gm = np.linalg.norm(g, axis=1)
-    s = np.rint(gcut / gm + 1.5)
+    g = 2 * math.pi * xp.linalg.inv(atoms.a.T)
+    gm = xp.linalg.norm(g, axis=1)
+    s = xp.round(gcut / gm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
-    G2 = np.linalg.norm(G, axis=1) ** 2
-    prefactor = 2 * math.pi / float(atoms.Omega) * np.exp(-0.25 * G2 / nu**2) / G2
+    G2 = xp.linalg.norm(G, axis=1) ** 2
+    prefactor = 2 * math.pi / float(atoms.Omega) * xp.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
-            dpos = np.asarray(atoms.pos[ia] - atoms.pos[ja])
-            ZiZj = np.asarray(atoms.Z[ia] * atoms.Z[ja])
+            dpos = atoms.pos[ia] - atoms.pos[ja]
+            ZiZj = atoms.Z[ia] * atoms.Z[ja]
 
             # Add the real-space contribution
-            rmag = np.linalg.norm(dpos - T, axis=1)
-            Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
+            rmag = xp.linalg.norm(dpos - T, axis=1)
+            Eewald += 0.5 * ZiZj * xp.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = np.linalg.norm(dpos)
+                rmag = xp.linalg.norm(dpos)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
             # Add the reciprocal space contribution
-            Gpos = np.sum(G * dpos, axis=1)
-            Eewald += ZiZj * np.sum(prefactor * np.cos(Gpos))
+            Gpos = xp.sum(G * dpos, axis=1)
+            Eewald += ZiZj * xp.sum(prefactor * xp.cos(Gpos))
     return Eewald
 
 

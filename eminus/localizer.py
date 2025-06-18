@@ -9,6 +9,7 @@ from scipy.linalg import qr
 from scipy.stats import unitary_group
 
 from . import backend as xp
+from . import config
 from .logger import log
 from .utils import handle_k, handle_spin
 
@@ -334,6 +335,11 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
     Returns:
         Localized orbitals.
     """
+    if config.backend == "torch":
+        expm = xp.linalg.matrix_exp
+    else:
+        from scipy.linalg import expm
+
     if not (xp.diag(xp.diag(atoms.a)) == atoms.a).all():
         log.warning("The Wannier localization needs a cubic unit cell.")
         return psirs
@@ -362,7 +368,7 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
         A = sign * mu * dOmega
         # dOmega is anti-hermitian, therefore calculate -A instead of A.conj().T
         # expm(A) will be unitary
-        expA_pos, expA_neg = xp.expm(A), xp.expm(-A)
+        expA_pos, expA_neg = expm(A), expm(-A)
         # Update total rotation
         U = U @ expA_pos
         # Update matrices

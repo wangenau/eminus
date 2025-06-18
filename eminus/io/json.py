@@ -26,7 +26,7 @@ def _custom_object_hook(dct):
     # ndarrays are base64 encoded, decode and recreate
     if isinstance(dct, dict) and "__ndarray__" in dct:
         data = base64.b64decode(dct["__ndarray__"])
-        return xp.asarray(np.copy(np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])))
+        return xp.asarray(copy.deepcopy(np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])))
 
     # Create simple eminus objects and set all attributes afterwards
     # Explicitly call objects with verbosity since the logger is created at instantiation

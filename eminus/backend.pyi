@@ -17,11 +17,6 @@ def delete(
     obj: int | Sequence[int] | _ArrayInt,
     axis: int | None = ...,
 ) -> _ArrayComplex: ...
-def expm(
-    A: _ArrayComplex,
-    *args: Any,
-    **kwargs: Any,
-) -> _ArrayComplex: ...
 def fftn(
     x: _ArrayComplex,
     *args: Any,

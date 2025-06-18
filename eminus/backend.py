@@ -55,27 +55,6 @@ def delete(arr, obj, axis=None):
     return arr.__getitem__(indices)
 
 
-def expm(A, *args, **kwargs):
-    """Matrix exponential.
-
-    Args:
-        A: Matrix whose matrix exponential to evaluate.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        **kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Value of the exp function at A.
-    """
-    if isinstance(A, np.ndarray):
-        return scipy.linalg.expm(A, *args, **kwargs)
-    from array_api_compat import array_namespace
-
-    xp = array_namespace(A)
-    return xp.linalg.matrix_exp(A, *args, **kwargs)
-
-
 def fftn(x, *args, **kwargs):
     """Compute the N-D discrete Fourier Transform.
 
