@@ -5,6 +5,7 @@ import numpy as np
 from scipy.optimize import minimize
 
 from eminus import Atoms, read, SCF
+from eminus import backend as xp
 from eminus.energies import get_Esic
 from eminus.orbitals import FLO, WO
 from eminus.tools import orbital_center
@@ -32,8 +33,8 @@ def optimize_fods(scf, fods):
         fod_up = np.reshape(x[: nfods[0] * 3], (nfods[0], 3))
         if len(nfods) > 1 or nfods[1] > 0:
             fod_dn = np.reshape(x[nfods[0] * 3 :], (nfods[1], 3))
-            return [fod_up, fod_dn]
-        return [fod_up]
+            return [xp.asarray(fod_up), xp.asarray(fod_dn)]
+        return [xp.asarray(fod_up)]
 
     def get_sic_energy(x):
         """Wrapper function to calculate the SIC energy from a 1d list of FODs."""

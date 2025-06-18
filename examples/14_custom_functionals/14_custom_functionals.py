@@ -1,12 +1,15 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # mypy: disable-error-code="no-untyped-call,no-untyped-def"
+import math
+
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 
 import eminus.xc
 from eminus import Atoms, SCF
+from eminus import backend as xp
 from eminus.units import ry2ha
 
 # # Start with a normal SCF calculation for helium with the original LDA Chachiyo functional
@@ -17,16 +20,16 @@ print(f"Energies with the Chachiyo functional:\n{scf.energies}")
 
 # # Define arrays for the Quantum Monte Carlo (QMC) results from Ceperley and Alder for the homogeneous electron gas
 # # The values are the paramagnetic correlation energies from Tab. 5 in Can. J. Phys. 58, 1200
-rs = np.array([2, 5, 10, 20, 50, 100])
+rs = xp.asarray([2, 5, 10, 20, 50, 100])
 # Convert from -mRy to Hartree
-ecp = -ry2ha(np.array([90.2, 56.3, 37.22, 23.00, 11.40, 6.379])) / 1000
+ecp = -ry2ha(np.asarray([90.2, 56.3, 37.22, 23.00, 11.40, 6.379])) / 1000
 
 # # Define the original Chachiyo functional parameters
 # # The parameters are derived such that the functional recovers the values in Phys. Rev. B 84, 033103 for the high-density limit
 # # Karasiev re-parameterized the functional in J. Chem. Phys. 145, 157101 without the restriction of `b=c`
 # # Here, `c` uses the same value as in Chachiyo to preserve the correct high-density limit but `b` is chosen such that it recovers the exact value for `rs=50`
 # # We will now build a new custom functional by fitting `b` over the QMC data set
-a = (np.log(2) - 1) / (2 * np.pi**2)
+a = (math.log(2) - 1) / (2 * math.pi**2)
 c = 20.4562557
 b = c
 print(f"\nOriginal parameter:\nb = {b:.7f}")
@@ -34,11 +37,12 @@ print(f"\nOriginal parameter:\nb = {b:.7f}")
 
 # # All functionals in eminus share the same signature and return types
 # # Define a custom spin-paired functional using said signature based on the Chachiyo functional but with the customizable parameter parameter `b` so we can fit over it
+# # To make your implementation backend agnostic, you can use the backend module, imported as `xp`
 def custom_functional(n, b, **kwargs):
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)  # Wigner-Seitz radius
-    ec = a * np.log(1 + b / rs + c / rs**2)  # Exchange energy
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)  # Wigner-Seitz radius
+    ec = a * xp.log(1 + b / rs + c / rs**2)  # Exchange energy
     vc = ec + a * (2 * c + b * rs) / (3 * (c + b * rs + b * rs**2))  # Exchange potential
-    return ec, np.array([vc]), None
+    return ec, xp.stack([vc]), None
 
 
 # # Fit the functional using a wrapper function
@@ -46,8 +50,8 @@ def custom_functional(n, b, **kwargs):
 # # The third return value of the function (here `None`) is only used in GGA functionals
 # # Functionals usually take densities as the input, so convert the Wigner-Seitz radius to a density in the wrapper function
 def functional_wrapper(rs, b):
-    n = 3 / (4 * np.pi * rs**3)  # Density from Wigner-Seitz radius
-    return custom_functional(n, b)[0]
+    n = 3 / (4 * math.pi * rs**3)  # Density from Wigner-Seitz radius
+    return np.asarray(custom_functional(n, b)[0])
 
 
 # # Do the fit over the QMC data
