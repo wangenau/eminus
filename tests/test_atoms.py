@@ -122,7 +122,9 @@ def test_center(center):
             atoms.pos, [[10 - math.sqrt(3) / 2, 10, 10], [10 + math.sqrt(3) / 2, 10, 10]]
         )
     elif center == "rotate":
-        assert_allclose(atoms.pos, [[0, 0, 0], [math.sqrt(3), 0, 0]], atol=1e-15)
+        assert_allclose(
+            xp.asarray(atoms.pos), xp.asarray([[0, 0, 0], [math.sqrt(3), 0, 0]]), atol=1e-15
+        )
     elif center == "shift":
         assert_array_equal(atoms.pos, [[9.5, 9.5, 9.5], [10.5, 10.5, 10.5]])
     elif center == "recentered":

@@ -197,10 +197,14 @@ def test_recenter(center):
     assert_allclose(center_of_mass(atoms.r, scf.n), com, atol=0.005)
     # Check that the orbitals are centered around the atom
     assert_allclose(
-        center_of_mass(atoms.r, xp.real(W[0, :, 0].conj() * W[0, :, 0])), com, atol=0.005
+        xp.asarray(center_of_mass(atoms.r, xp.real(W[0, :, 0].conj() * W[0, :, 0]))),
+        xp.asarray(com),
+        atol=0.005,
     )
     assert_allclose(
-        center_of_mass(atoms.r, xp.real(W[1, :, 0].conj() * W[1, :, 0])), com, atol=0.005
+        xp.asarray(center_of_mass(atoms.r, xp.real(W[1, :, 0].conj() * W[1, :, 0]))),
+        xp.asarray(com),
+        atol=0.005,
     )
     # Test that the local potential has been rebuild
     assert not xp.all(xp.equal(scf.Vloc, Vloc))

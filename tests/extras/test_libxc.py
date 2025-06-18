@@ -3,8 +3,8 @@
 # mypy: disable-error-code="no-redef"
 """Test libxc extra."""
 
+import numpy as np
 import pytest
-from numpy.random import default_rng
 from numpy.testing import assert_allclose
 
 from eminus import backend as xp
@@ -12,7 +12,7 @@ from eminus.xc import get_exc, get_vxc, get_xc_defaults
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
-rng = default_rng()
+rng = np.random.default_rng()
 n_tests = {
     1: xp.abs(xp.asarray(rng.standard_normal((1, 10000)))),
     2: xp.abs(xp.asarray(rng.standard_normal((2, 10000)))),

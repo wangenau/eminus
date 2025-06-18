@@ -242,7 +242,7 @@ def test_get_dos():
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     e, e_dos = get_dos(e_occ, scf_band.kpts.wk, spin=0, npts=500, width=0.1)
     # The maximum of the DOS should be close to the maximum eigenvalue in this case
-    assert_allclose(xp.max(e_occ), e[xp.argmax(e_dos)], atol=1e-2)
+    assert xp.isclose(xp.max(e_occ), e[xp.argmax(e_dos)], atol=1e-2)
     assert xp.min(e) < xp.min(e_occ)
     assert xp.max(e) > xp.max(e_occ)
 

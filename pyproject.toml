@@ -80,7 +80,10 @@ dev = [
 [tool.mypy]
 python_version = "3.13"
 strict = true
-disable_error_code = ["import-untyped"]  # Module is missing library stubs or py.typed marker
+disable_error_code = [
+    "import-untyped", # Module is missing library stubs or py.typed marker
+    "attr-defined",  # Module has no attribute, shadowed du to backend magic
+]
 
 [[tool.mypy.overrides]]
 module = "tests.*"
