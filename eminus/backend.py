@@ -28,6 +28,33 @@ def is_array(value):
     return False
 
 
+def delete(arr, obj, axis=None):
+    """Return a new array with sub-arrays along an axis deleted.
+
+    Ref: https://gist.github.com/velikodniy/6efef837e67aee2e7152eb5900eb0258
+
+    Args:
+        arr: Input array.
+        obj: Indicate indices of sub-arrays to remove along the specified axis.
+
+    Keyword Args:
+        axis: The axis along which to delete the subarray defined by obj. If `axis` is `None`, `obj`
+        is applied to the flattened array.
+
+    Returns:
+        A copy of `arr` with the elements specified by `obj` removed. If `axis` is `None`, `out` is
+        a flattened array.
+    """
+    if isinstance(arr, np.ndarray):
+        return np.delete(arr, obj, axis)
+    if axis is None:
+        axis = 0
+        arr = arr.ravel()
+    skip = [i for i in range(arr.size(axis)) if i not in np.asarray(obj)]
+    indices = [slice(None) if i != axis else skip for i in range(arr.ndim)]
+    return arr.__getitem__(indices)
+
+
 def expm(A, *args, **kwargs):
     """Matrix exponential.
 
@@ -47,27 +74,6 @@ def expm(A, *args, **kwargs):
 
     xp = array_namespace(A)
     return xp.linalg.matrix_exp(A, *args, **kwargs)
-
-
-def sqrtm(A, *args, **kwargs):
-    """Matrix square root.
-
-    Args:
-        A: Matrix whose square root to evaluate.
-        args: Pass-through arguments.
-
-    Keyword Args:
-        **kwargs: Pass-through keyword arguments.
-
-    Returns:
-        Value of the sqrt function at A.
-    """
-    if isinstance(A, np.ndarray):
-        return scipy.linalg.sqrtm(A, *args, **kwargs)
-    from array_api_compat import array_namespace
-
-    xp = array_namespace(A)
-    return xp.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=A.dtype)
 
 
 def fftn(x, *args, **kwargs):
@@ -110,3 +116,24 @@ def ifftn(x, *args, **kwargs):
 
     xp = array_namespace(x)
     return xp.fft.ifftn(x, *args, **kwargs)
+
+
+def sqrtm(A, *args, **kwargs):
+    """Matrix square root.
+
+    Args:
+        A: Matrix whose square root to evaluate.
+        args: Pass-through arguments.
+
+    Keyword Args:
+        **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Value of the sqrt function at A.
+    """
+    if isinstance(A, np.ndarray):
+        return scipy.linalg.sqrtm(A, *args, **kwargs)
+    from array_api_compat import array_namespace
+
+    xp = array_namespace(A)
+    return xp.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=A.dtype)

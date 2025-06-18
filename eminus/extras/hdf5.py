@@ -47,7 +47,7 @@ def read_hdf5(filename):
                 elif check_string_dtype(value.dtype):
                     dct[key] = value.asstr()[()]
                     # Lists of strings are encoded as arrays, restore them as well
-                    if xp.is_array(dct[key]):
+                    if isinstance(dct[key], np.ndarray):
                         dct[key] = dct[key].tolist()
                 else:
                     dct[key] = xp.asarray(value[()])

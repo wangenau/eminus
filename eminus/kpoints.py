@@ -169,8 +169,8 @@ class KPoints(BaseObject):
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = xp.asarray(np.delete(np.asarray(self.k), idx_to_remove, axis=0))
-        self.wk = xp.asarray(np.delete(np.asarray(self.wk), idx_to_remove))
+        self.k = xp.asarray(xp.delete(self.k, idx_to_remove, axis=0))
+        self.wk = xp.asarray(xp.delete(self.wk, idx_to_remove))
         return self
 
     def _assert_gamma_only(self):
