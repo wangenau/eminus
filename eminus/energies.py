@@ -93,7 +93,9 @@ def get_Ekin(atoms, Y, ik):
             -0.5
             * atoms.kpts.wk[ik]
             * xp.trace(
-                xp.astype(atoms.occ.F[ik][spin], complex) @ Y[spin].conj().T @ atoms.L(Y[spin], ik)
+                xp.asarray(atoms.occ.F[ik][spin], dtype=complex)
+                @ Y[spin].conj().T
+                @ atoms.L(Y[spin], ik)
             )
         )
     return xp.real(Ekin)
@@ -117,7 +119,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
-    return xp.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi)))
+    return xp.real(0.5 * xp.asarray(n, dtype=complex) @ atoms.Jdag(atoms.O(phi)))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
@@ -143,7 +145,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
-    return xp.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return xp.real(xp.asarray(n, dtype=complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
 
 
 def get_Eloc(scf, n):
@@ -158,7 +160,7 @@ def get_Eloc(scf, n):
     Returns:
         Local energy contribution in Hartree.
     """
-    return xp.real(xp.vdot(scf.Vloc, xp.astype(n, complex)))
+    return xp.real(xp.vdot(scf.Vloc, xp.asarray(n, dtype=complex)))
 
 
 @handle_k(mode="reduce")

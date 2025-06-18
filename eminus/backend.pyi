@@ -11,7 +11,7 @@ _Complex: TypeAlias = complexfloating[Any]
 _ArrayInt: TypeAlias = NDArray[_Int]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 
-def is_array(value: Any) -> Any: ...
+def is_array(value: _ArrayComplex) -> bool: ...
 def delete(
     arr: _ArrayComplex,
     obj: int | Sequence[int] | _ArrayInt,
