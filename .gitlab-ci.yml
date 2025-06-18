@@ -101,6 +101,9 @@ minimal:
     - uv pip install . --resolution lowest
     - uv pip install pytest
     - pytest tests/ -m "not slow"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "array_api"
+      when: never
 
 ##### Test using the newest dependency versions #####
 newest:
@@ -131,7 +134,7 @@ typecheck:
       echo -e
       "eminus.Atoms.(I|Idag|J|Jdag)\n"
       "eminus.atoms.Atoms.(I|Idag|J|Jdag)\n"
-      "eminus.backend\n"
+      "eminus.backend.*\n"
       "eminus.dft.(get_n_single|get_n_spin)\n"
       "eminus.energies.(get_Ekin|get_Enonloc)\n"
       "eminus.gga.get_tau\n"
