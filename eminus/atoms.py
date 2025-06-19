@@ -455,7 +455,7 @@ class Atoms(BaseObject):
         # Calculate index matrices
         M, N = self._get_index_matrices()
         # Build the real-space sampling
-        self._r = M @ xp.linalg.inv(xp.diag(xp.asarray(self.s, dtype=float))) @ self.a
+        self._r = M @ xp.linalg.inv(xp.diag(xp.astype(self.s, float))) @ self.a
         # Build G-vectors
         self._G = 2 * math.pi * N @ xp.linalg.inv(self.a.T)
         # Calculate squared magnitudes of G-vectors
