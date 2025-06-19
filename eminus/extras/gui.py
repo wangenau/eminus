@@ -114,9 +114,9 @@ def view_atoms(
     lattice = get_lattice(atoms.a)
     for xx in lattice:
         bz_data = go.Scatter3d(
-            x=xx[:, 0],
-            y=xx[:, 1],
-            z=xx[:, 2],
+            x=np.asarray(xx[:, 0]),
+            y=np.asarray(xx[:, 1]),
+            z=np.asarray(xx[:, 2]),
             name="Unit cell",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -127,9 +127,9 @@ def view_atoms(
     for ia in sorted(set(atoms.atom)):
         mask = np.nonzero(np.asarray(atoms.atom) == ia)[0]
         atom_data = go.Scatter3d(
-            x=atoms.pos[mask, 0],
-            y=atoms.pos[mask, 1],
-            z=atoms.pos[mask, 2],
+            x=np.asarray(atoms.pos[mask, 0]),
+            y=np.asarray(atoms.pos[mask, 1]),
+            z=np.asarray(atoms.pos[mask, 2]),
             name=ia,
             mode="markers",
             marker={
@@ -144,9 +144,9 @@ def view_atoms(
         if isinstance(fods, list):
             if len(fods[0]) != 0:
                 fods_data = go.Scatter3d(
-                    x=fods[0][:, 0],
-                    y=fods[0][:, 1],
-                    z=fods[0][:, 2],
+                    x=np.asarray(fods[0][:, 0]),
+                    y=np.asarray(fods[0][:, 1]),
+                    z=np.asarray(fods[0][:, 2]),
                     name="up-FOD",
                     mode="markers",
                     marker={"size": math.pi, "color": "red"},
@@ -154,9 +154,9 @@ def view_atoms(
                 fig.add_trace(fods_data)
             if len(fods) > 1 and len(fods[1]) != 0:
                 fods_data = go.Scatter3d(
-                    x=fods[1][:, 0],
-                    y=fods[1][:, 1],
-                    z=fods[1][:, 2],
+                    x=np.asarray(fods[1][:, 0]),
+                    y=np.asarray(fods[1][:, 1]),
+                    z=np.asarray(fods[1][:, 2]),
                     name="down-FOD",
                     mode="markers",
                     marker={"size": math.pi, "color": "green"},
@@ -165,9 +165,9 @@ def view_atoms(
         # Treat fods as normal coordinates otherwise
         else:
             fods_data = go.Scatter3d(
-                x=fods[:, 0],
-                y=fods[:, 1],
-                z=fods[:, 2],
+                x=np.asarray(fods[:, 0]),
+                y=np.asarray(fods[:, 1]),
+                z=np.asarray(fods[:, 2]),
                 name="Coordinates",
                 mode="markers",
                 marker={"size": 1, "color": "red"},
@@ -198,7 +198,7 @@ def view_atoms(
                 '"percent" keyword has no effect and all of the density data will be displayed.'
             )
         else:
-            r = atoms.r
+            r = np.asarray(atoms.r)
             isomin = get_isovalue(density, percent=percent)
             density = np.asarray(density)
 
@@ -214,7 +214,7 @@ def view_atoms(
             name=name,
             colorbar_title=name,
             colorscale="Inferno",
-            isomin=isomin,
+            isomin=float(isomin),
             isomax=np.max(density),
             surface_count=surfaces,
             opacity=0.1,
@@ -233,9 +233,9 @@ def view_atoms(
     }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
     if (xp.diag(xp.diag(atoms.a)) == atoms.a).all():
-        scene["xaxis"]["range"] = [0, atoms.a[0, 0]]
-        scene["yaxis"]["range"] = [0, atoms.a[1, 1]]
-        scene["zaxis"]["range"] = [0, atoms.a[2, 2]]
+        scene["xaxis"]["range"] = [0, float(atoms.a[0, 0])]
+        scene["yaxis"]["range"] = [0, float(atoms.a[1, 1])]
+        scene["zaxis"]["range"] = [0, float(atoms.a[2, 2])]
     fig.update_layout(
         scene=scene,
         width=size[0],
@@ -303,8 +303,8 @@ def view_contour(
     # Create the contour lines
     fig = go.Figure()
     contours = go.Contour(
-        x=atoms.r[:, axes[0]][mask],
-        y=atoms.r[:, axes[1]][mask],
+        x=np.asarray(atoms.r[:, axes[0]][mask]),
+        y=np.asarray(atoms.r[:, axes[1]][mask]),
         z=field[mask],
         contours_coloring="none",
         ncontours=lines,
@@ -319,15 +319,15 @@ def view_contour(
         margin={"b": 0, "l": 0, "r": 0, "t": 0},
         xaxis={
             "range": [
-                (1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
-                1 / zoom * atoms.a[axes[0], axes[0]],
+                (1 - 1 / zoom) * float(atoms.a[axes[0], axes[0]]),
+                1 / zoom * float(atoms.a[axes[0], axes[0]]),
             ],
             "visible": False,
         },
         yaxis={
             "range": [
-                (1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
-                1 / zoom * atoms.a[axes[1], axes[1]],
+                (1 - 1 / zoom) * float(atoms.a[axes[1], axes[1]]),
+                1 / zoom * float(atoms.a[axes[1], axes[1]]),
             ],
             "visible": False,
         },
@@ -686,8 +686,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         for i in range(scf.atoms.occ.Nstate):
             fig.add_trace(
                 go.Scatter(
-                    x=k_axis,
-                    y=e_occ[:, s, i] - Efermi,
+                    x=np.asarray(k_axis),
+                    y=np.asarray(e_occ[:, s, i] - Efermi),
                     mode="lines+markers",
                     name=f"Band {i + 1}",
                     marker_color=colors[s],
@@ -700,8 +700,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             for i in range(scf.atoms.occ.Nempty):
                 fig.add_trace(
                     go.Scatter(
-                        x=k_axis,
-                        y=e_unocc[:, s, i] - Efermi,
+                        x=np.asarray(k_axis),
+                        y=np.asarray(e_unocc[:, s, i] - Efermi),
                         mode="lines+markers",
                         line={"dash": "dash"},
                         name=f"Unocc. band {i + 1}",
@@ -720,7 +720,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             "mirror": True,
             "ticks": "outside",
             "tickmode": "array",
-            "tickvals": special,
+            "tickvals": np.asarray(special),
             "ticktext": label,
             "gridcolor": "grey",
             "gridwidth": 2,
@@ -732,7 +732,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             "ticks": "outside",
             "showgrid": False,
         },
-        xaxis_range=(0, k_axis[-1]),
+        xaxis_range=(0, float(k_axis[-1])),
         xaxis_title="k-path",
         yaxis_title="E - E<sub>F</sub> [eV]",
         hoverlabel_bgcolor="black",
@@ -778,8 +778,8 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
         e, dos_e = get_dos(e_occ, scf.kpts.wk, spin=s, **kwargs)
         fig.add_trace(
             go.Scatter(
-                x=e - Efermi,
-                y=dos_e,
+                x=np.asarray(e - Efermi),
+                y=np.asarray(dos_e),
                 mode="lines+markers",
                 name=f"Spin {s + 1}",
                 marker_color=colors[s],
@@ -833,9 +833,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     bz = get_brillouin_zone(kpts.a)
     for xx in bz:
         bz_data = go.Scatter3d(
-            x=xx[:, 0],
-            y=xx[:, 1],
-            z=xx[:, 2],
+            x=np.asarray(xx[:, 0]),
+            y=np.asarray(xx[:, 1]),
+            z=np.asarray(xx[:, 2]),
             name="Brillouin zone",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -849,9 +849,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
                 label = "\u0393"  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
             special_data = go.Scatter3d(
-                x=[v[0]],
-                y=[v[1]],
-                z=[v[2]],
+                x=[np.asarray(v[0])],
+                y=[np.asarray(v[1])],
+                z=[np.asarray(v[2])],
                 name=label,
                 mode="markers",
                 marker={"size": 4, "opacity": 0.9},
@@ -865,9 +865,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         mode = "markers"
     if path:
         path_data = go.Scatter3d(
-            x=kpts.k[:, 0],
-            y=kpts.k[:, 1],
-            z=kpts.k[:, 2],
+            x=np.asarray(kpts.k[:, 0]),
+            y=np.asarray(kpts.k[:, 1]),
+            z=np.asarray(kpts.k[:, 2]),
             name="k-points",
             mode=mode,
             marker={"size": 2, "color": "#1a962b", "opacity": 0.75},
