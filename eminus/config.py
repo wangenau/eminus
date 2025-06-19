@@ -37,7 +37,7 @@ class ConfigClass:
             except ImportError:
                 self._backend = "numpy"
             else:
-                torch.set_default_dtype(torch.double)
+                torch.set_default_dtype(torch.float64)
         else:
             self._backend = "numpy"
 
