@@ -69,7 +69,7 @@ def fftn(x, *args, **kwargs):
         Value of the fftn function at x.
     """
     if isinstance(x, np.ndarray):
-        return scipy.fft.fftn(x, *args, **kwargs)
+        return scipy.fft.fftn(x, *args, **kwargs, workers=config.threads)
     from array_api_compat import array_namespace
 
     xp = array_namespace(x)
@@ -90,7 +90,7 @@ def ifftn(x, *args, **kwargs):
         Value of the ifftn function at x.
     """
     if isinstance(x, np.ndarray):
-        return scipy.fft.ifftn(x, *args, **kwargs)
+        return scipy.fft.ifftn(x, *args, **kwargs, workers=config.threads)
     from array_api_compat import array_namespace
 
     xp = array_namespace(x)

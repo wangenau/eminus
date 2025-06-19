@@ -54,8 +54,11 @@ for i in range(atoms.occ.Nstate):
     print(f"{i + 1} of {atoms.occ.Nstate}")
     atoms.write(f"Ne_{i + 1}.cube", psi[0][0, :, i])
 
-# # You can also set check your configuration
-eminus.config.info()
+# # Another useful setting is the number of threads
+print(f"\nThreads: {eminus.config.threads}\n")
+
+# # You can also set them and check the configuration afterwards
+eminus.config.threads = 2
 
 # # eminus uses the NumPy and SciPy packages
 # # These packages will listen to the OMP_NUM_THREADS and/or MKL_NUM_THREADS flags

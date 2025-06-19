@@ -37,7 +37,7 @@ class ConfigClass:
         self._backend = value.lower()
         if self._backend == "torch":
             try:
-                import torch
+                from array_api_compat import torch
             except ImportError:
                 self._backend = "numpy"
             else:
@@ -48,15 +48,21 @@ class ConfigClass:
     @property
     def use_gpu(self):
         """Whether to use the GPU if available."""
-        if self.backend == "torch" and self._use_gpu:
-            import torch
-
-            return torch.cuda.is_available()
-        return False
+        return self._use_gpu
 
     @use_gpu.setter
     def use_gpu(self, value):
-        self._use_gpu = value
+        if self.backend == "torch" and value:
+            from array_api_compat import torch
+
+            if torch.cuda.is_available():
+                self._use_gpu = True
+                torch.set_default_device("cuda")
+            else:
+                self._use_gpu = False
+                torch.set_default_device("cpu")
+        else:
+            self._use_gpu = False
 
     @property
     def use_pylibxc(self):
@@ -80,7 +86,7 @@ class ConfigClass:
         if self._threads is None:
             try:
                 if self.backend == "torch":
-                    import torch
+                    from array_api_compat import torch
 
                     return torch.get_num_threads()
                 # Read the OMP threads for the default operators
@@ -94,7 +100,7 @@ class ConfigClass:
         self._threads = value
         if isinstance(value, numbers.Integral):
             if self.backend == "torch":
-                import torch
+                from array_api_compat import torch
 
                 return torch.set_num_threads(value)
             os.environ["OMP_NUM_THREADS"] = str(value)
