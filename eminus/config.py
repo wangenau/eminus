@@ -53,7 +53,7 @@ class ConfigClass:
     @use_gpu.setter
     def use_gpu(self, value):
         if self.backend == "torch" and value:
-            from array_api_compat import torch
+            import torch
 
             if torch.cuda.is_available():
                 self._use_gpu = True
