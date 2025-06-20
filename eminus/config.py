@@ -19,8 +19,8 @@ class ConfigClass:
 
     def __init__(self):
         """Initialize the ConfigClass object."""
-        self.backend = "torch"  # Use faster Torch FFTs from a different backend if available
-        self.use_gpu = False  # Disable GPU by default, since it is slower in my tests
+        self.backend = "torch"  # Use Torch as backend if available, default to NumPy otherwise
+        self.use_gpu = False  # Disable GPU by default, since not every functionality is available
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.threads = None  # Read threads from environment variables by default
         self.verbose = "INFO"  # Only display warnings (and worse) by default
@@ -82,7 +82,7 @@ class ConfigClass:
 
     @property
     def threads(self):
-        """Number of threads used in FFT calculations."""
+        """Number of threads used in array calculations."""
         if self._threads is None:
             try:
                 if self.backend == "torch":
@@ -135,23 +135,23 @@ class ConfigClass:
 
         sys.stdout.write(
             "\n--- Performance infos ---\n"
-            f"FFT backend : {self.backend}\n"
-            f"FFT device  : {'GPU' if self.use_gpu else 'CPU'}\n"
+            f"Array backend    : {self.backend}\n"
+            f"Array device     : {'GPU' if self.use_gpu else 'CPU'}\n"
         )
         # Do not print threading information when using GPU
         if self.use_gpu:
             return
-        # Check FFT threads
+        # Check threads
         if self.threads is None:
             sys.stdout.write(
-                "FFT threads : 1\n"
+                "Array threads    : 1\n"
                 "INFO: No OMP_NUM_THREADS environment variable was found.\nTo improve "
                 'performance, add "export OMP_NUM_THREADS=n" to your ".bashrc".\nMake sure to '
                 'replace "n", typically with the number of cores your CPU.\nTemporarily, you can '
                 'set them in your Python environment with "eminus.config.threads=n".\n'
             )
         else:
-            sys.stdout.write(f"FFT threads : {self.threads}\n")
+            sys.stdout.write(f"Array threads    : {self.threads}\n")
 
 
 if (
@@ -166,10 +166,10 @@ else:
     # Add mock variables for all properties and methods of the ConfigClass to the module
     # This allows IDEs to see that the module has said attribute
     # This also allows for stubtesting and documentation of these variables and functions
-    backend = ""  #: Whether to use SciPy or a different backend if installed.
+    backend = ""  #: Whether to use NumPy or a different backend if installed.
     use_gpu = False  #: Whether to use the GPU if available.
     use_pylibxc = False  #: Whether to use pylibxc or PySCF for functionals if both are installed.
-    threads = 0  #: Number of threads used in FFT calculations.
+    threads = 0  #: Number of threads used in array calculations.
     verbose = ""  #: Logger verbosity level.
 
     def info():
