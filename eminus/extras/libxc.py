@@ -131,7 +131,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         )
         raise
 
-    if xc_params is not None:
+    if xc_params and xc_params is not None:
         log.warning("xc_params are not supported when using PySCF as the Libxc backend.")
 
     if dn_spin is None:
