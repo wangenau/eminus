@@ -107,9 +107,7 @@ def get_tau(atoms, Y, ik):
     return (
         0.5
         * atoms.kpts.wk[ik]
-        * xp.real(
-            xp.einsum("sj,sijr,sijr->si", xp.astype(atoms.occ.f[ik], complex), dYrs.conj(), dYrs)
-        )
+        * xp.real(xp.einsum("sj,sijr,sijr->si", atoms.occ.f[ik], dYrs.conj(), dYrs))
     )
 
 
