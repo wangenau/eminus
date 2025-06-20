@@ -120,10 +120,13 @@ def get_n_spin(atoms, Y, ik):
         Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y, ik)
-    # Use einsum here, since this function it is one of the performance bottlenecks
-    return xp.real(
-        xp.einsum("sj,,sij,sij->si", atoms.occ.f[ik], atoms.kpts.wk[ik], Yrs.conj(), Yrs)
-    )
+    n = xp.empty((atoms.occ.Nspin, atoms.Ns))
+    for spin in range(atoms.occ.Nspin):
+        n[spin] = xp.sum(
+            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * xp.real(Yrs[spin].conj() * Yrs[spin]),
+            axis=1,
+        )
+    return n
 
 
 @handle_k(mode="reduce")
