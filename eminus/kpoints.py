@@ -270,29 +270,29 @@ def bandpath(kpts):
     for i in range(len(path_list) - 1):
         if "," not in path_list[i : i + 2]:
             # Use subtract since s_points are lists
-            dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
-            dists.append(np.linalg.norm(kpoint_convert(dist, kpts.a)))
+            dist = xp.asarray(s_points[path_list[i + 1]]) - xp.asarray(s_points[path_list[i]])
+            dists.append(xp.linalg.norm(kpoint_convert(dist, kpts.a)))
         else:
             # Set distance to zero when jumping between special points
             dists.append(0)
 
     # Calculate sample points between the special points
-    scaled_dists = (N - N_special) * np.asarray(dists) / sum(dists)
-    samplings = np.asarray(np.round(scaled_dists), dtype=int)
+    scaled_dists = (N - N_special) * xp.asarray(dists) / sum(dists)
+    samplings = xp.asarray(xp.round(scaled_dists), dtype=int)
 
     # If our sampling does not match the given N add the difference to the longest distance
-    if N - N_special - np.sum(samplings) != 0:
-        samplings[np.argmax(samplings)] += N - N_special - np.sum(samplings)
+    if N - N_special - xp.sum(samplings) != 0:
+        samplings[xp.argmax(samplings)] += N - N_special - xp.sum(samplings)
 
     # Generate k-point coordinates
-    k_points = [s_points[path_list[0]]]  # Insert the first special point
+    k_points = [xp.asarray(s_points[path_list[0]])]  # Insert the first special point
     for i in range(len(path_list) - 1):
         # Only do something when not jumping between special points
         if "," not in path_list[i : i + 2]:
-            s_start = s_points[path_list[i]]
-            s_end = s_points[path_list[i + 1]]
+            s_start = xp.asarray(s_points[path_list[i]])
+            s_end = xp.asarray(s_points[path_list[i + 1]])
             # Get the vector between special points
-            k_dist = np.subtract(s_end, s_start)
+            k_dist = s_end - s_start
             # Add scaled vectors to the special point to get the new k-points
             k_points += [
                 s_start + k_dist * (n + 1) / (samplings[i] + 1) for n in range(samplings[i])
@@ -301,8 +301,8 @@ def bandpath(kpts):
             k_points.append(s_end)
         # If we jump, add the new special point to start from
         elif path_list[i] == ",":
-            k_points.append(s_points[path_list[i + 1]])
-    return xp.asarray(np.asarray(k_points))
+            k_points.append(xp.asarray(s_points[path_list[i + 1]]))
+    return xp.stack(k_points)
 
 
 def kpoints2axis(kpts):

@@ -116,5 +116,5 @@ def sqrtm(A, *args, **kwargs):
 
     xp = array_namespace(A)
     return xp.asarray(
-        np.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=complex), dtype=A.dtype
+        np.asarray(scipy.linalg.sqrtm(A.cpu(), *args, **kwargs), dtype=complex), dtype=A.dtype
     )
