@@ -15,7 +15,7 @@
           inherit system;
           # config.allowUnfree = true;
         };
-        python = pkgs.python313;
+        python = pkgs.python312;
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
         version = pyproject.project.version;
 
@@ -34,7 +34,7 @@
             ### d3 ###
             simple-dftd3
             ### gui ###
-            # nglview is missing
+            nglview
             plotly
             ### hdf5 ###
             h5py

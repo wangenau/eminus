@@ -4,7 +4,6 @@
 
 import importlib.resources
 import pathlib
-import sys
 
 from eminus import backend as xp
 from eminus.logger import log
@@ -26,11 +25,7 @@ def read_gth(atom, charge=None, psp_path="pbe"):
         GTH parameters.
     """
     if psp_path in {"pade", "pbe"}:
-        if sys.version_info >= (3, 9):
-            file_path = importlib.resources.files(f"eminus.psp.{psp_path}")
-        else:
-            with importlib.resources.path("eminus.psp", psp_path) as p:
-                file_path = p
+        file_path = importlib.resources.files(f"eminus.psp.{psp_path}")
     else:
         file_path = pathlib.Path(psp_path)
 
