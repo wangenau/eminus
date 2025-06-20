@@ -52,15 +52,15 @@ class ConfigClass:
 
     @use_gpu.setter
     def use_gpu(self, value):
-        if self.backend == "torch" and value:
+        if self.backend == "torch":
             import torch
 
-            if torch.cuda.is_available():
-                self._use_gpu = True
+            if value and torch.cuda.is_available():
                 torch.set_default_device("cuda")
+                self._use_gpu = True
             else:
-                self._use_gpu = False
                 torch.set_default_device("cpu")
+                self._use_gpu = False
         else:
             self._use_gpu = False
 
