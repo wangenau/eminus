@@ -5,7 +5,7 @@
 
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_array_equal
 
 import eminus
 from eminus import backend as xp
@@ -21,7 +21,7 @@ def test_numpy_backend():
     """Test the numpy backend."""
     backend = config.backend
     config.backend = "numpy"
-    array = xp.arange(9, dtype=float).reshape((3, 3))
+    array = xp.arange(9).reshape((3, 3))
 
     assert isinstance(xp.pi, float)
     assert xp.sqrt(array).ndim == 2
@@ -58,7 +58,7 @@ def test_switching_and_equality():
     norm_torch = xp.linalg.norm(array, axis=0)
 
     config.backend = "numpy"
-    array = xp.arange(9, dtype=float).reshape((3, 3))
+    array = xp.arange(9).reshape((3, 3))
     sqrt_numpy = xp.sqrt(array)
     norm_numpy = xp.linalg.norm(array, axis=0)
 
@@ -66,6 +66,66 @@ def test_switching_and_equality():
     assert_allclose(sqrt_torch, sqrt_numpy)
     assert type(norm_torch) is not type(norm_numpy)
     assert_allclose(norm_torch, norm_numpy)
+    config.backend = backend  # Restore the default
+
+
+def test_is_array():
+    """Test the array check helper function."""
+    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    backend = config.backend
+    config.backend = "torch"
+    tensor = xp.arange(9)
+    assert xp.is_array(tensor)
+    array = np.arange(9)
+    assert xp.is_array(array)
+
+    config.backend = "numpy"
+    assert not xp.is_array(tensor)  # We skip the Torch import for the NumPy backend
+    assert xp.is_array(array)
+    config.backend = backend  # Restore the default
+
+
+def test_torch_delete():
+    """Test the delete implementation."""
+    default = config.backend
+    for backend in ("numpy", "torch"):
+        if backend == "torch":
+            pytest.importorskip("torch", reason="torch not installed, skip tests")
+        config.backend = backend
+
+        array = xp.arange(4)
+        assert_array_equal(xp.delete(array, 1), [0, 2, 3])
+        assert_array_equal(xp.delete(array, [1, 3]), [0, 2])
+        assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
+
+        array = xp.arange(4).reshape((2, 2))  # axis=None returns a flattened array
+        assert_array_equal(xp.delete(array, 1), [0, 2, 3])
+        assert_array_equal(xp.delete(array, [1, 3], axis=None), [0, 2])
+        assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
+
+        array = xp.arange(4).reshape((2, 2))
+        assert_array_equal(xp.delete(array, 0, axis=0), [[2, 3]])
+        assert_array_equal(xp.delete(array, 1, axis=1), [[0], [2]])
+
+        array = xp.arange(9).reshape((3, 3))
+        assert_array_equal(xp.delete(array, [0, 2], axis=0), [[3, 4, 5]])
+        assert_array_equal(xp.delete(array, [1, 2], axis=1), [[0], [3], [6]])
+    config.backend = default  # Restore the default
+
+
+@pytest.mark.parametrize("name", ["fftn", "ifftn", "sqrtm"])
+def test_trivial_functions(name):
+    """Check the availability of the more trivial backend functions implementations."""
+    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    backend = config.backend
+    config.backend = "torch"
+    array = xp.arange(9).reshape((3, 3))
+    func = getattr(xp, name)
+    func(array)
+
+    config.backend = "numpy"
+    array = xp.arange(9).reshape((3, 3))
+    func(array)
     config.backend = backend  # Restore the default
 
 

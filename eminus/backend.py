@@ -111,10 +111,10 @@ def sqrtm(A, *args, **kwargs):
         Value of the sqrt function at A.
     """
     if isinstance(A, np.ndarray):
-        return np.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=A.dtype)
+        return np.asarray(scipy.linalg.sqrtm(A, *args, **kwargs), dtype=complex)
     from array_api_compat import array_namespace
 
     xp = array_namespace(A)
     return xp.asarray(
-        np.asarray(scipy.linalg.sqrtm(A.cpu(), *args, **kwargs), dtype=complex), dtype=A.dtype
+        np.asarray(scipy.linalg.sqrtm(A.cpu(), *args, **kwargs), dtype=complex), dtype=complex
     )
