@@ -74,9 +74,9 @@ def test_is_array():
     pytest.importorskip("torch", reason="torch not installed, skip tests")
     backend = config.backend
     config.backend = "torch"
-    tensor = xp.arange(9)
+    tensor = xp.arange(9, dtype=float)
     assert xp.is_array(tensor)
-    array = np.arange(9)
+    array = np.arange(9, dtype=float)
     assert xp.is_array(array)
 
     config.backend = "numpy"
