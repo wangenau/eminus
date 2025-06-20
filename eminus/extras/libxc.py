@@ -62,8 +62,6 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                 params.append(param_defaults[i])
         func.set_ext_params(params)
 
-    if n_spin.device != "cpu":
-        n_spin = n_spin.cpu()
     if dn_spin is None:
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order="F"))
         out = func.compute({"rho": n_spin.T.ravel()})
@@ -80,13 +78,9 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                     xp.linalg.norm(dn_spin[1], axis=1) ** 2,
                 )
             )
-        if dn2.device != "cpu":
-            dn2 = dn2.cpu()
         if tau is None:
             out = func.compute({"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel()})
         else:
-            if tau.device != "cpu":
-                tau = tau.cpu()
             out = func.compute(
                 {"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel(), "tau": tau.T.ravel()}
             )
@@ -162,8 +156,6 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                 ]
             )
 
-    if rho.device != "cpu":
-        rho = rho.cpu()
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
     exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
     exc, vxc = xp.asarray(exc), [xp.asarray(v.T) if v is not None else v for v in vxc]
