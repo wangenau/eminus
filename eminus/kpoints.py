@@ -165,7 +165,7 @@ class KPoints(BaseObject):
         for i in range(self.Nk):
             for j in range(i + 1, self.Nk):
                 # Check k=-k within some tolerance
-                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-12:
+                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-15:
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
