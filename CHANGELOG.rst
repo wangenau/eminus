@@ -5,6 +5,29 @@
 Changelog
 =========
 
+dev
+---
+- New features
+   - Fully implement a new backend module
+      - Allow NumPy and Torch backends
+- Coding style
+   - Many unifications due to the added backend support
+   - Stricter input types
+   - Ignore Ruffs PLC0415 rule
+- Miscellaneous
+   - Drop Python 3.8 support
+   - Raise minimal versions of dependencies
+      - NumPY 2.0+ and SciPy 1.13+ is now required
+   - Fix Libxc warning when using PySCF as the backend
+   - Add nglview to the Nix flake
+   - Use Python 3.12 in the Nix flake since 3.13 does not support Torch
+   - Add free threading classifier
+- Breaking
+   - Remove Jax extra
+   - Torch extra has changed
+      - Remove Torch extra operator functions
+      - Now requires array-api-compat
+
 v3.1.0 - May 30, 2025
 ---------------------
 - New features
