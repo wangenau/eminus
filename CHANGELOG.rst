@@ -10,6 +10,8 @@ dev
 - New features
    - Fully implement a new backend module
       - Allow NumPy and Torch backends
+- Updated docs
+   - Add a backend overview page
 - Coding style
    - Run tests automatically for NumPy and Torch
    - Many unifications due to the added backend support
