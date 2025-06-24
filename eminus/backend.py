@@ -1,6 +1,10 @@
 # SPDX-FileCopyrightText: 2025 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-"""Array backend handling."""
+"""Array backend handling.
+
+Includes helper and compatibility functions.
+For more information see https://wangenau.gitlab.io/eminus/backend.html.
+"""
 
 import numpy as np
 import scipy
@@ -18,7 +22,14 @@ def __getattr__(name):
 
 
 def is_array(value):
-    """Check if the object is an NumPy array or Torch tensor."""
+    """Check if the object is an NumPy array or Torch tensor.
+
+    Args:
+        value: Input array.
+
+    Returns:
+        If the value is an array supported by the available backends.
+    """
     if isinstance(value, np.ndarray):
         return True
     if config.backend == "torch":
@@ -58,6 +69,9 @@ def delete(arr, obj, axis=None):
 def fftn(x, *args, **kwargs):
     """Compute the N-D discrete Fourier Transform.
 
+    Use SciPy FFTs since they are faster, support parallelism, and are more accurate.
+    They will upcast some complex arrays to complex256. Using NumPy FFTs will fail some tests.
+
     Args:
         x: Input array, can be complex.
         args: Pass-through arguments.
@@ -78,6 +92,9 @@ def fftn(x, *args, **kwargs):
 
 def ifftn(x, *args, **kwargs):
     """Compute the N-D inverse discrete Fourier Transform.
+
+    Use SciPy FFTs since they are faster, support parallelism, and are more accurate.
+    They will upcast some complex arrays to complex256. Using NumPy FFTs will fail some tests.
 
     Args:
         x: Input array, can be complex.
