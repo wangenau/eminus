@@ -117,6 +117,8 @@ def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
                     compression=compression,
                     compression_opts=compression_opts,
                 )
+            elif xp.is_array(value):
+                fp.create_dataset(f"{path}{key}", data=xp.to_np(value))
             else:
                 fp.create_dataset(f"{path}{key}", data=value)
 

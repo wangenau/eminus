@@ -10,6 +10,7 @@ Note that if one wants to use Jupyter one has to install it separately.
 """
 
 import collections
+import copy
 import io
 import math
 import pathlib
@@ -295,7 +296,7 @@ def view_contour(
         log.warning('The provided field is "None".')
         return None
     # Create a copy of the field data to not overwrite the input
-    field = np.copy(xp.to_np(field))
+    field = copy.deepcopy(field)
     # Remove large and small values (similar to VESTA)
     field[field < limits[0]] = limits[0]
     field[field > limits[1]] = limits[1]
@@ -305,7 +306,7 @@ def view_contour(
     contours = go.Contour(
         x=xp.to_np(atoms.r[:, axes[0]][mask]),
         y=xp.to_np(atoms.r[:, axes[1]][mask]),
-        z=field[mask],
+        z=xp.to_np(field[mask]),
         contours_coloring="none",
         ncontours=lines,
         line_width=linewidth,
