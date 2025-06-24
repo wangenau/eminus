@@ -57,7 +57,7 @@ To simplify some operations, there are also helper functions available in the :c
 GPU
 ---
 
-Torhc supports calculations on the GPU, while NumPy does not.
+Torch supports calculations on the GPU, while NumPy does not.
 However, some functionalities are exclusive to NumPy (mostly in the :code:`extras`).
 Therefore, it is sometimes needed to convert the Torch GPU tensors to NumPy CPU arrays.
 For this, the :code:`to_np` helper function can be utilized
@@ -78,3 +78,5 @@ To test the functionality for all backends, each test will be performed for ever
 This simplifies the writing of tests but may result in redundant tests.
 The tests will be performed consecutively.
 If there are failures in one backend, the other backend will not be performed.
+
+To test arrays that may exist on different devices or as arrays of different backends, one can use the utility functions in the :code:`testing` module.

@@ -28,6 +28,7 @@ Main source code directory.
 | orbitals.py       | Orbital generation workflows |
 | potentials.py     | Miscellaneous (pseudo-)potentials |
 | scf.py            | SCF class definition |
+| testing.py        | Array backend testing |
 | tools.py          | Tools to calculate physical properties |
 | units.py          | Constants and unit conversion functions |
 | utils.py          | Linear algebra and random utilities |

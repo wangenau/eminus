@@ -24,7 +24,7 @@ dev
    - Fix Libxc warning when using PySCF as the backend
    - Add nglview to the Nix flake
    - Use Python 3.12 in the Nix flake since 3.13 does not support Torch
-   - Add free threading classifier
+   - Add atesting module to support backend testing
 - Breaking
    - Remove Jax extra
    - Torch extra has changed

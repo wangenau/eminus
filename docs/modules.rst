@@ -33,6 +33,7 @@ Modules
    eminus.orbitals
    eminus.potentials
    eminus.scf
+   eminus.testing
    eminus.tools
    eminus.units
    eminus.utils
