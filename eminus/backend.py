@@ -14,7 +14,6 @@ import scipy
 
 from . import config
 
-
 if "stubtest" not in pathlib.Path(sys.argv[0]).name:
     # Do not overwrite getattr when stubtest is running
     def __getattr__(name):
@@ -24,6 +23,9 @@ if "stubtest" not in pathlib.Path(sys.argv[0]).name:
         else:
             xp = np
         return getattr(xp, name)
+
+
+# ### Helper functions ###
 
 
 def is_array(value):
@@ -42,6 +44,9 @@ def is_array(value):
 
         return is_torch_array(value)
     return False
+
+
+# ### Compatibility functions ###
 
 
 def delete(arr, obj, axis=None):

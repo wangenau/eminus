@@ -23,12 +23,13 @@ def pytest_sessionstart(session):
     terminalreporter.section(f"{eminus.config.backend} backend tests")
 
 
-def pytest_sessionfinish(session, exitstatus):  # noqa: ARG001
+def pytest_sessionfinish(session, exitstatus):
     """Hook that runs at the end of the pytest session.
 
     Rerun pytest using a different backend.
     """
-    if os.environ.get("PYTEST_RERUN_TORCH") != "1":
+    # Only run followup tests when all tests passed, otherwise we will see no traceback
+    if os.environ.get("PYTEST_RERUN_TORCH") != "1" and exitstatus == 0:
         try:
             import array_api_compat  # noqa: F401
             import torch  # noqa: F401

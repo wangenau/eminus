@@ -85,48 +85,33 @@ def test_is_array():
     config.backend = backend  # Restore the default
 
 
-def test_torch_delete():
+def test_delete():
     """Test the delete implementation."""
-    default = config.backend
-    for backend in ("numpy", "torch"):
-        if backend == "torch":
-            pytest.importorskip("torch", reason="torch not installed, skip tests")
-        config.backend = backend
+    array = xp.arange(4)
+    assert_array_equal(xp.delete(array, 1), [0, 2, 3])
+    assert_array_equal(xp.delete(array, [1, 3]), [0, 2])
+    assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
 
-        array = xp.arange(4)
-        assert_array_equal(xp.delete(array, 1), [0, 2, 3])
-        assert_array_equal(xp.delete(array, [1, 3]), [0, 2])
-        assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
+    array = xp.arange(4).reshape((2, 2))  # axis=None returns a flattened array
+    assert_array_equal(xp.delete(array, 1), [0, 2, 3])
+    assert_array_equal(xp.delete(array, [1, 3], axis=None), [0, 2])
+    assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
 
-        array = xp.arange(4).reshape((2, 2))  # axis=None returns a flattened array
-        assert_array_equal(xp.delete(array, 1), [0, 2, 3])
-        assert_array_equal(xp.delete(array, [1, 3], axis=None), [0, 2])
-        assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
+    array = xp.arange(4).reshape((2, 2))
+    assert_array_equal(xp.delete(array, 0, axis=0), [[2, 3]])
+    assert_array_equal(xp.delete(array, 1, axis=1), [[0], [2]])
 
-        array = xp.arange(4).reshape((2, 2))
-        assert_array_equal(xp.delete(array, 0, axis=0), [[2, 3]])
-        assert_array_equal(xp.delete(array, 1, axis=1), [[0], [2]])
-
-        array = xp.arange(9).reshape((3, 3))
-        assert_array_equal(xp.delete(array, [0, 2], axis=0), [[3, 4, 5]])
-        assert_array_equal(xp.delete(array, [1, 2], axis=1), [[0], [3], [6]])
-    config.backend = default  # Restore the default
+    array = xp.arange(9).reshape((3, 3))
+    assert_array_equal(xp.delete(array, [0, 2], axis=0), [[3, 4, 5]])
+    assert_array_equal(xp.delete(array, [1, 2], axis=1), [[0], [3], [6]])
 
 
 @pytest.mark.parametrize("name", ["fftn", "ifftn", "sqrtm"])
 def test_trivial_functions(name):
     """Check the availability of the more trivial backend functions implementations."""
-    pytest.importorskip("torch", reason="torch not installed, skip tests")
-    backend = config.backend
-    config.backend = "torch"
     array = xp.arange(9).reshape((3, 3))
     func = getattr(xp, name)
     func(array)
-
-    config.backend = "numpy"
-    array = xp.arange(9).reshape((3, 3))
-    func(array)
-    config.backend = backend  # Restore the default
 
 
 if __name__ == "__main__":
