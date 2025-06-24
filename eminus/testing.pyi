@@ -1,22 +1,8 @@
 # SPDX-FileCopyrightText: 2025 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any, TypeAlias
 
-from numpy import complexfloating
-from numpy.typing import NDArray
+from numpy.testing import assert_allclose as np_assert_allclose
+from numpy.testing import assert_array_equal as np_assert_array_equal
 
-_Complex: TypeAlias = complexfloating[Any]
-_ArrayComplex: TypeAlias = NDArray[_Complex]
-
-def assert_allclose(
-    actual: _ArrayComplex,
-    desired: _ArrayComplex,
-    *args: Any,
-    **kwargs: Any,
-) -> None: ...
-def assert_array_equal(
-    actual: _ArrayComplex,
-    desired: _ArrayComplex,
-    *args: Any,
-    **kwargs: Any,
-) -> None: ...
+assert_allclose = np_assert_allclose
+assert_array_equal = np_assert_array_equal
