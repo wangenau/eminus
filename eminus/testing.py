@@ -18,7 +18,7 @@ def assert_allclose(actual, desired, *args, **kwargs):
     Keyword Args:
         **kwargs: Pass-through keyword arguments.
     """
-    np.tesing.assert_allclose(xp.to_np(actual), xp.to_np(desired), *args, **kwargs)
+    np.testing.assert_allclose(xp.to_np(actual), xp.to_np(desired), *args, **kwargs)
 
 
 def assert_array_equal(actual, desired, *args, **kwargs):
@@ -32,4 +32,4 @@ def assert_array_equal(actual, desired, *args, **kwargs):
     Keyword Args:
         **kwargs: Pass-through keyword arguments.
     """
-    np.tesing.assert_array_equal(xp.to_np(actual), xp.to_np(desired), *args, **kwargs)
+    np.testing.assert_array_equal(xp.to_np(actual), xp.to_np(desired), *args, **kwargs)

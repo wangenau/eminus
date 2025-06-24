@@ -56,7 +56,10 @@ def to_np(*args):
         Copied arrays on the CPU.
     """
     if config.backend == "torch":
-        cpu_arr = tuple(np.asarray(i.cpu()) if not isinstance(i, np.ndarray) else i for i in args)
+        cpu_arr = tuple(
+            np.asarray(i.cpu()) if is_array(i) and not isinstance(i, np.ndarray) else i
+            for i in args
+        )
     else:
         cpu_arr = args
     # Single args should return single args, not tuple
