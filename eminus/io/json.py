@@ -94,7 +94,7 @@ def write_json(obj, filename):
             """Overwrite the default function to handle eminus objects."""
             # ndarrays are not JSON serializable, encode them as base64 to save them
             if xp.is_array(o):
-                o = np.asarray(o)
+                o = xp.to_np(o)
                 data = base64.b64encode(o.copy(order="C")).decode("utf-8")
                 return {"__ndarray__": data, "dtype": str(o.dtype), "shape": o.shape}
 

@@ -68,7 +68,7 @@ def _uniform_density_data(n, r, s):
     Returns:
         Interpolated density and new grid points.
     """
-    n, r, s = np.asarray(n), np.asarray(r), np.asarray(s)
+    n, r, s = xp.to_np(n), xp.to_np(r), xp.to_np(s)
     # Do not use a super fine grid to display the interpolated data
     x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), np.min([s[0], 25]))
     y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), np.min([s[1], 25]))
@@ -114,9 +114,9 @@ def view_atoms(
     lattice = get_lattice(atoms.a)
     for xx in lattice:
         bz_data = go.Scatter3d(
-            x=np.asarray(xx[:, 0]),
-            y=np.asarray(xx[:, 1]),
-            z=np.asarray(xx[:, 2]),
+            x=xp.to_np(xx[:, 0]),
+            y=xp.to_np(xx[:, 1]),
+            z=xp.to_np(xx[:, 2]),
             name="Unit cell",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -127,9 +127,9 @@ def view_atoms(
     for ia in sorted(set(atoms.atom)):
         mask = np.nonzero(np.asarray(atoms.atom) == ia)[0]
         atom_data = go.Scatter3d(
-            x=np.asarray(atoms.pos[mask, 0]),
-            y=np.asarray(atoms.pos[mask, 1]),
-            z=np.asarray(atoms.pos[mask, 2]),
+            x=xp.to_np(atoms.pos[mask, 0]),
+            y=xp.to_np(atoms.pos[mask, 1]),
+            z=xp.to_np(atoms.pos[mask, 2]),
             name=ia,
             mode="markers",
             marker={
@@ -144,9 +144,9 @@ def view_atoms(
         if isinstance(fods, list):
             if len(fods[0]) != 0:
                 fods_data = go.Scatter3d(
-                    x=np.asarray(fods[0][:, 0]),
-                    y=np.asarray(fods[0][:, 1]),
-                    z=np.asarray(fods[0][:, 2]),
+                    x=xp.to_np(fods[0][:, 0]),
+                    y=xp.to_np(fods[0][:, 1]),
+                    z=xp.to_np(fods[0][:, 2]),
                     name="up-FOD",
                     mode="markers",
                     marker={"size": math.pi, "color": "red"},
@@ -154,9 +154,9 @@ def view_atoms(
                 fig.add_trace(fods_data)
             if len(fods) > 1 and len(fods[1]) != 0:
                 fods_data = go.Scatter3d(
-                    x=np.asarray(fods[1][:, 0]),
-                    y=np.asarray(fods[1][:, 1]),
-                    z=np.asarray(fods[1][:, 2]),
+                    x=xp.to_np(fods[1][:, 0]),
+                    y=xp.to_np(fods[1][:, 1]),
+                    z=xp.to_np(fods[1][:, 2]),
                     name="down-FOD",
                     mode="markers",
                     marker={"size": math.pi, "color": "green"},
@@ -165,9 +165,9 @@ def view_atoms(
         # Treat fods as normal coordinates otherwise
         else:
             fods_data = go.Scatter3d(
-                x=np.asarray(fods[:, 0]),
-                y=np.asarray(fods[:, 1]),
-                z=np.asarray(fods[:, 2]),
+                x=xp.to_np(fods[:, 0]),
+                y=xp.to_np(fods[:, 1]),
+                z=xp.to_np(fods[:, 2]),
                 name="Coordinates",
                 mode="markers",
                 marker={"size": 1, "color": "red"},
@@ -198,9 +198,9 @@ def view_atoms(
                 '"percent" keyword has no effect and all of the density data will be displayed.'
             )
         else:
-            r = np.asarray(atoms.r)
+            r = xp.to_np(atoms.r)
             isomin = get_isovalue(density, percent=percent)
-            density = np.asarray(density)
+            density = xp.to_np(density)
 
         if isovalue is not None:
             isomin = isovalue
@@ -295,7 +295,7 @@ def view_contour(
         log.warning('The provided field is "None".')
         return None
     # Create a copy of the field data to not overwrite the input
-    field = np.copy(np.asarray(field))
+    field = np.copy(xp.to_np(field))
     # Remove large and small values (similar to VESTA)
     field[field < limits[0]] = limits[0]
     field[field > limits[1]] = limits[1]
@@ -303,8 +303,8 @@ def view_contour(
     # Create the contour lines
     fig = go.Figure()
     contours = go.Contour(
-        x=np.asarray(atoms.r[:, axes[0]][mask]),
-        y=np.asarray(atoms.r[:, axes[1]][mask]),
+        x=xp.to_np(atoms.r[:, axes[0]][mask]),
+        y=xp.to_np(atoms.r[:, axes[1]][mask]),
         z=field[mask],
         contours_coloring="none",
         ncontours=lines,
@@ -686,8 +686,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         for i in range(scf.atoms.occ.Nstate):
             fig.add_trace(
                 go.Scatter(
-                    x=np.asarray(k_axis),
-                    y=np.asarray(e_occ[:, s, i] - Efermi),
+                    x=xp.to_np(k_axis),
+                    y=xp.to_np(e_occ[:, s, i] - Efermi),
                     mode="lines+markers",
                     name=f"Band {i + 1}",
                     marker_color=colors[s],
@@ -700,8 +700,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             for i in range(scf.atoms.occ.Nempty):
                 fig.add_trace(
                     go.Scatter(
-                        x=np.asarray(k_axis),
-                        y=np.asarray(e_unocc[:, s, i] - Efermi),
+                        x=xp.to_np(k_axis),
+                        y=xp.to_np(e_unocc[:, s, i] - Efermi),
                         mode="lines+markers",
                         line={"dash": "dash"},
                         name=f"Unocc. band {i + 1}",
@@ -720,7 +720,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             "mirror": True,
             "ticks": "outside",
             "tickmode": "array",
-            "tickvals": np.asarray(special),
+            "tickvals": xp.to_np(special),
             "ticktext": label,
             "gridcolor": "grey",
             "gridwidth": 2,
@@ -778,8 +778,8 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
         e, dos_e = get_dos(e_occ, scf.kpts.wk, spin=s, **kwargs)
         fig.add_trace(
             go.Scatter(
-                x=np.asarray(e - Efermi),
-                y=np.asarray(dos_e),
+                x=xp.to_np(e - Efermi),
+                y=xp.to_np(dos_e),
                 mode="lines+markers",
                 name=f"Spin {s + 1}",
                 marker_color=colors[s],
@@ -833,9 +833,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     bz = get_brillouin_zone(kpts.a)
     for xx in bz:
         bz_data = go.Scatter3d(
-            x=np.asarray(xx[:, 0]),
-            y=np.asarray(xx[:, 1]),
-            z=np.asarray(xx[:, 2]),
+            x=xp.to_np(xx[:, 0]),
+            y=xp.to_np(xx[:, 1]),
+            z=xp.to_np(xx[:, 2]),
             name="Brillouin zone",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -849,9 +849,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
                 label = "\u0393"  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
             special_data = go.Scatter3d(
-                x=[np.asarray(v[0])],
-                y=[np.asarray(v[1])],
-                z=[np.asarray(v[2])],
+                x=[xp.to_np(v[0])],
+                y=[xp.to_np(v[1])],
+                z=[xp.to_np(v[2])],
                 name=label,
                 mode="markers",
                 marker={"size": 4, "opacity": 0.9},
@@ -865,9 +865,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         mode = "markers"
     if path:
         path_data = go.Scatter3d(
-            x=np.asarray(kpts.k[:, 0]),
-            y=np.asarray(kpts.k[:, 1]),
-            z=np.asarray(kpts.k[:, 2]),
+            x=xp.to_np(kpts.k[:, 0]),
+            y=xp.to_np(kpts.k[:, 1]),
+            z=xp.to_np(kpts.k[:, 2]),
             name="k-points",
             mode=mode,
             marker={"size": 2, "color": "#1a962b", "opacity": 0.75},

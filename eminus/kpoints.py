@@ -369,7 +369,7 @@ def get_brillouin_zone(lattice_vectors):
     Returns:
         Brillouin zone vertices.
     """
-    inv_cell = np.asarray(kpoint_convert(xp.eye(3), lattice_vectors))
+    inv_cell = xp.to_np(kpoint_convert(xp.eye(3), lattice_vectors))
 
     px, py, pz = np.tensordot(inv_cell, np.mgrid[-1:2, -1:2, -1:2], axes=(0, 0))
     points = np.c_[px.ravel(), py.ravel(), pz.ravel()]

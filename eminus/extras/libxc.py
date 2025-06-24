@@ -64,7 +64,7 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
     if dn_spin is None:
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order="F"))
-        out = func.compute({"rho": n_spin.T.ravel()})
+        out = func.compute({"rho": xp.to_np(n_spin.T.ravel())})
     else:
         # The gradients have to be reshaped as well but also squared
         if Nspin == 1:
@@ -79,10 +79,16 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
                 )
             )
         if tau is None:
-            out = func.compute({"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel()})
+            out = func.compute(
+                {"rho": xp.to_np(n_spin.T.ravel()), "sigma": xp.to_np(dn2.T.ravel())}
+            )
         else:
             out = func.compute(
-                {"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel(), "tau": tau.T.ravel()}
+                {
+                    "rho": xp.to_np(n_spin.T.ravel()),
+                    "sigma": xp.to_np(dn2.T.ravel()),
+                    "tau": xp.to_np(tau.T.ravel()),
+                }
             )
     # zk is a column vector, flatten it to a 1d row vector
     exc = xp.asarray(out["zk"].ravel())
@@ -157,7 +163,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
             )
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
-    exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
+    exc, vxc, _, _ = eval_xc(xc, xp.to_np(rho), spin=Nspin - 1)
     exc, vxc = xp.asarray(exc), [xp.asarray(v.T) if v is not None else v for v in vxc]
     # The first entry of vxc is vrho
     # The second entry of the second entry is vsigma

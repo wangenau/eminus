@@ -14,6 +14,7 @@ except ImportError:
     pass
 import numpy as np
 
+from eminus import backend as xp
 from eminus.data import SYMBOL2NUMBER
 from eminus.logger import log
 
@@ -84,7 +85,7 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
 
     # Set up the dispersion model object with periodic boundary conditions
     model = DispersionModel(
-        numbers, positions, lattice=np.asarray(atoms.a), periodic=np.asarray([1, 1, 1])
+        numbers, positions, lattice=xp.to_np(atoms.a), periodic=np.asarray([1, 1, 1])
     )
     # Calculate the dispersion energy, neglecting the gradient
     res = model.get_dispersion(dispersion_version[version](method=method, atm=atm), grad=False)
