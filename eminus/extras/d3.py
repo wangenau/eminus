@@ -62,7 +62,7 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
     # Set up input parameters
     # The dispersion correction is only geometry dependent which makes handling the input easy
     atoms = scf.atoms
-    positions = np.asarray(atoms.pos)
+    positions = xp.to_np(atoms.pos)
     numbers = np.asarray([SYMBOL2NUMBER[ia] for ia in atoms.atom])
     # Try to determine the method keyword
     if xc is None:

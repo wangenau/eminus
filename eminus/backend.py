@@ -93,7 +93,11 @@ def delete(arr, obj, axis=None):
     if axis is None:
         axis = 0
         arr = arr.ravel()
-    skip = [i for i in range(arr.size(axis)) if i not in np.asarray(obj)]
+    if is_array(obj):
+        obj = to_np(obj)
+    else:
+        obj = np.asarray(obj)
+    skip = [i for i in range(arr.size(axis)) if i not in to_np(obj)]
     indices = [slice(None) if i != axis else skip for i in range(arr.ndim)]
     return arr.__getitem__(indices)
 

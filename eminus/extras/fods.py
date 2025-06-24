@@ -104,7 +104,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
     # Convert to Angstrom for PySCF
     pos = bohr2ang(atoms.pos)
     # Build the PySCF input format
-    atom_pyscf = list(zip(atoms.atom, pos))
+    atom_pyscf = list(zip(atoms.atom, xp.to_np(pos)))
 
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
