@@ -131,7 +131,6 @@ typecheck:
       echo -e
       "eminus.Atoms.(I|Idag|J|Jdag)\n"
       "eminus.atoms.Atoms.(I|Idag|J|Jdag)\n"
-      "eminus.backend.*\n"
       "eminus.dft.(get_n_single|get_n_spin)\n"
       "eminus.energies.(get_Ekin|get_Enonloc)\n"
       "eminus.gga.get_tau\n"

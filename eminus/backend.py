@@ -6,19 +6,24 @@ Includes helper and compatibility functions.
 For more information see https://wangenau.gitlab.io/eminus/backend.html.
 """
 
+import pathlib
+import sys
+
 import numpy as np
 import scipy
 
 from . import config
 
 
-def __getattr__(name):
-    """Access modules and functions of array backends by their name."""
-    if config.backend == "torch":
-        from array_api_compat import torch as xp
-    else:
-        xp = np
-    return getattr(xp, name)
+if "stubtest" not in pathlib.Path(sys.argv[0]).name:
+    # Do not overwrite getattr when stubtest is running
+    def __getattr__(name):
+        """Access modules and functions of array backends by their name."""
+        if config.backend == "torch":
+            from array_api_compat import torch as xp
+        else:
+            xp = np
+        return getattr(xp, name)
 
 
 def is_array(value):
