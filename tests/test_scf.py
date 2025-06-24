@@ -3,10 +3,10 @@
 """Test the SCF class."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF, SCF, USCF
 from eminus import backend as xp
+from eminus.testing import assert_allclose
 from eminus.tools import center_of_mass
 
 atoms = Atoms("He", (0, 0, 0), ecut=2, unrestricted=True)

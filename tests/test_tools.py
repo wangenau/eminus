@@ -6,12 +6,12 @@ import copy
 import math
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF, SCF
 from eminus import backend as xp
 from eminus.dft import get_epsilon, get_psi
 from eminus.gga import get_grad_field
+from eminus.testing import assert_allclose
 from eminus.tools import (
     center_of_mass,
     check_norm,

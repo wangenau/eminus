@@ -3,10 +3,10 @@
 """Test the Occupations object."""
 
 import pytest
-from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import backend as xp
 from eminus.occupations import Occupations
+from eminus.testing import assert_allclose, assert_array_equal
 
 
 @pytest.mark.parametrize(("Nelec", "Nspin", "ref"), [(1, None, 2), (2, None, 1), (2, 2, 2)])

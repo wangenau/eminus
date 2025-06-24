@@ -3,11 +3,11 @@
 """Test GGA functions."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus import backend as xp
 from eminus.gga import get_grad_field, get_tau
+from eminus.testing import assert_allclose
 
 atoms_unpol = Atoms("He", (0, 0, 0), ecut=1, unrestricted=False)
 atoms_unpol.kpts.Nk = 2

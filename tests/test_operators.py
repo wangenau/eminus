@@ -7,10 +7,10 @@ import typing  # noqa: F401
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose
 
 from eminus import Atoms
 from eminus import backend as xp
+from eminus.testing import assert_allclose
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()

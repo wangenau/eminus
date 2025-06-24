@@ -3,10 +3,10 @@
 """Test total energies for bulk silicon with custom k-points."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Cell, RSCF, USCF
 from eminus.kpoints import kpoint_convert
+from eminus.testing import assert_allclose
 
 # Total energy from a spin-paired calculation with PWDFT.jl with the same parameters as below
 E_ref = -7.493530216

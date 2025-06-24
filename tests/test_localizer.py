@@ -5,12 +5,12 @@
 import copy
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus import backend as xp
 from eminus.dft import get_psi
 from eminus.localizer import get_FLO, get_scdm, get_wannier, wannier_cost
+from eminus.testing import assert_allclose
 from eminus.tools import check_orthonorm
 
 atoms_unpol = Atoms(

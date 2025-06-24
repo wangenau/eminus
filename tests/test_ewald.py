@@ -8,10 +8,9 @@ Reference: J. Chem. Phys. 28, 164.
 
 import math
 
-from numpy.testing import assert_allclose
-
 from eminus import Cell
 from eminus.energies import get_Eewald
+from eminus.testing import assert_allclose
 
 
 def test_NaCl():

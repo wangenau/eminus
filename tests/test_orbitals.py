@@ -8,11 +8,11 @@ import pathlib
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF
 from eminus import backend as xp
 from eminus.orbitals import cube_writer, FLO, FO, KSO, SCDM, WO
+from eminus.testing import assert_allclose
 
 atoms = Atoms("He", (0, 0, 0), ecut=1, center=True).build()
 scf = RSCF(atoms)

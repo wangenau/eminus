@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test eigenenergies for bulk silicon in band structure calculations."""
 
-from numpy.testing import assert_allclose
-
 from eminus import backend as xp
 from eminus import Cell, RSCF, USCF
 from eminus.dft import get_epsilon, get_epsilon_unocc
+from eminus.testing import assert_allclose
 from eminus.tools import get_bandgap
 
 # Eigenenergies from a spin-paired calculation with PWDFT.jl with the same parameters as below

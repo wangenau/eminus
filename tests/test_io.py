@@ -8,7 +8,6 @@ import os
 import pathlib
 
 import pytest
-from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms, Cell, SCF
 from eminus import backend as xp
@@ -31,6 +30,7 @@ from eminus.io import (
 )
 from eminus.kpoints import KPoints
 from eminus.occupations import Occupations
+from eminus.testing import assert_allclose, assert_array_equal
 
 atoms = Atoms("LiH", ((0, 0, 0), (3, 0, 0)), ecut=1).build()
 scf = SCF(atoms, opt={"sd": 1})

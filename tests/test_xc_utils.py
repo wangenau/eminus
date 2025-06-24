@@ -4,10 +4,10 @@
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose
 
 from eminus import backend as xp
 from eminus import config
+from eminus.testing import assert_allclose
 from eminus.xc import get_xc, get_xc_defaults, parse_functionals, parse_xc_type
 
 

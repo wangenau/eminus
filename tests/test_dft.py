@@ -3,11 +3,11 @@
 """Test DFT functions."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, demo, SCF
 from eminus import backend as xp
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
+from eminus.testing import assert_allclose
 from eminus.tools import get_magnetization
 
 atoms_unpol = Cell("Si", "diamond", 1, 10, kmesh=(2, 1, 1), bands=5)

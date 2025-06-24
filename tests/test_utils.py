@@ -6,10 +6,10 @@ import math
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms
 from eminus import backend as xp
+from eminus.testing import assert_allclose, assert_array_equal
 from eminus.utils import (
     add_maybe_none,
     atom2charge,

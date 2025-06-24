@@ -3,9 +3,9 @@
 """Test total energies for bulk lithium (spin-paired) for different smearings."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Cell, RSCF
+from eminus.testing import assert_allclose
 
 # Total energies from a spin-paired calculation with PWDFT.jl with similar parameters as below
 E_ref = {

@@ -5,7 +5,6 @@
 import os
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, SCF
 from eminus.energies import Energy
@@ -14,6 +13,7 @@ from eminus.gth import GTH
 from eminus.io import read, write
 from eminus.kpoints import KPoints
 from eminus.occupations import Occupations
+from eminus.testing import assert_allclose
 
 atoms = Atoms("LiH", ((0, 0, 0), (3, 0, 0)), ecut=1).build()
 scf = SCF(atoms, opt={"sd": 1})

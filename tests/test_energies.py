@@ -5,13 +5,13 @@
 import copy
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, SCF
 from eminus import backend as xp
 from eminus.dft import get_epsilon, guess_pseudo
 from eminus.energies import Energy, get_Eband, get_Eentropy
 from eminus.minimizer import scf_step
+from eminus.testing import assert_allclose
 
 # The reference contributions are similar for the polarized and unpolarized case,
 # but not necessary the same (for bad numerics)

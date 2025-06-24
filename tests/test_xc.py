@@ -5,9 +5,9 @@
 
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import backend as xp
+from eminus.testing import assert_allclose
 from eminus.xc import get_exc, get_vxc, get_xc, get_zeta, IMPLEMENTED, XC_MAP
 
 # Create random mock densities

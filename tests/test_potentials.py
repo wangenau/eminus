@@ -2,10 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test energies for the implemented toy potentials."""
 
-from numpy.testing import assert_allclose
-
 from eminus import Atoms, RSCF
 from eminus.dft import get_epsilon
+from eminus.testing import assert_allclose
 from eminus.units import ang2bohr
 
 

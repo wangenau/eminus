@@ -6,9 +6,9 @@ import inspect
 import pathlib
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, read, RSCF, USCF
+from eminus.testing import assert_allclose
 
 # Total energies from a spin-paired calculation with PWDFT.jl with the same parameters as below
 # PWDFT.jl does not support spin-polarized calculations with SCAN

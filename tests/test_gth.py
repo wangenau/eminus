@@ -5,10 +5,9 @@
 import inspect
 import pathlib
 
-from numpy.testing import assert_allclose, assert_array_equal
-
 from eminus import Atoms, Cell, SCF
 from eminus import backend as xp
+from eminus.testing import assert_allclose, assert_array_equal
 
 
 def test_GTH():

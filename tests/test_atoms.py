@@ -5,11 +5,11 @@
 import math
 
 import pytest
-from numpy.testing import assert_allclose, assert_array_equal
 from scipy.linalg import det
 
 from eminus import Atoms, Cell, log
 from eminus import backend as xp
+from eminus.testing import assert_allclose, assert_array_equal
 from eminus.tools import center_of_mass
 
 inp = ("He", (0, 0, 0))

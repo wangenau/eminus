@@ -5,10 +5,10 @@
 import math
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus import backend as xp
+from eminus.testing import assert_allclose
 from eminus.xc.lda_xc_gdsmfb import (
     lda_xc_gdsmfb,
     lda_xc_gdsmfb_spin,

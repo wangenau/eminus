@@ -4,11 +4,11 @@
 
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import Atoms
 from eminus import backend as xp
 from eminus.extras import remove_core_fods, split_fods
+from eminus.testing import assert_allclose, assert_array_equal
 
 rng = default_rng()
 

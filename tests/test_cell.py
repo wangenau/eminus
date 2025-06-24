@@ -2,11 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the Cell generation."""
 
-from numpy.testing import assert_array_equal
-
 from eminus import backend as xp
 from eminus import Cell
 from eminus.data import LATTICE_VECTORS
+from eminus.testing import assert_array_equal
 
 
 def test_ecut_verbose():

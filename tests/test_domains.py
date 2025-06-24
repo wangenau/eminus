@@ -3,11 +3,11 @@
 """Test domain generation."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms
 from eminus import backend as xp
 from eminus.domains import domain_cuboid, domain_isovalue, domain_sphere, truncate
+from eminus.testing import assert_allclose
 from eminus.tools import center_of_mass
 
 atoms = Atoms(

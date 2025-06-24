@@ -7,7 +7,6 @@ import math
 
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_array_equal
 
 from eminus import backend as xp
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
@@ -19,6 +18,7 @@ from eminus.kpoints import (
     kpoints2axis,
     monkhorst_pack,
 )
+from eminus.testing import assert_allclose, assert_array_equal
 
 
 def test_lattice():
