@@ -46,6 +46,25 @@ def is_array(value):
     return False
 
 
+def to_np(*args):
+    """Copy the arrays from the current device to CPU NumPy arrays.
+
+    Args:
+        args: Input arrays.
+
+    Returns:
+        Copied arrays on the CPU.
+    """
+    if config.backend == "torch":
+        cpu_arr = tuple(np.asarray(i.cpu()) if not isinstance(i, np.ndarray) else i for i in args)
+    else:
+        cpu_arr = args
+    # Single args should return single args, not tuple
+    if len(cpu_arr) == 1:
+        return cpu_arr[0]
+    return cpu_arr
+
+
 # ### Compatibility functions ###
 
 
@@ -143,5 +162,5 @@ def sqrtm(A, *args, **kwargs):
 
     xp = array_namespace(A)
     return xp.asarray(
-        np.asarray(scipy.linalg.sqrtm(A.cpu(), *args, **kwargs), dtype=complex), dtype=complex
+        np.asarray(scipy.linalg.sqrtm(to_np(A), *args, **kwargs), dtype=complex), dtype=complex
     )
