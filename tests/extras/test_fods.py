@@ -63,7 +63,7 @@ def test_remove_core_fods(unrestricted):
     core = atoms.pos
     valence = xp.asarray(rng.standard_normal((10, 3)))
 
-    fods = [xp.vstack((core, valence))] * atoms.occ.Nspin
+    fods = xp.stack([xp.vstack((core, valence))] * atoms.occ.Nspin)
     fods_valence = remove_core_fods(atoms, fods)
     assert_array_equal(xp.stack([valence] * atoms.occ.Nspin), fods_valence)
 
