@@ -16,7 +16,7 @@ from eminus.xc.lda_xc_gdsmfb import (
     Zeta0Coeffs,
     Zeta1Coeffs,
 )
-from eminus.xc.lda_xc_ksdt import (
+from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
     _get_fxc_zeta,
     _get_phi,
     _get_theta,
