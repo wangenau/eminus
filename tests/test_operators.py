@@ -124,10 +124,7 @@ def test_hermitian_I(field):
     assert not isinstance(a, list)
     out = (a.conj() @ atoms.I(b)).conj()
     test = b.conj() @ atoms.Idag(a, full=True)
-    try:
-        assert_allclose(out.resolve_conj().numpy(), test.resolve_conj().numpy())
-    except AttributeError:
-        assert_allclose(out, test)
+    assert_allclose(out, test)
 
 
 @pytest.mark.parametrize("field", ["full_single"])
@@ -138,10 +135,7 @@ def test_hermitian_J(field):
     assert not isinstance(a, list)
     out = (a.conj() @ atoms.J(b)).conj()
     test = b.conj() @ atoms.Jdag(a)
-    try:
-        assert_allclose(out.resolve_conj().numpy(), test.resolve_conj().numpy())
-    except AttributeError:
-        assert_allclose(out, test)
+    assert_allclose(out, test)
 
 
 @pytest.mark.parametrize(

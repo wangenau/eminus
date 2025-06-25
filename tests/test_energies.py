@@ -81,6 +81,7 @@ def test_get_Eband_unpol():
     assert scf_unpol.Y is not None
     Eband = get_Eband(scf_unpol, scf_unpol.Y)
     assert_allclose(Eband, -4.1123, atol=1e-4)
+    assert isinstance(Eband, float)
 
 
 def test_get_Eband_pol():
@@ -91,22 +92,25 @@ def test_get_Eband_pol():
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy
     assert_allclose(Eband, -8.2246, atol=1e-4)
+    assert isinstance(Eband, float)
 
 
 def test_get_Eentropy_unpol():
     """Check the spin-unpolarized entropic energy."""
     scf_unpol.atoms.occ.smearing = 1
     epsilon = get_epsilon(scf_unpol, scf_unpol.W)
-    Eband = get_Eentropy(scf_unpol, epsilon, 0)
-    assert_allclose(Eband, -4.4395, atol=1e-4)
+    Eentropy = get_Eentropy(scf_unpol, epsilon, 0)
+    assert_allclose(Eentropy, -4.4395, atol=1e-4)
+    assert isinstance(Eentropy, float)
 
 
 def test_get_Eentropy_pol():
     """Check the spin-polarized entropic energy."""
     scf_pol.atoms.occ.smearing = 1
     epsilon = get_epsilon(scf_pol, scf_pol.W)
-    Eband = get_Eentropy(scf_pol, epsilon, 0)
-    assert_allclose(Eband, -4.4395, atol=1e-4)
+    Eentropy = get_Eentropy(scf_pol, epsilon, 0)
+    assert_allclose(Eentropy, -4.4395, atol=1e-4)
+    assert isinstance(Eentropy, float)
 
 
 def test_multiple_k():
@@ -134,6 +138,13 @@ def test_extrapolate():
     assert e.extrapolate() == 2
     e.Eentropy = 2
     assert e.extrapolate() == 3
+
+
+@pytest.mark.parametrize("energy", E_ref.keys())
+def test_energy_types(energy):
+    """Check the types of energy contributions."""
+    E = getattr(scf_pol.energies, energy)
+    assert isinstance(E, float)
 
 
 if __name__ == "__main__":

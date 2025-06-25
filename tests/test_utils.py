@@ -41,6 +41,7 @@ def test_Ylm(l):
     phi_idx = xp.abs(G[:, 0]) == 0
     phi[phi_idx] = math.pi / 2 * xp.sign(G[phi_idx, 1])
 
+    theta, phi = xp.to_np(theta), xp.to_np(phi)
     # Calculate the spherical harmonics
     for m in range(-l, l + 1):
         Y_intern = Ylm_real(l, m, G)

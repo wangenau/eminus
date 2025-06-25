@@ -8,23 +8,24 @@ Changelog
 dev
 ---
 - New features
-   - Fully implement a new backend module
+   - Fully implement multiple backend support
       - Allow NumPy and Torch backends
+      - Torch now fully supports GPU calculations
 - Updated docs
    - Add a backend overview page
 - Coding style
-   - Run tests automatically for NumPy and Torch
    - Many unifications due to the added backend support
-   - Stricter input types
+   - Stricter types in many places
    - Ignore Ruffs PLC0415 rule
 - Miscellaneous
    - Drop Python 3.8 support
    - Raise minimal versions of dependencies
-      - NumPY 2.0+ and SciPy 1.13+ is now required
+      - NumPy 2+ and SciPy 1.13+ is now required
    - Fix Libxc warning when using PySCF as the backend
    - Add nglview to the Nix flake
    - Use Python 3.12 in the Nix flake since 3.13 does not support Torch
-   - Add atesting module to support backend testing
+   - Add a testing module to support backend testing
+   - Run tests automatically for NumPy and Torch
 - Breaking
    - Remove Jax extra
    - Torch extra has changed

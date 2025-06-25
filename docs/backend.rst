@@ -69,7 +69,7 @@ For this, the :code:`to_np` helper function can be utilized
 
    config.use_gpu = True
    a = xp.ones(3)
-   a = xp.to_gpu(a)
+   a = xp.to_np(a)
 
 Running tests
 -------------

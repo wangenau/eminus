@@ -37,7 +37,7 @@ def _custom_object_hook(dct):
         atoms = set_attrs(atoms, dct)
         # The tuple type is not preserved when serializing, manually cast the only important one
         if atoms._active is not None and not isinstance(atoms._active, tuple):
-            atoms._active = [tuple(i) for i in atoms._active]
+            atoms._active = [(xp.asarray(i[0]),) for i in atoms._active]
         return atoms
     # SCF objects
     if isinstance(dct, dict) and "_atoms" in dct:

@@ -117,8 +117,13 @@ def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
                     compression=compression,
                     compression_opts=compression_opts,
                 )
-            elif xp.is_array(value):
+            elif xp.is_array(value) or (
+                isinstance(value, list) and len(value) > 0 and xp.is_array(value[0])
+            ):
                 fp.create_dataset(f"{path}{key}", data=xp.to_np(value))
+            # active is a list of tuples of arrays, treat it explicitly
+            elif key == "_active" and value is not None:
+                fp.create_dataset(f"{path}{key}", data=[(xp.to_np(i[0]),) for i in value])
             else:
                 fp.create_dataset(f"{path}{key}", data=value)
 

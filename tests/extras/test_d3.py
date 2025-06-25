@@ -28,8 +28,9 @@ def test_functionals(xc):
     ref = {"svwn": 0.0184646051, "pbe": -0.0011935254, "pbesol": -0.0003419625}
     ref["chachiyo"] = ref["pbe"]
     scf = SCF(atoms, xc=xc)
-    edisp = get_Edisp(scf)
-    assert_allclose(edisp, ref[xc], atol=1e-8)
+    Edisp = get_Edisp(scf)
+    assert_allclose(Edisp, ref[xc], atol=1e-8)
+    assert isinstance(Edisp, float)
 
     # import ase
     # from dftd3.ase import DFTD3
@@ -48,8 +49,8 @@ def test_versions(atm, version):
     """Test the use of different dispersion correction versions."""
     pytest.importorskip("dftd3", reason="dftd3 not installed, skip tests")
     scf = SCF(atoms, xc="pbe")
-    edisp = get_Edisp(scf, version=version, atm=atm)
-    assert edisp == scf.energies.Edisp
+    Edisp = get_Edisp(scf, version=version, atm=atm)
+    assert Edisp == scf.energies.Edisp
 
 
 @pytest.mark.parametrize("disp", [True, False, {"version": "d3zero", "atm": False, "xc": "scan"}])

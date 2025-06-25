@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # mypy: disable-error-code="no-untyped-call,no-untyped-def"
-import numpy as np
 from scipy.optimize import minimize
 
 from eminus import Atoms, read, SCF
@@ -29,12 +28,13 @@ print(f"\nInitial FODs:\n{fods}")
 def optimize_fods(scf, fods):
     def x2fods(x):
         """Transform a 1d list back to FODs."""
+        x = xp.asarray(x)
         nfods = [len(fod) for fod in fods]
-        fod_up = np.reshape(x[: nfods[0] * 3], (nfods[0], 3))
+        fod_up = xp.reshape(x[: nfods[0] * 3], (nfods[0], 3))
         if len(nfods) > 1 or nfods[1] > 0:
-            fod_dn = np.reshape(x[nfods[0] * 3 :], (nfods[1], 3))
-            return [xp.asarray(fod_up), xp.asarray(fod_dn)]
-        return [xp.asarray(fod_up)]
+            fod_dn = xp.reshape(x[nfods[0] * 3 :], (nfods[1], 3))
+            return [fod_up, fod_dn]
+        return [fod_up]
 
     def get_sic_energy(x):
         """Wrapper function to calculate the SIC energy from a 1d list of FODs."""
@@ -43,10 +43,12 @@ def optimize_fods(scf, fods):
         return get_Esic(scf, scf.atoms.J(flo, full=False))
 
     # Convert FODs to a list such that SciPy's minimize function can work with them
-    x = np.concatenate([fod.flatten() for fod in fods])
+    x = xp.concatenate([fod.flatten() for fod in fods])
     # Call the optimizer
     print("\nStart FOD optimization...")
-    result = minimize(get_sic_energy, x0=x, method="nelder-mead", tol=1e-4, options={"disp": True})
+    result = minimize(
+        get_sic_energy, x0=xp.to_np(x), method="nelder-mead", tol=1e-4, options={"disp": True}
+    )
     # Print the SIC energies
     print(f"\nInitial SIC energy:   {get_sic_energy(x):.6f} Eh")
     print(f"Optimized SIC energy: {get_sic_energy(result.x):.6f} Eh")

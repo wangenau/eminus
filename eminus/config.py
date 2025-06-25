@@ -20,7 +20,7 @@ class ConfigClass:
     def __init__(self):
         """Initialize the ConfigClass object."""
         self.backend = "torch"  # Use Torch as backend if available, default to NumPy otherwise
-        self.use_gpu = False  # Disable GPU by default, since not every functionality is available
+        self.use_gpu = False  # Disable GPU by default, since one may be restrictd by a small VRAM
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.threads = None  # Read threads from environment variables by default
         self.verbose = "INFO"  # Only display warnings (and worse) by default

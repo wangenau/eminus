@@ -33,7 +33,7 @@ class Energy:
     @property
     def Etot(self):
         """Total energy is the sum of all energy contributions."""
-        return sum(float(getattr(self, ie.name)) for ie in dataclasses.fields(self))
+        return sum(getattr(self, ie.name) for ie in dataclasses.fields(self))
 
     def extrapolate(self):
         """Calculate the total energy at T=0.
@@ -96,7 +96,7 @@ def get_Ekin(atoms, Y, ik):
                 xp.astype(atoms.occ.F[ik][spin], complex) @ Y[spin].conj().T @ atoms.L(Y[spin], ik)
             )
         )
-    return xp.real(Ekin)
+    return float(xp.real(Ekin))
 
 
 def get_Ecoul(atoms, n, phi=None):
@@ -117,7 +117,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
-    return xp.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi)))
+    return float(xp.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi))))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
@@ -143,7 +143,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
-    return xp.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return float(xp.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc)))))
 
 
 def get_Eloc(scf, n):
@@ -158,7 +158,7 @@ def get_Eloc(scf, n):
     Returns:
         Local energy contribution in Hartree.
     """
-    return xp.real(xp.vdot(scf.Vloc, xp.astype(n, complex)))
+    return float(xp.real(xp.vdot(scf.Vloc, xp.astype(n, complex))))
 
 
 @handle_k(mode="reduce")
@@ -199,7 +199,7 @@ def get_Enonloc(scf, Y, ik):
                             enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
         Enonloc += xp.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
-    return xp.real(Enonloc * atoms.Omega)
+    return float(xp.real(Enonloc * atoms.Omega))
 
 
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
@@ -281,7 +281,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             # Add the reciprocal space contribution
             Gpos = xp.sum(G * dpos, axis=1)
             Eewald += ZiZj * xp.sum(prefactor * xp.cos(Gpos))
-    return Eewald
+    return float(Eewald)
 
 
 def get_Esic(scf, Y, n_single=None):
@@ -346,7 +346,7 @@ def get_Esic(scf, Y, n_single=None):
                 # SIC energy is scaled by the occupation number
                 Esic += (coul + xc) * xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
     scf.energies.Esic = Esic
-    return Esic
+    return float(Esic)
 
 
 def get_Edisp(scf, version="d3bj", atm=True, xc=None):  # noqa: D103
@@ -383,7 +383,7 @@ def get_Eband(scf, Y, **kwargs):
             Eband += atoms.kpts.wk[ik] * xp.trace(
                 Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             )
-    return xp.real(Eband)
+    return float(xp.real(Eband))
 
 
 def get_Eentropy(scf, epsilon, Efermi):
@@ -413,5 +413,5 @@ def get_Eentropy(scf, epsilon, Efermi):
                 )
 
     Eentropy *= 2 / occ.Nspin
-    scf.energies.Eentropy = Eentropy
-    return Eentropy
+    scf.energies.Eentropy = float(Eentropy)
+    return float(Eentropy)

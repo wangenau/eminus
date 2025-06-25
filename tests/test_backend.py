@@ -92,7 +92,7 @@ def test_to_np():
     assert str(array1.device) == "cpu"
     assert isinstance(array1, np.ndarray)
     array2 = xp.arange(9)
-    array1, array2 = xp.to_np(array1, array2)
+    array1, array2 = xp.to_np(array1), xp.to_np(array2)
     assert str(array1.device) == "cpu"
     assert str(array2.device) == "cpu"
     assert isinstance(array1, np.ndarray)

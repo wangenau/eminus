@@ -4,6 +4,7 @@
 import matplotlib.pyplot as plt
 
 from eminus import Atoms, SCF
+from eminus import backend as xp
 from eminus.tools import get_reduced_gradient
 from eminus.units import ang2bohr
 
@@ -32,7 +33,7 @@ s = get_reduced_gradient(scf, eps=1e-5)
 # # Find the plot named `density_finger.png`
 plt.style.use("../eminus.mplstyle")
 plt.figure()
-plt.scatter(scf.n, s, c=s)
+plt.scatter(xp.to_np(scf.n), xp.to_np(s), c=xp.to_np(s))
 plt.xlabel("$n$")
 plt.ylabel("$s$[$n$]")
 plt.savefig("density_finger.png")

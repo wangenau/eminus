@@ -89,5 +89,5 @@ def get_Edisp(scf, version="d3bj", atm=True, xc=None):
     )
     # Calculate the dispersion energy, neglecting the gradient
     res = model.get_dispersion(dispersion_version[version](method=method, atm=atm), grad=False)
-    scf.energies.Edisp = res["energy"]
-    return res["energy"]
+    scf.energies.Edisp = float(res["energy"])
+    return float(res["energy"])

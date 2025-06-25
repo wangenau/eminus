@@ -51,7 +51,7 @@ def custom_functional(n, b, **kwargs):
 # # Functionals usually take densities as the input, so convert the Wigner-Seitz radius to a density in the wrapper function
 def functional_wrapper(rs, b):
     n = 3 / (4 * math.pi * rs**3)  # Density from Wigner-Seitz radius
-    return np.asarray(custom_functional(n, b)[0])
+    return xp.to_np(custom_functional(n, b)[0])
 
 
 # # Do the fit over the QMC data
@@ -67,9 +67,9 @@ print(f"\nFitted parameter:\nb = {fitted_b[0]:.7f}")
 plt.style.use("../eminus.mplstyle")
 plt.figure()
 plt.axhline(c="dimgrey", ls="--", marker="")
-plt.plot(rs, 1000 * (functional_wrapper(rs, b) - ecp), label="Chachiyo")
-plt.plot(rs, 1000 * (functional_wrapper(rs, 21.7392245) - ecp), label="Karasiev")
-plt.plot(rs, 1000 * (functional_wrapper(rs, *fitted_b) - ecp), label="mod. Chachiyo")
+plt.plot(xp.to_np(rs), 1000 * (functional_wrapper(rs, b) - ecp), label="Chachiyo")
+plt.plot(xp.to_np(rs), 1000 * (functional_wrapper(rs, 21.7392245) - ecp), label="Karasiev")
+plt.plot(xp.to_np(rs), 1000 * (functional_wrapper(rs, *fitted_b) - ecp), label="mod. Chachiyo")
 plt.xlabel(r"$r_s$")
 plt.ylabel(r"$E_c^\mathrm{P} - E_c^{\mathrm{P,QMC}}$ [m$E_\mathrm{h}$]")
 plt.legend()
