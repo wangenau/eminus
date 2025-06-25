@@ -46,11 +46,11 @@ def is_array(value):
     return False
 
 
-def to_np(array):
+def to_np(arr):
     """Copy the array from the current device to a CPU NumPy array.
 
     Args:
-        array: Input array.
+        arr: Input array.
 
     Returns:
         Copied array on the CPU.
@@ -58,14 +58,14 @@ def to_np(array):
     try:
         from array_api_compat import is_torch_array
 
-        if is_torch_array(array):
-            return np.asarray(array.resolve_conj().cpu())
+        if is_torch_array(arr):
+            return np.asarray(arr.resolve_conj().cpu())
         # Wave functions are list of arrays, handle them as well
-        if isinstance(array, list) and len(array) > 0 and is_torch_array(array[0]):
-            return [np.asarray(arr.resolve_conj().cpu()) for arr in array]
-        return np.asarray(array)
+        if isinstance(arr, list) and len(arr) > 0 and is_torch_array(arr[0]):
+            return [np.asarray(arr.resolve_conj().cpu()) for arr in arr]
+        return np.asarray(arr)
     except ImportError:
-        return np.asarray(array)
+        return np.asarray(arr)
 
 
 # ### Compatibility functions ###
