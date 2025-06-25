@@ -99,7 +99,7 @@ def delete(arr, obj, axis=None):
         obj = np.asarray(obj)
     skip = [i for i in range(arr.size(axis)) if i not in to_np(obj)]
     indices = [slice(None) if i != axis else skip for i in range(arr.ndim)]
-    return arr.__getitem__(indices)
+    return arr[indices]
 
 
 def fftn(x, *args, **kwargs):
