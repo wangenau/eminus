@@ -52,7 +52,7 @@ def get_xc(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None, dens_thres
 
     # Only use non-zero values of the density
     n = xp.sum(n_spin, axis=0)
-    nz_mask = xp.atleast_2d(xp.nonzero(n > dens_threshold)[0])  # Torch can't handle tuple to Tensor
+    nz_mask = xp.atleast_2d(xp.nonzero(n > dens_threshold)[0])
     n_nz = n[nz_mask]
     # Zeta is only needed for non-zero values of the density
     zeta_nz = get_zeta(n_spin[:, nz_mask])
