@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, TypeAlias, TypeVar
+from typing import Any, Literal, overload, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -34,18 +34,21 @@ def Linv(
 def I(
     atoms: Atoms,
     W: list[_ArrayComplex],
+    norm: Literal["backward", "forward"] = ...,
 ) -> list[_ArrayComplex]: ...
 @overload
 def I(
     atoms: Atoms,
     W: _ArrayRealOrComplex,
     ik: int = ...,
+    norm: Literal["backward", "forward"] = ...,
 ) -> _ArrayRealOrComplex: ...
 @overload
 def J(
     atoms: Atoms,
     W: list[_ArrayComplex],
     full: bool = ...,
+    norm: Literal["backward", "forward"] = ...,
 ) -> list[_ArrayComplex]: ...
 @overload
 def J(
@@ -53,6 +56,7 @@ def J(
     W: _ArrayRealOrComplex,
     ik: int = ...,
     full: bool = ...,
+    norm: Literal["backward", "forward"] = ...,
 ) -> _ArrayRealOrComplex: ...
 @overload
 def Idag(

@@ -110,7 +110,7 @@ def Linv(atoms, W):
 
 
 @handle_k(mode="index")
-def I(atoms, W, ik=-1):
+def I(atoms, W, ik=-1, norm="forward"):
     """Backward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -123,6 +123,7 @@ def I(atoms, W, ik=-1):
 
     Keyword Args:
         ik: k-point index.
+        norm: Normalization mode.
 
     Returns:
         The operator applied on W.
@@ -148,23 +149,23 @@ def I(atoms, W, ik=-1):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = Wfft.reshape(list(atoms.s))
-        Finv = xp.ifftn(Wfft, norm="forward").ravel()
+        Finv = xp.ifftn(Wfft, norm=norm).ravel()
     # Here we reshape the input like in the 1d case but add an extra dimension in the end,
     # holding the number of states
     # Tell the function that the FFT only has to act on the respective 3 axes
     elif W.ndim == 2:
         Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
-        Finv = xp.ifftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        Finv = xp.ifftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     else:
         Wfft = Wfft.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
-        Finv = xp.ifftn(Wfft, norm="forward", axes=(1, 2, 3)).reshape(
+        Finv = xp.ifftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
             (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
         )
     return Finv
 
 
 @handle_k(mode="index")
-def J(atoms, W, ik=-1, full=True):
+def J(atoms, W, ik=-1, full=True, norm="forward"):
     """Forward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -178,6 +179,7 @@ def J(atoms, W, ik=-1, full=True):
     Keyword Args:
         ik: k-point index.
         full: Whether to transform in the full or in the active space.
+        norm: Normalization mode.
 
     Returns:
         The operator applied on W.
@@ -186,13 +188,13 @@ def J(atoms, W, ik=-1, full=True):
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
         Wfft = W.reshape(list(atoms.s))
-        F = xp.fftn(Wfft, norm="forward").ravel()
+        F = xp.fftn(Wfft, norm=norm).ravel()
     elif W.ndim == 2:
         Wfft = W.reshape([*atoms.s, W.shape[-1]])
-        F = xp.fftn(Wfft, norm="forward", axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        F = xp.fftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     else:
         Wfft = W.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
-        F = xp.fftn(Wfft, norm="forward", axes=(1, 2, 3)).reshape(
+        F = xp.fftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
             (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
         )
     # There is no way to know if J has to transform to the full or the active space
@@ -223,9 +225,9 @@ def Idag(atoms, W, ik=-1, full=False):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    F = J(atoms, W, ik, full)
-    return F * n
+    # This is just the J operator with the appropriate norm
+    # If we would not chnage the norm, we would have to multiply the result with n
+    return J(atoms, W, ik, full=full, norm="backward")
 
 
 @handle_k(mode="index")
@@ -246,9 +248,9 @@ def Jdag(atoms, W, ik=-1):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    Finv = I(atoms, W, ik)
-    return Finv / n
+    # This is just the J operator with the appropriate norm
+    # If we would not chnage the norm, we would have to divide the result by n
+    return I(atoms, W, ik, norm="backward")
 
 
 @handle_spin
