@@ -55,11 +55,15 @@ class ConfigClass:
         if self.backend == "torch":
             import torch
 
-            if value and torch.cuda.is_available():
-                torch.set_default_device("cuda")
-                self._use_gpu = True
+            # When using set_default_device the whole runtime will use a device context manager
+            if torch.cuda.is_available():
+                if value:
+                    torch.set_default_device("cuda")
+                    self._use_gpu = True
+                else:
+                    torch.set_default_device("cpu")
+                    self._use_gpu = False
             else:
-                torch.set_default_device("cpu")
                 self._use_gpu = False
         else:
             self._use_gpu = False
