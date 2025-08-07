@@ -98,7 +98,7 @@ def delete(arr, obj, axis=None):
     else:
         obj = np.asarray(obj)
     skip = [i for i in range(arr.size(axis)) if i not in obj]
-    indices = [slice(None) if i != axis else skip for i in range(arr.ndim)]
+    indices = tuple(slice(None) if i != axis else skip for i in range(arr.ndim))
     return arr[indices]
 
 
