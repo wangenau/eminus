@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 default:
-  image: ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+  image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
 variables:
   UV_SYSTEM_PYTHON: 1
   UV_NO_PROGRESS: 1
@@ -96,7 +96,7 @@ lint:
 ##### Test the minimally supported versions #####
 minimal:
   extends: .pytest
-  image: ghcr.io/astral-sh/uv:python3.9-bookworm-slim
+  image: ghcr.io/astral-sh/uv:python3.9-trixie-slim
   script:
     - uv pip install . --resolution lowest
     - uv pip install pytest
@@ -196,7 +196,7 @@ platform:windows:
 ##### Test code functionality for all supported Python versions #####
 python:
   extends: .pytest-full
-  image: ghcr.io/astral-sh/uv:python$PYTHON_VERSIONS-bookworm-slim
+  image: ghcr.io/astral-sh/uv:python$PYTHON_VERSIONS-trixie-slim
   script:
     - uv pip install .
     - uv pip install pytest

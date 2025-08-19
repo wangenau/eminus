@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2022 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 # Build everything using multi-stage builds
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim AS build
+FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim AS build
 
 # Create a working directory and Python environment
 WORKDIR /usr/app/
@@ -23,7 +23,7 @@ RUN git clone -b ${BRANCH} https://gitlab.com/wangenau/eminus.git \
 && uv pip install -e .[all] --group dev --torch-backend cpu --no-cache-dir
 
 # Set up the application stage
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim
 LABEL maintainer="wangenau"
 
 # Ensure that no root rights are being used, copy the environment and eminus source
