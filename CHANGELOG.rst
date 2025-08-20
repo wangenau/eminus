@@ -26,6 +26,8 @@ dev
    - Use Python 3.12 in the Nix flake since 3.13 does not support Torch
    - Add a testing module to support backend testing
    - Run tests automatically for NumPy and Torch
+   - Update Docker image to trixie
+   - Update units to CODATA 2022 values
 - Breaking
    - Remove Jax extra
    - Torch extra has changed
