@@ -36,7 +36,7 @@ from eminus.tools import (
     orbital_center,
 )
 
-atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
+atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=10, unrestricted=False, center=True)
 scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))[0]
@@ -95,7 +95,7 @@ def test_inertia_tensor(coords):
 
 def test_get_dipole():
     """Test the electric dipole moment calculation."""
-    assert_allclose(get_dipole(scf), 0, atol=1e-2)
+    assert_allclose(get_dipole(scf), 0, atol=1e-3)
 
 
 def test_get_ip():
@@ -127,7 +127,8 @@ def test_check_orthonorm(ref, func):
 def test_get_isovalue():
     """Test isovalue calculation."""
     assert scf.n is not None
-    assert_allclose(get_isovalue(scf.n), 0.013, atol=1e-3)
+    print(get_isovalue(scf.n))
+    assert_allclose(get_isovalue(scf.n), 0.012157, atol=1e-6)
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
