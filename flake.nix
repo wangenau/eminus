@@ -15,7 +15,7 @@
           inherit system;
           # config.allowUnfree = true;
         };
-        python = pkgs.python312;
+        python = pkgs.python313;
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
         version = pyproject.project.version;
 

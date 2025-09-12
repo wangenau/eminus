@@ -18,19 +18,18 @@ dev
    - Stricter types in many places
    - Ignore Ruffs PLC0415 rule
 - Miscellaneous
-   - Drop Python 3.8 support
-   - Raise minimal versions of dependencies
-      - NumPy 2+ and SciPy 1.13+ is now required
-   - Fix Libxc warning when using PySCF as the backend
+   - Fix Libxc warning when using PySCF as backend
    - Add nglview to the Nix flake
-   - Use Python 3.12 in the Nix flake since 3.13 does not support Torch
    - Add a testing module to support backend testing
    - Run tests automatically for NumPy and Torch
    - Update Docker image to trixie
    - Update units to CODATA 2022 values
 - Breaking
+   - Drop Python 3.8 support
+   - Raise minimal versions of dependencies
+      - NumPy 2+ and SciPy 1.13+ is now required
    - Remove Jax extra
-   - Torch extra has changed
+   - Updated Torch extra behavior
       - Remove Torch extra operator functions
       - Now requires array-api-compat
 
