@@ -74,9 +74,7 @@ For this, the :code:`to_np` helper function can be utilized
 Running tests
 -------------
 
-To test the functionality for all backends, each test will be performed for every supported tensors backend installed.
-This simplifies the writing of tests but may result in redundant tests.
-The tests will be performed consecutively.
-If there are failures in one backend, the other backend will not be performed.
-
+To test the functionality for a backend, one can select it by using the custom pytest :code:`--backend` option.
+By default, the tests will be performed using NumPy.
+The tests are written such that they work independently of the selected backend.
 To test arrays that may exist on different devices or as arrays of different backends, one can use the utility functions in the :code:`testing` module.

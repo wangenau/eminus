@@ -21,7 +21,7 @@ dev
    - Fix Libxc warning when using PySCF as backend
    - Add nglview to the Nix flake
    - Add a testing module to support backend testing
-   - Run tests automatically for NumPy and Torch
+   - Add a pytest backend option
    - Update Docker image to trixie
    - Update units to CODATA 2022 values
 - Breaking
