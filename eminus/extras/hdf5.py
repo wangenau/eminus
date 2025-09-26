@@ -49,6 +49,9 @@ def read_hdf5(filename):
                     # Lists of strings are encoded as arrays, restore them as well
                     if isinstance(dct[key], np.ndarray):
                         dct[key] = dct[key].tolist()
+                # If ndim is zero we do not want to cast it to an array
+                elif value.ndim == 0:
+                    dct[key] = value[()]
                 else:
                     dct[key] = xp.asarray(value[()])
             elif isinstance(value, Group):
