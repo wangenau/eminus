@@ -24,6 +24,7 @@ dev
    - Add a pytest backend option
    - Update Docker image to trixie
    - Update units to CODATA 2022 values
+   - Indicate Python 3.14 support
 - Breaking
    - Drop Python 3.8 support
    - Raise minimal versions of dependencies

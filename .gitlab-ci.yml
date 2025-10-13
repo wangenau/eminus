@@ -120,7 +120,7 @@ newest:
 
 ##### Type check Python files #####
 typecheck:
-  image: ghcr.io/astral-sh/uv:python3.13-alpine
+  image: ghcr.io/astral-sh/uv:python3.14-alpine
   stage: test
   script:
     - uv pip install -e .
@@ -203,7 +203,7 @@ python:
     - pytest tests/ -m "not slow"
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.10', '3.11', '3.12']
+      - PYTHON_VERSIONS: ['3.10', '3.11', '3.12', '3.14']
 
 ############### experiments ###############
 
@@ -211,7 +211,7 @@ python:
 nogil+jit:
   extends: .experiments
   script:
-    - uv venv --python 3.13t
+    - uv venv --python 3.14t
     - source .venv/bin/activate
     - uv pip install .
     - uv pip install pytest
@@ -361,7 +361,7 @@ pypi:
 
 ##### Create a weekly build and push it to the GitLab package registry #####
 weekly:
-  image: ghcr.io/astral-sh/uv:python3.13-alpine
+  image: ghcr.io/astral-sh/uv:python3.14-alpine
   stage: publish
   script:
     # Tag the version with a valid dev tag (VERSION.devYYYYMMDD)
