@@ -30,11 +30,12 @@ def info():
         f"\npython           : {sys.version.split()[0]}"
         f"\neminus           : {__version__}\n"
     )
+    indent = len(max(dependencies + extras + dev, key=len)) + 1
     for pkg in dependencies + extras + dev:
         try:
-            sys.stdout.write(f"{pkg:<17}: {importlib.metadata.version(pkg)}\n")
+            sys.stdout.write(f"{pkg:<{indent}}: {importlib.metadata.version(pkg)}\n")
         except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
-                sys.stdout.write(f"{pkg:<17}: Dependency not installed\n")
+                sys.stdout.write(f"{pkg:<{indent}}: Dependency not installed\n")
             elif pkg in extras:
-                sys.stdout.write(f"{pkg:<17}: Extra not installed\n")
+                sys.stdout.write(f"{pkg:<{indent}}: Extra not installed\n")
