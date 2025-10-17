@@ -8,8 +8,8 @@ All necessary dependencies to use this extra can be installed with::
 """
 
 import numpy as np
-from scipy.linalg import norm
 
+from eminus import backend as xp
 from eminus.data import SYMBOL2NUMBER
 from eminus.logger import log
 from eminus.units import bohr2ang
@@ -104,7 +104,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
     # Convert to Angstrom for PySCF
     pos = bohr2ang(atoms.pos)
     # Build the PySCF input format
-    atom_pyscf = list(zip(atoms.atom, pos))
+    atom_pyscf = list(zip(atoms.atom, xp.to_np(pos)))
 
     # Do the PySCF DFT calculation
     # Use Mole.build() over M() since the parse_arg option breaks testing with pytest
@@ -125,7 +125,7 @@ def get_fods(obj, basis="pc-1", loc="FB"):
         phi = ao @ loc_orb[s]
         dens = phi.conj() * phi * mf.grids.weights[:, None]
         loc_com.append(dens.T @ mf.grids.coords)
-    return loc_com
+    return [xp.asarray(coms) for coms in loc_com]
 
 
 def split_fods(atom, pos, elec_symbols=("X", "He")):
@@ -141,19 +141,19 @@ def split_fods(atom, pos, elec_symbols=("X", "He")):
     Returns:
         Atom types, the respective coordinates, and FOD positions.
     """
-    pos_fod_up = []
-    pos_fod_dn = []
+    pos_fod_up = xp.empty((0, 3))
+    pos_fod_dn = xp.empty((0, 3))
     # Iterate in reverse order because we may delete elements
     for ia in range(len(pos) - 1, -1, -1):
         if atom[ia] in elec_symbols:
             if atom[ia] in elec_symbols[0]:
-                pos_fod_up.append(pos[ia])
+                pos_fod_up = xp.vstack((pos_fod_up, pos[ia]))
             if len(elec_symbols) > 1 and atom[ia] in elec_symbols[1]:
-                pos_fod_dn.append(pos[ia])
-            pos = np.delete(pos, ia, axis=0)
+                pos_fod_dn = xp.vstack((pos_fod_dn, pos[ia]))
+            pos = xp.delete(pos, ia, axis=0)
             del atom[ia]
 
-    pos_fod = [np.asarray(pos_fod_up), np.asarray(pos_fod_dn)]
+    pos_fod = [pos_fod_up, pos_fod_dn]
     return atom, pos, pos_fod
 
 
@@ -171,12 +171,12 @@ def remove_core_fods(obj, fods):
 
     # If the number of valence electrons is the same as the number of FODs, do nothing
     atoms.kpts._assert_gamma_only()
-    if not atoms.unrestricted and len(fods[0]) * 2 == np.sum(atoms.occ.f[0]):
+    if not atoms.unrestricted and len(fods[0]) * 2 == xp.sum(atoms.occ.f[0]):
         return fods
     if (
         atoms.unrestricted
-        and len(fods[0]) == np.sum(atoms.occ.f[0, 0])
-        and len(fods[1]) == np.sum(atoms.occ.f[0, 1])
+        and len(fods[0]) == xp.sum(atoms.occ.f[0, 0])
+        and len(fods[1]) == xp.sum(atoms.occ.f[0, 1])
     ):
         return fods
 
@@ -187,8 +187,8 @@ def remove_core_fods(obj, fods):
             # Since only core states are removed in pseudopotentials this value is divisible by 2
             # +1 to account for uneven amounts of core FODs (like in hydrogen)
             n_core = (n_core + 1) // 2
-            dist = norm(fods[s] - atoms.pos[ia], axis=1)
-            idx = np.argsort(dist)
+            dist = xp.linalg.norm(fods[s] - atoms.pos[ia], axis=1)
+            idx = xp.argsort(dist)
             # Remove core FODs with the smallest distance to the core
-            fods[s] = np.delete(fods[s], idx[:n_core], axis=0)
+            fods[s] = xp.delete(fods[s], idx[:n_core], axis=0)
     return fods

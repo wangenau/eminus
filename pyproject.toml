@@ -12,8 +12,8 @@ only-include = ["eminus", "tests"]
 [project]
 name = "eminus"
 version = "3.1.0"
-dependencies = ["numpy>=1.17.3", "scipy>=1.6"]
-requires-python = ">=3.8"
+dependencies = ["numpy>=2", "scipy>=1.13"]
+requires-python = ">=3.9"
 authors = [{name = "Wanja Timm Schulze", email = "wangenau@protonmail.com"}]
 description = "Pythonic electronic structure theory."
 readme = "README.md"
@@ -26,18 +26,19 @@ classifiers = [
     "Intended Audience :: Education",
     "Intended Audience :: Science/Research",
     "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
+    "Operating System :: Microsoft",
     "Operating System :: POSIX",
     "Operating System :: Unix",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Free Threading",
     "Topic :: Education",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Chemistry",
@@ -53,22 +54,21 @@ documentation = "https://wangenau.gitlab.io/eminus"
 issues = "https://gitlab.com/wangenau/eminus/-/issues"
 
 [project.optional-dependencies]
-d3 = ["dftd3>=0.6"]  # Interface for DFT-D3 dispersion corrections
+d3 = ["dftd3>=1.1"]  # Interface for DFT-D3 dispersion corrections
 gui = [
     "nglview>=2.6.5",  # Molecule viewer
     "plotly>=4.5",  # Various visualizations
 ]
-hdf5 = ["h5py>=2.9"]  # HDF5 file reading and writing
-jax = ["jax>=0.4.8"]  # Faster FFT operators
-libxc = ["pyscf>=2.1"]  # Libxc interface using PySCF
-torch = ["torch>=1.8"]  # Faster FFT operators
+hdf5 = ["h5py>=3.11"]  # HDF5 file reading and writing
+libxc = ["pyscf>=2.6.2"]  # Libxc interface using PySCF
+torch = ["array-api-compat>=1.6", "torch>=2.5"]  # Faster FFT operators
 fods = ["eminus[libxc]"]  # PyCOM FOD guessing method uses PySCF
 all = ["eminus[d3]", "eminus[gui]", "eminus[hdf5]", "eminus[libxc]", "eminus[torch]"]
 
 [dependency-groups]
 dev = [
     "furo>=2024.08.06; python_version>='3.10'",  # Documentation theme
-    "matplotlib>=3.6.2",  # Plotting library for images in examples
+    "matplotlib>=3.8.1",  # Plotting library for images in examples
     "mypy>=1.16; python_version>='3.10'",  # Static type checker
     "pytest>=7",  # Test utilities
     "ruff>=0.10",  # Linter and formatter
@@ -79,7 +79,7 @@ dev = [
 
 ##### Mypy #####
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 disable_error_code = ["import-untyped"]  # Module is missing library stubs or py.typed marker
 
@@ -107,6 +107,7 @@ ignore = [
     "SIM108",  # Use ternary operator instead of if-else-block
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
+    "PLC0415", # import should be at the top-level of a file
     "PLR0911", "PLR0912", "PLR0913", "PLR0915",  # "Too many" rules
     "PLR2004", # Magic value used in comparison
     "COM812",  # Trailing comma missing (disabled due to possible conflicts with the formatter)

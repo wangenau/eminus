@@ -6,9 +6,9 @@ import inspect
 import pathlib
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, read, USCF
+from eminus.testing import assert_allclose
 
 # Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 E_ref = {

@@ -5,7 +5,9 @@
 Reference: Phys. Rev. B 22, 3812.
 """
 
-import numpy as np
+import math
+
+from eminus import backend as xp
 
 
 def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
@@ -28,23 +30,23 @@ def lda_c_vwn(n, A=0.0310907, b=3.72744, c=12.9352, x0=-0.10498, **kwargs):
     Returns:
         VWN correlation energy density and potential.
     """
-    rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+    rs = (3 / (4 * math.pi * n)) ** (1 / 3)
 
-    x = np.sqrt(rs)
+    x = xp.sqrt(rs)
     X = rs + b * x + c
-    Q = np.sqrt(4 * c - b**2)
+    Q = math.sqrt(4 * c - b**2)
     fx0 = b * x0 / (x0**2 + b * x0 + c)
     f3 = 2 * (2 * x0 + b) / Q
     tx = 2 * x + b
-    tanx = np.arctan(Q / tx)
+    tanx = xp.arctan(Q / tx)
 
-    ec = A * (np.log(rs / X) + 2 * b / Q * tanx - fx0 * (np.log((x - x0) ** 2 / X) + f3 * tanx))
+    ec = A * (xp.log(rs / X) + 2 * b / Q * tanx - fx0 * (xp.log((x - x0) ** 2 / X) + f3 * tanx))
 
     tt = tx**2 + Q**2
     vc = ec - x * A / 6 * (
         2 / x - tx / X - 4 * b / tt - fx0 * (2 / (x - x0) - tx / X - 4 * (2 * x0 + b) / tt)
     )
-    return ec, np.array([vc]), None
+    return ec, xp.stack([vc]), None
 
 
 def lda_c_vwn_spin(n, zeta, **kwargs):
@@ -64,7 +66,7 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
     Returns:
         VWN correlation energy density and potential.
     """
-    A = (0.0310907, 0.01554535, -1 / (6 * np.pi**2))
+    A = (0.0310907, 0.01554535, -1 / (6 * math.pi**2))
     b = (3.72744, 7.06042, 1.13107)
     c = (12.9352, 18.0578, 13.0045)
     x0 = (-0.10498, -0.325, -0.0047584)
@@ -88,4 +90,4 @@ def lda_c_vwn_spin(n, zeta, **kwargs):
 
     vc_up = dec1 + (1 - zeta) * dec2
     vc_dw = dec1 - (1 + zeta) * dec2
-    return ec, np.array([vc_up, vc_dw]), None
+    return ec, xp.stack([vc_up, vc_dw]), None

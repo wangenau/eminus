@@ -4,9 +4,9 @@
 
 import copy
 import logging
+import math
 
-import numpy as np
-
+from . import backend as xp
 from .dft import get_epsilon, get_grad
 from .energies import get_E, get_Eentropy
 from .logger import name
@@ -65,11 +65,11 @@ def check_convergence(scf, method, Elist, linmin=None, cg=None, norm_g=None):
                 scf.is_converged = True
                 return True
         # If a gradient tolerance has been set we also check norm_g for convergence
-        elif abs(Elist[-1] - Elist[-2]) < scf.etol and (np.sum(norm_g, axis=0) < scf.gradtol).all():
+        elif abs(Elist[-1] - Elist[-2]) < scf.etol and (xp.sum(norm_g, axis=0) < scf.gradtol).all():
             scf.is_converged = True
             return True
         # Check if the current energy is higher than the last two values
-        if (np.asarray(Elist[-3:-1]) < Elist[-1]).all():
+        if (xp.asarray(Elist[-3:-1]) < Elist[-1]).all():
             scf._log.warning("Total energy is not decreasing.")
     return False
 
@@ -108,19 +108,20 @@ def print_scf_step(scf, method, Elist, linmin, cg, norm_g):
             scf._log.info(header)
 
     # Print the information for every cycle
-    # Context manager for printing norm_g, linmin, and cg
-    with np.printoptions(formatter={"float": "{:+0.2e}".format}):
-        info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
-        # In the first step we do not have all information yet
-        if iteration > 1:
-            info += f"{Elist[-1] - Elist[-2]:<+13,.4e}"
-            if norm_g is not None:
-                info += str(np.sum(norm_g, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-            if scf._log.level <= logging.DEBUG:
-                if method != "sd" and linmin is not None:
-                    info += str(np.sum(linmin, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
-                if method not in {"sd", "lm", "pclm"} and cg is not None:
-                    info += str(np.sum(cg, axis=0)).ljust(10 * scf.atoms.occ.Nspin + 3)
+    info = f"{method:<8}{iteration:>8}   {Elist[-1]:<+13,.6f}"
+    # In the first step we do not have all information yet
+    if iteration > 1:
+        info += f"{Elist[-1] - Elist[-2]:<+13,.4e}"
+        if norm_g is not None:
+            norm_g_str = [f"{x:+.2e}" for x in xp.sum(norm_g, axis=0)]
+            info += f"[{' '.join(norm_g_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
+        if scf._log.level <= logging.DEBUG:
+            if method != "sd" and linmin is not None:
+                linmin_str = [f"{x:+.2e}" for x in xp.sum(linmin, axis=0)]
+                info += f"[{' '.join(linmin_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
+            if method not in {"sd", "lm", "pclm"} and cg is not None:
+                cg_str = [f"{x:+.2e}" for x in xp.sum(cg, axis=0)]
+                info += f"[{' '.join(cg_str)}]".ljust(10 * scf.atoms.occ.Nspin + 3)
     if scf._log.level <= logging.DEBUG:
         scf._log.debug(info)
     else:
@@ -142,7 +143,7 @@ def linmin_test(g, d):
         Linmin angle.
     """
     # cos = A B / |A| |B|
-    return dotprod(g, d) / np.sqrt(dotprod(g, g) * dotprod(d, d))
+    return dotprod(g, d) / math.sqrt(dotprod(g, g) * dotprod(d, d))
 
 
 def cg_test(atoms, ik, g, g_old, precondition=True):
@@ -170,7 +171,7 @@ def cg_test(atoms, ik, g, g_old, precondition=True):
     else:
         Kg, Kg_old = g, g_old
     # cos = A B / |A| |B|
-    return dotprod(g, Kg_old) / np.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
+    return dotprod(g, Kg_old) / math.sqrt(dotprod(g, Kg) * dotprod(g_old, Kg_old))
 
 
 def cg_method(scf, ik, cgform, g, g_old, d_old, precondition=True):
@@ -282,10 +283,10 @@ def pclm(
         method = "lm"
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Search direction that needs to be saved for each spin
-    d = [np.empty_like(Wk) for Wk in scf.W]
-    g = [np.empty_like(Wk) for Wk in scf.W]
+    d = [xp.empty_like(Wk) for Wk in scf.W]
+    g = [xp.empty_like(Wk) for Wk in scf.W]
 
     for i in range(Nit):
         W_tmp = copy.deepcopy(scf.W)
@@ -376,14 +377,14 @@ def pccg(
         method = "cg"
 
     # Scalars that need to be saved for each spin and k-point
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin and k-point
-    d = [np.empty_like(Wk) for Wk in scf.W]
-    g = [np.empty_like(Wk) for Wk in scf.W]
-    d_old = [np.empty_like(Wk) for Wk in scf.W]
-    g_old = [np.empty_like(Wk) for Wk in scf.W]
+    d = [xp.empty_like(Wk) for Wk in scf.W]
+    g = [xp.empty_like(Wk) for Wk in scf.W]
+    d_old = [xp.empty_like(Wk) for Wk in scf.W]
+    g_old = [xp.empty_like(Wk) for Wk in scf.W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     W_tmp = copy.deepcopy(scf.W)
@@ -495,14 +496,14 @@ def auto(scf, Nit, cost=scf_step, grad=get_grad, condition=check_convergence, be
     costs = []
 
     # Scalars that need to be saved for each spin
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
     # Gradients that need to be saved for each spin
-    d = [np.empty_like(Wk) for Wk in scf.W]
-    g = [np.empty_like(Wk) for Wk in scf.W]
-    d_old = [np.empty_like(Wk) for Wk in scf.W]
-    g_old = [np.empty_like(Wk) for Wk in scf.W]
+    d = [xp.empty_like(Wk) for Wk in scf.W]
+    g = [xp.empty_like(Wk) for Wk in scf.W]
+    d_old = [xp.empty_like(Wk) for Wk in scf.W]
+    g_old = [xp.empty_like(Wk) for Wk in scf.W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     W_tmp = copy.deepcopy(scf.W)

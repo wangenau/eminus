@@ -8,6 +8,8 @@ import json
 
 import numpy as np
 
+from eminus import backend as xp
+
 
 def _custom_object_hook(dct):
     """Custom JSON object hook to create eminus classes after deserialization."""
@@ -24,7 +26,7 @@ def _custom_object_hook(dct):
     # ndarrays are base64 encoded, decode and recreate
     if isinstance(dct, dict) and "__ndarray__" in dct:
         data = base64.b64decode(dct["__ndarray__"])
-        return np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])
+        return xp.asarray(copy.deepcopy(np.frombuffer(data, dct["dtype"]).reshape(dct["shape"])))
 
     # Create simple eminus objects and set all attributes afterwards
     # Explicitly call objects with verbosity since the logger is created at instantiation
@@ -35,7 +37,7 @@ def _custom_object_hook(dct):
         atoms = set_attrs(atoms, dct)
         # The tuple type is not preserved when serializing, manually cast the only important one
         if atoms._active is not None and not isinstance(atoms._active, tuple):
-            atoms._active = [tuple(i) for i in atoms._active]
+            atoms._active = [(xp.asarray(i[0]),) for i in atoms._active]
         return atoms
     # SCF objects
     if isinstance(dct, dict) and "_atoms" in dct:
@@ -91,7 +93,8 @@ def write_json(obj, filename):
         def default(self, o):
             """Overwrite the default function to handle eminus objects."""
             # ndarrays are not JSON serializable, encode them as base64 to save them
-            if isinstance(o, np.ndarray):
+            if xp.is_array(o):
+                o = xp.to_np(o)
                 data = base64.b64encode(o.copy(order="C")).decode("utf-8")
                 return {"__ndarray__": data, "dtype": str(o.dtype), "shape": o.shape}
 

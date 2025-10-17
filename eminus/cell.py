@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Cell wrapper function."""
 
-import numpy as np
-
+from . import backend as xp
 from .atoms import Atoms
 from .data import LATTICE_VECTORS
 from .utils import molecule2list
@@ -96,16 +95,17 @@ def Cell(
         if basis is None:
             basis = STRUCTURES[lattice]["basis"]
         lattice = STRUCTURES[lattice]["lattice"]
-        lattice_vectors = np.asarray(LATTICE_VECTORS[lattice])
+        lattice_vectors = xp.asarray(LATTICE_VECTORS[lattice], dtype=float)
     else:
         if basis is None:
             basis = [[0, 0, 0]]
-        lattice_vectors = np.asarray(lattice)
+        lattice_vectors = xp.asarray(lattice, dtype=float)
 
     # Only scale the lattice vectors with if a is given
     if a is not None:
+        a = xp.asarray(a, dtype=float)
         lattice_vectors = a * lattice_vectors
-        basis = a * np.atleast_2d(basis)
+        basis = a * xp.atleast_2d(xp.asarray(basis, dtype=float))
 
     # Account for different atom and basis sizes
     if isinstance(atom, str):

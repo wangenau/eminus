@@ -14,6 +14,7 @@ Modules
 
    eminus
    eminus.atoms
+   eminus.backend
    eminus.band_minimizer
    eminus.cell
    eminus.config
@@ -32,6 +33,7 @@ Modules
    eminus.orbitals
    eminus.potentials
    eminus.scf
+   eminus.testing
    eminus.tools
    eminus.units
    eminus.utils
@@ -66,9 +68,7 @@ Modules
    eminus.extras.fods
    eminus.extras.gui
    eminus.extras.hdf5
-   eminus.extras.jax
    eminus.extras.libxc
-   eminus.extras.torch
    eminus.psp
    eminus.psp.pade
    eminus.psp.pbe

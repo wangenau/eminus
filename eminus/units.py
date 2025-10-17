@@ -10,20 +10,20 @@ import math
 
 #: Hartree in electronvolt.
 # scipy.constants.value("Hartree energy in eV")
-electronvolt = eV = 27.211386245988  # noqa: N816
+electronvolt = eV = 27.211386245981  # noqa: N816
 #: Hartree in kcal per mol.
 # scipy.constants.value("Hartree energy") * scipy.constants.value("Avogadro constant") / 4.184 / 1e3
-kcalmol = 627.5094740630557
+kcalmol = 627.5094740628974
 #: Bohr radius in Angstrom.
 # scipy.constants.value("Bohr radius") * 1e10
-Angstrom = A = 0.529177210903
+Angstrom = A = 0.529177210544
 #: Elementary charge times bohr radius in Debye.
 # scipy.constants.value("atomic unit of electric dipole mom.") / \
 # scipy.constants.value("hertz-inverse meter relationship") * 1e21
-Debye = D = 2.5417464731818566
+Debye = D = 2.5417464714730396
 #: Hartree in kb times Kelvin.
 # scipy.constants.value("kelvin-hartree relationship")
-Kelvin = K = 3.1668115634556e-06
+Kelvin = K = 3.1668115634564e-06
 
 
 def ha2ev(E):

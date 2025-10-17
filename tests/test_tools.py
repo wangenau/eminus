@@ -3,14 +3,15 @@
 """Test tools functions."""
 
 import copy
+import math
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, RSCF, SCF
+from eminus import backend as xp
 from eminus.dft import get_epsilon, get_psi
 from eminus.gga import get_grad_field
+from eminus.testing import assert_allclose
 from eminus.tools import (
     center_of_mass,
     check_norm,
@@ -35,7 +36,7 @@ from eminus.tools import (
     orbital_center,
 )
 
-atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=5, unrestricted=False, center=True)
+atoms = Atoms("He2", ((0, 0, 0), (10, 0, 0)), ecut=10, unrestricted=False, center=True)
 scf = SCF(atoms)
 scf.run()
 psi = atoms.I(get_psi(scf, scf.W))[0]
@@ -55,14 +56,14 @@ scf_band.converge_bands()
 
 def test_cutoff_and_gridspacing():
     """Test the cutoff and grid spacing conversion."""
-    test = np.pi
+    test = math.pi
     out = cutoff2gridspacing(gridspacing2cutoff(test))
     assert_allclose(out, test)
 
 
 @pytest.mark.parametrize(
     ("coords", "masses", "ref"),
-    [(np.eye(3), None, [1 / 3] * 3), (np.eye(3), np.arange(3), [0, 1 / 3, 2 / 3])],
+    [(xp.eye(3), None, [1 / 3] * 3), (xp.eye(3), xp.arange(3), [0, 1 / 3, 2 / 3])],
 )
 def test_center_of_mass(coords, masses, ref):
     """Test the center of mass calculation."""
@@ -82,19 +83,19 @@ def test_pycom(unrestricted):
 
 
 @pytest.mark.parametrize(
-    "coords", [np.array([[1, 0, 0]]), np.array([[0, 1, 0]]), np.array([[0, 0, 1]])]
+    "coords", [xp.asarray([[1, 0, 0]]), xp.asarray([[0, 1, 0]]), xp.asarray([[0, 0, 1]])]
 )
 def test_inertia_tensor(coords):
     """Test the inertia tensor calculation."""
     out = inertia_tensor(coords)
-    ref = np.eye(3)
-    ref[np.nonzero(coords[0])] = [0] * 3
+    ref = xp.eye(3)
+    ref[xp.nonzero(coords[0])] = 0
     assert_allclose(out, ref)
 
 
 def test_get_dipole():
     """Test the electric dipole moment calculation."""
-    assert_allclose(get_dipole(scf), 0, atol=1e-2)
+    assert_allclose(get_dipole(scf), 0, atol=1e-3)
 
 
 def test_get_ip():
@@ -105,19 +106,19 @@ def test_get_ip():
     assert_allclose(get_ip(scf_pol), 0.39626631)
 
 
-@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, xp.ones_like(psi))])
 def test_check_ortho(ref, func):
     """Test orthogonality check."""
     assert check_ortho(atoms, func) == ref
 
 
-@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, xp.ones_like(psi))])
 def test_check_norm(ref, func):
     """Test normalization check."""
     assert check_norm(atoms, func) == ref
 
 
-@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, np.ones_like(psi))])
+@pytest.mark.parametrize(("ref", "func"), [(True, psi), (False, xp.ones_like(psi))])
 def test_check_orthonorm(ref, func):
     """Test orthonormalization check."""
     assert check_orthonorm(atoms, func) == ref
@@ -126,7 +127,8 @@ def test_check_orthonorm(ref, func):
 def test_get_isovalue():
     """Test isovalue calculation."""
     assert scf.n is not None
-    assert_allclose(get_isovalue(scf.n), 0.013, atol=1e-3)
+    print(get_isovalue(scf.n))
+    assert_allclose(get_isovalue(scf.n), 0.012157, atol=1e-6)
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
@@ -137,7 +139,7 @@ def test_get_tautf(unrestricted):
     else:
         scf = scf_unpol
     tautf = get_tautf(scf)
-    T = np.sum(tautf) * scf.atoms.dV
+    T = xp.sum(tautf) * scf.atoms.dV
     # TF KED is not exact, but similar for simple systems
     assert_allclose(T, scf.energies.Ekin, atol=0.2)
 
@@ -150,9 +152,9 @@ def test_get_tauw(unrestricted):
     else:
         scf = scf_unpol
         assert scf.n_spin is not None
-        scf.dn_spin = np.real(get_grad_field(scf.atoms, scf.n_spin))
+        scf.dn_spin = xp.real(get_grad_field(scf.atoms, scf.n_spin))
     tauw = get_tauw(scf)
-    T = np.sum(tauw) * scf.atoms.dV
+    T = xp.sum(tauw) * scf.atoms.dV
     # vW KED is exact for one- and two-electron systems
     assert_allclose(T, scf.energies.Ekin, atol=1e-6)
 
@@ -177,7 +179,7 @@ def test_get_reduced_gradient(unrestricted):
     else:
         scf = scf_unpol
         assert scf.n_spin is not None
-        scf.dn_spin = np.real(get_grad_field(scf.atoms, scf.n_spin))
+        scf.dn_spin = xp.real(get_grad_field(scf.atoms, scf.n_spin))
     s = get_reduced_gradient(scf, eps=1e-5)
     assert ((s >= 0) & (s < 100)).all()
 
@@ -217,11 +219,11 @@ def test_get_Efermi():
     Ef = get_Efermi(scf_band)
     assert hasattr(scf_band, "_precomputed")
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
-    assert_allclose(Ef, np.max(e_occ))
+    assert_allclose(Ef, xp.max(e_occ))
     scf_band.converge_empty_bands(Nempty=1)
     Ef = get_Efermi(scf_band)
     e_unocc = get_epsilon(scf_band, scf_band.Z, **scf_band._precomputed)
-    assert np.max(e_occ) < Ef < np.min(e_unocc)
+    assert xp.max(e_occ) < Ef < xp.min(e_unocc)
 
 
 def test_get_bandgap():
@@ -241,9 +243,9 @@ def test_get_dos():
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     e, e_dos = get_dos(e_occ, scf_band.kpts.wk, spin=0, npts=500, width=0.1)
     # The maximum of the DOS should be close to the maximum eigenvalue in this case
-    assert_allclose(np.max(e_occ), e[np.argmax(e_dos)], atol=1e-2)
-    assert np.min(e) < np.min(e_occ)
-    assert np.max(e) > np.max(e_occ)
+    assert xp.isclose(xp.max(e_occ), e[xp.argmax(e_dos)], atol=1e-2)
+    assert xp.min(e) < xp.min(e_occ)
+    assert xp.max(e) > xp.max(e_occ)
 
 
 if __name__ == "__main__":

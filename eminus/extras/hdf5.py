@@ -9,6 +9,7 @@ All necessary dependencies to use this extra can be installed with::
 
 import numpy as np
 
+from eminus import backend as xp
 from eminus.io.json import _custom_object_hook
 from eminus.logger import log
 
@@ -48,8 +49,11 @@ def read_hdf5(filename):
                     # Lists of strings are encoded as arrays, restore them as well
                     if isinstance(dct[key], np.ndarray):
                         dct[key] = dct[key].tolist()
-                else:
+                # If ndim is zero we do not want to cast it to an array
+                elif value.ndim == 0:
                     dct[key] = value[()]
+                else:
+                    dct[key] = xp.asarray(value[()])
             elif isinstance(value, Group):
                 dct[key] = read_hdf5_recursively(fh, f"{path}{key}/")
         # Create eminus objects from dictionaries, reuse the JSON helper function
@@ -116,6 +120,13 @@ def write_hdf5(obj, filename, compression="gzip", compression_opts=4):
                     compression=compression,
                     compression_opts=compression_opts,
                 )
+            elif xp.is_array(value) or (
+                isinstance(value, list) and len(value) > 0 and xp.is_array(value[0])
+            ):
+                fp.create_dataset(f"{path}{key}", data=xp.to_np(value))
+            # active is a list of tuples of arrays, treat it explicitly
+            elif key == "_active" and value is not None:
+                fp.create_dataset(f"{path}{key}", data=[(xp.to_np(i[0]),) for i in value])
             else:
                 fp.create_dataset(f"{path}{key}", data=value)
 

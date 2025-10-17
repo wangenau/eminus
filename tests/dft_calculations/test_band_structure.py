@@ -2,15 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test eigenenergies for bulk silicon in band structure calculations."""
 
-import numpy as np
-from numpy.testing import assert_allclose
-
+from eminus import backend as xp
 from eminus import Cell, RSCF, USCF
 from eminus.dft import get_epsilon, get_epsilon_unocc
+from eminus.testing import assert_allclose
 from eminus.tools import get_bandgap
 
 # Eigenenergies from a spin-paired calculation with PWDFT.jl with the same parameters as below
-epsilon_ref = np.array(
+epsilon_ref = xp.asarray(
     [
         [
             -0.1120735697,
@@ -71,7 +70,7 @@ def test_polarized():
     assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
-    epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
+    epsilon = xp.concatenate((epsilon_occ, epsilon_unocc), axis=2)
     # Eigenenergies are a bit more sensitive than total energies
     assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
     assert_allclose(epsilon[:, 1], epsilon_ref, atol=1e-5)
@@ -95,7 +94,7 @@ def test_unpolarized():
     assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
-    epsilon = np.append(epsilon_occ, epsilon_unocc, axis=2)
+    epsilon = xp.concatenate((epsilon_occ, epsilon_unocc), axis=2)
     # Eigenenergies are a bit more sensitive than total energies
     assert_allclose(epsilon[:, 0], epsilon_ref, atol=1e-5)
     bandgap = get_bandgap(scf)

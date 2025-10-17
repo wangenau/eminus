@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: 2022 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-import numpy as np
-
 import eminus
 from eminus import Atoms, SCF
+from eminus import backend as xp
 from eminus.dft import get_psi
 from eminus.localizer import wannier_cost
 from eminus.tools import center_of_mass, check_orthonorm, get_dipole, get_ip
@@ -22,7 +21,7 @@ scf.run(cgform=3)
 # # Centering the system is recommended to achieve this
 dip = get_dipole(scf)
 print(f"\nDipole moments = {dip} a0")
-print(f"Total dipole moment = {ebohr2d(np.linalg.norm(dip))} D")
+print(f"Total dipole moment = {ebohr2d(xp.linalg.norm(dip))} D")
 
 # # Calculate ionization potentials
 ip = get_ip(scf)
@@ -42,7 +41,7 @@ check_orthonorm(atoms, psi)
 # # Calculate the orbital variance and spread of the orbitals
 cost = wannier_cost(atoms, psi)
 print(f"\nOrbital variances = {cost} a0^2")
-print(f"Total spread = {np.sum(np.sqrt(cost))} a0")
+print(f"Total spread = {xp.sum(xp.sqrt(cost))} a0")
 
 # # Calculate the center of mass of the density
 com = center_of_mass(atoms.r, scf.n)

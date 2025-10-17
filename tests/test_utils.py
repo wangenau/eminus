@@ -2,18 +2,18 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test utility functions."""
 
-import numpy as np
+import math
+
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose, assert_equal
-from scipy.linalg import norm
 
-from eminus import Atoms, config
+from eminus import Atoms
+from eminus import backend as xp
+from eminus.testing import assert_allclose, assert_array_equal
 from eminus.utils import (
     add_maybe_none,
     atom2charge,
     get_lattice,
-    handle_backend,
     handle_k,
     handle_spin,
     molecule2list,
@@ -29,18 +29,19 @@ def test_Ylm(l):
     # Generate random G
     # Somehow I can only get the correct results from scipy when using positive G
     rng = default_rng()
-    G = np.abs(rng.random((1000, 3)))
+    G = xp.abs(xp.asarray(rng.random((1000, 3))))
 
     # Calculate the spherical coordinates theta and phi
-    tmp = np.sqrt(G[:, 0] ** 2 + G[:, 1] ** 2) / G[:, 2]
-    theta = np.arctan(tmp)
-    theta[G[:, 0] < 0] += np.pi
-    theta[np.abs(G[:, 0]) == 0] = np.pi / 2
+    tmp = xp.sqrt(G[:, 0] ** 2 + G[:, 1] ** 2) / G[:, 2]
+    theta = xp.arctan(tmp)
+    theta[G[:, 0] < 0] += math.pi
+    theta[xp.abs(G[:, 0]) == 0] = math.pi / 2
 
-    phi = np.arctan2(G[:, 1], G[:, 0])
-    phi_idx = np.abs(G[:, 0]) == 0
-    phi[phi_idx] = np.pi / 2 * np.sign(G[phi_idx, 1])
+    phi = xp.arctan2(G[:, 1], G[:, 0])
+    phi_idx = xp.abs(G[:, 0]) == 0
+    phi[phi_idx] = math.pi / 2 * xp.sign(G[phi_idx, 1])
 
+    theta, phi = xp.to_np(theta), xp.to_np(phi)
     # Calculate the spherical harmonics
     for m in range(-l, l + 1):
         Y_intern = Ylm_real(l, m, G)
@@ -53,17 +54,17 @@ def test_Ylm(l):
 
             Y_extern = sph_harm(abs(m), l, phi, theta)
         if m < 0:
-            Y_extern = np.sqrt(2) * (-1) ** m * Y_extern.imag
+            Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.imag
         elif m > 0:
-            Y_extern = np.sqrt(2) * (-1) ** m * Y_extern.real
+            Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.real
         assert_allclose(Y_intern, Y_extern)
 
 
 @pytest.mark.parametrize(
     ("seed", "ref"),
     [
-        (1234, np.array([[[0.93006472, 0.15416989, 0.93472344]]])),
-        (42, np.array([[[0.57138534, 0.34186435, 0.13408117]]])),
+        (1234, [[[0.93006472, 0.15416989, 0.93472344]]]),
+        (42, [[[0.57138534, 0.34186435, 0.13408117]]]),
     ],
 )
 def test_pseudo_uniform(seed, ref):
@@ -127,12 +128,12 @@ def test_vector_angle(a, b, ref):
 
 def test_get_lattice():
     """Test the lattice utility function."""
-    out = get_lattice(np.eye(3))
+    out = get_lattice(xp.eye(3))
     for vert in out:
-        assert_equal(norm(vert[0] - vert[1]), 1)
-    out = get_lattice(np.ones((3, 3)) - np.eye(3))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), 1)
+    out = get_lattice(xp.ones((3, 3)) - xp.eye(3))
     for vert in out:
-        assert_equal(norm(vert[0] - vert[1]), np.sqrt(2))
+        assert_array_equal(xp.linalg.norm(vert[0] - vert[1]), math.sqrt(2))
 
 
 def test_handle_spin():
@@ -143,11 +144,11 @@ def test_handle_spin():
         assert kwarg is not None
         return W
 
-    W = np.ones((1, 1, 1))
+    W = xp.ones((1, 1, 1))
     out = mock(None, W, kwarg="kwarg")
-    assert_equal(out, W)
+    assert_array_equal(out, W)
     out = mock(None, W[0], kwarg="kwarg")
-    assert_equal(out, W[0])
+    assert_array_equal(out, W[0])
 
 
 @pytest.mark.parametrize("mode", ["gracefully", "index", "reduce", "skip"])
@@ -157,42 +158,26 @@ def test_handle_k(mode):
     @handle_k(mode=mode)
     def mock(obj, W, ik=0, kwarg=None):  # noqa: ARG001
         if mode == "skip":  # skip should remove the outer list
-            assert isinstance(W, np.ndarray)
+            assert xp.is_array(W)
         assert kwarg is not None
         return W
 
     atoms = Atoms("He", (0, 0, 0))
     if mode == "skip":
-        W = [np.ones((1, 1, 1))]
+        W = [xp.ones((1, 1, 1))]
     else:
-        W = [np.ones((1, 1, 1))] * 2
+        W = [xp.ones((1, 1, 1))] * 2
 
     out = mock(atoms, W, kwarg="kwarg")
     if mode == "reduce":
-        assert_equal(out, np.ones((1, 1, 1)) * 2)
+        assert_array_equal(out, xp.ones((1, 1, 1)) * 2)
     else:
-        assert_equal(out, W)
+        assert_array_equal(out, W)
 
     out = mock(atoms, W[0], kwarg="kwarg")
-    assert_equal(out, W[0])
+    assert_array_equal(out, W[0])
     out = mock(atoms, W[0][0], kwarg="kwarg")
-    assert_equal(out, W[0][0])
-
-
-def test_handle_backend():
-    """Test the handle_backend decorator."""
-
-    @handle_backend
-    def mock(x):
-        return x
-
-    config.backend = "scipy"
-    out = mock(np.pi)
-    assert_equal(out, np.pi)
-    config.backend = "torch"
-    if config.backend == "torch":
-        with pytest.raises(AttributeError):
-            mock(np.pi)
+    assert_array_equal(out, W[0][0])
 
 
 if __name__ == "__main__":

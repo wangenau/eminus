@@ -6,6 +6,7 @@ import time
 
 import numpy as np
 
+from eminus import backend as xp
 from eminus.logger import log
 from eminus.units import ang2bohr, bohr2ang
 from eminus.version import __version__
@@ -43,10 +44,10 @@ def read_xyz(filename):
         for line in lines[2 : 2 + Natoms]:
             line_split = line.strip().split()
             atom.append(line_split[0])
-            pos.append(np.float64(line_split[1:4]))
+            pos.append(np.asarray(line_split[1:4], dtype=float))
 
     # XYZ files are in Angstrom, so convert to Bohr
-    pos = ang2bohr(np.asarray(pos))
+    pos = xp.asarray(ang2bohr(np.asarray(pos)))
     return atom, pos
 
 

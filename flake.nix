@@ -34,15 +34,14 @@
             ### d3 ###
             simple-dftd3
             ### gui ###
-            # nglview is missing
+            nglview
             plotly
             ### hdf5 ###
             h5py
             ### fods and libxc ###
             pyscf
-            ### jax ###
-            # jax
             ### torch ###
+            # array-api-compat
             # torch-bin
             ### dev ###
             furo

@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test DFT functions."""
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, demo, SCF
+from eminus import backend as xp
 from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
+from eminus.testing import assert_allclose
 from eminus.tools import get_magnetization
 
 atoms_unpol = Cell("Si", "diamond", 1, 10, kmesh=(2, 1, 1), bands=5)
@@ -37,10 +37,10 @@ def test_wavefunction(guess, unrestricted):
         for s in range(scf.atoms.occ.Nspin):
             # Test that WOW is the identity
             ovlp = W[ik][s].conj().T @ scf.atoms.O(W[ik][s])
-            assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
+            assert_allclose(xp.diag(ovlp), xp.ones(scf.atoms.occ.Nstate))
             # Also test that psiOpsi is the identity
             ovlp = psi[ik][s].conj().T @ scf.atoms.O(psi[ik][s])
-            assert_allclose(np.diag(ovlp), np.ones(scf.atoms.occ.Nstate))
+            assert_allclose(xp.diag(ovlp), xp.ones(scf.atoms.occ.Nstate))
 
 
 def test_unocc_wavefunction():
@@ -51,7 +51,7 @@ def test_unocc_wavefunction():
         for s in range(scf_unpol.atoms.occ.Nspin):
             # Test that DOD is the identity
             ovlp = scf_unpol.D[ik][s].conj().T @ scf_unpol.atoms.O(scf_unpol.D[ik][s])
-            assert_allclose(np.diag(ovlp), np.ones(scf_unpol.atoms.occ.Nempty))
+            assert_allclose(xp.diag(ovlp), xp.ones(scf_unpol.atoms.occ.Nempty))
             # Test that the unoccupied wavefunctions are orthogonal to the occupied ones
             assert_allclose(scf_unpol.D[ik][s].conj().T @ scf_unpol.Y[ik][s], 0, atol=1e-15)
 
@@ -69,7 +69,7 @@ def test_H(unrestricted):
             HW = H(scf, ik, s, psi)
             WHW = psi[ik][s].conj().T @ HW
             # Test that WHW is a diagonal matrix
-            assert_allclose(WHW, np.diag(np.diag(WHW)), atol=1e-12)
+            assert_allclose(WHW, xp.diag(xp.diag(WHW)), atol=1e-12)
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
@@ -82,8 +82,8 @@ def test_n_total(unrestricted):
     # Test that the integrated density gives the number of electrons
     assert scf.Y is not None
     n = get_n_total(scf.atoms, scf.Y)
-    n_int = np.sum(n) * scf.atoms.dV
-    assert_allclose(n_int, np.sum(scf.atoms.occ.f * scf.kpts.wk[:, None, None]))
+    n_int = xp.sum(n) * scf.atoms.dV
+    assert_allclose(n_int, xp.sum(scf.atoms.occ.f * scf.kpts.wk[:, None, None]))
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
@@ -98,8 +98,8 @@ def test_n_spin(unrestricted):
     n = get_n_spin(scf.atoms, scf.Y)
     for ik in range(scf.kpts.Nk):
         for s in range(scf.atoms.occ.Nspin):
-            n_int = np.sum(n[s]) * scf.atoms.dV
-            assert_allclose(n_int, np.sum(scf.atoms.occ.f[ik, s]))
+            n_int = xp.sum(n[s]) * scf.atoms.dV
+            assert_allclose(n_int, xp.sum(scf.atoms.occ.f[ik, s]))
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
@@ -114,7 +114,7 @@ def test_n_single(unrestricted):
     n = get_n_single(scf.atoms, scf.Y)
     for ik in range(scf.kpts.Nk):
         for s in range(scf.atoms.occ.Nspin):
-            n_int = np.sum(n[s], axis=0) * scf.atoms.dV
+            n_int = xp.sum(n[s], axis=0) * scf.atoms.dV
             assert_allclose(n_int, scf.atoms.occ.f[ik, s])
 
 
@@ -123,9 +123,9 @@ def test_k_point_permutation():
     cell = Cell("C", "diamond", 10, 6.75, kmesh=(2, 1, 1))
     scf = SCF(cell)
     etot1 = scf.run()
-    cell.kpts.k = cell.kpts.k[::-1]
+    cell.kpts.k = xp.flip(cell.kpts.k)
     cell.kpts.is_built = True
-    assert not np.all(cell.kpts.k == scf.kpts.k)
+    assert not xp.all(cell.kpts.k == scf.kpts.k)
     scf = SCF(cell)
     etot2 = scf.run()
     assert_allclose(etot1, etot2, atol=1e-7)
@@ -147,7 +147,7 @@ def test_magnetization():
     scf = SCF(cell)
     scf.run()
     assert scf.atoms.occ.magnetization < 1
-    assert not np.array_equal(cell.occ.f, scf.atoms.occ.f)
+    assert xp.any(cell.occ.f != scf.atoms.occ.f)
     assert_allclose(get_magnetization(scf), scf.atoms.occ.magnetization, atol=1e-7)
 
 

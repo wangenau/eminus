@@ -7,7 +7,7 @@
 Installation
 ************
 
-| The code is written for Python 3.8+.
+| The code is written for Python 3.9+.
 | The following packages are needed for a minimum working installation
 
 * `NumPy <https://numpy.org>`_

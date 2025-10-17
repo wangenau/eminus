@@ -51,12 +51,6 @@ License
      -
    * -
      -
-   * - jax
-     - Apache-2.0
-   * -
-     -
-   * -
-     -
    * - pyscf
      - Apache-2.0
    * - pylibxc
@@ -65,6 +59,8 @@ License
      -
    * -
      -
+   * - array-api-compat
+     - MIT
    * - torch
      - BSD-3-Clause
    * -

@@ -4,14 +4,14 @@
 
 import copy
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, Cell, SCF
+from eminus import backend as xp
 from eminus.dft import get_epsilon, guess_pseudo
 from eminus.energies import Energy, get_Eband, get_Eentropy
 from eminus.minimizer import scf_step
+from eminus.testing import assert_allclose
 
 # The reference contributions are similar for the polarized and unpolarized case,
 # but not necessary the same (for bad numerics)
@@ -38,7 +38,7 @@ atoms_pol = Atoms("Ne", (0, 0, 0), ecut=10, unrestricted=True)
 atoms_pol.s = 20
 scf_pol = SCF(atoms_pol, sic=True)
 assert scf_unpol.W is not None
-scf_pol.W = [np.array([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
+scf_pol.W = [xp.stack([scf_unpol.W[0][0] / 2, scf_unpol.W[0][0] / 2])]
 scf_pol.run()
 
 
@@ -81,6 +81,7 @@ def test_get_Eband_unpol():
     assert scf_unpol.Y is not None
     Eband = get_Eband(scf_unpol, scf_unpol.Y)
     assert_allclose(Eband, -4.1123, atol=1e-4)
+    assert isinstance(Eband, float)
 
 
 def test_get_Eband_pol():
@@ -91,22 +92,25 @@ def test_get_Eband_pol():
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy
     assert_allclose(Eband, -8.2246, atol=1e-4)
+    assert isinstance(Eband, float)
 
 
 def test_get_Eentropy_unpol():
     """Check the spin-unpolarized entropic energy."""
     scf_unpol.atoms.occ.smearing = 1
     epsilon = get_epsilon(scf_unpol, scf_unpol.W)
-    Eband = get_Eentropy(scf_unpol, epsilon, 0)
-    assert_allclose(Eband, -4.4395, atol=1e-4)
+    Eentropy = get_Eentropy(scf_unpol, epsilon, 0)
+    assert_allclose(Eentropy, -4.4395, atol=1e-4)
+    assert isinstance(Eentropy, float)
 
 
 def test_get_Eentropy_pol():
     """Check the spin-polarized entropic energy."""
     scf_pol.atoms.occ.smearing = 1
     epsilon = get_epsilon(scf_pol, scf_pol.W)
-    Eband = get_Eentropy(scf_pol, epsilon, 0)
-    assert_allclose(Eband, -4.4395, atol=1e-4)
+    Eentropy = get_Eentropy(scf_pol, epsilon, 0)
+    assert_allclose(Eentropy, -4.4395, atol=1e-4)
+    assert isinstance(Eentropy, float)
 
 
 def test_multiple_k():
@@ -118,7 +122,7 @@ def test_multiple_k():
     scf_step(scf, 0)
 
     atoms = Cell("Si", "diamond", ecut=30, a=10.2631, kmesh=(2, 2, 2))
-    atoms.set_k(np.zeros((8, 3)))
+    atoms.set_k(xp.zeros((8, 3)))
     scf_k = SCF(atoms, etol=1e-5)
     scf_k.W = guess_pseudo(scf_k)
     scf_k.dn_spin, scf_k.tau = None, None
@@ -134,6 +138,13 @@ def test_extrapolate():
     assert e.extrapolate() == 2
     e.Eentropy = 2
     assert e.extrapolate() == 3
+
+
+@pytest.mark.parametrize("energy", E_ref.keys())
+def test_energy_types(energy):
+    """Check the types of energy contributions."""
+    E = getattr(scf_pol.energies, energy)
+    assert isinstance(E, float)
 
 
 if __name__ == "__main__":

@@ -6,8 +6,7 @@ import copy
 import logging
 import time
 
-import numpy as np
-
+from . import backend as xp
 from . import config
 from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
@@ -508,9 +507,9 @@ class SCF(BaseObject):
         # Run the recenter method of the atoms object
         self.atoms.recenter(center=center)
         if center is None:
-            dr = com - np.sum(atoms.a, axis=0) / 2
+            dr = com - xp.sum(atoms.a, axis=0) / 2
         else:
-            center = np.asarray(center)
+            center = xp.asarray(center, dtype=float)
             dr = com - center
 
         # Shift orbitals and density
@@ -521,7 +520,7 @@ class SCF(BaseObject):
         if self.n is not None:
             Jn = atoms.J(self.n)
             TJn = atoms.T(Jn, dr=-dr)
-            n = np.real(atoms.I(TJn))
+            n = xp.real(atoms.I(TJn))
 
         # Recalculate the potential since it depends on the structure factor
         self.pot = self.pot

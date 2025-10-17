@@ -10,13 +10,16 @@ Note that if one wants to use Jupyter one has to install it separately.
 """
 
 import collections
+import copy
 import io
+import math
 import pathlib
 import uuid
 
 import numpy as np
 from scipy.interpolate import griddata
 
+from eminus import backend as xp
 from eminus.atoms import Atoms
 from eminus.data import COVALENT_RADII, CPK_COLORS, SPECIAL_POINTS
 from eminus.dft import get_epsilon, get_epsilon_unocc
@@ -66,11 +69,12 @@ def _uniform_density_data(n, r, s):
     Returns:
         Interpolated density and new grid points.
     """
+    n, r, s = xp.to_np(n), xp.to_np(r), xp.to_np(s)
     # Do not use a super fine grid to display the interpolated data
     x = np.linspace(np.min(r[:, 0]), np.max(r[:, 0]), np.min([s[0], 25]))
     y = np.linspace(np.min(r[:, 1]), np.max(r[:, 1]), np.min([s[1], 25]))
     z = np.linspace(np.min(r[:, 2]), np.max(r[:, 2]), np.min([s[2], 25]))
-    r_new = np.array(np.meshgrid(x, y, z)).T.reshape(-1, 3)
+    r_new = np.asarray(np.meshgrid(x, y, z)).T.reshape(-1, 3)
     n_new = griddata(r, n, r_new)
     return np.nan_to_num(n_new), r_new
 
@@ -111,9 +115,9 @@ def view_atoms(
     lattice = get_lattice(atoms.a)
     for xx in lattice:
         bz_data = go.Scatter3d(
-            x=xx[:, 0],
-            y=xx[:, 1],
-            z=xx[:, 2],
+            x=xp.to_np(xx[:, 0]),
+            y=xp.to_np(xx[:, 1]),
+            z=xp.to_np(xx[:, 2]),
             name="Unit cell",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -122,15 +126,15 @@ def view_atoms(
     # Add species one by one to be able to have them named and be selectable in the legend
     # Note: The size scaling is mostly arbitrary and has no meaning
     for ia in sorted(set(atoms.atom)):
-        mask = np.where(np.asarray(atoms.atom) == ia)[0]
+        mask = np.nonzero(np.asarray(atoms.atom) == ia)[0]
         atom_data = go.Scatter3d(
-            x=atoms.pos[mask, 0],
-            y=atoms.pos[mask, 1],
-            z=atoms.pos[mask, 2],
+            x=xp.to_np(atoms.pos[mask, 0]),
+            y=xp.to_np(atoms.pos[mask, 1]),
+            z=xp.to_np(atoms.pos[mask, 2]),
             name=ia,
             mode="markers",
             marker={
-                "size": 2 * np.pi * np.sqrt(COVALENT_RADII[ia]),
+                "size": 2 * math.pi * math.sqrt(COVALENT_RADII[ia]),
                 "color": CPK_COLORS[ia],
                 "line": {"color": "black", "width": 2},
             },
@@ -141,30 +145,30 @@ def view_atoms(
         if isinstance(fods, list):
             if len(fods[0]) != 0:
                 fods_data = go.Scatter3d(
-                    x=fods[0][:, 0],
-                    y=fods[0][:, 1],
-                    z=fods[0][:, 2],
+                    x=xp.to_np(fods[0][:, 0]),
+                    y=xp.to_np(fods[0][:, 1]),
+                    z=xp.to_np(fods[0][:, 2]),
                     name="up-FOD",
                     mode="markers",
-                    marker={"size": np.pi, "color": "red"},
+                    marker={"size": math.pi, "color": "red"},
                 )
                 fig.add_trace(fods_data)
             if len(fods) > 1 and len(fods[1]) != 0:
                 fods_data = go.Scatter3d(
-                    x=fods[1][:, 0],
-                    y=fods[1][:, 1],
-                    z=fods[1][:, 2],
+                    x=xp.to_np(fods[1][:, 0]),
+                    y=xp.to_np(fods[1][:, 1]),
+                    z=xp.to_np(fods[1][:, 2]),
                     name="down-FOD",
                     mode="markers",
-                    marker={"size": np.pi, "color": "green"},
+                    marker={"size": math.pi, "color": "green"},
                 )
                 fig.add_trace(fods_data)
         # Treat fods as normal coordinates otherwise
         else:
             fods_data = go.Scatter3d(
-                x=fods[:, 0],
-                y=fods[:, 1],
-                z=fods[:, 2],
+                x=xp.to_np(fods[:, 0]),
+                y=xp.to_np(fods[:, 1]),
+                z=xp.to_np(fods[:, 2]),
                 name="Coordinates",
                 mode="markers",
                 marker={"size": 1, "color": "red"},
@@ -172,19 +176,19 @@ def view_atoms(
             fig.add_trace(fods_data)
 
     # A density can be plotted for an SCF object
-    if isinstance(plot_n, np.ndarray) or plot_n:
+    if xp.is_array(plot_n) or plot_n:
         # Use the density from an SCF object...
         density = obj.n
         name = "Density"
         # ...or use the quantity if an array is given
-        if isinstance(plot_n, np.ndarray):
+        if xp.is_array(plot_n):
             density = plot_n
             name = "Quantity"
 
         # If the unit cell is not diagonal we have to interpolate the density data
         # Plotly will not display volumes that are represented on non-orthogonal grids, which is
         # normally the case for non-diagonal unit cells
-        if (np.diag(np.diag(atoms.a)) != atoms.a).any():
+        if (xp.diag(xp.diag(atoms.a)) != atoms.a).any():
             density, r = _uniform_density_data(density, atoms.r, atoms.s)
             # We will get data points outside of the unit cell that can contain NaNs
             # Do not use the get_isovalue function here but simply use the minimum value
@@ -195,8 +199,9 @@ def view_atoms(
                 '"percent" keyword has no effect and all of the density data will be displayed.'
             )
         else:
-            r = atoms.r
+            r = xp.to_np(atoms.r)
             isomin = get_isovalue(density, percent=percent)
+            density = xp.to_np(density)
 
         if isovalue is not None:
             isomin = isovalue
@@ -210,7 +215,7 @@ def view_atoms(
             name=name,
             colorbar_title=name,
             colorscale="Inferno",
-            isomin=isomin,
+            isomin=float(isomin),
             isomax=np.max(density),
             surface_count=surfaces,
             opacity=0.1,
@@ -228,10 +233,10 @@ def view_atoms(
         "aspectmode": "data",
     }
     # If the unit cell is diagonal and we scale the plot, otherwise let plotly decide
-    if (np.diag(np.diag(atoms.a)) == atoms.a).all():
-        scene["xaxis"]["range"] = [0, atoms.a[0, 0]]
-        scene["yaxis"]["range"] = [0, atoms.a[1, 1]]
-        scene["zaxis"]["range"] = [0, atoms.a[2, 2]]
+    if (xp.diag(xp.diag(atoms.a)) == atoms.a).all():
+        scene["xaxis"]["range"] = [0, float(atoms.a[0, 0])]
+        scene["yaxis"]["range"] = [0, float(atoms.a[1, 1])]
+        scene["zaxis"]["range"] = [0, float(atoms.a[2, 2])]
     fig.update_layout(
         scene=scene,
         width=size[0],
@@ -283,7 +288,7 @@ def view_contour(
     # Create an index mask to obtain a clean slice through the cell
     # Since the expression is a bit involved it can be understood with the following pseudo-code:
     # mask = |axis_values - slice_value| < axis_value_dist
-    mask = np.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
+    mask = xp.abs(atoms.r[:, axes[2]] - value * atoms.a[axes[2], axes[2]]) < (
         atoms.a[axes[2], axes[2]] / atoms.s[axes[2]]
     )
 
@@ -291,7 +296,7 @@ def view_contour(
         log.warning('The provided field is "None".')
         return None
     # Create a copy of the field data to not overwrite the input
-    field = np.copy(field)
+    field = copy.deepcopy(field)
     # Remove large and small values (similar to VESTA)
     field[field < limits[0]] = limits[0]
     field[field > limits[1]] = limits[1]
@@ -299,9 +304,9 @@ def view_contour(
     # Create the contour lines
     fig = go.Figure()
     contours = go.Contour(
-        x=atoms.r[:, axes[0]][mask],
-        y=atoms.r[:, axes[1]][mask],
-        z=field[mask],
+        x=xp.to_np(atoms.r[:, axes[0]][mask]),
+        y=xp.to_np(atoms.r[:, axes[1]][mask]),
+        z=xp.to_np(field[mask]),
         contours_coloring="none",
         ncontours=lines,
         line_width=linewidth,
@@ -315,15 +320,15 @@ def view_contour(
         margin={"b": 0, "l": 0, "r": 0, "t": 0},
         xaxis={
             "range": [
-                (1 - 1 / zoom) * atoms.a[axes[0], axes[0]],
-                1 / zoom * atoms.a[axes[0], axes[0]],
+                (1 - 1 / zoom) * float(atoms.a[axes[0], axes[0]]),
+                1 / zoom * float(atoms.a[axes[0], axes[0]]),
             ],
             "visible": False,
         },
         yaxis={
             "range": [
-                (1 - 1 / zoom) * atoms.a[axes[1], axes[1]],
-                1 / zoom * atoms.a[axes[1], axes[1]],
+                (1 - 1 / zoom) * float(atoms.a[axes[1], axes[1]]),
+                1 / zoom * float(atoms.a[axes[1], axes[1]]),
             ],
             "visible": False,
         },
@@ -682,8 +687,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         for i in range(scf.atoms.occ.Nstate):
             fig.add_trace(
                 go.Scatter(
-                    x=k_axis,
-                    y=e_occ[:, s, i] - Efermi,
+                    x=xp.to_np(k_axis),
+                    y=xp.to_np(e_occ[:, s, i] - Efermi),
                     mode="lines+markers",
                     name=f"Band {i + 1}",
                     marker_color=colors[s],
@@ -696,8 +701,8 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             for i in range(scf.atoms.occ.Nempty):
                 fig.add_trace(
                     go.Scatter(
-                        x=k_axis,
-                        y=e_unocc[:, s, i] - Efermi,
+                        x=xp.to_np(k_axis),
+                        y=xp.to_np(e_unocc[:, s, i] - Efermi),
                         mode="lines+markers",
                         line={"dash": "dash"},
                         name=f"Unocc. band {i + 1}",
@@ -716,7 +721,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             "mirror": True,
             "ticks": "outside",
             "tickmode": "array",
-            "tickvals": special,
+            "tickvals": xp.to_np(special),
             "ticktext": label,
             "gridcolor": "grey",
             "gridwidth": 2,
@@ -728,7 +733,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
             "ticks": "outside",
             "showgrid": False,
         },
-        xaxis_range=(0, k_axis[-1]),
+        xaxis_range=(0, float(k_axis[-1])),
         xaxis_title="k-path",
         yaxis_title="E - E<sub>F</sub> [eV]",
         hoverlabel_bgcolor="black",
@@ -774,8 +779,8 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
         e, dos_e = get_dos(e_occ, scf.kpts.wk, spin=s, **kwargs)
         fig.add_trace(
             go.Scatter(
-                x=e - Efermi,
-                y=dos_e,
+                x=xp.to_np(e - Efermi),
+                y=xp.to_np(dos_e),
                 mode="lines+markers",
                 name=f"Spin {s + 1}",
                 marker_color=colors[s],
@@ -829,9 +834,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
     bz = get_brillouin_zone(kpts.a)
     for xx in bz:
         bz_data = go.Scatter3d(
-            x=xx[:, 0],
-            y=xx[:, 1],
-            z=xx[:, 2],
+            x=xp.to_np(xx[:, 0]),
+            y=xp.to_np(xx[:, 1]),
+            z=xp.to_np(xx[:, 2]),
             name="Brillouin zone",
             showlegend=False,
             marker={"size": 0.1, "color": "black"},
@@ -845,9 +850,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
                 label = "\u0393"  # noqa: PLW2901
             v = kpoint_convert(k_scaled, kpts.a)
             special_data = go.Scatter3d(
-                x=[v[0]],
-                y=[v[1]],
-                z=[v[2]],
+                x=[xp.to_np(v[0])],
+                y=[xp.to_np(v[1])],
+                z=[xp.to_np(v[2])],
                 name=label,
                 mode="markers",
                 marker={"size": 4, "opacity": 0.9},
@@ -861,9 +866,9 @@ def view_kpts(kpts, path=True, special=True, connect=False, size=(600, 600)):
         mode = "markers"
     if path:
         path_data = go.Scatter3d(
-            x=kpts.k[:, 0],
-            y=kpts.k[:, 1],
-            z=kpts.k[:, 2],
+            x=xp.to_np(kpts.k[:, 0]),
+            y=xp.to_np(kpts.k[:, 1]),
+            z=xp.to_np(kpts.k[:, 2]),
             name="k-points",
             mode=mode,
             marker={"size": 2, "color": "#1a962b", "opacity": 0.75},

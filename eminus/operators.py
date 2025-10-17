@@ -30,10 +30,9 @@ W[ik][s, :, n].
 import copy
 
 import numpy as np
-from scipy.fft import fftn, ifftn
 
-from . import config
-from .utils import handle_backend, handle_k, handle_spin
+from . import backend as xp
+from .utils import handle_k, handle_spin
 
 
 # Spin handling is trivial for this operator
@@ -110,10 +109,8 @@ def Linv(atoms, W):
     return out
 
 
-@handle_backend
 @handle_k(mode="index")
-@handle_spin
-def I(atoms, W, ik=-1):
+def I(atoms, W, ik=-1, norm="forward"):
     """Backward transformation from reciprocal space to real-space.
 
     This operator acts on the options 3, 4, 5, and 6.
@@ -126,46 +123,49 @@ def I(atoms, W, ik=-1):
 
     Keyword Args:
         ik: k-point index.
+        norm: Normalization mode.
 
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-
-    # If W is in the full space do nothing with W
-    if len(W) == len(atoms.Gk2[ik]):
-        Wfft = np.copy(W)
-    else:
+    if W.ndim < 3:
+        # If W is in the full space do nothing with W
+        if len(W) == len(atoms._Gk2[ik]):
+            Wfft = W
         # Fill with zeros if W is in the active space
-        if W.ndim == 1:
-            Wfft = np.zeros(n, dtype=W.dtype)
         else:
-            Wfft = np.zeros((n, W.shape[-1]), dtype=W.dtype)
-        Wfft[atoms.active[ik]] = W
+            if W.ndim == 1:
+                Wfft = xp.zeros(atoms.Ns, dtype=W.dtype)
+            else:
+                Wfft = xp.zeros((atoms.Ns, W.shape[-1]), dtype=W.dtype)
+            Wfft[atoms._active[ik]] = W
+    elif W.shape[1] == len(atoms._G2):
+        Wfft = W
+    else:
+        Wfft = xp.zeros((atoms.occ._Nspin, atoms.Ns, W.shape[-1]), dtype=W.dtype)
+        Wfft[:, atoms._active[ik][0]] = W
 
-    # `workers` sets the number of threads the FFT operates on
-    # `overwrite_x` allows writing in Wfft, but since we do not need Wfft later on, we can set this
-    # for a little bit of extra performance
     # Normally, we would have to multiply by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
-        Wfft = Wfft.reshape(atoms.s)
-        Finv = ifftn(Wfft, workers=config.threads, overwrite_x=True, norm="forward").ravel()
+        Wfft = Wfft.reshape(list(atoms.s))
+        Finv = xp.ifftn(Wfft, norm=norm).ravel()
+    # Here we reshape the input like in the 1d case but add an extra dimension in the end,
+    # holding the number of states
+    # Tell the function that the FFT only has to act on the respective 3 axes
+    elif W.ndim == 2:
+        Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
+        Finv = xp.ifftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     else:
-        # Here we reshape the input like in the 1d case but add an extra dimension in the end,
-        # holding the number of states
-        Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
-        # Tell the function that the FFT only has to act on the first 3 axes
-        Finv = ifftn(
-            Wfft, workers=config.threads, overwrite_x=True, norm="forward", axes=(0, 1, 2)
-        ).reshape((n, W.shape[-1]))
+        Wfft = Wfft.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        Finv = xp.ifftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
+            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
+        )
     return Finv
 
 
-@handle_backend
 @handle_k(mode="index")
-@handle_spin
-def J(atoms, W, ik=-1, full=True):
+def J(atoms, W, ik=-1, full=True, norm="forward"):
     """Forward transformation from real-space to reciprocal space.
 
     This operator acts on options 1 and 2.
@@ -179,37 +179,34 @@ def J(atoms, W, ik=-1, full=True):
     Keyword Args:
         ik: k-point index.
         full: Whether to transform in the full or in the active space.
+        norm: Normalization mode.
 
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    Wfft = np.copy(W)
-
-    # `workers` sets the number of threads the FFT operates on
-    # `overwrite_x` allows writing in Wfft, but since we do not need Wfft later on, we can set this
-    # for a little bit of extra performance
     # Normally, we would have to divide by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
     if W.ndim == 1:
-        Wfft = Wfft.reshape(atoms.s)
-        F = fftn(Wfft, workers=config.threads, overwrite_x=True, norm="forward").ravel()
+        Wfft = W.reshape(list(atoms.s))
+        F = xp.fftn(Wfft, norm=norm).ravel()
+    elif W.ndim == 2:
+        Wfft = W.reshape([*atoms.s, W.shape[-1]])
+        F = xp.fftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
     else:
-        Wfft = Wfft.reshape(np.append(atoms.s, W.shape[-1]))
-        F = fftn(
-            Wfft, workers=config.threads, overwrite_x=True, norm="forward", axes=(0, 1, 2)
-        ).reshape((n, W.shape[-1]))
-
+        Wfft = W.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        F = xp.fftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
+            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
+        )
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:
-        return F[atoms.active[ik]]
+        if F.ndim < 3:
+            return F[atoms._active[ik]]
+        return F[:, atoms._active[ik][0]]
     return F
 
 
-@handle_backend
 @handle_k(mode="index")
-@handle_spin
 def Idag(atoms, W, ik=-1, full=False):
     """Conjugated backward transformation from real-space to reciprocal space.
 
@@ -228,14 +225,12 @@ def Idag(atoms, W, ik=-1, full=False):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    F = J(atoms, W, ik, full)
-    return F * n
+    # This is just the J operator with the appropriate norm
+    # If we would not chnage the norm, we would have to multiply the result with n
+    return J(atoms, W, ik, full=full, norm="backward")
 
 
-@handle_backend
 @handle_k(mode="index")
-@handle_spin
 def Jdag(atoms, W, ik=-1):
     """Conjugated forward transformation from reciprocal space to real-space.
 
@@ -253,9 +248,9 @@ def Jdag(atoms, W, ik=-1):
     Returns:
         The operator applied on W.
     """
-    n = atoms.Ns
-    Finv = I(atoms, W, ik)
-    return Finv / n
+    # This is just the J operator with the appropriate norm
+    # If we would not chnage the norm, we would have to divide the result by n
+    return I(atoms, W, ik, norm="backward")
 
 
 @handle_spin
@@ -288,17 +283,16 @@ def T(atoms, W, dr):
     Args:
         atoms: Atoms object.
         W: Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik: k-point index.
         dr: Real-space shifting vector.
 
     Returns:
         The operator applied on W.
     """
     # We can not use a fancy decorator for this operator, so handle it here
-    if isinstance(W, np.ndarray) and W.ndim == 3:
-        return np.asarray([T(atoms, Wspin, dr) for Wspin in W])
+    if xp.is_array(W) and W.ndim == 3:
+        return xp.stack([T(atoms, Wspin, dr) for Wspin in W])
 
-    if isinstance(W, np.ndarray):
+    if xp.is_array(W):
         atoms.kpts._assert_gamma_only()
         if len(W) == len(atoms.Gk2c[0]):
             G = atoms.G[atoms.active[0]]
@@ -306,7 +300,7 @@ def T(atoms, W, dr):
             G = atoms.G[atoms.active[-1]]
         else:
             G = atoms.G
-        factor = np.exp(-1j * G @ dr)
+        factor = xp.exp(-1j * (G @ dr))
         if W.ndim == 2:
             factor = factor[:, None]
         return factor * W
@@ -319,5 +313,5 @@ def T(atoms, W, dr):
             Gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
         else:
             Gk = atoms.G + atoms.kpts.k[ik]
-        Wshift[ik] = np.exp(-1j * Gk @ dr)[:, None] * W[ik]
+        Wshift[ik] = xp.exp(-1j * (Gk @ dr))[:, None] * W[ik]
     return Wshift

@@ -3,10 +3,10 @@
 """Test different minimization functions."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus.minimizer import IMPLEMENTED
+from eminus.testing import assert_allclose
 
 E_ref = -1.899358114  # The reference value is the same for the polarized and unpolarized case
 tolerance = 1e-9

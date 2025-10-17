@@ -6,7 +6,6 @@ import inspect
 import pathlib
 
 import pytest
-from numpy.testing import assert_equal
 
 from eminus.data import COVALENT_RADII, CPK_COLORS, SYMBOL2NUMBER
 from eminus.psp import pade, pbe
@@ -14,8 +13,8 @@ from eminus.psp import pade, pbe
 
 def test_data():
     """Check that every data dictionary has all necessary keys."""
-    assert_equal(SYMBOL2NUMBER.keys(), COVALENT_RADII.keys())
-    assert_equal(SYMBOL2NUMBER.keys(), CPK_COLORS.keys())
+    assert SYMBOL2NUMBER.keys() == COVALENT_RADII.keys()
+    assert SYMBOL2NUMBER.keys() == CPK_COLORS.keys()
 
 
 def test_pade_data():

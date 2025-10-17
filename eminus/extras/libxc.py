@@ -12,9 +12,7 @@ Alternatively, one can use the PySCF Libxc interface with::
     pip install eminus[libxc]
 """
 
-import numpy as np
-from scipy.linalg import norm
-
+from eminus import backend as xp
 from eminus import config
 from eminus.logger import log
 
@@ -66,35 +64,41 @@ def libxc_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
 
     if dn_spin is None:
         # Libxc expects a 1d array, so reshape n_spin (same as n_spin.ravel(order="F"))
-        out = func.compute({"rho": n_spin.T.ravel()})
+        out = func.compute({"rho": xp.to_np(n_spin.T.ravel())})
     else:
         # The gradients have to be reshaped as well but also squared
         if Nspin == 1:
-            dn2 = norm(dn_spin, axis=2) ** 2
+            dn2 = xp.linalg.norm(dn_spin, axis=2) ** 2
         else:
             # For the spin-polarized case the gradients of spin-up and -down are mixed
-            dn2 = np.vstack(
+            dn2 = xp.vstack(
                 (
-                    norm(dn_spin[0], axis=1) ** 2,
-                    np.sum(dn_spin[0] * dn_spin[1], axis=1),
-                    norm(dn_spin[1], axis=1) ** 2,
+                    xp.linalg.norm(dn_spin[0], axis=1) ** 2,
+                    xp.sum(dn_spin[0] * dn_spin[1], axis=1),
+                    xp.linalg.norm(dn_spin[1], axis=1) ** 2,
                 )
             )
         if tau is None:
-            out = func.compute({"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel()})
+            out = func.compute(
+                {"rho": xp.to_np(n_spin.T.ravel()), "sigma": xp.to_np(dn2.T.ravel())}
+            )
         else:
             out = func.compute(
-                {"rho": n_spin.T.ravel(), "sigma": dn2.T.ravel(), "tau": tau.T.ravel()}
+                {
+                    "rho": xp.to_np(n_spin.T.ravel()),
+                    "sigma": xp.to_np(dn2.T.ravel()),
+                    "tau": xp.to_np(tau.T.ravel()),
+                }
             )
     # zk is a column vector, flatten it to a 1d row vector
-    exc = out["zk"].ravel()
+    exc = xp.asarray(out["zk"].ravel())
 
     # vrho (and vsigma) is exactly transposed from what we need
-    vxc = out["vrho"].T
+    vxc = xp.asarray(out["vrho"]).T
     if dn_spin is not None:
-        vsigma = np.atleast_2d(out["vsigma"].T)
+        vsigma = xp.atleast_2d(xp.asarray(out["vsigma"]).T)
         if tau is not None:
-            vtau = out["vtau"].T
+            vtau = xp.asarray(out["vtau"]).T
             return exc, vxc, vsigma, vtau
         return exc, vxc, vsigma, None
     return exc, vxc, None, None
@@ -127,7 +131,7 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         )
         raise
 
-    if xc_params is not None:
+    if xc_params and xc_params is not None:
         log.warning("xc_params are not supported when using PySCF as the Libxc backend.")
 
     if dn_spin is None:
@@ -138,34 +142,35 @@ def pyscf_functional(xc, n_spin, Nspin, dn_spin=None, tau=None, xc_params=None):
         # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n)
         if Nspin == 1:
             # For spin-paired systems we have to remove the spin indexing (the outermost shape)
-            rho = np.vstack((n_spin[0], dn_spin[0].T))
+            rho = xp.vstack((n_spin[0], dn_spin[0].T))
         else:
-            rho = np.array(
-                [np.vstack((n_spin[0], dn_spin[0].T)), np.vstack((n_spin[1], dn_spin[1].T))]
+            rho = xp.stack(
+                [xp.vstack((n_spin[0], dn_spin[0].T)), xp.vstack((n_spin[1], dn_spin[1].T))]
             )
     else:
         # For meta-GGAs we have to append the kinetic energy densities as well
         # The input "density" rho is sorted as (n,grad_x n,grad_y n,grad_z n,lapl,tau)
         # We do not support meta-GGAs with a dependency of the laplacian so set it to zero
-        lapl = np.zeros(len(n_spin[0]))
+        lapl = xp.zeros(len(n_spin[0]))
         if Nspin == 1:
-            rho = np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
+            rho = xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0]))
         else:
-            rho = np.array(
+            rho = xp.stack(
                 [
-                    np.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
-                    np.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1])),
+                    xp.vstack((n_spin[0], dn_spin[0].T, lapl, tau[0])),
+                    xp.vstack((n_spin[1], dn_spin[1].T, lapl, tau[1])),
                 ]
             )
 
     # Spin in PySCF is the number of unpaired electrons, not the number of spin channels
-    exc, vxc, _, _ = eval_xc(xc, rho, spin=Nspin - 1)
+    exc, vxc, _, _ = eval_xc(xc, xp.to_np(rho), spin=Nspin - 1)
+    exc, vxc = xp.asarray(exc), [xp.asarray(v.T) if v is not None else v for v in vxc]
     # The first entry of vxc is vrho
     # The second entry of the second entry is vsigma
     # The fourth entry of the second entry is vtau (the third would be vlapl)
     # These arrays are 1d for Nspin=1 and a 2d column array for Nspin=2, reshape them as needed
     if dn_spin is not None:
         if tau is not None:
-            return exc, np.atleast_2d(vxc[0].T), np.atleast_2d(vxc[1].T), np.atleast_2d(vxc[3].T)
-        return exc, np.atleast_2d(vxc[0].T), np.atleast_2d(vxc[1].T), None
-    return exc, np.atleast_2d(vxc[0].T), None, None
+            return exc, xp.atleast_2d(vxc[0]), xp.atleast_2d(vxc[1]), xp.atleast_2d(vxc[3])
+        return exc, xp.atleast_2d(vxc[0]), xp.atleast_2d(vxc[1]), None
+    return exc, xp.atleast_2d(vxc[0]), None, None

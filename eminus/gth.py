@@ -2,8 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Utilities to use Goedecker, Teter, and Hutter pseudopotentials."""
 
+import math
+
 import numpy as np
 
+from . import backend as xp
 from .io import read_gth
 from .utils import Ylm_real
 
@@ -19,8 +22,8 @@ class GTH:
         """Initialize the GTH object."""
         self.GTH = {}  #: Dictionary with GTH parameters per atom type.
         self.NbetaNL = 0  #: Number of projector functions for the non-local potential.
-        self.prj2beta = np.array([0])  #: Index matrix to map to the correct projector function.
-        self.betaNL = np.array([0])  #: Atomic-centered projector functions.
+        self.prj2beta = xp.asarray([0])  #: Index matrix to map to the correct projector function.
+        self.betaNL = xp.asarray([0])  #: Atomic-centered projector functions.
 
         # Allow creating an empty instance (used when loading GTH objects from JSON files)
         if scf is not None:
@@ -66,7 +69,7 @@ def init_gth_loc(scf, **kwargs):
     species = set(atoms.atom)
     omega = 1  # Normally this would be det(atoms.a), but Arias notation is off by this factor
 
-    Vloc = np.zeros_like(atoms.G2)
+    Vloc = xp.zeros_like(atoms.G2, dtype=complex)
     for isp in species:
         psp = scf.gth[isp]
         rloc = psp["rloc"]
@@ -78,12 +81,12 @@ def init_gth_loc(scf, **kwargs):
 
         rlocG2 = atoms.G2 * rloc**2
         rlocG22 = rlocG2**2
-        exprlocG2 = np.exp(-0.5 * rlocG2)
+        exprlocG2 = xp.exp(-0.5 * rlocG2)
         # Ignore the division by zero for the first elements
         # One could do some proper indexing with [1:] but indexing is slow
         with np.errstate(divide="ignore", invalid="ignore"):
-            Vsp = -4 * np.pi * Zion / omega * exprlocG2 / atoms.G2 + np.sqrt(
-                (2 * np.pi) ** 3
+            Vsp = -4 * math.pi * Zion / omega * exprlocG2 / atoms.G2 + math.sqrt(
+                (2 * math.pi) ** 3
             ) * rloc**3 / omega * exprlocG2 * (
                 c1
                 + c2 * (3 - rlocG2)
@@ -91,16 +94,16 @@ def init_gth_loc(scf, **kwargs):
                 + c4 * (105 - 105 * rlocG2 + 21 * rlocG22 - rlocG2**3)
             )
         # Special case for G=(0,0,0), same as in QE
-        Vsp[0] = 2 * np.pi * Zion * rloc**2 + (2 * np.pi) ** 1.5 * rloc**3 * (
+        Vsp[0] = 2 * math.pi * Zion * rloc**2 + (2 * math.pi) ** 1.5 * rloc**3 * (
             c1 + 3 * c2 + 15 * c3 + 105 * c4
         )
 
         # Sum up the structure factor for every species
-        Sf = np.zeros(len(atoms.Sf[0]), dtype=complex)
+        Sf = xp.zeros(len(atoms.Sf[0]), dtype=complex)
         for ia in range(atoms.Natoms):
             if atoms.atom[ia] == isp:
                 Sf += atoms.Sf[ia]
-        Vloc += np.real(atoms.J(Vsp * Sf))
+        Vloc += xp.real(atoms.J(Vsp * Sf))
     return Vloc
 
 
@@ -118,7 +121,7 @@ def init_gth_nonloc(atoms, gth):
     Returns:
         NbetaNL, prj2beta, and betaNL.
     """
-    prj2beta = np.empty((3, atoms.Natoms, 4, 7), dtype=int)
+    prj2beta = xp.empty((3, atoms.Natoms, 4, 7), dtype=int)
     prj2beta[:] = -1  # Set to an invalid index
 
     NbetaNL = 0
@@ -132,10 +135,10 @@ def init_gth_nonloc(atoms, gth):
 
     betaNL = []
     for ik in range(atoms.kpts.Nk):
-        betaNL_ik = np.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
+        betaNL_ik = xp.empty((len(atoms.Gk2c[ik]), NbetaNL), dtype=complex)
         ibeta = 0
         gk = atoms.G[atoms.active[ik]] + atoms.kpts.k[ik]
-        Gkm = np.sqrt(atoms.Gk2c[ik])
+        Gkm = xp.sqrt(atoms.Gk2c[ik])
         for ia in range(atoms.Natoms):
             # It is important to transform the structure factor to make both notations compatible
             Sf = atoms.Idag(atoms.J(atoms.Sf[ia], ik), ik)
@@ -172,7 +175,7 @@ def calc_Vnonloc(scf, ik, spin, W):
     """
     atoms = scf.atoms
 
-    Vpsi = np.zeros_like(W[ik][spin], dtype=complex)
+    Vpsi = xp.zeros_like(W[ik][spin], dtype=complex)
     if scf.pot != "gth" or scf.gth.NbetaNL == 0:  # Only calculate the non-local part if necessary
         return Vpsi
 
@@ -211,31 +214,31 @@ def eval_proj_G(psp, l, iprj, Gm, Omega):
     rrl = psp["rp"][l]
     Gr2 = (Gm * rrl) ** 2
 
-    prefactor = 4 * np.pi ** (5 / 4) * np.sqrt(2 ** (l + 1) * rrl ** (2 * l + 3) / Omega)
-    Vprj = prefactor * np.exp(-0.5 * Gr2)
+    prefactor = 4 * math.pi ** (5 / 4) * math.sqrt(2 ** (l + 1) * rrl ** (2 * l + 3) / Omega)
+    Vprj = prefactor * xp.exp(-0.5 * Gr2)
 
     if l == 0:  # s-channel
         if iprj == 1:
             return Vprj
         if iprj == 2:
-            return 2 / np.sqrt(15) * (3 - Gr2) * Vprj
+            return 2 / math.sqrt(15) * (3 - Gr2) * Vprj
         if iprj == 3:
-            return (4 / 3) / np.sqrt(105) * (15 - 10 * Gr2 + Gr2**2) * Vprj
+            return (4 / 3) / math.sqrt(105) * (15 - 10 * Gr2 + Gr2**2) * Vprj
     elif l == 1:  # p-channel
         if iprj == 1:
-            return 1 / np.sqrt(3) * Gm * Vprj
+            return 1 / math.sqrt(3) * Gm * Vprj
         if iprj == 2:
-            return 2 / np.sqrt(105) * Gm * (5 - Gr2) * Vprj
+            return 2 / math.sqrt(105) * Gm * (5 - Gr2) * Vprj
         if iprj == 3:
-            return (4 / 3) / np.sqrt(1155) * Gm * (35 - 14 * Gr2 + Gr2**2) * Vprj
+            return (4 / 3) / math.sqrt(1155) * Gm * (35 - 14 * Gr2 + Gr2**2) * Vprj
     elif l == 2:  # d-channel
         if iprj == 1:
-            return 1 / np.sqrt(15) * Gm**2 * Vprj
+            return 1 / math.sqrt(15) * Gm**2 * Vprj
         if iprj == 2:
-            return (2 / 3) / np.sqrt(105) * Gm**2 * (7 - Gr2) * Vprj
+            return (2 / 3) / math.sqrt(105) * Gm**2 * (7 - Gr2) * Vprj
     elif l == 3:  # f-channel
         # Only one projector
-        return 1 / np.sqrt(105) * Gm**3 * Vprj
+        return 1 / math.sqrt(105) * Gm**3 * Vprj
 
     msg = f"No projector found for l={l}."
     raise ValueError(msg)

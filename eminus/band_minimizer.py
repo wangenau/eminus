@@ -9,9 +9,7 @@ and made more performant.
 import copy
 import logging
 
-import numpy as np
-from scipy.linalg import inv, sqrtm
-
+from . import backend as xp
 from .dft import H, orth, orth_unocc
 from .energies import get_Eband
 from .logger import name
@@ -72,8 +70,8 @@ def get_grad_occ(scf, ik, spin, W, **kwargs):
     WHW = W[ik][spin].conj().T @ HW
     OW = atoms.O(W[ik][spin])
     U = W[ik][spin].conj().T @ OW
-    invU = inv(U)
-    U12 = sqrtm(invU)
+    invU = xp.linalg.inv(U)
+    U12 = xp.sqrtm(invU)
     # grad E = (I - O(Y) Ydag) H(Y) U^-0.5
     return atoms.kpts.wk[ik] * ((HW - OW @ WHW) @ U12)
 
@@ -100,15 +98,15 @@ def get_grad_unocc(scf, ik, spin, Z, **kwargs):
     Ydag = Y.conj().T
     # We need X12 later, so orthogonalize in-place and only the current state
     rhoZ = Z[ik][spin] - Y @ Ydag @ atoms.O(Z[ik][spin])
-    X12 = inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+    X12 = xp.linalg.inv(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     D = rhoZ @ X12
     # Create the correct input shape for the Hamiltonian
     D_tmp = [None] * len(Z)
-    D_tmp[ik] = np.empty_like(Z[ik])
+    D_tmp[ik] = xp.empty_like(Z[ik])
     D_tmp[ik][spin] = D
     HD = H(scf, ik, spin, D_tmp, **kwargs)
     DHD = D.conj().T @ HD
-    I = np.eye(Z[ik].shape[1])
+    I = xp.eye(Z[ik].shape[1])
     # grad E = (I - O(Y) Ydag) (I - O(D) Ddag) H(D) X^-0.5
     return atoms.kpts.wk[ik] * ((I - atoms.O(Y) @ Ydag) @ (HD - atoms.O(D) @ DHD) @ X12)
 
@@ -189,8 +187,8 @@ def pclm(
     atoms = scf.atoms
     costs = []
 
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = [np.empty_like(Wk) for Wk in W]
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    d = [xp.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = "pclm"
@@ -282,12 +280,12 @@ def pccg(
     atoms = scf.atoms
     costs = []
 
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    d = [np.empty_like(Wk) for Wk in W]
-    d_old = [np.empty_like(Wk) for Wk in W]
-    g_old = [np.empty_like(Wk) for Wk in W]
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    d = [xp.empty_like(Wk) for Wk in W]
+    d_old = [xp.empty_like(Wk) for Wk in W]
+    g_old = [xp.empty_like(Wk) for Wk in W]
 
     if precondition:
         method = "pccg"
@@ -402,13 +400,13 @@ def auto(
     atoms = scf.atoms
     costs = []
 
-    linmin = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    cg = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    norm_g = np.empty((atoms.kpts.Nk, atoms.occ.Nspin))
-    g = [np.empty_like(Wk) for Wk in W]
-    d = [np.empty_like(Wk) for Wk in W]
-    d_old = [np.empty_like(Wk) for Wk in W]
-    g_old = [np.empty_like(Wk) for Wk in W]
+    linmin = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    cg = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    norm_g = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin))
+    g = [xp.empty_like(Wk) for Wk in W]
+    d = [xp.empty_like(Wk) for Wk in W]
+    d_old = [xp.empty_like(Wk) for Wk in W]
+    g_old = [xp.empty_like(Wk) for Wk in W]
 
     # Do the first step without the linmin and cg tests, and without the cg_method
     for ik in range(atoms.kpts.Nk):

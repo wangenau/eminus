@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the k-points functionalities."""
 
+import copy
+import math
+
 import numpy as np
 import pytest
-from numpy.testing import assert_allclose, assert_equal
 
+from eminus import backend as xp
 from eminus.data import LATTICE_VECTORS, SPECIAL_POINTS
 from eminus.kpoints import (
     bandpath,
@@ -15,6 +18,7 @@ from eminus.kpoints import (
     kpoints2axis,
     monkhorst_pack,
 )
+from eminus.testing import assert_allclose, assert_array_equal
 
 
 def test_lattice():
@@ -25,12 +29,12 @@ def test_lattice():
 
 
 @pytest.mark.parametrize(
-    ("a", "ref"), [(None, np.eye(3)), (2, 2 * np.eye(3)), (np.ones((3, 3)), np.ones((3, 3)))]
+    ("a", "ref"), [(None, xp.eye(3)), (2, 2 * xp.eye(3)), (xp.ones((3, 3)), xp.ones((3, 3)))]
 )
 def test_a(a, ref):
     """Test the setting of a."""
     kpts = KPoints("sc", a).build()
-    assert_equal(kpts.a, ref)
+    assert_array_equal(kpts.a, ref)
 
 
 @pytest.mark.parametrize(("kmesh", "ref"), [(None, None), (2, [2] * 3), ([1, 2, 3], [1, 2, 3])])
@@ -40,8 +44,8 @@ def test_kmesh(kmesh, ref):
     kpts.kmesh = kmesh
     kpts.build()
     assert kpts.path is None
-    assert_equal(kpts.kmesh, ref)
-    assert_allclose(np.sum(kpts.wk), 1)
+    assert_array_equal(kpts.kmesh, ref)
+    assert_allclose(xp.sum(kpts.wk), 1)
     assert len(kpts.wk) == kpts.Nk
     assert len(kpts.k) == kpts.Nk
 
@@ -51,7 +55,7 @@ def test_kshift():
     kpts = KPoints("fcc")
     kpts.kshift = [1] * 3
     kpts.build()
-    assert_equal(kpts.k, 1)
+    assert_array_equal(kpts.k, 1)
 
 
 def test_gamma_centered():
@@ -60,13 +64,13 @@ def test_gamma_centered():
     kpts.gamma_centered = True
     kpts.kmesh = 2
     kpts.build()
-    assert_equal(kpts.k[0], 0)
+    assert_array_equal(kpts.k[0], 0)
     kpts.gamma_centered = False
     kpts.build()
-    assert np.any(kpts.k[0] != 0)
+    assert xp.any(kpts.k[0] != 0)
 
 
-@pytest.mark.parametrize(("path", "ref"), [("G", 0), ("gX", [[0, 0, 0], [0, 2 * np.pi, 0]])])
+@pytest.mark.parametrize(("path", "ref"), [("G", 0), ("gX", [[0, 0, 0], [0, 2 * math.pi, 0]])])
 def test_path(path, ref):
     """Test the setting of path."""
     kpts = KPoints("fcc")
@@ -81,24 +85,24 @@ def test_k_scaled():
     kpts = KPoints("sc")
     kpts.kmesh = 2
     kpts.build()
-    assert_allclose(np.abs(kpts.k_scaled - 1 / 4), 1 / 4)
+    assert_allclose(xp.abs(kpts.k_scaled - 1 / 4), 1 / 4)
 
 
 def test_monkhorst_pack_generation():
     """Test the Monkhorst-Pack mesh generation."""
     k_points = monkhorst_pack((1, 1, 1))
-    assert_equal(k_points, 0)
+    assert_array_equal(k_points, 0)
     k_points = monkhorst_pack((2, 2, 2))
-    assert_equal(np.abs(k_points), 1 / 4)
+    assert_array_equal(xp.abs(k_points), 1 / 4)
 
 
 def test_gamma_centered_generation():
     """Test the Gamma centered mesh generation."""
     k_points = gamma_centered((1, 1, 1))
-    assert_equal(k_points, 0)
+    assert_array_equal(k_points, 0)
     k_points = gamma_centered((2, 2, 2))
-    assert_equal(k_points[0], 0)
-    assert np.all(k_points >= 0)
+    assert_array_equal(k_points[0], 0)
+    assert xp.all(k_points >= 0)
 
 
 def test_bandpath_lgx():
@@ -110,17 +114,17 @@ def test_bandpath_lgx():
     kpts.Nk = 2  # Test that that Nk gets set to 3, since 3 special points are set
     k_points = bandpath(kpts.build())
     assert len(k_points) == 3
-    assert_equal(k_points, s_points)
+    assert_array_equal(k_points, s_points)
 
     kpts.Nk = 10
     k_points = bandpath(kpts.build())
     assert len(k_points) == 10
-    assert_equal(k_points[[0, 4, 9]], s_points)
+    assert_array_equal(k_points[[0, 4, 9]], s_points)
 
     kpts.Nk = 50
     k_points = bandpath(kpts.build())
     assert len(k_points) == 50
-    assert_equal(k_points[[0, 23, 49]], s_points)
+    assert_array_equal(k_points[[0, 23, 49]], s_points)
 
 
 def test_bandpath_xukg():
@@ -137,17 +141,17 @@ def test_bandpath_xukg():
     kpts.Nk = 4
     k_points = bandpath(kpts.build())
     assert len(k_points) == 4
-    assert_equal(k_points, s_points)
+    assert_array_equal(k_points, s_points)
 
     kpts.Nk = 10
     k_points = bandpath(kpts.build())
     assert len(k_points) == 10
-    assert_equal(k_points[[0, 3, 4, 9]], s_points)
+    assert_array_equal(k_points[[0, 3, 4, 9]], s_points)
 
     kpts.Nk = 50
     k_points = bandpath(kpts.build())
     assert len(k_points) == 50
-    assert_equal(k_points[[0, 13, 14, 49]], s_points)
+    assert_array_equal(k_points[[0, 13, 14, 49]], s_points)
 
 
 def test_kpoints2axis_lgx():
@@ -183,9 +187,9 @@ def test_kpoints2axis_xukg():
 
 def test_get_brillouin_zone():
     """Test the Brillouin zone generation."""
-    ridges = get_brillouin_zone(np.eye(3))
+    ridges = get_brillouin_zone(xp.eye(3))
     # The Brillouin zone of a cubic lattice is cubic again
-    assert_allclose(np.abs(ridges), np.pi)
+    assert_allclose(np.abs(ridges), math.pi)
 
 
 def test_trs():
@@ -201,9 +205,9 @@ def test_trs():
     assert old_Nk > kpts.Nk
     assert len(old_k) > len(kpts.k)
     assert len(old_wk) > len(kpts.wk)
-    assert_allclose(np.sum(kpts.wk), 1)
+    assert_allclose(xp.sum(kpts.wk), 1)
     # Make sure the Gamma-point included in the symmetrized k-points
-    assert np.any(np.isin(kpts.k, [0, 0, 0]))
+    assert xp.any(xp.isin(kpts.k, xp.asarray([0, 0, 0])))
 
 
 def test_trs_ordering():
@@ -214,7 +218,7 @@ def test_trs_ordering():
     kpts.build()
     kpts.wk[2] = 1
     kpts.wk[5] = 0.5
-    old_wk = np.copy(kpts.wk)
+    old_wk = copy.deepcopy(kpts.wk)
     old_k = kpts.k
     kpts.trs()
     assert_allclose(old_wk[2] + old_wk[5], kpts.wk[1])

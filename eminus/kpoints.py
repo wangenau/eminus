@@ -2,12 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """Generate k-points and sample band paths."""
 
+import math
 import numbers
 
 import numpy as np
-from scipy.linalg import inv, norm
 from scipy.spatial import Voronoi
 
+from . import backend as xp
 from .data import LATTICE_VECTORS, SPECIAL_POINTS
 from .logger import log
 from .utils import BaseObject
@@ -27,8 +28,8 @@ class KPoints(BaseObject):
         if a is None:
             a = LATTICE_VECTORS[self.lattice]
         if isinstance(a, numbers.Real):
-            a = a * np.asarray(LATTICE_VECTORS[self.lattice])
-        self.a = a  #: Cell size.
+            a = a * xp.asarray(LATTICE_VECTORS[self.lattice], dtype=float)
+        self.a = xp.asarray(a, dtype=float)  #: Cell size.
         self.kmesh = [1, 1, 1]  #: k-point mesh.
         self.wk = [1]  #: k-point weights.
         self.k = [[0, 0, 0]]  #: k-point coordinates.
@@ -47,8 +48,8 @@ class KPoints(BaseObject):
     def kmesh(self, value):
         if value is not None:
             if isinstance(value, numbers.Integral):
-                value = value * np.ones(3, dtype=int)
-            self._kmesh = np.asarray(value)
+                value = value * xp.ones(3, dtype=int)
+            self._kmesh = xp.asarray(value, dtype=int)
             self.path = None
             self.is_built = False
         # If we set a band path to the object the k-mesh gets set to None
@@ -62,7 +63,7 @@ class KPoints(BaseObject):
 
     @wk.setter
     def wk(self, value):
-        self._wk = np.asarray(value)
+        self._wk = xp.asarray(value, dtype=float)
         self._Nk = len(self._wk)
         self.is_built = False
 
@@ -73,7 +74,7 @@ class KPoints(BaseObject):
 
     @k.setter
     def k(self, value):
-        self._k = np.asarray(value)
+        self._k = xp.asarray(value, dtype=float)
         self.is_built = False
 
     @property
@@ -93,7 +94,7 @@ class KPoints(BaseObject):
 
     @kshift.setter
     def kshift(self, value):
-        self._kshift = np.asarray(value)
+        self._kshift = xp.asarray(value, dtype=float)
         self.is_built = False
 
     @property
@@ -134,7 +135,7 @@ class KPoints(BaseObject):
 
     def build(self):
         """Build all parameters of the KPoints object."""
-        if self.lattice == "sc" and not (self.a == np.diag(np.diag(self.a))).all():
+        if self.lattice == "sc" and not xp.all(self.a == xp.diag(xp.diag(self.a))):
             log.warning("Lattice system and lattice vectors do not match.")
         if self.is_built:
             return self
@@ -146,7 +147,7 @@ class KPoints(BaseObject):
         else:
             self._k_scaled = bandpath(self)
         # Without removing redundancies the weight is the same for all k-points
-        self.wk = np.ones(len(self._k_scaled)) / len(self._k_scaled)
+        self.wk = xp.ones(len(self._k_scaled)) / len(self._k_scaled)
         self.k = kpoint_convert(self._k_scaled, self.a) + self.kshift
         self.is_built = True
         return self
@@ -157,24 +158,24 @@ class KPoints(BaseObject):
         """Reduce k-points using time reversal symmetry (k=-k)."""
         if not self.is_built:
             self.build()
-        if not np.any(self.k < 0):
+        if not xp.any(self.k < 0):
             log.warning("No negative k-points found. Nothing to do.")
             return self
         idx_to_remove = []
         for i in range(self.Nk):
             for j in range(i + 1, self.Nk):
                 # Check k=-k within some tolerance
-                if np.sum(np.abs(self.k[i] + self.k[j])) < 1e-15:
+                if xp.sum(xp.abs(self.k[i] + self.k[j])) < 1e-15:
                     idx_to_remove.append(i)
                     self.wk[j] += self.wk[i]  # Adjust weights
         # Delete k-points and weights
-        self.k = np.delete(self.k, idx_to_remove, axis=0)
-        self.wk = np.delete(self.wk, idx_to_remove)
+        self.k = xp.delete(self.k, idx_to_remove, axis=0)
+        self.wk = xp.delete(self.wk, idx_to_remove)
         return self
 
     def _assert_gamma_only(self):
         """Make sure that the object only contains the Gamma point."""
-        if not np.all(self.k == 0):
+        if not xp.all(self.k == 0):
             msg = "The k-points object does not contain only the Gamma point."
             raise NotImplementedError(msg)
 
@@ -201,7 +202,9 @@ def kpoint_convert(k_points, lattice_vectors):
     Returns:
         k-points in cartesian coordinates.
     """
-    inv_cell = 2 * np.pi * inv(lattice_vectors).T
+    k_points = xp.asarray(k_points, dtype=float)
+    lattice_vectors = xp.asarray(lattice_vectors, dtype=float)
+    inv_cell = 2 * math.pi * xp.linalg.inv(lattice_vectors).T
     return k_points @ inv_cell
 
 
@@ -217,8 +220,8 @@ def monkhorst_pack(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return (M + 0.5) / nk - 0.5  # Normal Monkhorst-Pack grid
+    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    return (M + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
 
 
 def gamma_centered(nk):
@@ -233,8 +236,8 @@ def gamma_centered(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3))
-    return M / nk  # Gamma-centered grid
+    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    return M / xp.asarray(nk)  # Gamma-centered grid
 
 
 def bandpath(kpts):
@@ -267,29 +270,29 @@ def bandpath(kpts):
     for i in range(len(path_list) - 1):
         if "," not in path_list[i : i + 2]:
             # Use subtract since s_points are lists
-            dist = np.subtract(s_points[path_list[i + 1]], s_points[path_list[i]])
-            dists.append(norm(kpoint_convert(dist, kpts.a)))
+            dist = xp.asarray(s_points[path_list[i + 1]]) - xp.asarray(s_points[path_list[i]])
+            dists.append(xp.linalg.norm(kpoint_convert(dist, kpts.a)))
         else:
             # Set distance to zero when jumping between special points
             dists.append(0)
 
     # Calculate sample points between the special points
-    scaled_dists = (N - N_special) * np.array(dists) / sum(dists)
-    samplings = np.int64(np.round(scaled_dists))
+    scaled_dists = (N - N_special) * xp.asarray(dists) / sum(dists)
+    samplings = xp.asarray(xp.round(scaled_dists), dtype=int)
 
     # If our sampling does not match the given N add the difference to the longest distance
-    if N - N_special - np.sum(samplings) != 0:
-        samplings[np.argmax(samplings)] += N - N_special - np.sum(samplings)
+    if N - N_special - xp.sum(samplings) != 0:
+        samplings[xp.argmax(samplings)] += N - N_special - xp.sum(samplings)
 
     # Generate k-point coordinates
-    k_points = [s_points[path_list[0]]]  # Insert the first special point
+    k_points = [xp.asarray(s_points[path_list[0]])]  # Insert the first special point
     for i in range(len(path_list) - 1):
         # Only do something when not jumping between special points
         if "," not in path_list[i : i + 2]:
-            s_start = s_points[path_list[i]]
-            s_end = s_points[path_list[i + 1]]
+            s_start = xp.asarray(s_points[path_list[i]])
+            s_end = xp.asarray(s_points[path_list[i + 1]])
             # Get the vector between special points
-            k_dist = np.subtract(s_end, s_start)
+            k_dist = s_end - s_start
             # Add scaled vectors to the special point to get the new k-points
             k_points += [
                 s_start + k_dist * (n + 1) / (samplings[i] + 1) for n in range(samplings[i])
@@ -298,8 +301,8 @@ def bandpath(kpts):
             k_points.append(s_end)
         # If we jump, add the new special point to start from
         elif path_list[i] == ",":
-            k_points.append(s_points[path_list[i + 1]])
-    return np.asarray(k_points)
+            k_points.append(xp.asarray(s_points[path_list[i + 1]]))
+    return xp.stack(k_points)
 
 
 def kpoints2axis(kpts):
@@ -317,7 +320,7 @@ def kpoints2axis(kpts):
 
     # Calculate the distances between k-points
     k_dist = kpts.k_scaled[1:] - kpts.k_scaled[:-1]
-    dists = norm(kpoint_convert(k_dist, kpts.a), axis=1)
+    dists = xp.linalg.norm(kpoint_convert(k_dist, kpts.a), axis=1)
 
     # Create the labels
     labels = []
@@ -337,17 +340,19 @@ def kpoints2axis(kpts):
     for p in labels[1:]:
         # Only search the k-points starting from the previous special point
         shift = special_indices[-1]
-        k = kpts.k_scaled[shift:]
+        k = xp.asarray(kpts.k_scaled[shift:])
         # We index p[0] since p could be a joined label of a jump
         # This expression simply finds the special point in the k_points matrix
-        index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
-        special_indices.append(index)
+        # The following expressions is a bit more readable, but only works with NumPy
+        # index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
+        index = xp.nonzero(xp.ravel(xp.all(k == xp.asarray(s_points[p[0]]), axis=1)))[0][0] + shift
+        special_indices.append(int(index))
         # Set the distance between special points to zero if we have a jump
         if "," in p:
             dists[index] = 0
 
     # Insert a zero at the beginning and add up the lengths to create the k-axis
-    k_axis = np.append([0], np.cumsum(dists))
+    k_axis = xp.concatenate((xp.asarray([0]), xp.cumsum(dists, axis=0)))
     return k_axis, k_axis[special_indices], labels
 
 
@@ -364,7 +369,7 @@ def get_brillouin_zone(lattice_vectors):
     Returns:
         Brillouin zone vertices.
     """
-    inv_cell = kpoint_convert(np.eye(3), lattice_vectors)
+    inv_cell = xp.to_np(kpoint_convert(xp.eye(3), lattice_vectors))
 
     px, py, pz = np.tensordot(inv_cell, np.mgrid[-1:2, -1:2, -1:2], axes=(0, 0))
     points = np.c_[px.ravel(), py.ravel(), pz.ravel()]

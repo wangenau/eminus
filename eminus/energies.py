@@ -3,11 +3,10 @@
 """Calculate different energy contributions."""
 
 import dataclasses
+import math
 
-import numpy as np
-from scipy.linalg import inv, norm
-from scipy.special import erfc
-
+from . import backend as xp
+from . import config
 from .dft import get_n_single, get_phi, H
 from .extras import d3
 from .gga import get_grad_field, get_tau
@@ -93,9 +92,11 @@ def get_Ekin(atoms, Y, ik):
         Ekin += (
             -0.5
             * atoms.kpts.wk[ik]
-            * np.trace(atoms.occ.F[ik][spin] @ Y[spin].conj().T @ atoms.L(Y[spin], ik))
+            * xp.trace(
+                xp.astype(atoms.occ.F[ik][spin], complex) @ Y[spin].conj().T @ atoms.L(Y[spin], ik)
+            )
         )
-    return np.real(Ekin)
+    return float(xp.real(Ekin))
 
 
 def get_Ecoul(atoms, n, phi=None):
@@ -116,7 +117,7 @@ def get_Ecoul(atoms, n, phi=None):
     if phi is None:
         phi = get_phi(atoms, n)
     # Ecoul = 0.5 (J(n))dag O(phi)
-    return np.real(0.5 * n @ atoms.Jdag(atoms.O(phi)))
+    return float(xp.real(0.5 * xp.astype(n, complex) @ atoms.Jdag(atoms.O(phi))))
 
 
 def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
@@ -142,7 +143,7 @@ def get_Exc(scf, n, exc=None, n_spin=None, dn_spin=None, tau=None, Nspin=2):
     if exc is None:
         exc = get_exc(scf.xc, n_spin, Nspin, dn_spin, tau, scf.xc_params)
     # Exc = (J(n))dag O(J(exc))
-    return np.real(n @ atoms.Jdag(atoms.O(atoms.J(exc))))
+    return float(xp.real(xp.astype(n, complex) @ atoms.Jdag(atoms.O(atoms.J(exc)))))
 
 
 def get_Eloc(scf, n):
@@ -157,7 +158,7 @@ def get_Eloc(scf, n):
     Returns:
         Local energy contribution in Hartree.
     """
-    return np.real(np.vdot(scf.Vloc, n))
+    return float(xp.real(xp.vdot(scf.Vloc, xp.astype(n, complex))))
 
 
 @handle_k(mode="reduce")
@@ -185,7 +186,7 @@ def get_Enonloc(scf, Y, ik):
     for spin in range(atoms.occ.Nspin):
         betaNL_psi = (Y[spin].conj().T @ scf.gth.betaNL[ik]).conj()
 
-        enl = np.zeros(Y.shape[-1], dtype=complex)
+        enl = xp.zeros(Y.shape[-1], dtype=complex)
         for ia in range(atoms.Natoms):
             psp = scf.gth[atoms.atom[ia]]
             for l in range(psp["lmax"]):
@@ -196,9 +197,9 @@ def get_Enonloc(scf, Y, ik):
                             jbeta = scf.gth.prj2beta[jprj, ia, l, m + psp["lmax"] - 1] - 1
                             hij = psp["h"][l, iprj, jprj]
                             enl += hij * betaNL_psi[:, ibeta].conj() * betaNL_psi[:, jbeta]
-        Enonloc += np.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
+        Enonloc += xp.sum(atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * enl)
     # We have to multiply with the cell volume, because of different orthogonalization methods
-    return np.real(Enonloc * atoms.Omega)
+    return float(xp.real(Enonloc * atoms.Omega))
 
 
 def get_Eewald(atoms, gcut=2, gamma=1e-8):
@@ -216,33 +217,37 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     Returns:
         Ewald energy in Hartree.
     """
+    if config.backend == "torch":
+        erfc = xp.special.erfc
+    else:
+        from scipy.special import erfc
 
     # For a plane wave code we have multiple contributions for the Ewald energy
     # Namely, a sum from contributions from real-space, reciprocal space,
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     def get_index_vectors(s):
         """Create index vectors of s periodic images."""
-        m1 = np.arange(-s[0], s[0] + 1)
-        m2 = np.arange(-s[1], s[1] + 1)
-        m3 = np.arange(-s[2], s[2] + 1)
-        M = np.transpose(np.meshgrid(m1, m2, m3)).reshape(-1, 3)
+        m1 = xp.arange(-s[0], s[0] + 1)
+        m2 = xp.arange(-s[1], s[1] + 1)
+        m3 = xp.arange(-s[2], s[2] + 1)
+        M = xp.permute_dims(xp.stack(xp.meshgrid(m1, m2, m3)), (3, 2, 1, 0)).reshape(-1, 3)
         # Delete the [0, 0, 0] element, to prevent checking for it in every loop
         return M[~(M == 0).all(axis=1)]
 
     # Calculate the Ewald splitting parameter nu
-    gexp = -np.log(gamma)
-    nu = 0.5 * np.sqrt(gcut**2 / gexp)
+    gexp = -math.log(gamma)
+    nu = 0.5 * math.sqrt(gcut**2 / gexp)
 
     # Start by calculating the self-energy
-    Eewald = -nu / np.sqrt(np.pi) * np.sum(atoms.Z**2)
+    Eewald = -nu / math.sqrt(math.pi) * xp.sum(atoms.Z**2)
     # Add the electroneutrality term
-    Eewald += -np.pi * np.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
+    Eewald += -math.pi * xp.sum(atoms.Z) ** 2 / (2 * nu**2 * atoms.Omega)
 
     # Calculate the real-space contribution
     # Calculate the amount of images that have to be considered per axis
-    Rm = norm(atoms.a, axis=1)
-    tmax = np.sqrt(0.5 * gexp) / nu
-    s = np.rint(tmax / Rm + 1.5)
+    Rm = xp.linalg.norm(atoms.a, axis=1)
+    tmax = math.sqrt(0.5 * gexp) / nu
+    s = xp.round(tmax / Rm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the translation vectors
@@ -250,15 +255,15 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
 
     # Calculate the reciprocal space contribution
     # Calculate the amount of reciprocal images that have to be considered per axis
-    g = 2 * np.pi * inv(atoms.a.T)
-    gm = norm(g, axis=1)
-    s = np.rint(gcut / gm + 1.5)
+    g = 2 * math.pi * xp.linalg.inv(atoms.a.T)
+    gm = xp.linalg.norm(g, axis=1)
+    s = xp.round(gcut / gm + 1.5)
     # Collect all box index vectors in a matrix
     M = get_index_vectors(s)
     # Calculate the reciprocal translation vectors and precompute the prefactor
     G = M @ g
-    G2 = norm(G, axis=1) ** 2
-    prefactor = 2 * np.pi / atoms.Omega * np.exp(-0.25 * G2 / nu**2) / G2
+    G2 = xp.linalg.norm(G, axis=1) ** 2
+    prefactor = 2 * math.pi / float(atoms.Omega) * xp.exp(-0.25 * G2 / nu**2) / G2
 
     for ia in range(atoms.Natoms):
         for ja in range(atoms.Natoms):
@@ -266,17 +271,17 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
             ZiZj = atoms.Z[ia] * atoms.Z[ja]
 
             # Add the real-space contribution
-            rmag = norm(dpos - T, axis=1)
-            Eewald += 0.5 * ZiZj * np.sum(erfc(rmag * nu) / rmag)
+            rmag = xp.linalg.norm(dpos - T, axis=1)
+            Eewald += 0.5 * ZiZj * xp.sum(erfc(rmag * nu) / rmag)
             # The T=[0, 0, 0] element is omitted in M but needed if ia!=ja, so add it manually
             if ia != ja:
-                rmag = norm(dpos)
+                rmag = xp.linalg.norm(dpos)
                 Eewald += 0.5 * ZiZj * erfc(rmag * nu) / rmag
 
             # Add the reciprocal space contribution
-            Gpos = np.sum(G * dpos, axis=1)
-            Eewald += ZiZj * np.sum(prefactor * np.cos(Gpos))
-    return Eewald
+            Gpos = xp.sum(G * dpos, axis=1)
+            Eewald += ZiZj * xp.sum(prefactor * xp.cos(Gpos))
+    return float(Eewald)
 
 
 def get_Esic(scf, Y, n_single=None):
@@ -306,16 +311,16 @@ def get_Esic(scf, Y, n_single=None):
     Esic = 0
     for i in range(atoms.occ.Nstate):
         for spin in range(atoms.occ.Nspin):
-            if np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk) > 0:
+            if xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk) > 0:
                 # Create normalized single-particle densities in the form of electronic densities
                 # per spin channel, since spin-polarized functionals expect this form
-                ni = np.zeros((2, atoms.Ns))
+                ni = xp.zeros((2, atoms.Ns))
                 # Normalize single-particle densities to 1
-                ni[0] = n_single[spin, :, i] / np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
+                ni[0] = n_single[spin, :, i] / xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
 
                 # Get the gradient of the single-particle density
                 if "gga" in scf.xc_type:
-                    dni = np.zeros((2, atoms.Ns, 3))
+                    dni = xp.zeros((2, atoms.Ns, 3))
                     dni[0] = get_grad_field(atoms, ni)[0]
                 else:
                     dni = None
@@ -325,11 +330,11 @@ def get_Esic(scf, Y, n_single=None):
                     # Use only one orbital for the calculation
                     Ytmp = []
                     for ik in range(atoms.kpts.Nk):
-                        Ytmp.append(np.zeros_like(Y[ik]))
+                        Ytmp.append(xp.zeros_like(Y[ik]))
                         Ytmp[ik][0, :, 0] = Y[ik][spin, :, i]
-                    taui = np.zeros_like(ni)
+                    taui = xp.zeros_like(ni)
                     # We also have to normalize to one again
-                    taui[0] = get_tau(atoms, Ytmp)[0] / np.sum(
+                    taui[0] = get_tau(atoms, Ytmp)[0] / xp.sum(
                         atoms.occ.f[:, spin, i] * atoms.kpts.wk
                     )
                 else:
@@ -339,9 +344,9 @@ def get_Esic(scf, Y, n_single=None):
                 # The exchange part for a SIC correction has to be spin-polarized
                 xc = get_Exc(scf, ni[0], n_spin=ni, dn_spin=dni, tau=taui, Nspin=2)
                 # SIC energy is scaled by the occupation number
-                Esic += (coul + xc) * np.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
+                Esic += (coul + xc) * xp.sum(atoms.occ.f[:, spin, i] * atoms.kpts.wk)
     scf.energies.Esic = Esic
-    return Esic
+    return float(Esic)
 
 
 def get_Edisp(scf, version="d3bj", atm=True, xc=None):  # noqa: D103
@@ -375,10 +380,10 @@ def get_Eband(scf, Y, **kwargs):
     Eband = 0
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            Eband += atoms.kpts.wk[ik] * np.trace(
+            Eband += atoms.kpts.wk[ik] * xp.trace(
                 Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
             )
-    return np.real(Eband)
+    return float(xp.real(Eband))
 
 
 def get_Eentropy(scf, epsilon, Efermi):
@@ -408,5 +413,5 @@ def get_Eentropy(scf, epsilon, Efermi):
                 )
 
     Eentropy *= 2 / occ.Nspin
-    scf.energies.Eentropy = Eentropy
-    return Eentropy
+    scf.energies.Eentropy = float(Eentropy)
+    return float(Eentropy)

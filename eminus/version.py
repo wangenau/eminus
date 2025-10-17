@@ -16,7 +16,7 @@ LOGO = (" ___ _____ _ ___ _ _ ___ \n"
 def info():
     """Print version numbers and availability of packages."""
     dependencies = ("numpy", "scipy")
-    extras = ("dftd3", "h5py", "pyscf", "torch", "plotly", "nglview")
+    extras = ("dftd3", "h5py", "pyscf", "torch", "array-api-compat", "plotly", "nglview")
     dev = ("pylibxc", "mypy", "notebook", "pytest", "ruff", "sphinx")
 
     sys.stdout.write("\n".join([f"{line:>35}" for line in LOGO.split("\n")]))
@@ -24,17 +24,17 @@ def info():
         "\n\neminus - Pythonic electronic structure theory"
         "\n https://doi.org/10.1016/j.softx.2025.102035\n"
         "\n--- Platform infos ---"
-        f"\nPlatform   : {platform.system()} {platform.machine()}"
-        f"\nRelease    : {platform.release()} {platform.version()}"
+        f"\nPlatform         : {platform.system()} {platform.machine()}"
+        f"\nRelease          : {platform.release()} {platform.version()}"
         "\n\n--- Version infos ---"
-        f"\npython     : {sys.version.split()[0]}"
-        f"\neminus     : {__version__}\n"
+        f"\npython           : {sys.version.split()[0]}"
+        f"\neminus           : {__version__}\n"
     )
     for pkg in dependencies + extras + dev:
         try:
-            sys.stdout.write(f"{pkg:<11}: {importlib.metadata.version(pkg)}\n")
+            sys.stdout.write(f"{pkg:<17}: {importlib.metadata.version(pkg)}\n")
         except ModuleNotFoundError:  # noqa: PERF203
             if pkg in dependencies:
-                sys.stdout.write(f"{pkg:<11}: Dependency not installed\n")
+                sys.stdout.write(f"{pkg:<17}: Dependency not installed\n")
             elif pkg in extras:
-                sys.stdout.write(f"{pkg:<11}: Extra not installed\n")
+                sys.stdout.write(f"{pkg:<17}: Extra not installed\n")

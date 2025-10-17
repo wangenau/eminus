@@ -5,6 +5,35 @@
 Changelog
 =========
 
+dev
+---
+- New features
+   - Fully implement multiple backend support
+      - Allow NumPy and Torch backends
+      - Torch now fully supports GPU calculations
+- Updated docs
+   - Add a backend overview page
+- Coding style
+   - Many unifications due to the added backend support
+   - Stricter types in many places
+   - Ignore Ruffs PLC0415 rule
+- Miscellaneous
+   - Fix Libxc warning when using PySCF as backend
+   - Add nglview to the Nix flake
+   - Add a testing module to support backend testing
+   - Add a pytest backend option
+   - Update Docker image to trixie
+   - Update units to CODATA 2022 values
+   - Indicate Python 3.14 support
+- Breaking
+   - Drop Python 3.8 support
+   - Raise minimal versions of dependencies
+      - NumPy 2+ and SciPy 1.13+ is now required
+   - Remove Jax extra
+   - Updated Torch extra behavior
+      - Remove Torch extra operator functions
+      - Now requires array-api-compat
+
 v3.1.0 - May 30, 2025
 ---------------------
 - New features

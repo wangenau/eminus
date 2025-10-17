@@ -5,15 +5,18 @@
 
 import numpy as np
 import pytest
-from numpy.random import default_rng
-from numpy.testing import assert_allclose
 
+from eminus import backend as xp
+from eminus.testing import assert_allclose
 from eminus.xc import get_exc, get_vxc, get_xc, get_zeta, IMPLEMENTED, XC_MAP
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
-rng = default_rng()
-n_tests = {1: np.abs(rng.standard_normal((1, 10000))), 2: np.abs(rng.standard_normal((2, 10000)))}
+rng = np.random.default_rng()
+n_tests = {
+    1: xp.abs(xp.asarray(rng.standard_normal((1, 10000)))),
+    2: xp.abs(xp.asarray(rng.standard_normal((2, 10000)))),
+}
 functionals = {xc for xc in XC_MAP if xc.isdigit()}
 excludelist = {
     ("259", 2),  # KSDT has inconsistencies in the Libxc implementation
@@ -37,7 +40,7 @@ def test_get_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack((n_spin, n_spin, n_spin), axis=2)  # type: np.typing.NDArray[np.floating]
     e_out = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
@@ -58,7 +61,7 @@ def test_get_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack((n_spin, n_spin, n_spin), axis=2)  # type: np.typing.NDArray[np.floating]
     v_out, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, v_test, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
@@ -76,7 +79,7 @@ def test_get_vsigmaxc(xc, Nspin):
     if not is_gga(xc):
         return
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
+    dn_spin = xp.stack((n_spin, n_spin, n_spin), axis=2)
     _, vsigma_out, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     _, _, vsigma_test, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(vsigma_out, vsigma_test)
@@ -94,10 +97,10 @@ def test_xc_shape(xc):
     else:
         Nspin = 1
     n_spin = n_tests[Nspin]
-    dn_spin = np.stack((n_spin, n_spin, n_spin), axis=2)
+    dn_spin = xp.stack((n_spin, n_spin, n_spin), axis=2)
 
     # The functionals need n and zeta...
-    n = np.sum(n_spin, axis=0)
+    n = xp.sum(n_spin, axis=0)
     zeta = get_zeta(n_spin)
     e_out, v_out, vsigma_out = IMPLEMENTED[xc](n, zeta=zeta, dn_spin=dn_spin)
 

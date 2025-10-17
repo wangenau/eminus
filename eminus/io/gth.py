@@ -4,10 +4,8 @@
 
 import importlib.resources
 import pathlib
-import sys
 
-import numpy as np
-
+from eminus import backend as xp
 from eminus.logger import log
 
 
@@ -27,11 +25,7 @@ def read_gth(atom, charge=None, psp_path="pbe"):
         GTH parameters.
     """
     if psp_path in {"pade", "pbe"}:
-        if sys.version_info >= (3, 9):
-            file_path = importlib.resources.files(f"eminus.psp.{psp_path}")
-        else:
-            with importlib.resources.path("eminus.psp", psp_path) as p:
-                file_path = p
+        file_path = importlib.resources.files(f"eminus.psp.{psp_path}")
     else:
         file_path = pathlib.Path(psp_path)
 
@@ -51,10 +45,10 @@ def read_gth(atom, charge=None, psp_path="pbe"):
             log.info(f'Multiple pseudopotentials found for "{atom}". Continue with "{f_psp.name}".')
 
     psp = {}
-    cloc = np.zeros(4)
-    rp = np.zeros(4)
-    Nproj_l = np.zeros(4, dtype=int)
-    h = np.zeros((4, 3, 3))
+    cloc = xp.zeros(4)
+    rp = xp.zeros(4)
+    Nproj_l = xp.zeros(4, dtype=int)
+    h = xp.zeros((4, 3, 3))
     try:
         with open(f_psp, encoding="utf-8") as fh:
             atom = fh.readline()
@@ -102,9 +96,9 @@ def mock_gth():
     return {
         "Zion": 0,
         "rloc": 0,
-        "cloc": np.zeros(4),
+        "cloc": xp.zeros(4),
         "lmax": 0,
-        "rp": np.zeros(4),
-        "Nproj_l": np.zeros(4, dtype=int),
-        "h": np.zeros((4, 3, 3)),
+        "rp": xp.zeros(4),
+        "Nproj_l": xp.zeros(4, dtype=int),
+        "h": xp.zeros((4, 3, 3)),
     }

@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test the GDSMFB exchange-correlation functional."""
 
-import numpy as np
+import math
+
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
+from eminus import backend as xp
+from eminus.testing import assert_allclose
 from eminus.xc.lda_xc_gdsmfb import (
     lda_xc_gdsmfb,
     lda_xc_gdsmfb_spin,
@@ -29,8 +31,8 @@ from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
 def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
     """Compare functional potentials to finite difference derivatives."""
     # Input
-    n_up = np.asarray(n_up)
-    n_dw = np.asarray(n_dw)
+    n_up = xp.asarray([n_up])
+    n_dw = xp.asarray([n_dw])
 
     # Calculate analytical energy density and derivative
     n = n_up + n_dw
@@ -46,7 +48,7 @@ def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
         # Calculate properties
         n = n_up + n_dw
         zeta = (n_up - n_dw) / n
-        rs = (3 / (4 * np.pi * n)) ** (1 / 3)
+        rs = (3 / (4 * math.pi * n)) ** (1 / 3)
         theta = _get_theta(T, n, zeta)
         theta0 = _get_theta0(theta, zeta)
         theta1 = _get_theta1(theta, zeta)
@@ -83,7 +85,7 @@ def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
     # Calculate finite difference derivatives
     vxc_up = get_vxc_up(n_up, n_dw)  # type: ignore[no-untyped-call]
     vxc_dw = get_vxc_dw(n_up, n_dw)  # type: ignore[no-untyped-call]
-    vxc_fd = fxc + np.array([vxc_up, vxc_dw]) * n
+    vxc_fd = fxc + xp.stack([vxc_up, vxc_dw]) * n
 
     assert_allclose(vxc_fd, vxc, atol=1e-4)
 
@@ -103,8 +105,8 @@ def test_lda_xc_gdsmfb_spin_exc(rs, zeta, T, ref):
 
     Reference values generated with fxc.py from https://github.com/agbonitz/xc_functional.git
     """
-    n = 1 / (4 * np.pi / 3 * rs**3)
-    e_out, _, _ = lda_xc_gdsmfb_spin(np.array([n]), np.array([zeta]), T=T)
+    n = 1 / (4 * math.pi / 3 * rs**3)
+    e_out, _, _ = lda_xc_gdsmfb_spin(xp.asarray([n]), xp.asarray([zeta]), T=T)
     assert_allclose(e_out, ref)
 
 
@@ -114,8 +116,8 @@ def test_lda_xc_gdsmfb_exc(rs, T, ref):
 
     Test case for the spin-unpolarized case from test_lda_xc_gdsmfb_spin_exc.
     """
-    n = 1 / (4 * np.pi / 3 * rs**3)
-    e_out, _, _ = lda_xc_gdsmfb(np.array([n]), T=T)
+    n = 1 / (4 * math.pi / 3 * rs**3)
+    e_out, _, _ = lda_xc_gdsmfb(xp.asarray([n]), T=T)
     assert_allclose(e_out, ref)
 
 

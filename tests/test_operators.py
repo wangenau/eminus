@@ -2,16 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test operator identities."""
 
+import copy
 import typing  # noqa: F401
 
-import numpy as np
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose
 
-from eminus import Atoms, config
-
-config.backend = "scipy"
+from eminus import Atoms
+from eminus import backend as xp
+from eminus.testing import assert_allclose
 
 # Create an Atoms object to build mock wave functions
 atoms = Atoms("Ne", (0, 0, 0), ecut=1).build()
@@ -20,23 +19,36 @@ assert atoms.G2c is not None
 assert atoms.Gk2c is not None
 rng = default_rng()
 W_tests = {
-    "full": rng.standard_normal((len(atoms.G2), atoms.occ.Nstate)),
-    "active": rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate)),
-    "full_single": rng.standard_normal(len(atoms.G2)),
-    "active_single": rng.standard_normal(len(atoms.G2c)),
-    "full_spin": rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)),
-    "active_spin": rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)),
-    "full_k": [rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate))],
-    "active_k": [rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate))],
+    "full": xp.asarray(rng.standard_normal((len(atoms.G2), atoms.occ.Nstate)), dtype=complex),
+    "active": xp.asarray(rng.standard_normal((len(atoms.G2c), atoms.occ.Nstate)), dtype=complex),
+    "full_single": xp.asarray(rng.standard_normal(len(atoms.G2)), dtype=complex),
+    "active_single": xp.asarray(rng.standard_normal(len(atoms.G2c)), dtype=complex),
+    "full_spin": xp.asarray(
+        rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)), dtype=complex
+    ),
+    "active_spin": xp.asarray(
+        rng.standard_normal((atoms.occ.Nspin, len(atoms.G2c), atoms.occ.Nstate)), dtype=complex
+    ),
+    "full_k": [
+        xp.asarray(
+            rng.standard_normal((atoms.occ.Nspin, len(atoms.G2), atoms.occ.Nstate)), dtype=complex
+        )
+    ],
+    "active_k": [
+        xp.asarray(
+            rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[0]), atoms.occ.Nstate)),
+            dtype=complex,
+        )
+    ],
 }  # type: dict[str, typing.Any]
-dr = rng.standard_normal(3)
+dr = xp.asarray(rng.standard_normal(3))
 
 
 @pytest.mark.parametrize("field", ["full", "full_spin"])
 def test_LinvL(field):
     """Test Laplacian operator identity."""
     out = atoms.Linv(atoms.L(W_tests[field]))
-    test = np.copy(W_tests[field])
+    test = copy.deepcopy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -48,7 +60,7 @@ def test_LinvL(field):
 def test_LLinv(field):
     """Test Laplacian operator identity."""
     out = atoms.L(atoms.Linv(W_tests[field]))
-    test = np.copy(W_tests[field])
+    test = copy.deepcopy(W_tests[field])
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -108,10 +120,10 @@ def test_JdagIdag(field):
 def test_hermitian_I(field):
     """Test that I and Idag operators are hermitian."""
     a = W_tests[field]
-    b = W_tests[field] + rng.standard_normal(1)
+    b = W_tests[field] + xp.asarray(rng.standard_normal(1), dtype=complex)
     assert not isinstance(a, list)
-    out = (a.conj().T @ atoms.I(b)).conj()
-    test = b.conj().T @ atoms.Idag(a, full=True)
+    out = (a.conj() @ atoms.I(b)).conj()
+    test = b.conj() @ atoms.Idag(a, full=True)
     assert_allclose(out, test)
 
 
@@ -119,10 +131,10 @@ def test_hermitian_I(field):
 def test_hermitian_J(field):
     """Test that J and Jdag operators are hermitian."""
     a = W_tests[field]
-    b = W_tests[field] + rng.standard_normal(1)
+    b = W_tests[field] + xp.asarray(rng.standard_normal(1), dtype=complex)
     assert not isinstance(a, list)
-    out = (a.conj().T @ atoms.J(b)).conj()
-    test = b.conj().T @ atoms.Jdag(a)
+    out = (a.conj() @ atoms.J(b)).conj()
+    test = b.conj() @ atoms.Jdag(a)
     assert_allclose(out, test)
 
 

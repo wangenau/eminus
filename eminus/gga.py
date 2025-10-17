@@ -6,8 +6,7 @@ Most functions here have been optimized for performance and can be harder to und
 To mitigate this, easier (but slower) implementations have been added as comments.
 """
 
-import numpy as np
-
+from . import backend as xp
 from .utils import handle_k
 
 
@@ -24,13 +23,13 @@ def get_grad_field(atoms, field, real=True):
     Returns:
         Gradients of field per spin channel.
     """
-    dfield = np.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
+    dfield = xp.empty((atoms.occ.Nspin, atoms.Ns, 3), dtype=complex)
     for spin in range(atoms.occ.Nspin):
         fieldG = atoms.J(field[spin])
         for dim in range(3):
             dfield[spin, :, dim] = atoms.I(1j * atoms.G[:, dim] * fieldG)
     if real:
-        return np.real(dfield)
+        return xp.real(dfield)
     return dfield
 
 
@@ -49,7 +48,7 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
         Gradient correction in reciprocal space.
     """
     # sigma is |dn|^2, while vsigma is n * d exc/d sigma
-    h = np.empty_like(dn_spin)
+    h = xp.empty_like(dn_spin)
     if not atoms.unrestricted:
         # In the unpolarized case we have no spin mixing and only one spin density
         h[0] = 2 * vsigma[0, :, None] * dn_spin[0]
@@ -62,11 +61,11 @@ def gradient_correction(atoms, spin, dn_spin, vsigma):
 
     # Calculate Nabla dot h
     # Normally we would calculate the correction for each spin, but we only need one at a time in H
-    Gh = np.empty((len(atoms.G2), 3), dtype=complex)
+    Gh = xp.empty((len(atoms.G2), 3), dtype=complex)
     for dim in range(3):
         Gh[:, dim] = atoms.J(h[spin, :, dim])
     # return 1j * np.sum(atoms.G * Gh, axis=1)
-    return 1j * np.einsum("ir,ir->i", atoms.G, Gh)
+    return xp.einsum("ir,ir->i", 1j * atoms.G, Gh)
 
 
 @handle_k(mode="reduce")
@@ -93,7 +92,7 @@ def get_tau(atoms, Y, ik):
     #     tau += 0.5 * atoms.occ.f[:, i, None] * np.sum(dYrs.conj() * dYrs, axis=2)
     # return np.real(tau)
 
-    dYrs = np.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
+    dYrs = xp.empty((atoms.occ.Nspin, atoms.Ns, Y.shape[-1], 3), dtype=complex)
     # Calculate the active G vectors and broadcast to the needed shape
     Gkc = atoms.G[atoms.active[ik]][:, None, :] + atoms.kpts.k[ik]
     # Calculate the gradients of Y in the active(!) reciprocal space and transform to real-space
@@ -108,9 +107,7 @@ def get_tau(atoms, Y, ik):
     return (
         0.5
         * atoms.kpts.wk[ik]
-        * np.real(
-            np.einsum("sj,sijr,sijr->si", atoms.occ.f[ik], dYrs.conj(), dYrs, optimize="greedy")
-        )
+        * xp.real(xp.einsum("sj,sijr,sijr->si", atoms.occ.f[ik], dYrs.conj(), dYrs))
     )
 
 
@@ -132,7 +129,7 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     atoms = scf.atoms
 
     if scf.xc_type != "meta-gga":  # Only calculate the contribution for meta-GGAs
-        return np.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
+        return xp.zeros((len(atoms.Gk2c[ik]), W[ik].shape[-1]), dtype=complex)
 
     # The "intuitive" way is the one commented out below (without k-point dependency)
     # Sadly, this implementation is really slow for various reasons so use the faster one below
@@ -146,8 +143,8 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     #         GVpsi[:, r] = atoms.J(vtau[spin] * dWrs[spin, :, r], full=False)
     #     Vpsi[:, i] = -0.5 * 1j * np.sum(Gc * GVpsi, axis=1)
 
-    GVpsi = np.empty((len(atoms.Gk2c[ik]), W[ik].shape[-1], 3), dtype=complex)
-    dWrs = np.empty((atoms.Ns, W[ik].shape[-1], 3), dtype=complex)
+    GVpsi = xp.empty((len(atoms.Gk2c[ik]), W[ik].shape[-1], 3), dtype=complex)
+    dWrs = xp.empty((atoms.Ns, W[ik].shape[-1], 3), dtype=complex)
     # Calculate the active G vectors and broadcast to the needed shape
     Gkc = atoms.G[atoms.active[ik]][:, None, :] + scf.kpts.k[ik]
     # We only calculate Vtau for one spin channel, index, and reshape before the loop
@@ -161,5 +158,5 @@ def calc_Vtau(scf, ik, spin, W, vtau):
     # Sum over dimensions
     # Calculate -0.5 Nabla dot Gvpsi (compare with gradient_correction)
     # Vpsi = -0.5 * 1j * np.sum(Gkc * GVpsi, axis=2)
-    Vpsi = -0.5 * 1j * np.einsum("ior,ijr->ij", Gkc, GVpsi)
+    Vpsi = -0.5 * xp.einsum("ior,ijr->ij", 1j * Gkc, GVpsi)
     return atoms.O(Vpsi)

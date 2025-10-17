@@ -2,10 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """Various tools to check physical properties."""
 
+import math
+import numbers
+
 import numpy as np
-from scipy.linalg import norm
 from scipy.optimize import minimize_scalar, root_scalar
 
+from . import backend as xp
 from .dft import get_epsilon, get_epsilon_unocc
 from .gga import get_grad_field, get_tau
 from .logger import log
@@ -23,7 +26,7 @@ def cutoff2gridspacing(E):
     Returns:
         Grid spacing in Bohr.
     """
-    return np.pi / np.sqrt(2 * E)
+    return math.pi / math.sqrt(2 * E)
 
 
 def gridspacing2cutoff(h):
@@ -37,7 +40,7 @@ def gridspacing2cutoff(h):
     Returns:
         Cut-off in Hartree.
     """
-    return 0.5 * (np.pi / h) ** 2
+    return 0.5 * (math.pi / h) ** 2
 
 
 def center_of_mass(coords, masses=None):
@@ -56,8 +59,8 @@ def center_of_mass(coords, masses=None):
         msg = 'The provided coordinates are "None".'
         raise ValueError(msg)
     if masses is None:
-        masses = np.ones(len(coords))
-    return np.sum(masses * coords.T, axis=1) / np.sum(masses)
+        masses = xp.ones(len(coords))
+    return xp.sum(masses * coords.T, axis=1) / xp.sum(masses)
 
 
 @handle_k
@@ -73,13 +76,13 @@ def orbital_center(obj, psirs):
     """
     atoms = obj._atoms
 
-    coms = [np.empty((0, 3))] * 2
+    coms = [xp.empty((0, 3))] * 2
     Ncom = psirs.shape[2]
     for spin in range(atoms.occ.Nspin):
-        coms_spin = np.empty((Ncom, 3))
+        coms_spin = xp.empty((Ncom, 3))
 
         # Squared orbitals
-        psi2 = np.real(psirs[spin].conj() * psirs[spin])
+        psi2 = xp.real(psirs[spin].conj() * psirs[spin])
         for i in range(Ncom):
             coms_spin[i] = center_of_mass(atoms.r, psi2[:, i])
         coms[spin] = coms_spin
@@ -101,17 +104,17 @@ def inertia_tensor(coords, masses=None):
         Inertia tensor.
     """
     if masses is None:
-        masses = np.ones(len(coords))
+        masses = xp.ones(len(coords))
 
     # The inertia tensor for a set of point masses can be calculated with a simple summation
     # https://en.wikipedia.org/wiki/Moment_of_inertia#Definition_2
-    I = np.empty((3, 3))
-    I[0, 0] = np.sum(masses * (coords[:, 1] ** 2 + coords[:, 2] ** 2))
-    I[1, 1] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 2] ** 2))
-    I[2, 2] = np.sum(masses * (coords[:, 0] ** 2 + coords[:, 1] ** 2))
-    I[0, 1] = I[1, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 1]))
-    I[0, 2] = I[2, 0] = -np.sum(masses * (coords[:, 0] * coords[:, 2]))
-    I[1, 2] = I[2, 1] = -np.sum(masses * (coords[:, 1] * coords[:, 2]))
+    I = xp.empty((3, 3))
+    I[0, 0] = xp.sum(masses * (coords[:, 1] ** 2 + coords[:, 2] ** 2))
+    I[1, 1] = xp.sum(masses * (coords[:, 0] ** 2 + coords[:, 2] ** 2))
+    I[2, 2] = xp.sum(masses * (coords[:, 0] ** 2 + coords[:, 1] ** 2))
+    I[0, 1] = I[1, 0] = -xp.sum(masses * (coords[:, 0] * coords[:, 1]))
+    I[0, 2] = I[2, 0] = -xp.sum(masses * (coords[:, 0] * coords[:, 2]))
+    I[1, 2] = I[2, 1] = -xp.sum(masses * (coords[:, 1] * coords[:, 2]))
     return I
 
 
@@ -139,12 +142,12 @@ def get_dipole(scf, n=None):
         n = scf.n
 
     # Diple moment: mu = \sum Z pos - \int n(r) r dr
-    mu = np.zeros(3)
+    mu = xp.zeros(3)
     for i in range(atoms.Natoms):
         mu += atoms.Z[i] * atoms.pos[i]
 
     for dim in range(3):
-        mu[dim] -= atoms.dV * np.sum(n * atoms.r[:, dim])
+        mu[dim] -= atoms.dV * xp.sum(n * atoms.r[:, dim])
     return mu
 
 
@@ -162,7 +165,7 @@ def get_ip(scf):
     scf.kpts._assert_gamma_only()
     epsilon = get_epsilon(scf, scf.W)[0]
     # Account for spin-polarized calculations
-    epsilon = np.sort(np.ravel(epsilon))
+    epsilon = xp.sort(xp.ravel(epsilon))
     return -epsilon[-1]
 
 
@@ -181,7 +184,7 @@ def check_ortho(obj, func, eps=1e-9):
         Orthogonality status for the set of functions.
     """
     atoms = obj._atoms
-    func = np.atleast_3d(func)
+    func = xp.atleast_3d(func)
 
     # It makes no sense to calculate anything for only one function
     if atoms.occ.Nstate == 1:
@@ -194,7 +197,7 @@ def check_ortho(obj, func, eps=1e-9):
     for spin in range(atoms.occ.Nspin):
         for i in range(atoms.occ.Nstate):
             for j in range(i + 1, atoms.occ.Nstate):
-                res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, j])
+                res = atoms.dV * xp.sum(func[spin, :, i].conj() * func[spin, :, j])
                 tmp_bool = abs(res) < eps
                 ortho_bool *= tmp_bool
                 log.debug(f"Function {i} and {j}:\nValue: {res:.7f}\nOrthogonal: {tmp_bool}")
@@ -217,14 +220,14 @@ def check_norm(obj, func, eps=1e-9):
         Normalization status for the set of functions.
     """
     atoms = obj._atoms
-    func = np.atleast_3d(func)
+    func = xp.atleast_3d(func)
 
     norm_bool = True
     # Check the condition for every function
     # Normality condition: \int func^* func dr = 1
     for spin in range(atoms.occ.Nspin):
         for i in range(atoms.occ.Nstate):
-            res = atoms.dV * np.sum(func[spin, :, i].conj() * func[spin, :, i])
+            res = atoms.dV * xp.sum(func[spin, :, i].conj() * func[spin, :, i])
             tmp_bool = abs(1 - res) < eps
             norm_bool *= tmp_bool
             log.debug(f"Function {i}:\nValue: {res:.7f}\nNormalized: {tmp_bool}")
@@ -270,14 +273,14 @@ def get_isovalue(n, percent=85):
 
     def deviation(isovalue):
         """Wrapper function for finding the isovalue by minimization."""
-        n_mask = np.sum(n[n > isovalue])
-        return abs(percent - (n_mask / n_ref) * 100)
+        n_mask = xp.sum(n[n > isovalue])
+        return float(xp.abs(percent - (n_mask / n_ref) * 100))
 
     # Integrated density
-    n_ref = np.sum(n)
+    n_ref = xp.sum(n)
     # Finding the isovalue is an optimization problem, minimizing the deviation above
     # The problem is bound by zero (no density) and the maximum value in n
-    res = minimize_scalar(deviation, bounds=(0, np.max(n)), method="bounded")
+    res = minimize_scalar(deviation, bounds=(0, float(xp.max(n))), method="bounded")
     return res.x
 
 
@@ -294,10 +297,10 @@ def get_tautf(scf):
     """
     atoms = scf.atoms
     # Use the definition with a division by two
-    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * np.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
+    tautf = 3 / 10 * (atoms.occ.Nspin * 3 * math.pi**2) ** (2 / 3) * scf.n_spin ** (5 / 3)
 
     log.debug(f"Calculated Ekin:  {scf.energies.Ekin:.6f} Eh")
-    log.debug(f"Integrated tautf: {np.sum(tautf) * atoms.dV:.6f} Eh")
+    log.debug(f"Integrated tautf: {xp.sum(tautf) * atoms.dV:.6f} Eh")
     return tautf
 
 
@@ -317,13 +320,13 @@ def get_tauw(scf):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    dn2 = norm(dn_spin, axis=2) ** 2
+    dn2 = xp.linalg.norm(dn_spin, axis=2) ** 2
     # Use the definition with a division by two
     tauw = dn2 / (8 * scf.n_spin)
 
     # For one- and two-electron systems the integrated KED has to be the same as the calculated KE
     log.debug(f"Calculated Ekin: {scf.energies.Ekin:.6f} Eh")
-    log.debug(f"Integrated tauw: {np.sum(tauw) * atoms.dV:.6f} Eh")
+    log.debug(f"Integrated tauw: {xp.sum(tauw) * atoms.dV:.6f} Eh")
     return tauw
 
 
@@ -363,9 +366,9 @@ def get_reduced_gradient(scf, eps=0):
         dn_spin = get_grad_field(atoms, scf.n_spin)
     else:
         dn_spin = scf.dn_spin
-    norm_dn = norm(np.sum(dn_spin, axis=0), axis=1)
+    norm_dn = xp.linalg.norm(xp.sum(dn_spin, axis=0), axis=1)
 
-    kf = (3 * np.pi**2 * scf.n) ** (1 / 3)
+    kf = (3 * math.pi**2 * scf.n) ** (1 / 3)
     with np.errstate(divide="ignore", invalid="ignore"):
         s = norm_dn / (2 * kf * scf.n)
     s[scf.n < eps] = 0
@@ -390,8 +393,8 @@ def get_spin_squared(scf):
 
     rhoXr = scf.n_spin[0] - scf.n_spin[1]
     rhoXr[rhoXr < 0] = 0
-    rhoX = np.sum(rhoXr) * atoms.dV
-    SX = 0.5 * (np.sum(scf.n_spin[0]) - np.sum(scf.n_spin[1])) * atoms.dV
+    rhoX = xp.sum(rhoXr) * atoms.dV
+    SX = 0.5 * (xp.sum(scf.n_spin[0]) - xp.sum(scf.n_spin[1])) * atoms.dV
     return SX * (SX + 1) + rhoX
 
 
@@ -406,7 +409,7 @@ def get_multiplicity(scf):
     """
     S2 = get_spin_squared(scf)
     # <S^2> = S(S+1) = S^2+S+0.25-0.25 = (S+0.5)^2-0.25 => S = sqrt(<S^2>+0.25)-0.5
-    S = np.sqrt(S2 + 0.25) - 0.5
+    S = math.sqrt(S2 + 0.25) - 0.5
     return 2 * S + 1
 
 
@@ -423,7 +426,7 @@ def get_magnetization(scf):
     if not scf.atoms.unrestricted:
         return 0
 
-    return np.sum(scf.n_spin[0] - scf.n_spin[1]) / np.sum(scf.n)
+    return xp.sum(scf.n_spin[0] - scf.n_spin[1]) / xp.sum(scf.n)
 
 
 def get_bandgap(scf):
@@ -442,7 +445,7 @@ def get_bandgap(scf):
         return 0
 
     e_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
-    return np.min(e_unocc) - np.max(e_occ)
+    return xp.min(e_unocc) - xp.max(e_occ)
 
 
 def get_Efermi(obj, epsilon=None):
@@ -477,19 +480,19 @@ def get_Efermi(obj, epsilon=None):
         """Number of electrons by Fermi distribution minus the actual number of electrons."""
         occ_sum = 0
         for ik in range(occ.Nk):
-            occ_sum += occ.wk[ik] * np.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
-        return occ_sum * 2 / occ.Nspin - occ.Nelec
+            occ_sum += occ.wk[ik] * xp.sum(fermi_distribution(e_occ[ik], Efermi, occ.smearing))
+        return float(occ_sum * 2 / occ.Nspin - occ.Nelec)
 
     # For smeared systems we have to find the root of an objective function
     if occ.smearing > 0:
-        return root_scalar(electron_root, bracket=(np.min(e_occ), np.max(e_occ))).root
+        return root_scalar(electron_root, bracket=(float(xp.min(e_occ)), float(xp.max(e_occ)))).root
 
     if obj.Z is None:
         log.warning("The SCF object has no unoccupied energies, return the maximum energy instead.")
-        return np.max(e_occ)
+        return xp.max(e_occ)
 
     e_unocc = get_epsilon_unocc(obj, obj.W, obj.Z, **obj._precomputed)
-    return np.max(e_occ) + (np.min(e_unocc) - np.max(e_occ)) / 2
+    return xp.max(e_occ) + (xp.min(e_unocc) - xp.max(e_occ)) / 2
 
 
 def fermi_distribution(E, mu, kbT):
@@ -507,7 +510,9 @@ def fermi_distribution(E, mu, kbT):
     """
     x = (E - mu) / kbT
     with np.errstate(over="ignore"):
-        return 1 / (np.exp(x) + 1)
+        if isinstance(x, numbers.Real):
+            return 1 / (math.exp(x) + 1)
+        return 1 / (xp.exp(x) + 1)
 
 
 def electronic_entropy(E, mu, kbT):
@@ -527,7 +532,9 @@ def electronic_entropy(E, mu, kbT):
     if abs((E - mu) / kbT) > 36:
         return 0
     f = fermi_distribution(E, mu, kbT)
-    return f * np.log(f) + (1 - f) * np.log(1 - f)
+    if isinstance(f, numbers.Real):
+        return f * math.log(f) + (1 - f) * math.log(1 - f)
+    return f * xp.log(f) + (1 - f) * xp.log(1 - f)
 
 
 def get_dos(epsilon, wk, spin=0, npts=500, width=0.1):
@@ -550,13 +557,13 @@ def get_dos(epsilon, wk, spin=0, npts=500, width=0.1):
 
     def delta(x, x0, width):
         """Gaussian of given width centered at x0."""
-        return np.exp(-(((x - x0) / width) ** 2)) / (np.sqrt(np.pi) * width)
+        return xp.exp(-(((x - x0) / width) ** 2)) / (math.sqrt(math.pi) * width)
 
     energies = epsilon[:, spin].flatten()
-    emin = np.min(energies) - 5 * width
-    emax = np.max(energies) + 5 * width
-    e = np.linspace(emin, emax, npts)
-    dos_e = np.zeros(npts)
+    emin = xp.min(energies) - 5 * width
+    emax = xp.max(energies) + 5 * width
+    e = xp.linspace(emin, emax, npts)
+    dos_e = xp.zeros(npts)
     for e0, w in zip(energies, wk):
         dos_e += w * delta(e, e0, width)
     return e, dos_e

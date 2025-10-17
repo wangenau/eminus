@@ -2,10 +2,14 @@
 # SPDX-License-Identifier: Apache-2.0
 """Utilities to localize and analyze orbitals."""
 
+import math
+
 import numpy as np
-from scipy.linalg import eig, expm, norm, qr
+from scipy.linalg import qr
 from scipy.stats import unitary_group
 
+from . import backend as xp
+from . import config
 from .logger import log
 from .utils import handle_k, handle_spin
 
@@ -44,12 +48,12 @@ def get_R(atoms, psi, fods):
         Transformation matrix R.
     """
     # We only calculate occupied orbitals
-    R = np.empty((len(fods), len(fods)), dtype=complex)
+    R = xp.empty((len(fods), len(fods)), dtype=complex)
 
     for i in range(len(fods)):
         # Get the value at one FOD position for all psi
         psi_fod = eval_psi(atoms, psi, fods[i])
-        sum_psi_fod = np.sqrt(np.sum(psi_fod.conj() * psi_fod))
+        sum_psi_fod = xp.sqrt(xp.sum(psi_fod.conj() * psi_fod))
         for j in range(len(fods)):
             R[i, j] = psi_fod[j].conj() / sum_psi_fod
     return R
@@ -69,7 +73,7 @@ def get_FO(atoms, psi, fods):
     Returns:
         Real-space Fermi orbitals.
     """
-    fo = np.zeros((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
+    fo = xp.zeros((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
     # Transform psi to real-space
     psi_rs = atoms.I(psi, 0)
@@ -97,11 +101,11 @@ def get_S(atoms, psirs):
         Overlap matrix S.
     """
     # Overlap elements: S_ij = \int psi_i^* psi_j dr
-    S = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    S = xp.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
 
     for i in range(atoms.occ.Nstate):
         for j in range(atoms.occ.Nstate):
-            S[i, j] = atoms.dV * np.sum(psirs[:, i].conj() * psirs[:, j])
+            S[i, j] = atoms.dV * xp.sum(psirs[:, i].conj() * psirs[:, j])
     return S
 
 
@@ -120,15 +124,15 @@ def get_FLO(atoms, psi, fods):
         Real-space Fermi-Loewdin orbitals.
     """
     fo = get_FO(atoms, psi, fods)
-    flo = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
+    flo = xp.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate), dtype=complex)
 
     for spin in range(atoms.occ.Nspin):
         # Calculate the overlap matrix for FOs
         S = get_S(atoms, fo[spin])
         # Calculate eigenvalues and eigenvectors
-        Q, T = eig(S)
+        Q, T = xp.linalg.eig(S)
         # Loewdins symmetric orthonormalization method
-        Q12 = np.diag(1 / np.sqrt(Q))
+        Q12 = xp.diag(1 / xp.sqrt(Q))
         flo[spin] = fo[spin] @ (T @ Q12 @ T.T)
     return flo
 
@@ -151,7 +155,11 @@ def get_scdm(atoms, psi):
     psi_rs = atoms.I(psi, 0)
 
     # Do the QR factorization
-    Q, _, _ = qr(psi_rs.T.conj(), pivoting=True)
+    if isinstance(psi_rs, np.ndarray):
+        Q, _, _ = qr(psi_rs.T.conj(), pivoting=True)
+    else:
+        Q, _, _ = qr(xp.to_np(psi_rs.T.conj()), pivoting=True)
+        Q = xp.asarray(Q, dtype=psi_rs.dtype)
     # Apply the transformation
     return psi_rs @ Q
 
@@ -175,7 +183,7 @@ def wannier_cost(atoms, psirs):
     # Variance = \int psi r^2 psi - (\int psi r psi)^2
     centers = wannier_center(atoms, psirs)
     moments = second_moment(atoms, psirs)
-    costs = moments - norm(centers, axis=1) ** 2
+    costs = moments - xp.linalg.norm(centers, axis=1) ** 2
     log.debug(f"Centers:\n{centers}\nMoments:\n{moments}")
     log.info(f"Costs:\n{costs}")
     return costs
@@ -195,11 +203,11 @@ def wannier_center(atoms, psirs):
     Returns:
         Wannier centers per orbital.
     """
-    centers = np.empty((atoms.occ.Nstate, 3))
+    centers = xp.empty((atoms.occ.Nstate, 3))
     for i in range(atoms.occ.Nstate):
         for dim in range(3):
-            centers[i, dim] = atoms.dV * np.real(
-                np.sum(psirs[:, i].conj() * atoms.r[:, dim] * psirs[:, i], axis=0)
+            centers[i, dim] = atoms.dV * xp.real(
+                xp.sum(psirs[:, i].conj() * atoms.r[:, dim] * psirs[:, i], axis=0)
             )
     return centers
 
@@ -218,11 +226,11 @@ def second_moment(atoms, psirs):
     Returns:
         Second moments per orbital.
     """
-    r2 = norm(atoms.r, axis=1) ** 2
+    r2 = xp.linalg.norm(atoms.r, axis=1) ** 2
 
-    moments = np.empty(atoms.occ.Nstate)
+    moments = xp.empty(atoms.occ.Nstate)
     for i in range(atoms.occ.Nstate):
-        moments[i] = atoms.dV * np.real(np.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
+        moments[i] = atoms.dV * xp.real(xp.sum(psirs[:, i].conj() * r2 * psirs[:, i], axis=0))
     return moments
 
 
@@ -240,9 +248,9 @@ def wannier_supercell_matrices(atoms, psirs):
         Matrices X, Y, and Z.
     """
     # Similar to the expectation value of r, but accounting for periodicity
-    X = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 0] / atoms.a[0, 0])) @ psirs
-    Y = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 1] / atoms.a[1, 1])) @ psirs
-    Z = (psirs.conj().T * np.exp(-1j * 2 * np.pi * atoms.r[:, 2] / atoms.a[2, 2])) @ psirs
+    X = (psirs.conj().T * xp.exp(-1j * 2 * math.pi * atoms.r[:, 0] / atoms.a[0, 0])) @ psirs
+    Y = (psirs.conj().T * xp.exp(-1j * 2 * math.pi * atoms.r[:, 1] / atoms.a[1, 1])) @ psirs
+    Z = (psirs.conj().T * xp.exp(-1j * 2 * math.pi * atoms.r[:, 2] / atoms.a[2, 2])) @ psirs
     return X * atoms.dV, Y * atoms.dV, Z * atoms.dV
 
 
@@ -262,10 +270,10 @@ def wannier_supercell_cost(X, Y, Z):
     Returns:
         Supercell Wannier cost.
     """
-    X2 = np.abs(np.diagonal(X)) ** 2
-    Y2 = np.abs(np.diagonal(Y)) ** 2
-    Z2 = np.abs(np.diagonal(Z)) ** 2
-    return np.sum(X2 + Y2 + Z2)
+    X2 = xp.abs(xp.diagonal(X)) ** 2
+    Y2 = xp.abs(xp.diagonal(Y)) ** 2
+    Z2 = xp.abs(xp.diagonal(Z)) ** 2
+    return xp.sum(X2 + Y2 + Z2)
 
 
 def wannier_supercell_grad(atoms, X, Y, Z):
@@ -282,9 +290,9 @@ def wannier_supercell_grad(atoms, X, Y, Z):
     Returns:
         Supercell Wannier gradient.
     """
-    x = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
-    y = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
-    z = np.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    x = xp.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    y = xp.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
+    z = xp.empty((atoms.occ.Nstate, atoms.occ.Nstate), dtype=complex)
     # Just the indexed gradient from the paper, without fancy optimization
     for n in range(atoms.occ.Nstate):
         for m in range(atoms.occ.Nstate):
@@ -327,16 +335,21 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
     Returns:
         Localized orbitals.
     """
-    if not (np.diag(np.diag(atoms.a)) == atoms.a).all():
+    if config.backend == "torch":
+        expm = xp.linalg.matrix_exp
+    else:
+        from scipy.linalg import expm
+
+    if not (xp.diag(xp.diag(atoms.a)) == atoms.a).all():
         log.warning("The Wannier localization needs a cubic unit cell.")
         return psirs
 
     X, Y, Z = wannier_supercell_matrices(atoms, psirs)  # Calculate matrices only once
     # The initial unitary transformation is the identity or a random unitary matrix
     if random_guess and atoms.occ.Nstate > 1:
-        U = unitary_group.rvs(atoms.occ.Nstate, random_state=seed)
+        U = xp.asarray(unitary_group.rvs(atoms.occ.Nstate, random_state=seed))
     else:
-        U = np.eye(atoms.occ.Nstate)
+        U = xp.eye(atoms.occ.Nstate, dtype=complex)
     costs = [0]  # Add a zero to the costs to allow the sign evaluation in the first iteration
 
     atoms._log.debug(f"{'Iteration':<11}{'Cost [a0^2]':<13}{'dCost [a0^2]':<13}")

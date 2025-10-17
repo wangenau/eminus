@@ -3,9 +3,9 @@
 """Test total energies of helium atoms with different spin states."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, USCF
+from eminus.testing import assert_allclose
 
 # Total energies from a spin-polarized calculation with JDFTx with (almost) same parameters as below
 E_ref = {

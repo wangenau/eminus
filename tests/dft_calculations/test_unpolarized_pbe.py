@@ -6,9 +6,9 @@ import inspect
 import pathlib
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, read, RSCF
+from eminus.testing import assert_allclose
 
 # Total energies from a spin-polarized calculation with PWDFT.jl with the same parameters as below
 # Closed-shell systems have the same energy for spin-paired and -polarized calculations

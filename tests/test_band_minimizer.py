@@ -3,11 +3,11 @@
 """Test different band minimization functions."""
 
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
 from eminus.energies import get_Eband
 from eminus.minimizer import IMPLEMENTED
+from eminus.testing import assert_allclose
 
 # The reference the polarized and unpolarized case is not the same since the band energies are not a
 # physical property, only something we want to minimize

@@ -4,13 +4,13 @@
 
 import copy
 
-import numpy as np
 import pytest
-from numpy.testing import assert_allclose
 
 from eminus import Atoms, SCF
+from eminus import backend as xp
 from eminus.dft import get_psi
 from eminus.localizer import get_FLO, get_scdm, get_wannier, wannier_cost
+from eminus.testing import assert_allclose
 from eminus.tools import check_orthonorm
 
 atoms_unpol = Atoms(
@@ -46,7 +46,7 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run()
 
 # FODs that will be used for both spin channels
-fods = np.array(
+fods = xp.asarray(
     [[9.16, 9.16, 10.89], [10.89, 10.89, 10.89], [10.73, 9.16, 9.16], [9.16, 10.73, 9.16]]
 )
 
@@ -111,7 +111,7 @@ def test_wannier_random_guess():
     costs = wannier_cost(scf.atoms, psi)
     wo = get_wannier(scf.atoms, psi, Nit=100, random_guess=True, seed=1234)
     assert check_orthonorm(scf, wo)
-    assert np.sum(wannier_cost(scf.atoms, wo)) < np.sum(costs)
+    assert xp.sum(wannier_cost(scf.atoms, wo)) < xp.sum(costs)
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
@@ -128,7 +128,7 @@ def test_scdm(unrestricted):
     # Check that all transformed orbitals roughly a similar spread
     assert_allclose(costs, costs[0, 0], atol=0.2)
     # Check that the SCDM orbitals have a lower spread than the KS orbitals
-    assert np.sum(costs) < np.sum(wannier_cost(scf.atoms, scf.atoms.I(psi)))
+    assert xp.sum(costs) < xp.sum(wannier_cost(scf.atoms, scf.atoms.I(psi)))
 
 
 if __name__ == "__main__":

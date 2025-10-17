@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 """Main DFT functions based on the DFT++ formulation."""
 
-import numpy as np
-from numpy.linalg import multi_dot
-from numpy.random import Generator, SFC64
-from scipy.linalg import eig, eigh, eigvalsh, inv, sqrtm
+import math
 
+from numpy.random import Generator, SFC64
+
+from . import backend as xp
 from .gga import calc_Vtau, get_grad_field, get_tau, gradient_correction
 from .gth import calc_Vnonloc
 from .logger import log
@@ -27,7 +27,7 @@ def get_phi(atoms, n):
         Hartree field.
     """
     # phi = -4 pi Linv(O(J(n)))
-    return -4 * np.pi * atoms.Linv(atoms.O(atoms.J(n)))
+    return -4 * math.pi * atoms.Linv(atoms.O(atoms.J(n)))
 
 
 @handle_k
@@ -45,7 +45,7 @@ def orth(atoms, W):
         Orthogonalized wave functions.
     """
     # Y = W (Wdag O(W))^-0.5
-    return W @ inv(sqrtm(W.conj().T @ atoms.O(W)))
+    return W @ xp.linalg.inv(xp.sqrtm(W.conj().T @ atoms.O(W)))
 
 
 def orth_unocc(atoms, Y, Z):
@@ -61,14 +61,14 @@ def orth_unocc(atoms, Y, Z):
     Returns:
         Orthogonalized wave functions.
     """
-    D = [np.empty_like(Zk) for Zk in Z]
+    D = [xp.empty_like(Zk) for Zk in Z]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             # rhoZ = (I - Y Ydag O) Z
             Yocc = Y[ik][spin][:, atoms.occ.f[ik][spin] > 0]
             rhoZ = Z[ik][spin] - Yocc @ Yocc.conj().T @ atoms.O(Z[ik][spin])
             # D = rhoZ (rhoZdag O(rhoZ))^-0.5
-            D[ik][spin] = rhoZ @ inv(sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
+            D[ik][spin] = rhoZ @ xp.linalg.inv(xp.sqrtm(rhoZ.conj().T @ atoms.O(rhoZ)))
     return D
 
 
@@ -89,17 +89,17 @@ def get_n_total(atoms, Y, n_spin=None):
     """
     # Return the total density in the spin-paired case
     if n_spin is not None:
-        return np.sum(n_spin, axis=0)
+        return xp.sum(n_spin, axis=0)
 
     # n = (IW) F (IW)dag
-    n = np.zeros(atoms.Ns)
+    n = xp.zeros(atoms.Ns)
     Yrs = atoms.I(Y)
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
-            n += np.sum(
+            n += xp.sum(
                 atoms.occ.f[ik, spin]
                 * atoms.kpts.wk[ik]
-                * np.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
+                * xp.real(Yrs[ik][spin].conj() * Yrs[ik][spin]),
                 axis=1,
             )
     return n
@@ -120,10 +120,10 @@ def get_n_spin(atoms, Y, ik):
         Electronic densities per spin channel.
     """
     Yrs = atoms.I(Y, ik)
-    n = np.empty((atoms.occ.Nspin, atoms.Ns))
+    n = xp.empty((atoms.occ.Nspin, atoms.Ns))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = np.sum(
-            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin]),
+        n[spin] = xp.sum(
+            atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * xp.real(Yrs[spin].conj() * Yrs[spin]),
             axis=1,
         )
     return n
@@ -142,9 +142,9 @@ def get_n_single(atoms, Y, ik):
         Single-electron densities.
     """
     Yrs = atoms.I(Y, ik)
-    n = np.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
+    n = xp.empty((atoms.occ.Nspin, atoms.Ns, atoms.occ.Nstate))
     for spin in range(atoms.occ.Nspin):
-        n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * np.real(Yrs[spin].conj() * Yrs[spin])
+        n[spin] = atoms.occ.f[ik, spin] * atoms.kpts.wk[ik] * xp.real(Yrs[spin].conj() * Yrs[spin])
     return n
 
 
@@ -166,20 +166,21 @@ def get_grad(scf, ik, spin, W, **kwargs):
         Gradient.
     """
     atoms = scf.atoms
-    F = atoms.occ.F[ik][spin]
+    F = xp.asarray(atoms.occ.F[ik][spin], dtype=complex)
     HW = H(scf, ik, spin, W, **kwargs)
     WHW = W[ik][spin].conj().T @ HW
     # U = Wdag O(W)
     OW = atoms.O(W[ik][spin])
     U = W[ik][spin].conj().T @ OW
-    invU = inv(U)
-    U12 = sqrtm(invU)
+    invU = xp.linalg.inv(U)
+    U12 = xp.sqrtm(invU)
     # Htilde = U^-0.5 Wdag H(W) U^-0.5
-    Ht = multi_dot([U12, WHW, U12])
+    Ht = xp.linalg.multi_dot([U12, WHW, U12])
     # grad E = H(W) - O(W) U^-1 (Wdag H(W)) (U^-0.5 F U^-0.5) + O(W) (U^-0.5 Q(Htilde F - F Htilde))
-    tmp = multi_dot([OW, invU, WHW])
+    tmp = xp.linalg.multi_dot([OW, invU, WHW])
     return atoms.kpts.wk[ik] * (
-        multi_dot([HW - tmp, U12, F, U12]) + multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)])
+        xp.linalg.multi_dot([HW - tmp, U12, F, U12])
+        + xp.linalg.multi_dot([OW, U12, Q(Ht @ F - F @ Ht, U)])
     )
 
 
@@ -272,13 +273,13 @@ def Q(inp, U):
     Returns:
         Q operator result.
     """
-    mu, V = eig(U)
+    mu, V = xp.linalg.eig(U)
     mu = mu[:, None]
-    denom = np.sqrt(mu) @ np.ones((1, len(mu)))
+    denom = xp.sqrt(mu) @ xp.ones((1, len(mu)), dtype=complex)
     denom2 = denom + denom.conj().T
     # return V @ ((V.conj().T @ inp @ V) / denom2) @ V.conj().T
-    tmp = multi_dot([V.conj().T, inp, V])
-    return multi_dot([V, tmp / denom2, V.conj().T])
+    tmp = xp.linalg.multi_dot([V.conj().T, inp, V])
+    return xp.linalg.multi_dot([V, tmp / denom2, V.conj().T])
 
 
 def get_psi(scf, W, **kwargs):
@@ -302,11 +303,11 @@ def get_psi(scf, W, **kwargs):
 
     atoms = scf.atoms
     Y = orth(atoms, W)
-    psi = [np.empty_like(Yk) for Yk in Y]
+    psi = [xp.empty_like(Yk) for Yk in Y]
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
-            _, D = eigh(mu)
+            _, D = xp.linalg.eigh(mu)
             psi[ik][spin] = Y[ik][spin] @ D
     return psi
 
@@ -332,11 +333,11 @@ def get_epsilon(scf, W, **kwargs):
 
     atoms = scf.atoms
     Y = orth(atoms, W)
-    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
+    epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, Y[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = Y[ik][spin].conj().T @ H(scf, ik, spin, Y, **kwargs)
-            epsilon[ik][spin] = np.sort(eigvalsh(mu))
+            epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
@@ -363,11 +364,11 @@ def get_epsilon_unocc(scf, W, Z, **kwargs):
     atoms = scf.atoms
     Y = orth(atoms, W)
     D = orth_unocc(atoms, Y, Z)
-    epsilon = np.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
+    epsilon = xp.empty((atoms.kpts.Nk, atoms.occ.Nspin, D[0].shape[-1]))
     for ik in range(atoms.kpts.Nk):
         for spin in range(atoms.occ.Nspin):
             mu = D[ik][spin].conj().T @ H(scf, ik, spin, D, **kwargs)
-            epsilon[ik][spin] = np.sort(eigvalsh(mu))
+            epsilon[ik][spin] = xp.sort(xp.linalg.eigvalsh(mu))
     return epsilon
 
 
@@ -393,15 +394,16 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     W = []
     for ik in range(atoms.kpts.Nk):
         if symmetric:
-            W_ik = rng.standard_normal((len(atoms.Gk2c[ik]), Nstate)) + 1j * rng.standard_normal(
-                (len(atoms.Gk2c[ik]), Nstate)
+            W_ik = xp.asarray(
+                rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
+                + 1j * rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
             )
-            W.append(np.array([W_ik] * atoms.occ.Nspin))
+            W.append(xp.stack([W_ik] * atoms.occ.Nspin))
         else:
             W_ik = rng.standard_normal(
                 (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
             ) + 1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
-            W.append(W_ik)
+            W.append(xp.asarray(W_ik))
     return orth(atoms, W)
 
 
@@ -427,7 +429,7 @@ def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     for ik in range(atoms.kpts.Nk):
         if symmetric:
             W_ik = pseudo_uniform((1, len(atoms.Gk2c[ik]), Nstate), seed=seed)
-            W.append(np.array([W_ik[0]] * atoms.occ.Nspin))
+            W.append(xp.stack([W_ik[0]] * atoms.occ.Nspin))
         else:
             W_ik = pseudo_uniform((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate), seed=seed)
             W.append(W_ik)

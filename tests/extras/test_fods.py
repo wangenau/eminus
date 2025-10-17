@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test fods identities."""
 
-import numpy as np
 import pytest
 from numpy.random import default_rng
-from numpy.testing import assert_allclose, assert_equal
 
 from eminus import Atoms
+from eminus import backend as xp
 from eminus.extras import remove_core_fods, split_fods
+from eminus.testing import assert_allclose, assert_array_equal
 
 rng = default_rng()
 
@@ -32,40 +32,40 @@ def test_get_fods_unpol(unrestricted, basis, loc):
 @pytest.mark.parametrize("elec_symbols", [("X", "He"), ("He", "Ne")])
 def test_split_fods(unrestricted, elec_symbols):
     """Test splitting FODs from atoms."""
-    pos = rng.standard_normal((5, 3))
+    pos = xp.asarray(rng.standard_normal((5, 3)))
     atom = ["H"] * len(pos)
-    fods = rng.standard_normal((10, 3))
+    fods = xp.asarray(rng.standard_normal((10, 3)))
     atom_fods = [elec_symbols[0]] * len(fods)
     if unrestricted:
         atom_fods += [elec_symbols[1]] * len(fods)
-        fods = np.vstack((fods, rng.standard_normal((10, 3))))
+        fods = xp.vstack((fods, xp.asarray(rng.standard_normal((10, 3)))))
 
     atom_split, pos_split, fods_split = split_fods(
-        atom + atom_fods, np.vstack((pos, fods)), elec_symbols
+        atom + atom_fods, xp.vstack((pos, fods)), elec_symbols
     )
-    assert_equal(atom, atom_split)
-    assert_equal(pos, pos_split)
+    assert_array_equal(atom, atom_split)
+    assert_array_equal(pos, pos_split)
     if unrestricted:
-        fods_split_array = np.vstack((fods_split[0], fods_split[1]))
+        fods_split_array = xp.vstack((fods_split[0], fods_split[1]))
     else:
         fods_split_array = fods_split[0]
     # Function is not stable, therefore sort arrays before the comparison
     fods = fods[fods[:, 0].argsort()]
     fods_split_array = fods_split_array[fods_split_array[:, 0].argsort()]
-    assert_equal(fods, fods_split_array)
+    assert_array_equal(fods, fods_split_array)
 
 
 @pytest.mark.parametrize("unrestricted", [True, False])
 def test_remove_core_fods(unrestricted):
     """Test core FOD removal function."""
-    atoms = Atoms("Li5", rng.standard_normal((5, 3)), unrestricted=unrestricted).build()
+    atoms = Atoms("Li5", xp.asarray(rng.standard_normal((5, 3))), unrestricted=unrestricted).build()
     atoms.Z = 1
     core = atoms.pos
-    valence = rng.standard_normal((10, 3))
+    valence = xp.asarray(rng.standard_normal((10, 3)))
 
-    fods = [np.vstack((core, valence))] * atoms.occ.Nspin
+    fods = [xp.vstack((core, valence))] * atoms.occ.Nspin
     fods_valence = remove_core_fods(atoms, fods)
-    assert_equal([valence] * atoms.occ.Nspin, fods_valence)
+    assert_array_equal(xp.stack([valence] * atoms.occ.Nspin), xp.stack(fods_valence))
 
 
 if __name__ == "__main__":
