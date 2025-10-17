@@ -283,7 +283,6 @@ def T(atoms, W, dr):
     Args:
         atoms: Atoms object.
         W: Expansion coefficients of unconstrained wave functions in reciprocal space.
-        ik: k-point index.
         dr: Real-space shifting vector.
 
     Returns:
