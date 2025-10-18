@@ -45,6 +45,7 @@ html_theme_options: dict[str, str | dict[str, str] | list[dict[str, str]]] = {
         "color-brand-primary": "#006700",
         "color-brand-content": "#1a962b",
         "color-brand-visited": "#1a962b",
+        "font-stack--headings": "Comfortaa, sans-serif",
     },
     "dark_logo": "logo/eminus_logo_dark.png",
     "dark_css_variables": {
@@ -87,6 +88,9 @@ def setup(app: Any) -> None:
     sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
     import examples_builder
 
+    app.add_css_file(
+        "https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap"
+    )
     app.connect("builder-inited", examples_builder.generate)
     app.connect("autodoc-skip-member", dunder_skip)
     app.connect("build-finished", examples_builder.clean)
