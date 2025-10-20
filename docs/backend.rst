@@ -30,6 +30,16 @@ one can now write
    from eminus import backend as xp
    xp.ones(3)
 
+One caveat is that one has to type imports of submodules explicitly instead of relying on :code:`from` imports.
+
+.. code-block:: python
+
+   from eminus import backend as xp
+   xp.linalg.det([[3]])
+
+This is because the backend module will be determined at runtime.
+:code:`from` imports do not support this dynamic system.
+
 The backend can be changed using the :code:`config` module with
 
 .. code-block:: python
