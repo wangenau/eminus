@@ -296,8 +296,6 @@ def T(atoms, W, dr):
         atoms.kpts._assert_gamma_only()
         if len(W) == len(atoms.Gk2c[0]):
             G = atoms.G[atoms.active[0]]
-        elif len(W) == len(atoms.Gk2c[-1]):
-            G = atoms.G[atoms.active[-1]]
         else:
             G = atoms.G
         factor = xp.exp(-1j * (G @ dr))

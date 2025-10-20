@@ -103,6 +103,7 @@ def test_guess():
     scf = SCF(atoms, guess="sym-pseudo")
     assert scf.guess == "pseudo"
     assert scf.symmetric
+    scf.run()  # Run the symmetric guess for coverage
 
 
 def test_gradtol():

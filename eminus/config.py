@@ -166,7 +166,7 @@ if (
     # Since we set the class instance to the module name Sphinx would only document
     # the main docstring of the class without the properties
     sys.modules[__name__] = ConfigClass()
-else:
+else:  # pragma: no cover
     # Add mock variables for all properties and methods of the ConfigClass to the module
     # This allows IDEs to see that the module has said attribute
     # This also allows for stubtesting and documentation of these variables and functions
