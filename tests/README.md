@@ -35,7 +35,3 @@ pip install notebook
 ```
 
 Information about installing extras can be found [here](https://wangenau.gitlab.io/eminus/_autosummary/eminus.extras.html#module-eminus.extras).
-
-When running pytest each test will run for every supported backend, e.g., when NumPy and Torch are
-installed the amount of tests will be doubled. This is achieved using a subprocess call in
-`conftest.py`.

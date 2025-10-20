@@ -343,7 +343,7 @@ def kpoints2axis(kpts):
         k = xp.asarray(kpts.k_scaled[shift:])
         # We index p[0] since p could be a joined label of a jump
         # This expression simply finds the special point in the k_points matrix
-        # The following expressions is a bit more readable, but only works with NumPy
+        # The following expressions is a bit more readable, but only works with NumPy, not Torch
         # index = np.flatnonzero((k == s_points[p[0]]).all(axis=1))[0] + shift
         index = xp.nonzero(xp.ravel(xp.all(k == xp.asarray(s_points[p[0]]), axis=1)))[0][0] + shift
         special_indices.append(int(index))

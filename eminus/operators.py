@@ -142,7 +142,7 @@ def I(atoms, W, ik=-1, norm="forward"):
     elif W.shape[1] == len(atoms._G2):
         Wfft = W
     else:
-        Wfft = xp.zeros((atoms.occ._Nspin, atoms.Ns, W.shape[-1]), dtype=W.dtype)
+        Wfft = xp.zeros((atoms.occ.Nspin, atoms.Ns, W.shape[-1]), dtype=W.dtype)
         Wfft[:, atoms._active[ik][0]] = W
 
     # Normally, we would have to multiply by n in the end for the correct normalization, but we can

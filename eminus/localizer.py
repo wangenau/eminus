@@ -4,7 +4,6 @@
 
 import math
 
-import numpy as np
 from scipy.linalg import qr
 from scipy.stats import unitary_group
 
@@ -140,7 +139,7 @@ def get_FLO(atoms, psi, fods):
 @handle_k(mode="skip")
 @handle_spin
 def get_scdm(atoms, psi):
-    """Calculate localized orbitals by QR decomposition, as given in the SCDM method.
+    """Calculate localized SCDM orbitals via QR decomposition.
 
     Reference: J. Chem. Theory Comput. 11, 1463.
 
@@ -155,11 +154,9 @@ def get_scdm(atoms, psi):
     psi_rs = atoms.I(psi, 0)
 
     # Do the QR factorization
-    if isinstance(psi_rs, np.ndarray):
-        Q, _, _ = qr(psi_rs.T.conj(), pivoting=True)
-    else:
-        Q, _, _ = qr(xp.to_np(psi_rs.T.conj()), pivoting=True)
-        Q = xp.asarray(Q, dtype=psi_rs.dtype)
+    Q, _, _ = qr(xp.to_np(psi_rs.T.conj()), pivoting=True)
+    Q = xp.asarray(Q, dtype=psi_rs.dtype)
+
     # Apply the transformation
     return psi_rs @ Q
 
