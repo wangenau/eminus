@@ -34,7 +34,5 @@ def info():
         try:
             sys.stdout.write(f"{pkg:<17}: {importlib.metadata.version(pkg)}\n")
         except ModuleNotFoundError:  # noqa: PERF203
-            if pkg in dependencies:
-                sys.stdout.write(f"{pkg:<17}: Dependency not installed\n")
-            elif pkg in extras:
+            if pkg in extras:
                 sys.stdout.write(f"{pkg:<17}: Extra not installed\n")
