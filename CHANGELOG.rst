@@ -8,17 +8,19 @@ Changelog
 dev
 ---
 - New features
-   - Fully implement multiple backend support
+   - Implement multiple backend support
       - Allow NumPy and Torch backends
       - Torch now fully supports GPU calculations
+      - The NumPy backend retains backwards compatibility
 - Updated docs
    - Add a backend overview page
 - Coding style
    - Many unifications due to the added backend support
    - Stricter types in many places
+   - Remove nbit type parameter from stubs
    - Ignore Ruffs PLC0415 rule
 - Miscellaneous
-   - Fix Libxc warning when using PySCF as backend
+   - Fix Libxc warning when using PySCF for XC evaluations
    - Add nglview to the Nix flake
    - Add a testing module to support backend testing
    - Add a pytest backend option
@@ -30,6 +32,7 @@ dev
    - Raise minimal versions of dependencies
       - NumPy 2+ and SciPy 1.13+ is now required
    - Remove Jax extra
+   - Remove handle_backend function
    - Updated Torch extra behavior
       - Remove Torch extra operator functions
       - Now requires array-api-compat
