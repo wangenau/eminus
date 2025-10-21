@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.2.0 - Oct 21, 2025
+---------------------
 - New features
    - Implement multiple backend support
       - Allow NumPy and Torch backends
