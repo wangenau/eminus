@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Self, TypeAlias
+from typing import Self, TypeAlias
 
 from numpy import floating
 from numpy.typing import NDArray
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _Array1D: TypeAlias = Sequence[float] | _ArrayReal
 _Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal

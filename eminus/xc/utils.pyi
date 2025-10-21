@@ -6,7 +6,7 @@ from typing import Any, Protocol, TypeAlias, TypeVar
 from numpy import floating
 from numpy.typing import NDArray
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _DnOrNone = TypeVar("_DnOrNone", _ArrayReal, None)
 _TauOrNone = TypeVar("_TauOrNone", _ArrayReal, None)

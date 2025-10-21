@@ -8,8 +8,8 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _AnyW = TypeVar("_AnyW", _ArrayComplex, list[_ArrayComplex])

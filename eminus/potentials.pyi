@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 
 from .scf import SCF
 
-_Complex: TypeAlias = complexfloating[Any]
+_Complex: TypeAlias = complexfloating
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 
 def get_pot_defaults(pot: str) -> dict[str, float]: ...

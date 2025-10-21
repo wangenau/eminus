@@ -6,9 +6,9 @@ from typing import Any, Literal, Protocol, TypeAlias
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _Array2D: TypeAlias = Sequence[Sequence[float]] | Sequence[_ArrayReal] | _ArrayReal

@@ -9,7 +9,7 @@ from numpy.typing import NDArray
 from eminus.atoms import Atoms
 from eminus.scf import SCF
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 
 def get_localized_orbitals(

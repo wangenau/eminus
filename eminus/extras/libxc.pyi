@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any, TypeAlias, TypeVar
+from typing import TypeAlias, TypeVar
 
 from numpy import floating
 from numpy.typing import NDArray
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _DnOrNone = TypeVar("_DnOrNone", _ArrayReal, None)
 _TauOrNone = TypeVar("_TauOrNone", _ArrayReal, None)

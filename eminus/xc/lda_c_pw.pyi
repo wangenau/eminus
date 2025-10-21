@@ -6,7 +6,7 @@ from typing import Any, TypeAlias
 from numpy import floating
 from numpy.typing import NDArray
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 
 def lda_c_pw(

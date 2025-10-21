@@ -6,8 +6,8 @@ from typing import Any, overload, TypeAlias
 from numpy import complexfloating, integer
 from numpy.typing import NDArray
 
-_Int: TypeAlias = integer[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Int: TypeAlias = integer
+_Complex: TypeAlias = complexfloating
 _ArrayInt: TypeAlias = NDArray[_Int]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 

@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any, overload, TypeAlias
+from typing import overload, TypeAlias
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -8,8 +8,8 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 

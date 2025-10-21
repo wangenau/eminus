@@ -8,9 +8,9 @@ from numpy.typing import NDArray
 from .atoms import Atoms
 from .scf import SCF
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _ArrayInt: TypeAlias = NDArray[_Int]

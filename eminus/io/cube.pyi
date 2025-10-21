@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, TypeAlias
+from typing import TypeAlias
 
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -9,9 +9,9 @@ from numpy.typing import NDArray
 from eminus.atoms import Atoms
 from eminus.scf import SCF
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 
 def read_cube(

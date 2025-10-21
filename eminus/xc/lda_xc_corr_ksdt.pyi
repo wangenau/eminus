@@ -8,7 +8,7 @@ from numpy.typing import NDArray
 
 from .lda_xc_ksdt import Coefficients
 
-_Float: TypeAlias = floating[Any]
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 
 @dataclass

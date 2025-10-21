@@ -10,8 +10,8 @@ from eminus.atoms import Atoms
 from eminus.kpoints import KPoints
 from eminus.scf import SCF
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _IntArray: TypeAlias = Sequence[int] | NDArray[_Int]
 

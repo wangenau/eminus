@@ -8,8 +8,8 @@ from numpy.typing import NDArray
 
 from .atoms import Atoms
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _Array1D: TypeAlias = Sequence[float] | _ArrayReal
 _Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal

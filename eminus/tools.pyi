@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, TypeAlias, TypeVar
+from typing import overload, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
@@ -10,8 +10,8 @@ from .atoms import Atoms
 from .occupations import Occupations
 from .scf import SCF
 
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _ScalarOrArrayReal = TypeVar("_ScalarOrArrayReal", float, _ArrayReal)

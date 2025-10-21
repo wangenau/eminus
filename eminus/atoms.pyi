@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, overload, Self, TypeAlias, TypeVar
+from typing import overload, Self, TypeAlias, TypeVar
 
 from numpy import bool_, complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -11,9 +11,9 @@ from .kpoints import KPoints
 from .occupations import Occupations
 from .utils import BaseObject
 
-_Int: TypeAlias = integer[Any]
-_Float: TypeAlias = floating[Any]
-_Complex: TypeAlias = complexfloating[Any]
+_Int: TypeAlias = integer
+_Float: TypeAlias = floating
+_Complex: TypeAlias = complexfloating
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayInt: TypeAlias = NDArray[_Int]
