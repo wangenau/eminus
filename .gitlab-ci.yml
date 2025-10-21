@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 default:
+  # TODO: Update to 3.14 once pyscf supports it
   image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
 variables:
   UV_SYSTEM_PYTHON: 1
@@ -296,8 +297,7 @@ attestate:
       aud: sigstore
   script:
     # Reference: https://docs.pypi.org/attestations/producing-attestations/#gitlab-cicd
-    # TODO: Remove prerelease flag once betterproto 2.0 is released: https://github.com/danielgtaylor/python-betterproto/releases
-    - uvx --prerelease=allow pypi-attestations sign dist/*
+    - uvx pypi-attestations sign dist/*
   artifacts:
     paths:
       - dist/
