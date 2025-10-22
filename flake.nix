@@ -67,7 +67,10 @@
 
       in
       {
-        devShells.default = pkgs.mkShell { buildInputs = [ eminus ]; };
+        devShells.default = pkgs.mkShell {
+          buildInputs = [ eminus ];
+          shellHook = "export JUPYTER_PLATFORM_DIRS=1";
+        };
         packages.default = python.withPackages (p: [ eminus ]);
         formatter = pkgs.nixpkgs-fmt;
       }
