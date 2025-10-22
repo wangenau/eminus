@@ -220,7 +220,7 @@ def monkhorst_pack(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    M = xp.asarray(np.indices(nk).transpose(1, 2, 3, 0).reshape(-1, 3))
     return (M + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
 
 
@@ -236,7 +236,7 @@ def gamma_centered(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = xp.asarray(np.indices(nk).transpose((1, 2, 3, 0)).reshape((-1, 3)))
+    M = xp.asarray(np.indices(nk).transpose(1, 2, 3, 0).reshape(-1, 3))
     return M / xp.asarray(nk)  # Gamma-centered grid
 
 

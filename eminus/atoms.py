@@ -445,7 +445,7 @@ class Atoms(BaseObject):
         # m2 = np.floor(ms / self.s[2]) % self.s[1]
         # m3 = ms % self.s[2]
         # M = np.column_stack((m1, m2, m3))
-        M = xp.asarray(np.indices(self.s).transpose((1, 2, 3, 0)).reshape((-1, 3)), dtype=float)
+        M = xp.asarray(np.indices(self.s, dtype=float).transpose(1, 2, 3, 0).reshape(-1, 3))
         # Build index matrix N
         N = M - (self.s / 2 < M) * self.s
         return M, N

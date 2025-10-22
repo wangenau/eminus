@@ -155,11 +155,11 @@ def I(atoms, W, ik=-1, norm="forward"):
     # Tell the function that the FFT only has to act on the respective 3 axes
     elif W.ndim == 2:
         Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
-        Finv = xp.ifftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        Finv = xp.ifftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape(atoms.Ns, W.shape[-1])
     else:
         Wfft = Wfft.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
         Finv = xp.ifftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
-            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
+            atoms.occ.Nspin, atoms.Ns, W.shape[-1]
         )
     return Finv
 
@@ -191,12 +191,10 @@ def J(atoms, W, ik=-1, full=True, norm="forward"):
         F = xp.fftn(Wfft, norm=norm).ravel()
     elif W.ndim == 2:
         Wfft = W.reshape([*atoms.s, W.shape[-1]])
-        F = xp.fftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape((atoms.Ns, W.shape[-1]))
+        F = xp.fftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape(atoms.Ns, W.shape[-1])
     else:
         Wfft = W.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
-        F = xp.fftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
-            (atoms.occ.Nspin, atoms.Ns, W.shape[-1])
-        )
+        F = xp.fftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(atoms.occ.Nspin, atoms.Ns, W.shape[-1])
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space
     if not full:

@@ -21,7 +21,7 @@ def test_numpy_backend():
     """Test the numpy backend."""
     backend = config.backend
     config.backend = "numpy"
-    array = xp.arange(9).reshape((3, 3))
+    array = xp.arange(9).reshape(3, 3)
 
     assert isinstance(xp.pi, float)
     assert xp.sqrt(array).ndim == 2
@@ -38,7 +38,7 @@ def test_torch_backend():
 
     backend = config.backend
     config.backend = "torch"
-    array = xp.arange(9, dtype=float).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape(3, 3)
 
     assert isinstance(xp.pi, float)
     assert xp.sqrt(array).ndim == 2
@@ -53,12 +53,12 @@ def test_switching_and_equality():
     pytest.importorskip("torch", reason="torch not installed, skip tests")
     backend = config.backend
     config.backend = "torch"
-    array = xp.arange(9, dtype=float).reshape((3, 3))
+    array = xp.arange(9, dtype=float).reshape(3, 3)
     sqrt_torch = xp.sqrt(array)
     norm_torch = xp.linalg.norm(array, axis=0)
 
     config.backend = "numpy"
-    array = xp.arange(9).reshape((3, 3))
+    array = xp.arange(9).reshape(3, 3)
     sqrt_numpy = xp.sqrt(array)
     norm_numpy = xp.linalg.norm(array, axis=0)
 
@@ -106,16 +106,16 @@ def test_delete():
     assert_array_equal(xp.delete(array, [1, 3]), [0, 2])
     assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
 
-    array = xp.arange(4).reshape((2, 2))  # axis=None returns a flattened array
+    array = xp.arange(4).reshape(2, 2)  # axis=None returns a flattened array
     assert_array_equal(xp.delete(array, 1), [0, 2, 3])
     assert_array_equal(xp.delete(array, [1, 3], axis=None), [0, 2])
     assert_array_equal(xp.delete(array, [0, 1, 2, 3]), [])
 
-    array = xp.arange(4).reshape((2, 2))
+    array = xp.arange(4).reshape(2, 2)
     assert_array_equal(xp.delete(array, 0, axis=0), [[2, 3]])
     assert_array_equal(xp.delete(array, 1, axis=1), [[0], [2]])
 
-    array = xp.arange(9).reshape((3, 3))
+    array = xp.arange(9).reshape(3, 3)
     assert_array_equal(xp.delete(array, [0, 2], axis=0), [[3, 4, 5]])
     assert_array_equal(xp.delete(array, [1, 2], axis=1), [[0], [3], [6]])
 
@@ -123,7 +123,7 @@ def test_delete():
 @pytest.mark.parametrize("name", ["fftn", "ifftn", "sqrtm"])
 def test_trivial_functions(name):
     """Check the availability of the more trivial backend functions implementations."""
-    array = xp.arange(9).reshape((3, 3))
+    array = xp.arange(9).reshape(3, 3)
     func = getattr(xp, name)
     func(array)
 
