@@ -258,7 +258,7 @@ def test_clear():
     assert atoms.is_built
     atoms.clear()
     assert not atoms.is_built
-    assert [x for x in (atoms.r, atoms.G, atoms.G2, atoms.active, atoms.G2c, atoms.Sf) if x is None]
+    assert [x for x in (atoms.r, atoms.G, atoms.G2, atoms.active, atoms.G2c, atoms.Sf) if x is None]  # type: ignore[unreachable]
 
 
 def test_recenter():

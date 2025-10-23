@@ -81,6 +81,8 @@ dev = [
 [tool.mypy]
 python_version = "3.14"
 strict = true
+warn_unreachable = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 disable_error_code = ["import-untyped"]  # Module is missing library stubs or py.typed marker
 
 [[tool.mypy.overrides]]
@@ -89,8 +91,13 @@ disable_error_code = ["no-untyped-def"]  # Function is missing a type annotation
 
 ##### Pytest #####
 [tool.pytest.ini_options]
+minversion = "7"
+testpaths = ["tests"]
 addopts = ["-rsxX", "--strict-config", "--strict-markers"]
 markers = ["slow: test runs longer than five seconds."]
+filterwarnings = ["error"]
+log_cli_level = "INFO"
+xfail_strict = true
 
 ##### Ruff #####
 [tool.ruff]
