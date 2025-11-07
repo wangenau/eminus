@@ -10,7 +10,7 @@ _Int: TypeAlias = integer
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
 _ArrayInt: TypeAlias = NDArray[_Int]
-_ArrayComplex: TypeAlias = NDArray[_Complex | _Float]
+_ArrayComplex: TypeAlias = NDArray[_Float | _Complex]
 
 def __getattr__(name: str) -> Any: ...
 def is_array(value: _ArrayComplex) -> bool: ...
