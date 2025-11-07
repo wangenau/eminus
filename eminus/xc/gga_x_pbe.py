@@ -14,7 +14,7 @@ from eminus import backend as xp
 from .lda_x import lda_x, lda_x_spin
 
 
-def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
+def gga_x_pbe(n, dn_spin, mu=0.2195149727645171, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
@@ -23,22 +23,22 @@ def gga_x_pbe(n, mu=0.2195149727645171, dn_spin=None, **kwargs):
 
     Args:
         n: Real-space electronic density.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
         mu: Functional parameter.
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
         PBE exchange energy density, potential, and vsigma.
     """
     ex, vx, _ = lda_x(n, **kwargs)
-    gex, gvx, vsigmax = pbe_x_base(n, mu, dn_spin[0], **kwargs)
+    gex, gvx, vsigmax = pbe_x_base(n, dn_spin[0], mu, **kwargs)
     vx, gvx = vx[0], gvx[0]  # Remove spin dimension for the correct shape
     return ex + gex / n, xp.stack([vx + gvx]), xp.stack([0.5 * vsigmax])
 
 
-def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
+def gga_x_pbe_spin(n, zeta, dn_spin, mu=0.2195149727645171, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_PBE and ID 101 in Libxc.
@@ -48,10 +48,10 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     Args:
         n: Real-space electronic density.
         zeta: Relative spin polarization.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
         mu: Functional parameter.
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -61,8 +61,8 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     zeta = zeta[0]  # Getting the non-zero values from zeta adds an extra dimension, remove it here
     n_up = zeta * n + n  # 2 * n_up
     n_dw = -zeta * n + n  # 2 * n_down
-    ex_up, vx_up, vsigma_up = pbe_x_base(n_up, mu, 2 * dn_spin[0], **kwargs)
-    ex_dw, vx_dw, vsigma_dw = pbe_x_base(n_dw, mu, 2 * dn_spin[1], **kwargs)
+    ex_up, vx_up, vsigma_up = pbe_x_base(n_up, 2 * dn_spin[0], mu, **kwargs)
+    ex_dw, vx_dw, vsigma_dw = pbe_x_base(n_dw, 2 * dn_spin[1], mu, **kwargs)
     vx_up, vx_dw = vx_up[0], vx_dw[0]  # Remove spin dimension for the correct shape
 
     ex, vx, _ = lda_x_spin(n, zeta, **kwargs)
@@ -71,17 +71,17 @@ def gga_x_pbe_spin(n, zeta, mu=0.2195149727645171, dn_spin=None, **kwargs):
     return ex + 0.5 * (ex_up + ex_dw) / n, xp.stack([vx[0] + vx_up, vx[1] + vx_dw]), vsigmax
 
 
-def pbe_x_base(n, mu=0.2195149727645171, dn=None, **kwargs):
+def pbe_x_base(n, dn, mu=0.2195149727645171, **kwargs):
     """Base PBE exchange functional to be used in the spin-paired and -polarized case.
 
     Reference: Phys. Rev. Lett. 77, 3865.
 
     Args:
         n: Real-space electronic density.
+        dn: Real-space gradient of densities per spin channel.
 
     Keyword Args:
         mu: Functional parameter.
-        dn: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

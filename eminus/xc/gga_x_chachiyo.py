@@ -12,7 +12,7 @@ from eminus import backend as xp
 from .lda_x import lda_x
 
 
-def gga_x_chachiyo(n, dn_spin=None, **kwargs):
+def gga_x_chachiyo(n, dn_spin, **kwargs):
     """Chachiyo parametrization of the exchange functional (spin-paired).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
@@ -21,9 +21,9 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
 
     Args:
         n: Real-space electronic density.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -48,7 +48,7 @@ def gga_x_chachiyo(n, dn_spin=None, **kwargs):
     return ex * gex, xp.stack([gvx]) * gex, xp.stack([vsigmax]) * gex
 
 
-def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
+def gga_x_chachiyo_spin(n, zeta, dn_spin, **kwargs):
     """Chachiyo parametrization of the exchange functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_X_CHACHIYO and ID 298 in Libxc.
@@ -58,9 +58,9 @@ def gga_x_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     Args:
         n: Real-space electronic density.
         zeta: Relative spin polarization.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

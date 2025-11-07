@@ -10,12 +10,12 @@ _ArrayReal: TypeAlias = NDArray[_Float]
 
 def gga_c_chachiyo(
     n: _ArrayReal,
-    dn_spin: _ArrayReal | None = ...,
+    dn_spin: _ArrayReal,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...
 def gga_c_chachiyo_spin(
     n: _ArrayReal,
     zeta: _ArrayReal,
-    dn_spin: _ArrayReal | None = ...,
+    dn_spin: _ArrayReal,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...

@@ -10,14 +10,14 @@ _ArrayReal: TypeAlias = NDArray[_Float]
 
 def gga_c_pbe(
     n: _ArrayReal,
+    dn_spin: _ArrayReal,
     beta: float = ...,
-    dn_spin: _ArrayReal | None = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...
 def gga_c_pbe_spin(
     n: _ArrayReal,
     zeta: _ArrayReal,
+    dn_spin: _ArrayReal,
     beta: float = ...,
-    dn_spin: _ArrayReal | None = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, _ArrayReal]: ...

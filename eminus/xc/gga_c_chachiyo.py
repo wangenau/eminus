@@ -12,7 +12,7 @@ from eminus import backend as xp
 from .lda_c_chachiyo_mod import chachiyo_scaling_mod as weight_function
 
 
-def gga_c_chachiyo(n, dn_spin=None, **kwargs):
+def gga_c_chachiyo(n, dn_spin, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
@@ -21,9 +21,9 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
 
     Args:
         n: Real-space electronic density.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -60,7 +60,7 @@ def gga_c_chachiyo(n, dn_spin=None, **kwargs):
     return ec * expgec, xp.stack([gvc]), xp.stack([vsigmac])
 
 
-def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
+def gga_c_chachiyo_spin(n, zeta, dn_spin, **kwargs):
     """Chachiyo parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_CHACHIYO and ID 309 in Libxc.
@@ -70,9 +70,9 @@ def gga_c_chachiyo_spin(n, zeta, dn_spin=None, **kwargs):
     Args:
         n: Real-space electronic density.
         zeta: Relative spin polarization.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:

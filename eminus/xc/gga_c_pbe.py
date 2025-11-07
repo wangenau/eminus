@@ -14,7 +14,7 @@ from eminus import backend as xp
 from .lda_c_pw_mod import lda_c_pw_mod, lda_c_pw_mod_spin
 
 
-def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
+def gga_c_pbe(n, dn_spin, beta=0.06672455060314922, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-paired).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
@@ -23,10 +23,10 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
 
     Args:
         n: Real-space electronic density.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
         beta: Functional parameter.
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
@@ -62,7 +62,7 @@ def gga_c_pbe(n, beta=0.06672455060314922, dn_spin=None, **kwargs):
     return ec + gec, xp.stack([vc + gvc]), xp.stack([0.5 * vsigmac])
 
 
-def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
+def gga_c_pbe_spin(n, zeta, dn_spin, beta=0.06672455060314922, **kwargs):
     """Perdew-Burke-Ernzerhof parametrization of the correlation functional (spin-polarized).
 
     Corresponds to the functional with the label GGA_C_PBE and ID 130 in Libxc.
@@ -72,10 +72,10 @@ def gga_c_pbe_spin(n, zeta, beta=0.06672455060314922, dn_spin=None, **kwargs):
     Args:
         n: Real-space electronic density.
         zeta: Relative spin polarization.
+        dn_spin: Real-space gradient of densities per spin channel.
 
     Keyword Args:
         beta: Functional parameter.
-        dn_spin: Real-space gradient of densities per spin channel.
         **kwargs: Throwaway arguments.
 
     Returns:
