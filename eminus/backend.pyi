@@ -3,13 +3,14 @@
 from collections.abc import Sequence
 from typing import Any, overload, TypeAlias
 
-from numpy import complexfloating, integer
+from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
 
 _Int: TypeAlias = integer
+_Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
 _ArrayInt: TypeAlias = NDArray[_Int]
-_ArrayComplex: TypeAlias = NDArray[_Complex]
+_ArrayComplex: TypeAlias = NDArray[_Complex | _Float]
 
 def __getattr__(name: str) -> Any: ...
 def is_array(value: _ArrayComplex) -> bool: ...

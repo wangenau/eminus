@@ -50,9 +50,10 @@ def get_localized_orbitals(mf, loc, Nit=1000, seed=1234):
     for s in range(Nspin):
         # Initialize the localizer object
         if Nspin == 2:
-            localizer = loc_dict[loc](mf.mol, mf.mo_coeff[s][:, mf.mo_occ[s] > 0])
+            tmp_orb = mf.mo_coeff[s][:, mf.mo_occ[s] > 0]
         else:
-            localizer = loc_dict[loc](mf.mol, mf.mo_coeff[:, mf.mo_occ > 0])
+            tmp_orb = mf.mo_coeff[:, mf.mo_occ > 0]
+        localizer = loc_dict[loc](mf.mol, tmp_orb)
 
         # Set the population method in generalized PM to Becke charges
         if loc == "GPM":

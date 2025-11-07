@@ -109,6 +109,7 @@ def test_libxc_str():
 def test_get_xc_defaults():
     """Test that the xc defaults are correctly parsed."""
     assert get_xc_defaults("svwn5") == {"A": 0.0310907, "b": 3.72744, "c": 12.9352, "x0": -0.10498}
+    assert get_xc_defaults(["not_implemented"]) == {}
 
 
 if __name__ == "__main__":

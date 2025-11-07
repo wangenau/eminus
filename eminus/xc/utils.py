@@ -308,15 +308,16 @@ def get_xc_defaults(xc):
             except ValueError:
                 f_xc = LibXCFunctional(fxc, 1)
             fxc_params = dict(zip(f_xc.get_ext_param_names(), f_xc.get_ext_param_default_values()))
-
         # Analyze the signature for implemented functionals
-        if func in IMPLEMENTED:
+        elif func in IMPLEMENTED:
             sig = inspect.signature(IMPLEMENTED[func])
             fxc_params = {
                 param.name: param.default
                 for param in sig.parameters.values()
                 if param.default is not inspect.Parameter.empty
             }
+        else:
+            fxc_params = {}
 
         # Remove special names from the parsed parameters
         for special in SPECIAL_NAMES:
