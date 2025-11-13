@@ -5,6 +5,12 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Small typing, CI, and TOML improvements
+   - Use Python 3.14 as the CI base image
+
 v3.2.0 - Oct 21, 2025
 ---------------------
 - New features
