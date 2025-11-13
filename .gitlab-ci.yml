@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2021 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 default:
-  # TODO: Update to 3.14 once pyscf supports it
-  image: ghcr.io/astral-sh/uv:python3.13-trixie-slim
+  image: ghcr.io/astral-sh/uv:python3.14-trixie-slim
 variables:
   UV_SYSTEM_PYTHON: 1
   UV_NO_PROGRESS: 1
@@ -204,7 +203,7 @@ python:
     - pytest tests/ -m "not slow"
   parallel:
     matrix:
-      - PYTHON_VERSIONS: ['3.10', '3.11', '3.12', '3.14']
+      - PYTHON_VERSIONS: ['3.10', '3.11', '3.12', '3.13']
 
 ############### experiments ###############
 
