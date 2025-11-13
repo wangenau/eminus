@@ -96,7 +96,7 @@ testpaths = ["tests"]
 addopts = ["-rsxX", "--strict-config", "--strict-markers"]
 markers = ["slow: test runs longer than five seconds."]
 filterwarnings = ["error"]
-log_cli_level = "INFO"
+log_level = "INFO"
 xfail_strict = true
 
 ##### Ruff #####
