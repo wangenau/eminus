@@ -8,8 +8,9 @@ Changelog
 dev
 ---
 - Miscellaneous
-   - Small typing, CI, and TOML improvements
+   - Fix meta-GGAs evaluation when using Torch with opt-einsum
    - Use Python 3.14 as the CI base image
+   - Small typing, CI, TOML, and coding style improvements
 
 v3.2.0 - Oct 21, 2025
 ---------------------
