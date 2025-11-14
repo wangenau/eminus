@@ -41,7 +41,7 @@ def handle_spin(
     func: _F,
 ) -> _F: ...
 def handle_k(
-    func: _F | None = ...,
+    func: Callable[..., object] | None = ...,
     *,
     mode: Literal["gracefully", "index", "reduce", "skip"] = ...,
 ) -> Callable[..., Any]: ...

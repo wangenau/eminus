@@ -33,27 +33,27 @@ class Atoms(BaseObject):
     T = operators.T
     @overload
     def I(
-        self,
+        atoms: Self,  # noqa: N805
         W: list[_ArrayComplex],
         norm: Literal["backward", "forward"] = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def I(
-        self,
+        atoms: Self,  # noqa: N805
         W: _ArrayRealOrComplex,
         ik: int = ...,
         norm: Literal["backward", "forward"] = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
     def J(
-        self,
+        atoms: Self,  # noqa: N805
         W: list[_ArrayComplex],
         full: bool = ...,
         norm: Literal["backward", "forward"] = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def J(
-        self,
+        atoms: Self,  # noqa: N805
         W: _ArrayRealOrComplex,
         ik: int = ...,
         full: bool = ...,
@@ -61,22 +61,25 @@ class Atoms(BaseObject):
     ) -> _ArrayRealOrComplex: ...
     @overload
     def Idag(
-        self,
+        atoms: Self,  # noqa: N805
         W: list[_ArrayComplex],
         full: bool = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def Idag(
-        self,
+        atoms: Self,  # noqa: N805
         W: _ArrayRealOrComplex,
         ik: int = ...,
         full: bool = ...,
     ) -> _ArrayRealOrComplex: ...
-    @overload
-    def Jdag(self, W: list[_ArrayComplex]) -> list[_ArrayComplex]: ...
     @overload
     def Jdag(
-        self,
+        atoms: Self,  # noqa: N805
+        W: list[_ArrayComplex],
+    ) -> list[_ArrayComplex]: ...
+    @overload
+    def Jdag(
+        atoms: Self,  # noqa: N805
         W: _ArrayRealOrComplex,
         ik: int = ...,
     ) -> _ArrayRealOrComplex: ...
