@@ -126,7 +126,7 @@ typecheck:
     - uv pip install -e .
     - uv pip install mypy[faster-cache]
     - mypy . --disable-error-code="import-not-found" --disable-error-code="unused-ignore"
-    # Overload issues due to https://github.com/python/mypy/issues/16956
+    # Overload issues
     - >-
       echo -e
       "eminus.Atoms.(I|Idag|J|Jdag)\n"

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import overload, Self, TypeAlias, TypeVar
+from typing import Literal, overload, Self, TypeAlias, TypeVar
 
 from numpy import bool_, complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -32,18 +32,24 @@ class Atoms(BaseObject):
     K = operators.K
     T = operators.T
     @overload
-    def I(self, W: list[_ArrayComplex]) -> list[_ArrayComplex]: ...
+    def I(
+        self,
+        W: list[_ArrayComplex],
+        norm: Literal["backward", "forward"] = ...,
+    ) -> list[_ArrayComplex]: ...
     @overload
     def I(
         self,
         W: _ArrayRealOrComplex,
         ik: int = ...,
+        norm: Literal["backward", "forward"] = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
     def J(
         self,
         W: list[_ArrayComplex],
         full: bool = ...,
+        norm: Literal["backward", "forward"] = ...,
     ) -> list[_ArrayComplex]: ...
     @overload
     def J(
@@ -51,6 +57,7 @@ class Atoms(BaseObject):
         W: _ArrayRealOrComplex,
         ik: int = ...,
         full: bool = ...,
+        norm: Literal["backward", "forward"] = ...,
     ) -> _ArrayRealOrComplex: ...
     @overload
     def Idag(
