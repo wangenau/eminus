@@ -1,13 +1,14 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from dataclasses import dataclass
-from typing import Any, overload, TypeAlias
+from typing import Any, TypeAlias
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .scf import SCF
+from .utils import handle_k
 
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
@@ -30,13 +31,7 @@ class Energy:
     def extrapolate(self) -> float: ...
 
 def get_E(scf: SCF) -> float: ...
-@overload
-def get_Ekin(
-    atoms: Atoms,
-    Y: _ArrayComplex,
-    ik: int,
-) -> float: ...
-@overload
+@handle_k(mode="reduce")
 def get_Ekin(
     atoms: Atoms,
     Y: list[_ArrayComplex],
@@ -59,13 +54,7 @@ def get_Eloc(
     scf: SCF,
     n: _ArrayReal,
 ) -> float: ...
-@overload
-def get_Enonloc(
-    scf: SCF,
-    Y: _ArrayComplex,
-    ik: int,
-) -> float: ...
-@overload
+@handle_k(mode="reduce")
 def get_Enonloc(
     scf: SCF,
     Y: list[_ArrayComplex],

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
 from collections.abc import Sequence
-from typing import Any, Literal, Protocol, TypeAlias
+from typing import Any, Callable, Literal, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating, integer
 from numpy.typing import NDArray
@@ -13,15 +13,7 @@ _ArrayReal: TypeAlias = NDArray[_Float]
 _ArrayComplex: TypeAlias = NDArray[_Complex]
 _Array2D: TypeAlias = Sequence[Sequence[float]] | Sequence[_ArrayReal] | _ArrayReal
 
-# Create a custom Callable type for some decorators
-class _HandleType(Protocol):
-    def __call__(
-        self,
-        obj: Any,
-        W: Any,
-        *args: Any,
-        **kwargs: Any,
-    ) -> Any: ...
+_F = TypeVar("_F", bound=Callable[..., object])
 
 class BaseObject:
     def view(
@@ -46,13 +38,13 @@ def Ylm_real(
     G: _ArrayReal,
 ) -> _ArrayReal: ...
 def handle_spin(
-    func: _HandleType,
-) -> _HandleType: ...
+    func: _F,
+) -> _F: ...
 def handle_k(
-    func: _HandleType | None = ...,
+    func: _F | None = ...,
     *,
     mode: Literal["gracefully", "index", "reduce", "skip"] = ...,
-) -> Any: ...
+) -> Callable[..., Any]: ...
 def pseudo_uniform(
     size: Sequence[int] | NDArray[_Int],
     seed: int = ...,

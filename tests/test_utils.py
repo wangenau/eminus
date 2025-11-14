@@ -145,9 +145,9 @@ def test_handle_spin():
         return W
 
     W = xp.ones((1, 1, 1))
-    out = mock(None, W, kwarg="kwarg")
+    out = mock(None, W, kwarg="kwarg")  # type: ignore[no-untyped-call]
     assert_array_equal(out, W)
-    out = mock(None, W[0], kwarg="kwarg")
+    out = mock(None, W[0], kwarg="kwarg")  # type: ignore[no-untyped-call]
     assert_array_equal(out, W[0])
 
 

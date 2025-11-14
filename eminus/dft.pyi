@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import Any, overload, TypeAlias, TypeVar
+from typing import Any, TypeAlias, TypeVar
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .scf import SCF
+from .utils import handle_k, handle_spin
 
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
@@ -18,6 +19,8 @@ def get_phi(
     atoms: Atoms,
     n: _ArrayReal,
 ) -> _ArrayReal: ...
+@handle_k
+@handle_spin
 def orth(
     atoms: Atoms,
     W: _AnyW,
@@ -32,24 +35,12 @@ def get_n_total(
     Y: list[_ArrayComplex],
     n_spin: _ArrayReal | None = ...,
 ) -> _ArrayReal: ...
-@overload
-def get_n_spin(
-    atoms: Atoms,
-    Y: _ArrayComplex,
-    ik: int,
-) -> _ArrayReal: ...
-@overload
+@handle_k(mode="reduce")
 def get_n_spin(
     atoms: Atoms,
     Y: list[_ArrayComplex],
 ) -> _ArrayReal: ...
-@overload
-def get_n_single(
-    atoms: Atoms,
-    Y: _ArrayComplex,
-    ik: int,
-) -> _ArrayReal: ...
-@overload
+@handle_k(mode="reduce")
 def get_n_single(
     atoms: Atoms,
     Y: list[_ArrayComplex],

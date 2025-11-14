@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from typing import overload, TypeAlias
+from typing import TypeAlias
 
 from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
 from .scf import SCF
+from .utils import handle_k
 
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
@@ -24,13 +25,7 @@ def gradient_correction(
     dn_spin: _ArrayReal,
     vsigma: _ArrayComplex,
 ) -> _ArrayComplex: ...
-@overload
-def get_tau(
-    atoms: Atoms,
-    Y: _ArrayComplex,
-    ik: int,
-) -> _ArrayReal: ...
-@overload
+@handle_k
 def get_tau(
     atoms: Atoms,
     Y: list[_ArrayComplex],

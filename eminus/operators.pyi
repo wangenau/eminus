@@ -7,6 +7,7 @@ from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
+from .utils import handle_k, handle_spin
 
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
@@ -17,15 +18,18 @@ _Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal
 _AnyWOrN = TypeVar("_AnyWOrN", _ArrayReal, _ArrayComplex, list[_ArrayComplex])
 _ArrayRealOrComplex = TypeVar("_ArrayRealOrComplex", _ArrayReal, _ArrayComplex)
 
+@handle_k
 def O(
     atoms: Atoms,
     W: _AnyWOrN,
 ) -> _AnyWOrN: ...
+@handle_spin
 def L(
     atoms: Atoms,
     W: _ArrayRealOrComplex,
     ik: int = ...,
 ) -> _ArrayRealOrComplex: ...
+@handle_spin
 def Linv(
     atoms: Atoms,
     W: _ArrayRealOrComplex,
@@ -82,6 +86,7 @@ def Jdag(
     W: _ArrayRealOrComplex,
     ik: int = ...,
 ) -> _ArrayRealOrComplex: ...
+@handle_spin
 def K(
     atoms: Atoms,
     W: _ArrayComplex,

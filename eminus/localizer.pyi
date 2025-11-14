@@ -7,6 +7,7 @@ from numpy import complexfloating, floating
 from numpy.typing import NDArray
 
 from .atoms import Atoms
+from .utils import handle_k, handle_spin
 
 _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
@@ -16,30 +17,37 @@ _Array1D: TypeAlias = Sequence[float] | _ArrayReal
 _Array2D: TypeAlias = Sequence[_Array1D] | _ArrayReal
 _AnyW = TypeVar("_AnyW", _ArrayComplex, list[_ArrayComplex])
 
+@handle_k(mode="skip")
 def eval_psi(
     atoms: Atoms,
     psi: _AnyW,
     r: _Array1D | _Array2D,
 ) -> _AnyW: ...
+@handle_k(mode="skip")
 def get_R(
     atoms: Atoms,
     psi: _AnyW,
     fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
+@handle_k(mode="skip")
 def get_FO(
     atoms: Atoms,
     psi: _AnyW,
     fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
+@handle_spin
 def get_S(
     atoms: Atoms,
     psirs: _ArrayComplex,
 ) -> _ArrayComplex: ...
+@handle_k(mode="skip")
 def get_FLO(
     atoms: Atoms,
     psi: _AnyW,
     fods: _ArrayReal | Sequence[_ArrayReal],
 ) -> _AnyW: ...
+@handle_k(mode="skip")
+@handle_spin
 def get_scdm(
     atoms: Atoms,
     psi: _AnyW,
@@ -74,6 +82,7 @@ def second_moment(
     atoms: Atoms,
     psirs: _ArrayComplex,
 ) -> _ArrayReal: ...
+@handle_spin
 def wannier_supercell_matrices(
     atoms: Atoms,
     psirs: _ArrayComplex,
@@ -89,6 +98,8 @@ def wannier_supercell_grad(
     Y: _ArrayReal,
     Z: _ArrayReal,
 ) -> _ArrayComplex: ...
+@handle_k(mode="skip")
+@handle_spin
 def get_wannier(
     atoms: Atoms,
     psirs: _AnyW,
