@@ -9,8 +9,11 @@ dev
 ---
 - Miscellaneous
    - Fix meta-GGAs evaluation when using Torch with opt-einsum
+   - Indicate dn_spin as non-optional in GGA functionals
+   - Many type hint improvements
+      - Properly type decorators
    - Use Python 3.14 as the CI base image
-   - Small typing, CI, TOML, and coding style improvements
+   - Small TOML improvements to satisfy Scientific Python recommendations
 
 v3.2.0 - Oct 21, 2025
 ---------------------
