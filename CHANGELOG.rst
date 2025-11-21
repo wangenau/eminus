@@ -5,8 +5,8 @@
 Changelog
 =========
 
-dev
----
+v3.2.1 - Nov 21, 2025
+---------------------
 - Miscellaneous
    - Fix meta-GGAs evaluation when using Torch with opt-einsum
    - Indicate dn_spin as non-optional in GGA functionals
