@@ -95,7 +95,10 @@ minversion = "7"
 testpaths = ["tests"]
 addopts = ["-rsxX", "--strict-config", "--strict-markers"]
 markers = ["slow: test runs longer than five seconds."]
-filterwarnings = ["error"]
+filterwarnings = [
+    "error",
+    "ignore:Implicitly cleaning up:ResourceWarning:tempfile",  # From PySCF
+]
 log_level = "INFO"
 xfail_strict = true
 

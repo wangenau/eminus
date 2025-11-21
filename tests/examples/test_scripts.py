@@ -108,6 +108,7 @@ def test_16():  # noqa: D103
 
 @pytest.mark.slow
 def test_17():  # noqa: D103
+    pytest.importorskip("matplotlib", reason="matplotlib not installed, skip tests")
     execute_example("17_reduced_density_gradient")
 
 
