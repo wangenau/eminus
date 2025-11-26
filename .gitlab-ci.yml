@@ -341,8 +341,7 @@ pypi:
       aud: pypi
   script:
     # Reference: https://docs.pypi.org/trusted-publishers/using-a-publisher/#gitlab-cicd
-    # TODO: Remove twine once uv has attestations upload support: https://github.com/astral-sh/uv/issues/9122
-    - uvx twine upload --attestations dist/*
+    - uv publish dist/*
   rules:
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == "main"
