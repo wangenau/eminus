@@ -50,8 +50,8 @@ def read_cube(filename):
         pos = []
         Z = []
         # Following lines contain atom positions with the format: atom-id charge x-pos y-pos z-pos
-        _offset = 0
-        for _offset, line in enumerate(lines[6:]):
+        offset = 0
+        for line in lines[6:]:
             line_split = line.strip().split()
             # If the first value is not a (positive) integer, we have reached the field data
             if not line_split[0].isdigit():
@@ -59,11 +59,12 @@ def read_cube(filename):
             atom.append(NUMBER2SYMBOL[int(line_split[0])])
             Z.append(float(line_split[1]))
             pos.append(np.asarray(line_split[2:5], dtype=float))
+            offset += 1
     pos = xp.asarray(np.asarray(pos))
 
     # The rest of the data is the field data
     # Split the strings, flatten the lists of lists, and convert to a float numpy array
-    tmp_list = [l.split() for l in lines[6 + _offset :]]
+    tmp_list = [l.split() for l in lines[6 + offset :]]
     field_list = [item for sublist in tmp_list for item in sublist]
     field = xp.asarray(np.asarray(field_list, dtype=float))
     return atom, pos, Z, a, s, field
