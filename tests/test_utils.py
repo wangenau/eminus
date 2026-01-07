@@ -50,7 +50,7 @@ def test_Ylm(l):
 
             Y_extern = sph_harm_y(l, abs(m), theta, phi)
         except ImportError:
-            from scipy.special import sph_harm
+            from scipy.special import sph_harm  # type: ignore[attr-defined,unused-ignore]
 
             Y_extern = sph_harm(abs(m), l, phi, theta)
         if m < 0:
