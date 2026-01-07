@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import Any
 
+def _custom_object_hook(dct: dict[str, Any]) -> Any: ...
 def read_json(filename: str) -> Any: ...
 def write_json(
     obj: Any,

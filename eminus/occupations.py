@@ -221,6 +221,23 @@ class Occupations:
 
     kernel = fill
 
+    def smear(self, epsilon):
+        """Update fillings according to a Fermi distribution.
+
+        Args:
+            epsilon: Eigenenergies.
+
+        Returns:
+            Efermi: Fermi energy.
+        """
+        if self.smearing == 0:
+            log.info("Smearing is set to zero, nothing to do.")
+            return 0
+
+        Efermi = get_Efermi(self, epsilon)
+        self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
+        return Efermi
+
     def _update_from_fillings(self, value, magnetization):
         """Update fillings.
 
@@ -375,20 +392,3 @@ class Occupations:
             f"Smearing width: {self.smearing} Eh\n"
             f"Fillings: \n{self.f if self.is_filled else 'Not filled'}"
         )
-
-    def smear(self, epsilon):
-        """Update fillings according to a Fermi distribution.
-
-        Args:
-            epsilon: Eigenenergies.
-
-        Returns:
-            Efermi: Fermi energy.
-        """
-        if self.smearing == 0:
-            log.info("Smearing is set to zero, nothing to do.")
-            return 0
-
-        Efermi = get_Efermi(self, epsilon)
-        self._f = fermi_distribution(epsilon, Efermi, self.smearing) * 2 / self.Nspin
-        return Efermi

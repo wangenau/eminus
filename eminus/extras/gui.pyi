@@ -19,6 +19,11 @@ def view(
     *args: Any,
     **kwargs: Any,
 ) -> Any: ...
+def _uniform_density_data(
+    n: _ArrayReal,
+    r: _ArrayReal,
+    s: _IntArray,
+) -> tuple[_ArrayReal, _ArrayReal]: ...
 def view_atoms(
     obj: Atoms | SCF,
     fods: _ArrayReal | Sequence[_ArrayReal] | None = ...,
@@ -48,6 +53,25 @@ def view_file(
     **kwargs: Any,
 ) -> Any: ...
 def executed_in_notebook() -> bool: ...
+def _generic_view(
+    view: Any,
+    filename: Any,
+) -> Any: ...
+def _cube_view(
+    view: Any,
+    filename: str,
+    isovalue: float,
+    elec_symbols: Sequence[str],
+) -> Any: ...
+def _xyz_view(
+    view: Any,
+    filename: str,
+    elec_symbols: Sequence[str],
+) -> Any: ...
+def _traj_view(
+    view: Any,
+    filename: Sequence[str],
+) -> Any: ...
 def plot_bandstructure(
     scf: SCF,
     spin: int | _IntArray = ...,

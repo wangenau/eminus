@@ -12,11 +12,11 @@ from eminus.testing import assert_allclose
 from eminus.xc.lda_xc_gdsmfb import (
     lda_xc_gdsmfb,
     lda_xc_gdsmfb_spin,
-    PhiParams,
+    PhiParamsGDSMFB,
     Zeta0Coeffs,
     Zeta1Coeffs,
 )
-from eminus.xc.lda_xc_ksdt import (  # type: ignore[attr-defined]
+from eminus.xc.lda_xc_ksdt import (
     _get_fxc_zeta,
     _get_phi,
     _get_theta,
@@ -53,7 +53,7 @@ def test_lda_xc_gdsmfb_spin_vxc(n_up, n_dw, T):
         theta0 = _get_theta0(theta, zeta)
         theta1 = _get_theta1(theta, zeta)
         # Initialize parameters
-        phi_params = PhiParams()
+        phi_params = PhiParamsGDSMFB()
         zeta0theta0 = Zeta0Coeffs(theta0)
         zeta1theta1 = Zeta1Coeffs(theta1)
         # Calculate fxc

@@ -10,6 +10,7 @@ from .atoms import Atoms
 from .energies import Energy
 from .gth import GTH
 from .kpoints import KPoints
+from .logger import CustomLogger
 from .utils import BaseObject
 
 _Float: TypeAlias = floating
@@ -40,6 +41,9 @@ class SCF(BaseObject):
     vxc: _ArrayComplex | None
     vsigma: _ArrayComplex | None
     vtau: _ArrayComplex | None
+    _opt_log: dict[str, dict[str, float]]
+    _log: CustomLogger
+    _precomputed: dict[str, _ArrayComplex | None]
     def __init__(
         self,
         atoms: Atoms,
@@ -109,6 +113,7 @@ class SCF(BaseObject):
     def clear(self) -> Self: ...
     @staticmethod
     def callback(scf: SCF, step: int) -> None: ...
+    def _precompute(self) -> Self: ...
 
 class RSCF(SCF):
     @property

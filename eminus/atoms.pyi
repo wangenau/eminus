@@ -8,6 +8,7 @@ from numpy.typing import NDArray
 
 from . import operators
 from .kpoints import KPoints
+from .logger import CustomLogger
 from .occupations import Occupations
 from .utils import BaseObject
 
@@ -26,6 +27,7 @@ class Atoms(BaseObject):
     occ: Occupations
     kpts: KPoints
     is_built: bool
+    _log: CustomLogger
     O = operators.O
     L = operators.L
     Linv = operators.Linv
@@ -167,6 +169,8 @@ class Atoms(BaseObject):
     def Sf(self) -> NDArray[_Complex] | None: ...
     @property
     def dV(self) -> float: ...
+    @property
+    def _atoms(self) -> Self: ...
     def build(self) -> Self: ...
     kernel = build
     def recenter(self, center: float | _Array1D | None = ...) -> Self: ...
@@ -176,3 +180,5 @@ class Atoms(BaseObject):
         wk: _Array1D | None = ...,
     ) -> Self: ...
     def clear(self) -> Self: ...
+    def _get_index_matrices(self) -> tuple[_ArrayReal, _ArrayReal]: ...
+    def _sample_unit_cell(self) -> None: ...

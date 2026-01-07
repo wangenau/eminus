@@ -5,6 +5,11 @@
 Changelog
 =========
 
+dev
+---
+- Miscellaneous
+   - Add type hints for private members
+
 v3.2.1 - Nov 21, 2025
 ---------------------
 - Miscellaneous

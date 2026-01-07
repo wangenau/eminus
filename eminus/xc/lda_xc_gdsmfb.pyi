@@ -6,7 +6,7 @@ from typing import Any, TypeAlias
 from numpy import floating
 from numpy.typing import NDArray
 
-from .lda_xc_ksdt import Coefficients
+from .lda_xc_ksdt import Coefficients, PhiParams
 
 _Float: TypeAlias = floating
 _ArrayReal: TypeAlias = NDArray[_Float]
@@ -54,7 +54,7 @@ class Zeta1Coeffs(Coefficients):
     e5: float = ...
 
 @dataclass
-class PhiParams:
+class PhiParamsGDSMFB(PhiParams):
     g1: float = ...
     g2: float = ...
     g3: float = ...

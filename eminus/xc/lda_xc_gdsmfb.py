@@ -7,7 +7,7 @@ Reference: Phys. Rev. Lett. 119, 135001.
 
 import dataclasses
 
-from .lda_xc_ksdt import Coefficients, lda_xc_ksdt, lda_xc_ksdt_spin
+from .lda_xc_ksdt import Coefficients, lda_xc_ksdt, lda_xc_ksdt_spin, PhiParams
 
 
 @dataclasses.dataclass
@@ -65,7 +65,7 @@ class Zeta1Coeffs(Coefficients):
 
 
 @dataclasses.dataclass
-class PhiParams:
+class PhiParamsGDSMFB(PhiParams):
     """Parameter class holding the spin-interpolation function parameters.
 
     Reference: Phys. Rev. Lett. 119, 135001.
@@ -99,7 +99,12 @@ def lda_xc_gdsmfb(n, T=0, **kwargs):
         GDSMFB exchange-correlation energy density and potential.
     """
     return lda_xc_ksdt(
-        n, T=T, zeta0_coeffs=Zeta0Coeffs, zeta1_coeffs=Zeta1Coeffs, phi_params=PhiParams, **kwargs
+        n,
+        T=T,
+        zeta0_coeffs=Zeta0Coeffs,
+        zeta1_coeffs=Zeta1Coeffs,
+        phi_params=PhiParamsGDSMFB,
+        **kwargs,
     )
 
 
@@ -129,6 +134,6 @@ def lda_xc_gdsmfb_spin(n, zeta, T=0, **kwargs):
         T=T,
         zeta0_coeffs=Zeta0Coeffs,
         zeta1_coeffs=Zeta1Coeffs,
-        phi_params=PhiParams,
+        phi_params=PhiParamsGDSMFB,
         **kwargs,
     )

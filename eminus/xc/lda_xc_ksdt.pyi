@@ -130,3 +130,113 @@ def lda_xc_ksdt_spin(
     phi_params: Callable[..., Any] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
+def _pade(
+    x: _ArrayReal,
+    n1: float,
+    n2: float,
+    n3: float,
+    n4: float,
+    d1: float,
+    d2: float,
+) -> _ArrayReal: ...
+def _dpade(
+    x: _ArrayReal,
+    n1: float,
+    n2: float,
+    n3: float,
+    n4: float,
+    d1: float,
+    d2: float,
+) -> _ArrayReal: ...
+def _get_theta(
+    T: float,
+    n: _ArrayReal,
+    zeta: _ArrayReal,
+) -> _ArrayReal: ...
+def _get_dthetadn_up(
+    T: float,
+    n_up: _ArrayReal,
+) -> _ArrayReal: ...
+def _get_theta0(
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+) -> _ArrayReal: ...
+def _get_dtheta0dtheta(zeta: _ArrayReal) -> _ArrayReal: ...
+def _get_theta1(
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+) -> _ArrayReal: ...
+def _get_dtheta1dtheta0() -> float: ...
+def _get_fxc_zeta(
+    rs: _ArrayReal,
+    p: Coefficients,
+) -> _ArrayReal: ...
+def _get_dfxc_zetadrs(
+    rs: _ArrayReal,
+    p: Coefficients,
+) -> _ArrayReal: ...
+def _get_dfxc_zetadtheta(
+    rs: _ArrayReal,
+    p: Coefficients,
+) -> _ArrayReal: ...
+def _get_phi(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dphidrs(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dphidtheta(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dphidzeta(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    zeta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_alpha(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dalphadrs(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dalphadtheta(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_g(
+    rs: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dgdrs(
+    rs: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_lambda(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dlambdadrs(
+    rs: _ArrayReal,
+    theta: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
+def _get_dlambdadtheta(
+    rs: _ArrayReal,
+    phi_params: PhiParams,
+) -> _ArrayReal: ...
