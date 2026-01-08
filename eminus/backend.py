@@ -55,6 +55,8 @@ def to_np(arr):
     Returns:
         Copied array on the CPU.
     """
+    if arr is None:
+        return None
     try:
         from array_api_compat import is_torch_array
 
