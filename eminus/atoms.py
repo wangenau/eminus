@@ -470,7 +470,7 @@ class Atoms(BaseObject):
         self._Gk2 = xp.stack(
             [xp.linalg.norm(self.G + self.kpts.k[ik], axis=1) ** 2 for ik in range(self.kpts.Nk)]
         )
-        self._Gk2c = [self.Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
+        self._Gk2c = [self._Gk2[ik][self._active[ik]] for ik in range(self.kpts.Nk)]
         # Calculate the structure factor per atom
         self._Sf = xp.exp(1j * (self.G @ self.pos.T)).T
 
