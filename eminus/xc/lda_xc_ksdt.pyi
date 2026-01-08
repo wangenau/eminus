@@ -118,7 +118,7 @@ def lda_xc_ksdt(
     T: float = ...,
     zeta0_coeffs: Callable[..., Coefficients] = ...,
     zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., Any] = ...,
+    phi_params: Callable[..., PhiParams] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def lda_xc_ksdt_spin(
@@ -127,7 +127,7 @@ def lda_xc_ksdt_spin(
     T: float = ...,
     zeta0_coeffs: Callable[..., Coefficients] = ...,
     zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., Any] = ...,
+    phi_params: Callable[..., PhiParams] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def _pade(
