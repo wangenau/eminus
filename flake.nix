@@ -39,6 +39,7 @@
             ### hdf5 ###
             h5py
             ### fods and libxc ###
+            libxc
             pyscf
             ### torch ###
             # array-api-compat
