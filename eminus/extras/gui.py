@@ -735,7 +735,7 @@ def plot_bandstructure(scf, spin=0, size=(800, 600)):
         },
         xaxis_range=(0, float(k_axis[-1])),
         xaxis_title="k-path",
-        yaxis_title="E - E<sub>F</sub> [eV]",
+        yaxis_title="E - E<sub>F</sub> / eV",
         hoverlabel_bgcolor="black",
         template="none",
     )
@@ -793,7 +793,7 @@ def plot_dos(scf, spin=0, size=(800, 600), **kwargs):
         font={"size": 20},
         xaxis={"zeroline": False, "showline": True, "mirror": True, "ticks": "outside"},
         yaxis={"showline": True, "mirror": True, "ticks": "outside"},
-        xaxis_title="E - E<sub>F</sub> [eV]",
+        xaxis_title="E - E<sub>F</sub> / eV",
         yaxis_title="DOS",
         hoverlabel_bgcolor="black",
         template="none",
