@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from collections.abc import Callable
 from typing import Any, Protocol, TypeAlias
 
 from numpy import complexfloating, floating
@@ -12,6 +11,17 @@ _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ComplexReal: TypeAlias = NDArray[_Complex]
+
+# Create a custom Callable type for band minimizer
+class _BandMinimizerType(Protocol):
+    def __call__(
+        self,
+        scf: SCF,
+        W: list[_ComplexReal],
+        Nit: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> tuple[list[float], list[_ComplexReal]]: ...
 
 # Create a custom Callable type for cost functions
 class _CostType(Protocol):
@@ -129,4 +139,4 @@ def auto(
     cgform: int = ...,
 ) -> tuple[list[float], list[_ComplexReal]]: ...
 
-IMPLEMENTED: dict[str, Callable[[Any], tuple[list[float], _ComplexReal]]]
+IMPLEMENTED: dict[str, _BandMinimizerType]

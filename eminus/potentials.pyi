@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from collections.abc import Callable
-from typing import Any, TypeAlias
+from typing import Any, Protocol, TypeAlias
 
 from numpy import complexfloating
 from numpy.typing import NDArray
@@ -10,6 +9,15 @@ from .scf import SCF
 
 _Complex: TypeAlias = complexfloating
 _ArrayComplex: TypeAlias = NDArray[_Complex]
+
+# Create a custom Callable type for potentials
+class _PotentialType(Protocol):
+    def __call__(
+        self,
+        scf: SCF,
+        *args: Any,
+        **kwargs: Any,
+    ) -> _ArrayComplex: ...
 
 def get_pot_defaults(pot: str) -> dict[str, float]: ...
 def harmonic(
@@ -35,4 +43,4 @@ def init_pot(
     pot_params: dict[str, float] | None = ...,
 ) -> _ArrayComplex: ...
 
-IMPLEMENTED: dict[str, Callable[[SCF], _ArrayComplex]]
+IMPLEMENTED: dict[str, _PotentialType]

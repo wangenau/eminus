@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2024 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-from collections.abc import Callable
 from typing import Any, Protocol, TypeAlias
 
 from numpy import complexfloating, floating
@@ -13,6 +12,16 @@ _Float: TypeAlias = floating
 _Complex: TypeAlias = complexfloating
 _ArrayReal: TypeAlias = NDArray[_Float]
 _ComplexReal: TypeAlias = NDArray[_Complex]
+
+# Create a custom Callable type for minimizer
+class _MinimizerType(Protocol):
+    def __call__(
+        self,
+        scf: SCF,
+        Nit: int,
+        *args: Any,
+        **kwargs: Any,
+    ) -> list[float]: ...
 
 # Create a custom Callable type for cost functions
 class _CostType(Protocol):
@@ -142,4 +151,4 @@ def auto(
     cgform: int = ...,
 ) -> list[float]: ...
 
-IMPLEMENTED: dict[str, Callable[[Any], list[float]]]
+IMPLEMENTED: dict[str, _MinimizerType]
