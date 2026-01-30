@@ -116,18 +116,18 @@ class PhiParams:
 def lda_xc_ksdt(
     n: _ArrayReal,
     T: float = ...,
-    zeta0_coeffs: Callable[..., Coefficients] = ...,
-    zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., PhiParams] = ...,
+    zeta0_coeffs: Callable[[_ArrayReal], Zeta0Coeffs] = ...,
+    zeta1_coeffs: Callable[[_ArrayReal], Zeta1Coeffs] = ...,
+    phi_params: Callable[[], PhiParams] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def lda_xc_ksdt_spin(
     n: _ArrayReal,
     zeta: _ArrayReal,
     T: float = ...,
-    zeta0_coeffs: Callable[..., Coefficients] = ...,
-    zeta1_coeffs: Callable[..., Coefficients] = ...,
-    phi_params: Callable[..., PhiParams] = ...,
+    zeta0_coeffs: Callable[[_ArrayReal], Zeta0Coeffs] = ...,
+    zeta1_coeffs: Callable[[_ArrayReal], Zeta1Coeffs] = ...,
+    phi_params: Callable[[], PhiParams] = ...,
     **kwargs: Any,
 ) -> tuple[_ArrayReal, _ArrayReal, None]: ...
 def _pade(
