@@ -40,7 +40,7 @@ W_tests = {
             dtype=complex,
         )
     ],
-}  # type: dict[str, typing.Any]
+}
 dr = xp.asarray(rng.standard_normal(3))
 
 

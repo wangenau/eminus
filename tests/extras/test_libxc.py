@@ -1,6 +1,5 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-# mypy: disable-error-code="no-redef"
 """Test libxc extra."""
 
 import numpy as np
@@ -32,7 +31,7 @@ def test_libxc_functional_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     e_out, _, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
@@ -51,7 +50,7 @@ def test_libxc_functional_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     _, v_out, _, _ = libxc_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
@@ -120,7 +119,7 @@ def test_pyscf_functional_exc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     e_out, _, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     e_test = get_exc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(e_out, e_test)
@@ -138,7 +137,7 @@ def test_pyscf_functional_vxc(xc, Nspin):
     n_spin = n_tests[Nspin]
     dn_spin = None
     if is_gga(xc):
-        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)  # type: np.typing.NDArray[np.floating]
+        dn_spin = xp.stack([n_spin, n_spin, n_spin], axis=2)
     _, v_out, _, _ = pyscf_functional(xc, n_spin, Nspin, dn_spin=dn_spin)
     v_test, _, _ = get_vxc(xc, n_spin, Nspin, dn_spin=dn_spin)
     assert_allclose(v_out, v_test)
