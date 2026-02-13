@@ -9,6 +9,7 @@ dev
 ---
 - Miscellaneous
    - Add type hints for private members
+   - Small typing improvements
    - Add pylibxc to the Nix flake
 
 v3.2.1 - Nov 21, 2025
