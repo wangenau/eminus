@@ -27,9 +27,8 @@ from eminus.utils import (
 def test_Ylm(l):
     """Test the spherical harmonics."""
     # Generate random G
-    # Somehow I can only get the correct results from scipy when using positive G
     rng = default_rng()
-    G = xp.abs(xp.asarray(rng.random((1000, 3))))
+    G = xp.asarray(rng.random((1000, 3)))
 
     # Calculate the spherical coordinates theta and phi
     tmp = xp.sqrt(G[:, 0] ** 2 + G[:, 1] ** 2) / G[:, 2]
@@ -57,6 +56,8 @@ def test_Ylm(l):
             Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.imag
         elif m > 0:
             Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.real
+        else:
+            Y_extern = Y_extern.real
         assert_allclose(Y_intern, Y_extern)
 
 
