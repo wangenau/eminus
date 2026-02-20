@@ -114,6 +114,8 @@ def get_fods(obj, basis="pc-1", loc="FB"):
         mf = UKS(mol=mol)
     else:
         mf = RKS(mol=mol)
+    mf.chkfile = None
+    mf._chkfile.close()  # Fix for "ResourceWarning: Implicitly cleaning up" with Python 3.14+
     mf.verbose = 0
     mf.kernel()
 
