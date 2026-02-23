@@ -47,17 +47,17 @@ def test_Ylm(l):
         try:
             from scipy.special import sph_harm_y
 
-            Y_extern = sph_harm_y(l, abs(m), theta, phi)
+            Y_nm = sph_harm_y(l, abs(m), theta, phi)
         except ImportError:
             from scipy.special import sph_harm  # type: ignore[attr-defined,unused-ignore]
 
-            Y_extern = sph_harm(abs(m), l, phi, theta)
+            Y_nm = sph_harm(abs(m), l, phi, theta)
         if m < 0:
-            Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.imag
+            Y_extern = math.sqrt(2) * (-1) ** m * Y_nm.imag
         elif m > 0:
-            Y_extern = math.sqrt(2) * (-1) ** m * Y_extern.real
+            Y_extern = math.sqrt(2) * (-1) ** m * Y_nm.real
         else:
-            Y_extern = Y_extern.real
+            Y_extern = Y_nm.real
         assert_allclose(Y_intern, Y_extern)
 
 
