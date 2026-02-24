@@ -207,9 +207,9 @@ def H(scf, ik, spin, W, dn_spin=None, phi=None, vxc=None, vsigma=None, vtau=None
     """
     atoms = scf.atoms
 
-    # If dn_spin is None all other keyword arguments are None by design
+    # If vxc is None all other keyword arguments are None by design
     # In that case precompute values from the SCF class
-    if phi is None:
+    if vxc is None:
         dn_spin, phi, vxc, vsigma, vtau = H_precompute(scf, W)
 
     # This calculates the XC potential in the reciprocal space
