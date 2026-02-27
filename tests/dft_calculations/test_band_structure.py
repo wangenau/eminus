@@ -67,7 +67,6 @@ def test_polarized():
     scf.kpts.Nk = len(path)
     scf.converge_bands()
 
-    assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = xp.concatenate((epsilon_occ, epsilon_unocc), axis=2)
@@ -91,7 +90,6 @@ def test_unpolarized():
     scf.kpts.Nk = len(path)
     scf.converge_bands()
 
-    assert hasattr(scf, "_precomputed")
     epsilon_occ = get_epsilon(scf, scf.W, **scf._precomputed)
     epsilon_unocc = get_epsilon_unocc(scf, scf.W, scf.Z, **scf._precomputed)
     epsilon = xp.concatenate((epsilon_occ, epsilon_unocc), axis=2)

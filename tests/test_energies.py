@@ -87,7 +87,6 @@ def test_get_Eband_unpol():
 def test_get_Eband_pol():
     """Check the spin-polarized band energy."""
     assert scf_pol.Y is not None
-    assert hasattr(scf_pol, "_precomputed")
     Eband = get_Eband(scf_pol, scf_pol.Y, **scf_pol._precomputed)
     # About twice as large as the unpolarized case since we do not account for occupations
     # The "real" energy does not matter, we only want to minimize the band energy

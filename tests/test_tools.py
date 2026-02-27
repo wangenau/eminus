@@ -217,7 +217,6 @@ def test_magnetization():
 def test_get_Efermi():
     """Test the Fermi energy calculation."""
     Ef = get_Efermi(scf_band)
-    assert hasattr(scf_band, "_precomputed")
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     assert_allclose(Ef, xp.max(e_occ))
     scf_band.converge_empty_bands(Nempty=1)
@@ -239,7 +238,6 @@ def test_get_bandgap():
 
 def test_get_dos():
     """Test the DOS calculation."""
-    assert hasattr(scf_band, "_precomputed")
     e_occ = get_epsilon(scf_band, scf_band.Y, **scf_band._precomputed)
     e, e_dos = get_dos(e_occ, scf_band.kpts.wk, spin=0, npts=500, width=0.1)
     # The maximum of the DOS should be close to the maximum eigenvalue in this case

@@ -145,7 +145,6 @@ def test_opt():
     assert "sd" in scf.opt
     assert "auto" not in scf.opt
     scf.run()
-    assert hasattr(scf, "_opt_log")
     assert "sd" in scf._opt_log
 
 
@@ -153,8 +152,6 @@ def test_verbose():
     """Test the verbosity level."""
     scf = SCF(atoms)
     assert scf.verbose == atoms.verbose
-    assert hasattr(atoms, "_log")
-    assert hasattr(scf, "_log")
     assert scf._log.verbose == atoms._log.verbose
 
     level = "DEBUG"
@@ -241,7 +238,6 @@ def test_callback():
 
     scf.callback = callback  # type: ignore[method-assign]
     scf.run()
-    assert hasattr(scf, "_opt_log")
     assert scf._opt_log["pccg"]["iter"] == 2
 
 

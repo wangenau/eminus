@@ -5,6 +5,7 @@
 import copy
 import typing  # noqa: F401
 
+import numpy as np
 import pytest
 from numpy.random import default_rng
 
@@ -49,6 +50,7 @@ def test_LinvL(field):
     """Test Laplacian operator identity."""
     out = atoms.Linv(atoms.L(W_tests[field]))
     test = copy.deepcopy(W_tests[field])
+    assert isinstance(test, np.ndarray)
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:
@@ -61,6 +63,7 @@ def test_LLinv(field):
     """Test Laplacian operator identity."""
     out = atoms.L(atoms.Linv(W_tests[field]))
     test = copy.deepcopy(W_tests[field])
+    assert isinstance(test, np.ndarray)
     if test.ndim == 3:
         test[:, 0, :] = 0
     else:

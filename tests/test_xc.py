@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test exchange-correlation functionals."""
 
-import numpy as np
 import pytest
+from numpy.random import default_rng
 
 from eminus import backend as xp
 from eminus.testing import assert_allclose
@@ -11,7 +11,7 @@ from eminus.xc import get_exc, get_vxc, get_xc, get_zeta, IMPLEMENTED, XC_MAP
 
 # Create random mock densities
 # Use absolute values since eminus' functionals have no safety checks for simplicity and performance
-rng = np.random.default_rng()
+rng = default_rng()
 n_tests = {
     1: xp.abs(xp.asarray(rng.standard_normal((1, 10000)))),
     2: xp.abs(xp.asarray(rng.standard_normal((2, 10000)))),
