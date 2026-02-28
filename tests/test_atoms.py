@@ -18,6 +18,8 @@ inp = ("He", (0, 0, 0))
 @pytest.mark.parametrize(
     ("atom", "ref", "Nref"),
     [
+        ("", [], 0),
+        ([], [], 0),
         ("H", ["H"], 1),
         (["H"], ["H"], 1),
         ("He-q2", ["He"], 1),

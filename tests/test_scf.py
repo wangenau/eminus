@@ -241,6 +241,16 @@ def test_callback():
     assert scf._opt_log["pccg"]["iter"] == 2
 
 
+@pytest.mark.parametrize("unrestricted", [True, False])
+def test_empty(unrestricted):
+    """Test empty Atoms objects object."""
+    atoms = Atoms("", (0, 0, 0))
+    atoms.occ.Nelec = 2
+    atoms.unrestricted = unrestricted
+    scf = SCF(atoms, opt={"AUTO": 1})
+    assert_allclose(scf.Vloc, 0)
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib

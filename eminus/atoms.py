@@ -122,12 +122,14 @@ class Atoms(BaseObject):
     def pos(self, value):
         # We need atom positions as a two-dimensional array
         self._pos = xp.atleast_2d(xp.asarray(value, dtype=float))
-        if self.Natoms != len(self._pos):
+        if self.Natoms != len(self._pos) and self.Natoms > 0:
             msg = (
                 f"Mismatch between number of atoms ({self.Natoms}) and number of "
                 f"coordinates ({len(self._pos)})."
             )
             raise ValueError(msg)
+        if self.Natoms == 0:
+            log.warning("No atoms are placed in the unit cell.")
         # The structure factor changes when changing pos
         self.is_built = False
 
