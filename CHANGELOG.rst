@@ -12,6 +12,8 @@ dev
    - Small typing improvements
    - Add pylibxc to the Nix flake
    - Allow empty units cells
+   - Update Docker image to Python 3.14
+   - Fix GPM FOD extra under Python 3.14
 
 v3.2.1 - Nov 21, 2025
 ---------------------

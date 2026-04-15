@@ -58,6 +58,14 @@ def get_localized_orbitals(mf, loc, Nit=1000, seed=1234):
         # Set the population method in generalized PM to Becke charges
         if loc == "GPM":
             localizer.pop_method = "becke"
+            # Fix for "ResourceWarning: Implicitly cleaning up" with Python 3.14+
+            coords, weights = mf.grids.get_partition(mf.mol, concat=False)
+            charge_matrices = []
+            for i in range(mf.mol.natm):
+                ao = mf._numint.eval_ao(mf.mol, coords[i], deriv=0)
+                aow = ao * weights[i][:, None]
+                charge_matrices.append(aow.conj().T @ ao)
+            localizer._charge_matrices = charge_matrices
 
         for _ in range(Nit):
             tmp_orb = localizer.kernel()
