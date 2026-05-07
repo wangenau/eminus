@@ -1,6 +1,6 @@
 # SPDX-FileCopyrightText: 2023 The eminus developers
 # SPDX-License-Identifier: Apache-2.0
-# mypy: disable-error-code="no-untyped-call,no-untyped-def"
+# mypy: disable-error-code="no-untyped-call,no-untyped-def,var-annotated"
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import minimize_scalar
