@@ -10,8 +10,9 @@ dev
 - Miscellaneous
    - Add type hints for private members
    - Small typing improvements
+   - Allow empty unit cells
    - Add pylibxc to the Nix flake
-   - Allow empty units cells
+   - Use Python 3.14 in Nix flake
    - Update Docker image to Python 3.14
    - Fix GPM FOD extra under Python 3.14
 
