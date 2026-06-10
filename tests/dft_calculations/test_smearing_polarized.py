@@ -19,7 +19,7 @@ s = 9
 xc = "LDA,VWN"
 guess = "random"
 etol = 1e-6
-opt = {"auto": 21}
+opt = {"auto": 24}
 
 
 @pytest.mark.parametrize("smearing", E_ref.keys())
