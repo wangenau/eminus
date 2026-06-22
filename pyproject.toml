@@ -69,7 +69,7 @@ all = ["eminus[d3,gui,hdf5,libxc,torch]"]
 dev = [
     "furo>=2024.08.06; python_version>='3.10'",  # Documentation theme
     "matplotlib>=3.8.1",  # Plotting library for images in examples
-    "mypy>=1.16; python_version>='3.10'",  # Static type checker
+    "mypy[faster-cache]>=1.16; python_version>='3.10'",  # Static type checker
     "pytest>=7",  # Test utilities
     "ruff>=0.10",  # Linter and formatter
     "sphinx>=8.1; python_version>='3.10'",  # Documentation builder
