@@ -248,7 +248,7 @@ class SCF(BaseObject):
 
     @property
     def pot_params_defaults(self):
-        """Get the default potential parameters."""
+        """The default potential parameters."""
         return get_pot_defaults(self.pot)
 
     @property
@@ -268,7 +268,7 @@ class SCF(BaseObject):
 
     @property
     def xc_params_defaults(self):
-        """Get the default exchange-correlation functional parameters."""
+        """The default exchange-correlation functional parameters."""
         return get_xc_defaults(self.xc)
 
     # ### Class methods ###

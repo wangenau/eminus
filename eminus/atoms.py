@@ -364,7 +364,7 @@ class Atoms(BaseObject):
 
     @property
     def _atoms(self):
-        """Return the Atoms object itself."""
+        """The Atoms object itself."""
         # This way we can access the object from Atoms and SCF classes with the same code
         return self
 
