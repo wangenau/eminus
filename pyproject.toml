@@ -146,3 +146,7 @@ max-complexity = 15
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+##### UV #####
+[tool.uv]
+exclude-newer = "1 day"
