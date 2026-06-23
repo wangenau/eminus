@@ -5,16 +5,17 @@
 Changelog
 =========
 
-dev
----
+v3.2.2 - Jun 23, 2026
+---------------------
 - Miscellaneous
    - Add type hints for private members
    - Small typing improvements
    - Allow empty unit cells
-   - Add pylibxc to the Nix flake
+   - Add pylibxc to Nix flake
    - Use Python 3.14 in Nix flake
    - Update Docker image to Python 3.14
    - Fix GPM FOD extra under Python 3.14
+   - Add a dependency cooldown of 1 day when using UV
 
 v3.2.1 - Nov 21, 2025
 ---------------------
