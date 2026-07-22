@@ -67,7 +67,6 @@ html_show_sphinx: bool = False
 
 autodoc_member_order: str = "groupwise"
 autodoc_preserve_defaults: bool = True
-napoleon_use_rtype: bool = False
 
 bibtex_bibfiles: list[str] = ["references.bib"]
 bibtex_default_style: str = "unsrt"
