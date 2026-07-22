@@ -64,6 +64,7 @@ def test_06():  # noqa: D103
     clean_example(["Ne_1.cube", "Ne_2.cube", "Ne_3.cube", "Ne_4.cube"])
 
 
+@pytest.mark.filterwarnings("ignore:Implicitly cleaning up:ResourceWarning:tempfile")  # From PySCF
 @pytest.mark.slow
 def test_07():  # noqa: D103
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")

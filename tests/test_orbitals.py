@@ -47,6 +47,7 @@ def test_fo_from_wannier():
     assert_allclose(atoms.dV * xp.sum(orb.conj() * orb), 1)
 
 
+@pytest.mark.filterwarnings("ignore:Implicitly cleaning up:ResourceWarning:tempfile")  # From PySCF
 def test_fo_from_pycom():
     """Test the Fermi orbital function starting from a PyCOM guess calculated with PySCF."""
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
@@ -69,6 +70,7 @@ def test_flo_from_wannier():
     assert_allclose(atoms.dV * xp.sum(orb.conj() * orb), 1)
 
 
+@pytest.mark.filterwarnings("ignore:Implicitly cleaning up:ResourceWarning:tempfile")  # From PySCF
 def test_flo_from_pycom():
     """Test the Fermi-Loewdin orbital function starting from a PyCOM guess calculated with PySCF."""
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")

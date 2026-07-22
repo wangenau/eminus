@@ -13,6 +13,7 @@ from eminus.testing import assert_allclose, assert_array_equal
 rng = default_rng()
 
 
+@pytest.mark.filterwarnings("ignore:Implicitly cleaning up:ResourceWarning:tempfile")  # From PySCF
 @pytest.mark.parametrize("unrestricted", [True, False])
 @pytest.mark.parametrize(
     ("basis", "loc"), [("pc-1", "fb"), ("pc-0", "er"), ("pc-0", "pm"), ("pc-0", "gpm")]
