@@ -20,7 +20,7 @@ RUN apt-get update -y \
 ARG BRANCH=main
 RUN git clone -b ${BRANCH} https://gitlab.com/wangenau/eminus.git \
 && cd eminus \
-&& uv pip install -e .[all] --group dev --torch-backend cpu --no-cache-dir
+&& uv pip install -e .[all,torch] --group dev --torch-backend cpu --no-cache-dir
 
 # Set up the application stage
 FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim

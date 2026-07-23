@@ -47,7 +47,7 @@ def read_gth(atom, charge=None, psp_path="pbe"):
     psp = {}
     cloc = xp.zeros(4)
     rp = xp.zeros(4)
-    Nproj_l = xp.zeros(4, dtype=int)
+    Nproj_l = [0] * 4  # List for a simplified cupy interface
     h = xp.zeros((4, 3, 3))
     try:
         with open(f_psp, encoding="utf-8") as fh:

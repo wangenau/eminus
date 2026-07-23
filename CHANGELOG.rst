@@ -5,6 +5,15 @@
 Changelog
 =========
 
+dev
+---
+- New features
+   - Support CuPy as a backend
+- Miscellaneous
+   - Add a pytest gpu option
+   - Remove torch from the all installation
+   - Add cupy and torch devShells to the Nix flake
+
 v3.2.2 - Jun 23, 2026
 ---------------------
 - Miscellaneous

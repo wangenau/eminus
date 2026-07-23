@@ -334,6 +334,10 @@ def get_wannier(atoms, psirs, Nit=10000, conv_tol=1e-7, mu=1, random_guess=False
     """
     if config.backend == "torch":
         expm = xp.linalg.matrix_exp
+    elif config.backend == "cupy":
+        import cupyx.scipy.linalg
+
+        expm = cupyx.scipy.linalg.expm
     else:
         from scipy.linalg import expm
 

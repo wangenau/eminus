@@ -13,7 +13,7 @@
       let
         pkgs = import nixpkgs {
           inherit system;
-          # config.allowUnfree = true;
+          config.allowUnfree = true;
         };
         python = pkgs.python314;
         pyproject = builtins.fromTOML (builtins.readFile ./pyproject.toml);
@@ -28,6 +28,10 @@
           nativeBuildInputs = [ python.pkgs.hatchling ];
 
           propagatedBuildInputs = with python.pkgs; [
+            ### backends ###
+            # array-api-compat
+            # cupy
+            # torch-bin
             ### basic ###
             numpy
             scipy
@@ -41,9 +45,6 @@
             ### fods and libxc ###
             libxc
             pyscf
-            ### torch ###
-            # array-api-compat
-            # torch-bin
             ### dev ###
             furo
             jupyter
@@ -69,7 +70,27 @@
       in
       {
         devShells.default = pkgs.mkShell {
-          buildInputs = [ eminus ];
+          packages = [ eminus ];
+          shellHook = "export JUPYTER_PLATFORM_DIRS=1";
+        };
+        devShells.cupy = pkgs.mkShell {
+          packages = [
+            eminus
+            python.pkgs.array-api-compat
+            python.pkgs.cupy
+          ];
+          shellHook = ''
+            export JUPYTER_PLATFORM_DIRS=1
+            export CUDA_PATH=${pkgs.cudaPackages.cudatoolkit}
+            export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${pkgs.lib.makeLibraryPath [ pkgs.cudaPackages.cuda_nvrtc ]}
+          '';
+        };
+        devShells.torch = pkgs.mkShell {
+          packages = [
+            eminus
+            python.pkgs.array-api-compat
+            python.pkgs.torch-bin
+          ];
           shellHook = "export JUPYTER_PLATFORM_DIRS=1";
         };
         packages.default = python.withPackages (p: [ eminus ]);

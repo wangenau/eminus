@@ -147,17 +147,18 @@ def I(atoms, W, ik=-1, norm="forward"):
 
     # Normally, we would have to multiply by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
+    s = xp.to_np(atoms.s)
     if W.ndim == 1:
-        Wfft = Wfft.reshape(list(atoms.s))
+        Wfft = Wfft.reshape(list(s))
         Finv = xp.ifftn(Wfft, norm=norm).ravel()
     # Here we reshape the input like in the 1d case but add an extra dimension in the end,
     # holding the number of states
     # Tell the function that the FFT only has to act on the respective 3 axes
     elif W.ndim == 2:
-        Wfft = Wfft.reshape([*atoms.s, W.shape[-1]])
+        Wfft = Wfft.reshape([*s, W.shape[-1]])
         Finv = xp.ifftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape(atoms.Ns, W.shape[-1])
     else:
-        Wfft = Wfft.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        Wfft = Wfft.reshape([atoms.occ.Nspin, *s, W.shape[-1]])
         Finv = xp.ifftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(
             atoms.occ.Nspin, atoms.Ns, W.shape[-1]
         )
@@ -186,14 +187,15 @@ def J(atoms, W, ik=-1, full=True, norm="forward"):
     """
     # Normally, we would have to divide by n in the end for the correct normalization, but we can
     # ignore this step when properly setting the `norm` option for a faster operation
+    s = xp.to_np(atoms.s)
     if W.ndim == 1:
-        Wfft = W.reshape(list(atoms.s))
+        Wfft = W.reshape(list(s))
         F = xp.fftn(Wfft, norm=norm).ravel()
     elif W.ndim == 2:
-        Wfft = W.reshape([*atoms.s, W.shape[-1]])
+        Wfft = W.reshape([*s, W.shape[-1]])
         F = xp.fftn(Wfft, norm=norm, axes=(0, 1, 2)).reshape(atoms.Ns, W.shape[-1])
     else:
-        Wfft = W.reshape([atoms.occ.Nspin, *atoms.s, W.shape[-1]])
+        Wfft = W.reshape([atoms.occ.Nspin, *s, W.shape[-1]])
         F = xp.fftn(Wfft, norm=norm, axes=(1, 2, 3)).reshape(atoms.occ.Nspin, atoms.Ns, W.shape[-1])
     # There is no way to know if J has to transform to the full or the active space
     # but normally it transforms to the full space

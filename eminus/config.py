@@ -42,6 +42,11 @@ class ConfigClass:
                 self._backend = "numpy"
             else:
                 torch.set_default_dtype(torch.float64)
+        elif self._backend == "cupy":
+            try:
+                from array_api_compat import cupy  # noqa: F401
+            except ImportError:
+                self._backend = "numpy"
         else:
             self._backend = "numpy"
 
@@ -65,6 +70,8 @@ class ConfigClass:
                     self._use_gpu = False
             else:
                 self._use_gpu = False
+        elif self.backend == "cupy":
+            self._use_gpu = True
         else:
             self._use_gpu = False
 

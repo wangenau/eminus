@@ -119,6 +119,15 @@ def test_delete():
     assert_array_equal(xp.delete(array, [1, 2], axis=1), [[0], [3], [6]])
 
 
+def test_indices():
+    """Test the indices implementation."""
+    assert_array_equal(xp.indices([1], dtype=int), [[0]])
+    assert_array_equal(xp.indices([1, 2], dtype=float), [[[0, 0]], [[0, 1]]])
+
+    assert_array_equal(xp.indices(xp.asarray([1])), [[0]])
+    assert_array_equal(xp.indices(xp.asarray([1, 2])), [[[0, 0]], [[0, 1]]])
+
+
 @pytest.mark.parametrize("name", ["fftn", "ifftn", "sqrtm"])
 def test_trivial_functions(name):
     """Check the availability of the more trivial backend functions implementations."""

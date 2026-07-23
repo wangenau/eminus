@@ -138,9 +138,10 @@ def write_cube(obj, filename, field, fods=None, elec_symbols=("X", "He")):
                 )
         # Field data (float) with scientific formatting
         # We have s[0]*s[1] chunks values with a length of s[2]
-        for i in range(atoms.s[0] * atoms.s[1]):
+        s = xp.to_np(atoms.s)
+        for i in range(s[0] * s[1]):
             # Print every round of values, so we can add empty lines between them
-            data_str = "%+1.6e  " * atoms.s[2] % tuple(field[i * atoms.s[2] : (i + 1) * atoms.s[2]])
+            data_str = "%+1.6e  " * s[2] % tuple(field[i * s[2] : (i + 1) * s[2]])
             # Print a maximum of 6 values per row
             # Max width for this formatting is 90, since 6*len("+1.00000e-000  ")=90
             # Setting break_on_hyphens to False greatly improves the textwrap.fill performance

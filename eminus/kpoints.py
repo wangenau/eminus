@@ -220,7 +220,7 @@ def monkhorst_pack(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = xp.asarray(np.indices(nk).transpose(1, 2, 3, 0).reshape(-1, 3))
+    M = xp.permute_dims(xp.indices(nk), (1, 2, 3, 0)).reshape(-1, 3)
     return (M + 0.5) / xp.asarray(nk) - 0.5  # Normal Monkhorst-Pack grid
 
 
@@ -236,7 +236,7 @@ def gamma_centered(nk):
         k-points.
     """
     # Same index matrix as in Atoms._get_index_matrices()
-    M = xp.asarray(np.indices(nk).transpose(1, 2, 3, 0).reshape(-1, 3))
+    M = xp.permute_dims(xp.indices(nk), (1, 2, 3, 0)).reshape(-1, 3)
     return M / xp.asarray(nk)  # Gamma-centered grid
 
 
@@ -274,7 +274,7 @@ def bandpath(kpts):
             dists.append(xp.linalg.norm(kpoint_convert(dist, kpts.a)))
         else:
             # Set distance to zero when jumping between special points
-            dists.append(0)
+            dists.append(xp.asarray(0))
 
     # Calculate sample points between the special points
     scaled_dists = (N - N_special) * xp.asarray(dists) / sum(dists)
@@ -295,7 +295,7 @@ def bandpath(kpts):
             k_dist = s_end - s_start
             # Add scaled vectors to the special point to get the new k-points
             k_points += [
-                s_start + k_dist * (n + 1) / (samplings[i] + 1) for n in range(samplings[i])
+                s_start + k_dist * (n + 1) / (samplings[i] + 1) for n in xp.arange(samplings[i])
             ]
             # Append the special point we are ending at
             k_points.append(s_end)

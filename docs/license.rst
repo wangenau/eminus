@@ -61,6 +61,8 @@ License
      -
    * - array-api-compat
      - MIT
+   * - cupy
+     - MIT
    * - torch
      - BSD-3-Clause
    * -

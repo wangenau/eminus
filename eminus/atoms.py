@@ -5,7 +5,6 @@
 import math
 import numbers
 
-import numpy as np
 from scipy.fft import next_fast_len
 
 from . import backend as xp
@@ -146,7 +145,7 @@ class Atoms(BaseObject):
         # Multiply by two and add one to match PWDFT.jl
         s = 2 * s + 1
         # Calculate a fast length to optimize the FFT calculations
-        self.s = [int(next_fast_len(i)) for i in s]
+        self.s = [int(next_fast_len(int(i))) for i in s]
         # The cell discretization changes when changing s or ecut
         self.is_built = False
 
@@ -447,7 +446,7 @@ class Atoms(BaseObject):
         # m2 = np.floor(ms / self.s[2]) % self.s[1]
         # m3 = ms % self.s[2]
         # M = np.column_stack((m1, m2, m3))
-        M = xp.asarray(np.indices(self.s, dtype=float).transpose(1, 2, 3, 0).reshape(-1, 3))
+        M = xp.permute_dims(xp.indices(self.s, dtype=float), (1, 2, 3, 0)).reshape(-1, 3)
         # Build index matrix N
         N = M - (self.s / 2 < M) * self.s
         return M, N

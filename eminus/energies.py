@@ -227,6 +227,7 @@ def get_Eewald(atoms, gcut=2, gamma=1e-8):
     # the self energy, (the dipole term [neglected]), and an additional electroneutrality term
     def get_index_vectors(s):
         """Create index vectors of s periodic images."""
+        s = xp.to_np(s)
         m1 = xp.arange(-s[0], s[0] + 1)
         m2 = xp.arange(-s[1], s[1] + 1)
         m3 = xp.arange(-s[2], s[2] + 1)

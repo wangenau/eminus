@@ -20,6 +20,8 @@ if "stubtest" not in pathlib.Path(sys.argv[0]).name:
         """Access modules and functions of array backends by their name."""
         if config.backend == "torch":
             from array_api_compat import torch as xp
+        elif config.backend == "cupy":
+            from array_api_compat import cupy as xp
         else:
             xp = np
         return getattr(xp, name)
@@ -29,7 +31,7 @@ if "stubtest" not in pathlib.Path(sys.argv[0]).name:
 
 
 def is_array(value):
-    """Check if the object is an NumPy array or Torch tensor.
+    """Check if the object is coming from NumPy, CuPy, or Torch.
 
     Args:
         value: Input array.
@@ -43,6 +45,10 @@ def is_array(value):
         from array_api_compat import is_torch_array
 
         return is_torch_array(value)
+    if config.backend == "cupy":
+        from array_api_compat import is_cupy_array
+
+        return is_cupy_array(value)
     return False
 
 
@@ -58,13 +64,20 @@ def to_np(arr):
     if arr is None:
         return None
     try:
-        from array_api_compat import is_torch_array
+        from array_api_compat import is_cupy_array, is_torch_array
 
         if is_torch_array(arr):
             return np.asarray(arr.resolve_conj().cpu())
-        # Wave functions are list of arrays, handle them as well
+        # Wave functions are a list of arrays, handle them as well
         if isinstance(arr, list) and len(arr) > 0 and is_torch_array(arr[0]):
             return [np.asarray(arr.resolve_conj().cpu()) for arr in arr]
+
+        if is_cupy_array(arr):
+            return arr.get()
+        # Wave functions are a list of arrays, handle them as well
+        if isinstance(arr, list) and len(arr) > 0 and is_cupy_array(arr[0]):
+            return [arr.get() for arr in arr]
+
         return np.asarray(arr)
     except ImportError:
         return np.asarray(arr)
@@ -92,16 +105,49 @@ def delete(arr, obj, axis=None):
     """
     if isinstance(arr, np.ndarray):
         return np.delete(arr, obj, axis)
-    if axis is None:
-        axis = 0
-        arr = arr.ravel()
-    if is_array(obj):
-        obj = to_np(obj)
-    else:
-        obj = np.asarray(obj)
-    skip = [i for i in range(arr.size(axis)) if i not in obj]
-    indices = tuple(slice(None) if i != axis else skip for i in range(arr.ndim))
-    return arr[indices]
+    from array_api_compat import array_namespace, is_torch_array
+
+    if is_torch_array(arr):
+        if axis is None:
+            axis = 0
+            arr = arr.ravel()
+        if is_array(obj):
+            obj = to_np(obj)
+        else:
+            obj = np.asarray(obj)
+        skip = [i for i in range(arr.size(axis)) if i not in obj]
+        indices = tuple(slice(None) if i != axis else skip for i in range(arr.ndim))
+        return arr[indices]
+
+    xp = array_namespace(arr)
+    return xp.delete(arr, obj, axis)
+
+
+def indices(dimensions, dtype=int, *args, **kwargs):
+    """Return an array representing the indices of a grid.
+
+    Args:
+        dimensions: The shape of the grid.
+        dtype: Data type of the result.
+        args: Pass-through arguments.
+
+    Keyword Args:
+        **kwargs: Pass-through keyword arguments.
+
+    Returns:
+        Returns a tuple of arrays.
+    """
+    if config.backend == "torch":
+        from array_api_compat import torch as xp
+
+        return xp.asarray(np.indices(to_np(dimensions), dtype, *args, **kwargs))
+
+    if config.backend == "cupy":
+        from array_api_compat import cupy as xp
+
+        return xp.indices(tuple(to_np(dimensions)), dtype, *args, **kwargs)
+
+    return np.indices(dimensions, dtype, *args, **kwargs)
 
 
 def fftn(x, *args, **kwargs):

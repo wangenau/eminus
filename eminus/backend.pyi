@@ -25,6 +25,12 @@ def delete(
     obj: int | Sequence[int] | _ArrayInt,
     axis: int | None = ...,
 ) -> _ArrayComplex: ...
+def indices(
+    dimensions: Sequence[int],
+    dtype: type[int | float | complex] = ...,
+    *args: Any,
+    **kwargs: Any,
+) -> NDArray[_Complex]: ...
 def fftn(
     x: _ArrayComplex,
     *args: Any,
