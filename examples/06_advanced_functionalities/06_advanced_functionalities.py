@@ -31,7 +31,10 @@ print(f"\nIonization potential = {ha2kcalmol(ip)} kcal/mol\n")
 # # Make sure to use orthogonal wave functions to generate them
 psi = atoms.I(get_psi(scf, scf.W))
 
-# # Some functions are controlled with a global logging level that can be changed with
+# # Some functions are controlled with a global logging level that can be changed like shown below
+# # Configuration options can also be controlled via environment variables
+# # They use `EMINUS_` as a prefix, followed by the attribute in uppercase
+# # To set the logging level like below, one could use `export EMINUS_VERBOSE="3"` or `export EMINUS_VERBOSE="INFO"`
 eminus.config.verbose = 3
 
 # # Check orthonormality of Kohn-Sham orbitals
@@ -62,5 +65,5 @@ eminus.config.threads = 2
 eminus.config.info()
 
 # # eminus uses the NumPy and SciPy packages
-# # These packages will listen to the OMP_NUM_THREADS and/or MKL_NUM_THREADS flags
-# # Setting these flags will control how many threads eminus uses.
+# # These packages will listen to the `OMP_NUM_THREADS` environment variable
+# # Setting this variable controls how many threads eminus uses in some processes

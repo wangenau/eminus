@@ -9,6 +9,7 @@ dev
 ---
 - New features
    - Support CuPy as a backend
+   - Add the option to set configuration options via environment variables
 - Miscellaneous
    - Add a pytest gpu option
    - Remove torch from the all installation

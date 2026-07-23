@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Consolidated configuration module."""
 
+import inspect
 import numbers
 import os
 import pathlib
@@ -24,6 +25,7 @@ class ConfigClass:
         self.use_pylibxc = True  # Use Libxc over PySCF if available since it is faster
         self.threads = None  # Read threads from environment variables by default
         self.verbose = "INFO"  # Only display warnings (and worse) by default
+        self.load_env()  # Load environment variables to overwrite the defaults
 
     # ### Class properties ###
 
@@ -62,6 +64,12 @@ class ConfigClass:
 
             # When using set_default_device the whole runtime will use a device context manager
             if torch.cuda.is_available():
+                # Parse strings from environment variables
+                if isinstance(value, str):
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        value = value.lower() == "true"
                 if value:
                     torch.set_default_device("cuda")
                     self._use_gpu = True
@@ -89,6 +97,12 @@ class ConfigClass:
 
     @use_pylibxc.setter
     def use_pylibxc(self, value):
+        # Parse strings from environment variables
+        if isinstance(value, str):
+            try:
+                value = int(value)
+            except ValueError:
+                value = value.lower() == "true"
         self._use_pylibxc = value
 
     @property
@@ -124,6 +138,11 @@ class ConfigClass:
 
     @verbose.setter
     def verbose(self, value):
+        # Parse strings from environment variables
+        try:  # noqa: SIM105
+            value = int(value)
+        except ValueError:
+            pass
         # Logic in setter to run it on initialization
         log.verbose = value
 
@@ -140,7 +159,7 @@ class ConfigClass:
 
                 sys.stdout.write("Libxc backend    : PySCF\n")
             except ImportError:
-                pass
+                sys.stdout.write("Libxc backend    : None\n")
         else:
             sys.stdout.write("Libxc backend    : pylibxc\n")
 
@@ -164,6 +183,16 @@ class ConfigClass:
         else:
             sys.stdout.write(f"Array threads    : {self.threads}\n")
 
+    def load_env(self):
+        """Load configurations from environment variables."""
+        properties = []
+        for name, value in inspect.getmembers(type(self)):
+            if isinstance(value, property):
+                properties.append(name)
+        for prop in properties:
+            if f"EMINUS_{prop.upper()}" in os.environ:
+                setattr(self, prop, os.environ[f"EMINUS_{prop.upper()}"])
+
 
 if (
     "sphinx-build" not in pathlib.Path(sys.argv[0]).name
@@ -185,4 +214,6 @@ else:  # pragma: no cover
 
     def info():
         """Print configuration and performance information."""
-        return
+
+    def load_env():
+        """Load configurations from environment variables."""

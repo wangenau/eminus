@@ -37,10 +37,10 @@ etol = 1e-8
 # # Convergence tolerance of the gradient norm
 gradtol = 1e-7
 
-# # Calculate a self-interaction correction from the Kohn-Sham orbitals after an SCF calculation.
+# # Calculate a self-interaction correction from the Kohn-Sham orbitals after an SCF calculation
 sic = True
 
-# # Calculate a dispersion correction after an SCF calculation (need the d3 extra).
+# # Calculate a dispersion correction after an SCF calculation (need the d3 extra)
 disp = False
 
 # # The amount of output can be controlled with the verbosity level

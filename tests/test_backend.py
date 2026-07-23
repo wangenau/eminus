@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Test backend module."""
 
+import os
+
 import numpy as np
 import pytest
 
@@ -14,6 +16,20 @@ from eminus.testing import assert_allclose, assert_array_equal
 def test_singleton():
     """Check that backend is truly a singleton."""
     assert id(config) == id(eminus.config)
+
+
+@pytest.mark.parametrize(
+    ("name", "value", "ref"), [("backend", "torch", "torch"), ("backend", "NumPy", "numpy")]
+)
+def test_env_setting(name, value, ref):
+    """Test the setting and parsing of backends via environment variables."""
+    pytest.importorskip("torch", reason="torch not installed, skip tests")
+    old = getattr(config, name)
+    os.environ[f"EMINUS_{name.upper()}"] = value
+    config.load_env()
+    del os.environ[f"EMINUS_{name.upper()}"]
+    assert getattr(config, name) == ref
+    setattr(config, name, old)
 
 
 def test_numpy_backend():

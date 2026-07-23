@@ -45,7 +45,13 @@ The backend can be changed using the :code:`config` module with
 .. code-block:: python
 
    import eminus
-   eminus.backend = "numpy"
+   eminus.config.backend = "numpy"
+
+or using the respective environment variable
+
+.. code-block:: console
+
+   export EMINUS_BACKEND="cupy"
 
 Currently supported backends are NumPy, CuPy, and Torch.
 

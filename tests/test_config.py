@@ -57,6 +57,30 @@ def test_info():
     config.info()
 
 
+@pytest.mark.parametrize(
+    ("name", "value", "ref"),
+    [
+        ("use_gpu", "false", False),
+        ("use_gpu", "0", False),
+        ("use_pylibxc", "FALSE", False),
+        ("use_pylibxc", "0", False),
+        ("threads", "2", 2),
+        ("threads", "1", 1),
+        ("verbose", "DEBUG", "DEBUG"),
+        ("verbose", "2", "WARNING"),
+    ],
+)
+def test_env(name, value, ref):
+    """Test the setting and parsing of environment variables."""
+    pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
+    old = getattr(config, name)
+    os.environ[f"EMINUS_{name.upper()}"] = value
+    config.load_env()
+    del os.environ[f"EMINUS_{name.upper()}"]
+    assert getattr(config, name) == ref
+    setattr(config, name, old)
+
+
 if __name__ == "__main__":
     import inspect
     import pathlib
