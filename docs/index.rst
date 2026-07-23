@@ -26,7 +26,7 @@ Home
    citation.rst
    changelog.rst
    license.rst
-   backend.rst
+   backends.rst
    nomenclature.rst
    further.rst
 

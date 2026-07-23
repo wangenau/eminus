@@ -2,10 +2,10 @@
    SPDX-FileCopyrightText: 2025 The eminus developers
    SPDX-License-Identifier: Apache-2.0
 
-.. _backend:
+.. _backends:
 
-Backend
-*******
+Backends
+********
 
 The eminus code is written such that multiple array backends can be used.
 Naturally, this adds a layer of complexity.
