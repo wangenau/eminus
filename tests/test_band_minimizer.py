@@ -56,11 +56,12 @@ def test_minimizer_pol(minimizer):
         assert_allclose(E, E_ref_pol, atol=tolerance)
 
 
-def test_empty_W():
+@pytest.mark.parametrize("guess", ["filter", "pseudo"])
+def test_empty_W(guess):
     """Test the band minimization for a few edge cases."""
     scf_unpol.is_converged = False
     scf_unpol.W = None
-    scf_unpol.guess = "pseudo"
+    scf_unpol.guess = guess
     scf_unpol.opt = {"auto": 1}
     scf_unpol.converge_bands()
     scf_unpol.converge_empty_bands(1)

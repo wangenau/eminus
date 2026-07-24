@@ -99,6 +99,12 @@ def guess_random(
     seed: int = ...,
     symmetric: bool = ...,
 ) -> list[_ArrayComplex]: ...
+def guess_filter(
+    scf: SCF,
+    Nstate: int | None = ...,
+    seed: int = ...,
+    symmetric: bool = ...,
+) -> list[_ArrayComplex]: ...
 def guess_pseudo(
     scf: SCF,
     Nstate: int | None = ...,

@@ -100,6 +100,11 @@ def test_guess():
     assert scf.guess == "random"
     assert not scf.symmetric
 
+    scf = SCF(atoms, guess="sym-filter")
+    assert scf.guess == "filter"
+    assert scf.symmetric
+    scf.run()  # Run the filtered guess for coverage
+
     scf = SCF(atoms, guess="sym-pseudo")
     assert scf.guess == "pseudo"
     assert scf.symmetric

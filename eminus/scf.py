@@ -10,7 +10,16 @@ from . import backend as xp
 from . import config
 from .band_minimizer import get_grad_unocc, scf_step_unocc
 from .band_minimizer import IMPLEMENTED as BAND_MINIMIZER
-from .dft import get_epsilon, get_n_spin, get_n_total, get_phi, guess_pseudo, guess_random, orth
+from .dft import (
+    get_epsilon,
+    get_n_spin,
+    get_n_total,
+    get_phi,
+    guess_filter,
+    guess_pseudo,
+    guess_random,
+    orth,
+)
 from .energies import Energy, get_Edisp, get_Eewald, get_Esic
 from .gga import get_grad_field, get_tau
 from .gth import GTH
@@ -41,8 +50,8 @@ class SCF(BaseObject):
             a directory containing custom GTH pseudopotential files can be given.
         guess: Initial guess for the wave functions.
 
-            Can be one of "random" (default) or "pseudo". Adding "symm" to the string will use the
-            same coefficients for both spin channels, e.g., :code:`symm-rand`.
+            Can be one of "random" (default), "filter, or "pseudo". Adding "symm" to the string will
+            use the same coefficients for both spin channels, e.g., :code:`symm-rand`.
         etol: Convergence tolerance of the total energy.
         gradtol: Convergence tolerance of the gradient norm.
 
@@ -200,6 +209,8 @@ class SCF(BaseObject):
         value = value.lower()
         if "rand" in value:
             self._guess = "random"
+        elif "filter" in value:
+            self._guess = "filter"
         elif "pseudo" in value:
             self._guess = "pseudo"
         else:
@@ -273,7 +284,7 @@ class SCF(BaseObject):
 
     # ### Class methods ###
 
-    def run(self, **kwargs):
+    def run(self, **kwargs):  # noqa: C901
         """Run the self-consistent field (SCF) calculation.
 
         Keyword Args:
@@ -305,6 +316,8 @@ class SCF(BaseObject):
         if self.W is None:
             if "random" in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
+            elif "filter" in self.guess:
+                self.W = guess_filter(self, symmetric=self.symmetric)
             elif "pseudo" in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
@@ -389,6 +402,8 @@ class SCF(BaseObject):
         if self.W is None or len(self.W) != self.atoms.kpts.Nk:
             if "random" in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
+            if "filter" in self.guess:
+                self.W = guess_filter(self, symmetric=self.symmetric)
             elif "pseudo" in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
 
@@ -452,6 +467,8 @@ class SCF(BaseObject):
         if self.Z is None:
             if "random" in self.guess:
                 self.Z = guess_random(self, Nempty, symmetric=self.symmetric)
+            if "filter" in self.guess:
+                self.Z = guess_filter(self, Nempty, symmetric=self.symmetric)
             elif "pseudo" in self.guess:
                 self.Z = guess_pseudo(self, Nempty, symmetric=self.symmetric)
 

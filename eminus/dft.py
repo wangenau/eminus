@@ -405,6 +405,47 @@ def guess_random(scf, Nstate=None, seed=42, symmetric=False):
     return orth(atoms, W)
 
 
+def guess_filter(scf, Nstate=None, seed=42, symmetric=False):
+    """Generate filtered random initial-guess coefficients as starting values.
+
+    A weighting corresponding to a Gaussian distribution in G^2 is applied to the random values,
+    which acts similar to a low-pass filter.
+
+    Reference: https://doi.org/10.1017/CBO9780511609633
+
+    Args:
+        scf: SCF object.
+
+    Keyword Args:
+        Nstate: Number of states.
+        seed: Seed to initialize the random number generator.
+        symmetric: Whether to use the same guess for both spin channels.
+
+    Returns:
+        Initial-guess orthogonal wave functions in reciprocal space.
+    """
+    atoms = scf.atoms
+    if Nstate is None:
+        Nstate = atoms.occ.Nstate
+
+    rng = Generator(SFC64(seed))
+    W = []
+    for ik in range(atoms.kpts.Nk):
+        weight = 1 / math.sqrt(2 * math.pi) * xp.exp(-atoms.Gk2c[ik] / 2)
+        if symmetric:
+            W_ik = xp.asarray(
+                rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
+                + 1j * rng.standard_normal((len(atoms.Gk2c[ik]), Nstate))
+            )
+            W.append(weight[:, None] * xp.stack([W_ik] * atoms.occ.Nspin))
+        else:
+            W_ik = rng.standard_normal(
+                (atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate)
+            ) + 1j * rng.standard_normal((atoms.occ.Nspin, len(atoms.Gk2c[ik]), Nstate))
+            W.append(weight[:, None] * xp.asarray(W_ik))
+    return orth(atoms, W)
+
+
 def guess_pseudo(scf, Nstate=None, seed=1234, symmetric=False):
     """Generate initial-guess coefficients using pseudo-random starting values.
 

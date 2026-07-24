@@ -6,7 +6,16 @@ import pytest
 
 from eminus import Atoms, Cell, demo, SCF
 from eminus import backend as xp
-from eminus.dft import get_n_single, get_n_spin, get_n_total, get_psi, guess_pseudo, guess_random, H
+from eminus.dft import (
+    get_n_single,
+    get_n_spin,
+    get_n_total,
+    get_psi,
+    guess_filter,
+    guess_pseudo,
+    guess_random,
+    H,
+)
 from eminus.testing import assert_allclose
 from eminus.tools import get_magnetization
 
@@ -20,7 +29,7 @@ scf_pol = SCF(atoms_pol)
 scf_pol.run(betat=1e-4)
 
 
-@pytest.mark.parametrize("guess", ["random", "pseudo"])
+@pytest.mark.parametrize("guess", ["random", "filter", "pseudo"])
 @pytest.mark.parametrize("unrestricted", [True, False])
 def test_wavefunction(guess, unrestricted):
     """Test the orthonormalization of wave functions."""
@@ -30,6 +39,8 @@ def test_wavefunction(guess, unrestricted):
         scf = SCF(atoms_unpol, guess=guess)
     if guess == "random":
         W = guess_random(scf)
+    elif guess == "filter":
+        W = guess_filter(scf)
     else:
         W = guess_pseudo(scf)
     psi = get_psi(scf, W)

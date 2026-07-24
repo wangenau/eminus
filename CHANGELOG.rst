@@ -10,6 +10,7 @@ dev
 - New features
    - Support CuPy as a backend
    - Add the option to set configuration options via environment variables
+   - Add a filter starting guess which applies a Gaussian distribution to randomized values
 - Miscellaneous
    - Add a pytest gpu option
    - Remove torch from the all installation
