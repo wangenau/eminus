@@ -85,6 +85,7 @@ lint:
   stage: test
   script:
     - ruff check
+    - ruff format --check
   rules:
     - if: $CI_PIPELINE_SOURCE != "schedule"
       changes:
