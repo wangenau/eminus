@@ -116,7 +116,7 @@ ignore = [
     "PTH123",  # open() should be replaced by Path.open()
     "ERA001",  # Found commented-out code
     "PLC0415", # import should be at the top-level of a file
-    "PLR0911", "PLR0912", "PLR0913", "PLR0915",  # "Too many" rules
+    "PLR09", # "too-many" rules from Pylint
     "PLR2004", # Magic value used in comparison
     "COM812",  # Trailing comma missing (disabled due to possible conflicts with the formatter)
 ]
@@ -135,6 +135,9 @@ ignore = [
     "T201",  # print found
     "PTH107",  # os.remove() should be replaced by Path.unlink()
 ]
+
+[tool.ruff.lint.flake8-copyright]
+notice-rgx = "(?i)# SPDX-FileCopyrightText:\\s\\d{4}*"
 
 [tool.ruff.lint.flake8-unused-arguments]
 ignore-variadic-names = true
