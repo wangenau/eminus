@@ -48,10 +48,10 @@ classifiers = [
 ]
 
 [project.urls]
-source = "https://gitlab.com/wangenau/eminus"
-changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
-documentation = "https://wangenau.gitlab.io/eminus"
-issues = "https://gitlab.com/wangenau/eminus/-/issues"
+Repository = "https://gitlab.com/wangenau/eminus"
+Changelog = "https://wangenau.gitlab.io/eminus/changelog.html"
+Documentation = "https://wangenau.gitlab.io/eminus"
+Issues = "https://gitlab.com/wangenau/eminus/-/issues"
 
 [project.optional-dependencies]
 cupy = ["array-api-compat>=1.6", "cupy>=14"]  # CuPy array backend
