@@ -226,7 +226,7 @@ def Idag(atoms, W, ik=-1, full=False):
         The operator applied on W.
     """
     # This is just the J operator with the appropriate norm
-    # If we would not chnage the norm, we would have to multiply the result with n
+    # If we would not change the norm, we would have to multiply the result with n
     return J(atoms, W, ik, full=full, norm="backward")
 
 

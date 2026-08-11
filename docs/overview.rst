@@ -88,7 +88,7 @@ Features
       <li style="background:#f7b6c2">Fixed density SIC</li>
       <li style="background:#f7b6c2">FLO-SIC</li>
       <li style="background:#f7b6c2">PyCOM</li>
-      <li style="background:#f7b6c2">Arbitraty orbital SIC</li>
+      <li style="background:#f7b6c2">Arbitrary orbital SIC</li>
    </ul>
 
    <div class="colored-heading" style="background:#cdcc5d">Files</div>
