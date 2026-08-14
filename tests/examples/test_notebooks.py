@@ -45,9 +45,10 @@ def test_notebooks(name, trash):
     with open(f"{name}.ipynb", encoding="utf-8") as fh:
         nb = read(fh, as_version=4)  # type: ignore[no-untyped-call]
         ep = ExecutePreprocessor(timeout=300)  # type: ignore[no-untyped-call]
-        assert ep.preprocess(nb) is not None
-
-    clean_example(trash)
+        try:
+            ep.preprocess(nb)
+        finally:
+            clean_example(trash)
 
 
 if __name__ == "__main__":

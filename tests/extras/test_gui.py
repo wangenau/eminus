@@ -34,7 +34,7 @@ def test_gui(name):
     with open(f"{file_path}/{name}.ipynb", encoding="utf-8") as fh:
         nb = read(fh, as_version=4)  # type: ignore[no-untyped-call]
         ep = ExecutePreprocessor(timeout=300)  # type: ignore[no-untyped-call]
-        assert ep.preprocess(nb) is not None
+        ep.preprocess(nb)
 
 
 def test_executed_in_notebook():

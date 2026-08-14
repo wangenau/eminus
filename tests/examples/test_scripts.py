@@ -54,24 +54,30 @@ def test_04():  # noqa: D103
 
 
 def test_05():  # noqa: D103
-    execute_example("05_input_output")
-    clean_example(["CH4.json", "CH4_density.cube"])
+    try:
+        execute_example("05_input_output")
+    finally:
+        clean_example(["CH4.json", "CH4_density.cube"])
 
 
 @pytest.mark.slow
 def test_06():  # noqa: D103
-    execute_example("06_advanced_functionalities")
-    clean_example(["Ne_1.cube", "Ne_2.cube", "Ne_3.cube", "Ne_4.cube"])
+    try:
+        execute_example("06_advanced_functionalities")
+    finally:
+        clean_example(["Ne_1.cube", "Ne_2.cube", "Ne_3.cube", "Ne_4.cube"])
 
 
 @pytest.mark.filterwarnings("ignore:Implicitly cleaning up:ResourceWarning:tempfile")  # From PySCF
 @pytest.mark.slow
 def test_07():  # noqa: D103
     pytest.importorskip("pyscf", reason="pyscf not installed, skip tests")
-    execute_example("07_fod_extra")
-    clean_example(
-        ["CH4_FLO_1.cube", "CH4_FLO_2.cube", "CH4_FLO_3.cube", "CH4_FLO_4.cube", "CH4_fods.xyz"]
-    )
+    try:
+        execute_example("07_fod_extra")
+    finally:
+        clean_example(
+            ["CH4_FLO_1.cube", "CH4_FLO_2.cube", "CH4_FLO_3.cube", "CH4_FLO_4.cube", "CH4_fods.xyz"]
+        )
 
 
 @pytest.mark.slow
@@ -81,8 +87,10 @@ def test_09():  # noqa: D103
 
 @pytest.mark.slow
 def test_11():  # noqa: D103
-    execute_example("11_germanium_solid")
-    clean_example(["Ge_solid_density.cube"])
+    try:
+        execute_example("11_germanium_solid")
+    finally:
+        clean_example(["Ge_solid_density.cube"])
 
 
 @pytest.mark.slow
@@ -103,8 +111,10 @@ def test_15():  # noqa: D103
 
 @pytest.mark.slow
 def test_16():  # noqa: D103
-    execute_example("16_fod_optimization")
-    clean_example(["CH4_fods.xyz"])
+    try:
+        execute_example("16_fod_optimization")
+    finally:
+        clean_example(["CH4_fods.xyz"])
 
 
 @pytest.mark.slow
