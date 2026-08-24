@@ -205,7 +205,7 @@ python:
 nogil+jit:
   extends: .experiments
   script:
-    - uv venv --python 3.14t
+    - uv venv --python 3.15t
     - source .venv/bin/activate
     - uv pip install .
     - uv pip install pytest
