@@ -10,8 +10,8 @@ doi: 10.5281/zenodo.5720635
 license: Apache-2.0
 title: "eminus"
 url: "https://wangenau.gitlab.io/eminus"
-version: 3.2.2
-date-released: "2026-06-23"
+version: 3.3.0
+date-released: "2026-10-26"
 preferred-citation:
   type: article
   authors:

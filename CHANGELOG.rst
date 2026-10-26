@@ -5,16 +5,19 @@
 Changelog
 =========
 
-dev
----
+v3.3.0 - Oct 26, 2026
+---------------------
 - New features
    - Support CuPy as a backend
    - Add the option to set configuration options via environment variables
-   - Add a filter starting guess which applies a Gaussian distribution to randomized values
+   - Add a filter starting guess that applies a Gaussian distribution to randomized values
 - Miscellaneous
-   - Add a pytest gpu option
+   - Add a pytest GPU option
    - Remove torch from the all installation
    - Add cupy and torch devShells to the Nix flake
+   - Check notebooks and formatting in CI
+   - Improve example test execution and cleanup
+   - Indicate Python 3.15 support
 
 v3.2.2 - Jun 23, 2026
 ---------------------
