@@ -402,7 +402,7 @@ class SCF(BaseObject):
         if self.W is None or len(self.W) != self.atoms.kpts.Nk:
             if "random" in self.guess:
                 self.W = guess_random(self, symmetric=self.symmetric)
-            if "filter" in self.guess:
+            elif "filter" in self.guess:
                 self.W = guess_filter(self, symmetric=self.symmetric)
             elif "pseudo" in self.guess:
                 self.W = guess_pseudo(self, symmetric=self.symmetric)
@@ -467,7 +467,7 @@ class SCF(BaseObject):
         if self.Z is None:
             if "random" in self.guess:
                 self.Z = guess_random(self, Nempty, symmetric=self.symmetric)
-            if "filter" in self.guess:
+            elif "filter" in self.guess:
                 self.Z = guess_filter(self, Nempty, symmetric=self.symmetric)
             elif "pseudo" in self.guess:
                 self.Z = guess_pseudo(self, Nempty, symmetric=self.symmetric)
