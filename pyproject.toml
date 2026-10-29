@@ -154,4 +154,4 @@ convention = "google"
 
 ##### UV #####
 [tool.uv]
-exclude-newer = "1 day"
+exclude-newer = "7 day"
