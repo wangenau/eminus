@@ -24,12 +24,8 @@ def test_logger(level):
 
 def test_libxc():
     """Check the Libxc initialization."""
-    try:
-        import pylibxc  # noqa: F401
-
-        assert config.use_pylibxc
-    except ImportError:
-        assert not config.use_pylibxc
+    pytest.importorskip("pylibxc", reason="pylibxc not installed, skip tests")
+    assert config.use_pylibxc
 
 
 def test_threads():
