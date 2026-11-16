@@ -114,8 +114,9 @@ def gga_c_pbe_spin(n, zeta, dn_spin, beta=0.06672455060314922, **kwargs):
     bf_up = bfpre * (vc_up - ec)
     bf_dw = bfpre * (vc_dw - ec)
     dgecpre = beta * t2 * phi3 / nolog
-    dgec_up = dgecpre * (-7 / 3 * div - factor * (A * bf_up / beta - 7 / 3))
-    dgec_dw = dgecpre * (-7 / 3 * div - factor * (A * bf_dw / beta - 7 / 3))
+    dgecpre2 = -7 / 3 * div
+    dgec_up = dgecpre * (dgecpre2 - factor * (A * bf_up / beta - 7 / 3))
+    dgec_dw = dgecpre * (dgecpre2 - factor * (A * bf_dw / beta - 7 / 3))
     dgeczpre = (
         3 * gec / phi
         - beta * t2 * phi2 / nolog * (2 * div - factor * (3 * A * expec * ec / phi3 / beta + 2))

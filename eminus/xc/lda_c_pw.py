@@ -38,7 +38,7 @@ def lda_c_pw(n, A=0.031091, a1=0.2137, b1=7.5957, b2=3.5876, b3=1.6382, b4=0.492
     rs2 = rs**2
 
     om = 2 * A * (b1 * rs12 + b2 * rs + b3 * rs32 + b4 * rs2)
-    olog = xp.log(1 + 1 / om)
+    olog = xp.log1p(1 / om)
     ec = -2 * A * (1 + a1 * rs) * olog
 
     dom = 2 * A * (0.5 * b1 * rs12 + b2 * rs + 1.5 * b3 * rs32 + 2 * b4 * rs2)

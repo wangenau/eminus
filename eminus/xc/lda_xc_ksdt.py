@@ -482,7 +482,7 @@ def _get_dphidrs(rs, theta, zeta, phi_params):
     dalphadrs = _get_dalphadrs(rs, theta, phi_params)
     with np.errstate(divide="ignore"):
         tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
-    tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
+    tmp2 = (1 + zeta) ** alpha * xp.log1p(zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * math.log(2)
     vv = (2**alpha - 2) ** 2
@@ -495,7 +495,7 @@ def _get_dphidtheta(rs, theta, zeta, phi_params):
     dalphadtheta = _get_dalphadtheta(rs, theta, phi_params)
     with np.errstate(divide="ignore"):
         tmp1 = (1 - zeta) ** alpha * xp.where(1 - zeta > 0, xp.log(1 - zeta), 0)
-    tmp2 = (1 + zeta) ** alpha * xp.log(1 + zeta)
+    tmp2 = (1 + zeta) ** alpha * xp.log1p(zeta)
     duv = (tmp1 + tmp2) * (2**alpha - 2)
     udv = ((1 - zeta) ** alpha + (1 + zeta) ** alpha - 2) * 2**alpha * math.log(2)
     vv = (2**alpha - 2) ** 2
